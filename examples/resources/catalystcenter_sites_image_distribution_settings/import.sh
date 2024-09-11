@@ -1,0 +1,1 @@
+terraform import catalystcenter_sites_image_distribution_settings.example "id:=string"

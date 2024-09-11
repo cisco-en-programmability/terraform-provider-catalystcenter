@@ -1,0 +1,1 @@
+terraform import catalystcenter_qos_device_interface.example "id:=string"

@@ -1,0 +1,1 @@
+terraform import catalystcenter_wireless_settings_dot11be_profiles.example "id:=string"

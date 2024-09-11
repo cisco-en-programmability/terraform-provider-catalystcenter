@@ -1,0 +1,1 @@
+terraform import catalystcenter_sda_fabric_zones.example "id:=string"

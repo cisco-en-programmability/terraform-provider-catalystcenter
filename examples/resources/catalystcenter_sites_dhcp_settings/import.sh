@@ -1,0 +1,1 @@
+terraform import catalystcenter_sites_dhcp_settings.example "id:=string"

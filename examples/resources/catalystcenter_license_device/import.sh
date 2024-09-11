@@ -1,0 +1,1 @@
+terraform import catalystcenter_license_device.example "id:=string"

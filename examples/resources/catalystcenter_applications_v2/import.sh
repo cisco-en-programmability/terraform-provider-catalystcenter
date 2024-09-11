@@ -1,0 +1,1 @@
+terraform import catalystcenter_applications_v2.example "id:=string"

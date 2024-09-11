@@ -1,0 +1,1 @@
+terraform import catalystcenter_sites_ntp_settings.example "id:=string"

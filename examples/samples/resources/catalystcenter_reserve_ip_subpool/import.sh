@@ -1,0 +1,1 @@
+terraform import catalystcenter_reserve_ip_subpool.example "name:=string\\site_id:=string"

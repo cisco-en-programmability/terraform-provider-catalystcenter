@@ -1,0 +1,1 @@
+terraform import catalystcenter_sda_port_assignments.example "id:=string"

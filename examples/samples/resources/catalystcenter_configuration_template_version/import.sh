@@ -1,0 +1,1 @@
+terraform import catalystcenter_configuration_template_version.example "template_id:=string"

@@ -1,0 +1,1 @@
+terraform import catalystcenter_sda_multicast.example "id:=string"

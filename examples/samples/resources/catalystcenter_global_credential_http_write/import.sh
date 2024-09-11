@@ -1,0 +1,1 @@
+terraform import catalystcenter_global_credentail_http_write.example "id:=string"

@@ -1,0 +1,1 @@
+terraform import catalystcenter_sites_telemetry_settings.example "id:=string"

@@ -1,0 +1,1 @@
+terraform import catalystcenter_integration_settings_instances_itsm.example "instance_id:=string"

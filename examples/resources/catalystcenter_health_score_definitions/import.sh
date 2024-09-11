@@ -1,0 +1,1 @@
+terraform import catalystcenter_health_score_definitions.example "id:=string"

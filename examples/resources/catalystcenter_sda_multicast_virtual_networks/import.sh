@@ -1,0 +1,1 @@
+terraform import catalystcenter_sda_multicast_virtual_networks.example "id:=string"

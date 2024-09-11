@@ -1,0 +1,1 @@
+terraform import catalystcenter_tag_member.example "id:=string"

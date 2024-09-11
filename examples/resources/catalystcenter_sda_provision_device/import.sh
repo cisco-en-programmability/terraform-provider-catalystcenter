@@ -1,0 +1,1 @@
+terraform import catalystcenter_sda_provision_device.example "id:=string"

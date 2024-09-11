@@ -1,0 +1,1 @@
+terraform import catalystcenter_diagnostic_validation_workflows.example "id:=string"

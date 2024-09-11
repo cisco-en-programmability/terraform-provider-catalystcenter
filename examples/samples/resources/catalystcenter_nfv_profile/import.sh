@@ -1,0 +1,1 @@
+terraform import catalystcenter_nfv_profile.example "id:=string"

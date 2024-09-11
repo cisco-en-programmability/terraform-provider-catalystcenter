@@ -1,0 +1,1 @@
+terraform import catalystcenter_sites_device_credentials.example "id:=string"

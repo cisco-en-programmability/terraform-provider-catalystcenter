@@ -1,0 +1,1 @@
+terraform import catalystcenter_network_device.example "id:=string"

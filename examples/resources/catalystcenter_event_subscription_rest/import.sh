@@ -1,0 +1,1 @@
+terraform import catalystcenter_event_subscription_rest.example "id:=string"

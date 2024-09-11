@@ -1,0 +1,1 @@
+terraform import catalystcenter_golden_image.example "id:=string"

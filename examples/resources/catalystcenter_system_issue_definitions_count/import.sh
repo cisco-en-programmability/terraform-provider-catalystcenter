@@ -1,0 +1,1 @@
+terraform import catalystcenter_system_issue_definitions_count.example "id:=string"

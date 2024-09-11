@@ -1,0 +1,1 @@
+terraform import catalystcenter_sda_extranet_policies.example "id:=string"

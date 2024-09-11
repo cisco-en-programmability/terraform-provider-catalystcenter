@@ -1,0 +1,1 @@
+terraform import catalystcenter_wireless_dynamic_interface.example "id:=string"

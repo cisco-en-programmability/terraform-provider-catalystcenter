@@ -1,0 +1,1 @@
+terraform import catalystcenter_sda_fabric_devices_layer2_handoffs.example "id:=string"

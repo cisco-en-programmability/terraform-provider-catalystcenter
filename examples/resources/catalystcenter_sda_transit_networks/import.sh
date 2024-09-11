@@ -1,0 +1,1 @@
+terraform import catalystcenter_sda_transit_networks.example "id:=string"

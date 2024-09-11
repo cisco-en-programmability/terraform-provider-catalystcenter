@@ -1,0 +1,1 @@
+terraform import catalystcenter_snmp_properties.example "id:=string"

@@ -1,0 +1,1 @@
+terraform import catalystcenter_swim_image_file.example "id:=string"

@@ -1,0 +1,1 @@
+terraform import catalystcenter_event_syslog_config.example "id:=string"
