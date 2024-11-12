@@ -127,26 +127,26 @@ func dataSourceReportsViewGroupRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAllViewGroups")
+		log.Printf("[DEBUG] Selected method: GetAllViewGroupsV1")
 
-		response1, restyResp1, err := client.Reports.GetAllViewGroups()
+		response1, restyResp1, err := client.Reports.GetAllViewGroupsV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAllViewGroups", err,
-				"Failure at GetAllViewGroups, unexpected response", ""))
+				"Failure when executing 2 GetAllViewGroupsV1", err,
+				"Failure at GetAllViewGroupsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenReportsGetAllViewGroupsItems(response1)
+		vItems1 := flattenReportsGetAllViewGroupsV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAllViewGroups response",
+				"Failure when setting GetAllViewGroupsV1 response",
 				err))
 			return diags
 		}
@@ -156,27 +156,27 @@ func dataSourceReportsViewGroupRead(ctx context.Context, d *schema.ResourceData,
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetViewsForAGivenViewGroup")
+		log.Printf("[DEBUG] Selected method: GetViewsForAGivenViewGroupV1")
 		vvViewGroupID := vViewGroupID.(string)
 
-		response2, restyResp2, err := client.Reports.GetViewsForAGivenViewGroup(vvViewGroupID)
+		response2, restyResp2, err := client.Reports.GetViewsForAGivenViewGroupV1(vvViewGroupID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetViewsForAGivenViewGroup", err,
-				"Failure at GetViewsForAGivenViewGroup, unexpected response", ""))
+				"Failure when executing 2 GetViewsForAGivenViewGroupV1", err,
+				"Failure at GetViewsForAGivenViewGroupV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenReportsGetViewsForAGivenViewGroupItem(response2)
+		vItem2 := flattenReportsGetViewsForAGivenViewGroupV1Item(response2)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetViewsForAGivenViewGroup response",
+				"Failure when setting GetViewsForAGivenViewGroupV1 response",
 				err))
 			return diags
 		}
@@ -188,7 +188,7 @@ func dataSourceReportsViewGroupRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenReportsGetAllViewGroupsItems(items *catalystcentersdkgo.ResponseReportsGetAllViewGroups) []map[string]interface{} {
+func flattenReportsGetAllViewGroupsV1Items(items *catalystcentersdkgo.ResponseReportsGetAllViewGroupsV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -204,19 +204,19 @@ func flattenReportsGetAllViewGroupsItems(items *catalystcentersdkgo.ResponseRepo
 	return respItems
 }
 
-func flattenReportsGetViewsForAGivenViewGroupItem(item *catalystcentersdkgo.ResponseReportsGetViewsForAGivenViewGroup) []map[string]interface{} {
+func flattenReportsGetViewsForAGivenViewGroupV1Item(item *catalystcentersdkgo.ResponseReportsGetViewsForAGivenViewGroupV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["view_group_id"] = item.ViewGroupID
-	respItem["views"] = flattenReportsGetViewsForAGivenViewGroupItemViews(item.Views)
+	respItem["views"] = flattenReportsGetViewsForAGivenViewGroupV1ItemViews(item.Views)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenReportsGetViewsForAGivenViewGroupItemViews(items *[]catalystcentersdkgo.ResponseReportsGetViewsForAGivenViewGroupViews) []map[string]interface{} {
+func flattenReportsGetViewsForAGivenViewGroupV1ItemViews(items *[]catalystcentersdkgo.ResponseReportsGetViewsForAGivenViewGroupV1Views) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

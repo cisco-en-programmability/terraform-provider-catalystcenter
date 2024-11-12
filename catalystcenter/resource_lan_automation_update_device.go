@@ -65,7 +65,7 @@ update, hostname update, link addition, and link deletion.
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"feature": &schema.Schema{
-							Description: `feature query parameter. Feature ID for the update. Supported feature IDs include: LOOPBACK0_IPADDRESS_UPDATE, HOSTNAME_UPDATE, LINK_Add and LINK_DELETE. 
+							Description: `feature query parameter. Feature ID for the update. Supported feature IDs include: LOOPBACK0_IPADDRESS_UPDATE, HOSTNAME_UPDATE, LINK_ADD, and LINK_DELETE. 
 `,
 							Type:     schema.TypeString,
 							Required: true,
@@ -191,23 +191,21 @@ func resourceLanAutomationUpdateDeviceCreate(ctx context.Context, d *schema.Reso
 
 	vFeature := resourceItem["feature"]
 
-	request1 := expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdate(ctx, "parameters.0", d)
-	queryParams1 := catalystcentersdkgo.LanAutomationDeviceUpdateQueryParams{}
+	request1 := expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateV1(ctx, "parameters.0", d)
+	queryParams1 := catalystcentersdkgo.LanAutomationDeviceUpdateV1QueryParams{}
 
 	queryParams1.Feature = vFeature.(string)
 
-	response1, restyResp1, err := client.LanAutomation.LanAutomationDeviceUpdate(request1, &queryParams1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.LanAutomation.LanAutomationDeviceUpdateV1(request1, &queryParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing LanAutomationDeviceUpdate", err))
+			"Failure when executing LanAutomationDeviceUpdateV1", err))
 		return diags
 	}
 
@@ -215,7 +213,7 @@ func resourceLanAutomationUpdateDeviceCreate(ctx context.Context, d *schema.Reso
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing LANAutomationDeviceUpdate", err))
+			"Failure when executing LANAutomationDeviceUpdateV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -249,22 +247,24 @@ func resourceLanAutomationUpdateDeviceCreate(ctx context.Context, d *schema.Reso
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing LANAutomationDeviceUpdate", err1))
+				"Failure when executing LANAutomationDeviceUpdateV1", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenLanAutomationLanAutomationDeviceUpdateItem(response1.Response)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
+	vItem1 := flattenLanAutomationLanAutomationDeviceUpdateV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting LanAutomationDeviceUpdate response",
+			"Failure when setting LanAutomationDeviceUpdateV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceLanAutomationUpdateDeviceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -279,22 +279,22 @@ func resourceLanAutomationUpdateDeviceDelete(ctx context.Context, d *schema.Reso
 	return diags
 }
 
-func expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdate(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdate {
-	request := catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdate{}
+func expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdateV1 {
+	request := catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdateV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".loopback_update_device_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".loopback_update_device_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".loopback_update_device_list")))) {
-		request.LoopbackUpdateDeviceList = expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateLoopbackUpdateDeviceListArray(ctx, key+".loopback_update_device_list", d)
+		request.LoopbackUpdateDeviceList = expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateV1LoopbackUpdateDeviceListArray(ctx, key+".loopback_update_device_list", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".link_update")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".link_update")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".link_update")))) {
-		request.LinkUpdate = expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateLinkUpdate(ctx, key+".link_update.0", d)
+		request.LinkUpdate = expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateV1LinkUpdate(ctx, key+".link_update.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".hostname_update_devices")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".hostname_update_devices")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".hostname_update_devices")))) {
-		request.HostnameUpdateDevices = expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateHostnameUpdateDevicesArray(ctx, key+".hostname_update_devices", d)
+		request.HostnameUpdateDevices = expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateV1HostnameUpdateDevicesArray(ctx, key+".hostname_update_devices", d)
 	}
 	return &request
 }
 
-func expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateLoopbackUpdateDeviceListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdateLoopbackUpdateDeviceList {
-	request := []catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdateLoopbackUpdateDeviceList{}
+func expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateV1LoopbackUpdateDeviceListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdateV1LoopbackUpdateDeviceList {
+	request := []catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdateV1LoopbackUpdateDeviceList{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -305,7 +305,7 @@ func expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateLoopbackUpda
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateLoopbackUpdateDeviceList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateV1LoopbackUpdateDeviceList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -313,8 +313,8 @@ func expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateLoopbackUpda
 	return &request
 }
 
-func expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateLoopbackUpdateDeviceList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdateLoopbackUpdateDeviceList {
-	request := catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdateLoopbackUpdateDeviceList{}
+func expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateV1LoopbackUpdateDeviceList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdateV1LoopbackUpdateDeviceList {
+	request := catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdateV1LoopbackUpdateDeviceList{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_management_ipaddress")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_management_ipaddress")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_management_ipaddress")))) {
 		request.DeviceManagementIPAddress = interfaceToString(v)
 	}
@@ -324,8 +324,8 @@ func expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateLoopbackUpda
 	return &request
 }
 
-func expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateLinkUpdate(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdateLinkUpdate {
-	request := catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdateLinkUpdate{}
+func expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateV1LinkUpdate(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdateV1LinkUpdate {
+	request := catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdateV1LinkUpdate{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".source_device_management_ipaddress")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".source_device_management_ipaddress")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".source_device_management_ipaddress")))) {
 		request.SourceDeviceManagementIPAddress = interfaceToString(v)
 	}
@@ -344,8 +344,8 @@ func expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateLinkUpdate(c
 	return &request
 }
 
-func expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateHostnameUpdateDevicesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdateHostnameUpdateDevices {
-	request := []catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdateHostnameUpdateDevices{}
+func expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateV1HostnameUpdateDevicesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdateV1HostnameUpdateDevices {
+	request := []catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdateV1HostnameUpdateDevices{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -356,7 +356,7 @@ func expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateHostnameUpda
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateHostnameUpdateDevices(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateV1HostnameUpdateDevices(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -364,8 +364,8 @@ func expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateHostnameUpda
 	return &request
 }
 
-func expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateHostnameUpdateDevices(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdateHostnameUpdateDevices {
-	request := catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdateHostnameUpdateDevices{}
+func expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateV1HostnameUpdateDevices(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdateV1HostnameUpdateDevices {
+	request := catalystcentersdkgo.RequestLanAutomationLanAutomationDeviceUpdateV1HostnameUpdateDevices{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_management_ipaddress")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_management_ipaddress")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_management_ipaddress")))) {
 		request.DeviceManagementIPAddress = interfaceToString(v)
 	}
@@ -375,7 +375,7 @@ func expandRequestLanAutomationUpdateDeviceLanAutomationDeviceUpdateHostnameUpda
 	return &request
 }
 
-func flattenLanAutomationLanAutomationDeviceUpdateItem(item *catalystcentersdkgo.ResponseLanAutomationLanAutomationDeviceUpdateResponse) []map[string]interface{} {
+func flattenLanAutomationLanAutomationDeviceUpdateV1Item(item *catalystcentersdkgo.ResponseLanAutomationLanAutomationDeviceUpdateV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

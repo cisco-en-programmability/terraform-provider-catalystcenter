@@ -428,8 +428,8 @@ func dataSourceWirelessSensorTestResultsRead(ctx context.Context, d *schema.Reso
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: SensorTestResults")
-		queryParams1 := catalystcentersdkgo.SensorTestResultsQueryParams{}
+		log.Printf("[DEBUG] Selected method: SensorTestResultsV1")
+		queryParams1 := catalystcentersdkgo.SensorTestResultsV1QueryParams{}
 
 		if okSiteID {
 			queryParams1.SiteID = vSiteID.(string)
@@ -444,24 +444,24 @@ func dataSourceWirelessSensorTestResultsRead(ctx context.Context, d *schema.Reso
 			queryParams1.TestFailureBy = vTestFailureBy.(string)
 		}
 
-		response1, restyResp1, err := client.Wireless.SensorTestResults(&queryParams1)
+		response1, restyResp1, err := client.Wireless.SensorTestResultsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 SensorTestResults", err,
-				"Failure at SensorTestResults, unexpected response", ""))
+				"Failure when executing 2 SensorTestResultsV1", err,
+				"Failure at SensorTestResultsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessSensorTestResultsItem(response1.Response)
+		vItem1 := flattenWirelessSensorTestResultsV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting SensorTestResults response",
+				"Failure when setting SensorTestResultsV1 response",
 				err))
 			return diags
 		}
@@ -473,30 +473,30 @@ func dataSourceWirelessSensorTestResultsRead(ctx context.Context, d *schema.Reso
 	return diags
 }
 
-func flattenWirelessSensorTestResultsItem(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsResponse) []map[string]interface{} {
+func flattenWirelessSensorTestResultsV1Item(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["summary"] = flattenWirelessSensorTestResultsItemSummary(item.Summary)
-	respItem["failure_stats"] = flattenWirelessSensorTestResultsItemFailureStats(item.FailureStats)
+	respItem["summary"] = flattenWirelessSensorTestResultsV1ItemSummary(item.Summary)
+	respItem["failure_stats"] = flattenWirelessSensorTestResultsV1ItemFailureStats(item.FailureStats)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenWirelessSensorTestResultsItemSummary(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsResponseSummary) []map[string]interface{} {
+func flattenWirelessSensorTestResultsV1ItemSummary(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsV1ResponseSummary) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["total_test_count"] = item.TotalTestCount
-	respItem["onb_oar_din_g"] = flattenWirelessSensorTestResultsItemSummaryOnBoarding(item.OnBoarding)
-	respItem["per_for_man_ce"] = flattenWirelessSensorTestResultsItemSummaryPERfORMAncE(item.PERfORMAncE)
-	respItem["net_wor_kse_rvi_ces"] = flattenWirelessSensorTestResultsItemSummaryNETWORKSERVICES(item.NETWORKSERVICES)
-	respItem["app_con_nec_tiv_ity"] = flattenWirelessSensorTestResultsItemSummaryApPCONNECTIVITY(item.ApPCONNECTIVITY)
-	respItem["rfa_sse_ssm_ent"] = flattenWirelessSensorTestResultsItemSummaryRfASSESSMENT(item.RfASSESSMENT)
-	respItem["ema_il"] = flattenWirelessSensorTestResultsItemSummaryEmail(item.Email)
+	respItem["onb_oar_din_g"] = flattenWirelessSensorTestResultsV1ItemSummaryOnBoarding(item.OnBoarding)
+	respItem["per_for_man_ce"] = flattenWirelessSensorTestResultsV1ItemSummaryPERfORMAncE(item.PERfORMAncE)
+	respItem["net_wor_kse_rvi_ces"] = flattenWirelessSensorTestResultsV1ItemSummaryNETWORKSERVICES(item.NETWORKSERVICES)
+	respItem["app_con_nec_tiv_ity"] = flattenWirelessSensorTestResultsV1ItemSummaryApPCONNECTIVITY(item.ApPCONNECTIVITY)
+	respItem["rfa_sse_ssm_ent"] = flattenWirelessSensorTestResultsV1ItemSummaryRfASSESSMENT(item.RfASSESSMENT)
+	respItem["ema_il"] = flattenWirelessSensorTestResultsV1ItemSummaryEmail(item.Email)
 
 	return []map[string]interface{}{
 		respItem,
@@ -504,14 +504,14 @@ func flattenWirelessSensorTestResultsItemSummary(item *catalystcentersdkgo.Respo
 
 }
 
-func flattenWirelessSensorTestResultsItemSummaryOnBoarding(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsResponseSummaryOnBoarding) []map[string]interface{} {
+func flattenWirelessSensorTestResultsV1ItemSummaryOnBoarding(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsV1ResponseSummaryOnBoarding) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["aut_h"] = flattenWirelessSensorTestResultsItemSummaryOnBoardingAuth(item.Auth)
-	respItem["dhc_p"] = flattenWirelessSensorTestResultsItemSummaryOnBoardingDHCP(item.DHCP)
-	respItem["ass_oc"] = flattenWirelessSensorTestResultsItemSummaryOnBoardingAssoc(item.Assoc)
+	respItem["aut_h"] = flattenWirelessSensorTestResultsV1ItemSummaryOnBoardingAuth(item.Auth)
+	respItem["dhc_p"] = flattenWirelessSensorTestResultsV1ItemSummaryOnBoardingDHCP(item.DHCP)
+	respItem["ass_oc"] = flattenWirelessSensorTestResultsV1ItemSummaryOnBoardingAssoc(item.Assoc)
 
 	return []map[string]interface{}{
 		respItem,
@@ -519,21 +519,7 @@ func flattenWirelessSensorTestResultsItemSummaryOnBoarding(item *catalystcenters
 
 }
 
-func flattenWirelessSensorTestResultsItemSummaryOnBoardingAuth(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsResponseSummaryOnBoardingAuth) []map[string]interface{} {
-	if item == nil {
-		return nil
-	}
-	respItem := make(map[string]interface{})
-	respItem["pass_count"] = item.PassCount
-	respItem["fail_count"] = item.FailCount
-
-	return []map[string]interface{}{
-		respItem,
-	}
-
-}
-
-func flattenWirelessSensorTestResultsItemSummaryOnBoardingDHCP(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsResponseSummaryOnBoardingDHCP) []map[string]interface{} {
+func flattenWirelessSensorTestResultsV1ItemSummaryOnBoardingAuth(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsV1ResponseSummaryOnBoardingAuth) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -547,7 +533,7 @@ func flattenWirelessSensorTestResultsItemSummaryOnBoardingDHCP(item *catalystcen
 
 }
 
-func flattenWirelessSensorTestResultsItemSummaryOnBoardingAssoc(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsResponseSummaryOnBoardingAssoc) []map[string]interface{} {
+func flattenWirelessSensorTestResultsV1ItemSummaryOnBoardingDHCP(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsV1ResponseSummaryOnBoardingDHCP) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -561,20 +547,7 @@ func flattenWirelessSensorTestResultsItemSummaryOnBoardingAssoc(item *catalystce
 
 }
 
-func flattenWirelessSensorTestResultsItemSummaryPERfORMAncE(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsResponseSummaryPERfORMAncE) []map[string]interface{} {
-	if item == nil {
-		return nil
-	}
-	respItem := make(map[string]interface{})
-	respItem["ips_las_end_er"] = flattenWirelessSensorTestResultsItemSummaryPERfORMAncEIPSLASENDER(item.IPSLASENDER)
-
-	return []map[string]interface{}{
-		respItem,
-	}
-
-}
-
-func flattenWirelessSensorTestResultsItemSummaryPERfORMAncEIPSLASENDER(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsResponseSummaryPERfORMAncEIPSLASENDER) []map[string]interface{} {
+func flattenWirelessSensorTestResultsV1ItemSummaryOnBoardingAssoc(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsV1ResponseSummaryOnBoardingAssoc) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -588,12 +561,12 @@ func flattenWirelessSensorTestResultsItemSummaryPERfORMAncEIPSLASENDER(item *cat
 
 }
 
-func flattenWirelessSensorTestResultsItemSummaryNETWORKSERVICES(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsResponseSummaryNETWORKSERVICES) []map[string]interface{} {
+func flattenWirelessSensorTestResultsV1ItemSummaryPERfORMAncE(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsV1ResponseSummaryPERfORMAncE) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["dns"] = flattenWirelessSensorTestResultsItemSummaryNETWORKSERVICESDNS(item.DNS)
+	respItem["ips_las_end_er"] = flattenWirelessSensorTestResultsV1ItemSummaryPERfORMAncEIPSLASENDER(item.IPSLASENDER)
 
 	return []map[string]interface{}{
 		respItem,
@@ -601,36 +574,7 @@ func flattenWirelessSensorTestResultsItemSummaryNETWORKSERVICES(item *catalystce
 
 }
 
-func flattenWirelessSensorTestResultsItemSummaryNETWORKSERVICESDNS(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsResponseSummaryNETWORKSERVICESDNS) []map[string]interface{} {
-	if item == nil {
-		return nil
-	}
-	respItem := make(map[string]interface{})
-	respItem["pass_count"] = item.PassCount
-	respItem["fail_count"] = item.FailCount
-
-	return []map[string]interface{}{
-		respItem,
-	}
-
-}
-
-func flattenWirelessSensorTestResultsItemSummaryApPCONNECTIVITY(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsResponseSummaryApPCONNECTIVITY) []map[string]interface{} {
-	if item == nil {
-		return nil
-	}
-	respItem := make(map[string]interface{})
-	respItem["hos_tre_ach_abi_lit_y"] = flattenWirelessSensorTestResultsItemSummaryApPCONNECTIVITYHOSTREACHABILITY(item.HOSTREACHABILITY)
-	respItem["web_ser_ver"] = flattenWirelessSensorTestResultsItemSummaryApPCONNECTIVITYWebServer(item.WebServer)
-	respItem["fil_etr_ans_fer"] = flattenWirelessSensorTestResultsItemSummaryApPCONNECTIVITYFileTransfer(item.FileTransfer)
-
-	return []map[string]interface{}{
-		respItem,
-	}
-
-}
-
-func flattenWirelessSensorTestResultsItemSummaryApPCONNECTIVITYHOSTREACHABILITY(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsResponseSummaryApPCONNECTIVITYHOSTREACHABILITY) []map[string]interface{} {
+func flattenWirelessSensorTestResultsV1ItemSummaryPERfORMAncEIPSLASENDER(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsV1ResponseSummaryPERfORMAncEIPSLASENDER) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -644,7 +588,20 @@ func flattenWirelessSensorTestResultsItemSummaryApPCONNECTIVITYHOSTREACHABILITY(
 
 }
 
-func flattenWirelessSensorTestResultsItemSummaryApPCONNECTIVITYWebServer(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsResponseSummaryApPCONNECTIVITYWebServer) []map[string]interface{} {
+func flattenWirelessSensorTestResultsV1ItemSummaryNETWORKSERVICES(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsV1ResponseSummaryNETWORKSERVICES) []map[string]interface{} {
+	if item == nil {
+		return nil
+	}
+	respItem := make(map[string]interface{})
+	respItem["dns"] = flattenWirelessSensorTestResultsV1ItemSummaryNETWORKSERVICESDNS(item.DNS)
+
+	return []map[string]interface{}{
+		respItem,
+	}
+
+}
+
+func flattenWirelessSensorTestResultsV1ItemSummaryNETWORKSERVICESDNS(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsV1ResponseSummaryNETWORKSERVICESDNS) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -658,7 +615,22 @@ func flattenWirelessSensorTestResultsItemSummaryApPCONNECTIVITYWebServer(item *c
 
 }
 
-func flattenWirelessSensorTestResultsItemSummaryApPCONNECTIVITYFileTransfer(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsResponseSummaryApPCONNECTIVITYFileTransfer) []map[string]interface{} {
+func flattenWirelessSensorTestResultsV1ItemSummaryApPCONNECTIVITY(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsV1ResponseSummaryApPCONNECTIVITY) []map[string]interface{} {
+	if item == nil {
+		return nil
+	}
+	respItem := make(map[string]interface{})
+	respItem["hos_tre_ach_abi_lit_y"] = flattenWirelessSensorTestResultsV1ItemSummaryApPCONNECTIVITYHOSTREACHABILITY(item.HOSTREACHABILITY)
+	respItem["web_ser_ver"] = flattenWirelessSensorTestResultsV1ItemSummaryApPCONNECTIVITYWebServer(item.WebServer)
+	respItem["fil_etr_ans_fer"] = flattenWirelessSensorTestResultsV1ItemSummaryApPCONNECTIVITYFileTransfer(item.FileTransfer)
+
+	return []map[string]interface{}{
+		respItem,
+	}
+
+}
+
+func flattenWirelessSensorTestResultsV1ItemSummaryApPCONNECTIVITYHOSTREACHABILITY(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsV1ResponseSummaryApPCONNECTIVITYHOSTREACHABILITY) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -672,21 +644,7 @@ func flattenWirelessSensorTestResultsItemSummaryApPCONNECTIVITYFileTransfer(item
 
 }
 
-func flattenWirelessSensorTestResultsItemSummaryRfASSESSMENT(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsResponseSummaryRfASSESSMENT) []map[string]interface{} {
-	if item == nil {
-		return nil
-	}
-	respItem := make(map[string]interface{})
-	respItem["dat_ara_te"] = flattenWirelessSensorTestResultsItemSummaryRfASSESSMENTDATARATE(item.DATARATE)
-	respItem["snr"] = flattenWirelessSensorTestResultsItemSummaryRfASSESSMENTSNR(item.SNR)
-
-	return []map[string]interface{}{
-		respItem,
-	}
-
-}
-
-func flattenWirelessSensorTestResultsItemSummaryRfASSESSMENTDATARATE(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsResponseSummaryRfASSESSMENTDATARATE) []map[string]interface{} {
+func flattenWirelessSensorTestResultsV1ItemSummaryApPCONNECTIVITYWebServer(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsV1ResponseSummaryApPCONNECTIVITYWebServer) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -700,7 +658,7 @@ func flattenWirelessSensorTestResultsItemSummaryRfASSESSMENTDATARATE(item *catal
 
 }
 
-func flattenWirelessSensorTestResultsItemSummaryRfASSESSMENTSNR(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsResponseSummaryRfASSESSMENTSNR) []map[string]interface{} {
+func flattenWirelessSensorTestResultsV1ItemSummaryApPCONNECTIVITYFileTransfer(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsV1ResponseSummaryApPCONNECTIVITYFileTransfer) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -714,12 +672,13 @@ func flattenWirelessSensorTestResultsItemSummaryRfASSESSMENTSNR(item *catalystce
 
 }
 
-func flattenWirelessSensorTestResultsItemSummaryEmail(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsResponseSummaryEmail) []map[string]interface{} {
+func flattenWirelessSensorTestResultsV1ItemSummaryRfASSESSMENT(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsV1ResponseSummaryRfASSESSMENT) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["mai_lse_rve_r"] = flattenWirelessSensorTestResultsItemSummaryEmailMailServer(item.MailServer)
+	respItem["dat_ara_te"] = flattenWirelessSensorTestResultsV1ItemSummaryRfASSESSMENTDATARATE(item.DATARATE)
+	respItem["snr"] = flattenWirelessSensorTestResultsV1ItemSummaryRfASSESSMENTSNR(item.SNR)
 
 	return []map[string]interface{}{
 		respItem,
@@ -727,7 +686,7 @@ func flattenWirelessSensorTestResultsItemSummaryEmail(item *catalystcentersdkgo.
 
 }
 
-func flattenWirelessSensorTestResultsItemSummaryEmailMailServer(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsResponseSummaryEmailMailServer) []map[string]interface{} {
+func flattenWirelessSensorTestResultsV1ItemSummaryRfASSESSMENTDATARATE(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsV1ResponseSummaryRfASSESSMENTDATARATE) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -741,7 +700,48 @@ func flattenWirelessSensorTestResultsItemSummaryEmailMailServer(item *catalystce
 
 }
 
-func flattenWirelessSensorTestResultsItemFailureStats(items *[]catalystcentersdkgo.ResponseWirelessSensorTestResultsResponseFailureStats) []map[string]interface{} {
+func flattenWirelessSensorTestResultsV1ItemSummaryRfASSESSMENTSNR(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsV1ResponseSummaryRfASSESSMENTSNR) []map[string]interface{} {
+	if item == nil {
+		return nil
+	}
+	respItem := make(map[string]interface{})
+	respItem["pass_count"] = item.PassCount
+	respItem["fail_count"] = item.FailCount
+
+	return []map[string]interface{}{
+		respItem,
+	}
+
+}
+
+func flattenWirelessSensorTestResultsV1ItemSummaryEmail(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsV1ResponseSummaryEmail) []map[string]interface{} {
+	if item == nil {
+		return nil
+	}
+	respItem := make(map[string]interface{})
+	respItem["mai_lse_rve_r"] = flattenWirelessSensorTestResultsV1ItemSummaryEmailMailServer(item.MailServer)
+
+	return []map[string]interface{}{
+		respItem,
+	}
+
+}
+
+func flattenWirelessSensorTestResultsV1ItemSummaryEmailMailServer(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsV1ResponseSummaryEmailMailServer) []map[string]interface{} {
+	if item == nil {
+		return nil
+	}
+	respItem := make(map[string]interface{})
+	respItem["pass_count"] = item.PassCount
+	respItem["fail_count"] = item.FailCount
+
+	return []map[string]interface{}{
+		respItem,
+	}
+
+}
+
+func flattenWirelessSensorTestResultsV1ItemFailureStats(items *[]catalystcentersdkgo.ResponseWirelessSensorTestResultsV1ResponseFailureStats) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

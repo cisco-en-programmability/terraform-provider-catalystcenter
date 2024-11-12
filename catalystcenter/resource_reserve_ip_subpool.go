@@ -409,7 +409,7 @@ func resourceReserveIPSubpoolCreate(ctx context.Context, d *schema.ResourceData,
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestReserveIPSubpoolReserveIPSubpool(ctx, "parameters.0", d)
+	request1 := expandRequestReserveIPSubpoolReserveIPSubpoolV1(ctx, "parameters.0", d)
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
@@ -419,7 +419,7 @@ func resourceReserveIPSubpoolCreate(ctx context.Context, d *schema.ResourceData,
 	vName := resourceItem["name"]
 	vvName := interfaceToString(vName)
 
-	queryParams1 := catalystcentersdkgo.GetReserveIPSubpoolQueryParams{}
+	queryParams1 := catalystcentersdkgo.GetReserveIPSubpoolV1QueryParams{}
 
 	queryParams1.SiteID = vvSiteID
 
@@ -506,7 +506,7 @@ func resourceReserveIPSubpoolRead(ctx context.Context, d *schema.ResourceData, m
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method 1: GetReserveIPSubpool")
-		queryParams1 := catalystcentersdkgo.GetReserveIPSubpoolQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetReserveIPSubpoolV1QueryParams{}
 
 		if okSiteID {
 			queryParams1.SiteID = vSiteID
@@ -527,17 +527,17 @@ func resourceReserveIPSubpoolRead(ctx context.Context, d *schema.ResourceData, m
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
-		items := []catalystcentersdkgo.ResponseNetworkSettingsGetReserveIPSubpoolResponse{
+		items := []catalystcentersdkgo.ResponseNetworkSettingsGetReserveIPSubpoolV1Response{
 			*response1,
 		}
-		vItem1 := flattenNetworkSettingsGetReserveIPSubpoolItems(&items)
+		vItem1 := flattenNetworkSettingsGetReserveIPSubpoolV1Items(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetReserveIPSubpool search response",
 				err))
 			return diags
 		}
-		request1 := expandRequestReserveIPSubpoolReserveIPSubpool(ctx, "parameters.0", d)
+		request1 := expandRequestReserveIPSubpoolReserveIPSubpoolV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 		updatedParameters := updateReserveIpPoolParameters(request1, response1)
 
@@ -564,7 +564,7 @@ func resourceReserveIPSubpoolUpdate(ctx context.Context, d *schema.ResourceData,
 	vSiteID := resourceMap["site_id"]
 	vName := resourceMap["name"]
 
-	queryParams1 := catalystcentersdkgo.GetReserveIPSubpoolQueryParams{}
+	queryParams1 := catalystcentersdkgo.GetReserveIPSubpoolV1QueryParams{}
 	queryParams1.SiteID = vSiteID
 	item, err := searchNetworkSettingsGetReserveIPSubpool(m, queryParams1, vName)
 	if err != nil || item == nil {
@@ -577,11 +577,11 @@ func resourceReserveIPSubpoolUpdate(ctx context.Context, d *schema.ResourceData,
 	// NOTE: Consider adding getAllItems and search function to get missing params
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vSiteID)
-		request1 := expandRequestReserveIPSubpoolUpdateReserveIPSubpool(ctx, "parameters.0", d)
+		request1 := expandRequestReserveIPSubpoolUpdateReserveIPSubpoolV1(ctx, "parameters.0", d)
 		if request1 != nil {
 			log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		}
-		queryParams2 := catalystcentersdkgo.UpdateReserveIPSubpoolQueryParams{}
+		queryParams2 := catalystcentersdkgo.UpdateReserveIPSubpoolV1QueryParams{}
 		queryParams2.ID = item.ID
 		response1, restyResp1, err := client.NetworkSettings.UpdateReserveIPSubpool(vSiteID, request1, &queryParams2)
 		if err != nil || response1 == nil {
@@ -648,7 +648,7 @@ func resourceReserveIPSubpoolDelete(ctx context.Context, d *schema.ResourceData,
 	vSiteID := resourceMap["site_id"]
 	vName := resourceMap["name"]
 
-	queryParams1 := catalystcentersdkgo.GetReserveIPSubpoolQueryParams{}
+	queryParams1 := catalystcentersdkgo.GetReserveIPSubpoolV1QueryParams{}
 	queryParams1.SiteID = vSiteID
 	item, err := searchNetworkSettingsGetReserveIPSubpool(m, queryParams1, vName)
 	if err != nil || item == nil {
@@ -714,8 +714,8 @@ func resourceReserveIPSubpoolDelete(ctx context.Context, d *schema.ResourceData,
 
 	return diags
 }
-func expandRequestReserveIPSubpoolReserveIPSubpool(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsReserveIPSubpool {
-	request := catalystcentersdkgo.RequestNetworkSettingsReserveIPSubpool{}
+func expandRequestReserveIPSubpoolReserveIPSubpoolV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsReserveIPSubpoolV1 {
+	request := catalystcentersdkgo.RequestNetworkSettingsReserveIPSubpoolV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -782,17 +782,13 @@ func expandRequestReserveIPSubpoolReserveIPSubpool(ctx context.Context, key stri
 	return &request
 }
 
-func expandRequestReserveIPSubpoolUpdateReserveIPSubpool(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateReserveIPSubpool {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateReserveIPSubpool{}
+func expandRequestReserveIPSubpoolUpdateReserveIPSubpoolV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateReserveIPSubpoolV1 {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateReserveIPSubpoolV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ipv6_address_space")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ipv6_address_space")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ipv6_address_space")))) {
 		request.IPv6AddressSpace = interfaceToBoolPtr(v)
-		if request.IPv6AddressSpace == nil {
-			defaultBool := false
-			request.IPv6AddressSpace = &defaultBool
-		}
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ipv4_dhcp_servers")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ipv4_dhcp_servers")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ipv4_dhcp_servers")))) {
 		request.IPv4DhcpServers = interfaceToSliceString(v)
@@ -808,22 +804,12 @@ func expandRequestReserveIPSubpoolUpdateReserveIPSubpool(ctx context.Context, ke
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ipv6_prefix_length")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ipv6_prefix_length")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ipv6_prefix_length")))) {
 		request.IPv6PrefixLength = interfaceToIntPtr(v)
-		if request.IPv6PrefixLength != nil {
-			if *request.IPv6PrefixLength == 0 {
-				request.IPv6PrefixLength = nil
-			}
-		}
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ipv6_subnet")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ipv6_subnet")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ipv6_subnet")))) {
 		request.IPv6Subnet = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ipv6_total_host")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ipv6_total_host")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ipv6_total_host")))) {
 		request.IPv6TotalHost = interfaceToIntPtr(v)
-		if request.IPv6TotalHost != nil {
-			if *request.IPv6TotalHost == 0 {
-				request.IPv6TotalHost = nil
-			}
-		}
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ipv6_gate_way")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ipv6_gate_way")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ipv6_gate_way")))) {
 		request.IPv6GateWay = interfaceToString(v)
@@ -837,20 +823,20 @@ func expandRequestReserveIPSubpoolUpdateReserveIPSubpool(ctx context.Context, ke
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".slaac_support")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".slaac_support")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".slaac_support")))) {
 		request.SLAacSupport = interfaceToBoolPtr(v)
 	}
-	// if v, ok := d.GetOkExists(fixKeyAccess(key + ".ipv4_gate_way")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ipv4_gate_way")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ipv4_gate_way")))) {
-	// 	request.IPv4GateWay = interfaceToString(v)
-	// }
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ipv4_gate_way")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ipv4_gate_way")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ipv4_gate_way")))) {
+		request.IPv4GateWay = interfaceToString(v)
+	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
 	}
 	return &request
 }
 
-func searchNetworkSettingsGetReserveIPSubpool(m interface{}, queryParams catalystcentersdkgo.GetReserveIPSubpoolQueryParams, vName string) (*catalystcentersdkgo.ResponseNetworkSettingsGetReserveIPSubpoolResponse, error) {
+func searchNetworkSettingsGetReserveIPSubpool(m interface{}, queryParams catalystcentersdkgo.GetReserveIPSubpoolV1QueryParams, vName string) (*catalystcentersdkgo.ResponseNetworkSettingsGetReserveIPSubpoolV1Response, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseNetworkSettingsGetReserveIPSubpoolResponse
-	var nResponse *catalystcentersdkgo.ResponseNetworkSettingsGetReserveIPSubpool
+	var foundItem *catalystcentersdkgo.ResponseNetworkSettingsGetReserveIPSubpoolV1Response
+	var nResponse *catalystcentersdkgo.ResponseNetworkSettingsGetReserveIPSubpoolV1
 	maxPageSize := 500
 	offset := 1
 	queryParams.Offset = float64(offset)
@@ -887,10 +873,10 @@ func searchNetworkSettingsGetReserveIPSubpool(m interface{}, queryParams catalys
 	return foundItem, err
 }
 
-func updateReserveIpPoolParameters(request *catalystcentersdkgo.RequestNetworkSettingsReserveIPSubpool, response *catalystcentersdkgo.ResponseNetworkSettingsGetReserveIPSubpoolResponse) *catalystcentersdkgo.RequestNetworkSettingsReserveIPSubpool {
+func updateReserveIpPoolParameters(request *catalystcentersdkgo.RequestNetworkSettingsReserveIPSubpoolV1, response *catalystcentersdkgo.ResponseNetworkSettingsGetReserveIPSubpoolV1Response) *catalystcentersdkgo.RequestNetworkSettingsReserveIPSubpoolV1 {
 	log.Printf("IPPOOLREQUEST %s", responseInterfaceToString(request))
 	if request == nil {
-		request = &catalystcentersdkgo.RequestNetworkSettingsReserveIPSubpool{}
+		request = &catalystcentersdkgo.RequestNetworkSettingsReserveIPSubpoolV1{}
 	}
 	for _, v := range *response.IPPools {
 		log.Printf("IPPOOL %s", responseInterfaceToString(v))

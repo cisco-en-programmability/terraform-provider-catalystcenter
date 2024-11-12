@@ -94,7 +94,7 @@ func resourceSdaLayer2VirtualNetworks() *schema.Resource {
 				},
 			},
 			"parameters": &schema.Schema{
-				Description: `Array of RequestSdaAddLayer2VirtualNetworks`,
+				Description: `Array of RequestSdaAddLayer2VirtualNetworksV1`,
 				Type:        schema.TypeList,
 				Optional:    true,
 				Computed:    true,
@@ -174,7 +174,7 @@ func resourceSdaLayer2VirtualNetworksCreate(ctx context.Context, d *schema.Resou
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters.0.payload"))
-	request1 := expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworks(ctx, "parameters.0", d)
+	request1 := expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksV1(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vID := resourceItem["id"]
@@ -184,7 +184,7 @@ func resourceSdaLayer2VirtualNetworksCreate(ctx context.Context, d *schema.Resou
 	vName := resourceItem["associated_layer3_virtual_network_name"]
 	vvName := interfaceToString(vName)
 
-	queryParamImport := catalystcentersdkgo.GetLayer2VirtualNetworksQueryParams{}
+	queryParamImport := catalystcentersdkgo.GetLayer2VirtualNetworksV1QueryParams{}
 	queryParamImport.FabricID = vvFabricID
 	queryParamImport.AssociatedLayer3VirtualNetworkName = vvName
 	item2, err := searchSdaGetLayer2VirtualNetworks(m, queryParamImport, vvID)
@@ -235,7 +235,7 @@ func resourceSdaLayer2VirtualNetworksCreate(ctx context.Context, d *schema.Resou
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetLayer2VirtualNetworksQueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetLayer2VirtualNetworksV1QueryParams{}
 	queryParamValidate.ID = vvID
 	queryParamValidate.FabricID = vvFabricID
 	queryParamValidate.AssociatedLayer3VirtualNetworkName = vvName
@@ -269,7 +269,7 @@ func resourceSdaLayer2VirtualNetworksRead(ctx context.Context, d *schema.Resourc
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetLayer2VirtualNetworks")
-		queryParams1 := catalystcentersdkgo.GetLayer2VirtualNetworksQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetLayer2VirtualNetworksV1QueryParams{}
 		queryParams1.FabricID = vvFabicID
 		queryParams1.AssociatedLayer3VirtualNetworkName = vvName
 
@@ -279,10 +279,10 @@ func resourceSdaLayer2VirtualNetworksRead(ctx context.Context, d *schema.Resourc
 			return diags
 		}
 		// Review flatten function used
-		items := []catalystcentersdkgo.ResponseSdaGetLayer2VirtualNetworksResponse{
+		items := []catalystcentersdkgo.ResponseSdaGetLayer2VirtualNetworksV1Response{
 			*item1,
 		}
-		vItem1 := flattenSdaGetLayer2VirtualNetworksItems(&items)
+		vItem1 := flattenSdaGetLayer2VirtualNetworksV1Items(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetLayer2VirtualNetworks search response",
@@ -304,7 +304,7 @@ func resourceSdaLayer2VirtualNetworksUpdate(ctx context.Context, d *schema.Resou
 	vID := resourceMap["id"]
 
 	if d.HasChange("parameters") {
-		request1 := expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworks(ctx, "parameters.0", d)
+		request1 := expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		if request1 != nil && len(*request1) > 0 {
 			req := *request1
@@ -421,9 +421,9 @@ func resourceSdaLayer2VirtualNetworksDelete(ctx context.Context, d *schema.Resou
 
 	return diags
 }
-func expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworks(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddLayer2VirtualNetworks {
-	request := catalystcentersdkgo.RequestSdaAddLayer2VirtualNetworks{}
-	if v := expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddLayer2VirtualNetworksV1 {
+	request := catalystcentersdkgo.RequestSdaAddLayer2VirtualNetworksV1{}
+	if v := expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -432,8 +432,8 @@ func expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworks(ctx context.C
 	return &request
 }
 
-func expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddLayer2VirtualNetworks {
-	request := []catalystcentersdkgo.RequestItemSdaAddLayer2VirtualNetworks{}
+func expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddLayer2VirtualNetworksV1 {
+	request := []catalystcentersdkgo.RequestItemSdaAddLayer2VirtualNetworksV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -444,7 +444,7 @@ func expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksItemArray(ctx 
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -455,8 +455,8 @@ func expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksItemArray(ctx 
 	return &request
 }
 
-func expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddLayer2VirtualNetworks {
-	request := catalystcentersdkgo.RequestItemSdaAddLayer2VirtualNetworks{}
+func expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddLayer2VirtualNetworksV1 {
+	request := catalystcentersdkgo.RequestItemSdaAddLayer2VirtualNetworksV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".fabric_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".fabric_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".fabric_id")))) {
 		request.FabricID = interfaceToString(v)
 	}
@@ -481,9 +481,9 @@ func expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksItem(ctx conte
 	return &request
 }
 
-func expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworks(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateLayer2VirtualNetworks {
-	request := catalystcentersdkgo.RequestSdaUpdateLayer2VirtualNetworks{}
-	if v := expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateLayer2VirtualNetworksV1 {
+	request := catalystcentersdkgo.RequestSdaUpdateLayer2VirtualNetworksV1{}
+	if v := expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -492,8 +492,8 @@ func expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworks(ctx contex
 	return &request
 }
 
-func expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateLayer2VirtualNetworks {
-	request := []catalystcentersdkgo.RequestItemSdaUpdateLayer2VirtualNetworks{}
+func expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateLayer2VirtualNetworksV1 {
+	request := []catalystcentersdkgo.RequestItemSdaUpdateLayer2VirtualNetworksV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -504,7 +504,7 @@ func expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksItemArray(c
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -515,8 +515,8 @@ func expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksItemArray(c
 	return &request
 }
 
-func expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateLayer2VirtualNetworks {
-	request := catalystcentersdkgo.RequestItemSdaUpdateLayer2VirtualNetworks{}
+func expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateLayer2VirtualNetworksV1 {
+	request := catalystcentersdkgo.RequestItemSdaUpdateLayer2VirtualNetworksV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -544,11 +544,11 @@ func expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksItem(ctx co
 	return &request
 }
 
-func searchSdaGetLayer2VirtualNetworks(m interface{}, queryParams catalystcentersdkgo.GetLayer2VirtualNetworksQueryParams, vID string) (*catalystcentersdkgo.ResponseSdaGetLayer2VirtualNetworksResponse, error) {
+func searchSdaGetLayer2VirtualNetworks(m interface{}, queryParams catalystcentersdkgo.GetLayer2VirtualNetworksV1QueryParams, vID string) (*catalystcentersdkgo.ResponseSdaGetLayer2VirtualNetworksV1Response, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseSdaGetLayer2VirtualNetworksResponse
-	var ite *catalystcentersdkgo.ResponseSdaGetLayer2VirtualNetworks
+	var foundItem *catalystcentersdkgo.ResponseSdaGetLayer2VirtualNetworksV1Response
+	var ite *catalystcentersdkgo.ResponseSdaGetLayer2VirtualNetworksV1
 	if vID != "" {
 		queryParams.Offset = 1
 		nResponse, _, err := client.Sda.GetLayer2VirtualNetworks(nil)

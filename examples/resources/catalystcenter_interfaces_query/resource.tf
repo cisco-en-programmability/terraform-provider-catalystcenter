@@ -1,6 +1,6 @@
 
 resource "catalystcenter_interfaces_query" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     aggregate_attributes {
@@ -18,12 +18,12 @@ resource "catalystcenter_interfaces_query" "example" {
         key              = "string"
         logical_operator = "string"
         operator         = "string"
-        value            = "string"
+        value            = "------"
       }
       key              = "string"
       logical_operator = "string"
       operator         = "string"
-      value            = "string"
+      value            = "------"
     }
     page {
 

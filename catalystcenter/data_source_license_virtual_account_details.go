@@ -84,27 +84,27 @@ func dataSourceLicenseVirtualAccountDetailsRead(ctx context.Context, d *schema.R
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: VirtualAccountDetails")
+		log.Printf("[DEBUG] Selected method: VirtualAccountDetailsV1")
 		vvSmartAccountID := vSmartAccountID.(string)
 
-		response1, restyResp1, err := client.Licenses.VirtualAccountDetails(vvSmartAccountID)
+		response1, restyResp1, err := client.Licenses.VirtualAccountDetailsV1(vvSmartAccountID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 VirtualAccountDetails", err,
-				"Failure at VirtualAccountDetails, unexpected response", ""))
+				"Failure when executing 2 VirtualAccountDetailsV1", err,
+				"Failure at VirtualAccountDetailsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenLicensesVirtualAccountDetailsItem(response1)
+		vItem1 := flattenLicensesVirtualAccountDetailsV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting VirtualAccountDetails response",
+				"Failure when setting VirtualAccountDetailsV1 response",
 				err))
 			return diags
 		}
@@ -116,20 +116,20 @@ func dataSourceLicenseVirtualAccountDetailsRead(ctx context.Context, d *schema.R
 	return diags
 }
 
-func flattenLicensesVirtualAccountDetailsItem(item *catalystcentersdkgo.ResponseLicensesVirtualAccountDetails) []map[string]interface{} {
+func flattenLicensesVirtualAccountDetailsV1Item(item *catalystcentersdkgo.ResponseLicensesVirtualAccountDetailsV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["smart_account_id"] = item.SmartAccountID
 	respItem["smart_account_name"] = item.SmartAccountName
-	respItem["virtual_account_details"] = flattenLicensesVirtualAccountDetailsItemVirtualAccountDetails(item.VirtualAccountDetails)
+	respItem["virtual_account_details"] = flattenLicensesVirtualAccountDetailsV1ItemVirtualAccountDetails(item.VirtualAccountDetails)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenLicensesVirtualAccountDetailsItemVirtualAccountDetails(items *[]catalystcentersdkgo.ResponseLicensesVirtualAccountDetailsVirtualAccountDetails) []map[string]interface{} {
+func flattenLicensesVirtualAccountDetailsV1ItemVirtualAccountDetails(items *[]catalystcentersdkgo.ResponseLicensesVirtualAccountDetailsV1VirtualAccountDetails) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -137,27 +137,27 @@ func dataSourceNetworkDeviceWirelessLanRead(ctx context.Context, d *schema.Resou
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetWirelessLanControllerDetailsByID")
+		log.Printf("[DEBUG] Selected method: GetWirelessLanControllerDetailsByIDV1")
 		vvID := vID.(string)
 
-		response1, restyResp1, err := client.Devices.GetWirelessLanControllerDetailsByID(vvID)
+		response1, restyResp1, err := client.Devices.GetWirelessLanControllerDetailsByIDV1(vvID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetWirelessLanControllerDetailsByID", err,
-				"Failure at GetWirelessLanControllerDetailsByID, unexpected response", ""))
+				"Failure when executing 2 GetWirelessLanControllerDetailsByIDV1", err,
+				"Failure at GetWirelessLanControllerDetailsByIDV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesGetWirelessLanControllerDetailsByIDItem(response1)
+		vItem1 := flattenDevicesGetWirelessLanControllerDetailsByIDV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetWirelessLanControllerDetailsByID response",
+				"Failure when setting GetWirelessLanControllerDetailsByIDV1 response",
 				err))
 			return diags
 		}
@@ -169,7 +169,7 @@ func dataSourceNetworkDeviceWirelessLanRead(ctx context.Context, d *schema.Resou
 	return diags
 }
 
-func flattenDevicesGetWirelessLanControllerDetailsByIDItem(item *catalystcentersdkgo.ResponseDevicesGetWirelessLanControllerDetailsByID) []map[string]interface{} {
+func flattenDevicesGetWirelessLanControllerDetailsByIDV1Item(item *catalystcentersdkgo.ResponseDevicesGetWirelessLanControllerDetailsByIDV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

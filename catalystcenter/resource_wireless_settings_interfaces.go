@@ -105,7 +105,7 @@ func resourceWirelessSettingsInterfacesCreate(ctx context.Context, d *schema.Res
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestWirelessSettingsInterfacesCreateInterface(ctx, "parameters.0", d)
+	request1 := expandRequestWirelessSettingsInterfacesCreateInterfaceV1(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vID, okID := resourceItem["id"]
@@ -121,7 +121,7 @@ func resourceWirelessSettingsInterfacesCreate(ctx context.Context, d *schema.Res
 			return resourceWirelessSettingsInterfacesRead(ctx, d, m)
 		}
 	} else {
-		queryParamImport := catalystcentersdkgo.GetInterfacesQueryParams{}
+		queryParamImport := catalystcentersdkgo.GetInterfacesV1QueryParams{}
 
 		response2, err := searchWirelessGetInterfaces(m, queryParamImport, vvName)
 		if response2 != nil && err == nil {
@@ -170,7 +170,7 @@ func resourceWirelessSettingsInterfacesCreate(ctx context.Context, d *schema.Res
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetInterfacesQueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetInterfacesV1QueryParams{}
 	item3, err := searchWirelessGetInterfaces(m, queryParamValidate, vvName)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
@@ -210,7 +210,7 @@ func resourceWirelessSettingsInterfacesRead(ctx context.Context, d *schema.Resou
 			return diags
 		}
 		// Review flatten function used
-		vItem1 := flattenWirelessGetInterfaceByIDItem(response1.Response)
+		vItem1 := flattenWirelessGetInterfaceByIDV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetInterfaces search response",
@@ -232,7 +232,7 @@ func resourceWirelessSettingsInterfacesUpdate(ctx context.Context, d *schema.Res
 	vvID := resourceMap["id"]
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvID)
-		request1 := expandRequestWirelessSettingsInterfacesUpdateInterface(ctx, "parameters.0", d)
+		request1 := expandRequestWirelessSettingsInterfacesUpdateInterfaceV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.Wireless.UpdateInterface(vvID, request1)
 		if err != nil || response1 == nil {
@@ -342,8 +342,8 @@ func resourceWirelessSettingsInterfacesDelete(ctx context.Context, d *schema.Res
 
 	return diags
 }
-func expandRequestWirelessSettingsInterfacesCreateInterface(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateInterface {
-	request := catalystcentersdkgo.RequestWirelessCreateInterface{}
+func expandRequestWirelessSettingsInterfacesCreateInterfaceV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateInterfaceV1 {
+	request := catalystcentersdkgo.RequestWirelessCreateInterfaceV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".interface_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".interface_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".interface_name")))) {
 		request.InterfaceName = interfaceToString(v)
 	}
@@ -356,8 +356,8 @@ func expandRequestWirelessSettingsInterfacesCreateInterface(ctx context.Context,
 	return &request
 }
 
-func expandRequestWirelessSettingsInterfacesUpdateInterface(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateInterface {
-	request := catalystcentersdkgo.RequestWirelessUpdateInterface{}
+func expandRequestWirelessSettingsInterfacesUpdateInterfaceV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateInterfaceV1 {
+	request := catalystcentersdkgo.RequestWirelessUpdateInterfaceV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".interface_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".interface_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".interface_name")))) {
 		request.InterfaceName = interfaceToString(v)
 	}
@@ -370,10 +370,10 @@ func expandRequestWirelessSettingsInterfacesUpdateInterface(ctx context.Context,
 	return &request
 }
 
-func searchWirelessGetInterfaces(m interface{}, queryParams catalystcentersdkgo.GetInterfacesQueryParams, vID string) (*catalystcentersdkgo.ResponseWirelessGetInterfacesResponse, error) {
+func searchWirelessGetInterfaces(m interface{}, queryParams catalystcentersdkgo.GetInterfacesV1QueryParams, vID string) (*catalystcentersdkgo.ResponseWirelessGetInterfacesV1Response, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseWirelessGetInterfacesResponse
+	var foundItem *catalystcentersdkgo.ResponseWirelessGetInterfacesV1Response
 
 	queryParams.Offset = 1
 	nResponse, _, err := client.Wireless.GetInterfaces(nil)

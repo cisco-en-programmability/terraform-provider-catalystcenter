@@ -61,8 +61,8 @@ func dataSourceSystemHealthCountRead(ctx context.Context, d *schema.ResourceData
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: SystemHealthCountAPI")
-		queryParams1 := catalystcentersdkgo.SystemHealthCountAPIQueryParams{}
+		log.Printf("[DEBUG] Selected method: SystemHealthCountAPIV1")
+		queryParams1 := catalystcentersdkgo.SystemHealthCountAPIV1QueryParams{}
 
 		if okDomain {
 			queryParams1.Domain = vDomain.(string)
@@ -71,24 +71,24 @@ func dataSourceSystemHealthCountRead(ctx context.Context, d *schema.ResourceData
 			queryParams1.Subdomain = vSubdomain.(string)
 		}
 
-		response1, restyResp1, err := client.HealthAndPerformance.SystemHealthCountAPI(&queryParams1)
+		response1, restyResp1, err := client.HealthAndPerformance.SystemHealthCountAPIV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 SystemHealthCountAPI", err,
-				"Failure at SystemHealthCountAPI, unexpected response", ""))
+				"Failure when executing 2 SystemHealthCountAPIV1", err,
+				"Failure at SystemHealthCountAPIV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenHealthAndPerformanceSystemHealthCountAPIItem(response1)
+		vItem1 := flattenHealthAndPerformanceSystemHealthCountAPIV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting SystemHealthCountAPI response",
+				"Failure when setting SystemHealthCountAPIV1 response",
 				err))
 			return diags
 		}
@@ -100,7 +100,7 @@ func dataSourceSystemHealthCountRead(ctx context.Context, d *schema.ResourceData
 	return diags
 }
 
-func flattenHealthAndPerformanceSystemHealthCountAPIItem(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemHealthCountAPI) []map[string]interface{} {
+func flattenHealthAndPerformanceSystemHealthCountAPIV1Item(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemHealthCountAPIV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

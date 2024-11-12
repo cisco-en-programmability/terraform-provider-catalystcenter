@@ -4,8 +4,8 @@ page_title: "catalystcenter_sites_device_credentials Data Source - terraform-pro
 subcategory: ""
 description: |-
   It performs read operation on Network Settings.
-  Gets device credential settings for a site; 'null' values indicate that the setting will be inherited from the parent
-  site; empty objects ('{}') indicate that the credential is unset, and that no credential of that type will be used for
+  Gets device credential settings for a site; null values indicate that the setting will be inherited from the parent
+  site; empty objects ({}) indicate that the credential is unset, and that no credential of that type will be used for
   the site.
 ---
 
@@ -13,8 +13,8 @@ description: |-
 
 It performs read operation on Network Settings.
 
-- Gets device credential settings for a site; 'null' values indicate that the setting will be inherited from the parent
-site; empty objects ('{}') indicate that the credential is unset, and that no credential of that type will be used for
+- Gets device credential settings for a site; *null* values indicate that the setting will be inherited from the parent
+site; empty objects (*{}*) indicate that the credential is unset, and that no credential of that type will be used for
 the site.
 
 ## Example Usage
@@ -36,11 +36,11 @@ output "catalystcenter_sites_device_credentials_example" {
 
 ### Required
 
-- `id` (String) id path parameter. Site Id, retrievable from the 'id' attribute in '/dna/intent/api/v1/sites'
+- `id` (String) id path parameter. Site Id, retrievable from the *id* attribute in */dna/intent/api/v1/sites*
 
 ### Optional
 
-- `inherited` (Boolean) _inherited query parameter. Include settings explicitly set for this site and settings inherited from sites higher in the site hierarchy; when 'false', 'null' values indicate that the site inherits that setting from the parent site or a site higher in the site hierarchy.
+- `inherited` (Boolean) _inherited query parameter. Include settings explicitly set for this site and settings inherited from sites higher in the site hierarchy; when *false*, *null* values indicate that the site inherits that setting from the parent site or a site higher in the site hierarchy.
 
 ### Read-Only
 

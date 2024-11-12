@@ -695,8 +695,8 @@ func dataSourceDeviceInterfaceRead(ctx context.Context, d *schema.ResourceData, 
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAllInterfaces")
-		queryParams1 := catalystcentersdkgo.GetAllInterfacesQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetAllInterfacesV1")
+		queryParams1 := catalystcentersdkgo.GetAllInterfacesV1QueryParams{}
 
 		if okOffset {
 			queryParams1.Offset = vOffset.(int)
@@ -711,24 +711,24 @@ func dataSourceDeviceInterfaceRead(ctx context.Context, d *schema.ResourceData, 
 			queryParams1.LastOutputTime = vLastOutputTime.(string)
 		}
 
-		response1, restyResp1, err := client.Devices.GetAllInterfaces(&queryParams1)
+		response1, restyResp1, err := client.Devices.GetAllInterfacesV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAllInterfaces", err,
-				"Failure at GetAllInterfaces, unexpected response", ""))
+				"Failure when executing 2 GetAllInterfacesV1", err,
+				"Failure at GetAllInterfacesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetAllInterfacesItems(response1.Response)
+		vItems1 := flattenDevicesGetAllInterfacesV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAllInterfaces response",
+				"Failure when setting GetAllInterfacesV1 response",
 				err))
 			return diags
 		}
@@ -738,27 +738,27 @@ func dataSourceDeviceInterfaceRead(ctx context.Context, d *schema.ResourceData, 
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetInterfaceByID")
+		log.Printf("[DEBUG] Selected method: GetInterfaceByIDV1")
 		vvID := vID.(string)
 
-		response2, restyResp2, err := client.Devices.GetInterfaceByID(vvID)
+		response2, restyResp2, err := client.Devices.GetInterfaceByIDV1(vvID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetInterfaceByID", err,
-				"Failure at GetInterfaceByID, unexpected response", ""))
+				"Failure when executing 2 GetInterfaceByIDV1", err,
+				"Failure at GetInterfaceByIDV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenDevicesGetInterfaceByIDItem(response2.Response)
+		vItem2 := flattenDevicesGetInterfaceByIDV1Item(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetInterfaceByID response",
+				"Failure when setting GetInterfaceByIDV1 response",
 				err))
 			return diags
 		}
@@ -770,14 +770,14 @@ func dataSourceDeviceInterfaceRead(ctx context.Context, d *schema.ResourceData, 
 	return diags
 }
 
-func flattenDevicesGetAllInterfacesItems(items *[]catalystcentersdkgo.ResponseDevicesGetAllInterfacesResponse) []map[string]interface{} {
+func flattenDevicesGetAllInterfacesV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetAllInterfacesV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["addresses"] = flattenDevicesGetAllInterfacesItemsAddresses(item.Addresses)
+		respItem["addresses"] = flattenDevicesGetAllInterfacesV1ItemsAddresses(item.Addresses)
 		respItem["admin_status"] = item.AdminStatus
 		respItem["class_name"] = item.ClassName
 		respItem["description"] = item.Description
@@ -817,27 +817,27 @@ func flattenDevicesGetAllInterfacesItems(items *[]catalystcentersdkgo.ResponseDe
 	return respItems
 }
 
-func flattenDevicesGetAllInterfacesItemsAddresses(items *[]catalystcentersdkgo.ResponseDevicesGetAllInterfacesResponseAddresses) []map[string]interface{} {
+func flattenDevicesGetAllInterfacesV1ItemsAddresses(items *[]catalystcentersdkgo.ResponseDevicesGetAllInterfacesV1ResponseAddresses) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["address"] = flattenDevicesGetAllInterfacesItemsAddressesAddress(item.Address)
+		respItem["address"] = flattenDevicesGetAllInterfacesV1ItemsAddressesAddress(item.Address)
 		respItem["type"] = item.Type
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesGetAllInterfacesItemsAddressesAddress(item *catalystcentersdkgo.ResponseDevicesGetAllInterfacesResponseAddressesAddress) []map[string]interface{} {
+func flattenDevicesGetAllInterfacesV1ItemsAddressesAddress(item *catalystcentersdkgo.ResponseDevicesGetAllInterfacesV1ResponseAddressesAddress) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["ip_address"] = flattenDevicesGetAllInterfacesItemsAddressesAddressIPAddress(item.IPAddress)
-	respItem["ip_mask"] = flattenDevicesGetAllInterfacesItemsAddressesAddressIPMask(item.IPMask)
+	respItem["ip_address"] = flattenDevicesGetAllInterfacesV1ItemsAddressesAddressIPAddress(item.IPAddress)
+	respItem["ip_mask"] = flattenDevicesGetAllInterfacesV1ItemsAddressesAddressIPMask(item.IPMask)
 	respItem["is_inverse_mask"] = boolPtrToString(item.IsInverseMask)
 
 	return []map[string]interface{}{
@@ -846,7 +846,7 @@ func flattenDevicesGetAllInterfacesItemsAddressesAddress(item *catalystcentersdk
 
 }
 
-func flattenDevicesGetAllInterfacesItemsAddressesAddressIPAddress(item *catalystcentersdkgo.ResponseDevicesGetAllInterfacesResponseAddressesAddressIPAddress) []map[string]interface{} {
+func flattenDevicesGetAllInterfacesV1ItemsAddressesAddressIPAddress(item *catalystcentersdkgo.ResponseDevicesGetAllInterfacesV1ResponseAddressesAddressIPAddress) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -859,7 +859,7 @@ func flattenDevicesGetAllInterfacesItemsAddressesAddressIPAddress(item *catalyst
 
 }
 
-func flattenDevicesGetAllInterfacesItemsAddressesAddressIPMask(item *catalystcentersdkgo.ResponseDevicesGetAllInterfacesResponseAddressesAddressIPMask) []map[string]interface{} {
+func flattenDevicesGetAllInterfacesV1ItemsAddressesAddressIPMask(item *catalystcentersdkgo.ResponseDevicesGetAllInterfacesV1ResponseAddressesAddressIPMask) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -872,12 +872,12 @@ func flattenDevicesGetAllInterfacesItemsAddressesAddressIPMask(item *catalystcen
 
 }
 
-func flattenDevicesGetInterfaceByIDItem(item *catalystcentersdkgo.ResponseDevicesGetInterfaceByIDResponse) []map[string]interface{} {
+func flattenDevicesGetInterfaceByIDV1Item(item *catalystcentersdkgo.ResponseDevicesGetInterfaceByIDV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["addresses"] = flattenDevicesGetInterfaceByIDItemAddresses(item.Addresses)
+	respItem["addresses"] = flattenDevicesGetInterfaceByIDV1ItemAddresses(item.Addresses)
 	respItem["admin_status"] = item.AdminStatus
 	respItem["class_name"] = item.ClassName
 	respItem["description"] = item.Description
@@ -917,27 +917,27 @@ func flattenDevicesGetInterfaceByIDItem(item *catalystcentersdkgo.ResponseDevice
 	}
 }
 
-func flattenDevicesGetInterfaceByIDItemAddresses(items *[]catalystcentersdkgo.ResponseDevicesGetInterfaceByIDResponseAddresses) []map[string]interface{} {
+func flattenDevicesGetInterfaceByIDV1ItemAddresses(items *[]catalystcentersdkgo.ResponseDevicesGetInterfaceByIDV1ResponseAddresses) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["address"] = flattenDevicesGetInterfaceByIDItemAddressesAddress(item.Address)
+		respItem["address"] = flattenDevicesGetInterfaceByIDV1ItemAddressesAddress(item.Address)
 		respItem["type"] = item.Type
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesGetInterfaceByIDItemAddressesAddress(item *catalystcentersdkgo.ResponseDevicesGetInterfaceByIDResponseAddressesAddress) []map[string]interface{} {
+func flattenDevicesGetInterfaceByIDV1ItemAddressesAddress(item *catalystcentersdkgo.ResponseDevicesGetInterfaceByIDV1ResponseAddressesAddress) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["ip_address"] = flattenDevicesGetInterfaceByIDItemAddressesAddressIPAddress(item.IPAddress)
-	respItem["ip_mask"] = flattenDevicesGetInterfaceByIDItemAddressesAddressIPMask(item.IPMask)
+	respItem["ip_address"] = flattenDevicesGetInterfaceByIDV1ItemAddressesAddressIPAddress(item.IPAddress)
+	respItem["ip_mask"] = flattenDevicesGetInterfaceByIDV1ItemAddressesAddressIPMask(item.IPMask)
 	respItem["is_inverse_mask"] = boolPtrToString(item.IsInverseMask)
 
 	return []map[string]interface{}{
@@ -946,7 +946,7 @@ func flattenDevicesGetInterfaceByIDItemAddressesAddress(item *catalystcentersdkg
 
 }
 
-func flattenDevicesGetInterfaceByIDItemAddressesAddressIPAddress(item *catalystcentersdkgo.ResponseDevicesGetInterfaceByIDResponseAddressesAddressIPAddress) []map[string]interface{} {
+func flattenDevicesGetInterfaceByIDV1ItemAddressesAddressIPAddress(item *catalystcentersdkgo.ResponseDevicesGetInterfaceByIDV1ResponseAddressesAddressIPAddress) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -959,7 +959,7 @@ func flattenDevicesGetInterfaceByIDItemAddressesAddressIPAddress(item *catalystc
 
 }
 
-func flattenDevicesGetInterfaceByIDItemAddressesAddressIPMask(item *catalystcentersdkgo.ResponseDevicesGetInterfaceByIDResponseAddressesAddressIPMask) []map[string]interface{} {
+func flattenDevicesGetInterfaceByIDV1ItemAddressesAddressIPMask(item *catalystcentersdkgo.ResponseDevicesGetInterfaceByIDV1ResponseAddressesAddressIPMask) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

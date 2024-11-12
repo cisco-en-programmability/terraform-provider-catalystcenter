@@ -94,20 +94,18 @@ func resourceWirelessAccessPointsFactoryResetRequestProvisionCreate(ctx context.
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestWirelessAccessPointsFactoryResetRequestProvisionFactoryResetAccessPoints(ctx, "parameters.0", d)
+	request1 := expandRequestWirelessAccessPointsFactoryResetRequestProvisionFactoryResetAccessPointsV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.Wireless.FactoryResetAccessPoints(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Wireless.FactoryResetAccessPointsV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing FactoryResetAccessPoints", err))
+			"Failure when executing FactoryResetAccessPointsV1", err))
 		return diags
 	}
 
@@ -115,7 +113,7 @@ func resourceWirelessAccessPointsFactoryResetRequestProvisionCreate(ctx context.
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing FactoryResetAccessPoints", err))
+			"Failure when executing FactoryResetAccessPointsV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -149,22 +147,24 @@ func resourceWirelessAccessPointsFactoryResetRequestProvisionCreate(ctx context.
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing FactoryResetAccessPoints", err1))
+				"Failure when executing FactoryResetAccessPointsV1", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenWirelessFactoryResetAccessPointsItem(response1.Response)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
+	vItem1 := flattenWirelessFactoryResetAccessPointsV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting FactoryResetAccessPoints response",
+			"Failure when setting FactoryResetAccessPointsV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceWirelessAccessPointsFactoryResetRequestProvisionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -179,8 +179,8 @@ func resourceWirelessAccessPointsFactoryResetRequestProvisionDelete(ctx context.
 	return diags
 }
 
-func expandRequestWirelessAccessPointsFactoryResetRequestProvisionFactoryResetAccessPoints(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessFactoryResetAccessPoints {
-	request := catalystcentersdkgo.RequestWirelessFactoryResetAccessPoints{}
+func expandRequestWirelessAccessPointsFactoryResetRequestProvisionFactoryResetAccessPointsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessFactoryResetAccessPointsV1 {
+	request := catalystcentersdkgo.RequestWirelessFactoryResetAccessPointsV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".keep_static_ipconfig")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".keep_static_ipconfig")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".keep_static_ipconfig")))) {
 		request.KeepStaticIPConfig = interfaceToBoolPtr(v)
 	}
@@ -190,7 +190,7 @@ func expandRequestWirelessAccessPointsFactoryResetRequestProvisionFactoryResetAc
 	return &request
 }
 
-func flattenWirelessFactoryResetAccessPointsItem(item *catalystcentersdkgo.ResponseWirelessFactoryResetAccessPointsResponse) []map[string]interface{} {
+func flattenWirelessFactoryResetAccessPointsV1Item(item *catalystcentersdkgo.ResponseWirelessFactoryResetAccessPointsV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

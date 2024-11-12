@@ -89,8 +89,8 @@ func dataSourceLicenseDeviceCountRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: DeviceCountDetails")
-		queryParams1 := catalystcentersdkgo.DeviceCountDetailsQueryParams{}
+		log.Printf("[DEBUG] Selected method: DeviceCountDetailsV1")
+		queryParams1 := catalystcentersdkgo.DeviceCountDetailsV1QueryParams{}
 
 		if okDeviceType {
 			queryParams1.DeviceType = vDeviceType.(string)
@@ -108,24 +108,24 @@ func dataSourceLicenseDeviceCountRead(ctx context.Context, d *schema.ResourceDat
 			queryParams1.SmartAccountID = vSmartAccountID.(string)
 		}
 
-		response1, restyResp1, err := client.Licenses.DeviceCountDetails(&queryParams1)
+		response1, restyResp1, err := client.Licenses.DeviceCountDetailsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 DeviceCountDetails", err,
-				"Failure at DeviceCountDetails, unexpected response", ""))
+				"Failure when executing 2 DeviceCountDetailsV1", err,
+				"Failure at DeviceCountDetailsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenLicensesDeviceCountDetailsItem(response1)
+		vItem1 := flattenLicensesDeviceCountDetailsV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting DeviceCountDetails response",
+				"Failure when setting DeviceCountDetailsV1 response",
 				err))
 			return diags
 		}
@@ -137,7 +137,7 @@ func dataSourceLicenseDeviceCountRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenLicensesDeviceCountDetailsItem(item *catalystcentersdkgo.ResponseLicensesDeviceCountDetails) []map[string]interface{} {
+func flattenLicensesDeviceCountDetailsV1Item(item *catalystcentersdkgo.ResponseLicensesDeviceCountDetailsV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

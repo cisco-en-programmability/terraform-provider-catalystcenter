@@ -405,27 +405,27 @@ func dataSourceNetworkDeviceByIPRead(ctx context.Context, d *schema.ResourceData
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetNetworkDeviceByIP")
+		log.Printf("[DEBUG] Selected method: GetNetworkDeviceByIPV1")
 		vvIPAddress := vIPAddress.(string)
 
-		response1, restyResp1, err := client.Devices.GetNetworkDeviceByIP(vvIPAddress)
+		response1, restyResp1, err := client.Devices.GetNetworkDeviceByIPV1(vvIPAddress)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetNetworkDeviceByIP", err,
-				"Failure at GetNetworkDeviceByIP, unexpected response", ""))
+				"Failure when executing 2 GetNetworkDeviceByIPV1", err,
+				"Failure at GetNetworkDeviceByIPV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesGetNetworkDeviceByIPItem(response1.Response)
+		vItem1 := flattenDevicesGetNetworkDeviceByIPV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetNetworkDeviceByIP response",
+				"Failure when setting GetNetworkDeviceByIPV1 response",
 				err))
 			return diags
 		}

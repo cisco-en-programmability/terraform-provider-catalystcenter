@@ -358,27 +358,27 @@ func dataSourceNetworkDeviceStackDetailsRead(ctx context.Context, d *schema.Reso
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetStackDetailsForDevice")
+		log.Printf("[DEBUG] Selected method: GetStackDetailsForDeviceV1")
 		vvDeviceID := vDeviceID.(string)
 
-		response1, restyResp1, err := client.Devices.GetStackDetailsForDevice(vvDeviceID)
+		response1, restyResp1, err := client.Devices.GetStackDetailsForDeviceV1(vvDeviceID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetStackDetailsForDevice", err,
-				"Failure at GetStackDetailsForDevice, unexpected response", ""))
+				"Failure when executing 2 GetStackDetailsForDeviceV1", err,
+				"Failure at GetStackDetailsForDeviceV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesGetStackDetailsForDeviceItem(response1.Response)
+		vItem1 := flattenDevicesGetStackDetailsForDeviceV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetStackDetailsForDevice response",
+				"Failure when setting GetStackDetailsForDeviceV1 response",
 				err))
 			return diags
 		}
@@ -390,21 +390,21 @@ func dataSourceNetworkDeviceStackDetailsRead(ctx context.Context, d *schema.Reso
 	return diags
 }
 
-func flattenDevicesGetStackDetailsForDeviceItem(item *catalystcentersdkgo.ResponseDevicesGetStackDetailsForDeviceResponse) []map[string]interface{} {
+func flattenDevicesGetStackDetailsForDeviceV1Item(item *catalystcentersdkgo.ResponseDevicesGetStackDetailsForDeviceV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["device_id"] = item.DeviceID
-	respItem["stack_port_info"] = flattenDevicesGetStackDetailsForDeviceItemStackPortInfo(item.StackPortInfo)
-	respItem["stack_switch_info"] = flattenDevicesGetStackDetailsForDeviceItemStackSwitchInfo(item.StackSwitchInfo)
-	respItem["svl_switch_info"] = flattenDevicesGetStackDetailsForDeviceItemSvlSwitchInfo(item.SvlSwitchInfo)
+	respItem["stack_port_info"] = flattenDevicesGetStackDetailsForDeviceV1ItemStackPortInfo(item.StackPortInfo)
+	respItem["stack_switch_info"] = flattenDevicesGetStackDetailsForDeviceV1ItemStackSwitchInfo(item.StackSwitchInfo)
+	respItem["svl_switch_info"] = flattenDevicesGetStackDetailsForDeviceV1ItemSvlSwitchInfo(item.SvlSwitchInfo)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenDevicesGetStackDetailsForDeviceItemStackPortInfo(items *[]catalystcentersdkgo.ResponseDevicesGetStackDetailsForDeviceResponseStackPortInfo) []map[string]interface{} {
+func flattenDevicesGetStackDetailsForDeviceV1ItemStackPortInfo(items *[]catalystcentersdkgo.ResponseDevicesGetStackDetailsForDeviceV1ResponseStackPortInfo) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -425,7 +425,7 @@ func flattenDevicesGetStackDetailsForDeviceItemStackPortInfo(items *[]catalystce
 	return respItems
 }
 
-func flattenDevicesGetStackDetailsForDeviceItemStackSwitchInfo(items *[]catalystcentersdkgo.ResponseDevicesGetStackDetailsForDeviceResponseStackSwitchInfo) []map[string]interface{} {
+func flattenDevicesGetStackDetailsForDeviceV1ItemStackSwitchInfo(items *[]catalystcentersdkgo.ResponseDevicesGetStackDetailsForDeviceV1ResponseStackSwitchInfo) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -448,7 +448,7 @@ func flattenDevicesGetStackDetailsForDeviceItemStackSwitchInfo(items *[]catalyst
 	return respItems
 }
 
-func flattenDevicesGetStackDetailsForDeviceItemSvlSwitchInfo(items *[]catalystcentersdkgo.ResponseDevicesGetStackDetailsForDeviceResponseSvlSwitchInfo) []map[string]interface{} {
+func flattenDevicesGetStackDetailsForDeviceV1ItemSvlSwitchInfo(items *[]catalystcentersdkgo.ResponseDevicesGetStackDetailsForDeviceV1ResponseSvlSwitchInfo) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -460,13 +460,13 @@ func flattenDevicesGetStackDetailsForDeviceItemSvlSwitchInfo(items *[]catalystce
 		respItem["domain_number"] = item.DomainNumber
 		respItem["in_dad_recovery_mode"] = boolPtrToString(item.InDadRecoveryMode)
 		respItem["sw_virtual_status"] = item.SwVirtualStatus
-		respItem["switch_members"] = flattenDevicesGetStackDetailsForDeviceItemSvlSwitchInfoSwitchMembers(item.SwitchMembers)
+		respItem["switch_members"] = flattenDevicesGetStackDetailsForDeviceV1ItemSvlSwitchInfoSwitchMembers(item.SwitchMembers)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesGetStackDetailsForDeviceItemSvlSwitchInfoSwitchMembers(items *[]catalystcentersdkgo.ResponseDevicesGetStackDetailsForDeviceResponseSvlSwitchInfoSwitchMembers) []map[string]interface{} {
+func flattenDevicesGetStackDetailsForDeviceV1ItemSvlSwitchInfoSwitchMembers(items *[]catalystcentersdkgo.ResponseDevicesGetStackDetailsForDeviceV1ResponseSvlSwitchInfoSwitchMembers) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -474,22 +474,22 @@ func flattenDevicesGetStackDetailsForDeviceItemSvlSwitchInfoSwitchMembers(items 
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["bandwidth"] = item.Bandwidth
-		respItem["svl_member_end_points"] = flattenDevicesGetStackDetailsForDeviceItemSvlSwitchInfoSwitchMembersSvlMemberEndPoints(item.SvlMemberEndPoints)
+		respItem["svl_member_end_points"] = flattenDevicesGetStackDetailsForDeviceV1ItemSvlSwitchInfoSwitchMembersSvlMemberEndPoints(item.SvlMemberEndPoints)
 		respItem["svl_member_number"] = item.SvlMemberNumber
-		respItem["svl_member_pep_settings"] = flattenDevicesGetStackDetailsForDeviceItemSvlSwitchInfoSwitchMembersSvlMemberPepSettings(item.SvlMemberPepSettings)
+		respItem["svl_member_pep_settings"] = flattenDevicesGetStackDetailsForDeviceV1ItemSvlSwitchInfoSwitchMembersSvlMemberPepSettings(item.SvlMemberPepSettings)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesGetStackDetailsForDeviceItemSvlSwitchInfoSwitchMembersSvlMemberEndPoints(items *[]catalystcentersdkgo.ResponseDevicesGetStackDetailsForDeviceResponseSvlSwitchInfoSwitchMembersSvlMemberEndPoints) []map[string]interface{} {
+func flattenDevicesGetStackDetailsForDeviceV1ItemSvlSwitchInfoSwitchMembersSvlMemberEndPoints(items *[]catalystcentersdkgo.ResponseDevicesGetStackDetailsForDeviceV1ResponseSvlSwitchInfoSwitchMembersSvlMemberEndPoints) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["svl_member_end_point_ports"] = flattenDevicesGetStackDetailsForDeviceItemSvlSwitchInfoSwitchMembersSvlMemberEndPointsSvlMemberEndPointPorts(item.SvlMemberEndPointPorts)
+		respItem["svl_member_end_point_ports"] = flattenDevicesGetStackDetailsForDeviceV1ItemSvlSwitchInfoSwitchMembersSvlMemberEndPointsSvlMemberEndPointPorts(item.SvlMemberEndPointPorts)
 		respItem["svl_number"] = item.SvlNumber
 		respItem["svl_status"] = item.SvlStatus
 		respItems = append(respItems, respItem)
@@ -497,7 +497,7 @@ func flattenDevicesGetStackDetailsForDeviceItemSvlSwitchInfoSwitchMembersSvlMemb
 	return respItems
 }
 
-func flattenDevicesGetStackDetailsForDeviceItemSvlSwitchInfoSwitchMembersSvlMemberEndPointsSvlMemberEndPointPorts(items *[]catalystcentersdkgo.ResponseDevicesGetStackDetailsForDeviceResponseSvlSwitchInfoSwitchMembersSvlMemberEndPointsSvlMemberEndPointPorts) []map[string]interface{} {
+func flattenDevicesGetStackDetailsForDeviceV1ItemSvlSwitchInfoSwitchMembersSvlMemberEndPointsSvlMemberEndPointPorts(items *[]catalystcentersdkgo.ResponseDevicesGetStackDetailsForDeviceV1ResponseSvlSwitchInfoSwitchMembersSvlMemberEndPointsSvlMemberEndPointPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -512,7 +512,7 @@ func flattenDevicesGetStackDetailsForDeviceItemSvlSwitchInfoSwitchMembersSvlMemb
 	return respItems
 }
 
-func flattenDevicesGetStackDetailsForDeviceItemSvlSwitchInfoSwitchMembersSvlMemberPepSettings(items *[]catalystcentersdkgo.ResponseDevicesGetStackDetailsForDeviceResponseSvlSwitchInfoSwitchMembersSvlMemberPepSettings) []map[string]interface{} {
+func flattenDevicesGetStackDetailsForDeviceV1ItemSvlSwitchInfoSwitchMembersSvlMemberPepSettings(items *[]catalystcentersdkgo.ResponseDevicesGetStackDetailsForDeviceV1ResponseSvlSwitchInfoSwitchMembersSvlMemberPepSettings) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

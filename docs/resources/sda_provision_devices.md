@@ -26,11 +26,10 @@ resource "catalystcenter_sda_provision_devices" "example" {
   provider = catalystcenter
 
   parameters {
-    payload {
-      id                = "string"
-      network_device_id = "string"
-      site_id           = "string"
-    }
+
+    id                = "string"
+    network_device_id = "string"
+    site_id           = "string"
   }
 }
 

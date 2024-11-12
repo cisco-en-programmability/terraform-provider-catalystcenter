@@ -4,16 +4,16 @@ page_title: "catalystcenter_sites_image_distribution_settings Resource - terrafo
 subcategory: ""
 description: |-
   It manages read and update operations on Network Settings.
-  Set image distribution settings for a site; 'null' values indicate that the setting will be inherited from the parent
-  site; empty objects ('{}') indicate that the settings is unset.
+  Set image distribution settings for a site; null values indicate that the setting will be inherited from the parent
+  site; empty objects ({}) indicate that the settings is unset.
 ---
 
 # catalystcenter_sites_image_distribution_settings (Resource)
 
 It manages read and update operations on Network Settings.
 
-- Set image distribution settings for a site; 'null' values indicate that the setting will be inherited from the parent
-site; empty objects ('{}') indicate that the settings is unset.
+- Set image distribution settings for a site; *null* values indicate that the setting will be inherited from the parent
+site; empty objects (*{}*) indicate that the settings is unset.
 
 ## Example Usage
 

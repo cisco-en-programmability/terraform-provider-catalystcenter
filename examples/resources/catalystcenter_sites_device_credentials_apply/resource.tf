@@ -1,6 +1,6 @@
 
 resource "catalystcenter_sites_device_credentials_apply" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     device_credential_id = "string"

@@ -46,7 +46,7 @@ output "catalystcenter_network_devices_network_profiles_for_sites_example" {
 
 ### Optional
 
-- `id` (String) id path parameter. The 'id' of the network profile, retrievable from 'GET /intent/api/v1/networkProfilesForSites'
+- `id` (String) id path parameter. The *id* of the network profile, retrievable from *GET /intent/api/v1/networkProfilesForSites*
 - `limit` (Number) limit query parameter. The number of records to show for this page.
 - `offset` (Number) offset query parameter. The first record to show for this page; the first record is numbered 1.
 - `order` (String) order query parameter. Whether ascending or descending order should be used to sort the response.

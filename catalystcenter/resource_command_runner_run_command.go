@@ -115,30 +115,23 @@ func resourceCommandRunnerRunCommandCreate(ctx context.Context, d *schema.Resour
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestCommandRunnerRunCommandRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfiguration(ctx, "parameters.0", d)
+	request1 := expandRequestCommandRunnerRunCommandRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.CommandRunner.RunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfiguration(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.CommandRunner.RunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing RunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfiguration", err))
+			"Failure when executing RunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationV1", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	if response1.Response == nil {
-		diags = append(diags, diagError(
-			"Failure when executing RunReadOnlyCommandsOnDevices", err))
-		return diags
-	}
 	taskId := response1.Response.TaskID
 	log.Printf("[DEBUG] TASKID => %s", taskId)
 	if taskId != "" {
@@ -175,10 +168,13 @@ func resourceCommandRunnerRunCommandCreate(ctx context.Context, d *schema.Resour
 		}
 	}
 
-	vItem1 := flattenCommandRunnerRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationItem(response1.Response)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
+	vItem1 := flattenCommandRunnerRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting RunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfiguration response",
+			"Failure when setting RunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationV1 response",
 			err))
 		return diags
 	}
@@ -200,8 +196,8 @@ func resourceCommandRunnerRunCommandDelete(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func expandRequestCommandRunnerRunCommandRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfiguration(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestCommandRunnerRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfiguration {
-	request := catalystcentersdkgo.RequestCommandRunnerRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfiguration{}
+func expandRequestCommandRunnerRunCommandRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestCommandRunnerRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationV1 {
+	request := catalystcentersdkgo.RequestCommandRunnerRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".commands")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".commands")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".commands")))) {
 		request.Commands = interfaceToSliceString(v)
 	}
@@ -220,7 +216,7 @@ func expandRequestCommandRunnerRunCommandRunReadOnlyCommandsOnDevicesToGetTheirR
 	return &request
 }
 
-func flattenCommandRunnerRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationItem(item *catalystcentersdkgo.ResponseCommandRunnerRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationResponse) []map[string]interface{} {
+func flattenCommandRunnerRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationV1Item(item *catalystcentersdkgo.ResponseCommandRunnerRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

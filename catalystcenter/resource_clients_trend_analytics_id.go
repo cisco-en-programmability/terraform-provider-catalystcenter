@@ -285,35 +285,31 @@ func resourceClientsTrendAnalyticsIDCreate(ctx context.Context, d *schema.Resour
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
 	vvID := vID.(string)
-	request1 := expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTime(ctx, "parameters.0", d)
+	request1 := expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.RetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeHeaderParams{}
+	headerParams1 := catalystcentersdkgo.RetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1HeaderParams{}
 
 	headerParams1.XCaLLERID = vXCaLLERID.(string)
 
-	response1, restyResp1, err := client.Clients.RetrievesSpecificClientInformationOverASpecifiedPeriodOfTime(vvID, request1, &headerParams1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Clients.RetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1(vvID, request1, &headerParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing RetrievesSpecificClientInformationOverASpecifiedPeriodOfTime", err))
+			"Failure when executing RetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	//Analizar verificacion.
-
-	vItems1 := flattenClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeItems(response1.Response)
+	vItems1 := flattenClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1Items(response1.Response)
 	if err := d.Set("items", vItems1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting RetrievesSpecificClientInformationOverASpecifiedPeriodOfTime response",
+			"Failure when setting RetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1 response",
 			err))
 		return diags
 	}
@@ -335,8 +331,8 @@ func resourceClientsTrendAnalyticsIDDelete(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTime(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTime {
-	request := catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTime{}
+func expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1 {
+	request := catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -353,19 +349,19 @@ func expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverA
 		request.Attributes = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeFiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1FiltersArray(ctx, key+".filters", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".aggregate_attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".aggregate_attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".aggregate_attributes")))) {
-		request.AggregateAttributes = expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeAggregateAttributesArray(ctx, key+".aggregate_attributes", d)
+		request.AggregateAttributes = expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1AggregateAttributesArray(ctx, key+".aggregate_attributes", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".page")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".page")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".page")))) {
-		request.Page = expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimePage(ctx, key+".page.0", d)
+		request.Page = expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1Page(ctx, key+".page.0", d)
 	}
 	return &request
 }
 
-func expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeFilters {
-	request := []catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeFilters{}
+func expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1Filters {
+	request := []catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1Filters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -376,7 +372,7 @@ func expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverA
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -384,8 +380,8 @@ func expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverA
 	return &request
 }
 
-func expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeFilters {
-	request := catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeFilters{}
+func expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1Filters {
+	request := catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1Filters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -398,8 +394,8 @@ func expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverA
 	return &request
 }
 
-func expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeAggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeAggregateAttributes {
-	request := []catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeAggregateAttributes{}
+func expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1AggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1AggregateAttributes {
+	request := []catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1AggregateAttributes{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -410,7 +406,7 @@ func expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverA
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeAggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1AggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -418,8 +414,8 @@ func expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverA
 	return &request
 }
 
-func expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeAggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeAggregateAttributes {
-	request := catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeAggregateAttributes{}
+func expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1AggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1AggregateAttributes {
+	request := catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1AggregateAttributes{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -429,8 +425,8 @@ func expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverA
 	return &request
 }
 
-func expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimePage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimePage {
-	request := catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimePage{}
+func expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1Page(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1Page {
+	request := catalystcentersdkgo.RequestClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1Page{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".limit")))) {
 		request.Limit = interfaceToIntPtr(v)
 	}
@@ -443,7 +439,7 @@ func expandRequestClientsTrendAnalyticsIDRetrievesSpecificClientInformationOverA
 	return &request
 }
 
-func flattenClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeItems(items *[]catalystcentersdkgo.ResponseClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeResponse) []map[string]interface{} {
+func flattenClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1Items(items *[]catalystcentersdkgo.ResponseClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -451,13 +447,13 @@ func flattenClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeI
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["timestamp"] = item.Timestamp
-		respItem["groups"] = flattenClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeItemsGroups(item.Groups)
+		respItem["groups"] = flattenClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1ItemsGroups(item.Groups)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeItemsGroups(items *[]catalystcentersdkgo.ResponseClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeResponseGroups) []map[string]interface{} {
+func flattenClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1ItemsGroups(items *[]catalystcentersdkgo.ResponseClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1ResponseGroups) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -465,14 +461,14 @@ func flattenClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeI
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["id"] = item.ID
-		respItem["attributes"] = flattenClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeItemsGroupsAttributes(item.Attributes)
-		respItem["aggregate_attributes"] = flattenClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeItemsGroupsAggregateAttributes(item.AggregateAttributes)
+		respItem["attributes"] = flattenClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1ItemsGroupsAttributes(item.Attributes)
+		respItem["aggregate_attributes"] = flattenClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1ItemsGroupsAggregateAttributes(item.AggregateAttributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeItemsGroupsAttributes(items *[]catalystcentersdkgo.ResponseClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeResponseGroupsAttributes) []map[string]interface{} {
+func flattenClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1ItemsGroupsAttributes(items *[]catalystcentersdkgo.ResponseClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1ResponseGroupsAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -486,7 +482,7 @@ func flattenClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeI
 	return respItems
 }
 
-func flattenClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeItemsGroupsAggregateAttributes(items *[]catalystcentersdkgo.ResponseClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeResponseGroupsAggregateAttributes) []map[string]interface{} {
+func flattenClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1ItemsGroupsAggregateAttributes(items *[]catalystcentersdkgo.ResponseClientsRetrievesSpecificClientInformationOverASpecifiedPeriodOfTimeV1ResponseGroupsAggregateAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

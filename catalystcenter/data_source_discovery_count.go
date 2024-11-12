@@ -52,26 +52,26 @@ func dataSourceDiscoveryCountRead(ctx context.Context, d *schema.ResourceData, m
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetCountOfAllDiscoveryJobs")
+		log.Printf("[DEBUG] Selected method: GetCountOfAllDiscoveryJobsV1")
 
-		response1, restyResp1, err := client.Discovery.GetCountOfAllDiscoveryJobs()
+		response1, restyResp1, err := client.Discovery.GetCountOfAllDiscoveryJobsV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetCountOfAllDiscoveryJobs", err,
-				"Failure at GetCountOfAllDiscoveryJobs, unexpected response", ""))
+				"Failure when executing 2 GetCountOfAllDiscoveryJobsV1", err,
+				"Failure at GetCountOfAllDiscoveryJobsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDiscoveryGetCountOfAllDiscoveryJobsItem(response1)
+		vItem1 := flattenDiscoveryGetCountOfAllDiscoveryJobsV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetCountOfAllDiscoveryJobs response",
+				"Failure when setting GetCountOfAllDiscoveryJobsV1 response",
 				err))
 			return diags
 		}
@@ -83,7 +83,7 @@ func dataSourceDiscoveryCountRead(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func flattenDiscoveryGetCountOfAllDiscoveryJobsItem(item *catalystcentersdkgo.ResponseDiscoveryGetCountOfAllDiscoveryJobs) []map[string]interface{} {
+func flattenDiscoveryGetCountOfAllDiscoveryJobsV1Item(item *catalystcentersdkgo.ResponseDiscoveryGetCountOfAllDiscoveryJobsV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

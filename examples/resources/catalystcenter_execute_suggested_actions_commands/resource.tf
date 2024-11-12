@@ -1,6 +1,6 @@
 
 resource "catalystcenter_execute_suggested_actions_commands" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     entity_type  = "string"

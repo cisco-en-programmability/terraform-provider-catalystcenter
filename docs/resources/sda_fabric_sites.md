@@ -24,12 +24,11 @@ resource "catalystcenter_sda_fabric_sites" "example" {
   provider = catalystcenter
 
   parameters {
-    payload {
-      authentication_profile_name = "string"
-      id                          = "string"
-      is_pub_sub_enabled          = "false"
-      site_id                     = "string"
-    }
+
+    authentication_profile_name = "string"
+    id                          = "string"
+    is_pub_sub_enabled          = "false"
+    site_id                     = "string"
   }
 }
 
@@ -43,7 +42,7 @@ output "catalystcenter_sda_fabric_sites_example" {
 
 ### Optional
 
-- `parameters` (Block List) Array of RequestSdaAddFabricSite (see [below for nested schema](#nestedblock--parameters))
+- `parameters` (Block List) Array of RequestSdaAddFabricSiteV1 (see [below for nested schema](#nestedblock--parameters))
 
 ### Read-Only
 

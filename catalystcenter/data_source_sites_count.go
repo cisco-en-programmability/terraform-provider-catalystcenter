@@ -70,31 +70,31 @@ func dataSourceSitesCountRead(ctx context.Context, d *schema.ResourceData, m int
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSitesCount")
-		queryParams1 := catalystcentersdkgo.GetSitesCountQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetSitesCountV1")
+		queryParams1 := catalystcentersdkgo.GetSitesCountV1QueryParams{}
 
 		if okName {
 			queryParams1.Name = vName.(string)
 		}
 
-		response1, restyResp1, err := client.SiteDesign.GetSitesCount(&queryParams1)
+		response1, restyResp1, err := client.SiteDesign.GetSitesCountV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSitesCount", err,
-				"Failure at GetSitesCount, unexpected response", ""))
+				"Failure when executing 2 GetSitesCountV1", err,
+				"Failure at GetSitesCountV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSiteDesignGetSitesCountItems(response1)
+		vItems1 := flattenSiteDesignGetSitesCountV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSitesCount response",
+				"Failure when setting GetSitesCountV1 response",
 				err))
 			return diags
 		}
@@ -106,21 +106,21 @@ func dataSourceSitesCountRead(ctx context.Context, d *schema.ResourceData, m int
 	return diags
 }
 
-func flattenSiteDesignGetSitesCountItems(items *catalystcentersdkgo.ResponseSiteDesignGetSitesCount) []map[string]interface{} {
+func flattenSiteDesignGetSitesCountV1Items(items *catalystcentersdkgo.ResponseSiteDesignGetSitesCountV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["response"] = flattenSiteDesignGetSitesCountItemsResponse(item.Response)
+		respItem["response"] = flattenSiteDesignGetSitesCountV1ItemsResponse(item.Response)
 		respItem["version"] = item.Version
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSiteDesignGetSitesCountItemsResponse(item *catalystcentersdkgo.ResponseItemSiteDesignGetSitesCountResponse) []map[string]interface{} {
+func flattenSiteDesignGetSitesCountV1ItemsResponse(item *catalystcentersdkgo.ResponseItemSiteDesignGetSitesCountV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

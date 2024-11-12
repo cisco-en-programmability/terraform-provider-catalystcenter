@@ -202,7 +202,7 @@ func resourceSdaAuthenticationProfilesRead(ctx context.Context, d *schema.Resour
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetAuthenticationProfiles")
-		queryParams1 := catalystcentersdkgo.GetAuthenticationProfilesQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetAuthenticationProfilesV1QueryParams{}
 
 		queryParams1.AuthenticationProfileName = vvName
 
@@ -213,10 +213,10 @@ func resourceSdaAuthenticationProfilesRead(ctx context.Context, d *schema.Resour
 		}
 		// Review flatten function used
 
-		items := []catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesResponse{
+		items := []catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesV1Response{
 			*item1,
 		}
-		vItem1 := flattenSdaGetAuthenticationProfilesItems(&items)
+		vItem1 := flattenSdaGetAuthenticationProfilesV1Items(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetAuthenticationProfiles search response",
@@ -301,9 +301,9 @@ func resourceSdaAuthenticationProfilesDelete(ctx context.Context, d *schema.Reso
 		"Failure at SdaAuthenticationProfilesDelete, unexpected response", ""))
 	return diags
 }
-func expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateAuthenticationProfile {
-	request := catalystcentersdkgo.RequestSdaUpdateAuthenticationProfile{}
-	if v := expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateAuthenticationProfileV1 {
+	request := catalystcentersdkgo.RequestSdaUpdateAuthenticationProfileV1{}
+	if v := expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -312,8 +312,8 @@ func expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfile(ctx conte
 	return &request
 }
 
-func expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateAuthenticationProfile {
-	request := []catalystcentersdkgo.RequestItemSdaUpdateAuthenticationProfile{}
+func expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateAuthenticationProfileV1 {
+	request := []catalystcentersdkgo.RequestItemSdaUpdateAuthenticationProfileV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -324,7 +324,7 @@ func expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileItemArray(
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -335,8 +335,8 @@ func expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileItemArray(
 	return &request
 }
 
-func expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateAuthenticationProfile {
-	request := catalystcentersdkgo.RequestItemSdaUpdateAuthenticationProfile{}
+func expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateAuthenticationProfileV1 {
+	request := catalystcentersdkgo.RequestItemSdaUpdateAuthenticationProfileV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -367,11 +367,11 @@ func expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileItem(ctx c
 	return &request
 }
 
-func searchSdaGetAuthenticationProfiles(m interface{}, queryParams catalystcentersdkgo.GetAuthenticationProfilesQueryParams, vID string) (*catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesResponse, error) {
+func searchSdaGetAuthenticationProfiles(m interface{}, queryParams catalystcentersdkgo.GetAuthenticationProfilesV1QueryParams, vID string) (*catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesV1Response, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesResponse
-	var ite *catalystcentersdkgo.ResponseSdaGetAuthenticationProfiles
+	var foundItem *catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesV1Response
+	var ite *catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesV1
 	if vID != "" {
 		queryParams.Offset = 1
 		nResponse, _, err := client.Sda.GetAuthenticationProfiles(nil)

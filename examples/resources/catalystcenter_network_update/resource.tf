@@ -1,6 +1,6 @@
 
 resource "catalystcenter_network_update" "example" {
-  provider = catalystcenter
+  provider = meraki
   site_id  = "string"
   parameters {
 

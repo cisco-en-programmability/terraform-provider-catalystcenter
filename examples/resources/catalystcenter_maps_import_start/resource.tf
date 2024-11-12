@@ -1,6 +1,6 @@
 
 resource "catalystcenter_maps_import_start" "example" {
-  provider = catalystcenter
+  provider = meraki
 }
 
 output "catalystcenter_maps_import_start_example" {

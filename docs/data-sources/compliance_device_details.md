@@ -36,7 +36,7 @@ output "catalystcenter_compliance_device_details_example" {
 ### Optional
 
 - `compliance_status` (String) complianceStatus query parameter. Specify "Compliance status(es)" in commas. The Compliance status can be 'COMPLIANT', 'NON_COMPLIANT', 'IN_PROGRESS', 'NOT_AVAILABLE', 'NOT_APPLICABLE', 'ERROR'.
-- `compliance_type` (String) complianceType query parameter. Specify "Compliance type(s)" in commas. The Compliance type can be 'NETWORK_PROFILE', 'IMAGE', 'FABRIC', 'APPLICATION_VISIBILITY', 'FABRIC', RUNNING_CONFIG', 'NETWORK_SETTINGS', 'WORKFLOW' , 'EOX'.
+- `compliance_type` (String) complianceType query parameter. Specify "Compliance type(s)" in commas. The Compliance type can be 'NETWORK_PROFILE', 'IMAGE', 'FABRIC', 'APPLICATION_VISIBILITY', 'FABRIC', RUNNING_CONFIG', 'NETWORK_SETTINGS', 'WORKFLOW' , 'EoX'.
 - `device_uuid` (String) deviceUuid query parameter. Comma separated "Device Id(s)"
 - `limit` (Number) limit query parameter. Number of records to be retrieved
 - `offset` (Number) offset query parameter. offset/starting row

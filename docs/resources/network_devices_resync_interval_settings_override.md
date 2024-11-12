@@ -14,9 +14,6 @@ It performs create operation on Devices.
 
 - Overrides the global resync interval on all network devices. This essentially removes device specific intervals if
 set.
-
-
-
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -25,7 +22,7 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 
 ```terraform
 resource "catalystcenter_network_devices_resync_interval_settings_override" "example" {
-  provider = catalystcenter
+  provider = meraki
 }
 
 output "catalystcenter_network_devices_resync_interval_settings_override_example" {

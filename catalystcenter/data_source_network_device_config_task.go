@@ -131,29 +131,29 @@ func dataSourceNetworkDeviceConfigTaskRead(ctx context.Context, d *schema.Resour
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetConfigTaskDetails")
-		queryParams1 := catalystcentersdkgo.GetConfigTaskDetailsQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetConfigTaskDetailsV1")
+		queryParams1 := catalystcentersdkgo.GetConfigTaskDetailsV1QueryParams{}
 
 		queryParams1.ParentTaskID = vParentTaskID.(string)
 
-		response1, restyResp1, err := client.Compliance.GetConfigTaskDetails(&queryParams1)
+		response1, restyResp1, err := client.Compliance.GetConfigTaskDetailsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetConfigTaskDetails", err,
-				"Failure at GetConfigTaskDetails, unexpected response", ""))
+				"Failure when executing 2 GetConfigTaskDetailsV1", err,
+				"Failure at GetConfigTaskDetailsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenComplianceGetConfigTaskDetailsItems(response1.Response)
+		vItems1 := flattenComplianceGetConfigTaskDetailsV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetConfigTaskDetails response",
+				"Failure when setting GetConfigTaskDetailsV1 response",
 				err))
 			return diags
 		}
@@ -165,7 +165,7 @@ func dataSourceNetworkDeviceConfigTaskRead(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func flattenComplianceGetConfigTaskDetailsItems(items *[]catalystcentersdkgo.ResponseComplianceGetConfigTaskDetailsResponse) []map[string]interface{} {
+func flattenComplianceGetConfigTaskDetailsV1Items(items *[]catalystcentersdkgo.ResponseComplianceGetConfigTaskDetailsV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

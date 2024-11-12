@@ -1744,7 +1744,7 @@ func resourcePnpDeviceCreate(ctx context.Context, d *schema.ResourceData, m inte
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestPnpDeviceAddDevice(ctx, "parameters.0", d)
+	request1 := expandRequestPnpDeviceAddDeviceV1(ctx, "parameters.0", d)
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
@@ -1776,7 +1776,7 @@ func resourcePnpDeviceCreate(ctx context.Context, d *schema.ResourceData, m inte
 			return resourcePnpDeviceRead(ctx, d, m)
 		}
 	} else if vName != "" {
-		queryParams1 := catalystcentersdkgo.GetDeviceList2QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetDeviceListSiteManagementV1QueryParams{}
 		response1, err := searchDeviceOnboardingPnpGetDeviceList2(m, queryParams1, vvName)
 		if err == nil && response1 != nil {
 			resourceMap := make(map[string]string)
@@ -1800,7 +1800,7 @@ func resourcePnpDeviceCreate(ctx context.Context, d *schema.ResourceData, m inte
 		return diags
 	}
 
-	queryParams3 := catalystcentersdkgo.GetDeviceList2QueryParams{}
+	queryParams3 := catalystcentersdkgo.GetDeviceListSiteManagementV1QueryParams{}
 	response2, err := searchDeviceOnboardingPnpGetDeviceList2(m, queryParams3, vvName)
 	if err != nil {
 		diags = append(diags, diagError(
@@ -1844,7 +1844,7 @@ func resourcePnpDeviceRead(ctx context.Context, d *schema.ResourceData, m interf
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-	vItemID2 := flattenDeviceOnboardingPnpGetDeviceByIDItem(response2)
+	vItemID2 := flattenDeviceOnboardingPnpGetDeviceByIDV1Item(response2)
 	if err := d.Set("item", vItemID2); err != nil {
 		diags = append(diags, diagError(
 			"Failure when setting GetDeviceByID response",
@@ -1869,7 +1869,7 @@ func resourcePnpDeviceUpdate(ctx context.Context, d *schema.ResourceData, m inte
 
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvID)
-		request1 := expandRequestPnpDeviceUpdateDevice(ctx, "parameters.0", d)
+		request1 := expandRequestPnpDeviceUpdateDeviceV1(ctx, "parameters.0", d)
 		if request1 != nil {
 			log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		}
@@ -1925,17 +1925,17 @@ func resourcePnpDeviceDelete(ctx context.Context, d *schema.ResourceData, m inte
 
 	return diags
 }
-func expandRequestPnpDeviceAddDevice(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAddDevice {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAddDevice{}
-	request.DeviceInfo = expandRequestPnpDeviceAddDeviceDeviceInfo(ctx, fixKeyAccess(key+".device_info.0"), d)
+func expandRequestPnpDeviceAddDeviceV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAddDeviceV1 {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAddDeviceV1{}
+	request.DeviceInfo = expandRequestPnpDeviceAddDeviceV1DeviceInfo(ctx, key, d)
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
 	}
 	return &request
 }
 
-func expandRequestPnpDeviceAddDeviceDeviceInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAddDeviceDeviceInfo {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAddDeviceDeviceInfo{}
+func expandRequestPnpDeviceAddDeviceV1DeviceInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAddDeviceV1DeviceInfo {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAddDeviceV1DeviceInfo{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".serial_number")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".serial_number")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".serial_number")))) {
 		request.SerialNumber = interfaceToString(v)
 	}
@@ -1976,7 +1976,7 @@ func expandRequestPnpDeviceAddDeviceDeviceInfo(ctx context.Context, key string, 
 		request.Hostname = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".stack_info")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".stack_info")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".stack_info")))) {
-		request.StackInfo = expandRequestPnpDeviceAddDeviceDeviceInfoStackInfo(ctx, key+".stack_info.0", d)
+		request.StackInfo = expandRequestPnpDeviceAddDeviceV1DeviceInfoStackInfo(ctx, key+".stack_info.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -1984,8 +1984,8 @@ func expandRequestPnpDeviceAddDeviceDeviceInfo(ctx context.Context, key string, 
 	return &request
 }
 
-func expandRequestPnpDeviceAddDeviceDeviceInfoStackInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAddDeviceDeviceInfoStackInfo {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAddDeviceDeviceInfoStackInfo{}
+func expandRequestPnpDeviceAddDeviceV1DeviceInfoStackInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAddDeviceV1DeviceInfoStackInfo {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAddDeviceV1DeviceInfoStackInfo{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".supports_stack_workflows")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".supports_stack_workflows")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".supports_stack_workflows")))) {
 		request.SupportsStackWorkflows = interfaceToBoolPtr(v)
 	}
@@ -1993,7 +1993,7 @@ func expandRequestPnpDeviceAddDeviceDeviceInfoStackInfo(ctx context.Context, key
 		request.IsFullRing = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".stack_member_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".stack_member_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".stack_member_list")))) {
-		request.StackMemberList = expandRequestPnpDeviceAddDeviceDeviceInfoStackInfoStackMemberListArray(ctx, key+".stack_member_list", d)
+		request.StackMemberList = expandRequestPnpDeviceAddDeviceV1DeviceInfoStackInfoStackMemberListArray(ctx, key+".stack_member_list", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".stack_ring_protocol")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".stack_ring_protocol")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".stack_ring_protocol")))) {
 		request.StackRingProtocol = interfaceToString(v)
@@ -2010,8 +2010,8 @@ func expandRequestPnpDeviceAddDeviceDeviceInfoStackInfo(ctx context.Context, key
 	return &request
 }
 
-func expandRequestPnpDeviceAddDeviceDeviceInfoStackInfoStackMemberListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpAddDeviceDeviceInfoStackInfoStackMemberList {
-	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpAddDeviceDeviceInfoStackInfoStackMemberList{}
+func expandRequestPnpDeviceAddDeviceV1DeviceInfoStackInfoStackMemberListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpAddDeviceV1DeviceInfoStackInfoStackMemberList {
+	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpAddDeviceV1DeviceInfoStackInfoStackMemberList{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -2022,7 +2022,7 @@ func expandRequestPnpDeviceAddDeviceDeviceInfoStackInfoStackMemberListArray(ctx 
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestPnpDeviceAddDeviceDeviceInfoStackInfoStackMemberList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestPnpDeviceAddDeviceV1DeviceInfoStackInfoStackMemberList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -2033,8 +2033,8 @@ func expandRequestPnpDeviceAddDeviceDeviceInfoStackInfoStackMemberListArray(ctx 
 	return &request
 }
 
-func expandRequestPnpDeviceAddDeviceDeviceInfoStackInfoStackMemberList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAddDeviceDeviceInfoStackInfoStackMemberList {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAddDeviceDeviceInfoStackInfoStackMemberList{}
+func expandRequestPnpDeviceAddDeviceV1DeviceInfoStackInfoStackMemberList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAddDeviceV1DeviceInfoStackInfoStackMemberList {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAddDeviceV1DeviceInfoStackInfoStackMemberList{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".serial_number")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".serial_number")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".serial_number")))) {
 		request.SerialNumber = interfaceToString(v)
 	}
@@ -2077,13 +2077,13 @@ func expandRequestPnpDeviceAddDeviceDeviceInfoStackInfoStackMemberList(ctx conte
 	return &request
 }
 
-func expandRequestPnpDeviceUpdateDevice(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateDevice {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateDevice{}
+func expandRequestPnpDeviceUpdateDeviceV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateDeviceV1 {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateDeviceV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_info")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_info")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_info")))) {
-		request.DeviceInfo = expandRequestPnpDeviceUpdateDeviceDeviceInfo(ctx, key+".device_info.0", d)
+		request.DeviceInfo = expandRequestPnpDeviceUpdateDeviceV1DeviceInfo(ctx, key+".device_info.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -2091,8 +2091,8 @@ func expandRequestPnpDeviceUpdateDevice(ctx context.Context, key string, d *sche
 	return &request
 }
 
-func expandRequestPnpDeviceUpdateDeviceDeviceInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateDeviceDeviceInfo {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateDeviceDeviceInfo{}
+func expandRequestPnpDeviceUpdateDeviceV1DeviceInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateDeviceV1DeviceInfo {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateDeviceV1DeviceInfo{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".hostname")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".hostname")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".hostname")))) {
 		request.Hostname = interfaceToString(v)
 	}
@@ -2117,14 +2117,14 @@ func expandRequestPnpDeviceUpdateDeviceDeviceInfo(ctx context.Context, key strin
 	return &request
 }
 
-func searchDeviceOnboardingPnpGetDeviceList2(m interface{}, queryParams catalystcentersdkgo.GetDeviceList2QueryParams, vName string) (*catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceList2, error) {
+func searchDeviceOnboardingPnpGetDeviceList2(m interface{}, queryParams catalystcentersdkgo.GetDeviceListSiteManagementV1QueryParams, vName string) (*catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceList2
+	var foundItem *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1
 	queryParams.Offset = 0
 	for {
 		log.Println("[DEBUG] INSIDE THE LOOP")
-		nResponse, _, err := client.DeviceOnboardingPnp.GetDeviceList2(&queryParams)
+		nResponse, _, err := client.DeviceOnboardingPnp.GetDeviceListSiteManagementV1(&queryParams)
 		if err != nil {
 			return foundItem, err
 		}

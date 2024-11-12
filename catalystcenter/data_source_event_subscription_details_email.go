@@ -126,8 +126,8 @@ func dataSourceEventSubscriptionDetailsEmailRead(ctx context.Context, d *schema.
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetEmailSubscriptionDetails")
-		queryParams1 := catalystcentersdkgo.GetEmailSubscriptionDetailsQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetEmailSubscriptionDetailsV1")
+		queryParams1 := catalystcentersdkgo.GetEmailSubscriptionDetailsV1QueryParams{}
 
 		if okName {
 			queryParams1.Name = vName.(string)
@@ -148,24 +148,24 @@ func dataSourceEventSubscriptionDetailsEmailRead(ctx context.Context, d *schema.
 			queryParams1.Order = vOrder.(string)
 		}
 
-		response1, restyResp1, err := client.EventManagement.GetEmailSubscriptionDetails(&queryParams1)
+		response1, restyResp1, err := client.EventManagement.GetEmailSubscriptionDetailsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetEmailSubscriptionDetails", err,
-				"Failure at GetEmailSubscriptionDetails, unexpected response", ""))
+				"Failure when executing 2 GetEmailSubscriptionDetailsV1", err,
+				"Failure at GetEmailSubscriptionDetailsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenEventManagementGetEmailSubscriptionDetailsItems(response1)
+		vItems1 := flattenEventManagementGetEmailSubscriptionDetailsV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetEmailSubscriptionDetails response",
+				"Failure when setting GetEmailSubscriptionDetailsV1 response",
 				err))
 			return diags
 		}
@@ -177,7 +177,7 @@ func dataSourceEventSubscriptionDetailsEmailRead(ctx context.Context, d *schema.
 	return diags
 }
 
-func flattenEventManagementGetEmailSubscriptionDetailsItems(items *catalystcentersdkgo.ResponseEventManagementGetEmailSubscriptionDetails) []map[string]interface{} {
+func flattenEventManagementGetEmailSubscriptionDetailsV1Items(items *catalystcentersdkgo.ResponseEventManagementGetEmailSubscriptionDetailsV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -632,9 +632,9 @@ func dataSourceUserEnrichmentDetailsRead(ctx context.Context, d *schema.Resource
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetUserEnrichmentDetails")
+		log.Printf("[DEBUG] Selected method: GetUserEnrichmentDetailsV1")
 
-		headerParams1 := catalystcentersdkgo.GetUserEnrichmentDetailsHeaderParams{}
+		headerParams1 := catalystcentersdkgo.GetUserEnrichmentDetailsV1HeaderParams{}
 
 		headerParams1.EntityType = vEntityType.(string)
 
@@ -642,24 +642,24 @@ func dataSourceUserEnrichmentDetailsRead(ctx context.Context, d *schema.Resource
 
 		headerParams1.Persistbapioutput = vPersistbapioutput.(string)
 
-		response1, restyResp1, err := client.Users.GetUserEnrichmentDetails(&headerParams1)
+		response1, restyResp1, err := client.Users.GetUserEnrichmentDetailsV1(&headerParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetUserEnrichmentDetails", err,
-				"Failure at GetUserEnrichmentDetails, unexpected response", ""))
+				"Failure when executing 2 GetUserEnrichmentDetailsV1", err,
+				"Failure at GetUserEnrichmentDetailsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenUsersGetUserEnrichmentDetailsItems(response1)
+		vItems1 := flattenUsersGetUserEnrichmentDetailsV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetUserEnrichmentDetails response",
+				"Failure when setting GetUserEnrichmentDetailsV1 response",
 				err))
 			return diags
 		}
@@ -671,21 +671,21 @@ func dataSourceUserEnrichmentDetailsRead(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func flattenUsersGetUserEnrichmentDetailsItems(items *catalystcentersdkgo.ResponseUsersGetUserEnrichmentDetails) []map[string]interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1Items(items *catalystcentersdkgo.ResponseUsersGetUserEnrichmentDetailsV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["user_details"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetails(item.UserDetails)
-		respItem["connected_device"] = flattenUsersGetUserEnrichmentDetailsItemsConnectedDevice(item.ConnectedDevice)
+		respItem["user_details"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetails(item.UserDetails)
+		respItem["connected_device"] = flattenUsersGetUserEnrichmentDetailsV1ItemsConnectedDevice(item.ConnectedDevice)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetails(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetails) []map[string]interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetails(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -693,38 +693,38 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetails(item *catalystcentersd
 	respItem["id"] = item.ID
 	respItem["connection_status"] = item.ConnectionStatus
 	respItem["host_type"] = item.HostType
-	respItem["user_id"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsUserID(item.UserID)
-	respItem["host_name"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsHostName(item.HostName)
-	respItem["host_os"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsHostOs(item.HostOs)
-	respItem["host_version"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsHostVersion(item.HostVersion)
+	respItem["user_id"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsUserID(item.UserID)
+	respItem["host_name"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsHostName(item.HostName)
+	respItem["host_os"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsHostOs(item.HostOs)
+	respItem["host_version"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsHostVersion(item.HostVersion)
 	respItem["sub_type"] = item.SubType
 	respItem["last_updated"] = item.LastUpdated
-	respItem["health_score"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsHealthScore(item.HealthScore)
+	respItem["health_score"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsHealthScore(item.HealthScore)
 	respItem["host_mac"] = item.HostMac
 	respItem["host_ip_v4"] = item.HostIPV4
-	respItem["host_ip_v6"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsHostIPV6(item.HostIPV6)
-	respItem["auth_type"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsAuthType(item.AuthType)
+	respItem["host_ip_v6"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsHostIPV6(item.HostIPV6)
+	respItem["auth_type"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsAuthType(item.AuthType)
 	respItem["vlan_id"] = item.VLANID
-	respItem["ssid"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsSSID(item.SSID)
-	respItem["frequency"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsFrequency(item.Frequency)
-	respItem["channel"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsChannel(item.Channel)
-	respItem["ap_group"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsApGroup(item.ApGroup)
-	respItem["location"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsLocation(item.Location)
+	respItem["ssid"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsSSID(item.SSID)
+	respItem["frequency"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsFrequency(item.Frequency)
+	respItem["channel"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsChannel(item.Channel)
+	respItem["ap_group"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsApGroup(item.ApGroup)
+	respItem["location"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsLocation(item.Location)
 	respItem["client_connection"] = item.ClientConnection
-	respItem["connected_device"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsConnectedDevice(item.ConnectedDevice)
+	respItem["connected_device"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsConnectedDevice(item.ConnectedDevice)
 	respItem["issue_count"] = item.IssueCount
-	respItem["rssi"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsRssi(item.Rssi)
-	respItem["avg_rssi"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsAvgRssi(item.AvgRssi)
-	respItem["snr"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsSnr(item.Snr)
-	respItem["avg_snr"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsAvgSnr(item.AvgSnr)
-	respItem["data_rate"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsDataRate(item.DataRate)
-	respItem["tx_bytes"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsTxBytes(item.TxBytes)
-	respItem["rx_bytes"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsRxBytes(item.RxBytes)
-	respItem["dns_success"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsDNSSuccess(item.DNSSuccess)
-	respItem["dns_failure"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsDNSFailure(item.DNSFailure)
-	respItem["onboarding"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboarding(item.Onboarding)
-	respItem["onboarding_time"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingTime(item.OnboardingTime)
-	respItem["port"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsPort(item.Port)
+	respItem["rssi"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsRssi(item.Rssi)
+	respItem["avg_rssi"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsAvgRssi(item.AvgRssi)
+	respItem["snr"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsSnr(item.Snr)
+	respItem["avg_snr"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsAvgSnr(item.AvgSnr)
+	respItem["data_rate"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsDataRate(item.DataRate)
+	respItem["tx_bytes"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsTxBytes(item.TxBytes)
+	respItem["rx_bytes"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsRxBytes(item.RxBytes)
+	respItem["dns_success"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsDNSSuccess(item.DNSSuccess)
+	respItem["dns_failure"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsDNSFailure(item.DNSFailure)
+	respItem["onboarding"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboarding(item.Onboarding)
+	respItem["onboarding_time"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboardingTime(item.OnboardingTime)
+	respItem["port"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsPort(item.Port)
 
 	return []map[string]interface{}{
 		respItem,
@@ -732,7 +732,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetails(item *catalystcentersd
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsUserID(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsUserID) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsUserID(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsUserID) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -742,7 +742,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsUserID(item *catalystce
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsHostName(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsHostName) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsHostName(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsHostName) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -752,7 +752,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsHostName(item *catalyst
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsHostOs(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsHostOs) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsHostOs(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsHostOs) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -762,7 +762,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsHostOs(item *catalystce
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsHostVersion(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsHostVersion) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsHostVersion(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsHostVersion) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -772,7 +772,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsHostVersion(item *catal
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsHealthScore(items *[]catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsHealthScore) []map[string]interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsHealthScore(items *[]catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsHealthScore) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -787,7 +787,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsHealthScore(items *[]ca
 	return respItems
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsHostIPV6(items *[]catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsHostIPV6) []interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsHostIPV6(items *[]catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsHostIPV6) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -799,7 +799,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsHostIPV6(items *[]catal
 	return respItems
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsAuthType(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsAuthType) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsAuthType(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsAuthType) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -809,7 +809,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsAuthType(item *catalyst
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsSSID(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsSSID) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsSSID(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsSSID) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -819,7 +819,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsSSID(item *catalystcent
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsFrequency(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsFrequency) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsFrequency(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsFrequency) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -829,7 +829,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsFrequency(item *catalys
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsChannel(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsChannel) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsChannel(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsChannel) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -839,7 +839,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsChannel(item *catalystc
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsApGroup(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsApGroup) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsApGroup(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsApGroup) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -849,7 +849,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsApGroup(item *catalystc
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsLocation(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsLocation) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsLocation(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsLocation) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -859,7 +859,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsLocation(item *catalyst
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsConnectedDevice(items *[]catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsConnectedDevice) []interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsConnectedDevice(items *[]catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsConnectedDevice) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -871,7 +871,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsConnectedDevice(items *
 	return respItems
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsRssi(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsRssi) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsRssi(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsRssi) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -881,7 +881,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsRssi(item *catalystcent
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsAvgRssi(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsAvgRssi) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsAvgRssi(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsAvgRssi) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -891,7 +891,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsAvgRssi(item *catalystc
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsSnr(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsSnr) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsSnr(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsSnr) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -901,7 +901,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsSnr(item *catalystcente
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsAvgSnr(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsAvgSnr) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsAvgSnr(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsAvgSnr) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -911,7 +911,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsAvgSnr(item *catalystce
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsDataRate(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsDataRate) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsDataRate(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsDataRate) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -921,7 +921,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsDataRate(item *catalyst
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsTxBytes(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsTxBytes) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsTxBytes(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsTxBytes) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -931,7 +931,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsTxBytes(item *catalystc
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsRxBytes(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsRxBytes) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsRxBytes(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsRxBytes) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -941,7 +941,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsRxBytes(item *catalystc
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsDNSSuccess(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsDNSSuccess) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsDNSSuccess(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsDNSSuccess) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -951,7 +951,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsDNSSuccess(item *cataly
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsDNSFailure(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsDNSFailure) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsDNSFailure(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsDNSFailure) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -961,21 +961,21 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsDNSFailure(item *cataly
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboarding(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsOnboarding) []map[string]interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboarding(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsOnboarding) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["average_run_duration"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingAverageRunDuration(item.AverageRunDuration)
-	respItem["max_run_duration"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingMaxRunDuration(item.MaxRunDuration)
-	respItem["average_assoc_duration"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingAverageAssocDuration(item.AverageAssocDuration)
-	respItem["max_assoc_duration"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingMaxAssocDuration(item.MaxAssocDuration)
-	respItem["average_auth_duration"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingAverageAuthDuration(item.AverageAuthDuration)
-	respItem["max_auth_duration"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingMaxAuthDuration(item.MaxAuthDuration)
-	respItem["average_dhcp_duration"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingAverageDhcpDuration(item.AverageDhcpDuration)
-	respItem["max_dhcp_duration"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingMaxDhcpDuration(item.MaxDhcpDuration)
-	respItem["aaa_server_ip"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingAAAServerIP(item.AAAServerIP)
-	respItem["dhcp_server_ip"] = flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingDhcpServerIP(item.DhcpServerIP)
+	respItem["average_run_duration"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboardingAverageRunDuration(item.AverageRunDuration)
+	respItem["max_run_duration"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboardingMaxRunDuration(item.MaxRunDuration)
+	respItem["average_assoc_duration"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboardingAverageAssocDuration(item.AverageAssocDuration)
+	respItem["max_assoc_duration"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboardingMaxAssocDuration(item.MaxAssocDuration)
+	respItem["average_auth_duration"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboardingAverageAuthDuration(item.AverageAuthDuration)
+	respItem["max_auth_duration"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboardingMaxAuthDuration(item.MaxAuthDuration)
+	respItem["average_dhcp_duration"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboardingAverageDhcpDuration(item.AverageDhcpDuration)
+	respItem["max_dhcp_duration"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboardingMaxDhcpDuration(item.MaxDhcpDuration)
+	respItem["aaa_server_ip"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboardingAAAServerIP(item.AAAServerIP)
+	respItem["dhcp_server_ip"] = flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboardingDhcpServerIP(item.DhcpServerIP)
 
 	return []map[string]interface{}{
 		respItem,
@@ -983,7 +983,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboarding(item *cataly
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingAverageRunDuration(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsOnboardingAverageRunDuration) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboardingAverageRunDuration(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsOnboardingAverageRunDuration) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -993,7 +993,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingAverageRunDur
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingMaxRunDuration(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsOnboardingMaxRunDuration) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboardingMaxRunDuration(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsOnboardingMaxRunDuration) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1003,7 +1003,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingMaxRunDuratio
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingAverageAssocDuration(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsOnboardingAverageAssocDuration) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboardingAverageAssocDuration(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsOnboardingAverageAssocDuration) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1013,7 +1013,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingAverageAssocD
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingMaxAssocDuration(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsOnboardingMaxAssocDuration) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboardingMaxAssocDuration(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsOnboardingMaxAssocDuration) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1023,7 +1023,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingMaxAssocDurat
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingAverageAuthDuration(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsOnboardingAverageAuthDuration) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboardingAverageAuthDuration(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsOnboardingAverageAuthDuration) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1033,7 +1033,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingAverageAuthDu
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingMaxAuthDuration(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsOnboardingMaxAuthDuration) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboardingMaxAuthDuration(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsOnboardingMaxAuthDuration) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1043,7 +1043,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingMaxAuthDurati
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingAverageDhcpDuration(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsOnboardingAverageDhcpDuration) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboardingAverageDhcpDuration(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsOnboardingAverageDhcpDuration) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1053,7 +1053,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingAverageDhcpDu
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingMaxDhcpDuration(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsOnboardingMaxDhcpDuration) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboardingMaxDhcpDuration(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsOnboardingMaxDhcpDuration) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1063,7 +1063,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingMaxDhcpDurati
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingAAAServerIP(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsOnboardingAAAServerIP) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboardingAAAServerIP(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsOnboardingAAAServerIP) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1073,7 +1073,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingAAAServerIP(i
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingDhcpServerIP(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsOnboardingDhcpServerIP) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboardingDhcpServerIP(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsOnboardingDhcpServerIP) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1083,7 +1083,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingDhcpServerIP(
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingTime(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsOnboardingTime) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsOnboardingTime(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsOnboardingTime) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1093,7 +1093,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsOnboardingTime(item *ca
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsPort(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsUserDetailsPort) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsUserDetailsPort(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1UserDetailsPort) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1103,28 +1103,28 @@ func flattenUsersGetUserEnrichmentDetailsItemsUserDetailsPort(item *catalystcent
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsConnectedDevice(items *[]catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsConnectedDevice) []map[string]interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsConnectedDevice(items *[]catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1ConnectedDevice) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["device_details"] = flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetails(item.DeviceDetails)
+		respItem["device_details"] = flattenUsersGetUserEnrichmentDetailsV1ItemsConnectedDeviceDeviceDetails(item.DeviceDetails)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetails(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsConnectedDeviceDeviceDetails) []map[string]interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsConnectedDeviceDeviceDetails(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1ConnectedDeviceDeviceDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["family"] = item.Family
 	respItem["type"] = item.Type
-	respItem["location"] = flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetailsLocation(item.Location)
-	respItem["error_code"] = flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetailsErrorCode(item.ErrorCode)
+	respItem["location"] = flattenUsersGetUserEnrichmentDetailsV1ItemsConnectedDeviceDeviceDetailsLocation(item.Location)
+	respItem["error_code"] = flattenUsersGetUserEnrichmentDetailsV1ItemsConnectedDeviceDeviceDetailsErrorCode(item.ErrorCode)
 	respItem["mac_address"] = item.MacAddress
 	respItem["role"] = item.Role
 	respItem["ap_manager_interface_ip"] = item.ApManagerInterfaceIP
@@ -1141,8 +1141,8 @@ func flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetails(item 
 	respItem["reachability_status"] = item.ReachabilityStatus
 	respItem["snmp_contact"] = item.SNMPContact
 	respItem["snmp_location"] = item.SNMPLocation
-	respItem["tunnel_udp_port"] = flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetailsTunnelUDPPort(item.TunnelUDPPort)
-	respItem["waas_device_mode"] = flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetailsWaasDeviceMode(item.WaasDeviceMode)
+	respItem["tunnel_udp_port"] = flattenUsersGetUserEnrichmentDetailsV1ItemsConnectedDeviceDeviceDetailsTunnelUDPPort(item.TunnelUDPPort)
+	respItem["waas_device_mode"] = flattenUsersGetUserEnrichmentDetailsV1ItemsConnectedDeviceDeviceDetailsWaasDeviceMode(item.WaasDeviceMode)
 	respItem["series"] = item.Series
 	respItem["inventory_status_detail"] = item.InventoryStatusDetail
 	respItem["collection_interval"] = item.CollectionInterval
@@ -1152,13 +1152,13 @@ func flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetails(item 
 	respItem["hostname"] = item.Hostname
 	respItem["up_time"] = item.UpTime
 	respItem["last_update_time"] = item.LastUpdateTime
-	respItem["error_description"] = flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetailsErrorDescription(item.ErrorDescription)
-	respItem["location_name"] = flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetailsLocationName(item.LocationName)
+	respItem["error_description"] = flattenUsersGetUserEnrichmentDetailsV1ItemsConnectedDeviceDeviceDetailsErrorDescription(item.ErrorDescription)
+	respItem["location_name"] = flattenUsersGetUserEnrichmentDetailsV1ItemsConnectedDeviceDeviceDetailsLocationName(item.LocationName)
 	respItem["tag_count"] = item.TagCount
 	respItem["last_updated"] = item.LastUpdated
 	respItem["instance_uuid"] = item.InstanceUUID
 	respItem["id"] = item.ID
-	respItem["neighbor_topology"] = flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetailsNeighborTopology(item.NeighborTopology)
+	respItem["neighbor_topology"] = flattenUsersGetUserEnrichmentDetailsV1ItemsConnectedDeviceDeviceDetailsNeighborTopology(item.NeighborTopology)
 
 	return []map[string]interface{}{
 		respItem,
@@ -1166,7 +1166,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetails(item 
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetailsLocation(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsConnectedDeviceDeviceDetailsLocation) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsConnectedDeviceDeviceDetailsLocation(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1ConnectedDeviceDeviceDetailsLocation) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1176,7 +1176,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetailsLocati
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetailsErrorCode(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsConnectedDeviceDeviceDetailsErrorCode) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsConnectedDeviceDeviceDetailsErrorCode(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1ConnectedDeviceDeviceDetailsErrorCode) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1186,7 +1186,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetailsErrorC
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetailsTunnelUDPPort(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsConnectedDeviceDeviceDetailsTunnelUDPPort) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsConnectedDeviceDeviceDetailsTunnelUDPPort(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1ConnectedDeviceDeviceDetailsTunnelUDPPort) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1196,7 +1196,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetailsTunnel
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetailsWaasDeviceMode(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsConnectedDeviceDeviceDetailsWaasDeviceMode) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsConnectedDeviceDeviceDetailsWaasDeviceMode(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1ConnectedDeviceDeviceDetailsWaasDeviceMode) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1206,7 +1206,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetailsWaasDe
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetailsErrorDescription(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsConnectedDeviceDeviceDetailsErrorDescription) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsConnectedDeviceDeviceDetailsErrorDescription(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1ConnectedDeviceDeviceDetailsErrorDescription) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1216,7 +1216,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetailsErrorD
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetailsLocationName(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsConnectedDeviceDeviceDetailsLocationName) interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsConnectedDeviceDeviceDetailsLocationName(item *catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1ConnectedDeviceDeviceDetailsLocationName) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1226,7 +1226,7 @@ func flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetailsLocati
 
 }
 
-func flattenUsersGetUserEnrichmentDetailsItemsConnectedDeviceDeviceDetailsNeighborTopology(items *[]catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsConnectedDeviceDeviceDetailsNeighborTopology) []map[string]interface{} {
+func flattenUsersGetUserEnrichmentDetailsV1ItemsConnectedDeviceDeviceDetailsNeighborTopology(items *[]catalystcentersdkgo.ResponseItemUsersGetUserEnrichmentDetailsV1ConnectedDeviceDeviceDetailsNeighborTopology) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -186,8 +186,8 @@ func dataSourceSitesRead(ctx context.Context, d *schema.ResourceData, m interfac
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSites")
-		queryParams1 := catalystcentersdkgo.GetSitesQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetSitesV1")
+		queryParams1 := catalystcentersdkgo.GetSitesV1QueryParams{}
 
 		if okName {
 			queryParams1.Name = vName.(string)
@@ -208,24 +208,24 @@ func dataSourceSitesRead(ctx context.Context, d *schema.ResourceData, m interfac
 			queryParams1.Limit = vLimit.(int)
 		}
 
-		response1, restyResp1, err := client.SiteDesign.GetSites(&queryParams1)
+		response1, restyResp1, err := client.SiteDesign.GetSitesV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSites", err,
-				"Failure at GetSites, unexpected response", ""))
+				"Failure when executing 2 GetSitesV1", err,
+				"Failure at GetSitesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSiteDesignGetSitesItems(response1.Response)
+		vItems1 := flattenSiteDesignGetSitesV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSites response",
+				"Failure when setting GetSitesV1 response",
 				err))
 			return diags
 		}
@@ -237,7 +237,7 @@ func dataSourceSitesRead(ctx context.Context, d *schema.ResourceData, m interfac
 	return diags
 }
 
-func flattenSiteDesignGetSitesItems(items *[]catalystcentersdkgo.ResponseSiteDesignGetSitesResponse) []map[string]interface{} {
+func flattenSiteDesignGetSitesV1Items(items *[]catalystcentersdkgo.ResponseSiteDesignGetSitesV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

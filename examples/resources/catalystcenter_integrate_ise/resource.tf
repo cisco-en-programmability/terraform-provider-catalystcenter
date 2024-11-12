@@ -1,6 +1,6 @@
 
 resource "catalystcenter_integrate_ise" "example" {
-  provider = catalystcenter
+  provider = meraki
   id       = "string"
   parameters {
 

@@ -707,8 +707,8 @@ func dataSourceNetworkDeviceListRead(ctx context.Context, d *schema.ResourceData
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceList")
-		queryParams1 := catalystcentersdkgo.GetDeviceListQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetDeviceListV1")
+		queryParams1 := catalystcentersdkgo.GetDeviceListV1QueryParams{}
 
 		if okHostname {
 			queryParams1.Hostname = interfaceToSliceString(vHostname)
@@ -813,24 +813,24 @@ func dataSourceNetworkDeviceListRead(ctx context.Context, d *schema.ResourceData
 			queryParams1.Limit = vLimit.(int)
 		}
 
-		response1, restyResp1, err := client.Devices.GetDeviceList(&queryParams1)
+		response1, restyResp1, err := client.Devices.GetDeviceListV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceList", err,
-				"Failure at GetDeviceList, unexpected response", ""))
+				"Failure when executing 2 GetDeviceListV1", err,
+				"Failure at GetDeviceListV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetDeviceListItems(response1.Response)
+		vItems1 := flattenDevicesGetDeviceListV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceList response",
+				"Failure when setting GetDeviceListV1 response",
 				err))
 			return diags
 		}
@@ -842,7 +842,7 @@ func dataSourceNetworkDeviceListRead(ctx context.Context, d *schema.ResourceData
 	return diags
 }
 
-func flattenDevicesGetDeviceListItems(items *[]catalystcentersdkgo.ResponseDevicesGetDeviceListResponse) []map[string]interface{} {
+func flattenDevicesGetDeviceListV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetDeviceListV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

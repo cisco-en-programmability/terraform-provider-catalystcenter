@@ -174,8 +174,8 @@ func resourceSyslogConfigUpdateDelete(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func expandRequestSyslogConfigUpdateUpdateSyslogDestination(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateSyslogDestination {
-	request := catalystcentersdkgo.RequestEventManagementUpdateSyslogDestination{}
+func expandRequestSyslogConfigUpdateUpdateSyslogDestination(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateSyslogDestinationV1 {
+	request := catalystcentersdkgo.RequestEventManagementUpdateSyslogDestinationV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".config_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".config_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".config_id")))) {
 		request.ConfigID = interfaceToString(v)
 	}
@@ -197,7 +197,7 @@ func expandRequestSyslogConfigUpdateUpdateSyslogDestination(ctx context.Context,
 	return &request
 }
 
-func flattenEventManagementUpdateSyslogDestinationItem(item *catalystcentersdkgo.ResponseEventManagementUpdateSyslogDestination) []map[string]interface{} {
+func flattenEventManagementUpdateSyslogDestinationItem(item *catalystcentersdkgo.ResponseEventManagementUpdateSyslogDestinationV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -210,7 +210,7 @@ func flattenEventManagementUpdateSyslogDestinationItem(item *catalystcentersdkgo
 	}
 }
 
-func flattenEventManagementUpdateSyslogDestinationItemErrorMessage(item *catalystcentersdkgo.ResponseEventManagementUpdateSyslogDestinationErrorMessage) []map[string]interface{} {
+func flattenEventManagementUpdateSyslogDestinationItemErrorMessage(item *catalystcentersdkgo.ResponseEventManagementUpdateSyslogDestinationV1ErrorMessage) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

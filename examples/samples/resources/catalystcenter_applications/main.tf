@@ -13,7 +13,7 @@ provider "catalystcenter" {
   debug = "true"
 }
 
-resource "catalystcenter_applications" "example" {
+resource "catalystcenter_applications_v2" "example" {
   provider = catalystcenter
   parameters {
     payload {
@@ -32,7 +32,7 @@ resource "catalystcenter_applications" "example" {
         engine_id            = "3"
         help_string          = "qmqp"
         id                   = "96b555f2-bf7b-41aa-a569-c26d3d3f68d9"
-        ignore_conflict      = "string"
+        ignore_conflict      = "true"
         long_description     = "Quick Mail Queuing Protocol (QMQP) is a network protocol designed to share e-mail queues between several hosts. It is designed and implemented in qmail."
         name                 = "qmqp"
         popularity           = 777
@@ -113,6 +113,6 @@ resource "catalystcenter_applications" "example" {
   }
 }
 
-output "catalystcenter_applications_example" {
-  value = catalystcenter_applications.example
-}
+# output "catalystcenter_applications_example" {
+#   value = catalystcenter_applications.example
+# }

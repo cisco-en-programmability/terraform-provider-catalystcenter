@@ -87,7 +87,7 @@ func dataSourceNetworkDevicesMembersAssociationsRead(ctx context.Context, d *sch
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: RetrieveTagsAssociatedWithNetworkDevices")
-		queryParams1 := catalystcentersdkgo.RetrieveTagsAssociatedWithNetworkDevicesQueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrieveTagsAssociatedWithNetworkDevicesV1QueryParams{}
 
 		if okOffset {
 			queryParams1.Offset = vOffset.(float64)
@@ -125,7 +125,7 @@ func dataSourceNetworkDevicesMembersAssociationsRead(ctx context.Context, d *sch
 	return diags
 }
 
-func flattenTagRetrieveTagsAssociatedWithNetworkDevicesItems(items *[]catalystcentersdkgo.ResponseTagRetrieveTagsAssociatedWithNetworkDevicesResponse) []map[string]interface{} {
+func flattenTagRetrieveTagsAssociatedWithNetworkDevicesItems(items *[]catalystcentersdkgo.ResponseTagRetrieveTagsAssociatedWithNetworkDevicesV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -139,7 +139,7 @@ func flattenTagRetrieveTagsAssociatedWithNetworkDevicesItems(items *[]catalystce
 	return respItems
 }
 
-func flattenTagRetrieveTagsAssociatedWithNetworkDevicesItemsTags(items *[]catalystcentersdkgo.ResponseTagRetrieveTagsAssociatedWithNetworkDevicesResponseTags) []map[string]interface{} {
+func flattenTagRetrieveTagsAssociatedWithNetworkDevicesItemsTags(items *[]catalystcentersdkgo.ResponseTagRetrieveTagsAssociatedWithNetworkDevicesV1ResponseTags) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

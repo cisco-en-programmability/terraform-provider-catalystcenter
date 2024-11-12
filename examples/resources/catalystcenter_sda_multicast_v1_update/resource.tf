@@ -1,6 +1,6 @@
 
 resource "catalystcenter_sda_multicast_v1_update" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     fabric_id        = "string"

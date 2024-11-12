@@ -171,8 +171,8 @@ func dataSourceSdaFabricDevicesRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetFabricDevices")
-		queryParams1 := catalystcentersdkgo.GetFabricDevicesQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetFabricDevicesV1")
+		queryParams1 := catalystcentersdkgo.GetFabricDevicesV1QueryParams{}
 
 		queryParams1.FabricID = vFabricID.(string)
 
@@ -189,24 +189,24 @@ func dataSourceSdaFabricDevicesRead(ctx context.Context, d *schema.ResourceData,
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.Sda.GetFabricDevices(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetFabricDevicesV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetFabricDevices", err,
-				"Failure at GetFabricDevices, unexpected response", ""))
+				"Failure when executing 2 GetFabricDevicesV1", err,
+				"Failure at GetFabricDevicesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaGetFabricDevicesItems(response1.Response)
+		vItems1 := flattenSdaGetFabricDevicesV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetFabricDevices response",
+				"Failure when setting GetFabricDevicesV1 response",
 				err))
 			return diags
 		}
@@ -218,7 +218,7 @@ func dataSourceSdaFabricDevicesRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenSdaGetFabricDevicesItems(items *[]catalystcentersdkgo.ResponseSdaGetFabricDevicesResponse) []map[string]interface{} {
+func flattenSdaGetFabricDevicesV1Items(items *[]catalystcentersdkgo.ResponseSdaGetFabricDevicesV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -229,19 +229,19 @@ func flattenSdaGetFabricDevicesItems(items *[]catalystcentersdkgo.ResponseSdaGet
 		respItem["network_device_id"] = item.NetworkDeviceID
 		respItem["fabric_id"] = item.FabricID
 		respItem["device_roles"] = item.DeviceRoles
-		respItem["border_device_settings"] = flattenSdaGetFabricDevicesItemsBorderDeviceSettings(item.BorderDeviceSettings)
+		respItem["border_device_settings"] = flattenSdaGetFabricDevicesV1ItemsBorderDeviceSettings(item.BorderDeviceSettings)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSdaGetFabricDevicesItemsBorderDeviceSettings(item *catalystcentersdkgo.ResponseSdaGetFabricDevicesResponseBorderDeviceSettings) []map[string]interface{} {
+func flattenSdaGetFabricDevicesV1ItemsBorderDeviceSettings(item *catalystcentersdkgo.ResponseSdaGetFabricDevicesV1ResponseBorderDeviceSettings) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["border_types"] = item.BorderTypes
-	respItem["layer3_settings"] = flattenSdaGetFabricDevicesItemsBorderDeviceSettingsLayer3Settings(item.Layer3Settings)
+	respItem["layer3_settings"] = flattenSdaGetFabricDevicesV1ItemsBorderDeviceSettingsLayer3Settings(item.Layer3Settings)
 
 	return []map[string]interface{}{
 		respItem,
@@ -249,7 +249,7 @@ func flattenSdaGetFabricDevicesItemsBorderDeviceSettings(item *catalystcentersdk
 
 }
 
-func flattenSdaGetFabricDevicesItemsBorderDeviceSettingsLayer3Settings(item *catalystcentersdkgo.ResponseSdaGetFabricDevicesResponseBorderDeviceSettingsLayer3Settings) []map[string]interface{} {
+func flattenSdaGetFabricDevicesV1ItemsBorderDeviceSettingsLayer3Settings(item *catalystcentersdkgo.ResponseSdaGetFabricDevicesV1ResponseBorderDeviceSettingsLayer3Settings) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -1,6 +1,6 @@
 
 resource "catalystcenter_assurance_issues_resolve" "example" {
-  provider    = catalystcenter
+  provider    = meraki
   xca_lle_rid = "string"
   parameters {
 

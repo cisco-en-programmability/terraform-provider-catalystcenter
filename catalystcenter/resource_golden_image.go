@@ -232,7 +232,7 @@ func resourceGoldenImageRead(ctx context.Context, d *schema.ResourceData, m inte
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSoftwareImageManagementSwimGetGoldenTagStatusOfAnImageItem(response1.Response)
+		vItem1 := flattenSoftwareImageManagementSwimGetGoldenTagStatusOfAnImageV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetGoldenTagStatusOfAnImage response",
@@ -334,8 +334,8 @@ func resourceGoldenImageDelete(ctx context.Context, d *schema.ResourceData, m in
 
 	return diags
 }
-func expandRequestGoldenImageTagAsGoldenImage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSoftwareImageManagementSwimTagAsGoldenImage {
-	request := catalystcentersdkgo.RequestSoftwareImageManagementSwimTagAsGoldenImage{}
+func expandRequestGoldenImageTagAsGoldenImage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSoftwareImageManagementSwimTagAsGoldenImageV1 {
+	request := catalystcentersdkgo.RequestSoftwareImageManagementSwimTagAsGoldenImageV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".image_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".image_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".image_id")))) {
 		request.ImageID = interfaceToString(v)
 	}

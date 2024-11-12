@@ -1,6 +1,6 @@
 
 resource "catalystcenter_site_health_summaries_summary_analytics_create" "example" {
-  provider          = catalystcenter
+  provider          = meraki
   id                = "string"
   site_hierarchy    = "string"
   site_hierarchy_id = "string"

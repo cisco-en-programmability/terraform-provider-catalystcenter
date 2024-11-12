@@ -224,31 +224,27 @@ func resourceInterfacesQueryCountCreate(ctx context.Context, d *schema.ResourceD
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevices(ctx, "parameters.0", d)
+	request1 := expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.Devices.TheTotalInterfacesCountAcrossTheNetworkDevices(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Devices.TheTotalInterfacesCountAcrossTheNetworkDevicesV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing TheTotalInterfacesCountAcrossTheNetworkDevices", err))
+			"Failure when executing TheTotalInterfacesCountAcrossTheNetworkDevicesV1", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	//Analizar verificacion.
-
-	vItem1 := flattenDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesItem(response1.Response)
+	vItem1 := flattenDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting TheTotalInterfacesCountAcrossTheNetworkDevices response",
+			"Failure when setting TheTotalInterfacesCountAcrossTheNetworkDevicesV1 response",
 			err))
 		return diags
 	}
@@ -270,8 +266,8 @@ func resourceInterfacesQueryCountDelete(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevices(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevices {
-	request := catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevices{}
+func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesV1 {
+	request := catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -285,19 +281,19 @@ func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDev
 		request.Attributes = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesFiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesV1FiltersArray(ctx, key+".filters", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".aggregate_attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".aggregate_attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".aggregate_attributes")))) {
-		request.AggregateAttributes = expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesAggregateAttributesArray(ctx, key+".aggregate_attributes", d)
+		request.AggregateAttributes = expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesV1AggregateAttributesArray(ctx, key+".aggregate_attributes", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".page")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".page")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".page")))) {
-		request.Page = expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesPage(ctx, key+".page.0", d)
+		request.Page = expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesV1Page(ctx, key+".page.0", d)
 	}
 	return &request
 }
 
-func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesFilters {
-	request := []catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesFilters{}
+func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesV1Filters {
+	request := []catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesV1Filters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -308,7 +304,7 @@ func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDev
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -316,8 +312,8 @@ func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDev
 	return &request
 }
 
-func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesFilters {
-	request := catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesFilters{}
+func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesV1Filters {
+	request := catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesV1Filters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -328,7 +324,7 @@ func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDev
 		request.LogicalOperator = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".value")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".value")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".value")))) {
-		request.Value = expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesFiltersValue(ctx, key+".value.0", d)
+		request.Value = expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesV1FiltersValue(ctx, key+".value.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
 		request.Filters = interfaceToSliceString(v)
@@ -336,14 +332,14 @@ func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDev
 	return &request
 }
 
-func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesFiltersValue(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesFiltersValue {
-	var request catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesFiltersValue
+func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesV1FiltersValue(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesV1FiltersValue {
+	var request catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesV1FiltersValue
 	request = d.Get(fixKeyAccess(key))
 	return &request
 }
 
-func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesAggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesAggregateAttributes {
-	request := []catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesAggregateAttributes{}
+func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesV1AggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesV1AggregateAttributes {
+	request := []catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesV1AggregateAttributes{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -354,7 +350,7 @@ func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDev
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesAggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesV1AggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -362,8 +358,8 @@ func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDev
 	return &request
 }
 
-func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesAggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesAggregateAttributes {
-	request := catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesAggregateAttributes{}
+func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesV1AggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesV1AggregateAttributes {
+	request := catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesV1AggregateAttributes{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -373,8 +369,8 @@ func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDev
 	return &request
 }
 
-func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesPage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesPage {
-	request := catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesPage{}
+func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesV1Page(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesV1Page {
+	request := catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesV1Page{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".limit")))) {
 		request.Limit = interfaceToIntPtr(v)
 	}
@@ -382,13 +378,13 @@ func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDev
 		request.Offset = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".sort_by")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".sort_by")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".sort_by")))) {
-		request.SortBy = expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesPageSortByArray(ctx, key+".sort_by", d)
+		request.SortBy = expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesV1PageSortByArray(ctx, key+".sort_by", d)
 	}
 	return &request
 }
 
-func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesPageSortByArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesPageSortBy {
-	request := []catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesPageSortBy{}
+func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesV1PageSortByArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesV1PageSortBy {
+	request := []catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesV1PageSortBy{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -399,7 +395,7 @@ func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDev
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesPageSortBy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesV1PageSortBy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -407,8 +403,8 @@ func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDev
 	return &request
 }
 
-func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesPageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesPageSortBy {
-	request := catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesPageSortBy{}
+func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDevicesV1PageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesV1PageSortBy {
+	request := catalystcentersdkgo.RequestDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesV1PageSortBy{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -418,7 +414,7 @@ func expandRequestInterfacesQueryCountTheTotalInterfacesCountAcrossTheNetworkDev
 	return &request
 }
 
-func flattenDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesItem(item *catalystcentersdkgo.ResponseDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesResponse) []map[string]interface{} {
+func flattenDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesV1Item(item *catalystcentersdkgo.ResponseDevicesTheTotalInterfacesCountAcrossTheNetworkDevicesV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

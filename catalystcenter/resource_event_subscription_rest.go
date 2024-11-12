@@ -292,7 +292,7 @@ func resourceEventSubscriptionRest() *schema.Resource {
 				},
 			},
 			"parameters": &schema.Schema{
-				Description: `Array of RequestEventManagementCreateRestWebhookEventSubscription`,
+				Description: `Array of RequestEventManagementCreateRestWebhookEventSubscriptionV1`,
 				Type:        schema.TypeList,
 				Optional:    true,
 				Computed:    true,
@@ -470,13 +470,13 @@ func resourceEventSubscriptionRestCreate(ctx context.Context, d *schema.Resource
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters.0.payload"))
-	request1 := expandRequestEventSubscriptionRestCreateRestWebhookEventSubscription(ctx, "parameters.0", d)
+	request1 := expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionV1(ctx, "parameters.0", d)
 	vName := resourceItem["name"]
 	vvName := interfaceToString(vName)
 	vSubscriptionID := resourceItem["subscription_id"]
 	vvSubscriptionID := interfaceToString(vSubscriptionID)
 
-	queryParams1 := catalystcentersdkgo.GetRestWebhookEventSubscriptionsQueryParams{}
+	queryParams1 := catalystcentersdkgo.GetRestWebhookEventSubscriptionsV1QueryParams{}
 	item, err := searchEventManagementGetRestWebhookEventSubscriptions(m, queryParams1, vvName, vvSubscriptionID)
 	if err == nil && (item != nil && len(*item) > 0) {
 		resourceMap := make(map[string]string)
@@ -519,7 +519,7 @@ func resourceEventSubscriptionRestRead(ctx context.Context, d *schema.ResourceDa
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method 1: GetRestWebhookEventSubscriptions")
-		queryParams1 := catalystcentersdkgo.GetRestWebhookEventSubscriptionsQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetRestWebhookEventSubscriptionsV1QueryParams{}
 		item, err := searchEventManagementGetRestWebhookEventSubscriptions(m, queryParams1, vName, vSubscriptionID)
 		if err != nil {
 			diags = append(diags, diagError(
@@ -536,8 +536,9 @@ func resourceEventSubscriptionRestRead(ctx context.Context, d *schema.ResourceDa
 			log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*item))
 		}
 
-		vItem1 := flattenEventManagementGetRestWebhookEventSubscriptionsItems(item)
+		vItem1 := flattenEventManagementGetRestWebhookEventSubscriptionsV1Items(item)
 		if err := d.Set("item", vItem1); err != nil {
+
 			diags = append(diags, diagError(
 				"Failure when setting GetRestWebhookEventSubscriptions search response",
 				err))
@@ -558,7 +559,7 @@ func resourceEventSubscriptionRestUpdate(ctx context.Context, d *schema.Resource
 	vName, _ := resourceMap["name"]
 	vSubscriptionID, _ := resourceMap["subscription_id"]
 
-	queryParams1 := catalystcentersdkgo.GetRestWebhookEventSubscriptionsQueryParams{}
+	queryParams1 := catalystcentersdkgo.GetRestWebhookEventSubscriptionsV1QueryParams{}
 	item, err := searchEventManagementGetRestWebhookEventSubscriptions(m, queryParams1, vName, vSubscriptionID)
 	if err != nil || item == nil || len(*item) <= 0 {
 		diags = append(diags, diagErrorWithAlt(
@@ -569,7 +570,7 @@ func resourceEventSubscriptionRestUpdate(ctx context.Context, d *schema.Resource
 
 	// NOTE: Consider adding getAllItems and search function to get missing params
 	if d.HasChange("parameters") {
-		request1 := expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscription(ctx, "parameters.0", d)
+		request1 := expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionV1(ctx, "parameters.0", d)
 		if request1 != nil {
 			log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		}
@@ -612,7 +613,7 @@ func resourceEventSubscriptionRestDelete(ctx context.Context, d *schema.Resource
 	vName, _ := resourceMap["name"]
 	vSubscriptionID, _ := resourceMap["subscription_id"]
 
-	queryParams1 := catalystcentersdkgo.GetRestWebhookEventSubscriptionsQueryParams{}
+	queryParams1 := catalystcentersdkgo.GetRestWebhookEventSubscriptionsV1QueryParams{}
 	item, err := searchEventManagementGetRestWebhookEventSubscriptions(m, queryParams1, vName, vSubscriptionID)
 	if err != nil {
 		diags = append(diags, diagErrorWithAlt(
@@ -625,7 +626,7 @@ func resourceEventSubscriptionRestDelete(ctx context.Context, d *schema.Resource
 	}
 
 	// REVIEW: Add getAllItems and search function to get missing params
-	queryParams2 := catalystcentersdkgo.DeleteEventSubscriptionsQueryParams{}
+	queryParams2 := catalystcentersdkgo.DeleteEventSubscriptionsV1QueryParams{}
 	if len(*item) > 0 {
 		itemCopy := *item
 		queryParams2.Subscriptions = itemCopy[0].SubscriptionID
@@ -651,9 +652,9 @@ func resourceEventSubscriptionRestDelete(ctx context.Context, d *schema.Resource
 
 	return diags
 }
-func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscription(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementCreateRestWebhookEventSubscription {
-	request := catalystcentersdkgo.RequestEventManagementCreateRestWebhookEventSubscription{}
-	if v := expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementCreateRestWebhookEventSubscriptionV1 {
+	request := catalystcentersdkgo.RequestEventManagementCreateRestWebhookEventSubscriptionV1{}
+	if v := expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -662,8 +663,8 @@ func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscription(ctx co
 	return &request
 }
 
-func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscription {
-	request := []catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscription{}
+func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionV1 {
+	request := []catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -674,7 +675,7 @@ func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemArr
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -685,8 +686,8 @@ func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemArr
 	return &request
 }
 
-func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscription {
-	request := catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscription{}
+func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionV1 {
+	request := catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_id")))) {
 		request.SubscriptionID = interfaceToString(v)
 	}
@@ -700,10 +701,10 @@ func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItem(ct
 		request.Description = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_endpoints")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_endpoints")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_endpoints")))) {
-		request.SubscriptionEndpoints = expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemSubscriptionEndpointsArray(ctx, key+".subscription_endpoints", d)
+		request.SubscriptionEndpoints = expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionV1ItemSubscriptionEndpointsArray(ctx, key+".subscription_endpoints", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filter")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filter")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filter")))) {
-		request.Filter = expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemFilter(ctx, key+".filter.0", d)
+		request.Filter = expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionV1ItemFilter(ctx, key+".filter.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -711,8 +712,8 @@ func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItem(ct
 	return &request
 }
 
-func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemSubscriptionEndpointsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionSubscriptionEndpoints {
-	request := []catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionSubscriptionEndpoints{}
+func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionV1ItemSubscriptionEndpointsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionV1SubscriptionEndpoints {
+	request := []catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionV1SubscriptionEndpoints{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -723,7 +724,7 @@ func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemSub
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemSubscriptionEndpoints(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionV1ItemSubscriptionEndpoints(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -734,13 +735,13 @@ func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemSub
 	return &request
 }
 
-func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemSubscriptionEndpoints(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionSubscriptionEndpoints {
-	request := catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionSubscriptionEndpoints{}
+func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionV1ItemSubscriptionEndpoints(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionV1SubscriptionEndpoints {
+	request := catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionV1SubscriptionEndpoints{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".instance_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".instance_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".instance_id")))) {
 		request.InstanceID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_details")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_details")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_details")))) {
-		request.SubscriptionDetails = expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemSubscriptionEndpointsSubscriptionDetails(ctx, key+".subscription_details.0", d)
+		request.SubscriptionDetails = expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionV1ItemSubscriptionEndpointsSubscriptionDetails(ctx, key+".subscription_details.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -748,8 +749,8 @@ func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemSub
 	return &request
 }
 
-func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemSubscriptionEndpointsSubscriptionDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionSubscriptionEndpointsSubscriptionDetails {
-	request := catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionSubscriptionEndpointsSubscriptionDetails{}
+func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionV1ItemSubscriptionEndpointsSubscriptionDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionV1SubscriptionEndpointsSubscriptionDetails {
+	request := catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionV1SubscriptionEndpointsSubscriptionDetails{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".connector_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".connector_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".connector_type")))) {
 		request.ConnectorType = interfaceToString(v)
 	}
@@ -759,13 +760,13 @@ func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemSub
 	return &request
 }
 
-func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemFilter(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionFilter {
-	request := catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionFilter{}
+func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionV1ItemFilter(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionV1Filter {
+	request := catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionV1Filter{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".event_ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".event_ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".event_ids")))) {
 		request.EventIDs = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".domains_subdomains")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".domains_subdomains")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".domains_subdomains")))) {
-		request.DomainsSubdomains = expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemFilterDomainsSubdomainsArray(ctx, key+".domains_subdomains", d)
+		request.DomainsSubdomains = expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionV1ItemFilterDomainsSubdomainsArray(ctx, key+".domains_subdomains", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".types")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".types")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".types")))) {
 		request.Types = interfaceToSliceString(v)
@@ -788,8 +789,8 @@ func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemFil
 	return &request
 }
 
-func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemFilterDomainsSubdomainsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionFilterDomainsSubdomains {
-	request := []catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionFilterDomainsSubdomains{}
+func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionV1ItemFilterDomainsSubdomainsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionV1FilterDomainsSubdomains {
+	request := []catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionV1FilterDomainsSubdomains{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -800,7 +801,7 @@ func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemFil
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemFilterDomainsSubdomains(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionV1ItemFilterDomainsSubdomains(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -811,8 +812,8 @@ func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemFil
 	return &request
 }
 
-func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemFilterDomainsSubdomains(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionFilterDomainsSubdomains {
-	request := catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionFilterDomainsSubdomains{}
+func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionV1ItemFilterDomainsSubdomains(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionV1FilterDomainsSubdomains {
+	request := catalystcentersdkgo.RequestItemEventManagementCreateRestWebhookEventSubscriptionV1FilterDomainsSubdomains{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".domain")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".domain")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".domain")))) {
 		request.Domain = interfaceToString(v)
 	}
@@ -825,9 +826,9 @@ func expandRequestEventSubscriptionRestCreateRestWebhookEventSubscriptionItemFil
 	return &request
 }
 
-func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscription(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateRestWebhookEventSubscription {
-	request := catalystcentersdkgo.RequestEventManagementUpdateRestWebhookEventSubscription{}
-	if v := expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateRestWebhookEventSubscriptionV1 {
+	request := catalystcentersdkgo.RequestEventManagementUpdateRestWebhookEventSubscriptionV1{}
+	if v := expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -836,8 +837,8 @@ func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscription(ctx co
 	return &request
 }
 
-func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscription {
-	request := []catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscription{}
+func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionV1 {
+	request := []catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -848,7 +849,7 @@ func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemArr
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -859,8 +860,8 @@ func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemArr
 	return &request
 }
 
-func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscription {
-	request := catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscription{}
+func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionV1 {
+	request := catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_id")))) {
 		request.SubscriptionID = interfaceToString(v)
 	}
@@ -874,10 +875,10 @@ func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItem(ct
 		request.Description = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_endpoints")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_endpoints")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_endpoints")))) {
-		request.SubscriptionEndpoints = expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemSubscriptionEndpointsArray(ctx, key+".subscription_endpoints", d)
+		request.SubscriptionEndpoints = expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionV1ItemSubscriptionEndpointsArray(ctx, key+".subscription_endpoints", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filter")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filter")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filter")))) {
-		request.Filter = expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemFilter(ctx, key+".filter.0", d)
+		request.Filter = expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionV1ItemFilter(ctx, key+".filter.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -885,8 +886,8 @@ func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItem(ct
 	return &request
 }
 
-func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemSubscriptionEndpointsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionSubscriptionEndpoints {
-	request := []catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionSubscriptionEndpoints{}
+func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionV1ItemSubscriptionEndpointsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionV1SubscriptionEndpoints {
+	request := []catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionV1SubscriptionEndpoints{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -897,7 +898,7 @@ func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemSub
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemSubscriptionEndpoints(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionV1ItemSubscriptionEndpoints(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -908,13 +909,13 @@ func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemSub
 	return &request
 }
 
-func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemSubscriptionEndpoints(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionSubscriptionEndpoints {
-	request := catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionSubscriptionEndpoints{}
+func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionV1ItemSubscriptionEndpoints(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionV1SubscriptionEndpoints {
+	request := catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionV1SubscriptionEndpoints{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".instance_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".instance_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".instance_id")))) {
 		request.InstanceID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_details")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_details")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_details")))) {
-		request.SubscriptionDetails = expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemSubscriptionEndpointsSubscriptionDetails(ctx, key+".subscription_details.0", d)
+		request.SubscriptionDetails = expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionV1ItemSubscriptionEndpointsSubscriptionDetails(ctx, key+".subscription_details.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -922,8 +923,8 @@ func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemSub
 	return &request
 }
 
-func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemSubscriptionEndpointsSubscriptionDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionSubscriptionEndpointsSubscriptionDetails {
-	request := catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionSubscriptionEndpointsSubscriptionDetails{}
+func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionV1ItemSubscriptionEndpointsSubscriptionDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionV1SubscriptionEndpointsSubscriptionDetails {
+	request := catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionV1SubscriptionEndpointsSubscriptionDetails{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".connector_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".connector_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".connector_type")))) {
 		request.ConnectorType = interfaceToString(v)
 	}
@@ -933,13 +934,13 @@ func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemSub
 	return &request
 }
 
-func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemFilter(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionFilter {
-	request := catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionFilter{}
+func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionV1ItemFilter(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionV1Filter {
+	request := catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionV1Filter{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".event_ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".event_ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".event_ids")))) {
 		request.EventIDs = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".domains_subdomains")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".domains_subdomains")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".domains_subdomains")))) {
-		request.DomainsSubdomains = expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemFilterDomainsSubdomainsArray(ctx, key+".domains_subdomains", d)
+		request.DomainsSubdomains = expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionV1ItemFilterDomainsSubdomainsArray(ctx, key+".domains_subdomains", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".types")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".types")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".types")))) {
 		request.Types = interfaceToSliceString(v)
@@ -962,8 +963,8 @@ func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemFil
 	return &request
 }
 
-func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemFilterDomainsSubdomainsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionFilterDomainsSubdomains {
-	request := []catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionFilterDomainsSubdomains{}
+func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionV1ItemFilterDomainsSubdomainsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionV1FilterDomainsSubdomains {
+	request := []catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionV1FilterDomainsSubdomains{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -974,7 +975,7 @@ func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemFil
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemFilterDomainsSubdomains(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionV1ItemFilterDomainsSubdomains(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -985,8 +986,8 @@ func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemFil
 	return &request
 }
 
-func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemFilterDomainsSubdomains(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionFilterDomainsSubdomains {
-	request := catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionFilterDomainsSubdomains{}
+func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionV1ItemFilterDomainsSubdomains(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionV1FilterDomainsSubdomains {
+	request := catalystcentersdkgo.RequestItemEventManagementUpdateRestWebhookEventSubscriptionV1FilterDomainsSubdomains{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".domain")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".domain")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".domain")))) {
 		request.Domain = interfaceToString(v)
 	}
@@ -999,11 +1000,11 @@ func expandRequestEventSubscriptionRestUpdateRestWebhookEventSubscriptionItemFil
 	return &request
 }
 
-func searchEventManagementGetRestWebhookEventSubscriptions(m interface{}, queryParams catalystcentersdkgo.GetRestWebhookEventSubscriptionsQueryParams, name string, subscriptionID string) (*catalystcentersdkgo.ResponseEventManagementGetRestWebhookEventSubscriptions, error) {
+func searchEventManagementGetRestWebhookEventSubscriptions(m interface{}, queryParams catalystcentersdkgo.GetRestWebhookEventSubscriptionsV1QueryParams, name string, subscriptionID string) (*catalystcentersdkgo.ResponseEventManagementGetRestWebhookEventSubscriptionsV1, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItems catalystcentersdkgo.ResponseEventManagementGetRestWebhookEventSubscriptions
-	var items *catalystcentersdkgo.ResponseEventManagementGetRestWebhookEventSubscriptions
+	var foundItems catalystcentersdkgo.ResponseEventManagementGetRestWebhookEventSubscriptionsV1
+	var items *catalystcentersdkgo.ResponseEventManagementGetRestWebhookEventSubscriptionsV1
 	items, _, err = client.EventManagement.GetRestWebhookEventSubscriptions(&queryParams)
 	if err != nil {
 		return nil, err

@@ -1,10 +1,72 @@
 
 resource "catalystcenter_discovery" "example" {
   provider = catalystcenter
+  item {
 
+
+
+
+
+
+
+
+
+    http_read_credential {
+
+
+
+
+
+
+
+
+
+
+
+    }
+    http_write_credential {
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
   parameters {
 
-    attribute_info            = "string"
+    attribute_info            = "------"
     cdp_level                 = 1
     device_ids                = "string"
     discovery_condition       = "string"

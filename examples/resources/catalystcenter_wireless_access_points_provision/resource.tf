@@ -1,6 +1,6 @@
 
 resource "catalystcenter_wireless_access_points_provision" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     ap_zone_name = "string"

@@ -108,7 +108,7 @@ func dataSourceIPamServerSettingRead(ctx context.Context, d *schema.ResourceData
 	return diags
 }
 
-func flattenSystemSettingsRetrievesConfigurationDetailsOfTheExternalIPAMServerItem(item *catalystcentersdkgo.ResponseSystemSettingsRetrievesConfigurationDetailsOfTheExternalIPAMServerResponse) []map[string]interface{} {
+func flattenSystemSettingsRetrievesConfigurationDetailsOfTheExternalIPAMServerItem(item *catalystcentersdkgo.ResponseSystemSettingsRetrievesConfigurationDetailsOfTheExternalIPAMServerV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

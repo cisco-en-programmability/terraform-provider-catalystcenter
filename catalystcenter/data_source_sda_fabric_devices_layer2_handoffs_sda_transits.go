@@ -119,8 +119,8 @@ func dataSourceSdaFabricDevicesLayer2HandoffsSdaTransitsRead(ctx context.Context
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetFabricDevicesLayer3HandoffsWithSdaTransit")
-		queryParams1 := catalystcentersdkgo.GetFabricDevicesLayer3HandoffsWithSdaTransitQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetFabricDevicesLayer3HandoffsWithSdaTransitV1")
+		queryParams1 := catalystcentersdkgo.GetFabricDevicesLayer3HandoffsWithSdaTransitV1QueryParams{}
 
 		queryParams1.FabricID = vFabricID.(string)
 
@@ -134,24 +134,24 @@ func dataSourceSdaFabricDevicesLayer2HandoffsSdaTransitsRead(ctx context.Context
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.Sda.GetFabricDevicesLayer3HandoffsWithSdaTransit(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetFabricDevicesLayer3HandoffsWithSdaTransitV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetFabricDevicesLayer3HandoffsWithSdaTransit", err,
-				"Failure at GetFabricDevicesLayer3HandoffsWithSdaTransit, unexpected response", ""))
+				"Failure when executing 2 GetFabricDevicesLayer3HandoffsWithSdaTransitV1", err,
+				"Failure at GetFabricDevicesLayer3HandoffsWithSdaTransitV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaGetFabricDevicesLayer3HandoffsWithSdaTransitItems(response1.Response)
+		vItems1 := flattenSdaGetFabricDevicesLayer3HandoffsWithSdaTransitV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetFabricDevicesLayer3HandoffsWithSdaTransit response",
+				"Failure when setting GetFabricDevicesLayer3HandoffsWithSdaTransitV1 response",
 				err))
 			return diags
 		}
@@ -163,7 +163,7 @@ func dataSourceSdaFabricDevicesLayer2HandoffsSdaTransitsRead(ctx context.Context
 	return diags
 }
 
-func flattenSdaGetFabricDevicesLayer3HandoffsWithSdaTransitItems(items *[]catalystcentersdkgo.ResponseSdaGetFabricDevicesLayer3HandoffsWithSdaTransitResponse) []map[string]interface{} {
+func flattenSdaGetFabricDevicesLayer3HandoffsWithSdaTransitV1Items(items *[]catalystcentersdkgo.ResponseSdaGetFabricDevicesLayer3HandoffsWithSdaTransitV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

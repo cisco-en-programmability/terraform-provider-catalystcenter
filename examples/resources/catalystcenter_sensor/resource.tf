@@ -1,7 +1,28 @@
 
 resource "catalystcenter_sensor" "example" {
   provider = catalystcenter
+  item {
 
+
+
+
+
+
+
+
+
+
+    ssh {
+
+
+
+
+
+    }
+
+
+
+  }
   parameters {
 
     ap_coverage {
@@ -119,7 +140,7 @@ resource "catalystcenter_sensor" "example" {
       switch_serial_number      = "string"
       switch_uuid               = "string"
       target_a_ps               = ["string"]
-      test_mac_addresses        = "string"
+      test_mac_addresses        = "------"
       wired_application_message = "string"
       wired_application_status  = "string"
       xor_sensor                = "false"

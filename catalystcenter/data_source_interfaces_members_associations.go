@@ -86,8 +86,8 @@ func dataSourceInterfacesMembersAssociationsRead(ctx context.Context, d *schema.
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveTagsAssociatedWithTheInterfaces")
-		queryParams1 := catalystcentersdkgo.RetrieveTagsAssociatedWithTheInterfacesQueryParams{}
+		log.Printf("[DEBUG] Selected method: RetrieveTagsAssociatedWithTheInterfacesV1")
+		queryParams1 := catalystcentersdkgo.RetrieveTagsAssociatedWithTheInterfacesV1QueryParams{}
 
 		if okOffset {
 			queryParams1.Offset = vOffset.(float64)
@@ -96,24 +96,24 @@ func dataSourceInterfacesMembersAssociationsRead(ctx context.Context, d *schema.
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.Tag.RetrieveTagsAssociatedWithTheInterfaces(&queryParams1)
+		response1, restyResp1, err := client.Tag.RetrieveTagsAssociatedWithTheInterfacesV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveTagsAssociatedWithTheInterfaces", err,
-				"Failure at RetrieveTagsAssociatedWithTheInterfaces, unexpected response", ""))
+				"Failure when executing 2 RetrieveTagsAssociatedWithTheInterfacesV1", err,
+				"Failure at RetrieveTagsAssociatedWithTheInterfacesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenTagRetrieveTagsAssociatedWithTheInterfacesItems(response1.Response)
+		vItems1 := flattenTagRetrieveTagsAssociatedWithTheInterfacesV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveTagsAssociatedWithTheInterfaces response",
+				"Failure when setting RetrieveTagsAssociatedWithTheInterfacesV1 response",
 				err))
 			return diags
 		}
@@ -123,32 +123,4 @@ func dataSourceInterfacesMembersAssociationsRead(ctx context.Context, d *schema.
 
 	}
 	return diags
-}
-
-func flattenTagRetrieveTagsAssociatedWithTheInterfacesItems(items *[]catalystcentersdkgo.ResponseTagRetrieveTagsAssociatedWithTheInterfacesResponse) []map[string]interface{} {
-	if items == nil {
-		return nil
-	}
-	var respItems []map[string]interface{}
-	for _, item := range *items {
-		respItem := make(map[string]interface{})
-		respItem["id"] = item.ID
-		respItem["tags"] = flattenTagRetrieveTagsAssociatedWithTheInterfacesItemsTags(item.Tags)
-		respItems = append(respItems, respItem)
-	}
-	return respItems
-}
-
-func flattenTagRetrieveTagsAssociatedWithTheInterfacesItemsTags(items *[]catalystcentersdkgo.ResponseTagRetrieveTagsAssociatedWithTheInterfacesResponseTags) []map[string]interface{} {
-	if items == nil {
-		return nil
-	}
-	var respItems []map[string]interface{}
-	for _, item := range *items {
-		respItem := make(map[string]interface{})
-		respItem["id"] = item.ID
-		respItem["name"] = item.Name
-		respItems = append(respItems, respItem)
-	}
-	return respItems
 }

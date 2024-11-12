@@ -51,41 +51,10 @@ output "catalystcenter_site_example" {
 
 Read-Only:
 
-- `additional_info` (List of Object) (see [below for nested schema](#nestedobjatt--items--additional_info))
+- `additional_info` (List of String)
 - `id` (String)
 - `instance_tenant_id` (String)
 - `name` (String)
 - `parent_id` (String)
 - `site_hierarchy` (String)
 - `site_name_hierarchy` (String)
-
-<a id="nestedobjatt--items--additional_info"></a>
-### Nested Schema for `items.additional_info`
-
-Read-Only:
-
-- `attributes` (List of Object) (see [below for nested schema](#nestedobjatt--items--additional_info--attributes))
-- `name_space` (String)
-
-<a id="nestedobjatt--items--additional_info--attributes"></a>
-### Nested Schema for `items.additional_info.attributes`
-
-Read-Only:
-
-- `address` (String)
-- `addressinheritedfrom` (String)
-- `country` (String)
-- `floor_number` (String)
-- `floorindex` (String)
-- `height` (String)
-- `latitude` (String)
-- `length` (String)
-- `longitude` (String)
-- `name` (String)
-- `offsetx` (String)
-- `offsety` (String)
-- `parent_name` (String)
-- `rf_model` (String)
-- `rfmodel` (String)
-- `type` (String)
-- `width` (String)

@@ -82,27 +82,27 @@ func dataSourceAreasRead(ctx context.Context, d *schema.ResourceData, m interfac
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetsAnArea")
+		log.Printf("[DEBUG] Selected method: GetsAnAreaV1")
 		vvID := vID.(string)
 
-		response1, restyResp1, err := client.SiteDesign.GetsAnArea(vvID)
+		response1, restyResp1, err := client.SiteDesign.GetsAnAreaV1(vvID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetsAnArea", err,
-				"Failure at GetsAnArea, unexpected response", ""))
+				"Failure when executing 2 GetsAnAreaV1", err,
+				"Failure at GetsAnAreaV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSiteDesignGetsAnAreaItem(response1.Response)
+		vItem1 := flattenSiteDesignGetsAnAreaV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetsAnArea response",
+				"Failure when setting GetsAnAreaV1 response",
 				err))
 			return diags
 		}
@@ -114,7 +114,7 @@ func dataSourceAreasRead(ctx context.Context, d *schema.ResourceData, m interfac
 	return diags
 }
 
-func flattenSiteDesignGetsAnAreaItem(item *catalystcentersdkgo.ResponseSiteDesignGetsAnAreaResponse) []map[string]interface{} {
+func flattenSiteDesignGetsAnAreaV1Item(item *catalystcentersdkgo.ResponseSiteDesignGetsAnAreaV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

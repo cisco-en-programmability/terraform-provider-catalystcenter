@@ -1,6 +1,6 @@
 
 resource "catalystcenter_event_email_config_update" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     email_config_id = "string"

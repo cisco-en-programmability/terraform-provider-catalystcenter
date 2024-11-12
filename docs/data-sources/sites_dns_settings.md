@@ -4,16 +4,16 @@ page_title: "catalystcenter_sites_dns_settings Data Source - terraform-provider-
 subcategory: ""
 description: |-
   It performs read operation on Network Settings.
-  Retrieve DNS settings for a site; 'null' values indicate that the setting will be inherited from the parent site;
-  empty objects ('{}') indicate that the setting is unset at a site.
+  Retrieve DNS settings for a site; null values indicate that the setting will be inherited from the parent site;
+  empty objects ({}) indicate that the setting is unset at a site.
 ---
 
 # catalystcenter_sites_dns_settings (Data Source)
 
 It performs read operation on Network Settings.
 
-- Retrieve DNS settings for a site; 'null' values indicate that the setting will be inherited from the parent site;
-empty objects ('{}') indicate that the setting is unset at a site.
+- Retrieve DNS settings for a site; *null* values indicate that the setting will be inherited from the parent site;
+empty objects (*{}*) indicate that the setting is unset at a site.
 
 ## Example Usage
 
@@ -38,7 +38,7 @@ output "catalystcenter_sites_dns_settings_example" {
 
 ### Optional
 
-- `inherited` (Boolean) _inherited query parameter. Include settings explicitly set for this site and settings inherited from sites higher in the site hierarchy; when 'false', 'null' values indicate that the site inherits that setting from the parent site or a site higher in the site hierarchy.
+- `inherited` (Boolean) _inherited query parameter. Include settings explicitly set for this site and settings inherited from sites higher in the site hierarchy; when *false*, *null* values indicate that the site inherits that setting from the parent site or a site higher in the site hierarchy.
 
 ### Read-Only
 

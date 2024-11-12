@@ -174,12 +174,12 @@ func resourceEventSyslogConfigCreate(ctx context.Context, d *schema.ResourceData
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestEventSyslogConfigCreateSyslogDestination(ctx, "parameters.0", d)
+	request1 := expandRequestEventSyslogConfigCreateSyslogDestinationV1(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vName := resourceItem["name"]
 	vvName := interfaceToString(vName)
-	queryParamImport := catalystcentersdkgo.GetSyslogDestinationQueryParams{}
+	queryParamImport := catalystcentersdkgo.GetSyslogDestinationV1QueryParams{}
 	queryParamImport.Name = vvName
 	item2, _, err := client.EventManagement.GetSyslogDestination(&queryParamImport)
 	if err == nil && item2 != nil {
@@ -219,7 +219,7 @@ func resourceEventSyslogConfigRead(ctx context.Context, d *schema.ResourceData, 
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetSyslogDestination")
-		queryParams1 := catalystcentersdkgo.GetSyslogDestinationQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetSyslogDestinationV1QueryParams{}
 		queryParams1.Name = vName
 		response1, restyResp1, err := client.EventManagement.GetSyslogDestination(&queryParams1)
 
@@ -233,7 +233,7 @@ func resourceEventSyslogConfigRead(ctx context.Context, d *schema.ResourceData, 
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenEventManagementGetSyslogDestinationItem(response1)
+		vItem1 := flattenEventManagementGetSyslogDestinationV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetSyslogDestination response",
@@ -253,7 +253,7 @@ func resourceEventSyslogConfigUpdate(ctx context.Context, d *schema.ResourceData
 	var diags diag.Diagnostics
 
 	if d.HasChange("parameters") {
-		request1 := expandRequestEventSyslogConfigUpdateSyslogDestination(ctx, "parameters.0", d)
+		request1 := expandRequestEventSyslogConfigUpdateSyslogDestinationV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.EventManagement.UpdateSyslogDestination(request1)
 		if err != nil || response1 == nil {
@@ -286,8 +286,8 @@ func resourceEventSyslogConfigDelete(ctx context.Context, d *schema.ResourceData
 
 	return diags
 }
-func expandRequestEventSyslogConfigCreateSyslogDestination(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementCreateSyslogDestination {
-	request := catalystcentersdkgo.RequestEventManagementCreateSyslogDestination{}
+func expandRequestEventSyslogConfigCreateSyslogDestinationV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementCreateSyslogDestinationV1 {
+	request := catalystcentersdkgo.RequestEventManagementCreateSyslogDestinationV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".config_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".config_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".config_id")))) {
 		request.ConfigID = interfaceToString(v)
 	}
@@ -312,8 +312,8 @@ func expandRequestEventSyslogConfigCreateSyslogDestination(ctx context.Context, 
 	return &request
 }
 
-func expandRequestEventSyslogConfigUpdateSyslogDestination(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateSyslogDestination {
-	request := catalystcentersdkgo.RequestEventManagementUpdateSyslogDestination{}
+func expandRequestEventSyslogConfigUpdateSyslogDestinationV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateSyslogDestinationV1 {
+	request := catalystcentersdkgo.RequestEventManagementUpdateSyslogDestinationV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".config_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".config_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".config_id")))) {
 		request.ConfigID = interfaceToString(v)
 	}

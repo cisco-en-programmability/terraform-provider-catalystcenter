@@ -206,8 +206,8 @@ func dataSourceEventSubscriptionDetailsRestRead(ctx context.Context, d *schema.R
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetRestWebhookSubscriptionDetails")
-		queryParams1 := catalystcentersdkgo.GetRestWebhookSubscriptionDetailsQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetRestWebhookSubscriptionDetailsV1")
+		queryParams1 := catalystcentersdkgo.GetRestWebhookSubscriptionDetailsV1QueryParams{}
 
 		if okName {
 			queryParams1.Name = vName.(string)
@@ -228,24 +228,24 @@ func dataSourceEventSubscriptionDetailsRestRead(ctx context.Context, d *schema.R
 			queryParams1.Order = vOrder.(string)
 		}
 
-		response1, restyResp1, err := client.EventManagement.GetRestWebhookSubscriptionDetails(&queryParams1)
+		response1, restyResp1, err := client.EventManagement.GetRestWebhookSubscriptionDetailsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetRestWebhookSubscriptionDetails", err,
-				"Failure at GetRestWebhookSubscriptionDetails, unexpected response", ""))
+				"Failure when executing 2 GetRestWebhookSubscriptionDetailsV1", err,
+				"Failure at GetRestWebhookSubscriptionDetailsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenEventManagementGetRestWebhookSubscriptionDetailsItems(response1)
+		vItems1 := flattenEventManagementGetRestWebhookSubscriptionDetailsV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetRestWebhookSubscriptionDetails response",
+				"Failure when setting GetRestWebhookSubscriptionDetailsV1 response",
 				err))
 			return diags
 		}
@@ -257,7 +257,7 @@ func dataSourceEventSubscriptionDetailsRestRead(ctx context.Context, d *schema.R
 	return diags
 }
 
-func flattenEventManagementGetRestWebhookSubscriptionDetailsItems(items *catalystcentersdkgo.ResponseEventManagementGetRestWebhookSubscriptionDetails) []map[string]interface{} {
+func flattenEventManagementGetRestWebhookSubscriptionDetailsV1Items(items *catalystcentersdkgo.ResponseEventManagementGetRestWebhookSubscriptionDetailsV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -271,7 +271,7 @@ func flattenEventManagementGetRestWebhookSubscriptionDetailsItems(items *catalys
 		respItem["url"] = item.URL
 		respItem["method"] = item.Method
 		respItem["trust_cert"] = boolPtrToString(item.TrustCert)
-		respItem["headers"] = flattenEventManagementGetRestWebhookSubscriptionDetailsItemsHeaders(item.Headers)
+		respItem["headers"] = flattenEventManagementGetRestWebhookSubscriptionDetailsV1ItemsHeaders(item.Headers)
 		respItem["query_params"] = item.QueryParams
 		respItem["path_params"] = item.PathParams
 		respItem["body"] = item.Body
@@ -286,7 +286,7 @@ func flattenEventManagementGetRestWebhookSubscriptionDetailsItems(items *catalys
 	return respItems
 }
 
-func flattenEventManagementGetRestWebhookSubscriptionDetailsItemsHeaders(items *[]catalystcentersdkgo.ResponseItemEventManagementGetRestWebhookSubscriptionDetailsHeaders) []map[string]interface{} {
+func flattenEventManagementGetRestWebhookSubscriptionDetailsV1ItemsHeaders(items *[]catalystcentersdkgo.ResponseItemEventManagementGetRestWebhookSubscriptionDetailsV1Headers) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

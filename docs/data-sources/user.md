@@ -4,14 +4,14 @@ page_title: "catalystcenter_user Data Source - terraform-provider-catalystcenter
 subcategory: ""
 description: |-
   It performs read operation on User and Roles.
-  Get all users for the Cisco Catalyst Center System.
+  Get all users for the Cisco DNA Center System.
 ---
 
 # catalystcenter_user (Data Source)
 
 It performs read operation on User and Roles.
 
-- Get all users for the Cisco Catalyst Center System.
+- Get all users for the Cisco DNA Center System.
 
 ## Example Usage
 

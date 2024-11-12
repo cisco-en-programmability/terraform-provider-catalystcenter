@@ -3,6 +3,8 @@ package catalystcenter
 import (
 	"context"
 
+	"log"
+
 	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -46,17 +48,28 @@ func resourceTrustedCertificatesImport() *schema.Resource {
 func resourceTrustedCertificatesImportCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
-	response1, err := client.CiscoTrustedCertificates.ImportTrustedCertificate()
-	if err = d.Set("item", response1.String()); err != nil {
+
+	// has_unknown_response: True
+
+	response1, err := client.CiscoTrustedCertificates.ImportTrustedCertificateV1()
+
+	if err != nil || response1 == nil {
+		d.SetId("")
+		return diags
+	}
+
+	log.Printf("[DEBUG] Retrieved response %s", response1.String())
+
+	//Analizar verificacion.
+
+	if err := d.Set("item", response1.String()); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ImportTrustedCertificate response",
+			"Failure when setting ImportTrustedCertificateV1 response",
 			err))
 		return diags
 	}
 	d.SetId(getUnixTimeString())
 	return diags
-
-	//Analizar verificacion.
 
 }
 func resourceTrustedCertificatesImportRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

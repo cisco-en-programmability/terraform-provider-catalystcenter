@@ -116,8 +116,8 @@ func dataSourceSdaFabricAuthenticationProfileRead(ctx context.Context, d *schema
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDefaultAuthenticationProfileFromSdaFabric")
-		queryParams1 := catalystcentersdkgo.GetDefaultAuthenticationProfileFromSdaFabricQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetDefaultAuthenticationProfileFromSdaFabricV1")
+		queryParams1 := catalystcentersdkgo.GetDefaultAuthenticationProfileFromSdaFabricV1QueryParams{}
 
 		queryParams1.SiteNameHierarchy = vSiteNameHierarchy.(string)
 
@@ -125,24 +125,24 @@ func dataSourceSdaFabricAuthenticationProfileRead(ctx context.Context, d *schema
 			queryParams1.AuthenticateTemplateName = vAuthenticateTemplateName.(string)
 		}
 
-		response1, restyResp1, err := client.Sda.GetDefaultAuthenticationProfileFromSdaFabric(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetDefaultAuthenticationProfileFromSdaFabricV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDefaultAuthenticationProfileFromSdaFabric", err,
-				"Failure at GetDefaultAuthenticationProfileFromSdaFabric, unexpected response", ""))
+				"Failure when executing 2 GetDefaultAuthenticationProfileFromSdaFabricV1", err,
+				"Failure at GetDefaultAuthenticationProfileFromSdaFabricV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetDefaultAuthenticationProfileFromSdaFabricItem(response1)
+		vItem1 := flattenSdaGetDefaultAuthenticationProfileFromSdaFabricV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDefaultAuthenticationProfileFromSdaFabric response",
+				"Failure when setting GetDefaultAuthenticationProfileFromSdaFabricV1 response",
 				err))
 			return diags
 		}
@@ -154,7 +154,7 @@ func dataSourceSdaFabricAuthenticationProfileRead(ctx context.Context, d *schema
 	return diags
 }
 
-func flattenSdaGetDefaultAuthenticationProfileFromSdaFabricItem(item *catalystcentersdkgo.ResponseSdaGetDefaultAuthenticationProfileFromSdaFabric) []map[string]interface{} {
+func flattenSdaGetDefaultAuthenticationProfileFromSdaFabricV1Item(item *catalystcentersdkgo.ResponseSdaGetDefaultAuthenticationProfileFromSdaFabricV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -168,17 +168,6 @@ func flattenSdaGetDefaultAuthenticationProfileFromSdaFabricItem(item *catalystce
 	respItem["status"] = item.Status
 	respItem["description"] = item.Description
 	respItem["execution_id"] = item.ExecutionID
-	return []map[string]interface{}{
-		respItem,
-	}
-}
-
-func flattenSdaGetDefaultAuthenticationProfileFromSdaFabricPayload(item *catalystcentersdkgo.ResponseSdaGetDefaultAuthenticationProfileFromSdaFabric) []map[string]interface{} {
-	if item == nil {
-		return nil
-	}
-	respItem := make(map[string]interface{})
-	respItem["payload"] = flattenSdaGetDefaultAuthenticationProfileFromSdaFabricItem(item)
 	return []map[string]interface{}{
 		respItem,
 	}

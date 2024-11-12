@@ -1,1 +1,0 @@
-terraform import catalystcenter_global_credential.example "id:=string"

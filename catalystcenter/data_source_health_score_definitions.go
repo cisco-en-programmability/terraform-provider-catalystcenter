@@ -166,10 +166,10 @@ func dataSourceHealthScoreDefinitionsRead(ctx context.Context, d *schema.Resourc
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAllHealthScoreDefinitionsForGivenFilters")
+		log.Printf("[DEBUG] Selected method: GetAllHealthScoreDefinitionsForGivenFiltersV1")
 
-		headerParams1 := catalystcentersdkgo.GetAllHealthScoreDefinitionsForGivenFiltersHeaderParams{}
-		queryParams1 := catalystcentersdkgo.GetAllHealthScoreDefinitionsForGivenFiltersQueryParams{}
+		headerParams1 := catalystcentersdkgo.GetAllHealthScoreDefinitionsForGivenFiltersV1HeaderParams{}
+		queryParams1 := catalystcentersdkgo.GetAllHealthScoreDefinitionsForGivenFiltersV1QueryParams{}
 
 		if okDeviceType {
 			queryParams1.DeviceType = vDeviceType.(string)
@@ -193,15 +193,15 @@ func dataSourceHealthScoreDefinitionsRead(ctx context.Context, d *schema.Resourc
 			headerParams1.XCaLLERID = vXCaLLERID.(string)
 		}
 
-		response1, restyResp1, err := client.Devices.GetAllHealthScoreDefinitionsForGivenFilters(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Devices.GetAllHealthScoreDefinitionsForGivenFiltersV1(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAllHealthScoreDefinitionsForGivenFilters", err,
-				"Failure at GetAllHealthScoreDefinitionsForGivenFilters, unexpected response", ""))
+				"Failure when executing 2 GetAllHealthScoreDefinitionsForGivenFiltersV1", err,
+				"Failure at GetAllHealthScoreDefinitionsForGivenFiltersV1, unexpected response", ""))
 			return diags
 		}
 
@@ -209,33 +209,33 @@ func dataSourceHealthScoreDefinitionsRead(ctx context.Context, d *schema.Resourc
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetHealthScoreDefinitionForTheGivenID")
+		log.Printf("[DEBUG] Selected method: GetHealthScoreDefinitionForTheGivenIDV1")
 		vvID := vID.(string)
 
-		headerParams2 := catalystcentersdkgo.GetHealthScoreDefinitionForTheGivenIDHeaderParams{}
+		headerParams2 := catalystcentersdkgo.GetHealthScoreDefinitionForTheGivenIDV1HeaderParams{}
 
 		if okXCaLLERID {
 			headerParams2.XCaLLERID = vXCaLLERID.(string)
 		}
 
-		response2, restyResp2, err := client.Devices.GetHealthScoreDefinitionForTheGivenID(vvID, &headerParams2)
+		response2, restyResp2, err := client.Devices.GetHealthScoreDefinitionForTheGivenIDV1(vvID, &headerParams2)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetHealthScoreDefinitionForTheGivenID", err,
-				"Failure at GetHealthScoreDefinitionForTheGivenID, unexpected response", ""))
+				"Failure when executing 2 GetHealthScoreDefinitionForTheGivenIDV1", err,
+				"Failure at GetHealthScoreDefinitionForTheGivenIDV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItems2 := flattenDevicesGetHealthScoreDefinitionForTheGivenIDItems(response2.Response)
+		vItems2 := flattenDevicesGetHealthScoreDefinitionForTheGivenIDV1Items(response2.Response)
 		if err := d.Set("items", vItems2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetHealthScoreDefinitionForTheGivenID response",
+				"Failure when setting GetHealthScoreDefinitionForTheGivenIDV1 response",
 				err))
 			return diags
 		}
@@ -247,7 +247,7 @@ func dataSourceHealthScoreDefinitionsRead(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func flattenDevicesGetHealthScoreDefinitionForTheGivenIDItems(items *[]catalystcentersdkgo.ResponseDevicesGetHealthScoreDefinitionForTheGivenIDResponse) []map[string]interface{} {
+func flattenDevicesGetHealthScoreDefinitionForTheGivenIDV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetHealthScoreDefinitionForTheGivenIDV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -1,6 +1,7 @@
 
 resource "catalystcenter_sites_device_credentials" "example" {
   provider = catalystcenter
+
   parameters {
 
     cli_credentials_id {

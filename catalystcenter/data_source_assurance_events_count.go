@@ -24,36 +24,36 @@ specs/blob/main/Assurance/CE_Cat_Center_Org-AssuranceEvents-1.0.0-resolved.yaml
 		ReadContext: dataSourceAssuranceEventsCountRead,
 		Schema: map[string]*schema.Schema{
 			"ap_mac": &schema.Schema{
-				Description: `apMac query parameter. MAC address of the access point. This parameter is applicable for 'Unified AP' and 'Wireless Client' events.
-This field supports wildcard ('*') character-based search. Ex: '*50:0F*' or '50:0F*' or '*50:0F'
+				Description: `apMac query parameter. MAC address of the access point. This parameter is applicable for *Unified AP* and *Wireless Client* events.
+This field supports wildcard (***) character-based search. Ex: **50:0F** or *50:0F** or **50:0F*
 Examples:
-'apMac=50:0F:80:0F:F7:E0' (single apMac requested)
-'apMac=50:0F:80:0F:F7:E0&apMac=18:80:90:AB:7E:A0' (multiple apMac requested)
+*apMac=50:0F:80:0F:F7:E0* (single apMac requested)
+*apMac=50:0F:80:0F:F7:E0&apMac=18:80:90:AB:7E:A0* (multiple apMac requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"client_mac": &schema.Schema{
-				Description: `clientMac query parameter. MAC address of the client. This parameter is applicable for 'Wired Client' and 'Wireless Client' events.
-This field supports wildcard ('*') character-based search. Ex: '*66:2B*' or '66:2B*' or '*66:2B'
+				Description: `clientMac query parameter. MAC address of the client. This parameter is applicable for *Wired Client* and *Wireless Client* events.
+This field supports wildcard (***) character-based search. Ex: **66:2B** or *66:2B** or **66:2B*
 Examples:
-'clientMac=66:2B:B8:D2:01:56' (single clientMac requested)
-'clientMac=66:2B:B8:D2:01:56&clientMac=DC:A6:32:F5:5A:89' (multiple clientMac requested)
+*clientMac=66:2B:B8:D2:01:56* (single clientMac requested)
+*clientMac=66:2B:B8:D2:01:56&clientMac=DC:A6:32:F5:5A:89* (multiple clientMac requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"device_family": &schema.Schema{
-				Description: `deviceFamily query parameter. Device family. Please note that multiple families across network device type and client type is not allowed. For example, choosing 'Routers' along with 'Wireless Client' or 'Unified AP' is not supported. Examples:
-'deviceFamily=Switches and Hubs' (single deviceFamily requested)
-'deviceFamily=Switches and Hubs&deviceFamily=Routers' (multiple deviceFamily requested)
+				Description: `deviceFamily query parameter. Device family. Please note that multiple families across network device type and client type is not allowed. For example, choosing *Routers* along with *Wireless Client* or *Unified AP* is not supported. Examples:
+*deviceFamily=Switches and Hubs* (single deviceFamily requested)
+*deviceFamily=Switches and Hubs&deviceFamily=Routers* (multiple deviceFamily requested)
 `,
 				Type:     schema.TypeString,
 				Required: true,
 			},
 			"end_time": &schema.Schema{
 				Description: `endTime query parameter. End time to which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
-If 'endTime' is not provided, API will default to current time.
+If *endTime* is not provided, API will default to current time.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -61,61 +61,61 @@ If 'endTime' is not provided, API will default to current time.
 			"message_type": &schema.Schema{
 				Description: `messageType query parameter. Message type for the event.
 Examples:
-'messageType=Syslog' (single messageType requested)
-'messageType=Trap&messageType=Syslog' (multiple messageType requested)
+*messageType=Syslog* (single messageType requested)
+*messageType=Trap&messageType=Syslog* (multiple messageType requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"network_device_id": &schema.Schema{
-				Description: `networkDeviceId query parameter. The list of Network Device Uuids. (Ex. '6bef213c-19ca-4170-8375-b694e251101c')
+				Description: `networkDeviceId query parameter. The list of Network Device Uuids. (Ex. *6bef213c-19ca-4170-8375-b694e251101c*)
 Examples:
-'networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c' (single networkDeviceId requested)
-'networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c&networkDeviceId=32219612-819e-4b5e-a96b-cf22aca13dd9&networkDeviceId=2541e9a7-b80d-4955-8aa2-79b233318ba0' (multiple networkDeviceId requested)
+*networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c* (single networkDeviceId requested)
+*networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c&networkDeviceId=32219612-819e-4b5e-a96b-cf22aca13dd9&networkDeviceId=2541e9a7-b80d-4955-8aa2-79b233318ba0* (multiple networkDeviceId requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"network_device_name": &schema.Schema{
-				Description: `networkDeviceName query parameter. Network device name. This parameter is applicable for network device related families. This field supports wildcard ('*') character-based search. Ex: '*Branch*' or 'Branch*' or '*Branch' Examples:
-'networkDeviceName=Branch-3-Gateway' (single networkDeviceName requested)
-'networkDeviceName=Branch-3-Gateway&networkDeviceName=Branch-3-Switch' (multiple networkDeviceName requested)
+				Description: `networkDeviceName query parameter. Network device name. This parameter is applicable for network device related families. This field supports wildcard (***) character-based search. Ex: **Branch** or *Branch** or **Branch* Examples:
+*networkDeviceName=Branch-3-Gateway* (single networkDeviceName requested)
+*networkDeviceName=Branch-3-Gateway&networkDeviceName=Branch-3-Switch* (multiple networkDeviceName requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"severity": &schema.Schema{
-				Description: `severity query parameter. Severity of the event between 0 and 6. This is applicable only for events related to network devices (other than AP) and 'Wired Client' events.
+				Description: `severity query parameter. Severity of the event between 0 and 6. This is applicable only for events related to network devices (other than AP) and *Wired Client* events.
 | Value | Severity    | | ----| ----------| | 0     | Emergency   | | 1     | Alert       | | 2     | Critical    | | 3     | Error       | | 4     | Warning     | | 5     | Notice      | | 6     | Info        |
 Examples:
-'severity=0' (single severity requested)
-'severity=0&severity=1' (multiple severity requested)
+*severity=0* (single severity requested)
+*severity=0&severity=1* (multiple severity requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_hierarchy_id": &schema.Schema{
-				Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. 'globalUuid/areaUuid/buildingUuid/floorUuid')
-This field supports wildcard asterisk ('*') character search support. E.g. '*uuid*, *uuid, uuid*'
+				Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. *globalUuid/areaUuid/buildingUuid/floorUuid*)
+This field supports wildcard asterisk (***) character search support. E.g. **uuid*, *uuid, uuid**
 Examples:
-'?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid '(single siteHierarchyId requested)
-'?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2' (multiple siteHierarchyId requested)
+*?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid *(single siteHierarchyId requested)
+*?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2* (multiple siteHierarchyId requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_id": &schema.Schema{
-				Description: `siteId query parameter. The UUID of the site. (Ex. 'flooruuid')
+				Description: `siteId query parameter. The UUID of the site. (Ex. *flooruuid*)
 Examples:
-'?siteId=id1' (single siteId requested)
-'?siteId=id1&siteId=id2&siteId=id3' (multiple siteId requested)
+*?siteId=id1* (single siteId requested)
+*?siteId=id1&siteId=id2&siteId=id3* (multiple siteId requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"start_time": &schema.Schema{
 				Description: `startTime query parameter. Start time from which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
-If 'startTime' is not provided, API will default to current time minus 24 hours.
+If *startTime* is not provided, API will default to current time minus 24 hours.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -164,10 +164,10 @@ func dataSourceAssuranceEventsCountRead(ctx context.Context, d *schema.ResourceD
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: CountTheNumberOfEvents")
+		log.Printf("[DEBUG] Selected method: CountTheNumberOfEventsV1")
 
-		headerParams1 := catalystcentersdkgo.CountTheNumberOfEventsHeaderParams{}
-		queryParams1 := catalystcentersdkgo.CountTheNumberOfEventsQueryParams{}
+		headerParams1 := catalystcentersdkgo.CountTheNumberOfEventsV1HeaderParams{}
+		queryParams1 := catalystcentersdkgo.CountTheNumberOfEventsV1QueryParams{}
 
 		queryParams1.DeviceFamily = vDeviceFamily.(string)
 
@@ -203,24 +203,24 @@ func dataSourceAssuranceEventsCountRead(ctx context.Context, d *schema.ResourceD
 		}
 		headerParams1.XCaLLERID = vXCaLLERID.(string)
 
-		response1, restyResp1, err := client.Devices.CountTheNumberOfEvents(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Devices.CountTheNumberOfEventsV1(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 CountTheNumberOfEvents", err,
-				"Failure at CountTheNumberOfEvents, unexpected response", ""))
+				"Failure when executing 2 CountTheNumberOfEventsV1", err,
+				"Failure at CountTheNumberOfEventsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesCountTheNumberOfEventsItem(response1.Response)
+		vItem1 := flattenDevicesCountTheNumberOfEventsV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting CountTheNumberOfEvents response",
+				"Failure when setting CountTheNumberOfEventsV1 response",
 				err))
 			return diags
 		}
@@ -232,7 +232,7 @@ func dataSourceAssuranceEventsCountRead(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func flattenDevicesCountTheNumberOfEventsItem(item *catalystcentersdkgo.ResponseDevicesCountTheNumberOfEventsResponse) []map[string]interface{} {
+func flattenDevicesCountTheNumberOfEventsV1Item(item *catalystcentersdkgo.ResponseDevicesCountTheNumberOfEventsV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

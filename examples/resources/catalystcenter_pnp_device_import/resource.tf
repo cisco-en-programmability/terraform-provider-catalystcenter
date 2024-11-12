@@ -1,6 +1,6 @@
 
 resource "catalystcenter_pnp_device_import" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     id = "string"

@@ -15,7 +15,7 @@ func dataSourceSiteWiseProductNamesCount() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Software Image Management (SWIM).
 
-- Returns the count of network device product names for given filters. The default value of 'siteId' is global.
+- Returns the count of network device product names for given filters. The default value of *siteId* is global.
 `,
 
 		ReadContext: dataSourceSiteWiseProductNamesCountRead,
@@ -61,8 +61,8 @@ func dataSourceSiteWiseProductNamesCountRead(ctx context.Context, d *schema.Reso
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: ReturnsTheCountOfNetworkDeviceProductNamesForASite")
-		queryParams1 := catalystcentersdkgo.ReturnsTheCountOfNetworkDeviceProductNamesForASiteQueryParams{}
+		log.Printf("[DEBUG] Selected method: ReturnsTheCountOfNetworkDeviceProductNamesForASiteV1")
+		queryParams1 := catalystcentersdkgo.ReturnsTheCountOfNetworkDeviceProductNamesForASiteV1QueryParams{}
 
 		if okSiteID {
 			queryParams1.SiteID = vSiteID.(string)
@@ -71,24 +71,24 @@ func dataSourceSiteWiseProductNamesCountRead(ctx context.Context, d *schema.Reso
 			queryParams1.ProductName = vProductName.(string)
 		}
 
-		response1, restyResp1, err := client.SoftwareImageManagementSwim.ReturnsTheCountOfNetworkDeviceProductNamesForASite(&queryParams1)
+		response1, restyResp1, err := client.SoftwareImageManagementSwim.ReturnsTheCountOfNetworkDeviceProductNamesForASiteV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 ReturnsTheCountOfNetworkDeviceProductNamesForASite", err,
-				"Failure at ReturnsTheCountOfNetworkDeviceProductNamesForASite, unexpected response", ""))
+				"Failure when executing 2 ReturnsTheCountOfNetworkDeviceProductNamesForASiteV1", err,
+				"Failure at ReturnsTheCountOfNetworkDeviceProductNamesForASiteV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSoftwareImageManagementSwimReturnsTheCountOfNetworkDeviceProductNamesForASiteItem(response1.Response)
+		vItem1 := flattenSoftwareImageManagementSwimReturnsTheCountOfNetworkDeviceProductNamesForASiteV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting ReturnsTheCountOfNetworkDeviceProductNamesForASite response",
+				"Failure when setting ReturnsTheCountOfNetworkDeviceProductNamesForASiteV1 response",
 				err))
 			return diags
 		}
@@ -100,7 +100,7 @@ func dataSourceSiteWiseProductNamesCountRead(ctx context.Context, d *schema.Reso
 	return diags
 }
 
-func flattenSoftwareImageManagementSwimReturnsTheCountOfNetworkDeviceProductNamesForASiteItem(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimReturnsTheCountOfNetworkDeviceProductNamesForASiteResponse) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimReturnsTheCountOfNetworkDeviceProductNamesForASiteV1Item(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimReturnsTheCountOfNetworkDeviceProductNamesForASiteV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

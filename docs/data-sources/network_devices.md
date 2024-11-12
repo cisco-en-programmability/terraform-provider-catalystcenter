@@ -86,38 +86,38 @@ Examples:
 healthScore=good, healthScore=good&healthScore=fair (multiple entity healthscore values with & separator). This field is not case sensitive.
 - `id` (String) id path parameter. The device Uuid
 - `limit` (Number) limit query parameter. Maximum number of records to return
-- `mac_address` (String) macAddress query parameter. The macAddress of the network device or client This field supports wildcard ('*') character-based search.  Ex: '*AB:AB:AB*' or 'AB:AB:AB*' or '*AB:AB:AB' Examples:
-'macAddress=AB:AB:AB:CD:CD:CD' (single macAddress requested)
-'macAddress=AB:AB:AB:CD:CD:DC&macAddress=AB:AB:AB:CD:CD:FE' (multiple macAddress requested)
+- `mac_address` (String) macAddress query parameter. The macAddress of the network device or client This field supports wildcard (***) character-based search.  Ex: **AB:AB:AB** or *AB:AB:AB** or **AB:AB:AB* Examples:
+*macAddress=AB:AB:AB:CD:CD:CD* (single macAddress requested)
+*macAddress=AB:AB:AB:CD:CD:DC&macAddress=AB:AB:AB:CD:CD:FE* (multiple macAddress requested)
 - `maintenance_mode` (Boolean) maintenanceMode query parameter. The device maintenanceMode status true or false
 - `management_ip_address` (String) managementIpAddress query parameter. The list of entity management IP Address. It can be either Ipv4 or Ipv6 address or combination of both(Ex. "121.1.1.10")
-This field supports wildcard ('*') character-based search.  Ex: '*1.1*' or '1.1*' or '*1.1'
+This field supports wildcard (***) character-based search.  Ex: **1.1** or *1.1** or **1.1*
 Examples: managementIpAddresses=121.1.1.10 managementIpAddresses=121.1.1.10&managementIpAddresses=172.20.1.10&managementIpAddresses=200:10&=managementIpAddresses172.20.3.4 (multiple entity IP Address with & separator)
 - `offset` (Number) offset query parameter. Specifies the starting point within all records returned by the API. It's one based offset. The starting value is 1.
 - `order` (String) order query parameter. The sort order of the field ascending or descending.
 - `role` (String) role query parameter. The list of network device role. Examples:role=CORE, role=CORE&role=ACCESS&role=ROUTER (multiple Network device roles with & separator). This field is not case sensitive.
-- `serial_number` (String) serialNumber query parameter. The list of network device serial numbers. This field supports wildcard ('*') character-based search.  Ex: '*MS1SV*' or 'MS1SV*' or '*MS1SV' Examples: serialNumber=9FUFMS1SVAX serialNumber=9FUFMS1SVAX&FCW2333Q0BY&FJC240617JX(multiple Network device serial number with & separator)
-- `site_hierarchy` (String) siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. 'Global/AreaName/BuildingName/FloorName')
+- `serial_number` (String) serialNumber query parameter. The list of network device serial numbers. This field supports wildcard (***) character-based search.  Ex: **MS1SV** or *MS1SV** or **MS1SV* Examples: serialNumber=9FUFMS1SVAX serialNumber=9FUFMS1SVAX&FCW2333Q0BY&FJC240617JX(multiple Network device serial number with & separator)
+- `site_hierarchy` (String) siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. *Global/AreaName/BuildingName/FloorName*)
 This field supports wildcard asterisk (*) character search support. E.g. */San*, */San, /San*
 Examples:
-'?siteHierarchy=Global/AreaName/BuildingName/FloorName' (single siteHierarchy requested)
-'?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2' (multiple siteHierarchies requested)
-- `site_hierarchy_id` (String) siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. 'globalUuid/areaUuid/buildingUuid/floorUuid')
-This field supports wildcard asterisk (*) character search support. E.g. '*uuid*, *uuid, uuid*
+*?siteHierarchy=Global/AreaName/BuildingName/FloorName* (single siteHierarchy requested)
+*?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2* (multiple siteHierarchies requested)
+- `site_hierarchy_id` (String) siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. *globalUuid/areaUuid/buildingUuid/floorUuid*)
+This field supports wildcard asterisk (*) character search support. E.g. **uuid*, *uuid, uuid*
 Examples:
-'?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid '(single siteHierarchyId requested)
-'?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2' (multiple siteHierarchyIds requested)
-- `site_id` (String) siteId query parameter. The UUID of the site. (Ex. 'flooruuid')
+*?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid *(single siteHierarchyId requested)
+*?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2* (multiple siteHierarchyIds requested)
+- `site_id` (String) siteId query parameter. The UUID of the site. (Ex. *flooruuid*)
 This field supports wildcard asterisk (*) character search support. E.g.*flooruuid*, *flooruuid, flooruuid*
 Examples:
-'?siteId=id1' (single id requested)
-'?siteId=id1&siteId=id2&siteId=id3' (multiple ids requested)
-- `software_version` (String) softwareVersion query parameter. The list of network device software version This field supports wildcard ('*') character-based search. Ex: '*17.8*' or '*17.8' or '17.8*' Examples: softwareVersion=2.3.4.0 (single network device software version ) softwareVersion=17.9.3.23&softwareVersion=17.7.1.2&softwareVersion=*.17.7 (multiple Network device software versions with & separator)
+*?siteId=id1* (single id requested)
+*?siteId=id1&siteId=id2&siteId=id3* (multiple ids requested)
+- `software_version` (String) softwareVersion query parameter. The list of network device software version This field supports wildcard (***) character-based search. Ex: **17.8** or **17.8* or *17.8** Examples: softwareVersion=2.3.4.0 (single network device software version ) softwareVersion=17.9.3.23&softwareVersion=17.7.1.2&softwareVersion=*.17.7 (multiple Network device software versions with & separator)
 - `sort_by` (String) sortBy query parameter. A field within the response to sort by.
 - `start_time` (Number) startTime query parameter. Start time from which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
-If 'startTime' is not provided, API will default to current time.
-- `type` (String) type query parameter. The list of network device type This field supports wildcard ('*') character-based search. Ex: '*9407R*' or '*9407R' or '9407R*' Examples: type=SwitchesCisco Catalyst 9407R Switch (single network device types ) type=Cisco Catalyst 38xx stack-able ethernet switch&type=Cisco 3945 Integrated Services Router G2 (multiple Network device types with & separator)
-- `view` (String) view query parameter. The List of Network Device model views. Please refer to '''NetworkDeviceView''' for the supported list
+If *startTime* is not provided, API will default to current time.
+- `type` (String) type query parameter. The list of network device type This field supports wildcard (***) character-based search. Ex: **9407R** or **9407R* or *9407R** Examples: type=SwitchesCisco Catalyst 9407R Switch (single network device types ) type=Cisco Catalyst 38xx stack-able ethernet switch&type=Cisco 3945 Integrated Services Router G2 (multiple Network device types with & separator)
+- `view` (String) view query parameter. The List of Network Device model views. Please refer to ***NetworkDeviceView*** for the supported list
 
 ### Read-Only
 

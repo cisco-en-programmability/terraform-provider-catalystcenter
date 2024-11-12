@@ -1,6 +1,6 @@
 
 resource "catalystcenter_sites_bulk" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     address               = "string"

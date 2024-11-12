@@ -171,8 +171,8 @@ func dataSourceEventSyslogConfigRead(ctx context.Context, d *schema.ResourceData
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSyslogDestination")
-		queryParams1 := catalystcentersdkgo.GetSyslogDestinationQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetSyslogDestinationV1")
+		queryParams1 := catalystcentersdkgo.GetSyslogDestinationV1QueryParams{}
 
 		if okConfigID {
 			queryParams1.ConfigID = vConfigID.(string)
@@ -196,24 +196,24 @@ func dataSourceEventSyslogConfigRead(ctx context.Context, d *schema.ResourceData
 			queryParams1.Order = vOrder.(string)
 		}
 
-		response1, restyResp1, err := client.EventManagement.GetSyslogDestination(&queryParams1)
+		response1, restyResp1, err := client.EventManagement.GetSyslogDestinationV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSyslogDestination", err,
-				"Failure at GetSyslogDestination, unexpected response", ""))
+				"Failure when executing 2 GetSyslogDestinationV1", err,
+				"Failure at GetSyslogDestinationV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenEventManagementGetSyslogDestinationItem(response1)
+		vItem1 := flattenEventManagementGetSyslogDestinationV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSyslogDestination response",
+				"Failure when setting GetSyslogDestinationV1 response",
 				err))
 			return diags
 		}
@@ -225,20 +225,20 @@ func dataSourceEventSyslogConfigRead(ctx context.Context, d *schema.ResourceData
 	return diags
 }
 
-func flattenEventManagementGetSyslogDestinationItem(item *catalystcentersdkgo.ResponseEventManagementGetSyslogDestination) []map[string]interface{} {
+func flattenEventManagementGetSyslogDestinationV1Item(item *catalystcentersdkgo.ResponseEventManagementGetSyslogDestinationV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["error_message"] = flattenEventManagementGetSyslogDestinationItemErrorMessage(item.ErrorMessage)
+	respItem["error_message"] = flattenEventManagementGetSyslogDestinationV1ItemErrorMessage(item.ErrorMessage)
 	respItem["api_status"] = item.APIStatus
-	respItem["status_message"] = flattenEventManagementGetSyslogDestinationItemStatusMessage(item.StatusMessage)
+	respItem["status_message"] = flattenEventManagementGetSyslogDestinationV1ItemStatusMessage(item.StatusMessage)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenEventManagementGetSyslogDestinationItemErrorMessage(item *catalystcentersdkgo.ResponseEventManagementGetSyslogDestinationErrorMessage) []map[string]interface{} {
+func flattenEventManagementGetSyslogDestinationV1ItemErrorMessage(item *catalystcentersdkgo.ResponseEventManagementGetSyslogDestinationV1ErrorMessage) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -251,7 +251,7 @@ func flattenEventManagementGetSyslogDestinationItemErrorMessage(item *catalystce
 
 }
 
-func flattenEventManagementGetSyslogDestinationItemStatusMessage(items *[]catalystcentersdkgo.ResponseEventManagementGetSyslogDestinationStatusMessage) []map[string]interface{} {
+func flattenEventManagementGetSyslogDestinationV1ItemStatusMessage(items *[]catalystcentersdkgo.ResponseEventManagementGetSyslogDestinationV1StatusMessage) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

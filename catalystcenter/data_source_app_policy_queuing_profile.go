@@ -516,31 +516,31 @@ func dataSourceAppPolicyQueuingProfileRead(ctx context.Context, d *schema.Resour
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetApplicationPolicyQueuingProfile")
-		queryParams1 := catalystcentersdkgo.GetApplicationPolicyQueuingProfileQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetApplicationPolicyQueuingProfileV1")
+		queryParams1 := catalystcentersdkgo.GetApplicationPolicyQueuingProfileV1QueryParams{}
 
 		if okName {
 			queryParams1.Name = vName.(string)
 		}
 
-		response1, restyResp1, err := client.ApplicationPolicy.GetApplicationPolicyQueuingProfile(&queryParams1)
+		response1, restyResp1, err := client.ApplicationPolicy.GetApplicationPolicyQueuingProfileV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetApplicationPolicyQueuingProfile", err,
-				"Failure at GetApplicationPolicyQueuingProfile, unexpected response", ""))
+				"Failure when executing 2 GetApplicationPolicyQueuingProfileV1", err,
+				"Failure at GetApplicationPolicyQueuingProfileV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenApplicationPolicyGetApplicationPolicyQueuingProfileItems(response1.Response)
+		vItems1 := flattenApplicationPolicyGetApplicationPolicyQueuingProfileV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetApplicationPolicyQueuingProfile response",
+				"Failure when setting GetApplicationPolicyQueuingProfileV1 response",
 				err))
 			return diags
 		}
@@ -552,7 +552,7 @@ func dataSourceAppPolicyQueuingProfileRead(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func flattenApplicationPolicyGetApplicationPolicyQueuingProfileItems(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileResponse) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationPolicyQueuingProfileV1Items(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -576,23 +576,23 @@ func flattenApplicationPolicyGetApplicationPolicyQueuingProfileItems(items *[]ca
 		respItem["provisioning_state"] = item.ProvisioningState
 		respItem["qualifier"] = item.Qualifier
 		respItem["resource_version"] = item.ResourceVersion
-		respItem["target_id_list"] = flattenApplicationPolicyGetApplicationPolicyQueuingProfileItemsTargetIDList(item.TargetIDList)
+		respItem["target_id_list"] = flattenApplicationPolicyGetApplicationPolicyQueuingProfileV1ItemsTargetIDList(item.TargetIDList)
 		respItem["type"] = item.Type
-		respItem["cfs_change_info"] = flattenApplicationPolicyGetApplicationPolicyQueuingProfileItemsCfsChangeInfo(item.CfsChangeInfo)
-		respItem["custom_provisions"] = flattenApplicationPolicyGetApplicationPolicyQueuingProfileItemsCustomProvisions(item.CustomProvisions)
+		respItem["cfs_change_info"] = flattenApplicationPolicyGetApplicationPolicyQueuingProfileV1ItemsCfsChangeInfo(item.CfsChangeInfo)
+		respItem["custom_provisions"] = flattenApplicationPolicyGetApplicationPolicyQueuingProfileV1ItemsCustomProvisions(item.CustomProvisions)
 		respItem["gen_id"] = item.GenID
 		respItem["internal"] = boolPtrToString(item.Internal)
 		respItem["is_deleted"] = boolPtrToString(item.IsDeleted)
 		respItem["ise_reserved"] = boolPtrToString(item.IseReserved)
 		respItem["pushed"] = boolPtrToString(item.Pushed)
-		respItem["clause"] = flattenApplicationPolicyGetApplicationPolicyQueuingProfileItemsClause(item.Clause)
-		respItem["contract_classifier"] = flattenApplicationPolicyGetApplicationPolicyQueuingProfileItemsContractClassifier(item.ContractClassifier)
+		respItem["clause"] = flattenApplicationPolicyGetApplicationPolicyQueuingProfileV1ItemsClause(item.Clause)
+		respItem["contract_classifier"] = flattenApplicationPolicyGetApplicationPolicyQueuingProfileV1ItemsContractClassifier(item.ContractClassifier)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplicationPolicyQueuingProfileItemsTargetIDList(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileResponseTargetIDList) []interface{} {
+func flattenApplicationPolicyGetApplicationPolicyQueuingProfileV1ItemsTargetIDList(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileV1ResponseTargetIDList) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -604,7 +604,7 @@ func flattenApplicationPolicyGetApplicationPolicyQueuingProfileItemsTargetIDList
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplicationPolicyQueuingProfileItemsCfsChangeInfo(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileResponseCfsChangeInfo) []interface{} {
+func flattenApplicationPolicyGetApplicationPolicyQueuingProfileV1ItemsCfsChangeInfo(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileV1ResponseCfsChangeInfo) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -616,7 +616,7 @@ func flattenApplicationPolicyGetApplicationPolicyQueuingProfileItemsCfsChangeInf
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplicationPolicyQueuingProfileItemsCustomProvisions(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileResponseCustomProvisions) []interface{} {
+func flattenApplicationPolicyGetApplicationPolicyQueuingProfileV1ItemsCustomProvisions(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileV1ResponseCustomProvisions) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -628,7 +628,7 @@ func flattenApplicationPolicyGetApplicationPolicyQueuingProfileItemsCustomProvis
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplicationPolicyQueuingProfileItemsClause(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileResponseClause) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationPolicyQueuingProfileV1ItemsClause(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileV1ResponseClause) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -644,14 +644,14 @@ func flattenApplicationPolicyGetApplicationPolicyQueuingProfileItemsClause(items
 		respItem["priority"] = item.Priority
 		respItem["type"] = item.Type
 		respItem["is_common_between_all_interface_speeds"] = boolPtrToString(item.IsCommonBetweenAllInterfaceSpeeds)
-		respItem["interface_speed_bandwidth_clauses"] = flattenApplicationPolicyGetApplicationPolicyQueuingProfileItemsClauseInterfaceSpeedBandwidthClauses(item.InterfaceSpeedBandwidthClauses)
-		respItem["tc_dscp_settings"] = flattenApplicationPolicyGetApplicationPolicyQueuingProfileItemsClauseTcDscpSettings(item.TcDscpSettings)
+		respItem["interface_speed_bandwidth_clauses"] = flattenApplicationPolicyGetApplicationPolicyQueuingProfileV1ItemsClauseInterfaceSpeedBandwidthClauses(item.InterfaceSpeedBandwidthClauses)
+		respItem["tc_dscp_settings"] = flattenApplicationPolicyGetApplicationPolicyQueuingProfileV1ItemsClauseTcDscpSettings(item.TcDscpSettings)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplicationPolicyQueuingProfileItemsClauseInterfaceSpeedBandwidthClauses(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileResponseClauseInterfaceSpeedBandwidthClauses) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationPolicyQueuingProfileV1ItemsClauseInterfaceSpeedBandwidthClauses(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileV1ResponseClauseInterfaceSpeedBandwidthClauses) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -665,13 +665,13 @@ func flattenApplicationPolicyGetApplicationPolicyQueuingProfileItemsClauseInterf
 		respItem["instance_updated_on"] = item.InstanceUpdatedOn
 		respItem["instance_version"] = item.InstanceVersion
 		respItem["interface_speed"] = item.InterfaceSpeed
-		respItem["tc_bandwidth_settings"] = flattenApplicationPolicyGetApplicationPolicyQueuingProfileItemsClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings(item.TcBandwidthSettings)
+		respItem["tc_bandwidth_settings"] = flattenApplicationPolicyGetApplicationPolicyQueuingProfileV1ItemsClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings(item.TcBandwidthSettings)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplicationPolicyQueuingProfileItemsClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileResponseClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationPolicyQueuingProfileV1ItemsClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileV1ResponseClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -691,7 +691,7 @@ func flattenApplicationPolicyGetApplicationPolicyQueuingProfileItemsClauseInterf
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplicationPolicyQueuingProfileItemsClauseTcDscpSettings(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileResponseClauseTcDscpSettings) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationPolicyQueuingProfileV1ItemsClauseTcDscpSettings(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileV1ResponseClauseTcDscpSettings) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -711,7 +711,7 @@ func flattenApplicationPolicyGetApplicationPolicyQueuingProfileItemsClauseTcDscp
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplicationPolicyQueuingProfileItemsContractClassifier(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileResponseContractClassifier) []interface{} {
+func flattenApplicationPolicyGetApplicationPolicyQueuingProfileV1ItemsContractClassifier(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileV1ResponseContractClassifier) []interface{} {
 	if items == nil {
 		return nil
 	}

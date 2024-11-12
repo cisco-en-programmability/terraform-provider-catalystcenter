@@ -329,8 +329,8 @@ func dataSourceAuthenticationPolicyServersRead(ctx context.Context, d *schema.Re
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAuthenticationAndPolicyServers")
-		queryParams1 := catalystcentersdkgo.GetAuthenticationAndPolicyServersQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetAuthenticationAndPolicyServersV1")
+		queryParams1 := catalystcentersdkgo.GetAuthenticationAndPolicyServersV1QueryParams{}
 
 		if okIsIseEnabled {
 			queryParams1.IsIseEnabled = vIsIseEnabled.(bool)
@@ -342,24 +342,24 @@ func dataSourceAuthenticationPolicyServersRead(ctx context.Context, d *schema.Re
 			queryParams1.Role = vRole.(string)
 		}
 
-		response1, restyResp1, err := client.SystemSettings.GetAuthenticationAndPolicyServers(&queryParams1)
+		response1, restyResp1, err := client.SystemSettings.GetAuthenticationAndPolicyServersV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAuthenticationAndPolicyServers", err,
-				"Failure at GetAuthenticationAndPolicyServers, unexpected response", ""))
+				"Failure when executing 2 GetAuthenticationAndPolicyServersV1", err,
+				"Failure at GetAuthenticationAndPolicyServersV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSystemSettingsGetAuthenticationAndPolicyServersItems(response1.Response)
+		vItems1 := flattenSystemSettingsGetAuthenticationAndPolicyServersV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAuthenticationAndPolicyServers response",
+				"Failure when setting GetAuthenticationAndPolicyServersV1 response",
 				err))
 			return diags
 		}
@@ -371,7 +371,7 @@ func dataSourceAuthenticationPolicyServersRead(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func flattenSystemSettingsGetAuthenticationAndPolicyServersItems(items *[]catalystcentersdkgo.ResponseSystemSettingsGetAuthenticationAndPolicyServersResponse) []map[string]interface{} {
+func flattenSystemSettingsGetAuthenticationAndPolicyServersV1Items(items *[]catalystcentersdkgo.ResponseSystemSettingsGetAuthenticationAndPolicyServersV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -390,7 +390,7 @@ func flattenSystemSettingsGetAuthenticationAndPolicyServersItems(items *[]cataly
 		respItem["is_ise_enabled"] = boolPtrToString(item.IsIseEnabled)
 		respItem["instance_uuid"] = item.InstanceUUID
 		respItem["state"] = item.State
-		respItem["cisco_ise_dtos"] = flattenSystemSettingsGetAuthenticationAndPolicyServersItemsCiscoIseDtos(item.CiscoIseDtos)
+		respItem["cisco_ise_dtos"] = flattenSystemSettingsGetAuthenticationAndPolicyServersV1ItemsCiscoIseDtos(item.CiscoIseDtos)
 		respItem["encryption_scheme"] = item.EncryptionScheme
 		respItem["message_key"] = item.MessageKey
 		respItem["encryption_key"] = item.EncryptionKey
@@ -404,7 +404,7 @@ func flattenSystemSettingsGetAuthenticationAndPolicyServersItems(items *[]cataly
 	return respItems
 }
 
-func flattenSystemSettingsGetAuthenticationAndPolicyServersItemsCiscoIseDtos(items *[]catalystcentersdkgo.ResponseSystemSettingsGetAuthenticationAndPolicyServersResponseCiscoIseDtos) []map[string]interface{} {
+func flattenSystemSettingsGetAuthenticationAndPolicyServersV1ItemsCiscoIseDtos(items *[]catalystcentersdkgo.ResponseSystemSettingsGetAuthenticationAndPolicyServersV1ResponseCiscoIseDtos) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -423,19 +423,19 @@ func flattenSystemSettingsGetAuthenticationAndPolicyServersItemsCiscoIseDtos(ite
 		respItem["type"] = item.Type
 		respItem["failure_reason"] = item.FailureReason
 		respItem["role"] = item.Role
-		respItem["external_cisco_ise_ip_addr_dtos"] = flattenSystemSettingsGetAuthenticationAndPolicyServersItemsCiscoIseDtosExternalCiscoIseIPAddrDtos(item.ExternalCiscoIseIPAddrDtos)
+		respItem["external_cisco_ise_ip_addr_dtos"] = flattenSystemSettingsGetAuthenticationAndPolicyServersV1ItemsCiscoIseDtosExternalCiscoIseIPAddrDtos(item.ExternalCiscoIseIPAddrDtos)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSystemSettingsGetAuthenticationAndPolicyServersItemsCiscoIseDtosExternalCiscoIseIPAddrDtos(item *catalystcentersdkgo.ResponseSystemSettingsGetAuthenticationAndPolicyServersResponseCiscoIseDtosExternalCiscoIseIPAddrDtos) []map[string]interface{} {
+func flattenSystemSettingsGetAuthenticationAndPolicyServersV1ItemsCiscoIseDtosExternalCiscoIseIPAddrDtos(item *catalystcentersdkgo.ResponseSystemSettingsGetAuthenticationAndPolicyServersV1ResponseCiscoIseDtosExternalCiscoIseIPAddrDtos) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["type"] = item.Type
-	respItem["external_cisco_ise_ip_addresses"] = flattenSystemSettingsGetAuthenticationAndPolicyServersItemsCiscoIseDtosExternalCiscoIseIPAddrDtosExternalCiscoIseIPAddresses(item.ExternalCiscoIseIPAddresses)
+	respItem["external_cisco_ise_ip_addresses"] = flattenSystemSettingsGetAuthenticationAndPolicyServersV1ItemsCiscoIseDtosExternalCiscoIseIPAddrDtosExternalCiscoIseIPAddresses(item.ExternalCiscoIseIPAddresses)
 
 	return []map[string]interface{}{
 		respItem,
@@ -443,7 +443,7 @@ func flattenSystemSettingsGetAuthenticationAndPolicyServersItemsCiscoIseDtosExte
 
 }
 
-func flattenSystemSettingsGetAuthenticationAndPolicyServersItemsCiscoIseDtosExternalCiscoIseIPAddrDtosExternalCiscoIseIPAddresses(items *[]catalystcentersdkgo.ResponseSystemSettingsGetAuthenticationAndPolicyServersResponseCiscoIseDtosExternalCiscoIseIPAddrDtosExternalCiscoIseIPAddresses) []map[string]interface{} {
+func flattenSystemSettingsGetAuthenticationAndPolicyServersV1ItemsCiscoIseDtosExternalCiscoIseIPAddrDtosExternalCiscoIseIPAddresses(items *[]catalystcentersdkgo.ResponseSystemSettingsGetAuthenticationAndPolicyServersV1ResponseCiscoIseDtosExternalCiscoIseIPAddrDtosExternalCiscoIseIPAddresses) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

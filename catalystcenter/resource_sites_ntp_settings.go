@@ -18,8 +18,8 @@ func resourceSitesNtpSettings() *schema.Resource {
 	return &schema.Resource{
 		Description: `It manages read and update operations on Network Settings.
 
-- Set NTP settings for a site; 'null' values indicate that the setting will be inherited from the parent site; empty
-objects ('{}') indicate that the settings is unset.
+- Set NTP settings for a site; *null* values indicate that the setting will be inherited from the parent site; empty
+objects (*{}*) indicate that the settings is unset.
 `,
 
 		CreateContext: resourceSitesNtpSettingsCreate,
@@ -139,7 +139,7 @@ func resourceSitesNtpSettingsRead(ctx context.Context, d *schema.ResourceData, m
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: RetrieveNTPSettingsForASite")
 		vvID := vID
-		queryParams1 := catalystcentersdkgo.RetrieveNTPSettingsForASiteQueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrieveNTPSettingsForASiteV1QueryParams{}
 
 		response1, restyResp1, err := client.NetworkSettings.RetrieveNTPSettingsForASite(vvID, &queryParams1)
 
@@ -153,7 +153,7 @@ func resourceSitesNtpSettingsRead(ctx context.Context, d *schema.ResourceData, m
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenNetworkSettingsRetrieveNTPSettingsForASiteItem(response1.Response)
+		vItem1 := flattenNetworkSettingsRetrieveNTPSettingsForASiteV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrieveNTPSettingsForASite response",
@@ -176,7 +176,7 @@ func resourceSitesNtpSettingsUpdate(ctx context.Context, d *schema.ResourceData,
 
 	vvID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestSitesNtpSettingsSetNTPSettingsForASite(ctx, "parameters.0", d)
+		request1 := expandRequestSitesNtpSettingsSetNTPSettingsForASiteV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.NetworkSettings.SetNTPSettingsForASite(vvID, request1)
 		if err != nil || response1 == nil {
@@ -235,17 +235,17 @@ func resourceSitesNtpSettingsDelete(ctx context.Context, d *schema.ResourceData,
 		"Failure at SitesNtpSettingsDelete, unexpected response", ""))
 	return diags
 }
-func expandRequestSitesNtpSettingsSetNTPSettingsForASite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetNTPSettingsForASite {
-	request := catalystcentersdkgo.RequestNetworkSettingsSetNTPSettingsForASite{}
-	request.Ntp = expandRequestSitesNtpSettingsSetNTPSettingsForASiteNtp(ctx, key, d)
+func expandRequestSitesNtpSettingsSetNTPSettingsForASiteV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetNTPSettingsForASiteV1 {
+	request := catalystcentersdkgo.RequestNetworkSettingsSetNTPSettingsForASiteV1{}
+	request.Ntp = expandRequestSitesNtpSettingsSetNTPSettingsForASiteV1Ntp(ctx, key, d)
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
 	}
 	return &request
 }
 
-func expandRequestSitesNtpSettingsSetNTPSettingsForASiteNtp(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetNTPSettingsForASiteNtp {
-	request := catalystcentersdkgo.RequestNetworkSettingsSetNTPSettingsForASiteNtp{}
+func expandRequestSitesNtpSettingsSetNTPSettingsForASiteV1Ntp(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetNTPSettingsForASiteV1Ntp {
+	request := catalystcentersdkgo.RequestNetworkSettingsSetNTPSettingsForASiteV1Ntp{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".servers")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".servers")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".servers")))) {
 		request.Servers = interfaceToSliceString(v)
 	}

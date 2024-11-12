@@ -79,7 +79,7 @@ func dataSourceNetworkDevicesMembersAssociationsCountRead(ctx context.Context, d
 	return diags
 }
 
-func flattenTagRetrieveTheCountOfNetworkDevicesThatAreAssociatedWithAtLeastOneTagItem(item *catalystcentersdkgo.ResponseTagRetrieveTheCountOfNetworkDevicesThatAreAssociatedWithAtLeastOneTagResponse) []map[string]interface{} {
+func flattenTagRetrieveTheCountOfNetworkDevicesThatAreAssociatedWithAtLeastOneTagItem(item *catalystcentersdkgo.ResponseTagRetrieveTheCountOfNetworkDevicesThatAreAssociatedWithAtLeastOneTagV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

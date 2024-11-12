@@ -1,6 +1,6 @@
 
 resource "catalystcenter_device_configurations_export" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     device_id = "string"

@@ -39,26 +39,26 @@ func dataSourcePnpSmartAccountDomainsRead(ctx context.Context, d *schema.Resourc
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSmartAccountList")
+		log.Printf("[DEBUG] Selected method: GetSmartAccountListV1")
 
-		response1, restyResp1, err := client.DeviceOnboardingPnp.GetSmartAccountList()
+		response1, restyResp1, err := client.DeviceOnboardingPnp.GetSmartAccountListV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSmartAccountList", err,
-				"Failure at GetSmartAccountList, unexpected response", ""))
+				"Failure when executing 2 GetSmartAccountListV1", err,
+				"Failure at GetSmartAccountListV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDeviceOnboardingPnpGetSmartAccountListItems(response1)
+		vItems1 := flattenDeviceOnboardingPnpGetSmartAccountListV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSmartAccountList response",
+				"Failure when setting GetSmartAccountListV1 response",
 				err))
 			return diags
 		}
@@ -70,7 +70,7 @@ func dataSourcePnpSmartAccountDomainsRead(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func flattenDeviceOnboardingPnpGetSmartAccountListItems(items *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetSmartAccountList) []interface{} {
+func flattenDeviceOnboardingPnpGetSmartAccountListV1Items(items *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetSmartAccountListV1) []interface{} {
 	if items == nil {
 		return nil
 	}

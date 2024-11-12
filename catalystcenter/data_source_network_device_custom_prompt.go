@@ -68,26 +68,26 @@ func dataSourceNetworkDeviceCustomPromptRead(ctx context.Context, d *schema.Reso
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: CustomPromptSupportGETAPI")
+		log.Printf("[DEBUG] Selected method: CustomPromptSupportGETAPIV1")
 
-		response1, restyResp1, err := client.SystemSettings.CustomPromptSupportGETAPI()
+		response1, restyResp1, err := client.SystemSettings.CustomPromptSupportGETAPIV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 CustomPromptSupportGETAPI", err,
-				"Failure at CustomPromptSupportGETAPI, unexpected response", ""))
+				"Failure when executing 2 CustomPromptSupportGETAPIV1", err,
+				"Failure at CustomPromptSupportGETAPIV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSystemSettingsCustomPromptSupportGETAPIItem(response1.Response)
+		vItem1 := flattenSystemSettingsCustomPromptSupportGETAPIV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting CustomPromptSupportGETAPI response",
+				"Failure when setting CustomPromptSupportGETAPIV1 response",
 				err))
 			return diags
 		}
@@ -99,7 +99,7 @@ func dataSourceNetworkDeviceCustomPromptRead(ctx context.Context, d *schema.Reso
 	return diags
 }
 
-func flattenSystemSettingsCustomPromptSupportGETAPIItem(item *catalystcentersdkgo.ResponseSystemSettingsCustomPromptSupportGETAPIResponse) []map[string]interface{} {
+func flattenSystemSettingsCustomPromptSupportGETAPIV1Item(item *catalystcentersdkgo.ResponseSystemSettingsCustomPromptSupportGETAPIV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

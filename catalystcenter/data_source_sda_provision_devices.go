@@ -96,8 +96,8 @@ func dataSourceSdaProvisionDevicesRead(ctx context.Context, d *schema.ResourceDa
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetProvisionedDevices")
-		queryParams1 := catalystcentersdkgo.GetProvisionedDevicesQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetProvisionedDevicesV1")
+		queryParams1 := catalystcentersdkgo.GetProvisionedDevicesV1QueryParams{}
 
 		if okID {
 			queryParams1.ID = vID.(string)
@@ -115,24 +115,24 @@ func dataSourceSdaProvisionDevicesRead(ctx context.Context, d *schema.ResourceDa
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.Sda.GetProvisionedDevices(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetProvisionedDevicesV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetProvisionedDevices", err,
-				"Failure at GetProvisionedDevices, unexpected response", ""))
+				"Failure when executing 2 GetProvisionedDevicesV1", err,
+				"Failure at GetProvisionedDevicesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaGetProvisionedDevicesItems(response1.Response)
+		vItems1 := flattenSdaGetProvisionedDevicesV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetProvisionedDevices response",
+				"Failure when setting GetProvisionedDevicesV1 response",
 				err))
 			return diags
 		}
@@ -144,7 +144,7 @@ func dataSourceSdaProvisionDevicesRead(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func flattenSdaGetProvisionedDevicesItems(items *[]catalystcentersdkgo.ResponseSdaGetProvisionedDevicesResponse) []map[string]interface{} {
+func flattenSdaGetProvisionedDevicesV1Items(items *[]catalystcentersdkgo.ResponseSdaGetProvisionedDevicesV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

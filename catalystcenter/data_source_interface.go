@@ -114,27 +114,27 @@ func dataSourceInterfaceRead(ctx context.Context, d *schema.ResourceData, m inte
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: LegitOperationsForInterface")
+		log.Printf("[DEBUG] Selected method: LegitOperationsForInterfaceV1")
 		vvInterfaceUUID := vInterfaceUUID.(string)
 
-		response1, restyResp1, err := client.Devices.LegitOperationsForInterface(vvInterfaceUUID)
+		response1, restyResp1, err := client.Devices.LegitOperationsForInterfaceV1(vvInterfaceUUID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 LegitOperationsForInterface", err,
-				"Failure at LegitOperationsForInterface, unexpected response", ""))
+				"Failure when executing 2 LegitOperationsForInterfaceV1", err,
+				"Failure at LegitOperationsForInterfaceV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesLegitOperationsForInterfaceItem(response1.Response)
+		vItem1 := flattenDevicesLegitOperationsForInterfaceV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting LegitOperationsForInterface response",
+				"Failure when setting LegitOperationsForInterfaceV1 response",
 				err))
 			return diags
 		}
@@ -146,20 +146,20 @@ func dataSourceInterfaceRead(ctx context.Context, d *schema.ResourceData, m inte
 	return diags
 }
 
-func flattenDevicesLegitOperationsForInterfaceItem(item *catalystcentersdkgo.ResponseDevicesLegitOperationsForInterfaceResponse) []map[string]interface{} {
+func flattenDevicesLegitOperationsForInterfaceV1Item(item *catalystcentersdkgo.ResponseDevicesLegitOperationsForInterfaceV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["interface_uuid"] = item.InterfaceUUID
-	respItem["properties"] = flattenDevicesLegitOperationsForInterfaceItemProperties(item.Properties)
-	respItem["operations"] = flattenDevicesLegitOperationsForInterfaceItemOperations(item.Operations)
+	respItem["properties"] = flattenDevicesLegitOperationsForInterfaceV1ItemProperties(item.Properties)
+	respItem["operations"] = flattenDevicesLegitOperationsForInterfaceV1ItemOperations(item.Operations)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenDevicesLegitOperationsForInterfaceItemProperties(items *[]catalystcentersdkgo.ResponseDevicesLegitOperationsForInterfaceResponseProperties) []map[string]interface{} {
+func flattenDevicesLegitOperationsForInterfaceV1ItemProperties(items *[]catalystcentersdkgo.ResponseDevicesLegitOperationsForInterfaceV1ResponseProperties) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -174,7 +174,7 @@ func flattenDevicesLegitOperationsForInterfaceItemProperties(items *[]catalystce
 	return respItems
 }
 
-func flattenDevicesLegitOperationsForInterfaceItemOperations(items *[]catalystcentersdkgo.ResponseDevicesLegitOperationsForInterfaceResponseOperations) []map[string]interface{} {
+func flattenDevicesLegitOperationsForInterfaceV1ItemOperations(items *[]catalystcentersdkgo.ResponseDevicesLegitOperationsForInterfaceV1ResponseOperations) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -1,6 +1,6 @@
 
 resource "catalystcenter_pnp_device_config_preview" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     device_id = "string"

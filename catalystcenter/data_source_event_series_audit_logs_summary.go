@@ -191,8 +191,8 @@ func dataSourceEventSeriesAuditLogsSummaryRead(ctx context.Context, d *schema.Re
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAuditLogSummary")
-		queryParams1 := catalystcentersdkgo.GetAuditLogSummaryQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetAuditLogSummaryV1")
+		queryParams1 := catalystcentersdkgo.GetAuditLogSummaryV1QueryParams{}
 
 		if okParentInstanceID {
 			queryParams1.ParentInstanceID = vParentInstanceID.(string)
@@ -252,24 +252,24 @@ func dataSourceEventSeriesAuditLogsSummaryRead(ctx context.Context, d *schema.Re
 			queryParams1.EndTime = vEndTime.(float64)
 		}
 
-		response1, restyResp1, err := client.EventManagement.GetAuditLogSummary(&queryParams1)
+		response1, restyResp1, err := client.EventManagement.GetAuditLogSummaryV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAuditLogSummary", err,
-				"Failure at GetAuditLogSummary, unexpected response", ""))
+				"Failure when executing 2 GetAuditLogSummaryV1", err,
+				"Failure at GetAuditLogSummaryV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenEventManagementGetAuditLogSummaryItems(response1)
+		vItems1 := flattenEventManagementGetAuditLogSummaryV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAuditLogSummary response",
+				"Failure when setting GetAuditLogSummaryV1 response",
 				err))
 			return diags
 		}
@@ -281,7 +281,7 @@ func dataSourceEventSeriesAuditLogsSummaryRead(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func flattenEventManagementGetAuditLogSummaryItems(items *catalystcentersdkgo.ResponseEventManagementGetAuditLogSummary) []map[string]interface{} {
+func flattenEventManagementGetAuditLogSummaryV1Items(items *catalystcentersdkgo.ResponseEventManagementGetAuditLogSummaryV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

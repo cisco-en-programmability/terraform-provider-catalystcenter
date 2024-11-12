@@ -4,10 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"reflect"
 	"time"
-
-	"log"
 
 	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
 
@@ -191,14 +190,14 @@ func resourceSdaPortChannelsCreate(ctx context.Context, d *schema.ResourceData, 
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters.0.payload"))
-	request1 := expandRequestSdaPortChannelsAddPortChannels(ctx, "parameters.0", d)
+	request1 := expandRequestSdaPortChannelsAddPortChannelsV1(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vID := resourceItem["id"]
 	vvID := interfaceToString(vID)
 	vName := resourceItem["port_channel_name"]
 	vvName := interfaceToString(vName)
-	queryParamImport := catalystcentersdkgo.GetPortChannelsQueryParams{}
+	queryParamImport := catalystcentersdkgo.GetPortChannelsV1QueryParams{}
 	queryParamImport.PortChannelName = vvName
 	item2, err := searchSdaGetPortChannels(m, queryParamImport, vvID)
 	if err == nil && item2 != nil {
@@ -247,7 +246,7 @@ func resourceSdaPortChannelsCreate(ctx context.Context, d *schema.ResourceData, 
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetPortChannelsQueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetPortChannelsV1QueryParams{}
 	queryParamValidate.PortChannelName = vvName
 	item3, err := searchSdaGetPortChannels(m, queryParamValidate, vvID)
 	if err != nil || item3 == nil {
@@ -275,18 +274,18 @@ func resourceSdaPortChannelsRead(ctx context.Context, d *schema.ResourceData, m 
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetPortChannels")
-		queryParams1 := catalystcentersdkgo.GetPortChannelsQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetPortChannelsV1QueryParams{}
 		queryParams1.PortChannelName = vvName
 		item1, err := searchSdaGetPortChannels(m, queryParams1, vvID)
 		if err != nil || item1 == nil {
 			d.SetId("")
 			return diags
 		}
-		items := []catalystcentersdkgo.ResponseSdaGetPortChannelsResponse{
+		items := []catalystcentersdkgo.ResponseSdaGetPortChannelsV1Response{
 			*item1,
 		}
 		// Review flatten function used
-		vItem1 := flattenSdaGetPortChannelsItems(&items)
+		vItem1 := flattenSdaGetPortChannelsV1Items(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetPortChannels search response",
@@ -306,7 +305,7 @@ func resourceSdaPortChannelsUpdate(ctx context.Context, d *schema.ResourceData, 
 	resourceMap := separateResourceID(resourceID)
 	vID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestSdaPortChannelsUpdatePortChannels(ctx, "parameters.0", d)
+		request1 := expandRequestSdaPortChannelsUpdatePortChannelsV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		if request1 != nil && len(*request1) > 0 {
 			req := *request1
@@ -422,9 +421,9 @@ func resourceSdaPortChannelsDelete(ctx context.Context, d *schema.ResourceData, 
 
 	return diags
 }
-func expandRequestSdaPortChannelsAddPortChannels(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddPortChannels {
-	request := catalystcentersdkgo.RequestSdaAddPortChannels{}
-	if v := expandRequestSdaPortChannelsAddPortChannelsItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaPortChannelsAddPortChannelsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddPortChannelsV1 {
+	request := catalystcentersdkgo.RequestSdaAddPortChannelsV1{}
+	if v := expandRequestSdaPortChannelsAddPortChannelsV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -433,8 +432,8 @@ func expandRequestSdaPortChannelsAddPortChannels(ctx context.Context, key string
 	return &request
 }
 
-func expandRequestSdaPortChannelsAddPortChannelsItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddPortChannels {
-	request := []catalystcentersdkgo.RequestItemSdaAddPortChannels{}
+func expandRequestSdaPortChannelsAddPortChannelsV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddPortChannelsV1 {
+	request := []catalystcentersdkgo.RequestItemSdaAddPortChannelsV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -445,7 +444,7 @@ func expandRequestSdaPortChannelsAddPortChannelsItemArray(ctx context.Context, k
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaPortChannelsAddPortChannelsItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaPortChannelsAddPortChannelsV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -456,8 +455,8 @@ func expandRequestSdaPortChannelsAddPortChannelsItemArray(ctx context.Context, k
 	return &request
 }
 
-func expandRequestSdaPortChannelsAddPortChannelsItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddPortChannels {
-	request := catalystcentersdkgo.RequestItemSdaAddPortChannels{}
+func expandRequestSdaPortChannelsAddPortChannelsV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddPortChannelsV1 {
+	request := catalystcentersdkgo.RequestItemSdaAddPortChannelsV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".fabric_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".fabric_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".fabric_id")))) {
 		request.FabricID = interfaceToString(v)
 	}
@@ -482,9 +481,9 @@ func expandRequestSdaPortChannelsAddPortChannelsItem(ctx context.Context, key st
 	return &request
 }
 
-func expandRequestSdaPortChannelsUpdatePortChannels(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdatePortChannels {
-	request := catalystcentersdkgo.RequestSdaUpdatePortChannels{}
-	if v := expandRequestSdaPortChannelsUpdatePortChannelsItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaPortChannelsUpdatePortChannelsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdatePortChannelsV1 {
+	request := catalystcentersdkgo.RequestSdaUpdatePortChannelsV1{}
+	if v := expandRequestSdaPortChannelsUpdatePortChannelsV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -493,8 +492,8 @@ func expandRequestSdaPortChannelsUpdatePortChannels(ctx context.Context, key str
 	return &request
 }
 
-func expandRequestSdaPortChannelsUpdatePortChannelsItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdatePortChannels {
-	request := []catalystcentersdkgo.RequestItemSdaUpdatePortChannels{}
+func expandRequestSdaPortChannelsUpdatePortChannelsV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdatePortChannelsV1 {
+	request := []catalystcentersdkgo.RequestItemSdaUpdatePortChannelsV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -505,7 +504,7 @@ func expandRequestSdaPortChannelsUpdatePortChannelsItemArray(ctx context.Context
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaPortChannelsUpdatePortChannelsItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaPortChannelsUpdatePortChannelsV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -516,8 +515,8 @@ func expandRequestSdaPortChannelsUpdatePortChannelsItemArray(ctx context.Context
 	return &request
 }
 
-func expandRequestSdaPortChannelsUpdatePortChannelsItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdatePortChannels {
-	request := catalystcentersdkgo.RequestItemSdaUpdatePortChannels{}
+func expandRequestSdaPortChannelsUpdatePortChannelsV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdatePortChannelsV1 {
+	request := catalystcentersdkgo.RequestItemSdaUpdatePortChannelsV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -548,11 +547,11 @@ func expandRequestSdaPortChannelsUpdatePortChannelsItem(ctx context.Context, key
 	return &request
 }
 
-func searchSdaGetPortChannels(m interface{}, queryParams catalystcentersdkgo.GetPortChannelsQueryParams, vID string) (*catalystcentersdkgo.ResponseSdaGetPortChannelsResponse, error) {
+func searchSdaGetPortChannels(m interface{}, queryParams catalystcentersdkgo.GetPortChannelsV1QueryParams, vID string) (*catalystcentersdkgo.ResponseSdaGetPortChannelsV1Response, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseSdaGetPortChannelsResponse
-	var ite *catalystcentersdkgo.ResponseSdaGetPortChannels
+	var foundItem *catalystcentersdkgo.ResponseSdaGetPortChannelsV1Response
+	var ite *catalystcentersdkgo.ResponseSdaGetPortChannelsV1
 	if vID != "" {
 		queryParams.Offset = 1
 		nResponse, _, err := client.Sda.GetPortChannels(nil)

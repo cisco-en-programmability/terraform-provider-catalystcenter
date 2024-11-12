@@ -1,6 +1,6 @@
 
 resource "catalystcenter_network_devices_issues_remediation_provision" "example" {
-  provider = catalystcenter
+  provider = meraki
   id       = "string"
   parameters {
 

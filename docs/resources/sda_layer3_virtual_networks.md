@@ -24,12 +24,11 @@ resource "catalystcenter_sda_layer3_virtual_networks" "example" {
   provider = catalystcenter
 
   parameters {
-    payload {
-      anchored_site_id     = "string"
-      fabric_ids           = ["string"]
-      id                   = "string"
-      virtual_network_name = "string"
-    }
+
+    anchored_site_id     = "string"
+    fabric_ids           = ["string"]
+    id                   = "string"
+    virtual_network_name = "string"
   }
 }
 
@@ -43,7 +42,7 @@ output "catalystcenter_sda_layer3_virtual_networks_example" {
 
 ### Optional
 
-- `parameters` (Block List) Array of RequestSdaAddLayer3VirtualNetworks (see [below for nested schema](#nestedblock--parameters))
+- `parameters` (Block List) Array of RequestSdaAddLayer3VirtualNetworksV1 (see [below for nested schema](#nestedblock--parameters))
 
 ### Read-Only
 

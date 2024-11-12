@@ -47,26 +47,26 @@ func dataSourceWirelessSettingsDot11BeProfilesCountRead(ctx context.Context, d *
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: Get80211BeProfilesCount")
+		log.Printf("[DEBUG] Selected method: Get80211BeProfilesCountV1")
 
-		response1, restyResp1, err := client.Wireless.Get80211BeProfilesCount()
+		response1, restyResp1, err := client.Wireless.Get80211BeProfilesCountV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 Get80211BeProfilesCount", err,
-				"Failure at Get80211BeProfilesCount, unexpected response", ""))
+				"Failure when executing 2 Get80211BeProfilesCountV1", err,
+				"Failure at Get80211BeProfilesCountV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessGet80211BeProfilesCountItem(response1.Response)
+		vItem1 := flattenWirelessGet80211BeProfilesCountV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting Get80211BeProfilesCount response",
+				"Failure when setting Get80211BeProfilesCountV1 response",
 				err))
 			return diags
 		}
@@ -78,7 +78,7 @@ func dataSourceWirelessSettingsDot11BeProfilesCountRead(ctx context.Context, d *
 	return diags
 }
 
-func flattenWirelessGet80211BeProfilesCountItem(item *catalystcentersdkgo.ResponseWirelessGet80211BeProfilesCountResponse) []map[string]interface{} {
+func flattenWirelessGet80211BeProfilesCountV1Item(item *catalystcentersdkgo.ResponseWirelessGet80211BeProfilesCountV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

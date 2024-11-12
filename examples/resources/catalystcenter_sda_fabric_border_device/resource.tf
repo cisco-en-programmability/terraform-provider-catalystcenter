@@ -1,7 +1,138 @@
 
 resource "catalystcenter_sda_fabric_border_device" "example" {
   provider = catalystcenter
+  item {
 
+
+    payload {
+
+
+
+
+
+
+
+
+
+
+
+      device_settings {
+
+
+
+
+
+
+        ext_connectivity_settings {
+
+
+
+
+
+
+
+
+
+
+          l3_handoff {
+
+
+
+
+
+
+
+
+
+            virtual_network {
+
+
+            }
+
+          }
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+      network_widesettings {
+
+
+
+
+        dhcp {
+
+
+          ip_address {
+
+
+
+
+
+          }
+        }
+
+        dns {
+
+
+
+          ip {
+
+
+
+
+
+          }
+        }
+
+
+
+
+
+
+
+
+
+
+      }
+
+
+
+
+
+
+
+      transit_networks {
+
+
+      }
+
+
+
+    }
+
+  }
   parameters {
 
     border_priority                    = "string"

@@ -364,8 +364,8 @@ func dataSourceEventSeriesAuditLogsParentRecordsRead(ctx context.Context, d *sch
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAuditLogParentRecords")
-		queryParams1 := catalystcentersdkgo.GetAuditLogParentRecordsQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetAuditLogParentRecordsV1")
+		queryParams1 := catalystcentersdkgo.GetAuditLogParentRecordsV1QueryParams{}
 
 		if okInstanceID {
 			queryParams1.InstanceID = vInstanceID.(string)
@@ -431,24 +431,24 @@ func dataSourceEventSeriesAuditLogsParentRecordsRead(ctx context.Context, d *sch
 			queryParams1.Order = vOrder.(string)
 		}
 
-		response1, restyResp1, err := client.EventManagement.GetAuditLogParentRecords(&queryParams1)
+		response1, restyResp1, err := client.EventManagement.GetAuditLogParentRecordsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAuditLogParentRecords", err,
-				"Failure at GetAuditLogParentRecords, unexpected response", ""))
+				"Failure when executing 2 GetAuditLogParentRecordsV1", err,
+				"Failure at GetAuditLogParentRecordsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenEventManagementGetAuditLogParentRecordsItems(response1)
+		vItems1 := flattenEventManagementGetAuditLogParentRecordsV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAuditLogParentRecords response",
+				"Failure when setting GetAuditLogParentRecordsV1 response",
 				err))
 			return diags
 		}
@@ -460,7 +460,7 @@ func dataSourceEventSeriesAuditLogsParentRecordsRead(ctx context.Context, d *sch
 	return diags
 }
 
-func flattenEventManagementGetAuditLogParentRecordsItems(items *catalystcentersdkgo.ResponseEventManagementGetAuditLogParentRecords) []map[string]interface{} {
+func flattenEventManagementGetAuditLogParentRecordsV1Items(items *catalystcentersdkgo.ResponseEventManagementGetAuditLogParentRecordsV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -480,8 +480,8 @@ func flattenEventManagementGetAuditLogParentRecordsItems(items *catalystcentersd
 		respItem["severity"] = item.Severity
 		respItem["source"] = item.Source
 		respItem["timestamp"] = item.Timestamp
-		respItem["tags"] = flattenEventManagementGetAuditLogParentRecordsItemsTags(item.Tags)
-		respItem["details"] = flattenEventManagementGetAuditLogParentRecordsItemsDetails(item.Details)
+		respItem["tags"] = flattenEventManagementGetAuditLogParentRecordsV1ItemsTags(item.Tags)
+		respItem["details"] = flattenEventManagementGetAuditLogParentRecordsV1ItemsDetails(item.Details)
 		respItem["cisco_dna_event_link"] = item.CiscoDnaEventLink
 		respItem["note"] = item.Note
 		respItem["tnt_id"] = item.TntID
@@ -491,7 +491,7 @@ func flattenEventManagementGetAuditLogParentRecordsItems(items *catalystcentersd
 		respItem["event_hierarchy"] = item.EventHierarchy
 		respItem["message"] = item.Message
 		respItem["message_params"] = item.MessageParams
-		respItem["additional_details"] = flattenEventManagementGetAuditLogParentRecordsItemsAdditionalDetails(item.AdditionalDetails)
+		respItem["additional_details"] = flattenEventManagementGetAuditLogParentRecordsV1ItemsAdditionalDetails(item.AdditionalDetails)
 		respItem["parent_instance_id"] = item.ParentInstanceID
 		respItem["network"] = item.Network
 		respItem["child_count"] = item.ChildCount
@@ -501,7 +501,7 @@ func flattenEventManagementGetAuditLogParentRecordsItems(items *catalystcentersd
 	return respItems
 }
 
-func flattenEventManagementGetAuditLogParentRecordsItemsTags(items *[]catalystcentersdkgo.ResponseItemEventManagementGetAuditLogParentRecordsTags) []interface{} {
+func flattenEventManagementGetAuditLogParentRecordsV1ItemsTags(items *[]catalystcentersdkgo.ResponseItemEventManagementGetAuditLogParentRecordsV1Tags) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -513,7 +513,7 @@ func flattenEventManagementGetAuditLogParentRecordsItemsTags(items *[]catalystce
 	return respItems
 }
 
-func flattenEventManagementGetAuditLogParentRecordsItemsDetails(item *catalystcentersdkgo.ResponseItemEventManagementGetAuditLogParentRecordsDetails) interface{} {
+func flattenEventManagementGetAuditLogParentRecordsV1ItemsDetails(item *catalystcentersdkgo.ResponseItemEventManagementGetAuditLogParentRecordsV1Details) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -523,7 +523,7 @@ func flattenEventManagementGetAuditLogParentRecordsItemsDetails(item *catalystce
 
 }
 
-func flattenEventManagementGetAuditLogParentRecordsItemsAdditionalDetails(item *catalystcentersdkgo.ResponseItemEventManagementGetAuditLogParentRecordsAdditionalDetails) interface{} {
+func flattenEventManagementGetAuditLogParentRecordsV1ItemsAdditionalDetails(item *catalystcentersdkgo.ResponseItemEventManagementGetAuditLogParentRecordsV1AdditionalDetails) interface{} {
 	if item == nil {
 		return nil
 	}

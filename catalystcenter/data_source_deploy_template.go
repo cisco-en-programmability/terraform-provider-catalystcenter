@@ -228,7 +228,7 @@ func dataSourceDeployTemplateRead(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func flattenConfigurationTemplatesStatusOfTemplateDeploymentItem(item *catalystcentersdkgo.ResponseConfigurationTemplatesStatusOfTemplateDeployment) []map[string]interface{} {
+func flattenConfigurationTemplatesStatusOfTemplateDeploymentItem(item *catalystcentersdkgo.ResponseConfigurationTemplatesStatusOfTemplateDeploymentV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -249,7 +249,7 @@ func flattenConfigurationTemplatesStatusOfTemplateDeploymentItem(item *catalystc
 	}
 }
 
-func flattenConfigurationTemplatesStatusOfTemplateDeploymentItemDevices(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesStatusOfTemplateDeploymentDevices) []map[string]interface{} {
+func flattenConfigurationTemplatesStatusOfTemplateDeploymentItemDevices(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesStatusOfTemplateDeploymentV1Devices) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

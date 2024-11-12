@@ -12,9 +12,6 @@ description: |-
 It performs update operation on SDA.
 
 - Updates layer 3 handoffs with sda transit of fabric devices based on user input.
-
-
-
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -23,17 +20,16 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 
 ```terraform
 resource "catalystcenter_sda_fabric_devices_layer2_handoffs_sda_transits_update" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
-    payload {
-      affinity_id_decider               = 1
-      affinity_id_prime                 = 1
-      connected_to_internet             = "false"
-      fabric_id                         = "string"
-      is_multicast_over_transit_enabled = "false"
-      network_device_id                 = "string"
-      transit_network_id                = "string"
-    }
+
+    affinity_id_decider               = 1
+    affinity_id_prime                 = 1
+    connected_to_internet             = "false"
+    fabric_id                         = "string"
+    is_multicast_over_transit_enabled = "false"
+    network_device_id                 = "string"
+    transit_network_id                = "string"
   }
 }
 
@@ -60,7 +56,7 @@ output "catalystcenter_sda_fabric_devices_layer2_handoffs_sda_transits_update_ex
 
 Optional:
 
-- `payload` (Block List) Array of RequestSdaUpdateFabricDevicesLayer3HandoffsWithSdaTransit (see [below for nested schema](#nestedblock--parameters--payload))
+- `payload` (Block List) Array of RequestSdaUpdateFabricDevicesLayer3HandoffsWithSdaTransitV1 (see [below for nested schema](#nestedblock--parameters--payload))
 
 <a id="nestedblock--parameters--payload"></a>
 ### Nested Schema for `parameters.payload`

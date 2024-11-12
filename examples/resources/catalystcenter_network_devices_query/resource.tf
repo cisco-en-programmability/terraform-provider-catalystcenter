@@ -1,6 +1,6 @@
 
 resource "catalystcenter_network_devices_query" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     aggregate_attributes {

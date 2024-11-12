@@ -95,29 +95,29 @@ func dataSourceSdaFabricEdgeDeviceRead(ctx context.Context, d *schema.ResourceDa
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetEdgeDeviceFromSdaFabric")
-		queryParams1 := catalystcentersdkgo.GetEdgeDeviceFromSdaFabricQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetEdgeDeviceFromSdaFabricV1")
+		queryParams1 := catalystcentersdkgo.GetEdgeDeviceFromSdaFabricV1QueryParams{}
 
 		queryParams1.DeviceManagementIPAddress = vDeviceManagementIPAddress.(string)
 
-		response1, restyResp1, err := client.Sda.GetEdgeDeviceFromSdaFabric(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetEdgeDeviceFromSdaFabricV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetEdgeDeviceFromSdaFabric", err,
-				"Failure at GetEdgeDeviceFromSdaFabric, unexpected response", ""))
+				"Failure when executing 2 GetEdgeDeviceFromSdaFabricV1", err,
+				"Failure at GetEdgeDeviceFromSdaFabricV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetEdgeDeviceFromSdaFabricItem(response1)
+		vItem1 := flattenSdaGetEdgeDeviceFromSdaFabricV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetEdgeDeviceFromSdaFabric response",
+				"Failure when setting GetEdgeDeviceFromSdaFabricV1 response",
 				err))
 			return diags
 		}
@@ -129,7 +129,7 @@ func dataSourceSdaFabricEdgeDeviceRead(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func flattenSdaGetEdgeDeviceFromSdaFabricItem(item *catalystcentersdkgo.ResponseSdaGetEdgeDeviceFromSdaFabric) []map[string]interface{} {
+func flattenSdaGetEdgeDeviceFromSdaFabricV1Item(item *catalystcentersdkgo.ResponseSdaGetEdgeDeviceFromSdaFabricV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

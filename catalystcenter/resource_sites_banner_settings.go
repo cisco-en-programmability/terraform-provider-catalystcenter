@@ -18,8 +18,8 @@ func resourceSitesBannerSettings() *schema.Resource {
 	return &schema.Resource{
 		Description: `It manages read and update operations on Network Settings.
 
-- Set banner settings for a site; 'null' values indicate that the setting will be inherited from the parent site; empty
-objects ('{}') indicate that the settings is unset.
+- Set banner settings for a site; *null* values indicate that the setting will be inherited from the parent site; empty
+objects (*{}*) indicate that the settings is unset.
 `,
 
 		CreateContext: resourceSitesBannerSettingsCreate,
@@ -144,7 +144,7 @@ func resourceSitesBannerSettingsRead(ctx context.Context, d *schema.ResourceData
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: RetrieveBannerSettingsForASite")
 		vvID := vID
-		queryParams1 := catalystcentersdkgo.RetrieveBannerSettingsForASiteQueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrieveBannerSettingsForASiteV1QueryParams{}
 
 		response1, restyResp1, err := client.NetworkSettings.RetrieveBannerSettingsForASite(vvID, &queryParams1)
 
@@ -158,7 +158,7 @@ func resourceSitesBannerSettingsRead(ctx context.Context, d *schema.ResourceData
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenNetworkSettingsRetrieveBannerSettingsForASiteItem(response1.Response)
+		vItem1 := flattenNetworkSettingsRetrieveBannerSettingsForASiteV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrieveBannerSettingsForASite response",
@@ -181,7 +181,7 @@ func resourceSitesBannerSettingsUpdate(ctx context.Context, d *schema.ResourceDa
 
 	vvID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestSitesBannerSettingsSetBannerSettingsForASite(ctx, "parameters.0", d)
+		request1 := expandRequestSitesBannerSettingsSetBannerSettingsForASiteV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.NetworkSettings.SetBannerSettingsForASite(vvID, request1)
 		if err != nil || response1 == nil {
@@ -240,17 +240,17 @@ func resourceSitesBannerSettingsDelete(ctx context.Context, d *schema.ResourceDa
 		"Failure at SitesBannerSettingsDelete, unexpected response", ""))
 	return diags
 }
-func expandRequestSitesBannerSettingsSetBannerSettingsForASite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetBannerSettingsForASite {
-	request := catalystcentersdkgo.RequestNetworkSettingsSetBannerSettingsForASite{}
-	request.Banner = expandRequestSitesBannerSettingsSetBannerSettingsForASiteBanner(ctx, key, d)
+func expandRequestSitesBannerSettingsSetBannerSettingsForASiteV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetBannerSettingsForASiteV1 {
+	request := catalystcentersdkgo.RequestNetworkSettingsSetBannerSettingsForASiteV1{}
+	request.Banner = expandRequestSitesBannerSettingsSetBannerSettingsForASiteV1Banner(ctx, key, d)
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
 	}
 	return &request
 }
 
-func expandRequestSitesBannerSettingsSetBannerSettingsForASiteBanner(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetBannerSettingsForASiteBanner {
-	request := catalystcentersdkgo.RequestNetworkSettingsSetBannerSettingsForASiteBanner{}
+func expandRequestSitesBannerSettingsSetBannerSettingsForASiteV1Banner(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetBannerSettingsForASiteV1Banner {
+	request := catalystcentersdkgo.RequestNetworkSettingsSetBannerSettingsForASiteV1Banner{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".type")))) {
 		request.Type = interfaceToString(v)
 	}

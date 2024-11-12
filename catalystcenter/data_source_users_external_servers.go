@@ -120,29 +120,29 @@ func dataSourceUsersExternalServersRead(ctx context.Context, d *schema.ResourceD
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetExternalAuthenticationServersAPI")
-		queryParams1 := catalystcentersdkgo.GetExternalAuthenticationServersAPIQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetExternalAuthenticationServersAPIV1")
+		queryParams1 := catalystcentersdkgo.GetExternalAuthenticationServersAPIV1QueryParams{}
 
 		queryParams1.InvokeSource = vInvokeSource.(string)
 
-		response1, restyResp1, err := client.UserandRoles.GetExternalAuthenticationServersAPI(&queryParams1)
+		response1, restyResp1, err := client.UserandRoles.GetExternalAuthenticationServersAPIV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetExternalAuthenticationServersAPI", err,
-				"Failure at GetExternalAuthenticationServersAPI, unexpected response", ""))
+				"Failure when executing 2 GetExternalAuthenticationServersAPIV1", err,
+				"Failure at GetExternalAuthenticationServersAPIV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenUserandRolesGetExternalAuthenticationServersAPIItem(response1.Response)
+		vItem1 := flattenUserandRolesGetExternalAuthenticationServersAPIV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetExternalAuthenticationServersAPI response",
+				"Failure when setting GetExternalAuthenticationServersAPIV1 response",
 				err))
 			return diags
 		}
@@ -154,18 +154,18 @@ func dataSourceUsersExternalServersRead(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func flattenUserandRolesGetExternalAuthenticationServersAPIItem(item *catalystcentersdkgo.ResponseUserandRolesGetExternalAuthenticationServersAPIResponse) []map[string]interface{} {
+func flattenUserandRolesGetExternalAuthenticationServersAPIV1Item(item *catalystcentersdkgo.ResponseUserandRolesGetExternalAuthenticationServersAPIV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["aaa_servers"] = flattenUserandRolesGetExternalAuthenticationServersAPIItemAAAServers(item.AAAServers)
+	respItem["aaa_servers"] = flattenUserandRolesGetExternalAuthenticationServersAPIV1ItemAAAServers(item.AAAServers)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenUserandRolesGetExternalAuthenticationServersAPIItemAAAServers(items *[]catalystcentersdkgo.ResponseUserandRolesGetExternalAuthenticationServersAPIResponseAAAServers) []map[string]interface{} {
+func flattenUserandRolesGetExternalAuthenticationServersAPIV1ItemAAAServers(items *[]catalystcentersdkgo.ResponseUserandRolesGetExternalAuthenticationServersAPIV1ResponseAAAServers) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -29,7 +29,7 @@ func dataSourceDiagnosticValidationSets() *schema.Resource {
 				Optional: true,
 			},
 			"view": &schema.Schema{
-				Description: `view query parameter. When the query parameter 'view=DETAIL' is passed, all validation sets and associated validations will be returned. When the query parameter 'view=DEFAULT' is passed, only validation sets metadata will be returned.
+				Description: `view query parameter. When the query parameter *view=DETAIL* is passed, all validation sets and associated validations will be returned. When the query parameter *view=DEFAULT* is passed, only validation sets metadata will be returned.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -232,31 +232,31 @@ func dataSourceDiagnosticValidationSetsRead(ctx context.Context, d *schema.Resou
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesAllTheValidationSets")
-		queryParams1 := catalystcentersdkgo.RetrievesAllTheValidationSetsQueryParams{}
+		log.Printf("[DEBUG] Selected method: RetrievesAllTheValidationSetsV1")
+		queryParams1 := catalystcentersdkgo.RetrievesAllTheValidationSetsV1QueryParams{}
 
 		if okView {
 			queryParams1.View = vView.(string)
 		}
 
-		response1, restyResp1, err := client.HealthAndPerformance.RetrievesAllTheValidationSets(&queryParams1)
+		response1, restyResp1, err := client.HealthAndPerformance.RetrievesAllTheValidationSetsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesAllTheValidationSets", err,
-				"Failure at RetrievesAllTheValidationSets, unexpected response", ""))
+				"Failure when executing 2 RetrievesAllTheValidationSetsV1", err,
+				"Failure at RetrievesAllTheValidationSetsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenHealthAndPerformanceRetrievesAllTheValidationSetsItems(response1.Response)
+		vItems1 := flattenHealthAndPerformanceRetrievesAllTheValidationSetsV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesAllTheValidationSets response",
+				"Failure when setting RetrievesAllTheValidationSetsV1 response",
 				err))
 			return diags
 		}
@@ -266,27 +266,27 @@ func dataSourceDiagnosticValidationSetsRead(ctx context.Context, d *schema.Resou
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: RetrievesValidationDetailsForAValidationSet")
+		log.Printf("[DEBUG] Selected method: RetrievesValidationDetailsForAValidationSetV1")
 		vvID := vID.(string)
 
-		response2, restyResp2, err := client.HealthAndPerformance.RetrievesValidationDetailsForAValidationSet(vvID)
+		response2, restyResp2, err := client.HealthAndPerformance.RetrievesValidationDetailsForAValidationSetV1(vvID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesValidationDetailsForAValidationSet", err,
-				"Failure at RetrievesValidationDetailsForAValidationSet, unexpected response", ""))
+				"Failure when executing 2 RetrievesValidationDetailsForAValidationSetV1", err,
+				"Failure at RetrievesValidationDetailsForAValidationSetV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenHealthAndPerformanceRetrievesValidationDetailsForAValidationSetItem(response2.Response)
+		vItem2 := flattenHealthAndPerformanceRetrievesValidationDetailsForAValidationSetV1Item(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesValidationDetailsForAValidationSet response",
+				"Failure when setting RetrievesValidationDetailsForAValidationSetV1 response",
 				err))
 			return diags
 		}
@@ -298,7 +298,7 @@ func dataSourceDiagnosticValidationSetsRead(ctx context.Context, d *schema.Resou
 	return diags
 }
 
-func flattenHealthAndPerformanceRetrievesAllTheValidationSetsItems(items *[]catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesAllTheValidationSetsResponse) []map[string]interface{} {
+func flattenHealthAndPerformanceRetrievesAllTheValidationSetsV1Items(items *[]catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesAllTheValidationSetsV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -309,13 +309,13 @@ func flattenHealthAndPerformanceRetrievesAllTheValidationSetsItems(items *[]cata
 		respItem["name"] = item.Name
 		respItem["description"] = item.Description
 		respItem["version"] = item.Version
-		respItem["validation_groups"] = flattenHealthAndPerformanceRetrievesAllTheValidationSetsItemsValidationGroups(item.ValidationGroups)
+		respItem["validation_groups"] = flattenHealthAndPerformanceRetrievesAllTheValidationSetsV1ItemsValidationGroups(item.ValidationGroups)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenHealthAndPerformanceRetrievesAllTheValidationSetsItemsValidationGroups(items *[]catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesAllTheValidationSetsResponseValidationGroups) []map[string]interface{} {
+func flattenHealthAndPerformanceRetrievesAllTheValidationSetsV1ItemsValidationGroups(items *[]catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesAllTheValidationSetsV1ResponseValidationGroups) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -325,13 +325,13 @@ func flattenHealthAndPerformanceRetrievesAllTheValidationSetsItemsValidationGrou
 		respItem["name"] = item.Name
 		respItem["id"] = item.ID
 		respItem["description"] = item.Description
-		respItem["validations"] = flattenHealthAndPerformanceRetrievesAllTheValidationSetsItemsValidationGroupsValidations(item.Validations)
+		respItem["validations"] = flattenHealthAndPerformanceRetrievesAllTheValidationSetsV1ItemsValidationGroupsValidations(item.Validations)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenHealthAndPerformanceRetrievesAllTheValidationSetsItemsValidationGroupsValidations(items *[]catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesAllTheValidationSetsResponseValidationGroupsValidations) []map[string]interface{} {
+func flattenHealthAndPerformanceRetrievesAllTheValidationSetsV1ItemsValidationGroupsValidations(items *[]catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesAllTheValidationSetsV1ResponseValidationGroupsValidations) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -345,7 +345,7 @@ func flattenHealthAndPerformanceRetrievesAllTheValidationSetsItemsValidationGrou
 	return respItems
 }
 
-func flattenHealthAndPerformanceRetrievesValidationDetailsForAValidationSetItem(item *catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesValidationDetailsForAValidationSetResponse) []map[string]interface{} {
+func flattenHealthAndPerformanceRetrievesValidationDetailsForAValidationSetV1Item(item *catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesValidationDetailsForAValidationSetV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -354,13 +354,13 @@ func flattenHealthAndPerformanceRetrievesValidationDetailsForAValidationSetItem(
 	respItem["name"] = item.Name
 	respItem["description"] = item.Description
 	respItem["version"] = item.Version
-	respItem["validation_groups"] = flattenHealthAndPerformanceRetrievesValidationDetailsForAValidationSetItemValidationGroups(item.ValidationGroups)
+	respItem["validation_groups"] = flattenHealthAndPerformanceRetrievesValidationDetailsForAValidationSetV1ItemValidationGroups(item.ValidationGroups)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenHealthAndPerformanceRetrievesValidationDetailsForAValidationSetItemValidationGroups(items *[]catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesValidationDetailsForAValidationSetResponseValidationGroups) []map[string]interface{} {
+func flattenHealthAndPerformanceRetrievesValidationDetailsForAValidationSetV1ItemValidationGroups(items *[]catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesValidationDetailsForAValidationSetV1ResponseValidationGroups) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -370,13 +370,13 @@ func flattenHealthAndPerformanceRetrievesValidationDetailsForAValidationSetItemV
 		respItem["name"] = item.Name
 		respItem["id"] = item.ID
 		respItem["description"] = item.Description
-		respItem["validations"] = flattenHealthAndPerformanceRetrievesValidationDetailsForAValidationSetItemValidationGroupsValidations(item.Validations)
+		respItem["validations"] = flattenHealthAndPerformanceRetrievesValidationDetailsForAValidationSetV1ItemValidationGroupsValidations(item.Validations)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenHealthAndPerformanceRetrievesValidationDetailsForAValidationSetItemValidationGroupsValidations(items *[]catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesValidationDetailsForAValidationSetResponseValidationGroupsValidations) []map[string]interface{} {
+func flattenHealthAndPerformanceRetrievesValidationDetailsForAValidationSetV1ItemValidationGroupsValidations(items *[]catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesValidationDetailsForAValidationSetV1ResponseValidationGroupsValidations) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

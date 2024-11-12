@@ -1,6 +1,6 @@
 
 resource "catalystcenter_assurance_events_query" "example" {
-  provider    = catalystcenter
+  provider    = meraki
   xca_lle_rid = "string"
   parameters {
 

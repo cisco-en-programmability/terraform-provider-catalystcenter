@@ -453,27 +453,27 @@ func dataSourceDiscoveryRead(ctx context.Context, d *schema.ResourceData, m inte
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDiscoveryByID")
+		log.Printf("[DEBUG] Selected method: GetDiscoveryByIDV1")
 		vvID := vID.(string)
 
-		response1, restyResp1, err := client.Discovery.GetDiscoveryByID(vvID)
+		response1, restyResp1, err := client.Discovery.GetDiscoveryByIDV1(vvID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDiscoveryByID", err,
-				"Failure at GetDiscoveryByID, unexpected response", ""))
+				"Failure when executing 2 GetDiscoveryByIDV1", err,
+				"Failure at GetDiscoveryByIDV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDiscoveryGetDiscoveryByIDItem(response1.Response)
+		vItem1 := flattenDiscoveryGetDiscoveryByIDV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDiscoveryByID response",
+				"Failure when setting GetDiscoveryByIDV1 response",
 				err))
 			return diags
 		}
@@ -485,12 +485,12 @@ func dataSourceDiscoveryRead(ctx context.Context, d *schema.ResourceData, m inte
 	return diags
 }
 
-func flattenDiscoveryGetDiscoveryByIDItem(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveryByIDResponse) []map[string]interface{} {
+func flattenDiscoveryGetDiscoveryByIDV1Item(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveryByIDV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["attribute_info"] = flattenDiscoveryGetDiscoveryByIDItemAttributeInfo(item.AttributeInfo)
+	respItem["attribute_info"] = flattenDiscoveryGetDiscoveryByIDV1ItemAttributeInfo(item.AttributeInfo)
 	respItem["cdp_level"] = item.CdpLevel
 	respItem["device_ids"] = item.DeviceIDs
 	respItem["discovery_condition"] = item.DiscoveryCondition
@@ -498,8 +498,8 @@ func flattenDiscoveryGetDiscoveryByIDItem(item *catalystcentersdkgo.ResponseDisc
 	respItem["discovery_type"] = item.DiscoveryType
 	respItem["enable_password_list"] = item.EnablePasswordList
 	respItem["global_credential_id_list"] = item.GlobalCredentialIDList
-	respItem["http_read_credential"] = flattenDiscoveryGetDiscoveryByIDItemHTTPReadCredential(item.HTTPReadCredential)
-	respItem["http_write_credential"] = flattenDiscoveryGetDiscoveryByIDItemHTTPWriteCredential(item.HTTPWriteCredential)
+	respItem["http_read_credential"] = flattenDiscoveryGetDiscoveryByIDV1ItemHTTPReadCredential(item.HTTPReadCredential)
+	respItem["http_write_credential"] = flattenDiscoveryGetDiscoveryByIDV1ItemHTTPWriteCredential(item.HTTPWriteCredential)
 	respItem["id"] = item.ID
 	respItem["ip_address_list"] = item.IPAddressList
 	respItem["ip_filter_list"] = item.IPFilterList
@@ -531,7 +531,7 @@ func flattenDiscoveryGetDiscoveryByIDItem(item *catalystcentersdkgo.ResponseDisc
 	}
 }
 
-func flattenDiscoveryGetDiscoveryByIDItemAttributeInfo(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveryByIDResponseAttributeInfo) interface{} {
+func flattenDiscoveryGetDiscoveryByIDV1ItemAttributeInfo(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveryByIDV1ResponseAttributeInfo) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -541,7 +541,7 @@ func flattenDiscoveryGetDiscoveryByIDItemAttributeInfo(item *catalystcentersdkgo
 
 }
 
-func flattenDiscoveryGetDiscoveryByIDItemHTTPReadCredential(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveryByIDResponseHTTPReadCredential) []map[string]interface{} {
+func flattenDiscoveryGetDiscoveryByIDV1ItemHTTPReadCredential(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveryByIDV1ResponseHTTPReadCredential) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -563,7 +563,7 @@ func flattenDiscoveryGetDiscoveryByIDItemHTTPReadCredential(item *catalystcenter
 
 }
 
-func flattenDiscoveryGetDiscoveryByIDItemHTTPWriteCredential(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveryByIDResponseHTTPWriteCredential) []map[string]interface{} {
+func flattenDiscoveryGetDiscoveryByIDV1ItemHTTPWriteCredential(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveryByIDV1ResponseHTTPWriteCredential) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

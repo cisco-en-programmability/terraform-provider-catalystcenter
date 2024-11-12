@@ -75,8 +75,8 @@ func dataSourceSdaPortChannelsCountRead(ctx context.Context, d *schema.ResourceD
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetPortChannelCount")
-		queryParams1 := catalystcentersdkgo.GetPortChannelCountQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetPortChannelCountV1")
+		queryParams1 := catalystcentersdkgo.GetPortChannelCountV1QueryParams{}
 
 		if okFabricID {
 			queryParams1.FabricID = vFabricID.(string)
@@ -91,24 +91,24 @@ func dataSourceSdaPortChannelsCountRead(ctx context.Context, d *schema.ResourceD
 			queryParams1.ConnectedDeviceType = vConnectedDeviceType.(string)
 		}
 
-		response1, restyResp1, err := client.Sda.GetPortChannelCount(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetPortChannelCountV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetPortChannelCount", err,
-				"Failure at GetPortChannelCount, unexpected response", ""))
+				"Failure when executing 2 GetPortChannelCountV1", err,
+				"Failure at GetPortChannelCountV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetPortChannelCountItem(response1.Response)
+		vItem1 := flattenSdaGetPortChannelCountV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetPortChannelCount response",
+				"Failure when setting GetPortChannelCountV1 response",
 				err))
 			return diags
 		}
@@ -120,7 +120,7 @@ func dataSourceSdaPortChannelsCountRead(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func flattenSdaGetPortChannelCountItem(item *catalystcentersdkgo.ResponseSdaGetPortChannelCountResponse) []map[string]interface{} {
+func flattenSdaGetPortChannelCountV1Item(item *catalystcentersdkgo.ResponseSdaGetPortChannelCountV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

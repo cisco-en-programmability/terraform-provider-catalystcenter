@@ -3309,7 +3309,7 @@ func resourcePathTraceCreate(ctx context.Context, d *schema.ResourceData, m inte
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestPathTraceInitiateANewPathtrace(ctx, "parameters.0", d)
+	request1 := expandRequestPathTraceInitiateANewPathtraceV1(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vFlowAnalysisID := resourceItem["flow_analysis_id"]
@@ -3402,7 +3402,7 @@ func resourcePathTraceRead(ctx context.Context, d *schema.ResourceData, m interf
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenPathTraceRetrievesPreviousPathtraceItem(response2.Response)
+		vItem2 := flattenPathTraceRetrievesPreviousPathtraceV1Item(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrievesPreviousPathtrace response",
@@ -3493,8 +3493,8 @@ func resourcePathTraceDelete(ctx context.Context, d *schema.ResourceData, m inte
 
 	return diags
 }
-func expandRequestPathTraceInitiateANewPathtrace(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestPathTraceInitiateANewPathtrace {
-	request := catalystcentersdkgo.RequestPathTraceInitiateANewPathtrace{}
+func expandRequestPathTraceInitiateANewPathtraceV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestPathTraceInitiateANewPathtraceV1 {
+	request := catalystcentersdkgo.RequestPathTraceInitiateANewPathtraceV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".control_path")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".control_path")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".control_path")))) {
 		request.ControlPath = interfaceToBoolPtr(v)
 	}

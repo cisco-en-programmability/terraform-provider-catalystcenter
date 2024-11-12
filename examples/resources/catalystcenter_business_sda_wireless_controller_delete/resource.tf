@@ -1,6 +1,6 @@
 
 resource "catalystcenter_business_sda_wireless_controller_delete" "example" {
-  provider         = catalystcenter
+  provider         = meraki
   device_ipaddress = "string"
 }
 

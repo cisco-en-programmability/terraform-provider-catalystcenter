@@ -138,29 +138,29 @@ func dataSourceSdaMulticastRead(ctx context.Context, d *schema.ResourceData, m i
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetMulticastDetailsFromSdaFabric")
-		queryParams1 := catalystcentersdkgo.GetMulticastDetailsFromSdaFabricQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetMulticastDetailsFromSdaFabricV1")
+		queryParams1 := catalystcentersdkgo.GetMulticastDetailsFromSdaFabricV1QueryParams{}
 
 		queryParams1.SiteNameHierarchy = vSiteNameHierarchy.(string)
 
-		response1, restyResp1, err := client.Sda.GetMulticastDetailsFromSdaFabric(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetMulticastDetailsFromSdaFabricV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetMulticastDetailsFromSdaFabric", err,
-				"Failure at GetMulticastDetailsFromSdaFabric, unexpected response", ""))
+				"Failure when executing 2 GetMulticastDetailsFromSdaFabricV1", err,
+				"Failure at GetMulticastDetailsFromSdaFabricV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetMulticastDetailsFromSdaFabricItem(response1)
+		vItem1 := flattenSdaGetMulticastDetailsFromSdaFabricV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetMulticastDetailsFromSdaFabric response",
+				"Failure when setting GetMulticastDetailsFromSdaFabricV1 response",
 				err))
 			return diags
 		}
@@ -172,14 +172,14 @@ func dataSourceSdaMulticastRead(ctx context.Context, d *schema.ResourceData, m i
 	return diags
 }
 
-func flattenSdaGetMulticastDetailsFromSdaFabricItem(item *catalystcentersdkgo.ResponseSdaGetMulticastDetailsFromSdaFabric) []map[string]interface{} {
+func flattenSdaGetMulticastDetailsFromSdaFabricV1Item(item *catalystcentersdkgo.ResponseSdaGetMulticastDetailsFromSdaFabricV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["multicast_method"] = item.MulticastMethod
 	respItem["multicast_type"] = item.MulticastType
-	respItem["multicast_vn_info"] = flattenSdaGetMulticastDetailsFromSdaFabricItemMulticastVnInfo(item.MulticastVnInfo)
+	respItem["multicast_vn_info"] = flattenSdaGetMulticastDetailsFromSdaFabricV1ItemMulticastVnInfo(item.MulticastVnInfo)
 	respItem["status"] = item.Status
 	respItem["description"] = item.Description
 	return []map[string]interface{}{
@@ -187,7 +187,7 @@ func flattenSdaGetMulticastDetailsFromSdaFabricItem(item *catalystcentersdkgo.Re
 	}
 }
 
-func flattenSdaGetMulticastDetailsFromSdaFabricItemMulticastVnInfo(items *[]catalystcentersdkgo.ResponseSdaGetMulticastDetailsFromSdaFabricMulticastVnInfo) []map[string]interface{} {
+func flattenSdaGetMulticastDetailsFromSdaFabricV1ItemMulticastVnInfo(items *[]catalystcentersdkgo.ResponseSdaGetMulticastDetailsFromSdaFabricV1MulticastVnInfo) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -198,13 +198,13 @@ func flattenSdaGetMulticastDetailsFromSdaFabricItemMulticastVnInfo(items *[]cata
 		respItem["ip_pool_name"] = item.IPPoolName
 		respItem["internal_rp_ip_address"] = item.InternalRpIPAddress
 		respItem["external_rp_ip_address"] = item.ExternalRpIPAddress
-		respItem["ssm_info"] = flattenSdaGetMulticastDetailsFromSdaFabricItemMulticastVnInfoSsmInfo(item.SsmInfo)
+		respItem["ssm_info"] = flattenSdaGetMulticastDetailsFromSdaFabricV1ItemMulticastVnInfoSsmInfo(item.SsmInfo)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSdaGetMulticastDetailsFromSdaFabricItemMulticastVnInfoSsmInfo(items *[]catalystcentersdkgo.ResponseSdaGetMulticastDetailsFromSdaFabricMulticastVnInfoSsmInfo) []map[string]interface{} {
+func flattenSdaGetMulticastDetailsFromSdaFabricV1ItemMulticastVnInfoSsmInfo(items *[]catalystcentersdkgo.ResponseSdaGetMulticastDetailsFromSdaFabricV1MulticastVnInfoSsmInfo) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

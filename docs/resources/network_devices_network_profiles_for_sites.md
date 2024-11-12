@@ -48,7 +48,7 @@ output "catalystcenter_network_devices_network_profiles_for_sites_example" {
 
 Required:
 
-- `id` (String) id path parameter. The 'id' of the network profile, retrievable from 'GET /intent/api/v1/networkProfilesForSites'
+- `id` (String) id path parameter. The *id* of the network profile, retrievable from *GET /intent/api/v1/networkProfilesForSites*
 
 
 <a id="nestedatt--item"></a>

@@ -184,20 +184,18 @@ func resourceWirelessControllersProvisionCreate(ctx context.Context, d *schema.R
 	vDeviceID := resourceItem["device_id"]
 
 	vvDeviceID := vDeviceID.(string)
-	request1 := expandRequestWirelessControllersProvisionWirelessControllerProvision(ctx, "parameters.0", d)
+	request1 := expandRequestWirelessControllersProvisionWirelessControllerProvisionV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.Wireless.WirelessControllerProvision(vvDeviceID, request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Wireless.WirelessControllerProvisionV1(vvDeviceID, request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing WirelessControllerProvision", err))
+			"Failure when executing WirelessControllerProvisionV1", err))
 		return diags
 	}
 
@@ -205,7 +203,7 @@ func resourceWirelessControllersProvisionCreate(ctx context.Context, d *schema.R
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing WirelessControllerProvision", err))
+			"Failure when executing WirelessControllerProvisionV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -239,22 +237,24 @@ func resourceWirelessControllersProvisionCreate(ctx context.Context, d *schema.R
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing WirelessControllerProvision", err1))
+				"Failure when executing WirelessControllerProvisionV1", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenWirelessWirelessControllerProvisionItem(response1.Response)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
+	vItem1 := flattenWirelessWirelessControllerProvisionV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting WirelessControllerProvision response",
+			"Failure when setting WirelessControllerProvisionV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceWirelessControllersProvisionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -269,22 +269,22 @@ func resourceWirelessControllersProvisionDelete(ctx context.Context, d *schema.R
 	return diags
 }
 
-func expandRequestWirelessControllersProvisionWirelessControllerProvision(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessWirelessControllerProvision {
-	request := catalystcentersdkgo.RequestWirelessWirelessControllerProvision{}
+func expandRequestWirelessControllersProvisionWirelessControllerProvisionV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessWirelessControllerProvisionV1 {
+	request := catalystcentersdkgo.RequestWirelessWirelessControllerProvisionV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".interfaces")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".interfaces")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".interfaces")))) {
-		request.Interfaces = expandRequestWirelessControllersProvisionWirelessControllerProvisionInterfacesArray(ctx, key+".interfaces", d)
+		request.Interfaces = expandRequestWirelessControllersProvisionWirelessControllerProvisionV1InterfacesArray(ctx, key+".interfaces", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".skip_ap_provision")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".skip_ap_provision")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".skip_ap_provision")))) {
 		request.SkipApProvision = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rolling_ap_upgrade")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rolling_ap_upgrade")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rolling_ap_upgrade")))) {
-		request.RollingApUpgrade = expandRequestWirelessControllersProvisionWirelessControllerProvisionRollingApUpgrade(ctx, key+".rolling_ap_upgrade.0", d)
+		request.RollingApUpgrade = expandRequestWirelessControllersProvisionWirelessControllerProvisionV1RollingApUpgrade(ctx, key+".rolling_ap_upgrade.0", d)
 	}
 	return &request
 }
 
-func expandRequestWirelessControllersProvisionWirelessControllerProvisionInterfacesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessWirelessControllerProvisionInterfaces {
-	request := []catalystcentersdkgo.RequestWirelessWirelessControllerProvisionInterfaces{}
+func expandRequestWirelessControllersProvisionWirelessControllerProvisionV1InterfacesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessWirelessControllerProvisionV1Interfaces {
+	request := []catalystcentersdkgo.RequestWirelessWirelessControllerProvisionV1Interfaces{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -295,7 +295,7 @@ func expandRequestWirelessControllersProvisionWirelessControllerProvisionInterfa
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestWirelessControllersProvisionWirelessControllerProvisionInterfaces(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestWirelessControllersProvisionWirelessControllerProvisionV1Interfaces(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -303,8 +303,8 @@ func expandRequestWirelessControllersProvisionWirelessControllerProvisionInterfa
 	return &request
 }
 
-func expandRequestWirelessControllersProvisionWirelessControllerProvisionInterfaces(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessWirelessControllerProvisionInterfaces {
-	request := catalystcentersdkgo.RequestWirelessWirelessControllerProvisionInterfaces{}
+func expandRequestWirelessControllersProvisionWirelessControllerProvisionV1Interfaces(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessWirelessControllerProvisionV1Interfaces {
+	request := catalystcentersdkgo.RequestWirelessWirelessControllerProvisionV1Interfaces{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".interface_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".interface_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".interface_name")))) {
 		request.InterfaceName = interfaceToString(v)
 	}
@@ -326,8 +326,8 @@ func expandRequestWirelessControllersProvisionWirelessControllerProvisionInterfa
 	return &request
 }
 
-func expandRequestWirelessControllersProvisionWirelessControllerProvisionRollingApUpgrade(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessWirelessControllerProvisionRollingApUpgrade {
-	request := catalystcentersdkgo.RequestWirelessWirelessControllerProvisionRollingApUpgrade{}
+func expandRequestWirelessControllersProvisionWirelessControllerProvisionV1RollingApUpgrade(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessWirelessControllerProvisionV1RollingApUpgrade {
+	request := catalystcentersdkgo.RequestWirelessWirelessControllerProvisionV1RollingApUpgrade{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".enable_rolling_ap_upgrade")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".enable_rolling_ap_upgrade")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".enable_rolling_ap_upgrade")))) {
 		request.EnableRollingApUpgrade = interfaceToBoolPtr(v)
 	}
@@ -337,7 +337,7 @@ func expandRequestWirelessControllersProvisionWirelessControllerProvisionRolling
 	return &request
 }
 
-func flattenWirelessWirelessControllerProvisionItem(item *catalystcentersdkgo.ResponseWirelessWirelessControllerProvisionResponse) []map[string]interface{} {
+func flattenWirelessWirelessControllerProvisionV1Item(item *catalystcentersdkgo.ResponseWirelessWirelessControllerProvisionV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -1,6 +1,6 @@
 
 resource "catalystcenter_network_profiles_for_sites_site_assignments_bulk_delete" "example" {
-  provider   = catalystcenter
+  provider   = meraki
   profile_id = "string"
   site_id    = "string"
   parameters {

@@ -1,6 +1,6 @@
 
 resource "catalystcenter_compliance" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     categories   = ["string"]

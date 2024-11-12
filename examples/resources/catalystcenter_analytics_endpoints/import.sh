@@ -1,0 +1,1 @@
+terraform import catalystcenter_analytics_endpoints.example "ep_id:=string"

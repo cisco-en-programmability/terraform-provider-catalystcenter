@@ -92,14 +92,16 @@ func resourceDisassociateSiteToNetworkProfileCreate(ctx context.Context, d *sche
 	vvNetworkProfileID := vNetworkProfileID.(string)
 	vvSiteID := vSiteID.(string)
 
-	response1, restyResp1, err := client.SiteDesign.Disassociate(vvNetworkProfileID, vvSiteID)
+	// has_unknown_response: None
+
+	response1, restyResp1, err := client.SiteDesign.DisassociateV1(vvNetworkProfileID, vvSiteID)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing Disassociate", err))
+			"Failure when executing DisassociateV1", err))
 		return diags
 	}
 
@@ -107,7 +109,7 @@ func resourceDisassociateSiteToNetworkProfileCreate(ctx context.Context, d *sche
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing Disassociate", err))
+			"Failure when executing DisassociateV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -141,22 +143,20 @@ func resourceDisassociateSiteToNetworkProfileCreate(ctx context.Context, d *sche
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing Disassociate", err1))
+				"Failure when executing DisassociateV1", err1))
 			return diags
 		}
 	}
-
-	vItem1 := flattenSiteDesignDisassociateItem(response1.Response)
+	vItem1 := flattenSiteDesignDisassociateV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting Disassociate response",
+			"Failure when setting DisassociateV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceDisassociateSiteToNetworkProfileRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -171,7 +171,7 @@ func resourceDisassociateSiteToNetworkProfileDelete(ctx context.Context, d *sche
 	return diags
 }
 
-func flattenSiteDesignDisassociateItem(item *catalystcentersdkgo.ResponseSiteDesignDisassociateResponse) []map[string]interface{} {
+func flattenSiteDesignDisassociateV1Item(item *catalystcentersdkgo.ResponseSiteDesignDisassociateV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

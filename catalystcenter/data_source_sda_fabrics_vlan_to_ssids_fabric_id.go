@@ -91,9 +91,9 @@ func dataSourceSdaFabricsVLANToSSIDsFabricIDRead(ctx context.Context, d *schema.
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSite")
+		log.Printf("[DEBUG] Selected method: RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1")
 		vvFabricID := vFabricID.(string)
-		queryParams1 := catalystcentersdkgo.RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteQueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1QueryParams{}
 
 		if okLimit {
 			queryParams1.Limit = vLimit.(float64)
@@ -102,24 +102,24 @@ func dataSourceSdaFabricsVLANToSSIDsFabricIDRead(ctx context.Context, d *schema.
 			queryParams1.Offset = vOffset.(float64)
 		}
 
-		response1, restyResp1, err := client.FabricWireless.RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSite(vvFabricID, &queryParams1)
+		response1, restyResp1, err := client.FabricWireless.RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1(vvFabricID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSite", err,
-				"Failure at RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSite, unexpected response", ""))
+				"Failure when executing 2 RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1", err,
+				"Failure at RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteItems(response1.Response)
+		vItems1 := flattenFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSite response",
+				"Failure when setting RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1 response",
 				err))
 			return diags
 		}
@@ -131,7 +131,7 @@ func dataSourceSdaFabricsVLANToSSIDsFabricIDRead(ctx context.Context, d *schema.
 	return diags
 }
 
-func flattenFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteItems(items *[]catalystcentersdkgo.ResponseFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteResponse) []map[string]interface{} {
+func flattenFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1Items(items *[]catalystcentersdkgo.ResponseFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -139,13 +139,13 @@ func flattenFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSi
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["vlan_name"] = item.VLANName
-		respItem["ssid_details"] = flattenFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteItemsSSIDDetails(item.SSIDDetails)
+		respItem["ssid_details"] = flattenFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1ItemsSSIDDetails(item.SSIDDetails)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteItemsSSIDDetails(items *[]catalystcentersdkgo.ResponseFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteResponseSSIDDetails) []map[string]interface{} {
+func flattenFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1ItemsSSIDDetails(items *[]catalystcentersdkgo.ResponseFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1ResponseSSIDDetails) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

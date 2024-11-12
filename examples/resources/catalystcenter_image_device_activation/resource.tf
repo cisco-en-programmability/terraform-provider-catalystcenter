@@ -1,6 +1,6 @@
 
 resource "catalystcenter_image_device_activation" "example" {
-  provider          = catalystcenter
+  provider          = meraki
   client_type       = "string"
   client_url        = "string"
   schedule_validate = "false"

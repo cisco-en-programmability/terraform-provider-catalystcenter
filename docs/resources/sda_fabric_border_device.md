@@ -20,41 +20,171 @@ It manages create, read and delete operations on SDA.
 ```terraform
 resource "catalystcenter_sda_fabric_border_device" "example" {
   provider = catalystcenter
+  item {
 
-  parameters {
+
     payload {
-      border_priority                    = "string"
-      border_session_type                = "string"
-      border_with_external_connectivity  = "false"
-      connected_to_internet              = "false"
-      device_management_ip_address       = "string"
-      device_role                        = ["string"]
-      external_connectivity_ip_pool_name = "string"
-      external_connectivity_settings {
 
-        external_autonomou_system_number = "string"
-        interface_description            = "string"
-        interface_name                   = "string"
-        l2_handoff {
 
-          virtual_network_name = "string"
-          vlan_name            = "string"
+
+
+
+
+
+
+
+
+
+      device_settings {
+
+
+
+
+
+
+        ext_connectivity_settings {
+
+
+
+
+
+
+
+
+
+
+          l3_handoff {
+
+
+
+
+
+
+
+
+
+            virtual_network {
+
+
+            }
+
+          }
+
+
         }
-        l3_handoff {
 
-          virtual_network {
 
-            virtual_network_name = "string"
-            vlan_id              = "string"
+
+
+
+
+
+
+
+
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+      network_widesettings {
+
+
+
+
+        dhcp {
+
+
+          ip_address {
+
+
+
+
+
           }
         }
+
+        dns {
+
+
+
+          ip {
+
+
+
+
+
+          }
+        }
+
+
+
+
+
+
+
+
+
+
       }
-      external_domain_routing_protocol_name = "string"
-      internal_autonomou_system_number      = "string"
-      route_distribution_protocol           = "string"
-      sda_transit_network_name              = "string"
-      site_name_hierarchy                   = "string"
+
+
+
+
+
+
+
+      transit_networks {
+
+
+      }
+
+
+
     }
+
+  }
+  parameters {
+
+    border_priority                    = "string"
+    border_session_type                = "string"
+    border_with_external_connectivity  = "false"
+    connected_to_internet              = "false"
+    device_management_ip_address       = "string"
+    device_role                        = ["string"]
+    external_connectivity_ip_pool_name = "string"
+    external_connectivity_settings {
+
+      external_autonomou_system_number = "string"
+      interface_description            = "string"
+      interface_name                   = "string"
+      l2_handoff {
+
+        virtual_network_name = "string"
+        vlan_name            = "string"
+      }
+      l3_handoff {
+
+        virtual_network {
+
+          virtual_network_name = "string"
+          vlan_id              = "string"
+        }
+      }
+    }
+    external_domain_routing_protocol_name = "string"
+    internal_autonomou_system_number      = "string"
+    route_distribution_protocol           = "string"
+    sda_transit_network_name              = "string"
+    site_name_hierarchy                   = "string"
   }
 }
 
@@ -68,7 +198,7 @@ output "catalystcenter_sda_fabric_border_device_example" {
 
 ### Optional
 
-- `parameters` (Block List) Array of RequestSdaAddBorderDeviceInSDAFabric (see [below for nested schema](#nestedblock--parameters))
+- `parameters` (Block List) Array of RequestSdaAddBorderDeviceInSDAFabricV1 (see [below for nested schema](#nestedblock--parameters))
 
 ### Read-Only
 
@@ -81,13 +211,6 @@ output "catalystcenter_sda_fabric_border_device_example" {
 
 Optional:
 
-- `payload` (Block List) Array of RequestApplicationPolicyCreateApplication (see [below for nested schema](#nestedblock--parameters--payload))
-
-<a id="nestedblock--parameters--payload"></a>
-### Nested Schema for `parameters.payload`
-
-Optional:
-
 - `border_priority` (String) Border priority associated with a given device. Allowed range for Border Priority is [1-9]. A lower value indicates higher priority. E.g., a priority of 1 takes precedence over 5. Default priority would be set to 10.
 - `border_session_type` (String) Border Session Type
 - `border_with_external_connectivity` (String) Border With External Connectivity (Note: True for transit and False for non-transit border)
@@ -95,26 +218,26 @@ Optional:
 - `device_management_ip_address` (String) Management Ip Address of the provisioned Device
 - `device_role` (List of String) Supported Device Roles in SD-Access fabric. Allowed roles are "Border_Node","Control_Plane_Node","Edge_Node". E.g. ["Border_Node"] or ["Border_Node", "Control_Plane_Node"] or ["Border_Node", "Control_Plane_Node","Edge_Node"]
 - `external_connectivity_ip_pool_name` (String) External Connectivity IpPool Name
-- `external_connectivity_settings` (Block List) (see [below for nested schema](#nestedblock--parameters--payload--external_connectivity_settings))
+- `external_connectivity_settings` (Block List) (see [below for nested schema](#nestedblock--parameters--external_connectivity_settings))
 - `external_domain_routing_protocol_name` (String) External Domain Routing Protocol Name
 - `internal_autonomou_system_number` (String) Internal Autonomous System Number
 - `route_distribution_protocol` (String) Route Distribution Protocol for Control Plane Device. Allowed values are "LISP_BGP" or "LISP_PUB_SUB". Default value is "LISP_BGP"
 - `sda_transit_network_name` (String) SD-Access Transit Network Name
 - `site_name_hierarchy` (String) Site Name Hierarchy of provisioned Device(site should be part of Fabric Site)
 
-<a id="nestedblock--parameters--payload--external_connectivity_settings"></a>
-### Nested Schema for `parameters.payload.external_connectivity_settings`
+<a id="nestedblock--parameters--external_connectivity_settings"></a>
+### Nested Schema for `parameters.external_connectivity_settings`
 
 Optional:
 
 - `external_autonomou_system_number` (String) External Autonomous System Number peer (e.g.,1-65535)
 - `interface_description` (String) Interface Description
 - `interface_name` (String) Interface Name
-- `l2_handoff` (Block List) (see [below for nested schema](#nestedblock--parameters--payload--external_connectivity_settings--l2_handoff))
-- `l3_handoff` (Block List) (see [below for nested schema](#nestedblock--parameters--payload--external_connectivity_settings--l3_handoff))
+- `l2_handoff` (Block List) (see [below for nested schema](#nestedblock--parameters--external_connectivity_settings--l2_handoff))
+- `l3_handoff` (Block List) (see [below for nested schema](#nestedblock--parameters--external_connectivity_settings--l3_handoff))
 
-<a id="nestedblock--parameters--payload--external_connectivity_settings--l2_handoff"></a>
-### Nested Schema for `parameters.payload.external_connectivity_settings.l2_handoff`
+<a id="nestedblock--parameters--external_connectivity_settings--l2_handoff"></a>
+### Nested Schema for `parameters.external_connectivity_settings.l2_handoff`
 
 Optional:
 
@@ -122,21 +245,20 @@ Optional:
 - `vlan_name` (String) Vlan Name of L2 Handoff
 
 
-<a id="nestedblock--parameters--payload--external_connectivity_settings--l3_handoff"></a>
-### Nested Schema for `parameters.payload.external_connectivity_settings.l3_handoff`
+<a id="nestedblock--parameters--external_connectivity_settings--l3_handoff"></a>
+### Nested Schema for `parameters.external_connectivity_settings.l3_handoff`
 
 Optional:
 
-- `virtual_network` (Block List) (see [below for nested schema](#nestedblock--parameters--payload--external_connectivity_settings--l3_handoff--virtual_network))
+- `virtual_network` (Block List) (see [below for nested schema](#nestedblock--parameters--external_connectivity_settings--l3_handoff--virtual_network))
 
-<a id="nestedblock--parameters--payload--external_connectivity_settings--l3_handoff--virtual_network"></a>
-### Nested Schema for `parameters.payload.external_connectivity_settings.l3_handoff.virtual_network`
+<a id="nestedblock--parameters--external_connectivity_settings--l3_handoff--virtual_network"></a>
+### Nested Schema for `parameters.external_connectivity_settings.l3_handoff.virtual_network`
 
 Optional:
 
 - `virtual_network_name` (String) Virtual Network Name, that is associated to Fabric Site
 - `vlan_id` (String) Vlan Id (e.g.,2-4096 except for reserved VLANs (1002-1005, 2046, 4095))
-
 
 
 

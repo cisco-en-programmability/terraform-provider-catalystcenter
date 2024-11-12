@@ -199,8 +199,8 @@ func dataSourceWirelessSettingsDot11BeProfilesRead(ctx context.Context, d *schem
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAll80211BeProfiles")
-		queryParams1 := catalystcentersdkgo.GetAll80211BeProfilesQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetAll80211BeProfilesV1")
+		queryParams1 := catalystcentersdkgo.GetAll80211BeProfilesV1QueryParams{}
 
 		if okLimit {
 			queryParams1.Limit = vLimit.(float64)
@@ -209,24 +209,24 @@ func dataSourceWirelessSettingsDot11BeProfilesRead(ctx context.Context, d *schem
 			queryParams1.Offset = vOffset.(float64)
 		}
 
-		response1, restyResp1, err := client.Wireless.GetAll80211BeProfiles(&queryParams1)
+		response1, restyResp1, err := client.Wireless.GetAll80211BeProfilesV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAll80211BeProfiles", err,
-				"Failure at GetAll80211BeProfiles, unexpected response", ""))
+				"Failure when executing 2 GetAll80211BeProfilesV1", err,
+				"Failure at GetAll80211BeProfilesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenWirelessGetAll80211BeProfilesItems(response1.Response)
+		vItems1 := flattenWirelessGetAll80211BeProfilesV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAll80211BeProfiles response",
+				"Failure when setting GetAll80211BeProfilesV1 response",
 				err))
 			return diags
 		}
@@ -236,27 +236,27 @@ func dataSourceWirelessSettingsDot11BeProfilesRead(ctx context.Context, d *schem
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: Get80211BeProfileByID")
+		log.Printf("[DEBUG] Selected method: Get80211BeProfileByIDV1")
 		vvID := vID.(string)
 
-		response2, restyResp2, err := client.Wireless.Get80211BeProfileByID(vvID)
+		response2, restyResp2, err := client.Wireless.Get80211BeProfileByIDV1(vvID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 Get80211BeProfileByID", err,
-				"Failure at Get80211BeProfileByID, unexpected response", ""))
+				"Failure when executing 2 Get80211BeProfileByIDV1", err,
+				"Failure at Get80211BeProfileByIDV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenWirelessGet80211BeProfileByIDItem(response2.Response)
+		vItem2 := flattenWirelessGet80211BeProfileByIDV1Item(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting Get80211BeProfileByID response",
+				"Failure when setting Get80211BeProfileByIDV1 response",
 				err))
 			return diags
 		}
@@ -268,7 +268,7 @@ func dataSourceWirelessSettingsDot11BeProfilesRead(ctx context.Context, d *schem
 	return diags
 }
 
-func flattenWirelessGetAll80211BeProfilesItems(items *[]catalystcentersdkgo.ResponseWirelessGetAll80211BeProfilesResponse) []map[string]interface{} {
+func flattenWirelessGetAll80211BeProfilesV1Items(items *[]catalystcentersdkgo.ResponseWirelessGetAll80211BeProfilesV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -288,7 +288,7 @@ func flattenWirelessGetAll80211BeProfilesItems(items *[]catalystcentersdkgo.Resp
 	return respItems
 }
 
-func flattenWirelessGet80211BeProfileByIDItem(item *catalystcentersdkgo.ResponseWirelessGet80211BeProfileByIDResponse) []map[string]interface{} {
+func flattenWirelessGet80211BeProfileByIDV1Item(item *catalystcentersdkgo.ResponseWirelessGet80211BeProfileByIDV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -87,14 +87,16 @@ func resourceNetworkDevicesIssuesRemediationProvisionCreate(ctx context.Context,
 
 	vvID := vID.(string)
 
-	response1, restyResp1, err := client.Compliance.ComplianceRemediation(vvID)
+	// has_unknown_response: None
+
+	response1, restyResp1, err := client.Compliance.ComplianceRemediationV1(vvID)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ComplianceRemediation", err))
+			"Failure when executing ComplianceRemediationV1", err))
 		return diags
 	}
 
@@ -102,7 +104,7 @@ func resourceNetworkDevicesIssuesRemediationProvisionCreate(ctx context.Context,
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing ComplianceRemediation", err))
+			"Failure when executing ComplianceRemediationV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -136,15 +138,14 @@ func resourceNetworkDevicesIssuesRemediationProvisionCreate(ctx context.Context,
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing ComplianceRemediation", err1))
+				"Failure when executing ComplianceRemediationV1", err1))
 			return diags
 		}
 	}
-
-	vItem1 := flattenComplianceComplianceRemediationItem(response1.Response)
+	vItem1 := flattenComplianceComplianceRemediationV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ComplianceRemediation response",
+			"Failure when setting ComplianceRemediationV1 response",
 			err))
 		return diags
 	}
@@ -166,7 +167,7 @@ func resourceNetworkDevicesIssuesRemediationProvisionDelete(ctx context.Context,
 	return diags
 }
 
-func flattenComplianceComplianceRemediationItem(item *catalystcentersdkgo.ResponseComplianceComplianceRemediationResponse) []map[string]interface{} {
+func flattenComplianceComplianceRemediationV1Item(item *catalystcentersdkgo.ResponseComplianceComplianceRemediationV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

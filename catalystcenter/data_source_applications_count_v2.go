@@ -61,29 +61,29 @@ func dataSourceApplicationsCountV2Read(ctx context.Context, d *schema.ResourceDa
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetApplicationCount")
-		queryParams1 := catalystcentersdkgo.GetApplicationCountQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetApplicationCountV2")
+		queryParams1 := catalystcentersdkgo.GetApplicationCountV2QueryParams{}
 
 		queryParams1.ScalableGroupType = vScalableGroupType.(string)
 
-		response1, restyResp1, err := client.ApplicationPolicy.GetApplicationCount(&queryParams1)
+		response1, restyResp1, err := client.ApplicationPolicy.GetApplicationCountV2(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetApplicationCount", err,
-				"Failure at GetApplicationCount, unexpected response", ""))
+				"Failure when executing 2 GetApplicationCountV2", err,
+				"Failure at GetApplicationCountV2, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenApplicationPolicyGetApplicationCountItem(response1)
+		vItem1 := flattenApplicationPolicyGetApplicationCountV2Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetApplicationCount response",
+				"Failure when setting GetApplicationCountV2 response",
 				err))
 			return diags
 		}
@@ -95,7 +95,7 @@ func dataSourceApplicationsCountV2Read(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func flattenApplicationPolicyGetApplicationCountItem(item *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationCount) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationCountV2Item(item *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationCountV2) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

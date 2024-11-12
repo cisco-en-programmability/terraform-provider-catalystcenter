@@ -1,1 +1,0 @@
-terraform import catalystcenter_users_external_authentication.example "id:=string"

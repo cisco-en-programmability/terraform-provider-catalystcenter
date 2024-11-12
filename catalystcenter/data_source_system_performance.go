@@ -184,8 +184,8 @@ func dataSourceSystemPerformanceRead(ctx context.Context, d *schema.ResourceData
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: SystemPerformanceAPI")
-		queryParams1 := catalystcentersdkgo.SystemPerformanceAPIQueryParams{}
+		log.Printf("[DEBUG] Selected method: SystemPerformanceAPIV1")
+		queryParams1 := catalystcentersdkgo.SystemPerformanceAPIV1QueryParams{}
 
 		if okKpi {
 			queryParams1.Kpi = vKpi.(string)
@@ -200,24 +200,24 @@ func dataSourceSystemPerformanceRead(ctx context.Context, d *schema.ResourceData
 			queryParams1.EndTime = vEndTime.(float64)
 		}
 
-		response1, restyResp1, err := client.HealthAndPerformance.SystemPerformanceAPI(&queryParams1)
+		response1, restyResp1, err := client.HealthAndPerformance.SystemPerformanceAPIV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 SystemPerformanceAPI", err,
-				"Failure at SystemPerformanceAPI, unexpected response", ""))
+				"Failure when executing 2 SystemPerformanceAPIV1", err,
+				"Failure at SystemPerformanceAPIV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenHealthAndPerformanceSystemPerformanceAPIItem(response1)
+		vItem1 := flattenHealthAndPerformanceSystemPerformanceAPIV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting SystemPerformanceAPI response",
+				"Failure when setting SystemPerformanceAPIV1 response",
 				err))
 			return diags
 		}
@@ -229,28 +229,28 @@ func dataSourceSystemPerformanceRead(ctx context.Context, d *schema.ResourceData
 	return diags
 }
 
-func flattenHealthAndPerformanceSystemPerformanceAPIItem(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceAPI) []map[string]interface{} {
+func flattenHealthAndPerformanceSystemPerformanceAPIV1Item(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceAPIV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["host_name"] = item.HostName
 	respItem["version"] = item.Version
-	respItem["kpis"] = flattenHealthAndPerformanceSystemPerformanceAPIItemKpis(item.Kpis)
+	respItem["kpis"] = flattenHealthAndPerformanceSystemPerformanceAPIV1ItemKpis(item.Kpis)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenHealthAndPerformanceSystemPerformanceAPIItemKpis(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceAPIKpis) []map[string]interface{} {
+func flattenHealthAndPerformanceSystemPerformanceAPIV1ItemKpis(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceAPIV1Kpis) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["cpu"] = flattenHealthAndPerformanceSystemPerformanceAPIItemKpisCPU(item.CPU)
-	respItem["memory"] = flattenHealthAndPerformanceSystemPerformanceAPIItemKpisMemory(item.Memory)
-	respItem["network_tx_rate"] = flattenHealthAndPerformanceSystemPerformanceAPIItemKpisNetworktxRate(item.NetworktxRate)
-	respItem["network_rx_rate"] = flattenHealthAndPerformanceSystemPerformanceAPIItemKpisNetworkrxRate(item.NetworkrxRate)
+	respItem["cpu"] = flattenHealthAndPerformanceSystemPerformanceAPIV1ItemKpisCPU(item.CPU)
+	respItem["memory"] = flattenHealthAndPerformanceSystemPerformanceAPIV1ItemKpisMemory(item.Memory)
+	respItem["network_tx_rate"] = flattenHealthAndPerformanceSystemPerformanceAPIV1ItemKpisNetworktxRate(item.NetworktxRate)
+	respItem["network_rx_rate"] = flattenHealthAndPerformanceSystemPerformanceAPIV1ItemKpisNetworkrxRate(item.NetworkrxRate)
 
 	return []map[string]interface{}{
 		respItem,
@@ -258,21 +258,7 @@ func flattenHealthAndPerformanceSystemPerformanceAPIItemKpis(item *catalystcente
 
 }
 
-func flattenHealthAndPerformanceSystemPerformanceAPIItemKpisCPU(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceAPIKpisCPU) []map[string]interface{} {
-	if item == nil {
-		return nil
-	}
-	respItem := make(map[string]interface{})
-	respItem["units"] = item.Units
-	respItem["utilization"] = item.Utilization
-
-	return []map[string]interface{}{
-		respItem,
-	}
-
-}
-
-func flattenHealthAndPerformanceSystemPerformanceAPIItemKpisMemory(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceAPIKpisMemory) []map[string]interface{} {
+func flattenHealthAndPerformanceSystemPerformanceAPIV1ItemKpisCPU(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceAPIV1KpisCPU) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -286,7 +272,7 @@ func flattenHealthAndPerformanceSystemPerformanceAPIItemKpisMemory(item *catalys
 
 }
 
-func flattenHealthAndPerformanceSystemPerformanceAPIItemKpisNetworktxRate(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceAPIKpisNetworktxRate) []map[string]interface{} {
+func flattenHealthAndPerformanceSystemPerformanceAPIV1ItemKpisMemory(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceAPIV1KpisMemory) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -300,7 +286,21 @@ func flattenHealthAndPerformanceSystemPerformanceAPIItemKpisNetworktxRate(item *
 
 }
 
-func flattenHealthAndPerformanceSystemPerformanceAPIItemKpisNetworkrxRate(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceAPIKpisNetworkrxRate) []map[string]interface{} {
+func flattenHealthAndPerformanceSystemPerformanceAPIV1ItemKpisNetworktxRate(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceAPIV1KpisNetworktxRate) []map[string]interface{} {
+	if item == nil {
+		return nil
+	}
+	respItem := make(map[string]interface{})
+	respItem["units"] = item.Units
+	respItem["utilization"] = item.Utilization
+
+	return []map[string]interface{}{
+		respItem,
+	}
+
+}
+
+func flattenHealthAndPerformanceSystemPerformanceAPIV1ItemKpisNetworkrxRate(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceAPIV1KpisNetworkrxRate) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

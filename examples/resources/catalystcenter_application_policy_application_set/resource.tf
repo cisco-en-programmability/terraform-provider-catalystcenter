@@ -1,6 +1,7 @@
 
 resource "catalystcenter_application_policy_application_set" "example" {
   provider = catalystcenter
+
   parameters {
 
     default_business_relevance     = "string"

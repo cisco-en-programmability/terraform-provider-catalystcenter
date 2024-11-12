@@ -47,26 +47,26 @@ func dataSourceWirelessSettingsInterfacesCountRead(ctx context.Context, d *schem
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetInterfacesCount")
+		log.Printf("[DEBUG] Selected method: GetInterfacesCountV1")
 
-		response1, restyResp1, err := client.Wireless.GetInterfacesCount()
+		response1, restyResp1, err := client.Wireless.GetInterfacesCountV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetInterfacesCount", err,
-				"Failure at GetInterfacesCount, unexpected response", ""))
+				"Failure when executing 2 GetInterfacesCountV1", err,
+				"Failure at GetInterfacesCountV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessGetInterfacesCountItem(response1.Response)
+		vItem1 := flattenWirelessGetInterfacesCountV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetInterfacesCount response",
+				"Failure when setting GetInterfacesCountV1 response",
 				err))
 			return diags
 		}
@@ -78,7 +78,7 @@ func dataSourceWirelessSettingsInterfacesCountRead(ctx context.Context, d *schem
 	return diags
 }
 
-func flattenWirelessGetInterfacesCountItem(item *catalystcentersdkgo.ResponseWirelessGetInterfacesCountResponse) []map[string]interface{} {
+func flattenWirelessGetInterfacesCountV1Item(item *catalystcentersdkgo.ResponseWirelessGetInterfacesCountV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -18,7 +18,7 @@ func resourceSitesTelemetrySettings() *schema.Resource {
 	return &schema.Resource{
 		Description: `It manages read and update operations on Network Settings.
 
-- Sets telemetry settings for the given site; 'null' values indicate that the setting will be inherited from the parent
+- Sets telemetry settings for the given site; *null* values indicate that the setting will be inherited from the parent
 site.
 `,
 
@@ -275,7 +275,7 @@ site.
 							},
 						},
 						"id": &schema.Schema{
-							Description: `id path parameter. Site Id, retrievable from the 'id' attribute in '/dna/intent/api/v1/sites'
+							Description: `id path parameter. Site Id, retrievable from the *id* attribute in */dna/intent/api/v1/sites*
 `,
 							Type:     schema.TypeString,
 							Required: true,
@@ -408,7 +408,7 @@ func resourceSitesTelemetrySettingsRead(ctx context.Context, d *schema.ResourceD
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: RetrieveTelemetrySettingsForASite")
 		vvID := vID
-		queryParams1 := catalystcentersdkgo.RetrieveTelemetrySettingsForASiteQueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrieveTelemetrySettingsForASiteV1QueryParams{}
 
 		response1, restyResp1, err := client.NetworkSettings.RetrieveTelemetrySettingsForASite(vvID, &queryParams1)
 
@@ -422,7 +422,7 @@ func resourceSitesTelemetrySettingsRead(ctx context.Context, d *schema.ResourceD
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenNetworkSettingsRetrieveTelemetrySettingsForASiteItem(response1.Response)
+		vItem1 := flattenNetworkSettingsRetrieveTelemetrySettingsForASiteV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrieveTelemetrySettingsForASite response",
@@ -445,7 +445,7 @@ func resourceSitesTelemetrySettingsUpdate(ctx context.Context, d *schema.Resourc
 
 	vvID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASite(ctx, "parameters.0", d)
+		request1 := expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.NetworkSettings.SetTelemetrySettingsForASite(vvID, request1)
 		if err != nil || response1 == nil {
@@ -504,22 +504,22 @@ func resourceSitesTelemetrySettingsDelete(ctx context.Context, d *schema.Resourc
 		"Failure at SitesTelemetrySettingsDelete, unexpected response", ""))
 	return diags
 }
-func expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASite {
-	request := catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASite{}
+func expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteV1 {
+	request := catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".wired_data_collection")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".wired_data_collection")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".wired_data_collection")))) {
-		request.WiredDataCollection = expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteWiredDataCollection(ctx, key+".wired_data_collection.0", d)
+		request.WiredDataCollection = expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteV1WiredDataCollection(ctx, key+".wired_data_collection.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".wireless_telemetry")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".wireless_telemetry")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".wireless_telemetry")))) {
-		request.WirelessTelemetry = expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteWirelessTelemetry(ctx, key+".wireless_telemetry.0", d)
+		request.WirelessTelemetry = expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteV1WirelessTelemetry(ctx, key+".wireless_telemetry.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_traps")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_traps")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_traps")))) {
-		request.SNMPTraps = expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteSNMPTraps(ctx, key+".snmp_traps.0", d)
+		request.SNMPTraps = expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteV1SNMPTraps(ctx, key+".snmp_traps.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".syslogs")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".syslogs")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".syslogs")))) {
-		request.Syslogs = expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteSyslogs(ctx, key+".syslogs.0", d)
+		request.Syslogs = expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteV1Syslogs(ctx, key+".syslogs.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".application_visibility")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".application_visibility")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".application_visibility")))) {
-		request.ApplicationVisibility = expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteApplicationVisibility(ctx, key+".application_visibility.0", d)
+		request.ApplicationVisibility = expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteV1ApplicationVisibility(ctx, key+".application_visibility.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -527,8 +527,8 @@ func expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASite(ctx context
 	return &request
 }
 
-func expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteWiredDataCollection(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteWiredDataCollection {
-	request := catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteWiredDataCollection{}
+func expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteV1WiredDataCollection(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteV1WiredDataCollection {
+	request := catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteV1WiredDataCollection{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".enable_wired_data_collectio")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".enable_wired_data_collectio")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".enable_wired_data_collectio")))) {
 		request.EnableWiredDataCollectio = interfaceToBoolPtr(v)
 	}
@@ -538,8 +538,8 @@ func expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteWiredDataCol
 	return &request
 }
 
-func expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteWirelessTelemetry(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteWirelessTelemetry {
-	request := catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteWirelessTelemetry{}
+func expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteV1WirelessTelemetry(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteV1WirelessTelemetry {
+	request := catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteV1WirelessTelemetry{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".enable_wireless_telemetry")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".enable_wireless_telemetry")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".enable_wireless_telemetry")))) {
 		request.EnableWirelessTelemetry = interfaceToBoolPtr(v)
 	}
@@ -549,8 +549,8 @@ func expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteWirelessTele
 	return &request
 }
 
-func expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteSNMPTraps(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteSNMPTraps {
-	request := catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteSNMPTraps{}
+func expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteV1SNMPTraps(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteV1SNMPTraps {
+	request := catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteV1SNMPTraps{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".use_builtin_trap_server")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".use_builtin_trap_server")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".use_builtin_trap_server")))) {
 		request.UseBuiltinTrapServer = interfaceToBoolPtr(v)
 	}
@@ -563,8 +563,8 @@ func expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteSNMPTraps(ct
 	return &request
 }
 
-func expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteSyslogs(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteSyslogs {
-	request := catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteSyslogs{}
+func expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteV1Syslogs(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteV1Syslogs {
+	request := catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteV1Syslogs{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".use_builtin_syslog_server")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".use_builtin_syslog_server")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".use_builtin_syslog_server")))) {
 		request.UseBuiltinSyslogServer = interfaceToBoolPtr(v)
 	}
@@ -577,10 +577,10 @@ func expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteSyslogs(ctx 
 	return &request
 }
 
-func expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteApplicationVisibility(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteApplicationVisibility {
-	request := catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteApplicationVisibility{}
+func expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteV1ApplicationVisibility(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteV1ApplicationVisibility {
+	request := catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteV1ApplicationVisibility{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".collector")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".collector")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".collector")))) {
-		request.Collector = expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteApplicationVisibilityCollector(ctx, key+".collector.0", d)
+		request.Collector = expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteV1ApplicationVisibilityCollector(ctx, key+".collector.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".enable_on_wired_access_devices")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".enable_on_wired_access_devices")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".enable_on_wired_access_devices")))) {
 		request.EnableOnWiredAccessDevices = interfaceToBoolPtr(v)
@@ -591,8 +591,8 @@ func expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteApplicationV
 	return &request
 }
 
-func expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteApplicationVisibilityCollector(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteApplicationVisibilityCollector {
-	request := catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteApplicationVisibilityCollector{}
+func expandRequestSitesTelemetrySettingsSetTelemetrySettingsForASiteV1ApplicationVisibilityCollector(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteV1ApplicationVisibilityCollector {
+	request := catalystcentersdkgo.RequestNetworkSettingsSetTelemetrySettingsForASiteV1ApplicationVisibilityCollector{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".collector_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".collector_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".collector_type")))) {
 		request.CollectorType = interfaceToString(v)
 	}

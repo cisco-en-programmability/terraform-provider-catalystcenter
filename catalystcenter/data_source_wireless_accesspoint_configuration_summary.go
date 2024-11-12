@@ -459,29 +459,29 @@ func dataSourceWirelessAccesspointConfigurationSummaryRead(ctx context.Context, 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAccessPointConfiguration")
-		queryParams1 := catalystcentersdkgo.GetAccessPointConfigurationQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetAccessPointConfigurationV1")
+		queryParams1 := catalystcentersdkgo.GetAccessPointConfigurationV1QueryParams{}
 
 		queryParams1.Key = vKey.(string)
 
-		response1, restyResp1, err := client.Wireless.GetAccessPointConfiguration(&queryParams1)
+		response1, restyResp1, err := client.Wireless.GetAccessPointConfigurationV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAccessPointConfiguration", err,
-				"Failure at GetAccessPointConfiguration, unexpected response", ""))
+				"Failure when executing 2 GetAccessPointConfigurationV1", err,
+				"Failure at GetAccessPointConfigurationV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessGetAccessPointConfigurationItem(response1)
+		vItem1 := flattenWirelessGetAccessPointConfigurationV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAccessPointConfiguration response",
+				"Failure when setting GetAccessPointConfigurationV1 response",
 				err))
 			return diags
 		}
@@ -493,27 +493,27 @@ func dataSourceWirelessAccesspointConfigurationSummaryRead(ctx context.Context, 
 	return diags
 }
 
-func flattenWirelessGetAccessPointConfigurationItem(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfiguration) []map[string]interface{} {
+func flattenWirelessGetAccessPointConfigurationV1Item(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["instance_uuid"] = flattenWirelessGetAccessPointConfigurationItemInstanceUUID(item.InstanceUUID)
+	respItem["instance_uuid"] = flattenWirelessGetAccessPointConfigurationV1ItemInstanceUUID(item.InstanceUUID)
 	respItem["instance_id"] = item.InstanceID
-	respItem["auth_entity_id"] = flattenWirelessGetAccessPointConfigurationItemAuthEntityID(item.AuthEntityID)
+	respItem["auth_entity_id"] = flattenWirelessGetAccessPointConfigurationV1ItemAuthEntityID(item.AuthEntityID)
 	respItem["display_name"] = item.DisplayName
-	respItem["auth_entity_class"] = flattenWirelessGetAccessPointConfigurationItemAuthEntityClass(item.AuthEntityClass)
+	respItem["auth_entity_class"] = flattenWirelessGetAccessPointConfigurationV1ItemAuthEntityClass(item.AuthEntityClass)
 	respItem["instance_tenant_id"] = item.InstanceTenantID
 	respItem["ordered_list_oeindex"] = item.OrderedListOEIndex
-	respItem["ordered_list_oeassoc_name"] = flattenWirelessGetAccessPointConfigurationItemOrderedListOEAssocName(item.OrderedListOEAssocName)
+	respItem["ordered_list_oeassoc_name"] = flattenWirelessGetAccessPointConfigurationV1ItemOrderedListOEAssocName(item.OrderedListOEAssocName)
 	respItem["creation_order_index"] = item.CreationOrderIndex
 	respItem["is_being_changed"] = boolPtrToString(item.IsBeingChanged)
 	respItem["deploy_pending"] = item.DeployPending
-	respItem["instance_created_on"] = flattenWirelessGetAccessPointConfigurationItemInstanceCreatedOn(item.InstanceCreatedOn)
-	respItem["instance_updated_on"] = flattenWirelessGetAccessPointConfigurationItemInstanceUpdatedOn(item.InstanceUpdatedOn)
-	respItem["change_log_list"] = flattenWirelessGetAccessPointConfigurationItemChangeLogList(item.ChangeLogList)
-	respItem["instance_origin"] = flattenWirelessGetAccessPointConfigurationItemInstanceOrigin(item.InstanceOrigin)
-	respItem["lazy_loaded_entities"] = flattenWirelessGetAccessPointConfigurationItemLazyLoadedEntities(item.LazyLoadedEntities)
+	respItem["instance_created_on"] = flattenWirelessGetAccessPointConfigurationV1ItemInstanceCreatedOn(item.InstanceCreatedOn)
+	respItem["instance_updated_on"] = flattenWirelessGetAccessPointConfigurationV1ItemInstanceUpdatedOn(item.InstanceUpdatedOn)
+	respItem["change_log_list"] = flattenWirelessGetAccessPointConfigurationV1ItemChangeLogList(item.ChangeLogList)
+	respItem["instance_origin"] = flattenWirelessGetAccessPointConfigurationV1ItemInstanceOrigin(item.InstanceOrigin)
+	respItem["lazy_loaded_entities"] = flattenWirelessGetAccessPointConfigurationV1ItemLazyLoadedEntities(item.LazyLoadedEntities)
 	respItem["instance_version"] = item.InstanceVersion
 	respItem["admin_status"] = item.AdminStatus
 	respItem["ap_height"] = item.ApHeight
@@ -531,15 +531,15 @@ func flattenWirelessGetAccessPointConfigurationItem(item *catalystcentersdkgo.Re
 	respItem["secondary_ip_address"] = item.SecondaryIPAddress
 	respItem["tertiary_controller_name"] = item.TertiaryControllerName
 	respItem["tertiary_ip_address"] = item.TertiaryIPAddress
-	respItem["mesh_dtos"] = flattenWirelessGetAccessPointConfigurationItemMeshDTOs(item.MeshDTOs)
-	respItem["radio_dtos"] = flattenWirelessGetAccessPointConfigurationItemRadioDTOs(item.RadioDTOs)
-	respItem["internal_key"] = flattenWirelessGetAccessPointConfigurationItemInternalKey(item.InternalKey)
+	respItem["mesh_dtos"] = flattenWirelessGetAccessPointConfigurationV1ItemMeshDTOs(item.MeshDTOs)
+	respItem["radio_dtos"] = flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOs(item.RadioDTOs)
+	respItem["internal_key"] = flattenWirelessGetAccessPointConfigurationV1ItemInternalKey(item.InternalKey)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenWirelessGetAccessPointConfigurationItemInstanceUUID(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationInstanceUUID) interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemInstanceUUID(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1InstanceUUID) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -549,7 +549,7 @@ func flattenWirelessGetAccessPointConfigurationItemInstanceUUID(item *catalystce
 
 }
 
-func flattenWirelessGetAccessPointConfigurationItemAuthEntityID(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationAuthEntityID) interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemAuthEntityID(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1AuthEntityID) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -559,7 +559,7 @@ func flattenWirelessGetAccessPointConfigurationItemAuthEntityID(item *catalystce
 
 }
 
-func flattenWirelessGetAccessPointConfigurationItemAuthEntityClass(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationAuthEntityClass) interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemAuthEntityClass(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1AuthEntityClass) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -569,7 +569,7 @@ func flattenWirelessGetAccessPointConfigurationItemAuthEntityClass(item *catalys
 
 }
 
-func flattenWirelessGetAccessPointConfigurationItemOrderedListOEAssocName(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationOrderedListOEAssocName) interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemOrderedListOEAssocName(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1OrderedListOEAssocName) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -579,7 +579,7 @@ func flattenWirelessGetAccessPointConfigurationItemOrderedListOEAssocName(item *
 
 }
 
-func flattenWirelessGetAccessPointConfigurationItemInstanceCreatedOn(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationInstanceCreatedOn) interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemInstanceCreatedOn(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1InstanceCreatedOn) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -589,7 +589,7 @@ func flattenWirelessGetAccessPointConfigurationItemInstanceCreatedOn(item *catal
 
 }
 
-func flattenWirelessGetAccessPointConfigurationItemInstanceUpdatedOn(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationInstanceUpdatedOn) interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemInstanceUpdatedOn(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1InstanceUpdatedOn) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -599,7 +599,7 @@ func flattenWirelessGetAccessPointConfigurationItemInstanceUpdatedOn(item *catal
 
 }
 
-func flattenWirelessGetAccessPointConfigurationItemChangeLogList(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationChangeLogList) interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemChangeLogList(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1ChangeLogList) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -609,7 +609,7 @@ func flattenWirelessGetAccessPointConfigurationItemChangeLogList(item *catalystc
 
 }
 
-func flattenWirelessGetAccessPointConfigurationItemInstanceOrigin(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationInstanceOrigin) interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemInstanceOrigin(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1InstanceOrigin) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -619,7 +619,7 @@ func flattenWirelessGetAccessPointConfigurationItemInstanceOrigin(item *catalyst
 
 }
 
-func flattenWirelessGetAccessPointConfigurationItemLazyLoadedEntities(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationLazyLoadedEntities) interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemLazyLoadedEntities(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1LazyLoadedEntities) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -629,7 +629,7 @@ func flattenWirelessGetAccessPointConfigurationItemLazyLoadedEntities(item *cata
 
 }
 
-func flattenWirelessGetAccessPointConfigurationItemMeshDTOs(items *[]catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationMeshDTOs) []interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemMeshDTOs(items *[]catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1MeshDTOs) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -641,29 +641,29 @@ func flattenWirelessGetAccessPointConfigurationItemMeshDTOs(items *[]catalystcen
 	return respItems
 }
 
-func flattenWirelessGetAccessPointConfigurationItemRadioDTOs(items *[]catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationRadioDTOs) []map[string]interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOs(items *[]catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1RadioDTOs) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["instance_uuid"] = flattenWirelessGetAccessPointConfigurationItemRadioDTOsInstanceUUID(item.InstanceUUID)
+		respItem["instance_uuid"] = flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsInstanceUUID(item.InstanceUUID)
 		respItem["instance_id"] = item.InstanceID
-		respItem["auth_entity_id"] = flattenWirelessGetAccessPointConfigurationItemRadioDTOsAuthEntityID(item.AuthEntityID)
+		respItem["auth_entity_id"] = flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsAuthEntityID(item.AuthEntityID)
 		respItem["display_name"] = item.DisplayName
-		respItem["auth_entity_class"] = flattenWirelessGetAccessPointConfigurationItemRadioDTOsAuthEntityClass(item.AuthEntityClass)
+		respItem["auth_entity_class"] = flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsAuthEntityClass(item.AuthEntityClass)
 		respItem["instance_tenant_id"] = item.InstanceTenantID
 		respItem["ordered_list_oeindex"] = item.OrderedListOEIndex
-		respItem["ordered_list_oeassoc_name"] = flattenWirelessGetAccessPointConfigurationItemRadioDTOsOrderedListOEAssocName(item.OrderedListOEAssocName)
+		respItem["ordered_list_oeassoc_name"] = flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsOrderedListOEAssocName(item.OrderedListOEAssocName)
 		respItem["creation_order_index"] = item.CreationOrderIndex
 		respItem["is_being_changed"] = boolPtrToString(item.IsBeingChanged)
 		respItem["deploy_pending"] = item.DeployPending
-		respItem["instance_created_on"] = flattenWirelessGetAccessPointConfigurationItemRadioDTOsInstanceCreatedOn(item.InstanceCreatedOn)
-		respItem["instance_updated_on"] = flattenWirelessGetAccessPointConfigurationItemRadioDTOsInstanceUpdatedOn(item.InstanceUpdatedOn)
-		respItem["change_log_list"] = flattenWirelessGetAccessPointConfigurationItemRadioDTOsChangeLogList(item.ChangeLogList)
-		respItem["instance_origin"] = flattenWirelessGetAccessPointConfigurationItemRadioDTOsInstanceOrigin(item.InstanceOrigin)
-		respItem["lazy_loaded_entities"] = flattenWirelessGetAccessPointConfigurationItemRadioDTOsLazyLoadedEntities(item.LazyLoadedEntities)
+		respItem["instance_created_on"] = flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsInstanceCreatedOn(item.InstanceCreatedOn)
+		respItem["instance_updated_on"] = flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsInstanceUpdatedOn(item.InstanceUpdatedOn)
+		respItem["change_log_list"] = flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsChangeLogList(item.ChangeLogList)
+		respItem["instance_origin"] = flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsInstanceOrigin(item.InstanceOrigin)
+		respItem["lazy_loaded_entities"] = flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsLazyLoadedEntities(item.LazyLoadedEntities)
 		respItem["instance_version"] = item.InstanceVersion
 		respItem["admin_status"] = item.AdminStatus
 		respItem["antenna_angle"] = item.AntennaAngle
@@ -679,16 +679,16 @@ func flattenWirelessGetAccessPointConfigurationItemRadioDTOs(items *[]catalystce
 		respItem["mac_address"] = item.MacAddress
 		respItem["power_assignment_mode"] = item.PowerAssignmentMode
 		respItem["powerlevel"] = item.Powerlevel
-		respItem["radio_band"] = flattenWirelessGetAccessPointConfigurationItemRadioDTOsRadioBand(item.RadioBand)
-		respItem["radio_role_assignment"] = flattenWirelessGetAccessPointConfigurationItemRadioDTOsRadioRoleAssignment(item.RadioRoleAssignment)
+		respItem["radio_band"] = flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsRadioBand(item.RadioBand)
+		respItem["radio_role_assignment"] = flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsRadioRoleAssignment(item.RadioRoleAssignment)
 		respItem["slot_id"] = item.SlotID
-		respItem["internal_key"] = flattenWirelessGetAccessPointConfigurationItemRadioDTOsInternalKey(item.InternalKey)
+		respItem["internal_key"] = flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsInternalKey(item.InternalKey)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenWirelessGetAccessPointConfigurationItemRadioDTOsInstanceUUID(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationRadioDTOsInstanceUUID) interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsInstanceUUID(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1RadioDTOsInstanceUUID) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -698,7 +698,7 @@ func flattenWirelessGetAccessPointConfigurationItemRadioDTOsInstanceUUID(item *c
 
 }
 
-func flattenWirelessGetAccessPointConfigurationItemRadioDTOsAuthEntityID(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationRadioDTOsAuthEntityID) interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsAuthEntityID(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1RadioDTOsAuthEntityID) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -708,7 +708,7 @@ func flattenWirelessGetAccessPointConfigurationItemRadioDTOsAuthEntityID(item *c
 
 }
 
-func flattenWirelessGetAccessPointConfigurationItemRadioDTOsAuthEntityClass(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationRadioDTOsAuthEntityClass) interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsAuthEntityClass(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1RadioDTOsAuthEntityClass) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -718,7 +718,7 @@ func flattenWirelessGetAccessPointConfigurationItemRadioDTOsAuthEntityClass(item
 
 }
 
-func flattenWirelessGetAccessPointConfigurationItemRadioDTOsOrderedListOEAssocName(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationRadioDTOsOrderedListOEAssocName) interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsOrderedListOEAssocName(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1RadioDTOsOrderedListOEAssocName) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -728,7 +728,7 @@ func flattenWirelessGetAccessPointConfigurationItemRadioDTOsOrderedListOEAssocNa
 
 }
 
-func flattenWirelessGetAccessPointConfigurationItemRadioDTOsInstanceCreatedOn(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationRadioDTOsInstanceCreatedOn) interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsInstanceCreatedOn(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1RadioDTOsInstanceCreatedOn) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -738,7 +738,7 @@ func flattenWirelessGetAccessPointConfigurationItemRadioDTOsInstanceCreatedOn(it
 
 }
 
-func flattenWirelessGetAccessPointConfigurationItemRadioDTOsInstanceUpdatedOn(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationRadioDTOsInstanceUpdatedOn) interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsInstanceUpdatedOn(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1RadioDTOsInstanceUpdatedOn) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -748,7 +748,7 @@ func flattenWirelessGetAccessPointConfigurationItemRadioDTOsInstanceUpdatedOn(it
 
 }
 
-func flattenWirelessGetAccessPointConfigurationItemRadioDTOsChangeLogList(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationRadioDTOsChangeLogList) interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsChangeLogList(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1RadioDTOsChangeLogList) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -758,7 +758,7 @@ func flattenWirelessGetAccessPointConfigurationItemRadioDTOsChangeLogList(item *
 
 }
 
-func flattenWirelessGetAccessPointConfigurationItemRadioDTOsInstanceOrigin(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationRadioDTOsInstanceOrigin) interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsInstanceOrigin(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1RadioDTOsInstanceOrigin) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -768,7 +768,7 @@ func flattenWirelessGetAccessPointConfigurationItemRadioDTOsInstanceOrigin(item 
 
 }
 
-func flattenWirelessGetAccessPointConfigurationItemRadioDTOsLazyLoadedEntities(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationRadioDTOsLazyLoadedEntities) interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsLazyLoadedEntities(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1RadioDTOsLazyLoadedEntities) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -778,7 +778,7 @@ func flattenWirelessGetAccessPointConfigurationItemRadioDTOsLazyLoadedEntities(i
 
 }
 
-func flattenWirelessGetAccessPointConfigurationItemRadioDTOsRadioBand(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationRadioDTOsRadioBand) interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsRadioBand(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1RadioDTOsRadioBand) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -788,7 +788,7 @@ func flattenWirelessGetAccessPointConfigurationItemRadioDTOsRadioBand(item *cata
 
 }
 
-func flattenWirelessGetAccessPointConfigurationItemRadioDTOsRadioRoleAssignment(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationRadioDTOsRadioRoleAssignment) interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsRadioRoleAssignment(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1RadioDTOsRadioRoleAssignment) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -798,7 +798,7 @@ func flattenWirelessGetAccessPointConfigurationItemRadioDTOsRadioRoleAssignment(
 
 }
 
-func flattenWirelessGetAccessPointConfigurationItemRadioDTOsInternalKey(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationRadioDTOsInternalKey) []map[string]interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemRadioDTOsInternalKey(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1RadioDTOsInternalKey) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -814,7 +814,7 @@ func flattenWirelessGetAccessPointConfigurationItemRadioDTOsInternalKey(item *ca
 
 }
 
-func flattenWirelessGetAccessPointConfigurationItemInternalKey(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationInternalKey) []map[string]interface{} {
+func flattenWirelessGetAccessPointConfigurationV1ItemInternalKey(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationV1InternalKey) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

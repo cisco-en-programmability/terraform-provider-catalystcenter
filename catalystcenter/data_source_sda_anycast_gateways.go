@@ -230,8 +230,8 @@ func dataSourceSdaAnycastGatewaysRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAnycastGateways")
-		queryParams1 := catalystcentersdkgo.GetAnycastGatewaysQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetAnycastGatewaysV1")
+		queryParams1 := catalystcentersdkgo.GetAnycastGatewaysV1QueryParams{}
 
 		if okID {
 			queryParams1.ID = vID.(string)
@@ -258,24 +258,24 @@ func dataSourceSdaAnycastGatewaysRead(ctx context.Context, d *schema.ResourceDat
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.Sda.GetAnycastGateways(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetAnycastGatewaysV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAnycastGateways", err,
-				"Failure at GetAnycastGateways, unexpected response", ""))
+				"Failure when executing 2 GetAnycastGatewaysV1", err,
+				"Failure at GetAnycastGatewaysV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaGetAnycastGatewaysItems(response1.Response)
+		vItems1 := flattenSdaGetAnycastGatewaysV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAnycastGateways response",
+				"Failure when setting GetAnycastGatewaysV1 response",
 				err))
 			return diags
 		}
@@ -287,7 +287,7 @@ func dataSourceSdaAnycastGatewaysRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenSdaGetAnycastGatewaysItems(items *[]catalystcentersdkgo.ResponseSdaGetAnycastGatewaysResponse) []map[string]interface{} {
+func flattenSdaGetAnycastGatewaysV1Items(items *[]catalystcentersdkgo.ResponseSdaGetAnycastGatewaysV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

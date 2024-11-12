@@ -89,8 +89,8 @@ func dataSourceComplianceDeviceRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetComplianceStatus")
-		queryParams1 := catalystcentersdkgo.GetComplianceStatusQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetComplianceStatusV1")
+		queryParams1 := catalystcentersdkgo.GetComplianceStatusV1QueryParams{}
 
 		if okComplianceStatus {
 			queryParams1.ComplianceStatus = vComplianceStatus.(string)
@@ -99,24 +99,24 @@ func dataSourceComplianceDeviceRead(ctx context.Context, d *schema.ResourceData,
 			queryParams1.DeviceUUID = vDeviceUUID.(string)
 		}
 
-		response1, restyResp1, err := client.Compliance.GetComplianceStatus(&queryParams1)
+		response1, restyResp1, err := client.Compliance.GetComplianceStatusV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetComplianceStatus", err,
-				"Failure at GetComplianceStatus, unexpected response", ""))
+				"Failure when executing 2 GetComplianceStatusV1", err,
+				"Failure at GetComplianceStatusV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenComplianceGetComplianceStatusItems(response1.Response)
+		vItems1 := flattenComplianceGetComplianceStatusV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetComplianceStatus response",
+				"Failure when setting GetComplianceStatusV1 response",
 				err))
 			return diags
 		}
@@ -128,7 +128,7 @@ func dataSourceComplianceDeviceRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenComplianceGetComplianceStatusItems(items *[]catalystcentersdkgo.ResponseComplianceGetComplianceStatusResponse) []map[string]interface{} {
+func flattenComplianceGetComplianceStatusV1Items(items *[]catalystcentersdkgo.ResponseComplianceGetComplianceStatusV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

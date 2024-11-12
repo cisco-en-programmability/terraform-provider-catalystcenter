@@ -1,6 +1,6 @@
 
 resource "catalystcenter_network_device_export" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     device_uuids   = ["string"]

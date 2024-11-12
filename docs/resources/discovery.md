@@ -26,10 +26,72 @@ by range" API.
 ```terraform
 resource "catalystcenter_discovery" "example" {
   provider = catalystcenter
+  item {
 
+
+
+
+
+
+
+
+
+    http_read_credential {
+
+
+
+
+
+
+
+
+
+
+
+    }
+    http_write_credential {
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
   parameters {
 
-    attribute_info            = "string"
+    attribute_info            = "------"
     cdp_level                 = 1
     device_ids                = "string"
     discovery_condition       = "string"
@@ -156,7 +218,7 @@ ERROR: Different types for param passwordList schema.TypeList schema.TypeString
 - `snmp_ro_community` (String) SNMP RO community of the devices to be discovered
 - `snmp_ro_community_desc` (String) Description for SNMP RO community
 - `snmp_rw_community` (String) SNMP RW community of the devices to be discovered
-- `snmp_rw_community_desc` (String) Description for Snmp RW community
+- `snmp_rw_community_desc` (String) Description for SNMP RW community
 - `snmp_user_name` (String) SNMP username of the device
 - `snmp_version` (String) Version of SNMP. v2 or v3
 - `time_out` (Number) Time to wait for device response.

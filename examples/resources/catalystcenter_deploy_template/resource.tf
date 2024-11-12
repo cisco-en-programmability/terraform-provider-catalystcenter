@@ -1,6 +1,6 @@
 
 resource "catalystcenter_deploy_template" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     force_push_template             = "false"
@@ -11,7 +11,7 @@ resource "catalystcenter_deploy_template" "example" {
 
       host_name             = "string"
       id                    = "string"
-      params                = "string"
+      params                = "------"
       resource_params       = ["string"]
       type                  = "string"
       versioned_template_id = "string"

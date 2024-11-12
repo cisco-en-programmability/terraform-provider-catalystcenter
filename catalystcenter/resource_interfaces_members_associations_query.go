@@ -148,15 +148,15 @@ func resourceInterfacesMembersAssociationsQueryDelete(ctx context.Context, d *sc
 	return diags
 }
 
-func expandRequestInterfacesMembersAssociationsQueryQueryTheTagsAssociatedWithInterfaces(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagQueryTheTagsAssociatedWithInterfaces {
-	request := catalystcentersdkgo.RequestTagQueryTheTagsAssociatedWithInterfaces{}
+func expandRequestInterfacesMembersAssociationsQueryQueryTheTagsAssociatedWithInterfaces(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagQueryTheTagsAssociatedWithInterfacesV1 {
+	request := catalystcentersdkgo.RequestTagQueryTheTagsAssociatedWithInterfacesV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ids")))) {
 		request.IDs = interfaceToSliceString(v)
 	}
 	return &request
 }
 
-func flattenTagQueryTheTagsAssociatedWithInterfacesItems(items *[]catalystcentersdkgo.ResponseTagQueryTheTagsAssociatedWithInterfacesResponse) []map[string]interface{} {
+func flattenTagQueryTheTagsAssociatedWithInterfacesItems(items *[]catalystcentersdkgo.ResponseTagQueryTheTagsAssociatedWithInterfacesV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -170,7 +170,7 @@ func flattenTagQueryTheTagsAssociatedWithInterfacesItems(items *[]catalystcenter
 	return respItems
 }
 
-func flattenTagQueryTheTagsAssociatedWithInterfacesItemsTags(items *[]catalystcentersdkgo.ResponseTagQueryTheTagsAssociatedWithInterfacesResponseTags) []map[string]interface{} {
+func flattenTagQueryTheTagsAssociatedWithInterfacesItemsTags(items *[]catalystcentersdkgo.ResponseTagQueryTheTagsAssociatedWithInterfacesV1ResponseTags) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

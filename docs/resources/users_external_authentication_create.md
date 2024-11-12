@@ -4,7 +4,7 @@ page_title: "catalystcenter_users_external_authentication_create Resource - terr
 subcategory: ""
 description: |-
   It performs create operation on User and Roles.
-  Enable or disable external authentication on Cisco Catalyst Center System.
+  Enable or disable external authentication on Cisco DNA Center System.
   Please find the Administrator Guide for your particular release from the list linked below and follow the steps required
   to enable external authentication before trying to do so from this API.
   https://www.cisco.com/c/en/us/support/cloud-systems-management/dna-center/products-maintenance-guides-list.html
@@ -14,13 +14,10 @@ description: |-
 
 It performs create operation on User and Roles.
 
-- Enable or disable external authentication on Cisco Catalyst Center System.
+- Enable or disable external authentication on Cisco DNA Center System.
 Please find the Administrator Guide for your particular release from the list linked below and follow the steps required
 to enable external authentication before trying to do so from this API.
 https://www.cisco.com/c/en/us/support/cloud-systems-management/dna-center/products-maintenance-guides-list.html
-
-
-
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -29,7 +26,7 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 
 ```terraform
 resource "catalystcenter_users_external_authentication_create" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     enable = "false"

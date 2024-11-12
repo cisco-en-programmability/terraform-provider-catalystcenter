@@ -1,1 +1,0 @@
-terraform import catalystcenter_global_credential_snmpv2_write_community.example "id:=string"

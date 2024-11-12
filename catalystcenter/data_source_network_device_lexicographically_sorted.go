@@ -181,8 +181,8 @@ func dataSourceNetworkDeviceLexicographicallySortedRead(ctx context.Context, d *
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceValuesThatMatchFullyOrPartiallyAnAttribute")
-		queryParams1 := catalystcentersdkgo.GetDeviceValuesThatMatchFullyOrPartiallyAnAttributeQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetDeviceValuesThatMatchFullyOrPartiallyAnAttributeV1")
+		queryParams1 := catalystcentersdkgo.GetDeviceValuesThatMatchFullyOrPartiallyAnAttributeV1QueryParams{}
 
 		if okVrfName {
 			queryParams1.VrfName = vVrfName.(string)
@@ -251,13 +251,12 @@ func dataSourceNetworkDeviceLexicographicallySortedRead(ctx context.Context, d *
 			queryParams1.Limit = vLimit.(int)
 		}
 
-		response1, err := client.Devices.GetDeviceValuesThatMatchFullyOrPartiallyAnAttribute(&queryParams1)
+		response1, err := client.Devices.GetDeviceValuesThatMatchFullyOrPartiallyAnAttributeV1(&queryParams1)
 
 		if err != nil || response1 == nil {
-
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceValuesThatMatchFullyOrPartiallyAnAttribute", err,
-				"Failure at GetDeviceValuesThatMatchFullyOrPartiallyAnAttribute, unexpected response", ""))
+				"Failure when executing 2 GetDeviceValuesThatMatchFullyOrPartiallyAnAttributeV1", err,
+				"Failure at GetDeviceValuesThatMatchFullyOrPartiallyAnAttributeV1, unexpected response", ""))
 			return diags
 		}
 
@@ -266,7 +265,7 @@ func dataSourceNetworkDeviceLexicographicallySortedRead(ctx context.Context, d *
 		vItem1 := response1.String()
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceValuesThatMatchFullyOrPartiallyAnAttribute response",
+				"Failure when setting GetDeviceValuesThatMatchFullyOrPartiallyAnAttributeV1 response",
 				err))
 			return diags
 		}

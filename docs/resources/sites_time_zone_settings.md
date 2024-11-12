@@ -4,16 +4,16 @@ page_title: "catalystcenter_sites_time_zone_settings Resource - terraform-provid
 subcategory: ""
 description: |-
   It manages read and update operations on Network Settings.
-  Set time zone settings for a site; 'null' values indicate that the setting will be inherited from the parent site;
-  empty objects ('{}') indicate that the settings is unset.
+  Set time zone settings for a site; null values indicate that the setting will be inherited from the parent site;
+  empty objects ({}) indicate that the settings is unset.
 ---
 
 # catalystcenter_sites_time_zone_settings (Resource)
 
 It manages read and update operations on Network Settings.
 
-- Set time zone settings for a site; 'null' values indicate that the setting will be inherited from the parent site;
-empty objects ('{}') indicate that the settings is unset.
+- Set time zone settings for a site; *null* values indicate that the setting will be inherited from the parent site;
+empty objects (*{}*) indicate that the settings is unset.
 
 ## Example Usage
 

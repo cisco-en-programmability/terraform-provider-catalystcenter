@@ -141,8 +141,8 @@ func dataSourceSdaPortChannelsRead(ctx context.Context, d *schema.ResourceData, 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetPortChannels")
-		queryParams1 := catalystcentersdkgo.GetPortChannelsQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetPortChannelsV1")
+		queryParams1 := catalystcentersdkgo.GetPortChannelsV1QueryParams{}
 
 		if okFabricID {
 			queryParams1.FabricID = vFabricID.(string)
@@ -163,24 +163,24 @@ func dataSourceSdaPortChannelsRead(ctx context.Context, d *schema.ResourceData, 
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.Sda.GetPortChannels(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetPortChannelsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetPortChannels", err,
-				"Failure at GetPortChannels, unexpected response", ""))
+				"Failure when executing 2 GetPortChannelsV1", err,
+				"Failure at GetPortChannelsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaGetPortChannelsItems(response1.Response)
+		vItems1 := flattenSdaGetPortChannelsV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetPortChannels response",
+				"Failure when setting GetPortChannelsV1 response",
 				err))
 			return diags
 		}
@@ -192,7 +192,7 @@ func dataSourceSdaPortChannelsRead(ctx context.Context, d *schema.ResourceData, 
 	return diags
 }
 
-func flattenSdaGetPortChannelsItems(items *[]catalystcentersdkgo.ResponseSdaGetPortChannelsResponse) []map[string]interface{} {
+func flattenSdaGetPortChannelsV1Items(items *[]catalystcentersdkgo.ResponseSdaGetPortChannelsV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

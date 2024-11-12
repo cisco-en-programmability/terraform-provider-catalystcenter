@@ -59,93 +59,11 @@ func dataSourceSite() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 
 						"additional_info": &schema.Schema{
-							Type:     schema.TypeList,
-							Computed: true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-
-									"attributes": &schema.Schema{
-										Type:     schema.TypeList,
-										Computed: true,
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-												"country": &schema.Schema{
-													Type:     schema.TypeString,
-													Computed: true,
-												},
-												"address": &schema.Schema{
-													Type:     schema.TypeString,
-													Computed: true,
-												},
-												"latitude": &schema.Schema{
-													Type:     schema.TypeString,
-													Computed: true,
-												},
-												"addressinheritedfrom": &schema.Schema{
-													Type:     schema.TypeString,
-													Computed: true,
-												},
-												"type": &schema.Schema{
-													Type:     schema.TypeString,
-													Computed: true,
-												},
-												"longitude": &schema.Schema{
-													Type:     schema.TypeString,
-													Computed: true,
-												},
-												"offsetx": &schema.Schema{
-													Type:     schema.TypeString,
-													Computed: true,
-												},
-												"offsety": &schema.Schema{
-													Type:     schema.TypeString,
-													Computed: true,
-												},
-												"length": &schema.Schema{
-													Type:     schema.TypeString,
-													Computed: true,
-												},
-												"width": &schema.Schema{
-													Type:     schema.TypeString,
-													Computed: true,
-												},
-												"height": &schema.Schema{
-													Type:     schema.TypeString,
-													Computed: true,
-												},
-												"rfmodel": &schema.Schema{
-													Type:     schema.TypeString,
-													Computed: true,
-												},
-												"floorindex": &schema.Schema{
-													Type:     schema.TypeString,
-													Computed: true,
-												},
-												"parent_name": &schema.Schema{
-													Type:     schema.TypeString,
-													Computed: true,
-												},
-												"name": &schema.Schema{
-													Type:     schema.TypeString,
-													Computed: true,
-												},
-												"floor_number": &schema.Schema{
-													Type:     schema.TypeString,
-													Computed: true,
-												},
-												"rf_model": &schema.Schema{
-													Type:     schema.TypeString,
-													Computed: true,
-												},
-											},
-										},
-									},
-
-									"name_space": &schema.Schema{
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-								},
+							Description: `Additional Info`,
+							Type:        schema.TypeList,
+							Computed:    true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
 							},
 						},
 
@@ -203,8 +121,8 @@ func dataSourceSiteRead(ctx context.Context, d *schema.ResourceData, m interface
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSite")
-		queryParams1 := catalystcentersdkgo.GetSiteQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetSiteV1")
+		queryParams1 := catalystcentersdkgo.GetSiteV1QueryParams{}
 
 		if okName {
 			queryParams1.Name = vName.(string)
@@ -222,24 +140,24 @@ func dataSourceSiteRead(ctx context.Context, d *schema.ResourceData, m interface
 			queryParams1.Limit = vLimit.(int)
 		}
 
-		response1, restyResp1, err := client.Sites.GetSite(&queryParams1)
+		response1, restyResp1, err := client.Sites.GetSiteV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSite", err,
-				"Failure at GetSite, unexpected response", ""))
+				"Failure when executing 2 GetSiteV1", err,
+				"Failure at GetSiteV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSitesGetSiteItems(response1.Response, nil)
+		vItems1 := flattenSitesGetSiteV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSite response",
+				"Failure when setting GetSiteV1 response",
 				err))
 			return diags
 		}
@@ -251,7 +169,7 @@ func dataSourceSiteRead(ctx context.Context, d *schema.ResourceData, m interface
 	return diags
 }
 
-func flattenSitesGetSiteItems(items *[]catalystcentersdkgo.ResponseSitesGetSiteResponse, parameters []interface{}) []map[string]interface{} {
+func flattenSitesGetSiteV1Items(items *[]catalystcentersdkgo.ResponseSitesGetSiteV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -260,58 +178,16 @@ func flattenSitesGetSiteItems(items *[]catalystcentersdkgo.ResponseSitesGetSiteR
 		respItem := make(map[string]interface{})
 		respItem["parent_id"] = item.ParentID
 		respItem["name"] = item.Name
-		respItem["additional_info"] = flattenSitesGetSiteItemsAdditionalInfo(item.AdditionalInfo, parameters)
+		respItem["additional_info"] = item.AdditionalInfo
 		respItem["site_hierarchy"] = item.SiteHierarchy
 		respItem["site_name_hierarchy"] = item.SiteNameHierarchy
 		respItem["instance_tenant_id"] = item.InstanceTenantID
 		respItem["id"] = item.ID
-		//respItem["latitude"] = item.
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
-
-func flattenSitesGetFloorItems(items *[]catalystcentersdkgo.ResponseSitesGetFloorResponse) []map[string]interface{} {
-	if items == nil {
-		return nil
-	}
-	var respItems []map[string]interface{}
-	for _, item := range *items {
-		respItem := make(map[string]interface{})
-		respItem["parent_id"] = item.ParentID
-		respItem["name"] = item.Name
-		respItem["additional_info"] = flattenSitesGetFloorItemsAdditionalInfo(item.AdditionalInfo)
-		respItem["site_hierarchy"] = item.SiteHierarchy
-		respItem["site_name_hierarchy"] = item.SiteNameHierarchy
-		respItem["instance_tenant_id"] = item.InstanceTenantID
-		respItem["id"] = item.ID
-		//respItem["latitude"] = item.
-		respItems = append(respItems, respItem)
-	}
-	return respItems
-}
-
-func flattenSitesGetAreaItems(items *[]catalystcentersdkgo.ResponseSitesGetAreaResponse, parameters []interface{}) []map[string]interface{} {
-	if items == nil {
-		return nil
-	}
-	var respItems []map[string]interface{}
-	for _, item := range *items {
-		respItem := make(map[string]interface{})
-		respItem["parent_id"] = item.ParentID
-		respItem["name"] = item.Name
-		respItem["additional_info"] = flattenSitesGetAreaItemsAdditionalInfo(item.AdditionalInfo, parameters)
-		respItem["site_hierarchy"] = item.SiteHierarchy
-		respItem["site_name_hierarchy"] = item.SiteNameHierarchy
-		respItem["instance_tenant_id"] = item.InstanceTenantID
-		respItem["id"] = item.ID
-		//respItem["latitude"] = item.
-		respItems = append(respItems, respItem)
-	}
-	return respItems
-}
-
-func flattenSitesGetSiteParams(items *[]catalystcentersdkgo.ResponseSitesGetSiteResponse, parameters []interface{}) map[string]interface{} {
+func flattenSitesGetSiteParams(items *[]catalystcentersdkgo.ResponseSitesGetSiteV1Response, parameters []interface{}) map[string]interface{} {
 	respParams := make(map[string]interface{})
 	buildings := make([]map[string]interface{}, 0)
 	parentName := getParametersOfLastUpdatedBuilding(parameters, "parent_name", "building")
@@ -360,7 +236,7 @@ func flattenSitesGetSiteParams(items *[]catalystcentersdkgo.ResponseSitesGetSite
 
 }
 
-func flattenSitesGetFloorParams(items *[]catalystcentersdkgo.ResponseSitesGetFloorResponse, parameters []interface{}) map[string]interface{} {
+func flattenSitesGetFloorParams(items *[]catalystcentersdkgo.ResponseSitesGetFloorV1Response, parameters []interface{}) map[string]interface{} {
 	respParams := make(map[string]interface{})
 	parentName := getParametersOfLastUpdatedBuilding(parameters, "parent_name", "floor")
 	rfModel := getParametersOfLastUpdatedBuilding(parameters, "rf_model", "floor")
@@ -436,7 +312,7 @@ func flattenSitesGetFloorParams(items *[]catalystcentersdkgo.ResponseSitesGetFlo
 
 }
 
-func flattenSitesGetAreaParams(items *[]catalystcentersdkgo.ResponseSitesGetAreaResponse, parameters []interface{}) map[string]interface{} {
+func flattenSitesGetAreaParams(items *[]catalystcentersdkgo.ResponseSitesGetAreaV1Response, parameters []interface{}) map[string]interface{} {
 	respParams := make(map[string]interface{})
 	areas := make([]map[string]interface{}, 0)
 	parentName := getParametersOfLastUpdatedBuilding(parameters, "parent_name", "area")
@@ -467,7 +343,7 @@ func flattenSitesGetAreaParams(items *[]catalystcentersdkgo.ResponseSitesGetArea
 }
 
 /*
-func flattenSitesGetSiteItem(item *catalystcentersdkgo.ResponseSitesGetSiteResponse) []map[string]interface{} {
+func flattenSitesGetSiteItem(item *catalystcentersdkgo.ResponseSitesGetSiteV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -483,7 +359,7 @@ func flattenSitesGetSiteItem(item *catalystcentersdkgo.ResponseSitesGetSiteRespo
 	return respItems
 }*/
 
-func flattenSitesGetSiteItemsAdditionalInfo(items []catalystcentersdkgo.ResponseSitesGetSiteResponseAdditionalInfo, parameters []interface{}) []map[string]interface{} {
+func flattenSitesGetSiteItemsAdditionalInfo(items []catalystcentersdkgo.ResponseSitesGetSiteV1ResponseAdditionalInfo, parameters []interface{}) []map[string]interface{} {
 	var respItems []map[string]interface{}
 	var parentName string
 	if parameters != nil {
@@ -517,7 +393,7 @@ func flattenSitesGetSiteItemsAdditionalInfo(items []catalystcentersdkgo.Response
 	return respItems
 }
 
-func flattenSitesGetFloorItemsAdditionalInfo(items []catalystcentersdkgo.ResponseSitesGetFloorResponseAdditionalInfo) []map[string]interface{} {
+func flattenSitesGetFloorItemsAdditionalInfo(items []catalystcentersdkgo.ResponseSitesGetFloorV1ResponseAdditionalInfo) []map[string]interface{} {
 	var respItems []map[string]interface{}
 	for _, item := range items {
 		respItem := make(map[string]interface{})
@@ -538,7 +414,7 @@ func flattenSitesGetFloorItemsAdditionalInfo(items []catalystcentersdkgo.Respons
 	return respItems
 }
 
-func flattenSitesGetAreaItemsAdditionalInfo(items []catalystcentersdkgo.ResponseSitesGetAreaResponseAdditionalInfo, parameters []interface{}) []map[string]interface{} {
+func flattenSitesGetAreaItemsAdditionalInfo(items []catalystcentersdkgo.ResponseSitesGetAreaV1ResponseAdditionalInfo, parameters []interface{}) []map[string]interface{} {
 	var respItems []map[string]interface{}
 	var parentName string
 	if parameters != nil {
@@ -562,7 +438,7 @@ func flattenSitesGetAreaItemsAdditionalInfo(items []catalystcentersdkgo.Response
 	return respItems
 }
 
-func flattenSitesGetSiteItemsAdditionalInfoAtributes(item *catalystcentersdkgo.ResponseSitesGetSiteResponseAdditionalInfoAttributes) map[string]interface{} {
+func flattenSitesGetSiteItemsAdditionalInfoAtributes(item *catalystcentersdkgo.ResponseSitesGetSiteV1ResponseAdditionalInfoAttributes) map[string]interface{} {
 	if item == nil {
 		return nil
 	}

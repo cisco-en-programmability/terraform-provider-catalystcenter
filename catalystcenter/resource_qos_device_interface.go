@@ -417,7 +417,7 @@ func resourceQosDeviceInterfaceCreate(ctx context.Context, d *schema.ResourceDat
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters.0.payload"))
-	request1 := expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfo(ctx, "parameters.0", d)
+	request1 := expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoV1(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vID := resourceItem["id"]
@@ -426,7 +426,7 @@ func resourceQosDeviceInterfaceCreate(ctx context.Context, d *schema.ResourceDat
 	vvNetworkDeviceID := interfaceToString(vNetworkDeviceID)
 	vName := resourceItem["name"]
 	vvName := interfaceToString(vName)
-	queryParamImport := catalystcentersdkgo.GetQosDeviceInterfaceInfoQueryParams{}
+	queryParamImport := catalystcentersdkgo.GetQosDeviceInterfaceInfoV1QueryParams{}
 	queryParamImport.NetworkDeviceID = vvNetworkDeviceID
 	item2, err := searchApplicationPolicyGetQosDeviceInterfaceInfo(m, queryParamImport, vvName, vvID)
 	if err == nil && item2 != nil {
@@ -476,7 +476,7 @@ func resourceQosDeviceInterfaceCreate(ctx context.Context, d *schema.ResourceDat
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetQosDeviceInterfaceInfoQueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetQosDeviceInterfaceInfoV1QueryParams{}
 	queryParamValidate.NetworkDeviceID = vvNetworkDeviceID
 	item3, err := searchApplicationPolicyGetQosDeviceInterfaceInfo(m, queryParamValidate, vvName, vvID)
 	if err != nil || item3 == nil {
@@ -509,7 +509,7 @@ func resourceQosDeviceInterfaceRead(ctx context.Context, d *schema.ResourceData,
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetQosDeviceInterfaceInfo")
-		queryParams1 := catalystcentersdkgo.GetQosDeviceInterfaceInfoQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetQosDeviceInterfaceInfoV1QueryParams{}
 		queryParams1.NetworkDeviceID = vvNetworkDeviceID
 		item1, err := searchApplicationPolicyGetQosDeviceInterfaceInfo(m, queryParams1, vvName, vvID)
 		if err != nil || item1 == nil {
@@ -517,10 +517,10 @@ func resourceQosDeviceInterfaceRead(ctx context.Context, d *schema.ResourceData,
 			return diags
 		}
 		// Review flatten function used
-		items := []catalystcentersdkgo.ResponseApplicationPolicyGetQosDeviceInterfaceInfoResponse{
+		items := []catalystcentersdkgo.ResponseApplicationPolicyGetQosDeviceInterfaceInfoV1Response{
 			*item1,
 		}
-		vItem1 := flattenApplicationPolicyGetQosDeviceInterfaceInfoItems(&items)
+		vItem1 := flattenApplicationPolicyGetQosDeviceInterfaceInfoV1Items(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetQosDeviceInterfaceInfo search response",
@@ -540,7 +540,7 @@ func resourceQosDeviceInterfaceUpdate(ctx context.Context, d *schema.ResourceDat
 	resourceMap := separateResourceID(resourceID)
 	vID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfo(ctx, "parameters.0", d)
+		request1 := expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		if request1 != nil && len(*request1) > 0 {
 			req := *request1
@@ -656,9 +656,9 @@ func resourceQosDeviceInterfaceDelete(ctx context.Context, d *schema.ResourceDat
 
 	return diags
 }
-func expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyCreateQosDeviceInterfaceInfo {
-	request := catalystcentersdkgo.RequestApplicationPolicyCreateQosDeviceInterfaceInfo{}
-	if v := expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyCreateQosDeviceInterfaceInfoV1 {
+	request := catalystcentersdkgo.RequestApplicationPolicyCreateQosDeviceInterfaceInfoV1{}
+	if v := expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -667,8 +667,8 @@ func expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfo(ctx context.Con
 	return &request
 }
 
-func expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateQosDeviceInterfaceInfo {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateQosDeviceInterfaceInfo{}
+func expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateQosDeviceInterfaceInfoV1 {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateQosDeviceInterfaceInfoV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -679,7 +679,7 @@ func expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoItemArray(ctx co
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -690,8 +690,8 @@ func expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoItemArray(ctx co
 	return &request
 }
 
-func expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateQosDeviceInterfaceInfo {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateQosDeviceInterfaceInfo{}
+func expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateQosDeviceInterfaceInfoV1 {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateQosDeviceInterfaceInfoV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -702,7 +702,7 @@ func expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoItem(ctx context
 		request.NetworkDeviceID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".qos_device_interface_info")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".qos_device_interface_info")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".qos_device_interface_info")))) {
-		request.QosDeviceInterfaceInfo = expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoItemQosDeviceInterfaceInfoArray(ctx, key+".qos_device_interface_info", d)
+		request.QosDeviceInterfaceInfo = expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoV1ItemQosDeviceInterfaceInfoArray(ctx, key+".qos_device_interface_info", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -710,8 +710,8 @@ func expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoItem(ctx context
 	return &request
 }
 
-func expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoItemQosDeviceInterfaceInfoArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateQosDeviceInterfaceInfoQosDeviceInterfaceInfo {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateQosDeviceInterfaceInfoQosDeviceInterfaceInfo{}
+func expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoV1ItemQosDeviceInterfaceInfoArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateQosDeviceInterfaceInfoV1QosDeviceInterfaceInfo {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateQosDeviceInterfaceInfoV1QosDeviceInterfaceInfo{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -722,7 +722,7 @@ func expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoItemQosDeviceInt
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoItemQosDeviceInterfaceInfo(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoV1ItemQosDeviceInterfaceInfo(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -733,8 +733,8 @@ func expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoItemQosDeviceInt
 	return &request
 }
 
-func expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoItemQosDeviceInterfaceInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateQosDeviceInterfaceInfoQosDeviceInterfaceInfo {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateQosDeviceInterfaceInfoQosDeviceInterfaceInfo{}
+func expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoV1ItemQosDeviceInterfaceInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateQosDeviceInterfaceInfoV1QosDeviceInterfaceInfo {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateQosDeviceInterfaceInfoV1QosDeviceInterfaceInfo{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".dmvpn_remote_sites_bw")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".dmvpn_remote_sites_bw")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".dmvpn_remote_sites_bw")))) {
 		request.DmvpnRemoteSitesBw = interfaceToSliceInt(v)
 	}
@@ -759,9 +759,9 @@ func expandRequestQosDeviceInterfaceCreateQosDeviceInterfaceInfoItemQosDeviceInt
 	return &request
 }
 
-func expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyUpdateQosDeviceInterfaceInfo {
-	request := catalystcentersdkgo.RequestApplicationPolicyUpdateQosDeviceInterfaceInfo{}
-	if v := expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyUpdateQosDeviceInterfaceInfoV1 {
+	request := catalystcentersdkgo.RequestApplicationPolicyUpdateQosDeviceInterfaceInfoV1{}
+	if v := expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -770,8 +770,8 @@ func expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfo(ctx context.Con
 	return &request
 }
 
-func expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyUpdateQosDeviceInterfaceInfo {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyUpdateQosDeviceInterfaceInfo{}
+func expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyUpdateQosDeviceInterfaceInfoV1 {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyUpdateQosDeviceInterfaceInfoV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -782,7 +782,7 @@ func expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoItemArray(ctx co
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -793,8 +793,8 @@ func expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoItemArray(ctx co
 	return &request
 }
 
-func expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyUpdateQosDeviceInterfaceInfo {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyUpdateQosDeviceInterfaceInfo{}
+func expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyUpdateQosDeviceInterfaceInfoV1 {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyUpdateQosDeviceInterfaceInfoV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -808,7 +808,7 @@ func expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoItem(ctx context
 		request.NetworkDeviceID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".qos_device_interface_info")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".qos_device_interface_info")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".qos_device_interface_info")))) {
-		request.QosDeviceInterfaceInfo = expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoItemQosDeviceInterfaceInfoArray(ctx, key+".qos_device_interface_info", d)
+		request.QosDeviceInterfaceInfo = expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoV1ItemQosDeviceInterfaceInfoArray(ctx, key+".qos_device_interface_info", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -816,8 +816,8 @@ func expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoItem(ctx context
 	return &request
 }
 
-func expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoItemQosDeviceInterfaceInfoArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyUpdateQosDeviceInterfaceInfoQosDeviceInterfaceInfo {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyUpdateQosDeviceInterfaceInfoQosDeviceInterfaceInfo{}
+func expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoV1ItemQosDeviceInterfaceInfoArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyUpdateQosDeviceInterfaceInfoV1QosDeviceInterfaceInfo {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyUpdateQosDeviceInterfaceInfoV1QosDeviceInterfaceInfo{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -828,7 +828,7 @@ func expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoItemQosDeviceInt
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoItemQosDeviceInterfaceInfo(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoV1ItemQosDeviceInterfaceInfo(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -839,8 +839,8 @@ func expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoItemQosDeviceInt
 	return &request
 }
 
-func expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoItemQosDeviceInterfaceInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyUpdateQosDeviceInterfaceInfoQosDeviceInterfaceInfo {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyUpdateQosDeviceInterfaceInfoQosDeviceInterfaceInfo{}
+func expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoV1ItemQosDeviceInterfaceInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyUpdateQosDeviceInterfaceInfoV1QosDeviceInterfaceInfo {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyUpdateQosDeviceInterfaceInfoV1QosDeviceInterfaceInfo{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".instance_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".instance_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".instance_id")))) {
 		request.InstanceID = interfaceToIntPtr(v)
 	}
@@ -868,11 +868,11 @@ func expandRequestQosDeviceInterfaceUpdateQosDeviceInterfaceInfoItemQosDeviceInt
 	return &request
 }
 
-func searchApplicationPolicyGetQosDeviceInterfaceInfo(m interface{}, queryParams catalystcentersdkgo.GetQosDeviceInterfaceInfoQueryParams, vName string, vID string) (*catalystcentersdkgo.ResponseApplicationPolicyGetQosDeviceInterfaceInfoResponse, error) {
+func searchApplicationPolicyGetQosDeviceInterfaceInfo(m interface{}, queryParams catalystcentersdkgo.GetQosDeviceInterfaceInfoV1QueryParams, vName string, vID string) (*catalystcentersdkgo.ResponseApplicationPolicyGetQosDeviceInterfaceInfoV1Response, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseApplicationPolicyGetQosDeviceInterfaceInfoResponse
-	var ite *catalystcentersdkgo.ResponseApplicationPolicyGetQosDeviceInterfaceInfo
+	var foundItem *catalystcentersdkgo.ResponseApplicationPolicyGetQosDeviceInterfaceInfoV1Response
+	var ite *catalystcentersdkgo.ResponseApplicationPolicyGetQosDeviceInterfaceInfoV1
 	ite, _, err = client.ApplicationPolicy.GetQosDeviceInterfaceInfo(&queryParams)
 	if err != nil || ite == nil {
 		return foundItem, err
@@ -883,7 +883,7 @@ func searchApplicationPolicyGetQosDeviceInterfaceInfo(m interface{}, queryParams
 	for _, item := range itemsCopy {
 		// Call get by _ method and set value to foundItem and return
 		if item.Name == vName || item.ID == vID {
-			var getItem *catalystcentersdkgo.ResponseApplicationPolicyGetQosDeviceInterfaceInfoResponse
+			var getItem *catalystcentersdkgo.ResponseApplicationPolicyGetQosDeviceInterfaceInfoV1Response
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

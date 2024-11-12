@@ -88,20 +88,18 @@ func resourceDeviceConfigurationsExportCreate(ctx context.Context, d *schema.Res
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestDeviceConfigurationsExportExportDeviceConfigurations(ctx, "parameters.0", d)
+	request1 := expandRequestDeviceConfigurationsExportExportDeviceConfigurationsV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.ConfigurationArchive.ExportDeviceConfigurations(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.ConfigurationArchive.ExportDeviceConfigurationsV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ExportDeviceConfigurations", err))
+			"Failure when executing ExportDeviceConfigurationsV1", err))
 		return diags
 	}
 
@@ -109,7 +107,7 @@ func resourceDeviceConfigurationsExportCreate(ctx context.Context, d *schema.Res
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing ExportDeviceConfigurations", err))
+			"Failure when executing ExportDeviceConfigurationsV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -143,22 +141,24 @@ func resourceDeviceConfigurationsExportCreate(ctx context.Context, d *schema.Res
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing ExportDeviceConfigurations", err1))
+				"Failure when executing ExportDeviceConfigurationsV1", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenConfigurationArchiveExportDeviceConfigurationsItem(response1.Response)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
+	vItem1 := flattenConfigurationArchiveExportDeviceConfigurationsV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ExportDeviceConfigurations response",
+			"Failure when setting ExportDeviceConfigurationsV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceDeviceConfigurationsExportRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -173,8 +173,8 @@ func resourceDeviceConfigurationsExportDelete(ctx context.Context, d *schema.Res
 	return diags
 }
 
-func expandRequestDeviceConfigurationsExportExportDeviceConfigurations(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationArchiveExportDeviceConfigurations {
-	request := catalystcentersdkgo.RequestConfigurationArchiveExportDeviceConfigurations{}
+func expandRequestDeviceConfigurationsExportExportDeviceConfigurationsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationArchiveExportDeviceConfigurationsV1 {
+	request := catalystcentersdkgo.RequestConfigurationArchiveExportDeviceConfigurationsV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".password")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".password")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".password")))) {
 		request.Password = interfaceToString(v)
 	}
@@ -184,7 +184,7 @@ func expandRequestDeviceConfigurationsExportExportDeviceConfigurations(ctx conte
 	return &request
 }
 
-func flattenConfigurationArchiveExportDeviceConfigurationsItem(item *catalystcentersdkgo.ResponseConfigurationArchiveExportDeviceConfigurationsResponse) []map[string]interface{} {
+func flattenConfigurationArchiveExportDeviceConfigurationsV1Item(item *catalystcentersdkgo.ResponseConfigurationArchiveExportDeviceConfigurationsV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

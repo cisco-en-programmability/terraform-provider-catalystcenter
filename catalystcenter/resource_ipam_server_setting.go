@@ -349,8 +349,8 @@ func resourceIPamServerSettingDelete(ctx context.Context, d *schema.ResourceData
 
 	return diags
 }
-func expandRequestIPamServerSettingCreatesConfigurationDetailsOfTheExternalIPAMServer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSystemSettingsCreatesConfigurationDetailsOfTheExternalIPAMServer {
-	request := catalystcentersdkgo.RequestSystemSettingsCreatesConfigurationDetailsOfTheExternalIPAMServer{}
+func expandRequestIPamServerSettingCreatesConfigurationDetailsOfTheExternalIPAMServer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSystemSettingsCreatesConfigurationDetailsOfTheExternalIPAMServerV1 {
+	request := catalystcentersdkgo.RequestSystemSettingsCreatesConfigurationDetailsOfTheExternalIPAMServerV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".server_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".server_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".server_name")))) {
 		request.ServerName = interfaceToString(v)
 	}
@@ -378,8 +378,8 @@ func expandRequestIPamServerSettingCreatesConfigurationDetailsOfTheExternalIPAMS
 	return &request
 }
 
-func expandRequestIPamServerSettingUpdatesConfigurationDetailsOfTheExternalIPAMServer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSystemSettingsUpdatesConfigurationDetailsOfTheExternalIPAMServer {
-	request := catalystcentersdkgo.RequestSystemSettingsUpdatesConfigurationDetailsOfTheExternalIPAMServer{}
+func expandRequestIPamServerSettingUpdatesConfigurationDetailsOfTheExternalIPAMServer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSystemSettingsUpdatesConfigurationDetailsOfTheExternalIPAMServerV1 {
+	request := catalystcentersdkgo.RequestSystemSettingsUpdatesConfigurationDetailsOfTheExternalIPAMServerV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".server_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".server_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".server_name")))) {
 		request.ServerName = interfaceToString(v)
 	}

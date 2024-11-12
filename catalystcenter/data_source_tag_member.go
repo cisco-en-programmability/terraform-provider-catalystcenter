@@ -86,9 +86,9 @@ func dataSourceTagMemberRead(ctx context.Context, d *schema.ResourceData, m inte
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTagMembersByID")
+		log.Printf("[DEBUG] Selected method: GetTagMembersByIDV1")
 		vvID := vID.(string)
-		queryParams1 := catalystcentersdkgo.GetTagMembersByIDQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetTagMembersByIDV1QueryParams{}
 
 		queryParams1.MemberType = vMemberType.(string)
 
@@ -105,24 +105,24 @@ func dataSourceTagMemberRead(ctx context.Context, d *schema.ResourceData, m inte
 			queryParams1.Level = vLevel.(string)
 		}
 
-		response1, restyResp1, err := client.Tag.GetTagMembersByID(vvID, &queryParams1)
+		response1, restyResp1, err := client.Tag.GetTagMembersByIDV1(vvID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTagMembersByID", err,
-				"Failure at GetTagMembersByID, unexpected response", ""))
+				"Failure when executing 2 GetTagMembersByIDV1", err,
+				"Failure at GetTagMembersByIDV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenTagGetTagMembersByIDItems(response1.Response)
+		vItems1 := flattenTagGetTagMembersByIDV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTagMembersByID response",
+				"Failure when setting GetTagMembersByIDV1 response",
 				err))
 			return diags
 		}
@@ -134,7 +134,7 @@ func dataSourceTagMemberRead(ctx context.Context, d *schema.ResourceData, m inte
 	return diags
 }
 
-func flattenTagGetTagMembersByIDItems(items *[]catalystcentersdkgo.ResponseTagGetTagMembersByIDResponse) []map[string]interface{} {
+func flattenTagGetTagMembersByIDV1Items(items *[]catalystcentersdkgo.ResponseTagGetTagMembersByIDV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

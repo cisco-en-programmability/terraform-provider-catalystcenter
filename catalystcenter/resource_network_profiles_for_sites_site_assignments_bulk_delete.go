@@ -62,14 +62,14 @@ building first if this site is a floor.
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"profile_id": &schema.Schema{
-							Description: `profileId path parameter. The 'id' of the network profile, retrievable from 'GET /intent/api/v1/networkProfilesForSites'
+							Description: `profileId path parameter. The *id* of the network profile, retrievable from *GET /intent/api/v1/networkProfilesForSites*
 `,
 							Type:     schema.TypeString,
 							Required: true,
 							ForceNew: true,
 						},
 						"site_id": &schema.Schema{
-							Description: `siteId query parameter. The 'id' of the site, retrievable from 'GET /intent/api/v1/sites'
+							Description: `siteId query parameter. The *id* of the site, retrievable from *GET /intent/api/v1/sites*
 `,
 							Type:     schema.TypeString,
 							Required: true,
@@ -93,18 +93,20 @@ func resourceNetworkProfilesForSitesSiteAssignmentsBulkDeleteCreate(ctx context.
 	vSiteID := resourceItem["site_id"]
 
 	vvProfileID := vProfileID.(string)
-	queryParams1 := catalystcentersdkgo.UnassignsANetworkProfileForSitesFromMultipleSitesQueryParams{}
+	queryParams1 := catalystcentersdkgo.UnassignsANetworkProfileForSitesFromMultipleSitesV1QueryParams{}
 
 	queryParams1.SiteID = vSiteID.(string)
 
-	response1, restyResp1, err := client.SiteDesign.UnassignsANetworkProfileForSitesFromMultipleSites(vvProfileID, &queryParams1)
+	// has_unknown_response: None
+
+	response1, restyResp1, err := client.SiteDesign.UnassignsANetworkProfileForSitesFromMultipleSitesV1(vvProfileID, &queryParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing UnassignsANetworkProfileForSitesFromMultipleSites", err))
+			"Failure when executing UnassignsANetworkProfileForSitesFromMultipleSitesV1", err))
 		return diags
 	}
 
@@ -112,7 +114,7 @@ func resourceNetworkProfilesForSitesSiteAssignmentsBulkDeleteCreate(ctx context.
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing UnassignsANetworkProfileForSitesFromMultipleSites", err))
+			"Failure when executing UnassignsANetworkProfileForSitesFromMultipleSitesV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -146,22 +148,20 @@ func resourceNetworkProfilesForSitesSiteAssignmentsBulkDeleteCreate(ctx context.
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing UnassignsANetworkProfileForSitesFromMultipleSites", err1))
+				"Failure when executing UnassignsANetworkProfileForSitesFromMultipleSitesV1", err1))
 			return diags
 		}
 	}
-
-	vItem1 := flattenSiteDesignUnassignsANetworkProfileForSitesFromMultipleSitesItem(response1.Response)
+	vItem1 := flattenSiteDesignUnassignsANetworkProfileForSitesFromMultipleSitesV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting UnassignsANetworkProfileForSitesFromMultipleSites response",
+			"Failure when setting UnassignsANetworkProfileForSitesFromMultipleSitesV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceNetworkProfilesForSitesSiteAssignmentsBulkDeleteRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -176,7 +176,7 @@ func resourceNetworkProfilesForSitesSiteAssignmentsBulkDeleteDelete(ctx context.
 	return diags
 }
 
-func flattenSiteDesignUnassignsANetworkProfileForSitesFromMultipleSitesItem(item *catalystcentersdkgo.ResponseSiteDesignUnassignsANetworkProfileForSitesFromMultipleSitesResponse) []map[string]interface{} {
+func flattenSiteDesignUnassignsANetworkProfileForSitesFromMultipleSitesV1Item(item *catalystcentersdkgo.ResponseSiteDesignUnassignsANetworkProfileForSitesFromMultipleSitesV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

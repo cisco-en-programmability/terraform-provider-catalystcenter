@@ -1,6 +1,6 @@
 
 resource "catalystcenter_sda_fabric_devices_layer2_handoffs_sda_transits_delete" "example" {
-  provider          = catalystcenter
+  provider          = meraki
   fabric_id         = "string"
   network_device_id = "string"
 }

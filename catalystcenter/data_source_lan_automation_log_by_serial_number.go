@@ -106,33 +106,33 @@ func dataSourceLanAutomationLogBySerialNumberRead(ctx context.Context, d *schema
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: LanAutomationLogsForIndividualDevices")
+		log.Printf("[DEBUG] Selected method: LanAutomationLogsForIndividualDevicesV1")
 		vvID := vID.(string)
 		vvSerialNumber := vSerialNumber.(string)
-		queryParams1 := catalystcentersdkgo.LanAutomationLogsForIndividualDevicesQueryParams{}
+		queryParams1 := catalystcentersdkgo.LanAutomationLogsForIndividualDevicesV1QueryParams{}
 
 		if okLogLevel {
 			queryParams1.LogLevel = vLogLevel.(string)
 		}
 
-		response1, restyResp1, err := client.LanAutomation.LanAutomationLogsForIndividualDevices(vvID, vvSerialNumber, &queryParams1)
+		response1, restyResp1, err := client.LanAutomation.LanAutomationLogsForIndividualDevicesV1(vvID, vvSerialNumber, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 LanAutomationLogsForIndividualDevices", err,
-				"Failure at LanAutomationLogsForIndividualDevices, unexpected response", ""))
+				"Failure when executing 2 LanAutomationLogsForIndividualDevicesV1", err,
+				"Failure at LanAutomationLogsForIndividualDevicesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenLanAutomationLanAutomationLogsForIndividualDevicesItems(response1.Response)
+		vItems1 := flattenLanAutomationLanAutomationLogsForIndividualDevicesV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting LanAutomationLogsForIndividualDevices response",
+				"Failure when setting LanAutomationLogsForIndividualDevicesV1 response",
 				err))
 			return diags
 		}
@@ -144,7 +144,7 @@ func dataSourceLanAutomationLogBySerialNumberRead(ctx context.Context, d *schema
 	return diags
 }
 
-func flattenLanAutomationLanAutomationLogsForIndividualDevicesItems(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationLogsForIndividualDevicesResponse) []map[string]interface{} {
+func flattenLanAutomationLanAutomationLogsForIndividualDevicesV1Items(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationLogsForIndividualDevicesV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -152,14 +152,14 @@ func flattenLanAutomationLanAutomationLogsForIndividualDevicesItems(items *[]cat
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["nw_orch_id"] = item.NwOrchID
-		respItem["logs"] = flattenLanAutomationLanAutomationLogsForIndividualDevicesItemsLogs(item.Logs)
+		respItem["logs"] = flattenLanAutomationLanAutomationLogsForIndividualDevicesV1ItemsLogs(item.Logs)
 		respItem["serial_number"] = item.SerialNumber
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenLanAutomationLanAutomationLogsForIndividualDevicesItemsLogs(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationLogsForIndividualDevicesResponseLogs) []map[string]interface{} {
+func flattenLanAutomationLanAutomationLogsForIndividualDevicesV1ItemsLogs(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationLogsForIndividualDevicesV1ResponseLogs) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

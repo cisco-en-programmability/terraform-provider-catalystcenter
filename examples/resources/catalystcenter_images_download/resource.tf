@@ -1,6 +1,6 @@
 
 resource "catalystcenter_images_download" "example" {
-  provider = catalystcenter
+  provider = meraki
   id       = "string"
   parameters {
 

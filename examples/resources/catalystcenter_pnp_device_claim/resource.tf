@@ -1,6 +1,6 @@
 
 resource "catalystcenter_pnp_device_claim" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     authorization_needed = "false"

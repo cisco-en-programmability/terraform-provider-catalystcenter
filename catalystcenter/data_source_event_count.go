@@ -60,32 +60,32 @@ func dataSourceEventCountRead(ctx context.Context, d *schema.ResourceData, m int
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: CountOfEvents")
-		queryParams1 := catalystcentersdkgo.CountOfEventsQueryParams{}
+		log.Printf("[DEBUG] Selected method: CountOfEventsV1")
+		queryParams1 := catalystcentersdkgo.CountOfEventsV1QueryParams{}
 
 		if okEventID {
 			queryParams1.EventID = vEventID.(string)
 		}
 		queryParams1.Tags = vTags.(string)
 
-		response1, restyResp1, err := client.EventManagement.CountOfEvents(&queryParams1)
+		response1, restyResp1, err := client.EventManagement.CountOfEventsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 CountOfEvents", err,
-				"Failure at CountOfEvents, unexpected response", ""))
+				"Failure when executing 2 CountOfEventsV1", err,
+				"Failure at CountOfEventsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenEventManagementCountOfEventsItem(response1)
+		vItem1 := flattenEventManagementCountOfEventsV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting CountOfEvents response",
+				"Failure when setting CountOfEventsV1 response",
 				err))
 			return diags
 		}
@@ -97,7 +97,7 @@ func dataSourceEventCountRead(ctx context.Context, d *schema.ResourceData, m int
 	return diags
 }
 
-func flattenEventManagementCountOfEventsItem(item *catalystcentersdkgo.ResponseEventManagementCountOfEvents) []map[string]interface{} {
+func flattenEventManagementCountOfEventsV1Item(item *catalystcentersdkgo.ResponseEventManagementCountOfEventsV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

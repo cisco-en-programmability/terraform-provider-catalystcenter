@@ -67,7 +67,7 @@ can be seen in the child task of each device
 							ForceNew:    true,
 						},
 						"payload": &schema.Schema{
-							Description: `Array of RequestDevicesSyncDevices`,
+							Description: `Array of RequestDevicesSyncDevicesV1`,
 							Type:        schema.TypeList,
 							Optional:    true,
 							ForceNew:    true,
@@ -87,21 +87,19 @@ func resourceNetworkDeviceSyncCreate(ctx context.Context, d *schema.ResourceData
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestNetworkDeviceSyncSyncDevices(ctx, "parameters.0", d)
-	queryParams1 := catalystcentersdkgo.SyncDevicesQueryParams{}
+	request1 := expandRequestNetworkDeviceSyncSyncDevicesV1(ctx, "parameters.0", d)
+	queryParams1 := catalystcentersdkgo.SyncDevicesV1QueryParams{}
 
-	response1, restyResp1, err := client.Devices.SyncDevices(request1, &queryParams1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Devices.SyncDevicesV1(request1, &queryParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing SyncDevices", err))
+			"Failure when executing SyncDevicesV1", err))
 		return diags
 	}
 
@@ -148,10 +146,13 @@ func resourceNetworkDeviceSyncCreate(ctx context.Context, d *schema.ResourceData
 		}
 	}
 
-	vItem1 := flattenDevicesSyncDevicesItem(response1.Response)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
+	vItem1 := flattenDevicesSyncDevicesV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting SyncDevices response",
+			"Failure when setting SyncDevicesV1 response",
 			err))
 		return diags
 	}
@@ -173,15 +174,15 @@ func resourceNetworkDeviceSyncDelete(ctx context.Context, d *schema.ResourceData
 	return diags
 }
 
-func expandRequestNetworkDeviceSyncSyncDevices(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesSyncDevices {
-	request := catalystcentersdkgo.RequestDevicesSyncDevices{}
+func expandRequestNetworkDeviceSyncSyncDevicesV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesSyncDevicesV1 {
+	request := catalystcentersdkgo.RequestDevicesSyncDevicesV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".payload")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".payload")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".payload")))) {
 		request = interfaceToSliceString(v)
 	}
 	return &request
 }
 
-func flattenDevicesSyncDevicesItem(item *catalystcentersdkgo.ResponseDevicesSyncDevicesResponse) []map[string]interface{} {
+func flattenDevicesSyncDevicesV1Item(item *catalystcentersdkgo.ResponseDevicesSyncDevicesV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

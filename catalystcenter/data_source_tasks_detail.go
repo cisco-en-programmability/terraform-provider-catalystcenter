@@ -21,7 +21,7 @@ func dataSourceTasksDetail() *schema.Resource {
 		ReadContext: dataSourceTasksDetailRead,
 		Schema: map[string]*schema.Schema{
 			"id": &schema.Schema{
-				Description: `id path parameter. the 'id' of the task to retrieve details for
+				Description: `id path parameter. the *id* of the task to retrieve details for
 `,
 				Type:     schema.TypeString,
 				Required: true,
@@ -75,27 +75,27 @@ func dataSourceTasksDetailRead(ctx context.Context, d *schema.ResourceData, m in
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTaskDetailsByID")
+		log.Printf("[DEBUG] Selected method: GetTaskDetailsByIDV1")
 		vvID := vID.(string)
 
-		response1, restyResp1, err := client.Task.GetTaskDetailsByID(vvID)
+		response1, restyResp1, err := client.Task.GetTaskDetailsByIDV1(vvID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTaskDetailsByID", err,
-				"Failure at GetTaskDetailsByID, unexpected response", ""))
+				"Failure when executing 2 GetTaskDetailsByIDV1", err,
+				"Failure at GetTaskDetailsByIDV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenTaskGetTaskDetailsByIDItem(response1.Response)
+		vItem1 := flattenTaskGetTaskDetailsByIDV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTaskDetailsByID response",
+				"Failure when setting GetTaskDetailsByIDV1 response",
 				err))
 			return diags
 		}
@@ -107,7 +107,7 @@ func dataSourceTasksDetailRead(ctx context.Context, d *schema.ResourceData, m in
 	return diags
 }
 
-func flattenTaskGetTaskDetailsByIDItem(item *catalystcentersdkgo.ResponseTaskGetTaskDetailsByIDResponse) []map[string]interface{} {
+func flattenTaskGetTaskDetailsByIDV1Item(item *catalystcentersdkgo.ResponseTaskGetTaskDetailsByIDV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

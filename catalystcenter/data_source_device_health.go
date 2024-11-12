@@ -572,8 +572,8 @@ func dataSourceDeviceHealthRead(ctx context.Context, d *schema.ResourceData, m i
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: Devices")
-		queryParams1 := catalystcentersdkgo.DevicesQueryParams{}
+		log.Printf("[DEBUG] Selected method: DevicesV1")
+		queryParams1 := catalystcentersdkgo.DevicesV1QueryParams{}
 
 		if okDeviceRole {
 			queryParams1.DeviceRole = vDeviceRole.(string)
@@ -597,24 +597,24 @@ func dataSourceDeviceHealthRead(ctx context.Context, d *schema.ResourceData, m i
 			queryParams1.Offset = vOffset.(float64)
 		}
 
-		response1, restyResp1, err := client.Devices.Devices(&queryParams1)
+		response1, restyResp1, err := client.Devices.DevicesV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 Devices", err,
-				"Failure at Devices, unexpected response", ""))
+				"Failure when executing 2 DevicesV1", err,
+				"Failure at DevicesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesDevicesItems(response1.Response)
+		vItems1 := flattenDevicesDevicesV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting Devices response",
+				"Failure when setting DevicesV1 response",
 				err))
 			return diags
 		}
@@ -626,7 +626,7 @@ func dataSourceDeviceHealthRead(ctx context.Context, d *schema.ResourceData, m i
 	return diags
 }
 
-func flattenDevicesDevicesItems(items *[]catalystcentersdkgo.ResponseDevicesDevicesResponse) []map[string]interface{} {
+func flattenDevicesDevicesV1Items(items *[]catalystcentersdkgo.ResponseDevicesDevicesV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -636,26 +636,26 @@ func flattenDevicesDevicesItems(items *[]catalystcentersdkgo.ResponseDevicesDevi
 		respItem["device_type"] = item.DeviceType
 		respItem["cpu_utilization"] = item.CPUUtilization
 		respItem["overall_health"] = item.OverallHealth
-		respItem["utilization_health"] = flattenDevicesDevicesItemsUtilizationHealth(item.UtilizationHealth)
-		respItem["air_quality_health"] = flattenDevicesDevicesItemsAirQualityHealth(item.AirQualityHealth)
+		respItem["utilization_health"] = flattenDevicesDevicesV1ItemsUtilizationHealth(item.UtilizationHealth)
+		respItem["air_quality_health"] = flattenDevicesDevicesV1ItemsAirQualityHealth(item.AirQualityHealth)
 		respItem["ip_address"] = item.IPAddress
 		respItem["cpu_health"] = item.CPUHealth
 		respItem["device_family"] = item.DeviceFamily
 		respItem["issue_count"] = item.IssueCount
 		respItem["mac_address"] = item.MacAddress
-		respItem["noise_health"] = flattenDevicesDevicesItemsNoiseHealth(item.NoiseHealth)
+		respItem["noise_health"] = flattenDevicesDevicesV1ItemsNoiseHealth(item.NoiseHealth)
 		respItem["os_version"] = item.OsVersion
 		respItem["name"] = item.Name
 		respItem["interface_link_err_health"] = item.InterfaceLinkErrHealth
 		respItem["memory_utilization"] = item.MemoryUtilization
 		respItem["inter_device_link_avail_health"] = item.InterDeviceLinkAvailHealth
-		respItem["interference_health"] = flattenDevicesDevicesItemsInterferenceHealth(item.InterferenceHealth)
+		respItem["interference_health"] = flattenDevicesDevicesV1ItemsInterferenceHealth(item.InterferenceHealth)
 		respItem["model"] = item.Model
 		respItem["location"] = item.Location
 		respItem["reachability_health"] = item.ReachabilityHealth
-		respItem["band"] = flattenDevicesDevicesItemsBand(item.Band)
+		respItem["band"] = flattenDevicesDevicesV1ItemsBand(item.Band)
 		respItem["memory_utilization_health"] = item.MemoryUtilizationHealth
-		respItem["client_count"] = flattenDevicesDevicesItemsClientCount(item.ClientCount)
+		respItem["client_count"] = flattenDevicesDevicesV1ItemsClientCount(item.ClientCount)
 		respItem["avg_temperature"] = item.AvgTemperature
 		respItem["max_temperature"] = item.MaxTemperature
 		respItem["inter_device_link_avail_fabric"] = item.InterDeviceLinkAvailFabric
@@ -676,7 +676,7 @@ func flattenDevicesDevicesItems(items *[]catalystcentersdkgo.ResponseDevicesDevi
 	return respItems
 }
 
-func flattenDevicesDevicesItemsUtilizationHealth(item *catalystcentersdkgo.ResponseDevicesDevicesResponseUtilizationHealth) []map[string]interface{} {
+func flattenDevicesDevicesV1ItemsUtilizationHealth(item *catalystcentersdkgo.ResponseDevicesDevicesV1ResponseUtilizationHealth) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -694,7 +694,7 @@ func flattenDevicesDevicesItemsUtilizationHealth(item *catalystcentersdkgo.Respo
 
 }
 
-func flattenDevicesDevicesItemsAirQualityHealth(item *catalystcentersdkgo.ResponseDevicesDevicesResponseAirQualityHealth) []map[string]interface{} {
+func flattenDevicesDevicesV1ItemsAirQualityHealth(item *catalystcentersdkgo.ResponseDevicesDevicesV1ResponseAirQualityHealth) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -712,7 +712,7 @@ func flattenDevicesDevicesItemsAirQualityHealth(item *catalystcentersdkgo.Respon
 
 }
 
-func flattenDevicesDevicesItemsNoiseHealth(item *catalystcentersdkgo.ResponseDevicesDevicesResponseNoiseHealth) []map[string]interface{} {
+func flattenDevicesDevicesV1ItemsNoiseHealth(item *catalystcentersdkgo.ResponseDevicesDevicesV1ResponseNoiseHealth) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -730,7 +730,7 @@ func flattenDevicesDevicesItemsNoiseHealth(item *catalystcentersdkgo.ResponseDev
 
 }
 
-func flattenDevicesDevicesItemsInterferenceHealth(item *catalystcentersdkgo.ResponseDevicesDevicesResponseInterferenceHealth) []map[string]interface{} {
+func flattenDevicesDevicesV1ItemsInterferenceHealth(item *catalystcentersdkgo.ResponseDevicesDevicesV1ResponseInterferenceHealth) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -748,7 +748,7 @@ func flattenDevicesDevicesItemsInterferenceHealth(item *catalystcentersdkgo.Resp
 
 }
 
-func flattenDevicesDevicesItemsBand(item *catalystcentersdkgo.ResponseDevicesDevicesResponseBand) []map[string]interface{} {
+func flattenDevicesDevicesV1ItemsBand(item *catalystcentersdkgo.ResponseDevicesDevicesV1ResponseBand) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -764,7 +764,7 @@ func flattenDevicesDevicesItemsBand(item *catalystcentersdkgo.ResponseDevicesDev
 
 }
 
-func flattenDevicesDevicesItemsClientCount(item *catalystcentersdkgo.ResponseDevicesDevicesResponseClientCount) []map[string]interface{} {
+func flattenDevicesDevicesV1ItemsClientCount(item *catalystcentersdkgo.ResponseDevicesDevicesV1ResponseClientCount) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

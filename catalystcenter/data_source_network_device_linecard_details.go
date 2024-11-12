@@ -75,27 +75,27 @@ func dataSourceNetworkDeviceLinecardDetailsRead(ctx context.Context, d *schema.R
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetLinecardDetails")
+		log.Printf("[DEBUG] Selected method: GetLinecardDetailsV1")
 		vvDeviceUUID := vDeviceUUID.(string)
 
-		response1, restyResp1, err := client.Devices.GetLinecardDetails(vvDeviceUUID)
+		response1, restyResp1, err := client.Devices.GetLinecardDetailsV1(vvDeviceUUID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetLinecardDetails", err,
-				"Failure at GetLinecardDetails, unexpected response", ""))
+				"Failure when executing 2 GetLinecardDetailsV1", err,
+				"Failure at GetLinecardDetailsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetLinecardDetailsItems(response1.Response)
+		vItems1 := flattenDevicesGetLinecardDetailsV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetLinecardDetails response",
+				"Failure when setting GetLinecardDetailsV1 response",
 				err))
 			return diags
 		}
@@ -107,7 +107,7 @@ func dataSourceNetworkDeviceLinecardDetailsRead(ctx context.Context, d *schema.R
 	return diags
 }
 
-func flattenDevicesGetLinecardDetailsItems(items *[]catalystcentersdkgo.ResponseDevicesGetLinecardDetailsResponse) []map[string]interface{} {
+func flattenDevicesGetLinecardDetailsV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetLinecardDetailsV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

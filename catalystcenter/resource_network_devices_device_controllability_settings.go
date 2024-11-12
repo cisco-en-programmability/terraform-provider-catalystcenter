@@ -162,7 +162,7 @@ func resourceNetworkDevicesDeviceControllabilitySettingsRead(ctx context.Context
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSiteDesignGetDeviceControllabilitySettingsItem(response1.Response)
+		vItem1 := flattenSiteDesignGetDeviceControllabilitySettingsV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetDeviceControllabilitySettings response",
@@ -182,7 +182,7 @@ func resourceNetworkDevicesDeviceControllabilitySettingsUpdate(ctx context.Conte
 	var diags diag.Diagnostics
 
 	if d.HasChange("parameters") {
-		request1 := expandRequestNetworkDevicesDeviceControllabilitySettingsUpdateDeviceControllabilitySettings(ctx, "parameters.0", d)
+		request1 := expandRequestNetworkDevicesDeviceControllabilitySettingsUpdateDeviceControllabilitySettingsV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.SiteDesign.UpdateDeviceControllabilitySettings(request1)
 		if err != nil || response1 == nil {
@@ -241,8 +241,8 @@ func resourceNetworkDevicesDeviceControllabilitySettingsDelete(ctx context.Conte
 		"Failure at NetworkDevicesDeviceControllabilitySettingsDelete, unexpected response", ""))
 	return diags
 }
-func expandRequestNetworkDevicesDeviceControllabilitySettingsUpdateDeviceControllabilitySettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSiteDesignUpdateDeviceControllabilitySettings {
-	request := catalystcentersdkgo.RequestSiteDesignUpdateDeviceControllabilitySettings{}
+func expandRequestNetworkDevicesDeviceControllabilitySettingsUpdateDeviceControllabilitySettingsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSiteDesignUpdateDeviceControllabilitySettingsV1 {
+	request := catalystcentersdkgo.RequestSiteDesignUpdateDeviceControllabilitySettingsV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".autocorrect_telemetry_config")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".autocorrect_telemetry_config")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".autocorrect_telemetry_config")))) {
 		request.AutocorrectTelemetryConfig = interfaceToBoolPtr(v)
 	}

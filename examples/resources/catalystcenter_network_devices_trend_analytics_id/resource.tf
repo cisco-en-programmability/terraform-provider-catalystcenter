@@ -1,6 +1,6 @@
 
 resource "catalystcenter_network_devices_trend_analytics_id" "example" {
-  provider = catalystcenter
+  provider = meraki
   id       = "string"
   parameters {
 
@@ -17,7 +17,7 @@ resource "catalystcenter_network_devices_trend_analytics_id" "example" {
       key              = "string"
       logical_operator = "string"
       operator         = "string"
-      value            = "string"
+      value            = "------"
     }
     group_by = ["string"]
     page {

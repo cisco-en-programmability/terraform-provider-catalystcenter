@@ -1,6 +1,6 @@
 
 resource "catalystcenter_wireless_provision_ssid_create_provision" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     enable_fabric = "false"

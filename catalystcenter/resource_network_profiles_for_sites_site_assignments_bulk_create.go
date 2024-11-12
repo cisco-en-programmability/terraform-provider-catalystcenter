@@ -7,8 +7,6 @@ import (
 
 	"time"
 
-	"reflect"
-
 	"log"
 
 	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
@@ -63,19 +61,17 @@ func resourceNetworkProfilesForSitesSiteAssignmentsBulkCreate() *schema.Resource
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"profile_id": &schema.Schema{
-							Description: `profileId path parameter. The 'id' of the network profile, retrievable from 'GET /intent/api/v1/networkProfilesForSites'
+							Description: `profileId path parameter. The *id* of the network profile, retrievable from *GET /intent/api/v1/networkProfilesForSites*
 `,
 							Type:     schema.TypeString,
 							Required: true,
 							ForceNew: true,
 						},
-						"items": &schema.Schema{
-							Description: `Items`,
-							Type:        schema.TypeList,
-							Optional:    true,
-							ForceNew:    true,
-							Computed:    true,
-							Elem:        schema.TypeString,
+						"type": &schema.Schema{
+							Type:     schema.TypeString, //TEST,
+							Optional: true,
+							ForceNew: true,
+							Computed: true,
 						},
 					},
 				},
@@ -93,20 +89,18 @@ func resourceNetworkProfilesForSitesSiteAssignmentsBulkCreateCreate(ctx context.
 	vProfileID := resourceItem["profile_id"]
 
 	vvProfileID := vProfileID.(string)
-	request1 := expandRequestNetworkProfilesForSitesSiteAssignmentsBulkCreateAssignANetworkProfileForSitesToAListOfSites(ctx, "parameters.0", d)
+	request1 := expandRequestNetworkProfilesForSitesSiteAssignmentsBulkCreateAssignANetworkProfileForSitesToAListOfSitesV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.SiteDesign.AssignANetworkProfileForSitesToAListOfSites(vvProfileID, request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.SiteDesign.AssignANetworkProfileForSitesToAListOfSitesV1(vvProfileID, request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing AssignANetworkProfileForSitesToAListOfSites", err))
+			"Failure when executing AssignANetworkProfileForSitesToAListOfSitesV1", err))
 		return diags
 	}
 
@@ -114,7 +108,7 @@ func resourceNetworkProfilesForSitesSiteAssignmentsBulkCreateCreate(ctx context.
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing AssignANetworkProfileForSitesToAListOfSites", err))
+			"Failure when executing AssignANetworkProfileForSitesToAListOfSitesV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -148,22 +142,24 @@ func resourceNetworkProfilesForSitesSiteAssignmentsBulkCreateCreate(ctx context.
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing AssignANetworkProfileForSitesToAListOfSites", err1))
+				"Failure when executing AssignANetworkProfileForSitesToAListOfSitesV1", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenSiteDesignAssignANetworkProfileForSitesToAListOfSitesItem(response1.Response)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
+	vItem1 := flattenSiteDesignAssignANetworkProfileForSitesToAListOfSitesV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting AssignANetworkProfileForSitesToAListOfSites response",
+			"Failure when setting AssignANetworkProfileForSitesToAListOfSitesV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceNetworkProfilesForSitesSiteAssignmentsBulkCreateRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -178,15 +174,19 @@ func resourceNetworkProfilesForSitesSiteAssignmentsBulkCreateDelete(ctx context.
 	return diags
 }
 
-func expandRequestNetworkProfilesForSitesSiteAssignmentsBulkCreateAssignANetworkProfileForSitesToAListOfSites(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSiteDesignAssignANetworkProfileForSitesToAListOfSites {
-	request := catalystcentersdkgo.RequestSiteDesignAssignANetworkProfileForSitesToAListOfSites{}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".items")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".items")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".items")))) {
-		request.Items = v.(*[][]string)
-	}
+func expandRequestNetworkProfilesForSitesSiteAssignmentsBulkCreateAssignANetworkProfileForSitesToAListOfSitesV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSiteDesignAssignANetworkProfileForSitesToAListOfSitesV1 {
+	request := catalystcentersdkgo.RequestSiteDesignAssignANetworkProfileForSitesToAListOfSitesV1{}
+	request.Type = expandRequestNetworkProfilesForSitesSiteAssignmentsBulkCreateAssignANetworkProfileForSitesToAListOfSitesV1Type(ctx, key, d)
 	return &request
 }
 
-func flattenSiteDesignAssignANetworkProfileForSitesToAListOfSitesItem(item *catalystcentersdkgo.ResponseSiteDesignAssignANetworkProfileForSitesToAListOfSitesResponse) []map[string]interface{} {
+func expandRequestNetworkProfilesForSitesSiteAssignmentsBulkCreateAssignANetworkProfileForSitesToAListOfSitesV1Type(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSiteDesignAssignANetworkProfileForSitesToAListOfSitesV1Type {
+	var request catalystcentersdkgo.RequestSiteDesignAssignANetworkProfileForSitesToAListOfSitesV1Type
+	request = d.Get(fixKeyAccess(key))
+	return &request
+}
+
+func flattenSiteDesignAssignANetworkProfileForSitesToAListOfSitesV1Item(item *catalystcentersdkgo.ResponseSiteDesignAssignANetworkProfileForSitesToAListOfSitesV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

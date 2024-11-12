@@ -1,6 +1,6 @@
 
 resource "catalystcenter_maps_export" "example" {
-  provider            = catalystcenter
+  provider            = meraki
   site_hierarchy_uuid = "string"
   parameters {
 

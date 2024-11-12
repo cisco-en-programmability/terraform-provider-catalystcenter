@@ -957,35 +957,31 @@ func resourceClientsQueryCreate(ctx context.Context, d *schema.ResourceData, m i
 
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
-	request1 := expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributes(ctx, "parameters.0", d)
+	request1 := expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.RetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesHeaderParams{}
+	headerParams1 := catalystcentersdkgo.RetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1HeaderParams{}
 
 	headerParams1.XCaLLERID = vXCaLLERID.(string)
 
-	response1, restyResp1, err := client.Clients.RetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributes(request1, &headerParams1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Clients.RetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1(request1, &headerParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing RetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributes", err))
+			"Failure when executing RetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	//Analizar verificacion.
-
-	vItems1 := flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesItems(response1.Response)
+	vItems1 := flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1Items(response1.Response)
 	if err := d.Set("items", vItems1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting RetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributes response",
+			"Failure when setting RetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1 response",
 			err))
 		return diags
 	}
@@ -1007,8 +1003,8 @@ func resourceClientsQueryDelete(ctx context.Context, d *schema.ResourceData, m i
 	return diags
 }
 
-func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributes {
-	request := catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributes{}
+func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1 {
+	request := catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -1022,19 +1018,19 @@ func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersW
 		request.Attributes = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesFiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1FiltersArray(ctx, key+".filters", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".aggregate_attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".aggregate_attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".aggregate_attributes")))) {
-		request.AggregateAttributes = expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesAggregateAttributesArray(ctx, key+".aggregate_attributes", d)
+		request.AggregateAttributes = expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1AggregateAttributesArray(ctx, key+".aggregate_attributes", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".page")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".page")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".page")))) {
-		request.Page = expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesPage(ctx, key+".page.0", d)
+		request.Page = expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1Page(ctx, key+".page.0", d)
 	}
 	return &request
 }
 
-func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesFilters {
-	request := []catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesFilters{}
+func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1Filters {
+	request := []catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1Filters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1045,7 +1041,7 @@ func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersW
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1053,8 +1049,8 @@ func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersW
 	return &request
 }
 
-func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesFilters {
-	request := catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesFilters{}
+func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1Filters {
+	request := catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1Filters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -1067,8 +1063,8 @@ func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersW
 	return &request
 }
 
-func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesAggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesAggregateAttributes {
-	request := []catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesAggregateAttributes{}
+func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1AggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1AggregateAttributes {
+	request := []catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1AggregateAttributes{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1079,7 +1075,7 @@ func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersW
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesAggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1AggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1087,8 +1083,8 @@ func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersW
 	return &request
 }
 
-func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesAggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesAggregateAttributes {
-	request := catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesAggregateAttributes{}
+func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1AggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1AggregateAttributes {
+	request := catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1AggregateAttributes{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -1098,8 +1094,8 @@ func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersW
 	return &request
 }
 
-func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesPage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesPage {
-	request := catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesPage{}
+func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1Page(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1Page {
+	request := catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1Page{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".limit")))) {
 		request.Limit = interfaceToIntPtr(v)
 	}
@@ -1107,13 +1103,13 @@ func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersW
 		request.Offset = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".sort_by")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".sort_by")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".sort_by")))) {
-		request.SortBy = expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesPageSortByArray(ctx, key+".sort_by", d)
+		request.SortBy = expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1PageSortByArray(ctx, key+".sort_by", d)
 	}
 	return &request
 }
 
-func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesPageSortByArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesPageSortBy {
-	request := []catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesPageSortBy{}
+func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1PageSortByArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1PageSortBy {
+	request := []catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1PageSortBy{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1124,7 +1120,7 @@ func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersW
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesPageSortBy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1PageSortBy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1132,8 +1128,8 @@ func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersW
 	return &request
 }
 
-func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesPageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesPageSortBy {
-	request := catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesPageSortBy{}
+func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1PageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1PageSortBy {
+	request := catalystcentersdkgo.RequestClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1PageSortBy{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -1143,7 +1139,7 @@ func expandRequestClientsQueryRetrievesTheListOfClientsByApplyingComplexFiltersW
 	return &request
 }
 
-func flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesItems(items *[]catalystcentersdkgo.ResponseClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesResponse) []map[string]interface{} {
+func flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1Items(items *[]catalystcentersdkgo.ResponseClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1169,19 +1165,19 @@ func flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSup
 		respItem["connection_status"] = item.ConnectionStatus
 		respItem["tracked"] = item.Tracked
 		respItem["is_private_mac_address"] = boolPtrToString(item.IsPrivateMacAddress)
-		respItem["health"] = flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesItemsHealth(item.Health)
-		respItem["traffic"] = flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesItemsTraffic(item.Traffic)
-		respItem["connected_network_device"] = flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesItemsConnectedNetworkDevice(item.ConnectedNetworkDevice)
-		respItem["connection"] = flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesItemsConnection(item.Connection)
-		respItem["onboarding"] = flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesItemsOnboarding(item.Onboarding)
-		respItem["latency"] = flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesItemsLatency(item.Latency)
-		respItem["aggregate_attributes"] = flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesItemsAggregateAttributes(item.AggregateAttributes)
+		respItem["health"] = flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1ItemsHealth(item.Health)
+		respItem["traffic"] = flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1ItemsTraffic(item.Traffic)
+		respItem["connected_network_device"] = flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1ItemsConnectedNetworkDevice(item.ConnectedNetworkDevice)
+		respItem["connection"] = flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1ItemsConnection(item.Connection)
+		respItem["onboarding"] = flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1ItemsOnboarding(item.Onboarding)
+		respItem["latency"] = flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1ItemsLatency(item.Latency)
+		respItem["aggregate_attributes"] = flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1ItemsAggregateAttributes(item.AggregateAttributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesItemsHealth(item *catalystcentersdkgo.ResponseClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesResponseHealth) []map[string]interface{} {
+func flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1ItemsHealth(item *catalystcentersdkgo.ResponseClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1ResponseHealth) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1202,7 +1198,7 @@ func flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSup
 
 }
 
-func flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesItemsTraffic(item *catalystcentersdkgo.ResponseClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesResponseTraffic) []map[string]interface{} {
+func flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1ItemsTraffic(item *catalystcentersdkgo.ResponseClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1ResponseTraffic) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1229,7 +1225,7 @@ func flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSup
 
 }
 
-func flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesItemsConnectedNetworkDevice(item *catalystcentersdkgo.ResponseClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesResponseConnectedNetworkDevice) []map[string]interface{} {
+func flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1ItemsConnectedNetworkDevice(item *catalystcentersdkgo.ResponseClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1ResponseConnectedNetworkDevice) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1249,7 +1245,7 @@ func flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSup
 
 }
 
-func flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesItemsConnection(item *catalystcentersdkgo.ResponseClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesResponseConnection) []map[string]interface{} {
+func flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1ItemsConnection(item *catalystcentersdkgo.ResponseClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1ResponseConnection) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1290,7 +1286,7 @@ func flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSup
 
 }
 
-func flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesItemsOnboarding(item *catalystcentersdkgo.ResponseClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesResponseOnboarding) []map[string]interface{} {
+func flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1ItemsOnboarding(item *catalystcentersdkgo.ResponseClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1ResponseOnboarding) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1326,7 +1322,7 @@ func flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSup
 
 }
 
-func flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesItemsLatency(item *catalystcentersdkgo.ResponseClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesResponseLatency) []map[string]interface{} {
+func flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1ItemsLatency(item *catalystcentersdkgo.ResponseClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1ResponseLatency) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1342,7 +1338,7 @@ func flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSup
 
 }
 
-func flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesItemsAggregateAttributes(items *[]catalystcentersdkgo.ResponseClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesResponseAggregateAttributes) []map[string]interface{} {
+func flattenClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1ItemsAggregateAttributes(items *[]catalystcentersdkgo.ResponseClientsRetrievesTheListOfClientsByApplyingComplexFiltersWhileAlsoSupportingAggregateAttributesV1ResponseAggregateAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -76,8 +76,8 @@ func dataSourceNetworkDeviceUserDefinedFieldRead(ctx context.Context, d *schema.
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAllUserDefinedFields")
-		queryParams1 := catalystcentersdkgo.GetAllUserDefinedFieldsQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetAllUserDefinedFieldsV1")
+		queryParams1 := catalystcentersdkgo.GetAllUserDefinedFieldsV1QueryParams{}
 
 		if okID {
 			queryParams1.ID = vID.(string)
@@ -86,24 +86,24 @@ func dataSourceNetworkDeviceUserDefinedFieldRead(ctx context.Context, d *schema.
 			queryParams1.Name = vName.(string)
 		}
 
-		response1, restyResp1, err := client.Devices.GetAllUserDefinedFields(&queryParams1)
+		response1, restyResp1, err := client.Devices.GetAllUserDefinedFieldsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAllUserDefinedFields", err,
-				"Failure at GetAllUserDefinedFields, unexpected response", ""))
+				"Failure when executing 2 GetAllUserDefinedFieldsV1", err,
+				"Failure at GetAllUserDefinedFieldsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetAllUserDefinedFieldsItems(response1.Response)
+		vItems1 := flattenDevicesGetAllUserDefinedFieldsV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAllUserDefinedFields response",
+				"Failure when setting GetAllUserDefinedFieldsV1 response",
 				err))
 			return diags
 		}
@@ -115,7 +115,7 @@ func dataSourceNetworkDeviceUserDefinedFieldRead(ctx context.Context, d *schema.
 	return diags
 }
 
-func flattenDevicesGetAllUserDefinedFieldsItems(items *[]catalystcentersdkgo.ResponseDevicesGetAllUserDefinedFieldsResponse) []map[string]interface{} {
+func flattenDevicesGetAllUserDefinedFieldsV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetAllUserDefinedFieldsV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

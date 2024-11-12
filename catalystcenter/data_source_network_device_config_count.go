@@ -50,26 +50,26 @@ func dataSourceNetworkDeviceConfigCountRead(ctx context.Context, d *schema.Resou
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceConfigCount")
+		log.Printf("[DEBUG] Selected method: GetDeviceConfigCountV1")
 
-		response1, restyResp1, err := client.Devices.GetDeviceConfigCount()
+		response1, restyResp1, err := client.Devices.GetDeviceConfigCountV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceConfigCount", err,
-				"Failure at GetDeviceConfigCount, unexpected response", ""))
+				"Failure when executing 2 GetDeviceConfigCountV1", err,
+				"Failure at GetDeviceConfigCountV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesGetDeviceConfigCountItem(response1)
+		vItem1 := flattenDevicesGetDeviceConfigCountV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceConfigCount response",
+				"Failure when setting GetDeviceConfigCountV1 response",
 				err))
 			return diags
 		}
@@ -81,7 +81,7 @@ func dataSourceNetworkDeviceConfigCountRead(ctx context.Context, d *schema.Resou
 	return diags
 }
 
-func flattenDevicesGetDeviceConfigCountItem(item *catalystcentersdkgo.ResponseDevicesGetDeviceConfigCount) []map[string]interface{} {
+func flattenDevicesGetDeviceConfigCountV1Item(item *catalystcentersdkgo.ResponseDevicesGetDeviceConfigCountV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

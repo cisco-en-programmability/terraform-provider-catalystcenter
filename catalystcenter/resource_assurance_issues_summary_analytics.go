@@ -360,37 +360,33 @@ func resourceAssuranceIssuesSummaryAnalyticsCreate(ctx context.Context, d *schem
 
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
-	request1 := expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssues(ctx, "parameters.0", d)
+	request1 := expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesV1(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.GetSummaryAnalyticsDataOfIssuesHeaderParams{}
+	headerParams1 := catalystcentersdkgo.GetSummaryAnalyticsDataOfIssuesV1HeaderParams{}
 
 	headerParams1.AcceptLanguage = vAcceptLanguage.(string)
 
 	headerParams1.XCaLLERID = vXCaLLERID.(string)
 
-	response1, restyResp1, err := client.Issues.GetSummaryAnalyticsDataOfIssues(request1, &headerParams1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Issues.GetSummaryAnalyticsDataOfIssuesV1(request1, &headerParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing GetSummaryAnalyticsDataOfIssues", err))
+			"Failure when executing GetSummaryAnalyticsDataOfIssuesV1", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	//Analizar verificacion.
-
-	vItem1 := flattenIssuesGetSummaryAnalyticsDataOfIssuesItem(response1.Response)
+	vItem1 := flattenIssuesGetSummaryAnalyticsDataOfIssuesV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting GetSummaryAnalyticsDataOfIssues response",
+			"Failure when setting GetSummaryAnalyticsDataOfIssuesV1 response",
 			err))
 		return diags
 	}
@@ -412,8 +408,8 @@ func resourceAssuranceIssuesSummaryAnalyticsDelete(ctx context.Context, d *schem
 	return diags
 }
 
-func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssues(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssues {
-	request := catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssues{}
+func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesV1 {
+	request := catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -421,7 +417,7 @@ func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssues
 		request.EndTime = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesFiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesV1FiltersArray(ctx, key+".filters", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".group_by")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".group_by")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".group_by")))) {
 		request.GroupBy = interfaceToSliceString(v)
@@ -430,16 +426,16 @@ func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssues
 		request.Attributes = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".aggregate_attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".aggregate_attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".aggregate_attributes")))) {
-		request.AggregateAttributes = expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesAggregateAttributesArray(ctx, key+".aggregate_attributes", d)
+		request.AggregateAttributes = expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesV1AggregateAttributesArray(ctx, key+".aggregate_attributes", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".page")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".page")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".page")))) {
-		request.Page = expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesPage(ctx, key+".page.0", d)
+		request.Page = expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesV1Page(ctx, key+".page.0", d)
 	}
 	return &request
 }
 
-func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesFilters {
-	request := []catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesFilters{}
+func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesV1Filters {
+	request := []catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesV1Filters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -450,7 +446,7 @@ func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssues
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -458,8 +454,8 @@ func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssues
 	return &request
 }
 
-func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesFilters {
-	request := catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesFilters{}
+func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesV1Filters {
+	request := catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesV1Filters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -473,13 +469,13 @@ func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssues
 		request.LogicalOperator = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesFiltersFiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesV1FiltersFiltersArray(ctx, key+".filters", d)
 	}
 	return &request
 }
 
-func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesFiltersFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesFiltersFilters {
-	request := []catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesFiltersFilters{}
+func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesV1FiltersFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesV1FiltersFilters {
+	request := []catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesV1FiltersFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -490,7 +486,7 @@ func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssues
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesFiltersFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesV1FiltersFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -498,8 +494,8 @@ func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssues
 	return &request
 }
 
-func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesFiltersFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesFiltersFilters {
-	request := catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesFiltersFilters{}
+func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesV1FiltersFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesV1FiltersFilters {
+	request := catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesV1FiltersFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -512,8 +508,8 @@ func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssues
 	return &request
 }
 
-func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesAggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesAggregateAttributes {
-	request := []catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesAggregateAttributes{}
+func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesV1AggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesV1AggregateAttributes {
+	request := []catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesV1AggregateAttributes{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -524,7 +520,7 @@ func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssues
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesAggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesV1AggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -532,8 +528,8 @@ func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssues
 	return &request
 }
 
-func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesAggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesAggregateAttributes {
-	request := catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesAggregateAttributes{}
+func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesV1AggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesV1AggregateAttributes {
+	request := catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesV1AggregateAttributes{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -543,8 +539,8 @@ func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssues
 	return &request
 }
 
-func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesPage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesPage {
-	request := catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesPage{}
+func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesV1Page(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesV1Page {
+	request := catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesV1Page{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".limit")))) {
 		request.Limit = interfaceToIntPtr(v)
 	}
@@ -552,13 +548,13 @@ func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssues
 		request.Offset = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".sort_by")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".sort_by")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".sort_by")))) {
-		request.SortBy = expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesPageSortByArray(ctx, key+".sort_by", d)
+		request.SortBy = expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesV1PageSortByArray(ctx, key+".sort_by", d)
 	}
 	return &request
 }
 
-func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesPageSortByArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesPageSortBy {
-	request := []catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesPageSortBy{}
+func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesV1PageSortByArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesV1PageSortBy {
+	request := []catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesV1PageSortBy{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -569,7 +565,7 @@ func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssues
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesPageSortBy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesV1PageSortBy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -577,8 +573,8 @@ func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssues
 	return &request
 }
 
-func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesPageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesPageSortBy {
-	request := catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesPageSortBy{}
+func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssuesV1PageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesV1PageSortBy {
+	request := catalystcentersdkgo.RequestIssuesGetSummaryAnalyticsDataOfIssuesV1PageSortBy{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -588,20 +584,20 @@ func expandRequestAssuranceIssuesSummaryAnalyticsGetSummaryAnalyticsDataOfIssues
 	return &request
 }
 
-func flattenIssuesGetSummaryAnalyticsDataOfIssuesItem(item *catalystcentersdkgo.ResponseIssuesGetSummaryAnalyticsDataOfIssuesResponse) []map[string]interface{} {
+func flattenIssuesGetSummaryAnalyticsDataOfIssuesV1Item(item *catalystcentersdkgo.ResponseIssuesGetSummaryAnalyticsDataOfIssuesV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["groups"] = flattenIssuesGetSummaryAnalyticsDataOfIssuesItemGroups(item.Groups)
-	respItem["attributes"] = flattenIssuesGetSummaryAnalyticsDataOfIssuesItemAttributes(item.Attributes)
-	respItem["aggregate_attributes"] = flattenIssuesGetSummaryAnalyticsDataOfIssuesItemAggregateAttributes(item.AggregateAttributes)
+	respItem["groups"] = flattenIssuesGetSummaryAnalyticsDataOfIssuesV1ItemGroups(item.Groups)
+	respItem["attributes"] = flattenIssuesGetSummaryAnalyticsDataOfIssuesV1ItemAttributes(item.Attributes)
+	respItem["aggregate_attributes"] = flattenIssuesGetSummaryAnalyticsDataOfIssuesV1ItemAggregateAttributes(item.AggregateAttributes)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenIssuesGetSummaryAnalyticsDataOfIssuesItemGroups(items *[]catalystcentersdkgo.ResponseIssuesGetSummaryAnalyticsDataOfIssuesResponseGroups) []map[string]interface{} {
+func flattenIssuesGetSummaryAnalyticsDataOfIssuesV1ItemGroups(items *[]catalystcentersdkgo.ResponseIssuesGetSummaryAnalyticsDataOfIssuesV1ResponseGroups) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -609,14 +605,14 @@ func flattenIssuesGetSummaryAnalyticsDataOfIssuesItemGroups(items *[]catalystcen
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["id"] = item.ID
-		respItem["attributes"] = flattenIssuesGetSummaryAnalyticsDataOfIssuesItemGroupsAttributes(item.Attributes)
-		respItem["aggregate_attributes"] = flattenIssuesGetSummaryAnalyticsDataOfIssuesItemGroupsAggregateAttributes(item.AggregateAttributes)
+		respItem["attributes"] = flattenIssuesGetSummaryAnalyticsDataOfIssuesV1ItemGroupsAttributes(item.Attributes)
+		respItem["aggregate_attributes"] = flattenIssuesGetSummaryAnalyticsDataOfIssuesV1ItemGroupsAggregateAttributes(item.AggregateAttributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenIssuesGetSummaryAnalyticsDataOfIssuesItemGroupsAttributes(items *[]catalystcentersdkgo.ResponseIssuesGetSummaryAnalyticsDataOfIssuesResponseGroupsAttributes) []map[string]interface{} {
+func flattenIssuesGetSummaryAnalyticsDataOfIssuesV1ItemGroupsAttributes(items *[]catalystcentersdkgo.ResponseIssuesGetSummaryAnalyticsDataOfIssuesV1ResponseGroupsAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -630,7 +626,7 @@ func flattenIssuesGetSummaryAnalyticsDataOfIssuesItemGroupsAttributes(items *[]c
 	return respItems
 }
 
-func flattenIssuesGetSummaryAnalyticsDataOfIssuesItemGroupsAggregateAttributes(items *[]catalystcentersdkgo.ResponseIssuesGetSummaryAnalyticsDataOfIssuesResponseGroupsAggregateAttributes) []map[string]interface{} {
+func flattenIssuesGetSummaryAnalyticsDataOfIssuesV1ItemGroupsAggregateAttributes(items *[]catalystcentersdkgo.ResponseIssuesGetSummaryAnalyticsDataOfIssuesV1ResponseGroupsAggregateAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -645,7 +641,7 @@ func flattenIssuesGetSummaryAnalyticsDataOfIssuesItemGroupsAggregateAttributes(i
 	return respItems
 }
 
-func flattenIssuesGetSummaryAnalyticsDataOfIssuesItemAttributes(items *[]catalystcentersdkgo.ResponseIssuesGetSummaryAnalyticsDataOfIssuesResponseAttributes) []map[string]interface{} {
+func flattenIssuesGetSummaryAnalyticsDataOfIssuesV1ItemAttributes(items *[]catalystcentersdkgo.ResponseIssuesGetSummaryAnalyticsDataOfIssuesV1ResponseAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -659,7 +655,7 @@ func flattenIssuesGetSummaryAnalyticsDataOfIssuesItemAttributes(items *[]catalys
 	return respItems
 }
 
-func flattenIssuesGetSummaryAnalyticsDataOfIssuesItemAggregateAttributes(items *[]catalystcentersdkgo.ResponseIssuesGetSummaryAnalyticsDataOfIssuesResponseAggregateAttributes) []map[string]interface{} {
+func flattenIssuesGetSummaryAnalyticsDataOfIssuesV1ItemAggregateAttributes(items *[]catalystcentersdkgo.ResponseIssuesGetSummaryAnalyticsDataOfIssuesV1ResponseAggregateAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

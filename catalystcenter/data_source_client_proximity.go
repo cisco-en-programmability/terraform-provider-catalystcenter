@@ -82,8 +82,8 @@ func dataSourceClientProximityRead(ctx context.Context, d *schema.ResourceData, 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: ClientProximity")
-		queryParams1 := catalystcentersdkgo.ClientProximityQueryParams{}
+		log.Printf("[DEBUG] Selected method: ClientProximityV1")
+		queryParams1 := catalystcentersdkgo.ClientProximityV1QueryParams{}
 
 		queryParams1.Username = vUsername.(string)
 
@@ -94,24 +94,24 @@ func dataSourceClientProximityRead(ctx context.Context, d *schema.ResourceData, 
 			queryParams1.TimeResolution = vTimeResolution.(float64)
 		}
 
-		response1, restyResp1, err := client.Clients.ClientProximity(&queryParams1)
+		response1, restyResp1, err := client.Clients.ClientProximityV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 ClientProximity", err,
-				"Failure at ClientProximity, unexpected response", ""))
+				"Failure when executing 2 ClientProximityV1", err,
+				"Failure at ClientProximityV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenClientsClientProximityItem(response1)
+		vItem1 := flattenClientsClientProximityV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting ClientProximity response",
+				"Failure when setting ClientProximityV1 response",
 				err))
 			return diags
 		}
@@ -123,7 +123,7 @@ func dataSourceClientProximityRead(ctx context.Context, d *schema.ResourceData, 
 	return diags
 }
 
-func flattenClientsClientProximityItem(item *catalystcentersdkgo.ResponseClientsClientProximity) []map[string]interface{} {
+func flattenClientsClientProximityV1Item(item *catalystcentersdkgo.ResponseClientsClientProximityV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

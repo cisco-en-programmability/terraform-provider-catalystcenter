@@ -74,7 +74,7 @@ func resourceSensorTestDeleteCreate(ctx context.Context, d *schema.ResourceData,
 
 	vTemplateName := d.Get("parameters.0.template_name").(string)
 	log.Printf("[DEBUG] Selected method 1: DeleteSensorTest")
-	queryParams1 := catalystcentersdkgo.DeleteSensorTestQueryParams{}
+	queryParams1 := catalystcentersdkgo.DeleteSensorTestV1QueryParams{}
 	queryParams1.TemplateName = vTemplateName
 
 	response1, restyResp1, err := client.Sensors.DeleteSensorTest(&queryParams1)
@@ -117,7 +117,7 @@ func resourceSensorTestDeleteDelete(ctx context.Context, d *schema.ResourceData,
 	var diags diag.Diagnostics
 	return diags
 }
-func flattenSensorsDeleteSensorTestItem(item *catalystcentersdkgo.ResponseSensorsDeleteSensorTestResponse) []map[string]interface{} {
+func flattenSensorsDeleteSensorTestItem(item *catalystcentersdkgo.ResponseSensorsDeleteSensorTestV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

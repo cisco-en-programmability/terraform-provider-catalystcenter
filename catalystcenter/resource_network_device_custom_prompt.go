@@ -76,11 +76,12 @@ provide all the custom prompt in case of any update
 					Schema: map[string]*schema.Schema{
 
 						"password_prompt": &schema.Schema{
-							Description: `Password Prompt`,
-							Type:        schema.TypeString,
-							Optional:    true,
-							Sensitive:   true,
-							Default:     "",
+							Description: `Password for Custom Prompt
+`,
+							Type:      schema.TypeString,
+							Optional:  true,
+							Sensitive: true,
+							Default:   "",
 						},
 						"username_prompt": &schema.Schema{
 							Description: `Username for Custom Prompt
@@ -102,7 +103,7 @@ func resourceNetworkDeviceCustomPromptCreate(ctx context.Context, d *schema.Reso
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestNetworkDeviceCustomPromptCustomPromptPOSTAPI(ctx, "parameters.0", d)
+	request1 := expandRequestNetworkDeviceCustomPromptCustomPromptPOSTAPIV1(ctx, "parameters.0", d)
 	vPasswordPrompt := resourceItem["password_prompt"]
 
 	vvPasswordPrompt := interfaceToString(vPasswordPrompt)
@@ -184,7 +185,7 @@ func resourceNetworkDeviceCustomPromptRead(ctx context.Context, d *schema.Resour
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSystemSettingsCustomPromptSupportGETAPIItem(response1.Response)
+		vItem1 := flattenSystemSettingsCustomPromptSupportGETAPIV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting CustomPromptSupportGETAPI response",
@@ -217,8 +218,8 @@ func resourceNetworkDeviceCustomPromptDelete(ctx context.Context, d *schema.Reso
 
 	return diags
 }
-func expandRequestNetworkDeviceCustomPromptCustomPromptPOSTAPI(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSystemSettingsCustomPromptPOSTAPI {
-	request := catalystcentersdkgo.RequestSystemSettingsCustomPromptPOSTAPI{}
+func expandRequestNetworkDeviceCustomPromptCustomPromptPOSTAPIV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSystemSettingsCustomPromptPOSTAPIV1 {
+	request := catalystcentersdkgo.RequestSystemSettingsCustomPromptPOSTAPIV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".username_prompt")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".username_prompt")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".username_prompt")))) {
 		request.UsernamePrompt = interfaceToString(v)
 	}

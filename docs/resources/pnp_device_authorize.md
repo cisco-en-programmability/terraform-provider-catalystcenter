@@ -3,18 +3,15 @@
 page_title: "catalystcenter_pnp_device_authorize Resource - terraform-provider-catalystcenter"
 subcategory: ""
 description: |-
-  It performs create operation on Cisco Catalyst Center System.
+  It performs create operation on Cisco DNA Center System.
   Authorizes one of more devices. A device can only be authorized if Authorization is set in Device Settings.
 ---
 
 # catalystcenter_pnp_device_authorize (Resource)
 
-It performs create operation on Cisco Catalyst Center System.
+It performs create operation on Cisco DNA Center System.
 
 - Authorizes one of more devices. A device can only be authorized if Authorization is set in Device Settings.
-
-
-
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -23,7 +20,7 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 
 ```terraform
 resource "catalystcenter_pnp_device_authorize" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     device_id_list = ["string"]

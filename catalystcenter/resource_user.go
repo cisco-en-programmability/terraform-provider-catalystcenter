@@ -17,9 +17,9 @@ func resourceUser() *schema.Resource {
 	return &schema.Resource{
 		Description: `It manages create, read and update operations on User and Roles.
 
-- Add a new user for Cisco Catalyst Center System.
+- Add a new user for Cisco DNA Center System.
 
-- Update a user for Cisco Catalyst Center System.
+- Update a user for Cisco DNA Center System.
 `,
 
 		CreateContext: resourceUserCreate,
@@ -165,12 +165,12 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestUserAddUserAPI(ctx, "parameters.0", d)
+	request1 := expandRequestUserAddUserAPIV1(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vInvokeSource := resourceItem["invoke_source"]
 	vvInvokeSource := interfaceToString(vInvokeSource)
-	queryParamImport := catalystcentersdkgo.GetUsersAPIQueryParams{}
+	queryParamImport := catalystcentersdkgo.GetUsersAPIV1QueryParams{}
 	queryParamImport.InvokeSource = vvInvokeSource
 	item2, _, err := client.UserandRoles.GetUsersAPI(&queryParamImport)
 	if err == nil && item2 != nil {
@@ -191,7 +191,7 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 		return diags
 	}
 	// TODO REVIEW
-	queryParamValidate := catalystcentersdkgo.GetUsersAPIQueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetUsersAPIV1QueryParams{}
 	queryParamValidate.InvokeSource = vvInvokeSource
 	item3, _, err := client.UserandRoles.GetUsersAPI(&queryParamValidate)
 	if err != nil || item3 == nil {
@@ -221,7 +221,7 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetUsersAPI")
-		queryParams1 := catalystcentersdkgo.GetUsersAPIQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetUsersAPIV1QueryParams{}
 
 		queryParams1.InvokeSource = vInvokeSource
 
@@ -237,7 +237,7 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenUserandRolesGetUsersAPIItem(response1.Response)
+		vItem1 := flattenUserandRolesGetUsersAPIV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetUsersAPI response",
@@ -257,7 +257,7 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 	var diags diag.Diagnostics
 
 	if d.HasChange("parameters") {
-		request1 := expandRequestUserUpdateUserAPI(ctx, "parameters.0", d)
+		request1 := expandRequestUserUpdateUserAPIV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.UserandRoles.UpdateUserAPI(request1)
 		if err != nil || response1 == nil {
@@ -289,8 +289,8 @@ func resourceUserDelete(ctx context.Context, d *schema.ResourceData, m interface
 		"Failure at UserDelete, unexpected response", ""))
 	return diags
 }
-func expandRequestUserAddUserAPI(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestUserandRolesAddUserAPI {
-	request := catalystcentersdkgo.RequestUserandRolesAddUserAPI{}
+func expandRequestUserAddUserAPIV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestUserandRolesAddUserAPIV1 {
+	request := catalystcentersdkgo.RequestUserandRolesAddUserAPIV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".first_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".first_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".first_name")))) {
 		request.FirstName = interfaceToString(v)
 	}
@@ -315,8 +315,8 @@ func expandRequestUserAddUserAPI(ctx context.Context, key string, d *schema.Reso
 	return &request
 }
 
-func expandRequestUserUpdateUserAPI(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestUserandRolesUpdateUserAPI {
-	request := catalystcentersdkgo.RequestUserandRolesUpdateUserAPI{}
+func expandRequestUserUpdateUserAPIV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestUserandRolesUpdateUserAPIV1 {
+	request := catalystcentersdkgo.RequestUserandRolesUpdateUserAPIV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".first_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".first_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".first_name")))) {
 		request.FirstName = interfaceToString(v)
 	}

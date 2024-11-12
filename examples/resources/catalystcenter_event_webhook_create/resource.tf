@@ -1,6 +1,6 @@
 
 resource "catalystcenter_event_webhook_create" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     description = "string"

@@ -86,31 +86,33 @@ func resourceLanAutomationDeleteCreate(ctx context.Context, d *schema.ResourceDa
 
 	vvID := vID.(string)
 
-	response1, restyResp1, err := client.LanAutomation.LanAutomationStop(vvID)
+	// has_unknown_response: None
+
+	response1, restyResp1, err := client.LanAutomation.LanAutomationStopV1(vvID)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing LanAutomationStop", err))
+			"Failure when executing LanAutomationStopV1", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	//Analizar verificacion.
-
-	vItem1 := flattenLanAutomationLanAutomationStopItem(response1.Response)
+	vItem1 := flattenLanAutomationLanAutomationStopV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting LanAutomationStop response",
+			"Failure when setting LanAutomationStopV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
+
+	//Analizar verificacion.
 
 }
 func resourceLanAutomationDeleteRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -126,7 +128,7 @@ func resourceLanAutomationDeleteDelete(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func flattenLanAutomationLanAutomationStopItem(item *catalystcentersdkgo.ResponseLanAutomationLanAutomationStopResponse) []map[string]interface{} {
+func flattenLanAutomationLanAutomationStopV1Item(item *catalystcentersdkgo.ResponseLanAutomationLanAutomationStopV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

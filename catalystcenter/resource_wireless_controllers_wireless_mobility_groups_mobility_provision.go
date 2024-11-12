@@ -201,20 +201,18 @@ func resourceWirelessControllersWirelessMobilityGroupsMobilityProvisionCreate(ct
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestWirelessControllersWirelessMobilityGroupsMobilityProvisionMobilityProvision(ctx, "parameters.0", d)
+	request1 := expandRequestWirelessControllersWirelessMobilityGroupsMobilityProvisionMobilityProvisionV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.Wireless.MobilityProvision(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Wireless.MobilityProvisionV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing MobilityProvision", err))
+			"Failure when executing MobilityProvisionV1", err))
 		return diags
 	}
 
@@ -222,7 +220,7 @@ func resourceWirelessControllersWirelessMobilityGroupsMobilityProvisionCreate(ct
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing MobilityProvision", err))
+			"Failure when executing MobilityProvisionV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -256,22 +254,24 @@ func resourceWirelessControllersWirelessMobilityGroupsMobilityProvisionCreate(ct
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing MobilityProvision", err1))
+				"Failure when executing MobilityProvisionV1", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenWirelessMobilityProvisionItem(response1.Response)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
+	vItem1 := flattenWirelessMobilityProvisionV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting MobilityProvision response",
+			"Failure when setting MobilityProvisionV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceWirelessControllersWirelessMobilityGroupsMobilityProvisionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -286,8 +286,8 @@ func resourceWirelessControllersWirelessMobilityGroupsMobilityProvisionDelete(ct
 	return diags
 }
 
-func expandRequestWirelessControllersWirelessMobilityGroupsMobilityProvisionMobilityProvision(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessMobilityProvision {
-	request := catalystcentersdkgo.RequestWirelessMobilityProvision{}
+func expandRequestWirelessControllersWirelessMobilityGroupsMobilityProvisionMobilityProvisionV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessMobilityProvisionV1 {
+	request := catalystcentersdkgo.RequestWirelessMobilityProvisionV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".mobility_group_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".mobility_group_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".mobility_group_name")))) {
 		request.MobilityGroupName = interfaceToString(v)
 	}
@@ -307,13 +307,13 @@ func expandRequestWirelessControllersWirelessMobilityGroupsMobilityProvisionMobi
 		request.DataLinkEncryption = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".mobility_peers")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".mobility_peers")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".mobility_peers")))) {
-		request.MobilityPeers = expandRequestWirelessControllersWirelessMobilityGroupsMobilityProvisionMobilityProvisionMobilityPeersArray(ctx, key+".mobility_peers", d)
+		request.MobilityPeers = expandRequestWirelessControllersWirelessMobilityGroupsMobilityProvisionMobilityProvisionV1MobilityPeersArray(ctx, key+".mobility_peers", d)
 	}
 	return &request
 }
 
-func expandRequestWirelessControllersWirelessMobilityGroupsMobilityProvisionMobilityProvisionMobilityPeersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessMobilityProvisionMobilityPeers {
-	request := []catalystcentersdkgo.RequestWirelessMobilityProvisionMobilityPeers{}
+func expandRequestWirelessControllersWirelessMobilityGroupsMobilityProvisionMobilityProvisionV1MobilityPeersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessMobilityProvisionV1MobilityPeers {
+	request := []catalystcentersdkgo.RequestWirelessMobilityProvisionV1MobilityPeers{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -324,7 +324,7 @@ func expandRequestWirelessControllersWirelessMobilityGroupsMobilityProvisionMobi
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestWirelessControllersWirelessMobilityGroupsMobilityProvisionMobilityProvisionMobilityPeers(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestWirelessControllersWirelessMobilityGroupsMobilityProvisionMobilityProvisionV1MobilityPeers(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -332,8 +332,8 @@ func expandRequestWirelessControllersWirelessMobilityGroupsMobilityProvisionMobi
 	return &request
 }
 
-func expandRequestWirelessControllersWirelessMobilityGroupsMobilityProvisionMobilityProvisionMobilityPeers(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessMobilityProvisionMobilityPeers {
-	request := catalystcentersdkgo.RequestWirelessMobilityProvisionMobilityPeers{}
+func expandRequestWirelessControllersWirelessMobilityGroupsMobilityProvisionMobilityProvisionV1MobilityPeers(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessMobilityProvisionV1MobilityPeers {
+	request := catalystcentersdkgo.RequestWirelessMobilityProvisionV1MobilityPeers{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".peer_ip")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".peer_ip")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".peer_ip")))) {
 		request.PeerIP = interfaceToString(v)
 	}
@@ -361,7 +361,7 @@ func expandRequestWirelessControllersWirelessMobilityGroupsMobilityProvisionMobi
 	return &request
 }
 
-func flattenWirelessMobilityProvisionItem(item *catalystcentersdkgo.ResponseWirelessMobilityProvisionResponse) []map[string]interface{} {
+func flattenWirelessMobilityProvisionV1Item(item *catalystcentersdkgo.ResponseWirelessMobilityProvisionV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

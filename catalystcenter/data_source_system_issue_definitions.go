@@ -16,7 +16,7 @@ func dataSourceSystemIssueDefinitions() *schema.Resource {
 		Description: `It performs read operation on Issues.
 
 - Get all system issue defintions. The supported filters are id, name, profileId and definition enable status. An issue
-trigger definition can be different across the profile and device type. So, 'profileId' and 'deviceType' in the query
+trigger definition can be different across the profile and device type. So, *profileId* and *deviceType* in the query
 param is important and default is global profile and all device type. For detailed information about the usage of the
 API, please refer to the Open API specification document https://github.com/cisco-en-programmability/catalyst-center-
 api-specs/blob/main/Assurance/CE_Cat_Center_Org-issueAndHealthDefinitions-1.0.0-resolved.yaml
@@ -82,16 +82,16 @@ name=BGP_Down&name=BGP_Flap (multiple issue names separated by & operator)
 			},
 			"priority": &schema.Schema{
 				Description: `priority query parameter. Issue priority, possible values are P1, P2, P3, P4.
-'P1': A critical issue that needs immediate attention and can have a wide impact on network operations.
-'P2': A major issue that can potentially impact multiple devices or clients.
-'P3': A minor issue that has a localized or minimal impact.
-'P4': A warning issue that may not be an immediate problem but addressing it can optimize the network performance.
+*P1*: A critical issue that needs immediate attention and can have a wide impact on network operations.
+*P2*: A major issue that can potentially impact multiple devices or clients.
+*P3*: A minor issue that has a localized or minimal impact.
+*P4*: A warning issue that may not be an immediate problem but addressing it can optimize the network performance.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"profile_id": &schema.Schema{
-				Description: `profileId query parameter. The profile identier to fetch the profile associated issue defintions. The default is 'global'. Please refer Network design profiles documentation for more details.
+				Description: `profileId query parameter. The profile identier to fetch the profile associated issue defintions. The default is *global*. Please refer Network design profiles documentation for more details.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -326,10 +326,10 @@ func dataSourceSystemIssueDefinitionsRead(ctx context.Context, d *schema.Resourc
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: ReturnsAllIssueTriggerDefinitionsForGivenFilters")
+		log.Printf("[DEBUG] Selected method: ReturnsAllIssueTriggerDefinitionsForGivenFiltersV1")
 
-		headerParams1 := catalystcentersdkgo.ReturnsAllIssueTriggerDefinitionsForGivenFiltersHeaderParams{}
-		queryParams1 := catalystcentersdkgo.ReturnsAllIssueTriggerDefinitionsForGivenFiltersQueryParams{}
+		headerParams1 := catalystcentersdkgo.ReturnsAllIssueTriggerDefinitionsForGivenFiltersV1HeaderParams{}
+		queryParams1 := catalystcentersdkgo.ReturnsAllIssueTriggerDefinitionsForGivenFiltersV1QueryParams{}
 
 		if okDeviceType {
 			queryParams1.DeviceType = vDeviceType.(string)
@@ -368,24 +368,24 @@ func dataSourceSystemIssueDefinitionsRead(ctx context.Context, d *schema.Resourc
 			headerParams1.XCaLLERID = vXCaLLERID.(string)
 		}
 
-		response1, restyResp1, err := client.Issues.ReturnsAllIssueTriggerDefinitionsForGivenFilters(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Issues.ReturnsAllIssueTriggerDefinitionsForGivenFiltersV1(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 ReturnsAllIssueTriggerDefinitionsForGivenFilters", err,
-				"Failure at ReturnsAllIssueTriggerDefinitionsForGivenFilters, unexpected response", ""))
+				"Failure when executing 2 ReturnsAllIssueTriggerDefinitionsForGivenFiltersV1", err,
+				"Failure at ReturnsAllIssueTriggerDefinitionsForGivenFiltersV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenIssuesReturnsAllIssueTriggerDefinitionsForGivenFiltersItems(response1.Response)
+		vItems1 := flattenIssuesReturnsAllIssueTriggerDefinitionsForGivenFiltersV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting ReturnsAllIssueTriggerDefinitionsForGivenFilters response",
+				"Failure when setting ReturnsAllIssueTriggerDefinitionsForGivenFiltersV1 response",
 				err))
 			return diags
 		}
@@ -395,33 +395,33 @@ func dataSourceSystemIssueDefinitionsRead(ctx context.Context, d *schema.Resourc
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetIssueTriggerDefinitionForGivenID")
+		log.Printf("[DEBUG] Selected method: GetIssueTriggerDefinitionForGivenIDV1")
 		vvID := vID.(string)
 
-		headerParams2 := catalystcentersdkgo.GetIssueTriggerDefinitionForGivenIDHeaderParams{}
+		headerParams2 := catalystcentersdkgo.GetIssueTriggerDefinitionForGivenIDV1HeaderParams{}
 
 		if okXCaLLERID {
 			headerParams2.XCaLLERID = vXCaLLERID.(string)
 		}
 
-		response2, restyResp2, err := client.Issues.GetIssueTriggerDefinitionForGivenID(vvID, &headerParams2)
+		response2, restyResp2, err := client.Issues.GetIssueTriggerDefinitionForGivenIDV1(vvID, &headerParams2)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetIssueTriggerDefinitionForGivenID", err,
-				"Failure at GetIssueTriggerDefinitionForGivenID, unexpected response", ""))
+				"Failure when executing 2 GetIssueTriggerDefinitionForGivenIDV1", err,
+				"Failure at GetIssueTriggerDefinitionForGivenIDV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenIssuesGetIssueTriggerDefinitionForGivenIDItem(response2.Response)
+		vItem2 := flattenIssuesGetIssueTriggerDefinitionForGivenIDV1Item(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetIssueTriggerDefinitionForGivenID response",
+				"Failure when setting GetIssueTriggerDefinitionForGivenIDV1 response",
 				err))
 			return diags
 		}
@@ -433,7 +433,7 @@ func dataSourceSystemIssueDefinitionsRead(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func flattenIssuesReturnsAllIssueTriggerDefinitionsForGivenFiltersItems(items *[]catalystcentersdkgo.ResponseIssuesReturnsAllIssueTriggerDefinitionsForGivenFiltersResponse) []map[string]interface{} {
+func flattenIssuesReturnsAllIssueTriggerDefinitionsForGivenFiltersV1Items(items *[]catalystcentersdkgo.ResponseIssuesReturnsAllIssueTriggerDefinitionsForGivenFiltersV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -459,7 +459,7 @@ func flattenIssuesReturnsAllIssueTriggerDefinitionsForGivenFiltersItems(items *[
 	return respItems
 }
 
-func flattenIssuesGetIssueTriggerDefinitionForGivenIDItem(item *catalystcentersdkgo.ResponseIssuesGetIssueTriggerDefinitionForGivenIDResponse) []map[string]interface{} {
+func flattenIssuesGetIssueTriggerDefinitionForGivenIDV1Item(item *catalystcentersdkgo.ResponseIssuesGetIssueTriggerDefinitionForGivenIDV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

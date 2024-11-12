@@ -3,10 +3,9 @@ package catalystcenter
 import (
 	"context"
 	"errors"
+	"log"
 	"reflect"
 	"time"
-
-	"log"
 
 	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
 
@@ -18,8 +17,8 @@ func resourceSitesDNSSettings() *schema.Resource {
 	return &schema.Resource{
 		Description: `It manages read and update operations on Network Settings.
 
-- Set DNS settings for a site; 'null' values indicate that the setting will be inherited from the parent site; empty
-objects ('{}') indicate that the settings is unset.
+- Set DNS settings for a site; *null* values indicate that the setting will be inherited from the parent site; empty
+objects (*{}*) indicate that the settings is unset.
 `,
 
 		CreateContext: resourceSitesDNSSettingsCreate,
@@ -153,7 +152,7 @@ func resourceSitesDNSSettingsRead(ctx context.Context, d *schema.ResourceData, m
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: RetrieveDNSSettingsForASite")
 		vvID := vID
-		queryParams1 := catalystcentersdkgo.RetrieveDNSSettingsForASiteQueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrieveDNSSettingsForASiteV1QueryParams{}
 
 		response1, restyResp1, err := client.NetworkSettings.RetrieveDNSSettingsForASite(vvID, &queryParams1)
 
@@ -167,7 +166,7 @@ func resourceSitesDNSSettingsRead(ctx context.Context, d *schema.ResourceData, m
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenNetworkSettingsRetrieveDNSSettingsForASiteItem(response1.Response)
+		vItem1 := flattenNetworkSettingsRetrieveDNSSettingsForASiteV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrieveDNSSettingsForASite response",
@@ -190,7 +189,7 @@ func resourceSitesDNSSettingsUpdate(ctx context.Context, d *schema.ResourceData,
 
 	vvID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestSitesDNSSettingsSetDNSSettingsForASite(ctx, "parameters.0", d)
+		request1 := expandRequestSitesDNSSettingsSetDNSSettingsForASiteV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.NetworkSettings.SetDNSSettingsForASite(vvID, request1)
 		if err != nil || response1 == nil {
@@ -249,17 +248,17 @@ func resourceSitesDNSSettingsDelete(ctx context.Context, d *schema.ResourceData,
 		"Failure at SitesDNSSettingsDelete, unexpected response", ""))
 	return diags
 }
-func expandRequestSitesDNSSettingsSetDNSSettingsForASite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetDNSSettingsForASite {
-	request := catalystcentersdkgo.RequestNetworkSettingsSetDNSSettingsForASite{}
-	request.DNS = expandRequestSitesDNSSettingsSetDNSSettingsForASiteDNS(ctx, key, d)
+func expandRequestSitesDNSSettingsSetDNSSettingsForASiteV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetDNSSettingsForASiteV1 {
+	request := catalystcentersdkgo.RequestNetworkSettingsSetDNSSettingsForASiteV1{}
+	request.DNS = expandRequestSitesDNSSettingsSetDNSSettingsForASiteV1DNS(ctx, key, d)
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
 	}
 	return &request
 }
 
-func expandRequestSitesDNSSettingsSetDNSSettingsForASiteDNS(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetDNSSettingsForASiteDNS {
-	request := catalystcentersdkgo.RequestNetworkSettingsSetDNSSettingsForASiteDNS{}
+func expandRequestSitesDNSSettingsSetDNSSettingsForASiteV1DNS(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetDNSSettingsForASiteV1DNS {
+	request := catalystcentersdkgo.RequestNetworkSettingsSetDNSSettingsForASiteV1DNS{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".domain_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".domain_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".domain_name")))) {
 		request.DomainName = interfaceToString(v)
 	}

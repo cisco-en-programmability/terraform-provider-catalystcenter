@@ -84,9 +84,9 @@ func dataSourceWirelessControllersPrimaryManagedApLocationsRead(ctx context.Cont
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetPrimaryManagedApLocationsForSpecificWirelessController")
+		log.Printf("[DEBUG] Selected method: GetPrimaryManagedApLocationsForSpecificWirelessControllerV1")
 		vvNetworkDeviceID := vNetworkDeviceID.(string)
-		queryParams1 := catalystcentersdkgo.GetPrimaryManagedApLocationsForSpecificWirelessControllerQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetPrimaryManagedApLocationsForSpecificWirelessControllerV1QueryParams{}
 
 		if okLimit {
 			queryParams1.Limit = vLimit.(float64)
@@ -95,24 +95,24 @@ func dataSourceWirelessControllersPrimaryManagedApLocationsRead(ctx context.Cont
 			queryParams1.Offset = vOffset.(float64)
 		}
 
-		response1, restyResp1, err := client.Wireless.GetPrimaryManagedApLocationsForSpecificWirelessController(vvNetworkDeviceID, &queryParams1)
+		response1, restyResp1, err := client.Wireless.GetPrimaryManagedApLocationsForSpecificWirelessControllerV1(vvNetworkDeviceID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetPrimaryManagedApLocationsForSpecificWirelessController", err,
-				"Failure at GetPrimaryManagedApLocationsForSpecificWirelessController, unexpected response", ""))
+				"Failure when executing 2 GetPrimaryManagedApLocationsForSpecificWirelessControllerV1", err,
+				"Failure at GetPrimaryManagedApLocationsForSpecificWirelessControllerV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenWirelessGetPrimaryManagedApLocationsForSpecificWirelessControllerItems(response1.Response)
+		vItems1 := flattenWirelessGetPrimaryManagedApLocationsForSpecificWirelessControllerV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetPrimaryManagedApLocationsForSpecificWirelessController response",
+				"Failure when setting GetPrimaryManagedApLocationsForSpecificWirelessControllerV1 response",
 				err))
 			return diags
 		}
@@ -124,20 +124,20 @@ func dataSourceWirelessControllersPrimaryManagedApLocationsRead(ctx context.Cont
 	return diags
 }
 
-func flattenWirelessGetPrimaryManagedApLocationsForSpecificWirelessControllerItems(items *[]catalystcentersdkgo.ResponseWirelessGetPrimaryManagedApLocationsForSpecificWirelessControllerResponse) []map[string]interface{} {
+func flattenWirelessGetPrimaryManagedApLocationsForSpecificWirelessControllerV1Items(items *[]catalystcentersdkgo.ResponseWirelessGetPrimaryManagedApLocationsForSpecificWirelessControllerV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["managed_ap_locations"] = flattenWirelessGetPrimaryManagedApLocationsForSpecificWirelessControllerItemsManagedApLocations(item.ManagedApLocations)
+		respItem["managed_ap_locations"] = flattenWirelessGetPrimaryManagedApLocationsForSpecificWirelessControllerV1ItemsManagedApLocations(item.ManagedApLocations)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenWirelessGetPrimaryManagedApLocationsForSpecificWirelessControllerItemsManagedApLocations(items *[]catalystcentersdkgo.ResponseWirelessGetPrimaryManagedApLocationsForSpecificWirelessControllerResponseManagedApLocations) []map[string]interface{} {
+func flattenWirelessGetPrimaryManagedApLocationsForSpecificWirelessControllerV1ItemsManagedApLocations(items *[]catalystcentersdkgo.ResponseWirelessGetPrimaryManagedApLocationsForSpecificWirelessControllerV1ResponseManagedApLocations) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

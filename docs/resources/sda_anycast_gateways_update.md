@@ -12,9 +12,6 @@ description: |-
 It performs update operation on SDA.
 
 - Updates anycast gateways based on user input.
-
-
-
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -23,28 +20,27 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 
 ```terraform
 resource "catalystcenter_sda_anycast_gateways_update" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
-    payload {
-      fabric_id                                    = "string"
-      id                                           = "string"
-      ip_pool_name                                 = "string"
-      is_critical_pool                             = "false"
-      is_group_based_policy_enforcement_enabled    = "false"
-      is_intra_subnet_routing_enabled              = "false"
-      is_ip_directed_broadcast                     = "false"
-      is_layer2_flooding_enabled                   = "false"
-      is_multiple_ip_to_mac_addresses              = "false"
-      is_supplicant_based_extended_node_onboarding = "false"
-      is_wireless_pool                             = "false"
-      pool_type                                    = "string"
-      security_group_name                          = "string"
-      tcp_mss_adjustment                           = 1
-      traffic_type                                 = "string"
-      virtual_network_name                         = "string"
-      vlan_id                                      = 1
-      vlan_name                                    = "string"
-    }
+
+    fabric_id                                    = "string"
+    id                                           = "string"
+    ip_pool_name                                 = "string"
+    is_critical_pool                             = "false"
+    is_group_based_policy_enforcement_enabled    = "false"
+    is_intra_subnet_routing_enabled              = "false"
+    is_ip_directed_broadcast                     = "false"
+    is_layer2_flooding_enabled                   = "false"
+    is_multiple_ip_to_mac_addresses              = "false"
+    is_supplicant_based_extended_node_onboarding = "false"
+    is_wireless_pool                             = "false"
+    pool_type                                    = "string"
+    security_group_name                          = "string"
+    tcp_mss_adjustment                           = 1
+    traffic_type                                 = "string"
+    virtual_network_name                         = "string"
+    vlan_id                                      = 1
+    vlan_name                                    = "string"
   }
 }
 
@@ -71,7 +67,7 @@ output "catalystcenter_sda_anycast_gateways_update_example" {
 
 Optional:
 
-- `payload` (Block List) Array of RequestSdaUpdateAnycastGateways (see [below for nested schema](#nestedblock--parameters--payload))
+- `payload` (Block List) Array of RequestSdaUpdateAnycastGatewaysV1 (see [below for nested schema](#nestedblock--parameters--payload))
 
 <a id="nestedblock--parameters--payload"></a>
 ### Nested Schema for `parameters.payload`

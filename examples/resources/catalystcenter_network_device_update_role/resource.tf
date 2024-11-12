@@ -1,6 +1,6 @@
 
 resource "catalystcenter_network_device_update_role" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     id          = "string"

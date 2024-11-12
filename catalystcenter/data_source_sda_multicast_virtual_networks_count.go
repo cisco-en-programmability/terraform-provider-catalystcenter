@@ -54,31 +54,31 @@ func dataSourceSdaMulticastVirtualNetworksCountRead(ctx context.Context, d *sche
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetMulticastVirtualNetworkCount")
-		queryParams1 := catalystcentersdkgo.GetMulticastVirtualNetworkCountQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetMulticastVirtualNetworkCountV1")
+		queryParams1 := catalystcentersdkgo.GetMulticastVirtualNetworkCountV1QueryParams{}
 
 		if okFabricID {
 			queryParams1.FabricID = vFabricID.(string)
 		}
 
-		response1, restyResp1, err := client.Sda.GetMulticastVirtualNetworkCount(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetMulticastVirtualNetworkCountV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetMulticastVirtualNetworkCount", err,
-				"Failure at GetMulticastVirtualNetworkCount, unexpected response", ""))
+				"Failure when executing 2 GetMulticastVirtualNetworkCountV1", err,
+				"Failure at GetMulticastVirtualNetworkCountV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetMulticastVirtualNetworkCountItem(response1.Response)
+		vItem1 := flattenSdaGetMulticastVirtualNetworkCountV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetMulticastVirtualNetworkCount response",
+				"Failure when setting GetMulticastVirtualNetworkCountV1 response",
 				err))
 			return diags
 		}
@@ -90,7 +90,7 @@ func dataSourceSdaMulticastVirtualNetworksCountRead(ctx context.Context, d *sche
 	return diags
 }
 
-func flattenSdaGetMulticastVirtualNetworkCountItem(item *catalystcentersdkgo.ResponseSdaGetMulticastVirtualNetworkCountResponse) []map[string]interface{} {
+func flattenSdaGetMulticastVirtualNetworkCountV1Item(item *catalystcentersdkgo.ResponseSdaGetMulticastVirtualNetworkCountV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

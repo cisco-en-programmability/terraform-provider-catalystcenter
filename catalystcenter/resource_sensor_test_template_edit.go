@@ -3081,31 +3081,27 @@ func resourceSensorTestTemplateEditCreate(ctx context.Context, d *schema.Resourc
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestSensorTestTemplateEditEditSensorTestTemplate(ctx, "parameters.0", d)
+	request1 := expandRequestSensorTestTemplateEditEditSensorTestTemplateV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.Sensors.EditSensorTestTemplate(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Sensors.EditSensorTestTemplateV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing EditSensorTestTemplate", err))
+			"Failure when executing EditSensorTestTemplateV1", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	//Analizar verificacion.
-
-	vItem1 := flattenSensorsEditSensorTestTemplateItem(response1.Response)
+	vItem1 := flattenSensorsEditSensorTestTemplateV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting EditSensorTestTemplate response",
+			"Failure when setting EditSensorTestTemplateV1 response",
 			err))
 		return diags
 	}
@@ -3127,8 +3123,8 @@ func resourceSensorTestTemplateEditDelete(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplate(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplate {
-	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplate{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1 {
+	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".template_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".template_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".template_name")))) {
 		request.TemplateName = interfaceToString(v)
 	}
@@ -3169,7 +3165,7 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplate(ctx context.Conte
 		request.ActionInProgress = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".frequency")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".frequency")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".frequency")))) {
-		request.Frequency = expandRequestSensorTestTemplateEditEditSensorTestTemplateFrequency(ctx, key+".frequency.0", d)
+		request.Frequency = expandRequestSensorTestTemplateEditEditSensorTestTemplateV1Frequency(ctx, key+".frequency.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rssi_threshold")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rssi_threshold")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rssi_threshold")))) {
 		request.RssiThreshold = interfaceToIntPtr(v)
@@ -3184,10 +3180,10 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplate(ctx context.Conte
 		request.WLANs = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ssids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ssids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ssids")))) {
-		request.SSIDs = expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsArray(ctx, key+".ssids", d)
+		request.SSIDs = expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SSIDsArray(ctx, key+".ssids", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".profiles")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".profiles")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".profiles")))) {
-		request.Profiles = expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesArray(ctx, key+".profiles", d)
+		request.Profiles = expandRequestSensorTestTemplateEditEditSensorTestTemplateV1ProfilesArray(ctx, key+".profiles", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".test_schedule_mode")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".test_schedule_mode")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".test_schedule_mode")))) {
 		request.TestScheduleMode = interfaceToString(v)
@@ -3205,19 +3201,19 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplate(ctx context.Conte
 		request.RunNow = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".location_info_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".location_info_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".location_info_list")))) {
-		request.LocationInfoList = expandRequestSensorTestTemplateEditEditSensorTestTemplateLocationInfoListArray(ctx, key+".location_info_list", d)
+		request.LocationInfoList = expandRequestSensorTestTemplateEditEditSensorTestTemplateV1LocationInfoListArray(ctx, key+".location_info_list", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".sensors")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".sensors")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".sensors")))) {
-		request.Sensors = expandRequestSensorTestTemplateEditEditSensorTestTemplateSensorsArray(ctx, key+".sensors", d)
+		request.Sensors = expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SensorsArray(ctx, key+".sensors", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ap_coverage")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ap_coverage")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ap_coverage")))) {
-		request.ApCoverage = expandRequestSensorTestTemplateEditEditSensorTestTemplateApCoverageArray(ctx, key+".ap_coverage", d)
+		request.ApCoverage = expandRequestSensorTestTemplateEditEditSensorTestTemplateV1ApCoverageArray(ctx, key+".ap_coverage", d)
 	}
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateFrequency(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateFrequency {
-	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateFrequency{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1Frequency(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1Frequency {
+	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1Frequency{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".value")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".value")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".value")))) {
 		request.Value = interfaceToIntPtr(v)
 	}
@@ -3227,8 +3223,8 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateFrequency(ctx cont
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSSIDs {
-	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSSIDs{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SSIDsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1SSIDs {
+	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1SSIDs{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3239,7 +3235,7 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsArray(ctx con
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDs(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SSIDs(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3247,8 +3243,8 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsArray(ctx con
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDs(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSSIDs {
-	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSSIDs{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SSIDs(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1SSIDs {
+	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1SSIDs{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".bands")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".bands")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".bands")))) {
 		request.Bands = interfaceToString(v)
 	}
@@ -3277,7 +3273,7 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDs(ctx context.
 		request.Layer3WebAuthEmailAddress = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".third_party")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".third_party")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".third_party")))) {
-		request.ThirdParty = expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsThirdParty(ctx, key+".third_party.0", d)
+		request.ThirdParty = expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SSIDsThirdParty(ctx, key+".third_party.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToIntPtr(v)
@@ -3364,27 +3360,27 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDs(ctx context.
 		request.ExtWebAuthAccessURL = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ext_web_auth_html_tag")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ext_web_auth_html_tag")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ext_web_auth_html_tag")))) {
-		request.ExtWebAuthHTMLTag = expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsExtWebAuthHTMLTagArray(ctx, key+".ext_web_auth_html_tag", d)
+		request.ExtWebAuthHTMLTag = expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SSIDsExtWebAuthHTMLTagArray(ctx, key+".ext_web_auth_html_tag", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".qos_policy")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".qos_policy")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".qos_policy")))) {
 		request.QosPolicy = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tests")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tests")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tests")))) {
-		request.Tests = expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsTestsArray(ctx, key+".tests", d)
+		request.Tests = expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SSIDsTestsArray(ctx, key+".tests", d)
 	}
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsThirdParty(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSSIDsThirdParty {
-	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSSIDsThirdParty{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SSIDsThirdParty(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1SSIDsThirdParty {
+	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1SSIDsThirdParty{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".selected")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".selected")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".selected")))) {
 		request.Selected = interfaceToBoolPtr(v)
 	}
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsExtWebAuthHTMLTagArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSSIDsExtWebAuthHTMLTag {
-	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSSIDsExtWebAuthHTMLTag{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SSIDsExtWebAuthHTMLTagArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1SSIDsExtWebAuthHTMLTag {
+	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1SSIDsExtWebAuthHTMLTag{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3395,7 +3391,7 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsExtWebAuthHTM
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsExtWebAuthHTMLTag(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SSIDsExtWebAuthHTMLTag(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3403,8 +3399,8 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsExtWebAuthHTM
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsExtWebAuthHTMLTag(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSSIDsExtWebAuthHTMLTag {
-	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSSIDsExtWebAuthHTMLTag{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SSIDsExtWebAuthHTMLTag(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1SSIDsExtWebAuthHTMLTag {
+	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1SSIDsExtWebAuthHTMLTag{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".label")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".label")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".label")))) {
 		request.Label = interfaceToString(v)
 	}
@@ -3417,8 +3413,8 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsExtWebAuthHTM
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsTestsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSSIDsTests {
-	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSSIDsTests{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SSIDsTestsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1SSIDsTests {
+	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1SSIDsTests{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3429,7 +3425,7 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsTestsArray(ct
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsTests(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SSIDsTests(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3437,19 +3433,19 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsTestsArray(ct
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsTests(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSSIDsTests {
-	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSSIDsTests{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SSIDsTests(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1SSIDsTests {
+	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1SSIDsTests{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".config")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".config")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".config")))) {
-		request.Config = expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsTestsConfigArray(ctx, key+".config", d)
+		request.Config = expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SSIDsTestsConfigArray(ctx, key+".config", d)
 	}
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsTestsConfigArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSSIDsTestsConfig {
-	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSSIDsTestsConfig{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SSIDsTestsConfigArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1SSIDsTestsConfig {
+	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1SSIDsTestsConfig{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3460,7 +3456,7 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsTestsConfigAr
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsTestsConfig(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SSIDsTestsConfig(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3468,8 +3464,8 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsTestsConfigAr
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsTestsConfig(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSSIDsTestsConfig {
-	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSSIDsTestsConfig{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SSIDsTestsConfig(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1SSIDsTestsConfig {
+	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1SSIDsTestsConfig{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".domains")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".domains")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".domains")))) {
 		request.Domains = interfaceToSliceString(v)
 	}
@@ -3563,8 +3559,8 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateSSIDsTestsConfig(c
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateProfiles {
-	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateProfiles{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1ProfilesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1Profiles {
+	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1Profiles{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3575,7 +3571,7 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesArray(ctx 
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateProfiles(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateV1Profiles(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3583,8 +3579,8 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesArray(ctx 
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfiles(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateProfiles {
-	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateProfiles{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1Profiles(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1Profiles {
+	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1Profiles{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".auth_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".auth_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".auth_type")))) {
 		request.AuthType = interfaceToString(v)
 	}
@@ -3640,13 +3636,13 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfiles(ctx conte
 		request.ExtWebAuthAccessURL = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ext_web_auth_html_tag")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ext_web_auth_html_tag")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ext_web_auth_html_tag")))) {
-		request.ExtWebAuthHTMLTag = expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesExtWebAuthHTMLTagArray(ctx, key+".ext_web_auth_html_tag", d)
+		request.ExtWebAuthHTMLTag = expandRequestSensorTestTemplateEditEditSensorTestTemplateV1ProfilesExtWebAuthHTMLTagArray(ctx, key+".ext_web_auth_html_tag", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".qos_policy")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".qos_policy")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".qos_policy")))) {
 		request.QosPolicy = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tests")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tests")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tests")))) {
-		request.Tests = expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesTestsArray(ctx, key+".tests", d)
+		request.Tests = expandRequestSensorTestTemplateEditEditSensorTestTemplateV1ProfilesTestsArray(ctx, key+".tests", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".profile_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".profile_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".profile_name")))) {
 		request.ProfileName = interfaceToString(v)
@@ -3658,13 +3654,13 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfiles(ctx conte
 		request.VLAN = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".location_vlan_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".location_vlan_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".location_vlan_list")))) {
-		request.LocationVLANList = expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesLocationVLANListArray(ctx, key+".location_vlan_list", d)
+		request.LocationVLANList = expandRequestSensorTestTemplateEditEditSensorTestTemplateV1ProfilesLocationVLANListArray(ctx, key+".location_vlan_list", d)
 	}
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesExtWebAuthHTMLTagArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateProfilesExtWebAuthHTMLTag {
-	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateProfilesExtWebAuthHTMLTag{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1ProfilesExtWebAuthHTMLTagArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1ProfilesExtWebAuthHTMLTag {
+	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1ProfilesExtWebAuthHTMLTag{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3675,7 +3671,7 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesExtWebAuth
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesExtWebAuthHTMLTag(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateV1ProfilesExtWebAuthHTMLTag(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3683,8 +3679,8 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesExtWebAuth
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesExtWebAuthHTMLTag(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateProfilesExtWebAuthHTMLTag {
-	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateProfilesExtWebAuthHTMLTag{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1ProfilesExtWebAuthHTMLTag(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1ProfilesExtWebAuthHTMLTag {
+	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1ProfilesExtWebAuthHTMLTag{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".label")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".label")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".label")))) {
 		request.Label = interfaceToString(v)
 	}
@@ -3697,8 +3693,8 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesExtWebAuth
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesTestsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateProfilesTests {
-	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateProfilesTests{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1ProfilesTestsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1ProfilesTests {
+	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1ProfilesTests{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3709,7 +3705,7 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesTestsArray
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesTests(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateV1ProfilesTests(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3717,19 +3713,19 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesTestsArray
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesTests(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateProfilesTests {
-	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateProfilesTests{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1ProfilesTests(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1ProfilesTests {
+	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1ProfilesTests{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".config")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".config")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".config")))) {
-		request.Config = expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesTestsConfigArray(ctx, key+".config", d)
+		request.Config = expandRequestSensorTestTemplateEditEditSensorTestTemplateV1ProfilesTestsConfigArray(ctx, key+".config", d)
 	}
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesTestsConfigArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateProfilesTestsConfig {
-	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateProfilesTestsConfig{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1ProfilesTestsConfigArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1ProfilesTestsConfig {
+	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1ProfilesTestsConfig{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3740,7 +3736,7 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesTestsConfi
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesTestsConfig(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateV1ProfilesTestsConfig(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3748,8 +3744,8 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesTestsConfi
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesTestsConfig(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateProfilesTestsConfig {
-	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateProfilesTestsConfig{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1ProfilesTestsConfig(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1ProfilesTestsConfig {
+	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1ProfilesTestsConfig{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".domains")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".domains")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".domains")))) {
 		request.Domains = interfaceToSliceString(v)
 	}
@@ -3843,8 +3839,8 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesTestsConfi
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesLocationVLANListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateProfilesLocationVLANList {
-	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateProfilesLocationVLANList{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1ProfilesLocationVLANListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1ProfilesLocationVLANList {
+	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1ProfilesLocationVLANList{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3855,7 +3851,7 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesLocationVL
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesLocationVLANList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateV1ProfilesLocationVLANList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3863,8 +3859,8 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesLocationVL
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesLocationVLANList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateProfilesLocationVLANList {
-	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateProfilesLocationVLANList{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1ProfilesLocationVLANList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1ProfilesLocationVLANList {
+	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1ProfilesLocationVLANList{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".location_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".location_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".location_id")))) {
 		request.LocationID = interfaceToString(v)
 	}
@@ -3874,8 +3870,8 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateProfilesLocationVL
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateLocationInfoListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateLocationInfoList {
-	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateLocationInfoList{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1LocationInfoListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1LocationInfoList {
+	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1LocationInfoList{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3886,7 +3882,7 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateLocationInfoListAr
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateLocationInfoList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateV1LocationInfoList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3894,8 +3890,8 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateLocationInfoListAr
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateLocationInfoList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateLocationInfoList {
-	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateLocationInfoList{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1LocationInfoList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1LocationInfoList {
+	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1LocationInfoList{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".location_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".location_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".location_id")))) {
 		request.LocationID = interfaceToString(v)
 	}
@@ -3920,8 +3916,8 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateLocationInfoList(c
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateSensorsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSensors {
-	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSensors{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SensorsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1Sensors {
+	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1Sensors{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3932,7 +3928,7 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateSensorsArray(ctx c
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateSensors(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateV1Sensors(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3940,8 +3936,8 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateSensorsArray(ctx c
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateSensors(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSensors {
-	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSensors{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1Sensors(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1Sensors {
+	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1Sensors{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -4000,7 +3996,7 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateSensors(ctx contex
 		request.SensorType = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".test_mac_addresses")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".test_mac_addresses")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".test_mac_addresses")))) {
-		request.TestMacAddresses = expandRequestSensorTestTemplateEditEditSensorTestTemplateSensorsTestMacAddresses(ctx, key+".test_mac_addresses.0", d)
+		request.TestMacAddresses = expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SensorsTestMacAddresses(ctx, key+".test_mac_addresses.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
@@ -4009,25 +4005,25 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateSensors(ctx contex
 		request.ServicePolicy = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".i_perf_info")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".i_perf_info")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".i_perf_info")))) {
-		request.IPerfInfo = expandRequestSensorTestTemplateEditEditSensorTestTemplateSensorsIPerfInfo(ctx, key+".i_perf_info.0", d)
+		request.IPerfInfo = expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SensorsIPerfInfo(ctx, key+".i_perf_info.0", d)
 	}
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateSensorsTestMacAddresses(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSensorsTestMacAddresses {
-	var request catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSensorsTestMacAddresses
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SensorsTestMacAddresses(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1SensorsTestMacAddresses {
+	var request catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1SensorsTestMacAddresses
 	request = d.Get(fixKeyAccess(key))
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateSensorsIPerfInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSensorsIPerfInfo {
-	var request catalystcentersdkgo.RequestSensorsEditSensorTestTemplateSensorsIPerfInfo
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1SensorsIPerfInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1SensorsIPerfInfo {
+	var request catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1SensorsIPerfInfo
 	request = d.Get(fixKeyAccess(key))
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateApCoverageArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateApCoverage {
-	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateApCoverage{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1ApCoverageArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1ApCoverage {
+	request := []catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1ApCoverage{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -4038,7 +4034,7 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateApCoverageArray(ct
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateApCoverage(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorTestTemplateEditEditSensorTestTemplateV1ApCoverage(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -4046,8 +4042,8 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateApCoverageArray(ct
 	return &request
 }
 
-func expandRequestSensorTestTemplateEditEditSensorTestTemplateApCoverage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateApCoverage {
-	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateApCoverage{}
+func expandRequestSensorTestTemplateEditEditSensorTestTemplateV1ApCoverage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1ApCoverage {
+	request := catalystcentersdkgo.RequestSensorsEditSensorTestTemplateV1ApCoverage{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".bands")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".bands")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".bands")))) {
 		request.Bands = interfaceToString(v)
 	}
@@ -4060,7 +4056,7 @@ func expandRequestSensorTestTemplateEditEditSensorTestTemplateApCoverage(ctx con
 	return &request
 }
 
-func flattenSensorsEditSensorTestTemplateItem(item *catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateResponse) []map[string]interface{} {
+func flattenSensorsEditSensorTestTemplateV1Item(item *catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4077,27 +4073,27 @@ func flattenSensorsEditSensorTestTemplateItem(item *catalystcentersdkgo.Response
 	respItem["status"] = item.Status
 	respItem["connection"] = item.Connection
 	respItem["action_in_progress"] = item.ActionInProgress
-	respItem["frequency"] = flattenSensorsEditSensorTestTemplateItemFrequency(item.Frequency)
+	respItem["frequency"] = flattenSensorsEditSensorTestTemplateV1ItemFrequency(item.Frequency)
 	respItem["rssi_threshold"] = item.RssiThreshold
 	respItem["num_neighbor_apthreshold"] = item.NumNeighborApThreshold
 	respItem["schedule_in_days"] = item.ScheduleInDays
 	respItem["wlans"] = item.WLANs
-	respItem["ssids"] = flattenSensorsEditSensorTestTemplateItemSSIDs(item.SSIDs)
-	respItem["profiles"] = flattenSensorsEditSensorTestTemplateItemProfiles(item.Profiles)
+	respItem["ssids"] = flattenSensorsEditSensorTestTemplateV1ItemSSIDs(item.SSIDs)
+	respItem["profiles"] = flattenSensorsEditSensorTestTemplateV1ItemProfiles(item.Profiles)
 	respItem["test_schedule_mode"] = item.TestScheduleMode
 	respItem["show_wlc_upgrade_banner"] = boolPtrToString(item.ShowWlcUpgradeBanner)
 	respItem["radio_as_sensor_removed"] = boolPtrToString(item.RadioAsSensorRemoved)
 	respItem["encryption_mode"] = item.EncryptionMode
 	respItem["run_now"] = item.RunNow
-	respItem["location_info_list"] = flattenSensorsEditSensorTestTemplateItemLocationInfoList(item.LocationInfoList)
-	respItem["sensors"] = flattenSensorsEditSensorTestTemplateItemSensors(item.Sensors)
-	respItem["ap_coverage"] = flattenSensorsEditSensorTestTemplateItemApCoverage(item.ApCoverage)
+	respItem["location_info_list"] = flattenSensorsEditSensorTestTemplateV1ItemLocationInfoList(item.LocationInfoList)
+	respItem["sensors"] = flattenSensorsEditSensorTestTemplateV1ItemSensors(item.Sensors)
+	respItem["ap_coverage"] = flattenSensorsEditSensorTestTemplateV1ItemApCoverage(item.ApCoverage)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenSensorsEditSensorTestTemplateItemFrequency(item *catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateResponseFrequency) []map[string]interface{} {
+func flattenSensorsEditSensorTestTemplateV1ItemFrequency(item *catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateV1ResponseFrequency) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4111,7 +4107,7 @@ func flattenSensorsEditSensorTestTemplateItemFrequency(item *catalystcentersdkgo
 
 }
 
-func flattenSensorsEditSensorTestTemplateItemSSIDs(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateResponseSSIDs) []map[string]interface{} {
+func flattenSensorsEditSensorTestTemplateV1ItemSSIDs(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateV1ResponseSSIDs) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4127,7 +4123,7 @@ func flattenSensorsEditSensorTestTemplateItemSSIDs(items *[]catalystcentersdkgo.
 		respItem["layer3web_authuser_name"] = item.Layer3WebAuthuserName
 		respItem["layer3web_authpassword"] = item.Layer3WebAuthpassword
 		respItem["layer3web_auth_email_address"] = item.Layer3WebAuthEmailAddress
-		respItem["third_party"] = flattenSensorsEditSensorTestTemplateItemSSIDsThirdParty(item.ThirdParty)
+		respItem["third_party"] = flattenSensorsEditSensorTestTemplateV1ItemSSIDsThirdParty(item.ThirdParty)
 		respItem["id"] = item.ID
 		respItem["wlan_id"] = item.WLANID
 		respItem["wlc"] = item.Wlc
@@ -4156,15 +4152,15 @@ func flattenSensorsEditSensorTestTemplateItemSSIDs(items *[]catalystcentersdkgo.
 		respItem["white_list"] = boolPtrToString(item.WhiteList)
 		respItem["ext_web_auth_portal"] = item.ExtWebAuthPortal
 		respItem["ext_web_auth_access_url"] = item.ExtWebAuthAccessURL
-		respItem["ext_web_auth_html_tag"] = flattenSensorsEditSensorTestTemplateItemSSIDsExtWebAuthHTMLTag(item.ExtWebAuthHTMLTag)
+		respItem["ext_web_auth_html_tag"] = flattenSensorsEditSensorTestTemplateV1ItemSSIDsExtWebAuthHTMLTag(item.ExtWebAuthHTMLTag)
 		respItem["qos_policy"] = item.QosPolicy
-		respItem["tests"] = flattenSensorsEditSensorTestTemplateItemSSIDsTests(item.Tests)
+		respItem["tests"] = flattenSensorsEditSensorTestTemplateV1ItemSSIDsTests(item.Tests)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSensorsEditSensorTestTemplateItemSSIDsThirdParty(item *catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateResponseSSIDsThirdParty) []map[string]interface{} {
+func flattenSensorsEditSensorTestTemplateV1ItemSSIDsThirdParty(item *catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateV1ResponseSSIDsThirdParty) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4177,7 +4173,7 @@ func flattenSensorsEditSensorTestTemplateItemSSIDsThirdParty(item *catalystcente
 
 }
 
-func flattenSensorsEditSensorTestTemplateItemSSIDsExtWebAuthHTMLTag(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateResponseSSIDsExtWebAuthHTMLTag) []map[string]interface{} {
+func flattenSensorsEditSensorTestTemplateV1ItemSSIDsExtWebAuthHTMLTag(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateV1ResponseSSIDsExtWebAuthHTMLTag) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4192,7 +4188,7 @@ func flattenSensorsEditSensorTestTemplateItemSSIDsExtWebAuthHTMLTag(items *[]cat
 	return respItems
 }
 
-func flattenSensorsEditSensorTestTemplateItemSSIDsTests(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateResponseSSIDsTests) []map[string]interface{} {
+func flattenSensorsEditSensorTestTemplateV1ItemSSIDsTests(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateV1ResponseSSIDsTests) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4200,13 +4196,13 @@ func flattenSensorsEditSensorTestTemplateItemSSIDsTests(items *[]catalystcenters
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["name"] = item.Name
-		respItem["config"] = flattenSensorsEditSensorTestTemplateItemSSIDsTestsConfig(item.Config)
+		respItem["config"] = flattenSensorsEditSensorTestTemplateV1ItemSSIDsTestsConfig(item.Config)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSensorsEditSensorTestTemplateItemSSIDsTestsConfig(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateResponseSSIDsTestsConfig) []map[string]interface{} {
+func flattenSensorsEditSensorTestTemplateV1ItemSSIDsTestsConfig(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateV1ResponseSSIDsTestsConfig) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4248,7 +4244,7 @@ func flattenSensorsEditSensorTestTemplateItemSSIDsTestsConfig(items *[]catalystc
 	return respItems
 }
 
-func flattenSensorsEditSensorTestTemplateItemProfiles(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateResponseProfiles) []map[string]interface{} {
+func flattenSensorsEditSensorTestTemplateV1ItemProfiles(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateV1ResponseProfiles) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4273,19 +4269,19 @@ func flattenSensorsEditSensorTestTemplateItemProfiles(items *[]catalystcentersdk
 		respItem["white_list"] = boolPtrToString(item.WhiteList)
 		respItem["ext_web_auth_portal"] = item.ExtWebAuthPortal
 		respItem["ext_web_auth_access_url"] = item.ExtWebAuthAccessURL
-		respItem["ext_web_auth_html_tag"] = flattenSensorsEditSensorTestTemplateItemProfilesExtWebAuthHTMLTag(item.ExtWebAuthHTMLTag)
+		respItem["ext_web_auth_html_tag"] = flattenSensorsEditSensorTestTemplateV1ItemProfilesExtWebAuthHTMLTag(item.ExtWebAuthHTMLTag)
 		respItem["qos_policy"] = item.QosPolicy
-		respItem["tests"] = flattenSensorsEditSensorTestTemplateItemProfilesTests(item.Tests)
+		respItem["tests"] = flattenSensorsEditSensorTestTemplateV1ItemProfilesTests(item.Tests)
 		respItem["profile_name"] = item.ProfileName
 		respItem["device_type"] = item.DeviceType
 		respItem["vlan"] = item.VLAN
-		respItem["location_vlan_list"] = flattenSensorsEditSensorTestTemplateItemProfilesLocationVLANList(item.LocationVLANList)
+		respItem["location_vlan_list"] = flattenSensorsEditSensorTestTemplateV1ItemProfilesLocationVLANList(item.LocationVLANList)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSensorsEditSensorTestTemplateItemProfilesExtWebAuthHTMLTag(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateResponseProfilesExtWebAuthHTMLTag) []map[string]interface{} {
+func flattenSensorsEditSensorTestTemplateV1ItemProfilesExtWebAuthHTMLTag(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateV1ResponseProfilesExtWebAuthHTMLTag) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4300,7 +4296,7 @@ func flattenSensorsEditSensorTestTemplateItemProfilesExtWebAuthHTMLTag(items *[]
 	return respItems
 }
 
-func flattenSensorsEditSensorTestTemplateItemProfilesTests(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateResponseProfilesTests) []map[string]interface{} {
+func flattenSensorsEditSensorTestTemplateV1ItemProfilesTests(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateV1ResponseProfilesTests) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4308,13 +4304,13 @@ func flattenSensorsEditSensorTestTemplateItemProfilesTests(items *[]catalystcent
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["name"] = item.Name
-		respItem["config"] = flattenSensorsEditSensorTestTemplateItemProfilesTestsConfig(item.Config)
+		respItem["config"] = flattenSensorsEditSensorTestTemplateV1ItemProfilesTestsConfig(item.Config)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSensorsEditSensorTestTemplateItemProfilesTestsConfig(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateResponseProfilesTestsConfig) []map[string]interface{} {
+func flattenSensorsEditSensorTestTemplateV1ItemProfilesTestsConfig(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateV1ResponseProfilesTestsConfig) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4356,7 +4352,7 @@ func flattenSensorsEditSensorTestTemplateItemProfilesTestsConfig(items *[]cataly
 	return respItems
 }
 
-func flattenSensorsEditSensorTestTemplateItemProfilesLocationVLANList(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateResponseProfilesLocationVLANList) []map[string]interface{} {
+func flattenSensorsEditSensorTestTemplateV1ItemProfilesLocationVLANList(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateV1ResponseProfilesLocationVLANList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4370,7 +4366,7 @@ func flattenSensorsEditSensorTestTemplateItemProfilesLocationVLANList(items *[]c
 	return respItems
 }
 
-func flattenSensorsEditSensorTestTemplateItemLocationInfoList(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateResponseLocationInfoList) []map[string]interface{} {
+func flattenSensorsEditSensorTestTemplateV1ItemLocationInfoList(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateV1ResponseLocationInfoList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4389,7 +4385,7 @@ func flattenSensorsEditSensorTestTemplateItemLocationInfoList(items *[]catalystc
 	return respItems
 }
 
-func flattenSensorsEditSensorTestTemplateItemSensors(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateResponseSensors) []map[string]interface{} {
+func flattenSensorsEditSensorTestTemplateV1ItemSensors(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateV1ResponseSensors) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4415,16 +4411,16 @@ func flattenSensorsEditSensorTestTemplateItemSensors(items *[]catalystcentersdkg
 		respItem["all_sensor_addition"] = boolPtrToString(item.AllSensorAddition)
 		respItem["config_updated"] = item.ConfigUpdated
 		respItem["sensor_type"] = item.SensorType
-		respItem["test_mac_addresses"] = flattenSensorsEditSensorTestTemplateItemSensorsTestMacAddresses(item.TestMacAddresses)
+		respItem["test_mac_addresses"] = flattenSensorsEditSensorTestTemplateV1ItemSensorsTestMacAddresses(item.TestMacAddresses)
 		respItem["id"] = item.ID
 		respItem["service_policy"] = item.ServicePolicy
-		respItem["i_perf_info"] = flattenSensorsEditSensorTestTemplateItemSensorsIPerfInfo(item.IPerfInfo)
+		respItem["i_perf_info"] = flattenSensorsEditSensorTestTemplateV1ItemSensorsIPerfInfo(item.IPerfInfo)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSensorsEditSensorTestTemplateItemSensorsTestMacAddresses(item *catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateResponseSensorsTestMacAddresses) interface{} {
+func flattenSensorsEditSensorTestTemplateV1ItemSensorsTestMacAddresses(item *catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateV1ResponseSensorsTestMacAddresses) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4434,7 +4430,7 @@ func flattenSensorsEditSensorTestTemplateItemSensorsTestMacAddresses(item *catal
 
 }
 
-func flattenSensorsEditSensorTestTemplateItemSensorsIPerfInfo(item *catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateResponseSensorsIPerfInfo) interface{} {
+func flattenSensorsEditSensorTestTemplateV1ItemSensorsIPerfInfo(item *catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateV1ResponseSensorsIPerfInfo) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4444,7 +4440,7 @@ func flattenSensorsEditSensorTestTemplateItemSensorsIPerfInfo(item *catalystcent
 
 }
 
-func flattenSensorsEditSensorTestTemplateItemApCoverage(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateResponseApCoverage) []map[string]interface{} {
+func flattenSensorsEditSensorTestTemplateV1ItemApCoverage(items *[]catalystcentersdkgo.ResponseSensorsEditSensorTestTemplateV1ResponseApCoverage) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

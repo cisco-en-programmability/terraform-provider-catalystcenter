@@ -4,10 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"reflect"
 	"time"
-
-	"log"
 
 	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
 
@@ -1157,7 +1156,7 @@ func resourceSitesWirelessSettingsSSIDsCreate(ctx context.Context, d *schema.Res
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestSitesWirelessSettingsSSIDsCreateSSID(ctx, "parameters.0", d)
+	request1 := expandRequestSitesWirelessSettingsSSIDsCreateSSIDV1(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vSiteID, okSiteID := resourceItem["site_id"]
@@ -1176,7 +1175,7 @@ func resourceSitesWirelessSettingsSSIDsCreate(ctx context.Context, d *schema.Res
 			return resourceSitesWirelessSettingsSSIDsRead(ctx, d, m)
 		}
 	} else {
-		queryParamImport := catalystcentersdkgo.GetSSIDBySiteQueryParams{}
+		queryParamImport := catalystcentersdkgo.GetSSIDBySiteV1QueryParams{}
 
 		response2, err := searchWirelessGetSSIDBySite(m, queryParamImport, vvSiteID, vvName)
 		if response2 != nil && err == nil {
@@ -1226,7 +1225,7 @@ func resourceSitesWirelessSettingsSSIDsCreate(ctx context.Context, d *schema.Res
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetSSIDBySiteQueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetSSIDBySiteV1QueryParams{}
 	item3, err := searchWirelessGetSSIDBySite(m, queryParamValidate, vvSiteID, vvName)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
@@ -1270,7 +1269,7 @@ func resourceSitesWirelessSettingsSSIDsRead(ctx context.Context, d *schema.Resou
 		}
 
 		// Review flatten function used
-		vItem1 := flattenWirelessGetSSIDByIDItem(response1.Response)
+		vItem1 := flattenWirelessGetSSIDByIDV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetSSIDBySite search response",
@@ -1293,7 +1292,7 @@ func resourceSitesWirelessSettingsSSIDsUpdate(ctx context.Context, d *schema.Res
 	vvSiteID := resourceMap["site_id"]
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvID)
-		request1 := expandRequestSitesWirelessSettingsSSIDsUpdateSSID(ctx, "parameters.0", d)
+		request1 := expandRequestSitesWirelessSettingsSSIDsUpdateSSIDV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.Wireless.UpdateSSID(vvSiteID, vvID, request1)
 		if err != nil || response1 == nil {
@@ -1406,8 +1405,8 @@ func resourceSitesWirelessSettingsSSIDsDelete(ctx context.Context, d *schema.Res
 
 	return diags
 }
-func expandRequestSitesWirelessSettingsSSIDsCreateSSID(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateSSID {
-	request := catalystcentersdkgo.RequestWirelessCreateSSID{}
+func expandRequestSitesWirelessSettingsSSIDsCreateSSIDV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateSSIDV1 {
+	request := catalystcentersdkgo.RequestWirelessCreateSSIDV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ssid")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ssid")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ssid")))) {
 		request.SSID = interfaceToString(v)
 	}
@@ -1475,7 +1474,7 @@ func expandRequestSitesWirelessSettingsSSIDsCreateSSID(ctx context.Context, key 
 		request.ProtectedManagementFrame = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".multi_psk_settings")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".multi_psk_settings")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".multi_psk_settings")))) {
-		request.MultipSKSettings = expandRequestSitesWirelessSettingsSSIDsCreateSSIDMultipSKSettingsArray(ctx, key+".multi_psk_settings", d)
+		request.MultipSKSettings = expandRequestSitesWirelessSettingsSSIDsCreateSSIDV1MultipSKSettingsArray(ctx, key+".multi_psk_settings", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".client_rate_limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".client_rate_limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".client_rate_limit")))) {
 		request.ClientRateLimit = interfaceToIntPtr(v)
@@ -1612,8 +1611,8 @@ func expandRequestSitesWirelessSettingsSSIDsCreateSSID(ctx context.Context, key 
 	return &request
 }
 
-func expandRequestSitesWirelessSettingsSSIDsCreateSSIDMultipSKSettingsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessCreateSSIDMultipSKSettings {
-	request := []catalystcentersdkgo.RequestWirelessCreateSSIDMultipSKSettings{}
+func expandRequestSitesWirelessSettingsSSIDsCreateSSIDV1MultipSKSettingsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessCreateSSIDV1MultipSKSettings {
+	request := []catalystcentersdkgo.RequestWirelessCreateSSIDV1MultipSKSettings{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1624,7 +1623,7 @@ func expandRequestSitesWirelessSettingsSSIDsCreateSSIDMultipSKSettingsArray(ctx 
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSitesWirelessSettingsSSIDsCreateSSIDMultipSKSettings(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSitesWirelessSettingsSSIDsCreateSSIDV1MultipSKSettings(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1635,8 +1634,8 @@ func expandRequestSitesWirelessSettingsSSIDsCreateSSIDMultipSKSettingsArray(ctx 
 	return &request
 }
 
-func expandRequestSitesWirelessSettingsSSIDsCreateSSIDMultipSKSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateSSIDMultipSKSettings {
-	request := catalystcentersdkgo.RequestWirelessCreateSSIDMultipSKSettings{}
+func expandRequestSitesWirelessSettingsSSIDsCreateSSIDV1MultipSKSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateSSIDV1MultipSKSettings {
+	request := catalystcentersdkgo.RequestWirelessCreateSSIDV1MultipSKSettings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".priority")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".priority")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".priority")))) {
 		request.Priority = interfaceToIntPtr(v)
 	}
@@ -1652,8 +1651,8 @@ func expandRequestSitesWirelessSettingsSSIDsCreateSSIDMultipSKSettings(ctx conte
 	return &request
 }
 
-func expandRequestSitesWirelessSettingsSSIDsUpdateSSID(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateSSID {
-	request := catalystcentersdkgo.RequestWirelessUpdateSSID{}
+func expandRequestSitesWirelessSettingsSSIDsUpdateSSIDV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateSSIDV1 {
+	request := catalystcentersdkgo.RequestWirelessUpdateSSIDV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ssid")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ssid")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ssid")))) {
 		request.SSID = interfaceToString(v)
 	}
@@ -1721,7 +1720,7 @@ func expandRequestSitesWirelessSettingsSSIDsUpdateSSID(ctx context.Context, key 
 		request.ProtectedManagementFrame = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".multi_psk_settings")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".multi_psk_settings")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".multi_psk_settings")))) {
-		request.MultipSKSettings = expandRequestSitesWirelessSettingsSSIDsUpdateSSIDMultipSKSettingsArray(ctx, key+".multi_psk_settings", d)
+		request.MultipSKSettings = expandRequestSitesWirelessSettingsSSIDsUpdateSSIDV1MultipSKSettingsArray(ctx, key+".multi_psk_settings", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".client_rate_limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".client_rate_limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".client_rate_limit")))) {
 		request.ClientRateLimit = interfaceToIntPtr(v)
@@ -1858,8 +1857,8 @@ func expandRequestSitesWirelessSettingsSSIDsUpdateSSID(ctx context.Context, key 
 	return &request
 }
 
-func expandRequestSitesWirelessSettingsSSIDsUpdateSSIDMultipSKSettingsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessUpdateSSIDMultipSKSettings {
-	request := []catalystcentersdkgo.RequestWirelessUpdateSSIDMultipSKSettings{}
+func expandRequestSitesWirelessSettingsSSIDsUpdateSSIDV1MultipSKSettingsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessUpdateSSIDV1MultipSKSettings {
+	request := []catalystcentersdkgo.RequestWirelessUpdateSSIDV1MultipSKSettings{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1870,7 +1869,7 @@ func expandRequestSitesWirelessSettingsSSIDsUpdateSSIDMultipSKSettingsArray(ctx 
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSitesWirelessSettingsSSIDsUpdateSSIDMultipSKSettings(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSitesWirelessSettingsSSIDsUpdateSSIDV1MultipSKSettings(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1881,8 +1880,8 @@ func expandRequestSitesWirelessSettingsSSIDsUpdateSSIDMultipSKSettingsArray(ctx 
 	return &request
 }
 
-func expandRequestSitesWirelessSettingsSSIDsUpdateSSIDMultipSKSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateSSIDMultipSKSettings {
-	request := catalystcentersdkgo.RequestWirelessUpdateSSIDMultipSKSettings{}
+func expandRequestSitesWirelessSettingsSSIDsUpdateSSIDV1MultipSKSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateSSIDV1MultipSKSettings {
+	request := catalystcentersdkgo.RequestWirelessUpdateSSIDV1MultipSKSettings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".priority")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".priority")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".priority")))) {
 		request.Priority = interfaceToIntPtr(v)
 	}
@@ -1898,10 +1897,10 @@ func expandRequestSitesWirelessSettingsSSIDsUpdateSSIDMultipSKSettings(ctx conte
 	return &request
 }
 
-func searchWirelessGetSSIDBySite(m interface{}, queryParams catalystcentersdkgo.GetSSIDBySiteQueryParams, vSiteID string, vID string) (*catalystcentersdkgo.ResponseWirelessGetSSIDBySiteResponse, error) {
+func searchWirelessGetSSIDBySite(m interface{}, queryParams catalystcentersdkgo.GetSSIDBySiteV1QueryParams, vSiteID string, vID string) (*catalystcentersdkgo.ResponseWirelessGetSSIDBySiteV1Response, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseWirelessGetSSIDBySiteResponse
+	var foundItem *catalystcentersdkgo.ResponseWirelessGetSSIDBySiteV1Response
 	if vID != "" {
 		queryParams.Offset = 1
 		nResponse, _, err := client.Wireless.GetSSIDBySite(vSiteID, nil)

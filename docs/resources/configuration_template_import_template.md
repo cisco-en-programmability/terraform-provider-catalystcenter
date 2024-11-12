@@ -12,9 +12,6 @@ description: |-
 It performs create operation on Configuration Templates.
 
 - Imports the templates provided in the DTO by project Name
-
-
-
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -23,118 +20,27 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 
 ```terraform
 resource "catalystcenter_configuration_template_import_template" "example" {
-  provider     = catalystcenter
+  provider     = meraki
   do_version   = "false"
   project_name = "string"
   parameters {
-    payload{
-      author    = "string"
-      composite = "false"
-      containing_templates {
 
-        composite   = "false"
-        description = "string"
-        device_types {
+    author    = "string"
+    composite = "false"
+    containing_templates {
 
-          product_family = "string"
-          product_series = "string"
-          product_type   = "string"
-        }
-        id           = "string"
-        language     = "string"
-        name         = "string"
-        project_name = "string"
-        rollback_template_params {
-
-          binding          = "string"
-          custom_order     = 1
-          data_type        = "string"
-          default_value    = "string"
-          description      = "string"
-          display_name     = "string"
-          group            = "string"
-          id               = "string"
-          instruction_text = "string"
-          key              = "string"
-          not_param        = "false"
-          order            = 1
-          param_array      = "false"
-          parameter_name   = "string"
-          provider         = "string"
-          range {
-
-            id        = "string"
-            max_value = 1
-            min_value = 1
-          }
-          required = "false"
-          selection {
-
-            default_selected_values = ["string"]
-            id                      = "string"
-            selection_type          = "string"
-            selection_values        = "string"
-          }
-        }
-        tags {
-
-          id   = "string"
-          name = "string"
-        }
-        template_content = "string"
-        template_params {
-
-          binding          = "string"
-          custom_order     = 1
-          data_type        = "string"
-          default_value    = "string"
-          description      = "string"
-          display_name     = "string"
-          group            = "string"
-          id               = "string"
-          instruction_text = "string"
-          key              = "string"
-          not_param        = "false"
-          order            = 1
-          param_array      = "false"
-          parameter_name   = "string"
-          provider         = "string"
-          range {
-
-            id        = "string"
-            max_value = 1
-            min_value = 1
-          }
-          required = "false"
-          selection {
-
-            default_selected_values = ["string"]
-            id                      = "string"
-            selection_type          = "string"
-            selection_values        = "string"
-          }
-        }
-        version = "string"
-      }
-      create_time         = 1
-      custom_params_order = "false"
-      description         = "string"
+      composite   = "false"
+      description = "string"
       device_types {
 
         product_family = "string"
         product_series = "string"
         product_type   = "string"
       }
-      failure_policy            = "string"
-      id                        = "string"
-      language                  = "string"
-      last_update_time          = 1
-      latest_version_time       = 1
-      name                      = "string"
-      parent_template_id        = "string"
-      project_id                = "string"
-      project_name              = "string"
-      rollback_template_content = "string"
+      id           = "string"
+      language     = "string"
+      name         = "string"
+      project_name = "string"
       rollback_template_params {
 
         binding          = "string"
@@ -164,12 +70,9 @@ resource "catalystcenter_configuration_template_import_template" "example" {
           default_selected_values = ["string"]
           id                      = "string"
           selection_type          = "string"
-          selection_values        = "string"
+          selection_values        = "------"
         }
       }
-      software_type    = "string"
-      software_variant = "string"
-      software_version = "string"
       tags {
 
         id   = "string"
@@ -205,18 +108,111 @@ resource "catalystcenter_configuration_template_import_template" "example" {
           default_selected_values = ["string"]
           id                      = "string"
           selection_type          = "string"
-          selection_values        = "string"
+          selection_values        = "------"
         }
-      }
-      validation_errors {
-
-        rollback_template_errors = "string"
-        template_errors          = "string"
-        template_id              = "string"
-        template_version         = "string"
       }
       version = "string"
     }
+    create_time         = 1
+    custom_params_order = "false"
+    description         = "string"
+    device_types {
+
+      product_family = "string"
+      product_series = "string"
+      product_type   = "string"
+    }
+    failure_policy            = "string"
+    id                        = "string"
+    language                  = "string"
+    last_update_time          = 1
+    latest_version_time       = 1
+    name                      = "string"
+    parent_template_id        = "string"
+    project_id                = "string"
+    project_name              = "string"
+    rollback_template_content = "string"
+    rollback_template_params {
+
+      binding          = "string"
+      custom_order     = 1
+      data_type        = "string"
+      default_value    = "string"
+      description      = "string"
+      display_name     = "string"
+      group            = "string"
+      id               = "string"
+      instruction_text = "string"
+      key              = "string"
+      not_param        = "false"
+      order            = 1
+      param_array      = "false"
+      parameter_name   = "string"
+      provider         = "string"
+      range {
+
+        id        = "string"
+        max_value = 1
+        min_value = 1
+      }
+      required = "false"
+      selection {
+
+        default_selected_values = ["string"]
+        id                      = "string"
+        selection_type          = "string"
+        selection_values        = "------"
+      }
+    }
+    software_type    = "string"
+    software_variant = "string"
+    software_version = "string"
+    tags {
+
+      id   = "string"
+      name = "string"
+    }
+    template_content = "string"
+    template_params {
+
+      binding          = "string"
+      custom_order     = 1
+      data_type        = "string"
+      default_value    = "string"
+      description      = "string"
+      display_name     = "string"
+      group            = "string"
+      id               = "string"
+      instruction_text = "string"
+      key              = "string"
+      not_param        = "false"
+      order            = 1
+      param_array      = "false"
+      parameter_name   = "string"
+      provider         = "string"
+      range {
+
+        id        = "string"
+        max_value = 1
+        min_value = 1
+      }
+      required = "false"
+      selection {
+
+        default_selected_values = ["string"]
+        id                      = "string"
+        selection_type          = "string"
+        selection_values        = "------"
+      }
+    }
+    validation_errors {
+
+      rollback_template_errors = "------"
+      template_errors          = "------"
+      template_id              = "string"
+      template_version         = "string"
+    }
+    version = "string"
   }
 }
 
@@ -248,7 +244,7 @@ Required:
 Optional:
 
 - `do_version` (Boolean) doVersion query parameter. If this flag is true then it creates a new version of the template with the imported contents in case if the templates already exists. " If this flag is false and if template already exists, then operation fails with 'Template already exists' error
-- `payload` (Block List) Array of RequestConfigurationTemplatesImportsTheTemplatesProvided (see [below for nested schema](#nestedblock--parameters--payload))
+- `payload` (Block List) Array of RequestConfigurationTemplatesImportsTheTemplatesProvidedV1 (see [below for nested schema](#nestedblock--parameters--payload))
 
 <a id="nestedblock--parameters--payload"></a>
 ### Nested Schema for `parameters.payload`

@@ -239,8 +239,8 @@ func dataSourceNetworkDeviceFunctionalCapabilityRead(ctx context.Context, d *sch
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetFunctionalCapabilityForDevices")
-		queryParams1 := catalystcentersdkgo.GetFunctionalCapabilityForDevicesQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetFunctionalCapabilityForDevicesV1")
+		queryParams1 := catalystcentersdkgo.GetFunctionalCapabilityForDevicesV1QueryParams{}
 
 		if okDeviceID {
 			queryParams1.DeviceID = vDeviceID.(string)
@@ -249,24 +249,24 @@ func dataSourceNetworkDeviceFunctionalCapabilityRead(ctx context.Context, d *sch
 			queryParams1.FunctionName = interfaceToSliceString(vFunctionName)
 		}
 
-		response1, restyResp1, err := client.Devices.GetFunctionalCapabilityForDevices(&queryParams1)
+		response1, restyResp1, err := client.Devices.GetFunctionalCapabilityForDevicesV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetFunctionalCapabilityForDevices", err,
-				"Failure at GetFunctionalCapabilityForDevices, unexpected response", ""))
+				"Failure when executing 2 GetFunctionalCapabilityForDevicesV1", err,
+				"Failure at GetFunctionalCapabilityForDevicesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetFunctionalCapabilityForDevicesItems(response1.Response)
+		vItems1 := flattenDevicesGetFunctionalCapabilityForDevicesV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetFunctionalCapabilityForDevices response",
+				"Failure when setting GetFunctionalCapabilityForDevicesV1 response",
 				err))
 			return diags
 		}
@@ -276,27 +276,27 @@ func dataSourceNetworkDeviceFunctionalCapabilityRead(ctx context.Context, d *sch
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetFunctionalCapabilityByID")
+		log.Printf("[DEBUG] Selected method: GetFunctionalCapabilityByIDV1")
 		vvID := vID.(string)
 
-		response2, restyResp2, err := client.Devices.GetFunctionalCapabilityByID(vvID)
+		response2, restyResp2, err := client.Devices.GetFunctionalCapabilityByIDV1(vvID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetFunctionalCapabilityByID", err,
-				"Failure at GetFunctionalCapabilityByID, unexpected response", ""))
+				"Failure when executing 2 GetFunctionalCapabilityByIDV1", err,
+				"Failure at GetFunctionalCapabilityByIDV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenDevicesGetFunctionalCapabilityByIDItem(response2.Response)
+		vItem2 := flattenDevicesGetFunctionalCapabilityByIDV1Item(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetFunctionalCapabilityByID response",
+				"Failure when setting GetFunctionalCapabilityByIDV1 response",
 				err))
 			return diags
 		}
@@ -308,23 +308,23 @@ func dataSourceNetworkDeviceFunctionalCapabilityRead(ctx context.Context, d *sch
 	return diags
 }
 
-func flattenDevicesGetFunctionalCapabilityForDevicesItems(items *[]catalystcentersdkgo.ResponseDevicesGetFunctionalCapabilityForDevicesResponse) []map[string]interface{} {
+func flattenDevicesGetFunctionalCapabilityForDevicesV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetFunctionalCapabilityForDevicesV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["attribute_info"] = flattenDevicesGetFunctionalCapabilityForDevicesItemsAttributeInfo(item.AttributeInfo)
+		respItem["attribute_info"] = flattenDevicesGetFunctionalCapabilityForDevicesV1ItemsAttributeInfo(item.AttributeInfo)
 		respItem["device_id"] = item.DeviceID
-		respItem["functional_capability"] = flattenDevicesGetFunctionalCapabilityForDevicesItemsFunctionalCapability(item.FunctionalCapability)
+		respItem["functional_capability"] = flattenDevicesGetFunctionalCapabilityForDevicesV1ItemsFunctionalCapability(item.FunctionalCapability)
 		respItem["id"] = item.ID
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesGetFunctionalCapabilityForDevicesItemsAttributeInfo(item *catalystcentersdkgo.ResponseDevicesGetFunctionalCapabilityForDevicesResponseAttributeInfo) interface{} {
+func flattenDevicesGetFunctionalCapabilityForDevicesV1ItemsAttributeInfo(item *catalystcentersdkgo.ResponseDevicesGetFunctionalCapabilityForDevicesV1ResponseAttributeInfo) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -334,15 +334,15 @@ func flattenDevicesGetFunctionalCapabilityForDevicesItemsAttributeInfo(item *cat
 
 }
 
-func flattenDevicesGetFunctionalCapabilityForDevicesItemsFunctionalCapability(items *[]catalystcentersdkgo.ResponseDevicesGetFunctionalCapabilityForDevicesResponseFunctionalCapability) []map[string]interface{} {
+func flattenDevicesGetFunctionalCapabilityForDevicesV1ItemsFunctionalCapability(items *[]catalystcentersdkgo.ResponseDevicesGetFunctionalCapabilityForDevicesV1ResponseFunctionalCapability) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["attribute_info"] = flattenDevicesGetFunctionalCapabilityForDevicesItemsFunctionalCapabilityAttributeInfo(item.AttributeInfo)
-		respItem["function_details"] = flattenDevicesGetFunctionalCapabilityForDevicesItemsFunctionalCapabilityFunctionDetails(item.FunctionDetails)
+		respItem["attribute_info"] = flattenDevicesGetFunctionalCapabilityForDevicesV1ItemsFunctionalCapabilityAttributeInfo(item.AttributeInfo)
+		respItem["function_details"] = flattenDevicesGetFunctionalCapabilityForDevicesV1ItemsFunctionalCapabilityFunctionDetails(item.FunctionDetails)
 		respItem["function_name"] = item.FunctionName
 		respItem["function_op_state"] = item.FunctionOpState
 		respItem["id"] = item.ID
@@ -351,7 +351,7 @@ func flattenDevicesGetFunctionalCapabilityForDevicesItemsFunctionalCapability(it
 	return respItems
 }
 
-func flattenDevicesGetFunctionalCapabilityForDevicesItemsFunctionalCapabilityAttributeInfo(item *catalystcentersdkgo.ResponseDevicesGetFunctionalCapabilityForDevicesResponseFunctionalCapabilityAttributeInfo) interface{} {
+func flattenDevicesGetFunctionalCapabilityForDevicesV1ItemsFunctionalCapabilityAttributeInfo(item *catalystcentersdkgo.ResponseDevicesGetFunctionalCapabilityForDevicesV1ResponseFunctionalCapabilityAttributeInfo) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -361,14 +361,14 @@ func flattenDevicesGetFunctionalCapabilityForDevicesItemsFunctionalCapabilityAtt
 
 }
 
-func flattenDevicesGetFunctionalCapabilityForDevicesItemsFunctionalCapabilityFunctionDetails(items *[]catalystcentersdkgo.ResponseDevicesGetFunctionalCapabilityForDevicesResponseFunctionalCapabilityFunctionDetails) []map[string]interface{} {
+func flattenDevicesGetFunctionalCapabilityForDevicesV1ItemsFunctionalCapabilityFunctionDetails(items *[]catalystcentersdkgo.ResponseDevicesGetFunctionalCapabilityForDevicesV1ResponseFunctionalCapabilityFunctionDetails) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["attribute_info"] = flattenDevicesGetFunctionalCapabilityForDevicesItemsFunctionalCapabilityFunctionDetailsAttributeInfo(item.AttributeInfo)
+		respItem["attribute_info"] = flattenDevicesGetFunctionalCapabilityForDevicesV1ItemsFunctionalCapabilityFunctionDetailsAttributeInfo(item.AttributeInfo)
 		respItem["id"] = item.ID
 		respItem["property_name"] = item.PropertyName
 		respItem["string_value"] = item.StringValue
@@ -377,7 +377,7 @@ func flattenDevicesGetFunctionalCapabilityForDevicesItemsFunctionalCapabilityFun
 	return respItems
 }
 
-func flattenDevicesGetFunctionalCapabilityForDevicesItemsFunctionalCapabilityFunctionDetailsAttributeInfo(item *catalystcentersdkgo.ResponseDevicesGetFunctionalCapabilityForDevicesResponseFunctionalCapabilityFunctionDetailsAttributeInfo) interface{} {
+func flattenDevicesGetFunctionalCapabilityForDevicesV1ItemsFunctionalCapabilityFunctionDetailsAttributeInfo(item *catalystcentersdkgo.ResponseDevicesGetFunctionalCapabilityForDevicesV1ResponseFunctionalCapabilityFunctionDetailsAttributeInfo) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -387,13 +387,13 @@ func flattenDevicesGetFunctionalCapabilityForDevicesItemsFunctionalCapabilityFun
 
 }
 
-func flattenDevicesGetFunctionalCapabilityByIDItem(item *catalystcentersdkgo.ResponseDevicesGetFunctionalCapabilityByIDResponse) []map[string]interface{} {
+func flattenDevicesGetFunctionalCapabilityByIDV1Item(item *catalystcentersdkgo.ResponseDevicesGetFunctionalCapabilityByIDV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["attribute_info"] = flattenDevicesGetFunctionalCapabilityByIDItemAttributeInfo(item.AttributeInfo)
-	respItem["function_details"] = flattenDevicesGetFunctionalCapabilityByIDItemFunctionDetails(item.FunctionDetails)
+	respItem["attribute_info"] = flattenDevicesGetFunctionalCapabilityByIDV1ItemAttributeInfo(item.AttributeInfo)
+	respItem["function_details"] = flattenDevicesGetFunctionalCapabilityByIDV1ItemFunctionDetails(item.FunctionDetails)
 	respItem["function_name"] = item.FunctionName
 	respItem["function_op_state"] = item.FunctionOpState
 	respItem["id"] = item.ID
@@ -402,7 +402,7 @@ func flattenDevicesGetFunctionalCapabilityByIDItem(item *catalystcentersdkgo.Res
 	}
 }
 
-func flattenDevicesGetFunctionalCapabilityByIDItemAttributeInfo(item *catalystcentersdkgo.ResponseDevicesGetFunctionalCapabilityByIDResponseAttributeInfo) interface{} {
+func flattenDevicesGetFunctionalCapabilityByIDV1ItemAttributeInfo(item *catalystcentersdkgo.ResponseDevicesGetFunctionalCapabilityByIDV1ResponseAttributeInfo) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -412,14 +412,14 @@ func flattenDevicesGetFunctionalCapabilityByIDItemAttributeInfo(item *catalystce
 
 }
 
-func flattenDevicesGetFunctionalCapabilityByIDItemFunctionDetails(items *[]catalystcentersdkgo.ResponseDevicesGetFunctionalCapabilityByIDResponseFunctionDetails) []map[string]interface{} {
+func flattenDevicesGetFunctionalCapabilityByIDV1ItemFunctionDetails(items *[]catalystcentersdkgo.ResponseDevicesGetFunctionalCapabilityByIDV1ResponseFunctionDetails) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["attribute_info"] = flattenDevicesGetFunctionalCapabilityByIDItemFunctionDetailsAttributeInfo(item.AttributeInfo)
+		respItem["attribute_info"] = flattenDevicesGetFunctionalCapabilityByIDV1ItemFunctionDetailsAttributeInfo(item.AttributeInfo)
 		respItem["id"] = item.ID
 		respItem["property_name"] = item.PropertyName
 		respItem["string_value"] = item.StringValue
@@ -428,7 +428,7 @@ func flattenDevicesGetFunctionalCapabilityByIDItemFunctionDetails(items *[]catal
 	return respItems
 }
 
-func flattenDevicesGetFunctionalCapabilityByIDItemFunctionDetailsAttributeInfo(item *catalystcentersdkgo.ResponseDevicesGetFunctionalCapabilityByIDResponseFunctionDetailsAttributeInfo) interface{} {
+func flattenDevicesGetFunctionalCapabilityByIDV1ItemFunctionDetailsAttributeInfo(item *catalystcentersdkgo.ResponseDevicesGetFunctionalCapabilityByIDV1ResponseFunctionDetailsAttributeInfo) interface{} {
 	if item == nil {
 		return nil
 	}

@@ -164,8 +164,8 @@ func dataSourceDnaEventSNMPConfigRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSNMPDestination")
-		queryParams1 := catalystcentersdkgo.GetSNMPDestinationQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetSNMPDestinationV1")
+		queryParams1 := catalystcentersdkgo.GetSNMPDestinationV1QueryParams{}
 
 		if okConfigID {
 			queryParams1.ConfigID = vConfigID.(string)
@@ -183,24 +183,24 @@ func dataSourceDnaEventSNMPConfigRead(ctx context.Context, d *schema.ResourceDat
 			queryParams1.Order = vOrder.(string)
 		}
 
-		response1, restyResp1, err := client.EventManagement.GetSNMPDestination(&queryParams1)
+		response1, restyResp1, err := client.EventManagement.GetSNMPDestinationV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSNMPDestination", err,
-				"Failure at GetSNMPDestination, unexpected response", ""))
+				"Failure when executing 2 GetSNMPDestinationV1", err,
+				"Failure at GetSNMPDestinationV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenEventManagementGetSNMPDestinationItems(response1)
+		vItems1 := flattenEventManagementGetSNMPDestinationV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSNMPDestination response",
+				"Failure when setting GetSNMPDestinationV1 response",
 				err))
 			return diags
 		}
@@ -212,7 +212,7 @@ func dataSourceDnaEventSNMPConfigRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenEventManagementGetSNMPDestinationItems(items *catalystcentersdkgo.ResponseEventManagementGetSNMPDestination) []map[string]interface{} {
+func flattenEventManagementGetSNMPDestinationV1Items(items *catalystcentersdkgo.ResponseEventManagementGetSNMPDestinationV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

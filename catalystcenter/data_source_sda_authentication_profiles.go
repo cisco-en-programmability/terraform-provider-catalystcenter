@@ -126,8 +126,8 @@ func dataSourceSdaAuthenticationProfilesRead(ctx context.Context, d *schema.Reso
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAuthenticationProfiles")
-		queryParams1 := catalystcentersdkgo.GetAuthenticationProfilesQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetAuthenticationProfilesV1")
+		queryParams1 := catalystcentersdkgo.GetAuthenticationProfilesV1QueryParams{}
 
 		if okFabricID {
 			queryParams1.FabricID = vFabricID.(string)
@@ -142,24 +142,24 @@ func dataSourceSdaAuthenticationProfilesRead(ctx context.Context, d *schema.Reso
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.Sda.GetAuthenticationProfiles(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetAuthenticationProfilesV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAuthenticationProfiles", err,
-				"Failure at GetAuthenticationProfiles, unexpected response", ""))
+				"Failure when executing 2 GetAuthenticationProfilesV1", err,
+				"Failure at GetAuthenticationProfilesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaGetAuthenticationProfilesItems(response1.Response)
+		vItems1 := flattenSdaGetAuthenticationProfilesV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAuthenticationProfiles response",
+				"Failure when setting GetAuthenticationProfilesV1 response",
 				err))
 			return diags
 		}
@@ -171,7 +171,7 @@ func dataSourceSdaAuthenticationProfilesRead(ctx context.Context, d *schema.Reso
 	return diags
 }
 
-func flattenSdaGetAuthenticationProfilesItems(items *[]catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesResponse) []map[string]interface{} {
+func flattenSdaGetAuthenticationProfilesV1Items(items *[]catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

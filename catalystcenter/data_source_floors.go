@@ -130,32 +130,32 @@ func dataSourceFloorsRead(ctx context.Context, d *schema.ResourceData, m interfa
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetsAFloor")
+		log.Printf("[DEBUG] Selected method: GetsAFloorV2")
 		vvID := vID.(string)
-		queryParams1 := catalystcentersdkgo.GetsAFloorQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetsAFloorV2QueryParams{}
 
 		if okUnitsOfMeasure {
 			queryParams1.UnitsOfMeasure = vUnitsOfMeasure.(string)
 		}
 
-		response1, restyResp1, err := client.SiteDesign.GetsAFloor(vvID, &queryParams1)
+		response1, restyResp1, err := client.SiteDesign.GetsAFloorV2(vvID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetsAFloor", err,
-				"Failure at GetsAFloor, unexpected response", ""))
+				"Failure when executing 2 GetsAFloorV2", err,
+				"Failure at GetsAFloorV2, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSiteDesignGetsAFloorItem(response1.Response)
+		vItem1 := flattenSiteDesignGetsAFloorV2Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetsAFloor response",
+				"Failure when setting GetsAFloorV2 response",
 				err))
 			return diags
 		}
@@ -167,7 +167,7 @@ func dataSourceFloorsRead(ctx context.Context, d *schema.ResourceData, m interfa
 	return diags
 }
 
-func flattenSiteDesignGetsAFloorItem(item *catalystcentersdkgo.ResponseSiteDesignGetsAFloorResponse) []map[string]interface{} {
+func flattenSiteDesignGetsAFloorV2Item(item *catalystcentersdkgo.ResponseSiteDesignGetsAFloorV2Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -56,26 +56,26 @@ func dataSourceUsersExternalServersAAAAttributeRead(ctx context.Context, d *sche
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAAAAttributeAPI")
+		log.Printf("[DEBUG] Selected method: GetAAAAttributeAPIV1")
 
-		response1, restyResp1, err := client.UserandRoles.GetAAAAttributeAPI()
+		response1, restyResp1, err := client.UserandRoles.GetAAAAttributeAPIV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAAAAttributeAPI", err,
-				"Failure at GetAAAAttributeAPI, unexpected response", ""))
+				"Failure when executing 2 GetAAAAttributeAPIV1", err,
+				"Failure at GetAAAAttributeAPIV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenUserandRolesGetAAAAttributeAPIItem(response1.Response)
+		vItem1 := flattenUserandRolesGetAAAAttributeAPIV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAAAAttributeAPI response",
+				"Failure when setting GetAAAAttributeAPIV1 response",
 				err))
 			return diags
 		}
@@ -87,18 +87,18 @@ func dataSourceUsersExternalServersAAAAttributeRead(ctx context.Context, d *sche
 	return diags
 }
 
-func flattenUserandRolesGetAAAAttributeAPIItem(item *catalystcentersdkgo.ResponseUserandRolesGetAAAAttributeAPIResponse) []map[string]interface{} {
+func flattenUserandRolesGetAAAAttributeAPIV1Item(item *catalystcentersdkgo.ResponseUserandRolesGetAAAAttributeAPIV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["aaa_attributes"] = flattenUserandRolesGetAAAAttributeAPIItemAAAAttributes(item.AAAAttributes)
+	respItem["aaa_attributes"] = flattenUserandRolesGetAAAAttributeAPIV1ItemAAAAttributes(item.AAAAttributes)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenUserandRolesGetAAAAttributeAPIItemAAAAttributes(items *[]catalystcentersdkgo.ResponseUserandRolesGetAAAAttributeAPIResponseAAAAttributes) []map[string]interface{} {
+func flattenUserandRolesGetAAAAttributeAPIV1ItemAAAAttributes(items *[]catalystcentersdkgo.ResponseUserandRolesGetAAAAttributeAPIV1ResponseAAAAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

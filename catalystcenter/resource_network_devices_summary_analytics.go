@@ -276,31 +276,27 @@ func resourceNetworkDevicesSummaryAnalyticsCreate(ctx context.Context, d *schema
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevices(ctx, "parameters.0", d)
+	request1 := expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.Devices.GetsTheSummaryAnalyticsDataRelatedToNetworkDevices(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Devices.GetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing GetsTheSummaryAnalyticsDataRelatedToNetworkDevices", err))
+			"Failure when executing GetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	//Analizar verificacion.
-
-	vItem1 := flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesItem(response1.Response)
+	vItem1 := flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting GetsTheSummaryAnalyticsDataRelatedToNetworkDevices response",
+			"Failure when setting GetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1 response",
 			err))
 		return diags
 	}
@@ -322,8 +318,8 @@ func resourceNetworkDevicesSummaryAnalyticsDelete(ctx context.Context, d *schema
 	return diags
 }
 
-func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevices(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevices {
-	request := catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevices{}
+func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1 {
+	request := catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -337,19 +333,19 @@ func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelat
 		request.Attributes = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesFiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1FiltersArray(ctx, key+".filters", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".aggregate_attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".aggregate_attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".aggregate_attributes")))) {
-		request.AggregateAttributes = expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesAggregateAttributesArray(ctx, key+".aggregate_attributes", d)
+		request.AggregateAttributes = expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1AggregateAttributesArray(ctx, key+".aggregate_attributes", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".page")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".page")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".page")))) {
-		request.Page = expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesPage(ctx, key+".page.0", d)
+		request.Page = expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1Page(ctx, key+".page.0", d)
 	}
 	return &request
 }
 
-func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesFilters {
-	request := []catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesFilters{}
+func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1Filters {
+	request := []catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1Filters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -360,7 +356,7 @@ func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelat
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -368,8 +364,8 @@ func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelat
 	return &request
 }
 
-func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesFilters {
-	request := catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesFilters{}
+func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1Filters {
+	request := catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1Filters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -382,8 +378,8 @@ func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelat
 	return &request
 }
 
-func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesAggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesAggregateAttributes {
-	request := []catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesAggregateAttributes{}
+func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1AggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1AggregateAttributes {
+	request := []catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1AggregateAttributes{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -394,7 +390,7 @@ func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelat
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesAggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1AggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -402,8 +398,8 @@ func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelat
 	return &request
 }
 
-func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesAggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesAggregateAttributes {
-	request := catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesAggregateAttributes{}
+func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1AggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1AggregateAttributes {
+	request := catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1AggregateAttributes{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -413,8 +409,8 @@ func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelat
 	return &request
 }
 
-func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesPage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesPage {
-	request := catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesPage{}
+func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1Page(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1Page {
+	request := catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1Page{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".limit")))) {
 		request.Limit = interfaceToIntPtr(v)
 	}
@@ -422,13 +418,13 @@ func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelat
 		request.Offset = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".sort_by")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".sort_by")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".sort_by")))) {
-		request.SortBy = expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesPageSortByArray(ctx, key+".sort_by", d)
+		request.SortBy = expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1PageSortByArray(ctx, key+".sort_by", d)
 	}
 	return &request
 }
 
-func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesPageSortByArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesPageSortBy {
-	request := []catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesPageSortBy{}
+func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1PageSortByArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1PageSortBy {
+	request := []catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1PageSortBy{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -439,7 +435,7 @@ func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelat
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesPageSortBy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1PageSortBy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -447,8 +443,8 @@ func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelat
 	return &request
 }
 
-func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesPageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesPageSortBy {
-	request := catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesPageSortBy{}
+func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1PageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1PageSortBy {
+	request := catalystcentersdkgo.RequestDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1PageSortBy{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -458,20 +454,20 @@ func expandRequestNetworkDevicesSummaryAnalyticsGetsTheSummaryAnalyticsDataRelat
 	return &request
 }
 
-func flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesItem(item *catalystcentersdkgo.ResponseDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesResponse) []map[string]interface{} {
+func flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1Item(item *catalystcentersdkgo.ResponseDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["attributes"] = flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesItemAttributes(item.Attributes)
-	respItem["aggregate_attributes"] = flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesItemAggregateAttributes(item.AggregateAttributes)
-	respItem["groups"] = flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesItemGroups(item.Groups)
+	respItem["attributes"] = flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1ItemAttributes(item.Attributes)
+	respItem["aggregate_attributes"] = flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1ItemAggregateAttributes(item.AggregateAttributes)
+	respItem["groups"] = flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1ItemGroups(item.Groups)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesItemAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesResponseAttributes) []interface{} {
+func flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1ItemAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1ResponseAttributes) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -483,7 +479,7 @@ func flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesItemAttribu
 	return respItems
 }
 
-func flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesItemAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesResponseAggregateAttributes) []interface{} {
+func flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1ItemAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1ResponseAggregateAttributes) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -495,7 +491,7 @@ func flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesItemAggrega
 	return respItems
 }
 
-func flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesItemGroups(items *[]catalystcentersdkgo.ResponseDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesResponseGroups) []map[string]interface{} {
+func flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1ItemGroups(items *[]catalystcentersdkgo.ResponseDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1ResponseGroups) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -503,14 +499,14 @@ func flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesItemGroups(
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["id"] = item.ID
-		respItem["attributes"] = flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesItemGroupsAttributes(item.Attributes)
-		respItem["aggregate_attributes"] = flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesItemGroupsAggregateAttributes(item.AggregateAttributes)
+		respItem["attributes"] = flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1ItemGroupsAttributes(item.Attributes)
+		respItem["aggregate_attributes"] = flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1ItemGroupsAggregateAttributes(item.AggregateAttributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesItemGroupsAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesResponseGroupsAttributes) []map[string]interface{} {
+func flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1ItemGroupsAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1ResponseGroupsAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -524,7 +520,7 @@ func flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesItemGroupsA
 	return respItems
 }
 
-func flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesItemGroupsAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesResponseGroupsAggregateAttributes) []map[string]interface{} {
+func flattenDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1ItemGroupsAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetsTheSummaryAnalyticsDataRelatedToNetworkDevicesV1ResponseGroupsAggregateAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

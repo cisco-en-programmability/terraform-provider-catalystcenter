@@ -239,8 +239,8 @@ func dataSourceGlobalPoolRead(ctx context.Context, d *schema.ResourceData, m int
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetGlobalPool")
-		queryParams1 := catalystcentersdkgo.GetGlobalPoolQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetGlobalPoolV1")
+		queryParams1 := catalystcentersdkgo.GetGlobalPoolV1QueryParams{}
 
 		if okOffset {
 			queryParams1.Offset = vOffset.(float64)
@@ -249,24 +249,24 @@ func dataSourceGlobalPoolRead(ctx context.Context, d *schema.ResourceData, m int
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.NetworkSettings.GetGlobalPool(&queryParams1)
+		response1, restyResp1, err := client.NetworkSettings.GetGlobalPoolV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetGlobalPool", err,
-				"Failure at GetGlobalPool, unexpected response", ""))
+				"Failure when executing 2 GetGlobalPoolV1", err,
+				"Failure at GetGlobalPoolV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenNetworkSettingsGetGlobalPoolItems(response1.Response)
+		vItems1 := flattenNetworkSettingsGetGlobalPoolV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetGlobalPool response",
+				"Failure when setting GetGlobalPoolV1 response",
 				err))
 			return diags
 		}
@@ -278,7 +278,7 @@ func dataSourceGlobalPoolRead(ctx context.Context, d *schema.ResourceData, m int
 	return diags
 }
 
-func flattenNetworkSettingsGetGlobalPoolItems(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetGlobalPoolResponse) []map[string]interface{} {
+func flattenNetworkSettingsGetGlobalPoolV1Items(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetGlobalPoolV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -298,7 +298,7 @@ func flattenNetworkSettingsGetGlobalPoolItems(items *[]catalystcentersdkgo.Respo
 		respItem["overlapping"] = boolPtrToString(item.Overlapping)
 		respItem["configure_external_dhcp"] = boolPtrToString(item.ConfigureExternalDhcp)
 		respItem["used_percentage"] = item.UsedPercentage
-		respItem["client_options"] = flattenNetworkSettingsGetGlobalPoolItemsClientOptions(item.ClientOptions)
+		respItem["client_options"] = flattenNetworkSettingsGetGlobalPoolV1ItemsClientOptions(item.ClientOptions)
 		respItem["ip_pool_type"] = item.IPPoolType
 		respItem["unavailable_ip_address_count"] = item.UnavailableIPAddressCount
 		respItem["available_ip_address_count"] = item.AvailableIPAddressCount
@@ -306,7 +306,7 @@ func flattenNetworkSettingsGetGlobalPoolItems(items *[]catalystcentersdkgo.Respo
 		respItem["dns_server_ips"] = item.DNSServerIPs
 		respItem["has_subpools"] = boolPtrToString(item.HasSubpools)
 		respItem["default_assigned_ip_address_count"] = item.DefaultAssignedIPAddressCount
-		respItem["context"] = flattenNetworkSettingsGetGlobalPoolItemsContext(item.Context)
+		respItem["context"] = flattenNetworkSettingsGetGlobalPoolV1ItemsContext(item.Context)
 		respItem["ipv6"] = boolPtrToString(item.IPv6)
 		respItem["id"] = item.ID
 		respItem["ip_pool_cidr"] = item.IPPoolCidr
@@ -315,7 +315,7 @@ func flattenNetworkSettingsGetGlobalPoolItems(items *[]catalystcentersdkgo.Respo
 	return respItems
 }
 
-func flattenNetworkSettingsGetGlobalPoolItemsClientOptions(item *catalystcentersdkgo.ResponseNetworkSettingsGetGlobalPoolResponseClientOptions) interface{} {
+func flattenNetworkSettingsGetGlobalPoolV1ItemsClientOptions(item *catalystcentersdkgo.ResponseNetworkSettingsGetGlobalPoolV1ResponseClientOptions) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -325,7 +325,7 @@ func flattenNetworkSettingsGetGlobalPoolItemsClientOptions(item *catalystcenters
 
 }
 
-func flattenNetworkSettingsGetGlobalPoolItemsContext(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetGlobalPoolResponseContext) []map[string]interface{} {
+func flattenNetworkSettingsGetGlobalPoolV1ItemsContext(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetGlobalPoolV1ResponseContext) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

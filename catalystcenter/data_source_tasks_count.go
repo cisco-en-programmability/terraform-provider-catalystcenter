@@ -82,8 +82,8 @@ func dataSourceTasksCountRead(ctx context.Context, d *schema.ResourceData, m int
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTasksCount")
-		queryParams1 := catalystcentersdkgo.GetTasksCountQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetTasksCountV1")
+		queryParams1 := catalystcentersdkgo.GetTasksCountV1QueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(int)
@@ -101,24 +101,24 @@ func dataSourceTasksCountRead(ctx context.Context, d *schema.ResourceData, m int
 			queryParams1.Status = vStatus.(string)
 		}
 
-		response1, restyResp1, err := client.Task.GetTasksCount(&queryParams1)
+		response1, restyResp1, err := client.Task.GetTasksCountV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTasksCount", err,
-				"Failure at GetTasksCount, unexpected response", ""))
+				"Failure when executing 2 GetTasksCountV1", err,
+				"Failure at GetTasksCountV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenTaskGetTasksCountItem(response1.Response)
+		vItem1 := flattenTaskGetTasksCountV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTasksCount response",
+				"Failure when setting GetTasksCountV1 response",
 				err))
 			return diags
 		}
@@ -130,7 +130,7 @@ func dataSourceTasksCountRead(ctx context.Context, d *schema.ResourceData, m int
 	return diags
 }
 
-func flattenTaskGetTasksCountItem(item *catalystcentersdkgo.ResponseTaskGetTasksCountResponse) []map[string]interface{} {
+func flattenTaskGetTasksCountV1Item(item *catalystcentersdkgo.ResponseTaskGetTasksCountV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -383,20 +383,18 @@ func resourceNetworkUpdateCreate(ctx context.Context, d *schema.ResourceData, m 
 	vSiteID := resourceItem["site_id"]
 
 	vvSiteID := vSiteID.(string)
-	request1 := expandRequestNetworkUpdateUpdateNetwork(ctx, "parameters.0", d)
+	request1 := expandRequestNetworkUpdateUpdateNetworkV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.NetworkSettings.UpdateNetwork(vvSiteID, request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.NetworkSettings.UpdateNetworkV1(vvSiteID, request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing UpdateNetwork", err))
+			"Failure when executing UpdateNetworkV1", err))
 		return diags
 	}
 
@@ -432,23 +430,25 @@ func resourceNetworkUpdateCreate(ctx context.Context, d *schema.ResourceData, m 
 		if response2.Status == "FAILURE" {
 			bapiError := response2.BapiError
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing UpdateNetwork", err,
-				"Failure at UpdateNetwork execution", bapiError))
+				"Failure when executing UpdateNetworkV1", err,
+				"Failure at UpdateNetworkV1 execution", bapiError))
 			return diags
 		}
 	}
 
-	vItem1 := flattenNetworkSettingsUpdateNetworkItem(response1)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
+	vItem1 := flattenNetworkSettingsUpdateNetworkV1Item(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting UpdateNetwork response",
+			"Failure when setting UpdateNetworkV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceNetworkUpdateRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -463,28 +463,28 @@ func resourceNetworkUpdateDelete(ctx context.Context, d *schema.ResourceData, m 
 	return diags
 }
 
-func expandRequestNetworkUpdateUpdateNetwork(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateNetwork {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateNetwork{}
-	request.Settings = expandRequestNetworkUpdateUpdateNetworkSettings(ctx, key, d)
+func expandRequestNetworkUpdateUpdateNetworkV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkV1 {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkV1{}
+	request.Settings = expandRequestNetworkUpdateUpdateNetworkV1Settings(ctx, key, d)
 	return &request
 }
 
-func expandRequestNetworkUpdateUpdateNetworkSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkSettings {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkSettings{}
+func expandRequestNetworkUpdateUpdateNetworkV1Settings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkV1Settings {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkV1Settings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".dhcp_server")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".dhcp_server")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".dhcp_server")))) {
 		request.DhcpServer = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".dns_server")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".dns_server")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".dns_server")))) {
-		request.DNSServer = expandRequestNetworkUpdateUpdateNetworkSettingsDNSServer(ctx, key+".dns_server.0", d)
+		request.DNSServer = expandRequestNetworkUpdateUpdateNetworkV1SettingsDNSServer(ctx, key+".dns_server.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".syslog_server")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".syslog_server")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".syslog_server")))) {
-		request.SyslogServer = expandRequestNetworkUpdateUpdateNetworkSettingsSyslogServer(ctx, key+".syslog_server.0", d)
+		request.SyslogServer = expandRequestNetworkUpdateUpdateNetworkV1SettingsSyslogServer(ctx, key+".syslog_server.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_server")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_server")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_server")))) {
-		request.SNMPServer = expandRequestNetworkUpdateUpdateNetworkSettingsSNMPServer(ctx, key+".snmp_server.0", d)
+		request.SNMPServer = expandRequestNetworkUpdateUpdateNetworkV1SettingsSNMPServer(ctx, key+".snmp_server.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".netflowcollector")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".netflowcollector")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".netflowcollector")))) {
-		request.Netflowcollector = expandRequestNetworkUpdateUpdateNetworkSettingsNetflowcollector(ctx, key+".netflowcollector.0", d)
+		request.Netflowcollector = expandRequestNetworkUpdateUpdateNetworkV1SettingsNetflowcollector(ctx, key+".netflowcollector.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ntp_server")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ntp_server")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ntp_server")))) {
 		request.NtpServer = interfaceToSliceString(v)
@@ -493,19 +493,19 @@ func expandRequestNetworkUpdateUpdateNetworkSettings(ctx context.Context, key st
 		request.Timezone = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".message_of_theday")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".message_of_theday")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".message_of_theday")))) {
-		request.MessageOfTheday = expandRequestNetworkUpdateUpdateNetworkSettingsMessageOfTheday(ctx, key+".message_of_theday.0", d)
+		request.MessageOfTheday = expandRequestNetworkUpdateUpdateNetworkV1SettingsMessageOfTheday(ctx, key+".message_of_theday.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".network_aaa")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".network_aaa")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".network_aaa")))) {
-		request.NetworkAAA = expandRequestNetworkUpdateUpdateNetworkSettingsNetworkAAA(ctx, key+".network_aaa.0", d)
+		request.NetworkAAA = expandRequestNetworkUpdateUpdateNetworkV1SettingsNetworkAAA(ctx, key+".network_aaa.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".client_and_endpoint_aaa")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".client_and_endpoint_aaa")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".client_and_endpoint_aaa")))) {
-		request.ClientAndEndpointAAA = expandRequestNetworkUpdateUpdateNetworkSettingsClientAndEndpointAAA(ctx, key+".client_and_endpoint_aaa.0", d)
+		request.ClientAndEndpointAAA = expandRequestNetworkUpdateUpdateNetworkV1SettingsClientAndEndpointAAA(ctx, key+".client_and_endpoint_aaa.0", d)
 	}
 	return &request
 }
 
-func expandRequestNetworkUpdateUpdateNetworkSettingsDNSServer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkSettingsDNSServer {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkSettingsDNSServer{}
+func expandRequestNetworkUpdateUpdateNetworkV1SettingsDNSServer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkV1SettingsDNSServer {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkV1SettingsDNSServer{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".domain_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".domain_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".domain_name")))) {
 		request.DomainName = interfaceToString(v)
 	}
@@ -518,8 +518,8 @@ func expandRequestNetworkUpdateUpdateNetworkSettingsDNSServer(ctx context.Contex
 	return &request
 }
 
-func expandRequestNetworkUpdateUpdateNetworkSettingsSyslogServer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkSettingsSyslogServer {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkSettingsSyslogServer{}
+func expandRequestNetworkUpdateUpdateNetworkV1SettingsSyslogServer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkV1SettingsSyslogServer {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkV1SettingsSyslogServer{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ip_addresses")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ip_addresses")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ip_addresses")))) {
 		request.IPAddresses = interfaceToSliceString(v)
 	}
@@ -529,8 +529,8 @@ func expandRequestNetworkUpdateUpdateNetworkSettingsSyslogServer(ctx context.Con
 	return &request
 }
 
-func expandRequestNetworkUpdateUpdateNetworkSettingsSNMPServer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkSettingsSNMPServer {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkSettingsSNMPServer{}
+func expandRequestNetworkUpdateUpdateNetworkV1SettingsSNMPServer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkV1SettingsSNMPServer {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkV1SettingsSNMPServer{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ip_addresses")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ip_addresses")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ip_addresses")))) {
 		request.IPAddresses = interfaceToSliceString(v)
 	}
@@ -540,8 +540,8 @@ func expandRequestNetworkUpdateUpdateNetworkSettingsSNMPServer(ctx context.Conte
 	return &request
 }
 
-func expandRequestNetworkUpdateUpdateNetworkSettingsNetflowcollector(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkSettingsNetflowcollector {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkSettingsNetflowcollector{}
+func expandRequestNetworkUpdateUpdateNetworkV1SettingsNetflowcollector(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkV1SettingsNetflowcollector {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkV1SettingsNetflowcollector{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ip_address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ip_address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ip_address")))) {
 		request.IPAddress = interfaceToString(v)
 	}
@@ -551,8 +551,8 @@ func expandRequestNetworkUpdateUpdateNetworkSettingsNetflowcollector(ctx context
 	return &request
 }
 
-func expandRequestNetworkUpdateUpdateNetworkSettingsMessageOfTheday(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkSettingsMessageOfTheday {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkSettingsMessageOfTheday{}
+func expandRequestNetworkUpdateUpdateNetworkV1SettingsMessageOfTheday(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkV1SettingsMessageOfTheday {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkV1SettingsMessageOfTheday{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".banner_message")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".banner_message")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".banner_message")))) {
 		request.BannerMessage = interfaceToString(v)
 	}
@@ -562,8 +562,8 @@ func expandRequestNetworkUpdateUpdateNetworkSettingsMessageOfTheday(ctx context.
 	return &request
 }
 
-func expandRequestNetworkUpdateUpdateNetworkSettingsNetworkAAA(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkSettingsNetworkAAA {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkSettingsNetworkAAA{}
+func expandRequestNetworkUpdateUpdateNetworkV1SettingsNetworkAAA(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkV1SettingsNetworkAAA {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkV1SettingsNetworkAAA{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".servers")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".servers")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".servers")))) {
 		request.Servers = interfaceToString(v)
 	}
@@ -582,8 +582,8 @@ func expandRequestNetworkUpdateUpdateNetworkSettingsNetworkAAA(ctx context.Conte
 	return &request
 }
 
-func expandRequestNetworkUpdateUpdateNetworkSettingsClientAndEndpointAAA(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkSettingsClientAndEndpointAAA {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkSettingsClientAndEndpointAAA{}
+func expandRequestNetworkUpdateUpdateNetworkV1SettingsClientAndEndpointAAA(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkV1SettingsClientAndEndpointAAA {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateNetworkV1SettingsClientAndEndpointAAA{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".servers")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".servers")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".servers")))) {
 		request.Servers = interfaceToString(v)
 	}
@@ -602,7 +602,7 @@ func expandRequestNetworkUpdateUpdateNetworkSettingsClientAndEndpointAAA(ctx con
 	return &request
 }
 
-func flattenNetworkSettingsUpdateNetworkItem(item *catalystcentersdkgo.ResponseNetworkSettingsUpdateNetwork) []map[string]interface{} {
+func flattenNetworkSettingsUpdateNetworkV1Item(item *catalystcentersdkgo.ResponseNetworkSettingsUpdateNetworkV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

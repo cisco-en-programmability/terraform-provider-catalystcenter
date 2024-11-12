@@ -234,7 +234,7 @@ func resourceWirelessProfilesCreate(ctx context.Context, d *schema.ResourceData,
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestWirelessProfilesCreateWirelessProfile2(ctx, "parameters.0", d)
+	request1 := expandRequestWirelessProfilesCreateWirelessProfileConnectivityV1(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vID, okID := resourceItem["id"]
@@ -250,7 +250,7 @@ func resourceWirelessProfilesCreate(ctx context.Context, d *schema.ResourceData,
 			return resourceWirelessProfilesRead(ctx, d, m)
 		}
 	} else {
-		queryParamImport := catalystcentersdkgo.GetWirelessProfilesQueryParams{}
+		queryParamImport := catalystcentersdkgo.GetWirelessProfilesV1QueryParams{}
 
 		response2, err := searchWirelessGetWirelessProfiles(m, queryParamImport, vvName)
 		if response2 != nil && err == nil {
@@ -260,7 +260,7 @@ func resourceWirelessProfilesCreate(ctx context.Context, d *schema.ResourceData,
 			return resourceWirelessProfilesRead(ctx, d, m)
 		}
 	}
-	resp1, restyResp1, err := client.Wireless.CreateWirelessProfile2(request1)
+	resp1, restyResp1, err := client.Wireless.CreateWirelessProfileConnectivity(request1)
 	if err != nil || resp1 == nil {
 		if restyResp1 != nil {
 			diags = append(diags, diagErrorWithResponse(
@@ -299,7 +299,7 @@ func resourceWirelessProfilesCreate(ctx context.Context, d *schema.ResourceData,
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetWirelessProfilesQueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetWirelessProfilesV1QueryParams{}
 	item3, err := searchWirelessGetWirelessProfiles(m, queryParamValidate, vvID)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
@@ -340,7 +340,7 @@ func resourceWirelessProfilesRead(ctx context.Context, d *schema.ResourceData, m
 		}
 
 		// Review flatten function used
-		vItem1 := flattenWirelessGetWirelessProfileByIDItem(response1.Response)
+		vItem1 := flattenWirelessGetWirelessProfileByIDV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetWirelessProfiles search response",
@@ -362,9 +362,9 @@ func resourceWirelessProfilesUpdate(ctx context.Context, d *schema.ResourceData,
 	vvID := resourceMap["id"]
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvID)
-		request1 := expandRequestWirelessProfilesUpdateWirelessProfile2(ctx, "parameters.0", d)
+		request1 := expandRequestWirelessProfilesUpdateWirelessProfileConnectivityV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-		response1, restyResp1, err := client.Wireless.UpdateWirelessProfile2(vvID, request1)
+		response1, restyResp1, err := client.Wireless.UpdateWirelessProfileConnectivity(vvID, request1)
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] resty response for update operation => %v", restyResp1.String())
@@ -424,7 +424,7 @@ func resourceWirelessProfilesDelete(ctx context.Context, d *schema.ResourceData,
 
 	vvID := resourceMap["id"]
 
-	response1, restyResp1, err := client.Wireless.DeleteWirelessProfile2(vvID)
+	response1, restyResp1, err := client.Wireless.DeleteWirelessProfileConnectivityV1(vvID)
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] resty response for delete operation => %v", restyResp1.String())
@@ -474,13 +474,13 @@ func resourceWirelessProfilesDelete(ctx context.Context, d *schema.ResourceData,
 
 	return diags
 }
-func expandRequestWirelessProfilesCreateWirelessProfile2(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateWirelessProfile2 {
-	request := catalystcentersdkgo.RequestWirelessCreateWirelessProfile2{}
+func expandRequestWirelessProfilesCreateWirelessProfileConnectivityV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateWirelessProfileConnectivityV1 {
+	request := catalystcentersdkgo.RequestWirelessCreateWirelessProfileConnectivityV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".wireless_profile_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".wireless_profile_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".wireless_profile_name")))) {
 		request.WirelessProfileName = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ssid_details")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ssid_details")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ssid_details")))) {
-		request.SSIDDetails = expandRequestWirelessProfilesCreateWirelessProfile2SSIDDetailsArray(ctx, key+".ssid_details", d)
+		request.SSIDDetails = expandRequestWirelessProfilesCreateWirelessProfileConnectivityV1SSIDDetailsArray(ctx, key+".ssid_details", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -488,8 +488,8 @@ func expandRequestWirelessProfilesCreateWirelessProfile2(ctx context.Context, ke
 	return &request
 }
 
-func expandRequestWirelessProfilesCreateWirelessProfile2SSIDDetailsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessCreateWirelessProfile2SSIDDetails {
-	request := []catalystcentersdkgo.RequestWirelessCreateWirelessProfile2SSIDDetails{}
+func expandRequestWirelessProfilesCreateWirelessProfileConnectivityV1SSIDDetailsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessCreateWirelessProfileConnectivityV1SSIDDetails {
+	request := []catalystcentersdkgo.RequestWirelessCreateWirelessProfileConnectivityV1SSIDDetails{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -500,7 +500,7 @@ func expandRequestWirelessProfilesCreateWirelessProfile2SSIDDetailsArray(ctx con
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestWirelessProfilesCreateWirelessProfile2SSIDDetails(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestWirelessProfilesCreateWirelessProfileConnectivityV1SSIDDetails(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -511,13 +511,13 @@ func expandRequestWirelessProfilesCreateWirelessProfile2SSIDDetailsArray(ctx con
 	return &request
 }
 
-func expandRequestWirelessProfilesCreateWirelessProfile2SSIDDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateWirelessProfile2SSIDDetails {
-	request := catalystcentersdkgo.RequestWirelessCreateWirelessProfile2SSIDDetails{}
+func expandRequestWirelessProfilesCreateWirelessProfileConnectivityV1SSIDDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateWirelessProfileConnectivityV1SSIDDetails {
+	request := catalystcentersdkgo.RequestWirelessCreateWirelessProfileConnectivityV1SSIDDetails{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ssid_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ssid_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ssid_name")))) {
 		request.SSIDName = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".flex_connect")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".flex_connect")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".flex_connect")))) {
-		request.FlexConnect = expandRequestWirelessProfilesCreateWirelessProfile2SSIDDetailsFlexConnect(ctx, key+".flex_connect.0", d)
+		request.FlexConnect = expandRequestWirelessProfilesCreateWirelessProfileConnectivityV1SSIDDetailsFlexConnect(ctx, key+".flex_connect.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".enable_fabric")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".enable_fabric")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".enable_fabric")))) {
 		request.EnableFabric = interfaceToBoolPtr(v)
@@ -537,8 +537,8 @@ func expandRequestWirelessProfilesCreateWirelessProfile2SSIDDetails(ctx context.
 	return &request
 }
 
-func expandRequestWirelessProfilesCreateWirelessProfile2SSIDDetailsFlexConnect(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateWirelessProfile2SSIDDetailsFlexConnect {
-	request := catalystcentersdkgo.RequestWirelessCreateWirelessProfile2SSIDDetailsFlexConnect{}
+func expandRequestWirelessProfilesCreateWirelessProfileConnectivityV1SSIDDetailsFlexConnect(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateWirelessProfileConnectivityV1SSIDDetailsFlexConnect {
+	request := catalystcentersdkgo.RequestWirelessCreateWirelessProfileConnectivityV1SSIDDetailsFlexConnect{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".enable_flex_connect")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".enable_flex_connect")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".enable_flex_connect")))) {
 		request.EnableFlexConnect = interfaceToBoolPtr(v)
 	}
@@ -551,13 +551,13 @@ func expandRequestWirelessProfilesCreateWirelessProfile2SSIDDetailsFlexConnect(c
 	return &request
 }
 
-func expandRequestWirelessProfilesUpdateWirelessProfile2(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateWirelessProfile2 {
-	request := catalystcentersdkgo.RequestWirelessUpdateWirelessProfile2{}
+func expandRequestWirelessProfilesUpdateWirelessProfileConnectivityV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateWirelessProfileConnectivityV1 {
+	request := catalystcentersdkgo.RequestWirelessUpdateWirelessProfileConnectivityV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".wireless_profile_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".wireless_profile_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".wireless_profile_name")))) {
 		request.WirelessProfileName = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ssid_details")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ssid_details")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ssid_details")))) {
-		request.SSIDDetails = expandRequestWirelessProfilesUpdateWirelessProfile2SSIDDetailsArray(ctx, key+".ssid_details", d)
+		request.SSIDDetails = expandRequestWirelessProfilesUpdateWirelessProfileConnectivityV1SSIDDetailsArray(ctx, key+".ssid_details", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -565,8 +565,8 @@ func expandRequestWirelessProfilesUpdateWirelessProfile2(ctx context.Context, ke
 	return &request
 }
 
-func expandRequestWirelessProfilesUpdateWirelessProfile2SSIDDetailsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessUpdateWirelessProfile2SSIDDetails {
-	request := []catalystcentersdkgo.RequestWirelessUpdateWirelessProfile2SSIDDetails{}
+func expandRequestWirelessProfilesUpdateWirelessProfileConnectivityV1SSIDDetailsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessUpdateWirelessProfileConnectivityV1SSIDDetails {
+	request := []catalystcentersdkgo.RequestWirelessUpdateWirelessProfileConnectivityV1SSIDDetails{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -577,7 +577,7 @@ func expandRequestWirelessProfilesUpdateWirelessProfile2SSIDDetailsArray(ctx con
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestWirelessProfilesUpdateWirelessProfile2SSIDDetails(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestWirelessProfilesUpdateWirelessProfileConnectivityV1SSIDDetails(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -588,13 +588,13 @@ func expandRequestWirelessProfilesUpdateWirelessProfile2SSIDDetailsArray(ctx con
 	return &request
 }
 
-func expandRequestWirelessProfilesUpdateWirelessProfile2SSIDDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateWirelessProfile2SSIDDetails {
-	request := catalystcentersdkgo.RequestWirelessUpdateWirelessProfile2SSIDDetails{}
+func expandRequestWirelessProfilesUpdateWirelessProfileConnectivityV1SSIDDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateWirelessProfileConnectivityV1SSIDDetails {
+	request := catalystcentersdkgo.RequestWirelessUpdateWirelessProfileConnectivityV1SSIDDetails{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ssid_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ssid_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ssid_name")))) {
 		request.SSIDName = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".flex_connect")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".flex_connect")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".flex_connect")))) {
-		request.FlexConnect = expandRequestWirelessProfilesUpdateWirelessProfile2SSIDDetailsFlexConnect(ctx, key+".flex_connect.0", d)
+		request.FlexConnect = expandRequestWirelessProfilesUpdateWirelessProfileConnectivityV1SSIDDetailsFlexConnect(ctx, key+".flex_connect.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".enable_fabric")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".enable_fabric")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".enable_fabric")))) {
 		request.EnableFabric = interfaceToBoolPtr(v)
@@ -614,8 +614,8 @@ func expandRequestWirelessProfilesUpdateWirelessProfile2SSIDDetails(ctx context.
 	return &request
 }
 
-func expandRequestWirelessProfilesUpdateWirelessProfile2SSIDDetailsFlexConnect(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateWirelessProfile2SSIDDetailsFlexConnect {
-	request := catalystcentersdkgo.RequestWirelessUpdateWirelessProfile2SSIDDetailsFlexConnect{}
+func expandRequestWirelessProfilesUpdateWirelessProfileConnectivityV1SSIDDetailsFlexConnect(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateWirelessProfileConnectivityV1SSIDDetailsFlexConnect {
+	request := catalystcentersdkgo.RequestWirelessUpdateWirelessProfileConnectivityV1SSIDDetailsFlexConnect{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".enable_flex_connect")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".enable_flex_connect")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".enable_flex_connect")))) {
 		request.EnableFlexConnect = interfaceToBoolPtr(v)
 	}
@@ -628,10 +628,10 @@ func expandRequestWirelessProfilesUpdateWirelessProfile2SSIDDetailsFlexConnect(c
 	return &request
 }
 
-func searchWirelessGetWirelessProfiles(m interface{}, queryParams catalystcentersdkgo.GetWirelessProfilesQueryParams, vID string) (*catalystcentersdkgo.ResponseWirelessGetWirelessProfilesResponse, error) {
+func searchWirelessGetWirelessProfiles(m interface{}, queryParams catalystcentersdkgo.GetWirelessProfilesV1QueryParams, vID string) (*catalystcentersdkgo.ResponseWirelessGetWirelessProfilesV1Response, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseWirelessGetWirelessProfilesResponse
+	var foundItem *catalystcentersdkgo.ResponseWirelessGetWirelessProfilesV1Response
 
 	queryParams.Offset = 1
 	nResponse, _, err := client.Wireless.GetWirelessProfiles(nil)

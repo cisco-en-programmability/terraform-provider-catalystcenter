@@ -80,14 +80,16 @@ func resourceMapsExportCreate(ctx context.Context, d *schema.ResourceData, m int
 
 	vvSiteHierarchyUUID := vSiteHierarchyUUID.(string)
 
-	response1, restyResp1, err := client.Sites.ExportMapArchive(vvSiteHierarchyUUID)
+	// has_unknown_response: None
+
+	response1, restyResp1, err := client.Sites.ExportMapArchiveV1(vvSiteHierarchyUUID)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ExportMapArchive", err))
+			"Failure when executing ExportMapArchiveV1", err))
 		return diags
 	}
 
@@ -95,7 +97,7 @@ func resourceMapsExportCreate(ctx context.Context, d *schema.ResourceData, m int
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing ExportMapArchive", err))
+			"Failure when executing ExportMapArchiveV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -129,22 +131,21 @@ func resourceMapsExportCreate(ctx context.Context, d *schema.ResourceData, m int
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing ExportMapArchive", err1))
+				"Failure when executing ExportMapArchiveV1", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenSitesExportMapArchiveItem(response1.Response)
+	vItem1 := flattenSitesExportMapArchiveV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ExportMapArchive response",
+			"Failure when setting ExportMapArchiveV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceMapsExportRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -159,7 +160,7 @@ func resourceMapsExportDelete(ctx context.Context, d *schema.ResourceData, m int
 	return diags
 }
 
-func flattenSitesExportMapArchiveItem(item *catalystcentersdkgo.ResponseSitesExportMapArchiveResponse) []map[string]interface{} {
+func flattenSitesExportMapArchiveV1Item(item *catalystcentersdkgo.ResponseSitesExportMapArchiveV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

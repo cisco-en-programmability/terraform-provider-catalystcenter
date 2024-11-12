@@ -126,29 +126,29 @@ func dataSourceBusinessSdaVirtualNetworkSummaryRead(ctx context.Context, d *sche
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetVirtualNetworkSummary")
-		queryParams1 := catalystcentersdkgo.GetVirtualNetworkSummaryQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetVirtualNetworkSummaryV1")
+		queryParams1 := catalystcentersdkgo.GetVirtualNetworkSummaryV1QueryParams{}
 
 		queryParams1.SiteNameHierarchy = vSiteNameHierarchy.(string)
 
-		response1, restyResp1, err := client.Sda.GetVirtualNetworkSummary(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetVirtualNetworkSummaryV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetVirtualNetworkSummary", err,
-				"Failure at GetVirtualNetworkSummary, unexpected response", ""))
+				"Failure when executing 2 GetVirtualNetworkSummaryV1", err,
+				"Failure at GetVirtualNetworkSummaryV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetVirtualNetworkSummaryItem(response1)
+		vItem1 := flattenSdaGetVirtualNetworkSummaryV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetVirtualNetworkSummary response",
+				"Failure when setting GetVirtualNetworkSummaryV1 response",
 				err))
 			return diags
 		}
@@ -160,13 +160,13 @@ func dataSourceBusinessSdaVirtualNetworkSummaryRead(ctx context.Context, d *sche
 	return diags
 }
 
-func flattenSdaGetVirtualNetworkSummaryItem(item *catalystcentersdkgo.ResponseSdaGetVirtualNetworkSummary) []map[string]interface{} {
+func flattenSdaGetVirtualNetworkSummaryV1Item(item *catalystcentersdkgo.ResponseSdaGetVirtualNetworkSummaryV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["virtual_network_count"] = item.VirtualNetworkCount
-	respItem["virtual_network_summary"] = flattenSdaGetVirtualNetworkSummaryItemVirtualNetworkSummary(item.VirtualNetworkSummary)
+	respItem["virtual_network_summary"] = flattenSdaGetVirtualNetworkSummaryV1ItemVirtualNetworkSummary(item.VirtualNetworkSummary)
 	respItem["status"] = item.Status
 	respItem["description"] = item.Description
 	respItem["execution_id"] = item.ExecutionID
@@ -175,7 +175,7 @@ func flattenSdaGetVirtualNetworkSummaryItem(item *catalystcentersdkgo.ResponseSd
 	}
 }
 
-func flattenSdaGetVirtualNetworkSummaryItemVirtualNetworkSummary(items *[]catalystcentersdkgo.ResponseSdaGetVirtualNetworkSummaryVirtualNetworkSummary) []map[string]interface{} {
+func flattenSdaGetVirtualNetworkSummaryV1ItemVirtualNetworkSummary(items *[]catalystcentersdkgo.ResponseSdaGetVirtualNetworkSummaryV1VirtualNetworkSummary) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

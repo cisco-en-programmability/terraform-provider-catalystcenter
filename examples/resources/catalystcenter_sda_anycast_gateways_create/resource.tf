@@ -1,6 +1,6 @@
 
 resource "catalystcenter_sda_anycast_gateways_create" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     auto_generate_vlan_name                      = "false"

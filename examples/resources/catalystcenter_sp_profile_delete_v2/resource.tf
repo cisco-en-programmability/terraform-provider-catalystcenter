@@ -1,6 +1,6 @@
 
 resource "catalystcenter_sp_profile_delete_v2" "example" {
-  provider        = catalystcenter
+  provider        = meraki
   sp_profile_name = "string"
   parameters {
 

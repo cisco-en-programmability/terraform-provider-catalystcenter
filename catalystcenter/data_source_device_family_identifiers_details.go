@@ -54,26 +54,26 @@ func dataSourceDeviceFamilyIDentifiersDetailsRead(ctx context.Context, d *schema
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceFamilyIDentifiers")
+		log.Printf("[DEBUG] Selected method: GetDeviceFamilyIDentifiersV1")
 
-		response1, restyResp1, err := client.SoftwareImageManagementSwim.GetDeviceFamilyIDentifiers()
+		response1, restyResp1, err := client.SoftwareImageManagementSwim.GetDeviceFamilyIDentifiersV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceFamilyIDentifiers", err,
-				"Failure at GetDeviceFamilyIDentifiers, unexpected response", ""))
+				"Failure when executing 2 GetDeviceFamilyIDentifiersV1", err,
+				"Failure at GetDeviceFamilyIDentifiersV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSoftwareImageManagementSwimGetDeviceFamilyIDentifiersItems(response1.Response)
+		vItems1 := flattenSoftwareImageManagementSwimGetDeviceFamilyIDentifiersV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceFamilyIDentifiers response",
+				"Failure when setting GetDeviceFamilyIDentifiersV1 response",
 				err))
 			return diags
 		}
@@ -85,7 +85,7 @@ func dataSourceDeviceFamilyIDentifiersDetailsRead(ctx context.Context, d *schema
 	return diags
 }
 
-func flattenSoftwareImageManagementSwimGetDeviceFamilyIDentifiersItems(items *[]catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetDeviceFamilyIDentifiersResponse) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimGetDeviceFamilyIDentifiersV1Items(items *[]catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetDeviceFamilyIDentifiersV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

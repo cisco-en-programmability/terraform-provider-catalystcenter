@@ -71,29 +71,29 @@ func dataSourceSdaDeviceRoleRead(ctx context.Context, d *schema.ResourceData, m 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceRoleInSdaFabric")
-		queryParams1 := catalystcentersdkgo.GetDeviceRoleInSdaFabricQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetDeviceRoleInSdaFabricV1")
+		queryParams1 := catalystcentersdkgo.GetDeviceRoleInSdaFabricV1QueryParams{}
 
 		queryParams1.DeviceManagementIPAddress = vDeviceManagementIPAddress.(string)
 
-		response1, restyResp1, err := client.Sda.GetDeviceRoleInSdaFabric(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetDeviceRoleInSdaFabricV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceRoleInSdaFabric", err,
-				"Failure at GetDeviceRoleInSdaFabric, unexpected response", ""))
+				"Failure when executing 2 GetDeviceRoleInSdaFabricV1", err,
+				"Failure at GetDeviceRoleInSdaFabricV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetDeviceRoleInSdaFabricItem(response1)
+		vItem1 := flattenSdaGetDeviceRoleInSdaFabricV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceRoleInSdaFabric response",
+				"Failure when setting GetDeviceRoleInSdaFabricV1 response",
 				err))
 			return diags
 		}
@@ -105,7 +105,7 @@ func dataSourceSdaDeviceRoleRead(ctx context.Context, d *schema.ResourceData, m 
 	return diags
 }
 
-func flattenSdaGetDeviceRoleInSdaFabricItem(item *catalystcentersdkgo.ResponseSdaGetDeviceRoleInSdaFabric) []map[string]interface{} {
+func flattenSdaGetDeviceRoleInSdaFabricV1Item(item *catalystcentersdkgo.ResponseSdaGetDeviceRoleInSdaFabricV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

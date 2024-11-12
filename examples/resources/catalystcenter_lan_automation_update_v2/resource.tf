@@ -1,6 +1,6 @@
 
 resource "catalystcenter_lan_automation_update_v2" "example" {
-  provider = catalystcenter
+  provider = meraki
   id       = "string"
   parameters {
 

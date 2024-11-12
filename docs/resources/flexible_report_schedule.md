@@ -21,7 +21,7 @@ resource "catalystcenter_flexible_report_schedule" "example" {
   parameters {
 
     report_id = "string"
-    schedule  = "string"
+    schedule  = "------"
   }
 }
 

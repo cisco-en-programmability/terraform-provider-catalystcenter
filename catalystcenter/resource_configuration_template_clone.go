@@ -99,16 +99,18 @@ func resourceConfigurationTemplateCloneCreate(ctx context.Context, d *schema.Res
 	vvName := vName.(string)
 	vvTemplateID := vTemplateID.(string)
 	vvProjectID := vProjectID.(string)
-	queryParams1 := catalystcentersdkgo.CreatesACloneOfTheGivenTemplateQueryParams{}
+	queryParams1 := catalystcentersdkgo.CreatesACloneOfTheGivenTemplateV1QueryParams{}
 
-	response1, restyResp1, err := client.ConfigurationTemplates.CreatesACloneOfTheGivenTemplate(vvName, vvTemplateID, vvProjectID, &queryParams1)
+	// has_unknown_response: None
+
+	response1, restyResp1, err := client.ConfigurationTemplates.CreatesACloneOfTheGivenTemplateV1(vvName, vvTemplateID, vvProjectID, &queryParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing CreatesACloneOfTheGivenTemplate", err))
+			"Failure when executing CreatesACloneOfTheGivenTemplateV1", err))
 		return diags
 	}
 
@@ -154,18 +156,16 @@ func resourceConfigurationTemplateCloneCreate(ctx context.Context, d *schema.Res
 			return diags
 		}
 	}
-
-	vItem1 := flattenConfigurationTemplatesCreatesACloneOfTheGivenTemplateItem(response1.Response)
+	vItem1 := flattenConfigurationTemplatesCreatesACloneOfTheGivenTemplateV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting CreatesACloneOfTheGivenTemplate response",
+			"Failure when setting CreatesACloneOfTheGivenTemplateV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceConfigurationTemplateCloneRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -180,7 +180,7 @@ func resourceConfigurationTemplateCloneDelete(ctx context.Context, d *schema.Res
 	return diags
 }
 
-func flattenConfigurationTemplatesCreatesACloneOfTheGivenTemplateItem(item *catalystcentersdkgo.ResponseConfigurationTemplatesCreatesACloneOfTheGivenTemplateResponse) []map[string]interface{} {
+func flattenConfigurationTemplatesCreatesACloneOfTheGivenTemplateV1Item(item *catalystcentersdkgo.ResponseConfigurationTemplatesCreatesACloneOfTheGivenTemplateV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

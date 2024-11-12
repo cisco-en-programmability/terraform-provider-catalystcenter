@@ -22,9 +22,8 @@ resource "catalystcenter_application_sets" "example" {
   provider = catalystcenter
 
   parameters {
-    payload {
-      name = "string"
-    }
+
+    name = "string"
   }
 }
 
@@ -38,7 +37,7 @@ output "catalystcenter_application_sets_example" {
 
 ### Optional
 
-- `parameters` (Block List) Array of RequestApplicationPolicyCreateApplicationSet (see [below for nested schema](#nestedblock--parameters))
+- `parameters` (Block List) Array of RequestApplicationPolicyCreateApplicationSetV1 (see [below for nested schema](#nestedblock--parameters))
 
 ### Read-Only
 

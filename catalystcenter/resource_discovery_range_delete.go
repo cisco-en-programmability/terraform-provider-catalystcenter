@@ -90,14 +90,16 @@ func resourceDiscoveryRangeDeleteCreate(ctx context.Context, d *schema.ResourceD
 	vvStartIndex := vStartIndex.(int)
 	vvRecordsToDelete := vRecordsToDelete.(int)
 
-	response1, restyResp1, err := client.Discovery.DeleteDiscoveryBySpecifiedRange(vvStartIndex, vvRecordsToDelete)
+	// has_unknown_response: None
+
+	response1, restyResp1, err := client.Discovery.DeleteDiscoveryBySpecifiedRangeV1(vvStartIndex, vvRecordsToDelete)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing DeleteDiscoveryBySpecifiedRange", err))
+			"Failure when executing DeleteDiscoveryBySpecifiedRangeV1", err))
 		return diags
 	}
 
@@ -105,7 +107,7 @@ func resourceDiscoveryRangeDeleteCreate(ctx context.Context, d *schema.ResourceD
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing DeleteDiscoveryBySpecifiedRange", err))
+			"Failure when executing DeleteDiscoveryBySpecifiedRangeV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -139,22 +141,20 @@ func resourceDiscoveryRangeDeleteCreate(ctx context.Context, d *schema.ResourceD
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing DeleteDiscoveryBySpecifiedRange", err1))
+				"Failure when executing DeleteDiscoveryBySpecifiedRangeV1", err1))
 			return diags
 		}
 	}
-
-	vItem1 := flattenDiscoveryDeleteDiscoveryBySpecifiedRangeItem(response1.Response)
+	vItem1 := flattenDiscoveryDeleteDiscoveryBySpecifiedRangeV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting DeleteDiscoveryBySpecifiedRange response",
+			"Failure when setting DeleteDiscoveryBySpecifiedRangeV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceDiscoveryRangeDeleteRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -169,7 +169,7 @@ func resourceDiscoveryRangeDeleteDelete(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func flattenDiscoveryDeleteDiscoveryBySpecifiedRangeItem(item *catalystcentersdkgo.ResponseDiscoveryDeleteDiscoveryBySpecifiedRangeResponse) []map[string]interface{} {
+func flattenDiscoveryDeleteDiscoveryBySpecifiedRangeV1Item(item *catalystcentersdkgo.ResponseDiscoveryDeleteDiscoveryBySpecifiedRangeV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

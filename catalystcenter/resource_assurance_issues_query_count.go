@@ -176,41 +176,39 @@ func resourceAssuranceIssuesQueryCountCreate(ctx context.Context, d *schema.Reso
 
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
-	request1 := expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetOfFilters(ctx, "parameters.0", d)
+	request1 := expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetOfFiltersV1(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.GetTheTotalNumberOfIssuesForGivenSetOfFiltersHeaderParams{}
+	headerParams1 := catalystcentersdkgo.GetTheTotalNumberOfIssuesForGivenSetOfFiltersV1HeaderParams{}
 
 	headerParams1.XCaLLERID = vXCaLLERID.(string)
 
-	response1, restyResp1, err := client.Issues.GetTheTotalNumberOfIssuesForGivenSetOfFilters(request1, &headerParams1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Issues.GetTheTotalNumberOfIssuesForGivenSetOfFiltersV1(request1, &headerParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing GetTheTotalNumberOfIssuesForGivenSetOfFilters", err))
+			"Failure when executing GetTheTotalNumberOfIssuesForGivenSetOfFiltersV1", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	//Analizar verificacion.
-
-	vItems1 := flattenIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersItems(response1.Filters)
+	vItems1 := flattenIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersV1Items(response1.Filters)
 	if err := d.Set("items", vItems1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting GetTheTotalNumberOfIssuesForGivenSetOfFilters response",
+			"Failure when setting GetTheTotalNumberOfIssuesForGivenSetOfFiltersV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
+
+	//Analizar verificacion.
 
 }
 func resourceAssuranceIssuesQueryCountRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -226,8 +224,8 @@ func resourceAssuranceIssuesQueryCountDelete(ctx context.Context, d *schema.Reso
 	return diags
 }
 
-func expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetOfFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetTheTotalNumberOfIssuesForGivenSetOfFilters {
-	request := catalystcentersdkgo.RequestIssuesGetTheTotalNumberOfIssuesForGivenSetOfFilters{}
+func expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetOfFiltersV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersV1 {
+	request := catalystcentersdkgo.RequestIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -235,13 +233,13 @@ func expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetO
 		request.EndTime = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetOfFiltersFiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetOfFiltersV1FiltersArray(ctx, key+".filters", d)
 	}
 	return &request
 }
 
-func expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetOfFiltersFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersFilters {
-	request := []catalystcentersdkgo.RequestIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersFilters{}
+func expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetOfFiltersV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersV1Filters {
+	request := []catalystcentersdkgo.RequestIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersV1Filters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -252,7 +250,7 @@ func expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetO
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetOfFiltersFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetOfFiltersV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -260,8 +258,8 @@ func expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetO
 	return &request
 }
 
-func expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetOfFiltersFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersFilters {
-	request := catalystcentersdkgo.RequestIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersFilters{}
+func expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetOfFiltersV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersV1Filters {
+	request := catalystcentersdkgo.RequestIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersV1Filters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -275,13 +273,13 @@ func expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetO
 		request.LogicalOperator = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetOfFiltersFiltersFiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetOfFiltersV1FiltersFiltersArray(ctx, key+".filters", d)
 	}
 	return &request
 }
 
-func expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetOfFiltersFiltersFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersFiltersFilters {
-	request := []catalystcentersdkgo.RequestIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersFiltersFilters{}
+func expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetOfFiltersV1FiltersFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersV1FiltersFilters {
+	request := []catalystcentersdkgo.RequestIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersV1FiltersFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -292,7 +290,7 @@ func expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetO
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetOfFiltersFiltersFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetOfFiltersV1FiltersFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -300,8 +298,8 @@ func expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetO
 	return &request
 }
 
-func expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetOfFiltersFiltersFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersFiltersFilters {
-	request := catalystcentersdkgo.RequestIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersFiltersFilters{}
+func expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetOfFiltersV1FiltersFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersV1FiltersFilters {
+	request := catalystcentersdkgo.RequestIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersV1FiltersFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -314,7 +312,7 @@ func expandRequestAssuranceIssuesQueryCountGetTheTotalNumberOfIssuesForGivenSetO
 	return &request
 }
 
-func flattenIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersItems(items *[]catalystcentersdkgo.ResponseIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersFilters) []map[string]interface{} {
+func flattenIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersV1Items(items *[]catalystcentersdkgo.ResponseIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersV1Filters) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

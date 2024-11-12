@@ -165,8 +165,8 @@ func dataSourceLanAutomationLogRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: LanAutomationLog")
-		queryParams1 := catalystcentersdkgo.LanAutomationLogQueryParams{}
+		log.Printf("[DEBUG] Selected method: LanAutomationLogV1")
+		queryParams1 := catalystcentersdkgo.LanAutomationLogV1QueryParams{}
 
 		if okOffset {
 			queryParams1.Offset = vOffset.(float64)
@@ -175,24 +175,24 @@ func dataSourceLanAutomationLogRead(ctx context.Context, d *schema.ResourceData,
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.LanAutomation.LanAutomationLog(&queryParams1)
+		response1, restyResp1, err := client.LanAutomation.LanAutomationLogV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 LanAutomationLog", err,
-				"Failure at LanAutomationLog, unexpected response", ""))
+				"Failure when executing 2 LanAutomationLogV1", err,
+				"Failure at LanAutomationLogV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenLanAutomationLanAutomationLogItems(response1.Response)
+		vItems1 := flattenLanAutomationLanAutomationLogV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting LanAutomationLog response",
+				"Failure when setting LanAutomationLogV1 response",
 				err))
 			return diags
 		}
@@ -202,27 +202,27 @@ func dataSourceLanAutomationLogRead(ctx context.Context, d *schema.ResourceData,
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: LanAutomationLogByID")
+		log.Printf("[DEBUG] Selected method: LanAutomationLogByIDV1")
 		vvID := vID.(string)
 
-		response2, restyResp2, err := client.LanAutomation.LanAutomationLogByID(vvID)
+		response2, restyResp2, err := client.LanAutomation.LanAutomationLogByIDV1(vvID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 LanAutomationLogByID", err,
-				"Failure at LanAutomationLogByID, unexpected response", ""))
+				"Failure when executing 2 LanAutomationLogByIDV1", err,
+				"Failure at LanAutomationLogByIDV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenLanAutomationLanAutomationLogByIDItem(response2.Response)
+		vItem2 := flattenLanAutomationLanAutomationLogByIDV1Item(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting LanAutomationLogByID response",
+				"Failure when setting LanAutomationLogByIDV1 response",
 				err))
 			return diags
 		}
@@ -234,7 +234,7 @@ func dataSourceLanAutomationLogRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenLanAutomationLanAutomationLogItems(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationLogResponse) []map[string]interface{} {
+func flattenLanAutomationLanAutomationLogV1Items(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationLogV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -242,13 +242,13 @@ func flattenLanAutomationLanAutomationLogItems(items *[]catalystcentersdkgo.Resp
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["nw_orch_id"] = item.NwOrchID
-		respItem["entry"] = flattenLanAutomationLanAutomationLogItemsEntry(item.Entry)
+		respItem["entry"] = flattenLanAutomationLanAutomationLogV1ItemsEntry(item.Entry)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenLanAutomationLanAutomationLogItemsEntry(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationLogResponseEntry) []map[string]interface{} {
+func flattenLanAutomationLanAutomationLogV1ItemsEntry(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationLogV1ResponseEntry) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -264,7 +264,7 @@ func flattenLanAutomationLanAutomationLogItemsEntry(items *[]catalystcentersdkgo
 	return respItems
 }
 
-func flattenLanAutomationLanAutomationLogByIDItem(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationLogByIDResponse) []map[string]interface{} {
+func flattenLanAutomationLanAutomationLogByIDV1Item(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationLogByIDV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -272,13 +272,13 @@ func flattenLanAutomationLanAutomationLogByIDItem(items *[]catalystcentersdkgo.R
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["nw_orch_id"] = item.NwOrchID
-		respItem["entry"] = flattenLanAutomationLanAutomationLogByIDItemEntry(item.Entry)
+		respItem["entry"] = flattenLanAutomationLanAutomationLogByIDV1ItemEntry(item.Entry)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenLanAutomationLanAutomationLogByIDItemEntry(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationLogByIDResponseEntry) []map[string]interface{} {
+func flattenLanAutomationLanAutomationLogByIDV1ItemEntry(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationLogByIDV1ResponseEntry) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

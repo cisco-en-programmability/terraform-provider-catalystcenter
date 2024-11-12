@@ -12,9 +12,6 @@ description: |-
 It performs update operation on SDA.
 
 - Updates a multicast configuration at a fabric level based on user input.
-
-
-
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -23,12 +20,11 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 
 ```terraform
 resource "catalystcenter_sda_multicast_v1_update" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
-    payload {
-      fabric_id        = "string"
-      replication_mode = "string"
-    }
+
+    fabric_id        = "string"
+    replication_mode = "string"
   }
 }
 
@@ -55,7 +51,7 @@ output "catalystcenter_sda_multicast_v1_update_example" {
 
 Optional:
 
-- `payload` (Block List) Array of RequestSdaUpdateMulticast (see [below for nested schema](#nestedblock--parameters--payload))
+- `payload` (Block List) Array of RequestSdaUpdateMulticastV1 (see [below for nested schema](#nestedblock--parameters--payload))
 
 <a id="nestedblock--parameters--payload"></a>
 ### Nested Schema for `parameters.payload`

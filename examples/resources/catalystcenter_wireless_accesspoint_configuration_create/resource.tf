@@ -1,6 +1,6 @@
 
 resource "catalystcenter_wireless_accesspoint_configuration_create" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     admin_status = "false"

@@ -1,6 +1,6 @@
 
 resource "catalystcenter_wireless_provision_device_create" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     device_name = "string"

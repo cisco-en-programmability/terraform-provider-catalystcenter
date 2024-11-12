@@ -1,6 +1,6 @@
 
 resource "catalystcenter_configuration_template_clone" "example" {
-  provider    = catalystcenter
+  provider    = meraki
   name        = "string"
   project_id  = "string"
   template_id = "string"

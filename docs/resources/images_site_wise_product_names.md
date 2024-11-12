@@ -4,28 +4,28 @@ page_title: "catalystcenter_images_site_wise_product_names Resource - terraform-
 subcategory: ""
 description: |-
   It manages create, read, update and delete operations on Software Image Management (SWIM).
-  Assign network device product name and sites for the given image identifier. Refer '/dna/intent/api/v1/images' API for
+  Assign network device product name and sites for the given image identifier. Refer /dna/intent/api/v1/images API for
   obtaining imageIdThis resource unassigns the network device product name from all the sites for the given software image.
-      Refer to '/dna/intent/api/v1/images' and '/dna/intent/api/v1/images/{imageId}/siteWiseProductNames' GET APIs for
-  obtaining  'imageId' and 'productNameOrdinal' respectively.Update the list of sites for the network device product name assigned to the software image. Refer to
-  '/dna/intent/api/v1/images' and '/dna/intent/api/v1/images/{imageId}/siteWiseProductNames' GET APIs for obtaining
-  'imageId' and 'productNameOrdinal' respectively.
+      Refer to /dna/intent/api/v1/images and /dna/intent/api/v1/images/{imageId}/siteWiseProductNames GET APIs for
+  obtaining  imageId and productNameOrdinal respectively.Update the list of sites for the network device product name assigned to the software image. Refer to
+  /dna/intent/api/v1/images and /dna/intent/api/v1/images/{imageId}/siteWiseProductNames GET APIs for obtaining
+  imageId and productNameOrdinal respectively.
 ---
 
 # catalystcenter_images_site_wise_product_names (Resource)
 
 It manages create, read, update and delete operations on Software Image Management (SWIM).
 
-- Assign network device product name and sites for the given image identifier. Refer '/dna/intent/api/v1/images' API for
+- Assign network device product name and sites for the given image identifier. Refer */dna/intent/api/v1/images* API for
 obtaining imageId
 
 - This resource unassigns the network device product name from all the sites for the given software image.
-        Refer to '/dna/intent/api/v1/images' and '/dna/intent/api/v1/images/{imageId}/siteWiseProductNames' GET APIs for
-obtaining  'imageId' and 'productNameOrdinal' respectively.
+        Refer to */dna/intent/api/v1/images* and */dna/intent/api/v1/images/{imageId}/siteWiseProductNames* GET APIs for
+obtaining  *imageId* and *productNameOrdinal* respectively.
 
 - Update the list of sites for the network device product name assigned to the software image. Refer to
-'/dna/intent/api/v1/images' and '/dna/intent/api/v1/images/{imageId}/siteWiseProductNames' GET APIs for obtaining
-'imageId' and 'productNameOrdinal' respectively.
+*/dna/intent/api/v1/images* and */dna/intent/api/v1/images/{imageId}/siteWiseProductNames* GET APIs for obtaining
+*imageId* and *productNameOrdinal* respectively.
 
 ## Example Usage
 
@@ -64,7 +64,7 @@ output "catalystcenter_images_site_wise_product_names_example" {
 
 Required:
 
-- `image_id` (String) imageId path parameter. Software image identifier. Refer '/dna/intent/api/v1/images' API for obtaining 'imageId'
+- `image_id` (String) imageId path parameter. Software image identifier. Refer */dna/intent/api/v1/images* API for obtaining *imageId*
 
 Optional:
 

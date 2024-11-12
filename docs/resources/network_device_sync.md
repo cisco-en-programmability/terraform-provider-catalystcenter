@@ -16,9 +16,6 @@ It performs update operation on Devices.
 - Synchronizes the devices. If forceSync param is false (default) then the sync would run in normal priority thread. If
 forceSync param is true then the sync would run in high priority thread if available, else the sync will fail. Result
 can be seen in the child task of each device
-
-
-
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -27,11 +24,9 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 
 ```terraform
 resource "catalystcenter_network_device_sync" "example" {
-  provider   = catalystcenter
+  provider   = meraki
   force_sync = "false"
-  parameters {
-    payload = ["string"]
-  } 
+  parameters = ["string"]
 }
 
 output "catalystcenter_network_device_sync_example" {
@@ -58,7 +53,7 @@ output "catalystcenter_network_device_sync_example" {
 Optional:
 
 - `force_sync` (Boolean) forceSync query parameter.
-- `payload` (List of String) Array of RequestDevicesSyncDevices
+- `payload` (List of String) Array of RequestDevicesSyncDevicesV1
 
 
 <a id="nestedatt--item"></a>

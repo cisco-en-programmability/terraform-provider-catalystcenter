@@ -84,14 +84,16 @@ func resourceSdaAnycastGatewaysDeleteCreate(ctx context.Context, d *schema.Resou
 
 	vvID := vID.(string)
 
-	response1, restyResp1, err := client.Sda.DeleteAnycastGatewayByID(vvID)
+	// has_unknown_response: None
+
+	response1, restyResp1, err := client.Sda.DeleteAnycastGatewayByIDV1(vvID)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing DeleteAnycastGatewayByID", err))
+			"Failure when executing DeleteAnycastGatewayByIDV1", err))
 		return diags
 	}
 
@@ -99,7 +101,7 @@ func resourceSdaAnycastGatewaysDeleteCreate(ctx context.Context, d *schema.Resou
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing DeleteAnycastGatewayById", err))
+			"Failure when executing DeleteAnycastGatewayByIdV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -133,22 +135,20 @@ func resourceSdaAnycastGatewaysDeleteCreate(ctx context.Context, d *schema.Resou
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing DeleteAnycastGatewayById", err1))
+				"Failure when executing DeleteAnycastGatewayByIdV1", err1))
 			return diags
 		}
 	}
-
-	vItem1 := flattenSdaDeleteAnycastGatewayByIDItem(response1.Response)
+	vItem1 := flattenSdaDeleteAnycastGatewayByIDV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting DeleteAnycastGatewayByID response",
+			"Failure when setting DeleteAnycastGatewayByIDV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceSdaAnycastGatewaysDeleteRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -163,7 +163,7 @@ func resourceSdaAnycastGatewaysDeleteDelete(ctx context.Context, d *schema.Resou
 	return diags
 }
 
-func flattenSdaDeleteAnycastGatewayByIDItem(item *catalystcentersdkgo.ResponseSdaDeleteAnycastGatewayByIDResponse) []map[string]interface{} {
+func flattenSdaDeleteAnycastGatewayByIDV1Item(item *catalystcentersdkgo.ResponseSdaDeleteAnycastGatewayByIDV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

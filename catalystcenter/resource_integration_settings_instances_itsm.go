@@ -213,7 +213,7 @@ func resourceIntegrationSettingsInstancesItsmCreate(ctx context.Context, d *sche
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestIntegrationSettingsInstancesItsmCreateItsmIntegrationSetting(ctx, "parameters.0", d)
+	request1 := expandRequestIntegrationSettingsInstancesItsmCreateItsmIntegrationSettingV1(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vInstanceID, okInstanceID := resourceItem["instance_id"]
@@ -286,7 +286,7 @@ func resourceIntegrationSettingsInstancesItsmRead(ctx context.Context, d *schema
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenItsmIntegrationGetItsmIntegrationSettingByIDItem(response1)
+		vItem1 := flattenItsmIntegrationGetItsmIntegrationSettingByIDV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetItsmIntegrationSettingByID response",
@@ -309,7 +309,7 @@ func resourceIntegrationSettingsInstancesItsmUpdate(ctx context.Context, d *sche
 	vvID := resourceMap["instance_id"]
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvID)
-		request1 := expandRequestIntegrationSettingsInstancesItsmUpdateItsmIntegrationSetting(ctx, "parameters.0", d)
+		request1 := expandRequestIntegrationSettingsInstancesItsmUpdateItsmIntegrationSettingV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.ItsmIntegration.UpdateItsmIntegrationSetting(vvID, request1)
 		if err != nil || response1 == nil {
@@ -366,8 +366,8 @@ func resourceIntegrationSettingsInstancesItsmDelete(ctx context.Context, d *sche
 
 	return diags
 }
-func expandRequestIntegrationSettingsInstancesItsmCreateItsmIntegrationSetting(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItsmIntegrationCreateItsmIntegrationSetting {
-	request := catalystcentersdkgo.RequestItsmIntegrationCreateItsmIntegrationSetting{}
+func expandRequestIntegrationSettingsInstancesItsmCreateItsmIntegrationSettingV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItsmIntegrationCreateItsmIntegrationSettingV1 {
+	request := catalystcentersdkgo.RequestItsmIntegrationCreateItsmIntegrationSettingV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -375,7 +375,7 @@ func expandRequestIntegrationSettingsInstancesItsmCreateItsmIntegrationSetting(c
 		request.Description = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".data")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".data")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".data")))) {
-		request.Data = expandRequestIntegrationSettingsInstancesItsmCreateItsmIntegrationSettingData(ctx, key+".data.0", d)
+		request.Data = expandRequestIntegrationSettingsInstancesItsmCreateItsmIntegrationSettingV1Data(ctx, key+".data.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".dyp_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".dyp_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".dyp_name")))) {
 		request.DypName = interfaceToString(v)
@@ -386,10 +386,10 @@ func expandRequestIntegrationSettingsInstancesItsmCreateItsmIntegrationSetting(c
 	return &request
 }
 
-func expandRequestIntegrationSettingsInstancesItsmCreateItsmIntegrationSettingData(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItsmIntegrationCreateItsmIntegrationSettingData {
-	request := catalystcentersdkgo.RequestItsmIntegrationCreateItsmIntegrationSettingData{}
+func expandRequestIntegrationSettingsInstancesItsmCreateItsmIntegrationSettingV1Data(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItsmIntegrationCreateItsmIntegrationSettingV1Data {
+	request := catalystcentersdkgo.RequestItsmIntegrationCreateItsmIntegrationSettingV1Data{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".connection_settings")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".connection_settings")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".connection_settings")))) {
-		request.ConnectionSettings = expandRequestIntegrationSettingsInstancesItsmCreateItsmIntegrationSettingDataConnectionSettings(ctx, key+".connection_settings.0", d)
+		request.ConnectionSettings = expandRequestIntegrationSettingsInstancesItsmCreateItsmIntegrationSettingV1DataConnectionSettings(ctx, key+".connection_settings.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -397,8 +397,8 @@ func expandRequestIntegrationSettingsInstancesItsmCreateItsmIntegrationSettingDa
 	return &request
 }
 
-func expandRequestIntegrationSettingsInstancesItsmCreateItsmIntegrationSettingDataConnectionSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItsmIntegrationCreateItsmIntegrationSettingDataConnectionSettings {
-	request := catalystcentersdkgo.RequestItsmIntegrationCreateItsmIntegrationSettingDataConnectionSettings{}
+func expandRequestIntegrationSettingsInstancesItsmCreateItsmIntegrationSettingV1DataConnectionSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItsmIntegrationCreateItsmIntegrationSettingV1DataConnectionSettings {
+	request := catalystcentersdkgo.RequestItsmIntegrationCreateItsmIntegrationSettingV1DataConnectionSettings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".url")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".url")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".url")))) {
 		request.URL = interfaceToString(v)
 	}
@@ -414,8 +414,8 @@ func expandRequestIntegrationSettingsInstancesItsmCreateItsmIntegrationSettingDa
 	return &request
 }
 
-func expandRequestIntegrationSettingsInstancesItsmUpdateItsmIntegrationSetting(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItsmIntegrationUpdateItsmIntegrationSetting {
-	request := catalystcentersdkgo.RequestItsmIntegrationUpdateItsmIntegrationSetting{}
+func expandRequestIntegrationSettingsInstancesItsmUpdateItsmIntegrationSettingV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItsmIntegrationUpdateItsmIntegrationSettingV1 {
+	request := catalystcentersdkgo.RequestItsmIntegrationUpdateItsmIntegrationSettingV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -423,7 +423,7 @@ func expandRequestIntegrationSettingsInstancesItsmUpdateItsmIntegrationSetting(c
 		request.Description = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".data")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".data")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".data")))) {
-		request.Data = expandRequestIntegrationSettingsInstancesItsmUpdateItsmIntegrationSettingData(ctx, key+".data.0", d)
+		request.Data = expandRequestIntegrationSettingsInstancesItsmUpdateItsmIntegrationSettingV1Data(ctx, key+".data.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".dyp_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".dyp_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".dyp_name")))) {
 		request.DypName = interfaceToString(v)
@@ -434,10 +434,10 @@ func expandRequestIntegrationSettingsInstancesItsmUpdateItsmIntegrationSetting(c
 	return &request
 }
 
-func expandRequestIntegrationSettingsInstancesItsmUpdateItsmIntegrationSettingData(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItsmIntegrationUpdateItsmIntegrationSettingData {
-	request := catalystcentersdkgo.RequestItsmIntegrationUpdateItsmIntegrationSettingData{}
+func expandRequestIntegrationSettingsInstancesItsmUpdateItsmIntegrationSettingV1Data(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItsmIntegrationUpdateItsmIntegrationSettingV1Data {
+	request := catalystcentersdkgo.RequestItsmIntegrationUpdateItsmIntegrationSettingV1Data{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".connection_settings")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".connection_settings")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".connection_settings")))) {
-		request.ConnectionSettings = expandRequestIntegrationSettingsInstancesItsmUpdateItsmIntegrationSettingDataConnectionSettings(ctx, key+".connection_settings.0", d)
+		request.ConnectionSettings = expandRequestIntegrationSettingsInstancesItsmUpdateItsmIntegrationSettingV1DataConnectionSettings(ctx, key+".connection_settings.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -445,8 +445,8 @@ func expandRequestIntegrationSettingsInstancesItsmUpdateItsmIntegrationSettingDa
 	return &request
 }
 
-func expandRequestIntegrationSettingsInstancesItsmUpdateItsmIntegrationSettingDataConnectionSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItsmIntegrationUpdateItsmIntegrationSettingDataConnectionSettings {
-	request := catalystcentersdkgo.RequestItsmIntegrationUpdateItsmIntegrationSettingDataConnectionSettings{}
+func expandRequestIntegrationSettingsInstancesItsmUpdateItsmIntegrationSettingV1DataConnectionSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItsmIntegrationUpdateItsmIntegrationSettingV1DataConnectionSettings {
+	request := catalystcentersdkgo.RequestItsmIntegrationUpdateItsmIntegrationSettingV1DataConnectionSettings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".url")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".url")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".url")))) {
 		request.URL = interfaceToString(v)
 	}
@@ -462,7 +462,7 @@ func expandRequestIntegrationSettingsInstancesItsmUpdateItsmIntegrationSettingDa
 	return &request
 }
 
-func searchITSM(m interface{}, vName string) (foundItem *catalystcentersdkgo.ResponseItemItsmIntegrationGetAllItsmIntegrationSettings, err error) {
+func searchITSM(m interface{}, vName string) (foundItem *catalystcentersdkgo.ResponseItemItsmIntegrationGetAllItsmIntegrationSettingsV1, err error) {
 	client := m.(*catalystcentersdkgo.Client)
 
 	nResponse, _, err := client.ItsmIntegration.GetAllItsmIntegrationSettings()

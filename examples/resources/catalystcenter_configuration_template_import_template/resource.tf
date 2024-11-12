@@ -1,6 +1,6 @@
 
 resource "catalystcenter_configuration_template_import_template" "example" {
-  provider     = catalystcenter
+  provider     = meraki
   do_version   = "false"
   project_name = "string"
   parameters {
@@ -50,7 +50,7 @@ resource "catalystcenter_configuration_template_import_template" "example" {
           default_selected_values = ["string"]
           id                      = "string"
           selection_type          = "string"
-          selection_values        = "string"
+          selection_values        = "------"
         }
       }
       tags {
@@ -88,7 +88,7 @@ resource "catalystcenter_configuration_template_import_template" "example" {
           default_selected_values = ["string"]
           id                      = "string"
           selection_type          = "string"
-          selection_values        = "string"
+          selection_values        = "------"
         }
       }
       version = "string"
@@ -141,7 +141,7 @@ resource "catalystcenter_configuration_template_import_template" "example" {
         default_selected_values = ["string"]
         id                      = "string"
         selection_type          = "string"
-        selection_values        = "string"
+        selection_values        = "------"
       }
     }
     software_type    = "string"
@@ -182,13 +182,13 @@ resource "catalystcenter_configuration_template_import_template" "example" {
         default_selected_values = ["string"]
         id                      = "string"
         selection_type          = "string"
-        selection_values        = "string"
+        selection_values        = "------"
       }
     }
     validation_errors {
 
-      rollback_template_errors = "string"
-      template_errors          = "string"
+      rollback_template_errors = "------"
+      template_errors          = "------"
       template_id              = "string"
       template_version         = "string"
     }

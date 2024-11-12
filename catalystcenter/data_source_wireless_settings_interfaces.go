@@ -117,8 +117,8 @@ func dataSourceWirelessSettingsInterfacesRead(ctx context.Context, d *schema.Res
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetInterfaces")
-		queryParams1 := catalystcentersdkgo.GetInterfacesQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetInterfacesV1")
+		queryParams1 := catalystcentersdkgo.GetInterfacesV1QueryParams{}
 
 		if okLimit {
 			queryParams1.Limit = vLimit.(float64)
@@ -127,24 +127,24 @@ func dataSourceWirelessSettingsInterfacesRead(ctx context.Context, d *schema.Res
 			queryParams1.Offset = vOffset.(float64)
 		}
 
-		response1, restyResp1, err := client.Wireless.GetInterfaces(&queryParams1)
+		response1, restyResp1, err := client.Wireless.GetInterfacesV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetInterfaces", err,
-				"Failure at GetInterfaces, unexpected response", ""))
+				"Failure when executing 2 GetInterfacesV1", err,
+				"Failure at GetInterfacesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenWirelessGetInterfacesItems(response1.Response)
+		vItems1 := flattenWirelessGetInterfacesV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetInterfaces response",
+				"Failure when setting GetInterfacesV1 response",
 				err))
 			return diags
 		}
@@ -154,27 +154,27 @@ func dataSourceWirelessSettingsInterfacesRead(ctx context.Context, d *schema.Res
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetInterfaceByID")
+		log.Printf("[DEBUG] Selected method: GetInterfaceByIDV1")
 		vvID := vID.(string)
 
-		response2, restyResp2, err := client.Wireless.GetInterfaceByID(vvID)
+		response2, restyResp2, err := client.Wireless.GetInterfaceByIDV1(vvID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetInterfaceByID", err,
-				"Failure at GetInterfaceByID, unexpected response", ""))
+				"Failure when executing 2 GetInterfaceByIDV1", err,
+				"Failure at GetInterfaceByIDV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenWirelessGetInterfaceByIDItem(response2.Response)
+		vItem2 := flattenWirelessGetInterfaceByIDV1Item(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetInterfaceByID response",
+				"Failure when setting GetInterfaceByIDV1 response",
 				err))
 			return diags
 		}
@@ -186,7 +186,7 @@ func dataSourceWirelessSettingsInterfacesRead(ctx context.Context, d *schema.Res
 	return diags
 }
 
-func flattenWirelessGetInterfacesItems(items *[]catalystcentersdkgo.ResponseWirelessGetInterfacesResponse) []map[string]interface{} {
+func flattenWirelessGetInterfacesV1Items(items *[]catalystcentersdkgo.ResponseWirelessGetInterfacesV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -201,7 +201,7 @@ func flattenWirelessGetInterfacesItems(items *[]catalystcentersdkgo.ResponseWire
 	return respItems
 }
 
-func flattenWirelessGetInterfaceByIDItem(item *catalystcentersdkgo.ResponseWirelessGetInterfaceByIDResponse) []map[string]interface{} {
+func flattenWirelessGetInterfaceByIDV1Item(item *catalystcentersdkgo.ResponseWirelessGetInterfaceByIDV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

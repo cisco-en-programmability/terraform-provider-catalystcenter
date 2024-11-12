@@ -3,18 +3,15 @@
 page_title: "catalystcenter_site_assign_credential Resource - terraform-provider-catalystcenter"
 subcategory: ""
 description: |-
-  It performs create operation on Sites.
+  It performs create operation on NetworkSettings.
   Assign Device Credential to a site.
 ---
 
 # catalystcenter_site_assign_credential (Resource)
 
-It performs create operation on Sites.
+It performs create operation on NetworkSettings.
 
 - Assign Device Credential to a site.
-
-
-
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -23,7 +20,7 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 
 ```terraform
 resource "catalystcenter_site_assign_credential" "example" {
-  provider = catalystcenter
+  provider = meraki
   site_id  = "string"
   parameters {
 

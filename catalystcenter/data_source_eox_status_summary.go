@@ -11,14 +11,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func dataSourceEoxStatusSummary() *schema.Resource {
+func dataSourceEoXStatusSummary() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on EoX.
 
 - Retrieves EoX summary for all devices in the network
 `,
 
-		ReadContext: dataSourceEoxStatusSummaryRead,
+		ReadContext: dataSourceEoXStatusSummaryRead,
 		Schema: map[string]*schema.Schema{
 
 			"item": &schema.Schema{
@@ -61,33 +61,33 @@ func dataSourceEoxStatusSummary() *schema.Resource {
 	}
 }
 
-func dataSourceEoxStatusSummaryRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceEoXStatusSummaryRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetEoxSummary")
+		log.Printf("[DEBUG] Selected method: GetEoXSummaryV1")
 
-		response1, restyResp1, err := client.Eox.GetEoxSummary()
+		response1, restyResp1, err := client.EoX.GetEoXSummaryV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetEoxSummary", err,
-				"Failure at GetEoxSummary, unexpected response", ""))
+				"Failure when executing 2 GetEoXSummaryV1", err,
+				"Failure at GetEoXSummaryV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenEoxGetEoxSummaryItem(response1.Response)
+		vItem1 := flattenEoXGetEoXSummaryV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetEoxSummary response",
+				"Failure when setting GetEoXSummaryV1 response",
 				err))
 			return diags
 		}
@@ -99,7 +99,7 @@ func dataSourceEoxStatusSummaryRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenEoxGetEoxSummaryItem(item *catalystcentersdkgo.ResponseEoxGetEoxSummaryResponse) []map[string]interface{} {
+func flattenEoXGetEoXSummaryV1Item(item *catalystcentersdkgo.ResponseEoXGetEoXSummaryV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

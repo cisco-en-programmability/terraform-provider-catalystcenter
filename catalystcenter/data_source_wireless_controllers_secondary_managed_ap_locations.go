@@ -84,9 +84,9 @@ func dataSourceWirelessControllersSecondaryManagedApLocationsRead(ctx context.Co
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSecondaryManagedApLocationsForSpecificWirelessController")
+		log.Printf("[DEBUG] Selected method: GetSecondaryManagedApLocationsForSpecificWirelessControllerV1")
 		vvNetworkDeviceID := vNetworkDeviceID.(string)
-		queryParams1 := catalystcentersdkgo.GetSecondaryManagedApLocationsForSpecificWirelessControllerQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetSecondaryManagedApLocationsForSpecificWirelessControllerV1QueryParams{}
 
 		if okLimit {
 			queryParams1.Limit = vLimit.(float64)
@@ -95,24 +95,24 @@ func dataSourceWirelessControllersSecondaryManagedApLocationsRead(ctx context.Co
 			queryParams1.Offset = vOffset.(float64)
 		}
 
-		response1, restyResp1, err := client.Wireless.GetSecondaryManagedApLocationsForSpecificWirelessController(vvNetworkDeviceID, &queryParams1)
+		response1, restyResp1, err := client.Wireless.GetSecondaryManagedApLocationsForSpecificWirelessControllerV1(vvNetworkDeviceID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSecondaryManagedApLocationsForSpecificWirelessController", err,
-				"Failure at GetSecondaryManagedApLocationsForSpecificWirelessController, unexpected response", ""))
+				"Failure when executing 2 GetSecondaryManagedApLocationsForSpecificWirelessControllerV1", err,
+				"Failure at GetSecondaryManagedApLocationsForSpecificWirelessControllerV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerItems(response1.Response)
+		vItems1 := flattenWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSecondaryManagedApLocationsForSpecificWirelessController response",
+				"Failure when setting GetSecondaryManagedApLocationsForSpecificWirelessControllerV1 response",
 				err))
 			return diags
 		}
@@ -124,20 +124,20 @@ func dataSourceWirelessControllersSecondaryManagedApLocationsRead(ctx context.Co
 	return diags
 }
 
-func flattenWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerItems(items *[]catalystcentersdkgo.ResponseWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerResponse) []map[string]interface{} {
+func flattenWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerV1Items(items *[]catalystcentersdkgo.ResponseWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["managed_ap_locations"] = flattenWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerItemsManagedApLocations(item.ManagedApLocations)
+		respItem["managed_ap_locations"] = flattenWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerV1ItemsManagedApLocations(item.ManagedApLocations)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerItemsManagedApLocations(items *[]catalystcentersdkgo.ResponseWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerResponseManagedApLocations) []map[string]interface{} {
+func flattenWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerV1ItemsManagedApLocations(items *[]catalystcentersdkgo.ResponseWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerV1ResponseManagedApLocations) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

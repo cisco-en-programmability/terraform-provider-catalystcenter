@@ -341,8 +341,8 @@ func dataSourceNetworkDeviceModuleRead(ctx context.Context, d *schema.ResourceDa
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetModules")
-		queryParams1 := catalystcentersdkgo.GetModulesQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetModulesV1")
+		queryParams1 := catalystcentersdkgo.GetModulesV1QueryParams{}
 
 		if okDeviceID {
 			queryParams1.DeviceID = vDeviceID.(string)
@@ -366,24 +366,24 @@ func dataSourceNetworkDeviceModuleRead(ctx context.Context, d *schema.ResourceDa
 			queryParams1.OperationalStateCodeList = interfaceToSliceString(vOperationalStateCodeList)
 		}
 
-		response1, restyResp1, err := client.Devices.GetModules(&queryParams1)
+		response1, restyResp1, err := client.Devices.GetModulesV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetModules", err,
-				"Failure at GetModules, unexpected response", ""))
+				"Failure when executing 2 GetModulesV1", err,
+				"Failure at GetModulesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetModulesItems(response1.Response)
+		vItems1 := flattenDevicesGetModulesV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetModules response",
+				"Failure when setting GetModulesV1 response",
 				err))
 			return diags
 		}
@@ -393,27 +393,27 @@ func dataSourceNetworkDeviceModuleRead(ctx context.Context, d *schema.ResourceDa
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetModuleInfoByID")
+		log.Printf("[DEBUG] Selected method: GetModuleInfoByIDV1")
 		vvID := vID.(string)
 
-		response2, restyResp2, err := client.Devices.GetModuleInfoByID(vvID)
+		response2, restyResp2, err := client.Devices.GetModuleInfoByIDV1(vvID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetModuleInfoByID", err,
-				"Failure at GetModuleInfoByID, unexpected response", ""))
+				"Failure when executing 2 GetModuleInfoByIDV1", err,
+				"Failure at GetModuleInfoByIDV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenDevicesGetModuleInfoByIDItem(response2.Response)
+		vItem2 := flattenDevicesGetModuleInfoByIDV1Item(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetModuleInfoByID response",
+				"Failure when setting GetModuleInfoByIDV1 response",
 				err))
 			return diags
 		}
@@ -425,7 +425,7 @@ func dataSourceNetworkDeviceModuleRead(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func flattenDevicesGetModulesItems(items *[]catalystcentersdkgo.ResponseDevicesGetModulesResponse) []map[string]interface{} {
+func flattenDevicesGetModulesV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetModulesV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -434,7 +434,7 @@ func flattenDevicesGetModulesItems(items *[]catalystcentersdkgo.ResponseDevicesG
 		respItem := make(map[string]interface{})
 		respItem["assembly_number"] = item.AssemblyNumber
 		respItem["assembly_revision"] = item.AssemblyRevision
-		respItem["attribute_info"] = flattenDevicesGetModulesItemsAttributeInfo(item.AttributeInfo)
+		respItem["attribute_info"] = flattenDevicesGetModulesV1ItemsAttributeInfo(item.AttributeInfo)
 		respItem["containment_entity"] = item.ContainmentEntity
 		respItem["description"] = item.Description
 		respItem["entity_physical_index"] = item.EntityPhysicalIndex
@@ -453,7 +453,7 @@ func flattenDevicesGetModulesItems(items *[]catalystcentersdkgo.ResponseDevicesG
 	return respItems
 }
 
-func flattenDevicesGetModulesItemsAttributeInfo(item *catalystcentersdkgo.ResponseDevicesGetModulesResponseAttributeInfo) interface{} {
+func flattenDevicesGetModulesV1ItemsAttributeInfo(item *catalystcentersdkgo.ResponseDevicesGetModulesV1ResponseAttributeInfo) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -463,14 +463,14 @@ func flattenDevicesGetModulesItemsAttributeInfo(item *catalystcentersdkgo.Respon
 
 }
 
-func flattenDevicesGetModuleInfoByIDItem(item *catalystcentersdkgo.ResponseDevicesGetModuleInfoByIDResponse) []map[string]interface{} {
+func flattenDevicesGetModuleInfoByIDV1Item(item *catalystcentersdkgo.ResponseDevicesGetModuleInfoByIDV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["assembly_number"] = item.AssemblyNumber
 	respItem["assembly_revision"] = item.AssemblyRevision
-	respItem["attribute_info"] = flattenDevicesGetModuleInfoByIDItemAttributeInfo(item.AttributeInfo)
+	respItem["attribute_info"] = flattenDevicesGetModuleInfoByIDV1ItemAttributeInfo(item.AttributeInfo)
 	respItem["containment_entity"] = item.ContainmentEntity
 	respItem["description"] = item.Description
 	respItem["entity_physical_index"] = item.EntityPhysicalIndex
@@ -489,7 +489,7 @@ func flattenDevicesGetModuleInfoByIDItem(item *catalystcentersdkgo.ResponseDevic
 	}
 }
 
-func flattenDevicesGetModuleInfoByIDItemAttributeInfo(item *catalystcentersdkgo.ResponseDevicesGetModuleInfoByIDResponseAttributeInfo) interface{} {
+func flattenDevicesGetModuleInfoByIDV1ItemAttributeInfo(item *catalystcentersdkgo.ResponseDevicesGetModuleInfoByIDV1ResponseAttributeInfo) interface{} {
 	if item == nil {
 		return nil
 	}

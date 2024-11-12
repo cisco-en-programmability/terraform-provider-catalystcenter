@@ -80,10 +80,10 @@ func dataSourceHealthScoreDefinitionsCountRead(ctx context.Context, d *schema.Re
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTheCountOfHealthScoreDefinitionsBasedOnProvidedFilters")
+		log.Printf("[DEBUG] Selected method: GetTheCountOfHealthScoreDefinitionsBasedOnProvidedFiltersV1")
 
-		headerParams1 := catalystcentersdkgo.GetTheCountOfHealthScoreDefinitionsBasedOnProvidedFiltersHeaderParams{}
-		queryParams1 := catalystcentersdkgo.GetTheCountOfHealthScoreDefinitionsBasedOnProvidedFiltersQueryParams{}
+		headerParams1 := catalystcentersdkgo.GetTheCountOfHealthScoreDefinitionsBasedOnProvidedFiltersV1HeaderParams{}
+		queryParams1 := catalystcentersdkgo.GetTheCountOfHealthScoreDefinitionsBasedOnProvidedFiltersV1QueryParams{}
 
 		if okDeviceType {
 			queryParams1.DeviceType = vDeviceType.(string)
@@ -96,24 +96,24 @@ func dataSourceHealthScoreDefinitionsCountRead(ctx context.Context, d *schema.Re
 		}
 		headerParams1.XCaLLERID = vXCaLLERID.(string)
 
-		response1, restyResp1, err := client.Devices.GetTheCountOfHealthScoreDefinitionsBasedOnProvidedFilters(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Devices.GetTheCountOfHealthScoreDefinitionsBasedOnProvidedFiltersV1(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTheCountOfHealthScoreDefinitionsBasedOnProvidedFilters", err,
-				"Failure at GetTheCountOfHealthScoreDefinitionsBasedOnProvidedFilters, unexpected response", ""))
+				"Failure when executing 2 GetTheCountOfHealthScoreDefinitionsBasedOnProvidedFiltersV1", err,
+				"Failure at GetTheCountOfHealthScoreDefinitionsBasedOnProvidedFiltersV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesGetTheCountOfHealthScoreDefinitionsBasedOnProvidedFiltersItem(response1.Response)
+		vItem1 := flattenDevicesGetTheCountOfHealthScoreDefinitionsBasedOnProvidedFiltersV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTheCountOfHealthScoreDefinitionsBasedOnProvidedFilters response",
+				"Failure when setting GetTheCountOfHealthScoreDefinitionsBasedOnProvidedFiltersV1 response",
 				err))
 			return diags
 		}
@@ -125,7 +125,7 @@ func dataSourceHealthScoreDefinitionsCountRead(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func flattenDevicesGetTheCountOfHealthScoreDefinitionsBasedOnProvidedFiltersItem(item *catalystcentersdkgo.ResponseDevicesGetTheCountOfHealthScoreDefinitionsBasedOnProvidedFiltersResponse) []map[string]interface{} {
+func flattenDevicesGetTheCountOfHealthScoreDefinitionsBasedOnProvidedFiltersV1Item(item *catalystcentersdkgo.ResponseDevicesGetTheCountOfHealthScoreDefinitionsBasedOnProvidedFiltersV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

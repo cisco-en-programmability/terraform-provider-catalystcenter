@@ -85,7 +85,7 @@ func resourceSdaFabricDevicesLayer2Handoffs() *schema.Resource {
 				},
 			},
 			"parameters": &schema.Schema{
-				Description: `Array of RequestSdaAddFabricDevicesLayer2Handoffs`,
+				Description: `Array of RequestSdaAddFabricDevicesLayer2HandoffsV1`,
 				Type:        schema.TypeList,
 				Optional:    true,
 				Computed:    true,
@@ -155,7 +155,7 @@ func resourceSdaFabricDevicesLayer2HandoffsCreate(ctx context.Context, d *schema
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters.0.payload"))
-	request1 := expandRequestSdaFabricDevicesLayer2HandoffsAddFabricDevicesLayer2Handoffs(ctx, "parameters.0", d)
+	request1 := expandRequestSdaFabricDevicesLayer2HandoffsAddFabricDevicesLayer2HandoffsV1(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vID := resourceItem["id"]
@@ -164,7 +164,7 @@ func resourceSdaFabricDevicesLayer2HandoffsCreate(ctx context.Context, d *schema
 	vvFabricID := interfaceToString(vFabricID)
 	vInterfaceName := resourceItem["interface_name"]
 	vvInterfaceName := interfaceToString(vInterfaceName)
-	queryParamImport := catalystcentersdkgo.GetFabricDevicesLayer2HandoffsQueryParams{}
+	queryParamImport := catalystcentersdkgo.GetFabricDevicesLayer2HandoffsV1QueryParams{}
 	queryParamImport.FabricID = vvFabricID
 	item2, err := searchSdaGetFabricDevicesLayer2Handoffs(m, queryParamImport, vvID, vvInterfaceName)
 	if err == nil && item2 != nil {
@@ -214,7 +214,7 @@ func resourceSdaFabricDevicesLayer2HandoffsCreate(ctx context.Context, d *schema
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetFabricDevicesLayer2HandoffsQueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetFabricDevicesLayer2HandoffsV1QueryParams{}
 	queryParamValidate.FabricID = vvFabricID
 	item3, err := searchSdaGetFabricDevicesLayer2Handoffs(m, queryParamValidate, vvID, vvInterfaceName)
 	if err != nil || item3 == nil {
@@ -247,7 +247,7 @@ func resourceSdaFabricDevicesLayer2HandoffsRead(ctx context.Context, d *schema.R
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetFabricDevicesLayer2Handoffs")
-		queryParams1 := catalystcentersdkgo.GetFabricDevicesLayer2HandoffsQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetFabricDevicesLayer2HandoffsV1QueryParams{}
 
 		queryParams1.FabricID = vFabricID
 
@@ -258,11 +258,11 @@ func resourceSdaFabricDevicesLayer2HandoffsRead(ctx context.Context, d *schema.R
 		}
 		// Review flatten function used
 
-		items := []catalystcentersdkgo.ResponseSdaGetFabricDevicesLayer2HandoffsResponse{
+		items := []catalystcentersdkgo.ResponseSdaGetFabricDevicesLayer2HandoffsV1Response{
 			*item1,
 		}
 
-		vItem1 := flattenSdaGetFabricDevicesLayer2HandoffsItems(&items)
+		vItem1 := flattenSdaGetFabricDevicesLayer2HandoffsV1Items(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetFabricDevicesLayer2Handoffs search response",
@@ -337,9 +337,9 @@ func resourceSdaFabricDevicesLayer2HandoffsDelete(ctx context.Context, d *schema
 
 	return diags
 }
-func expandRequestSdaFabricDevicesLayer2HandoffsAddFabricDevicesLayer2Handoffs(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddFabricDevicesLayer2Handoffs {
-	request := catalystcentersdkgo.RequestSdaAddFabricDevicesLayer2Handoffs{}
-	if v := expandRequestSdaFabricDevicesLayer2HandoffsAddFabricDevicesLayer2HandoffsItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaFabricDevicesLayer2HandoffsAddFabricDevicesLayer2HandoffsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddFabricDevicesLayer2HandoffsV1 {
+	request := catalystcentersdkgo.RequestSdaAddFabricDevicesLayer2HandoffsV1{}
+	if v := expandRequestSdaFabricDevicesLayer2HandoffsAddFabricDevicesLayer2HandoffsV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -348,8 +348,8 @@ func expandRequestSdaFabricDevicesLayer2HandoffsAddFabricDevicesLayer2Handoffs(c
 	return &request
 }
 
-func expandRequestSdaFabricDevicesLayer2HandoffsAddFabricDevicesLayer2HandoffsItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer2Handoffs {
-	request := []catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer2Handoffs{}
+func expandRequestSdaFabricDevicesLayer2HandoffsAddFabricDevicesLayer2HandoffsV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer2HandoffsV1 {
+	request := []catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer2HandoffsV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -360,7 +360,7 @@ func expandRequestSdaFabricDevicesLayer2HandoffsAddFabricDevicesLayer2HandoffsIt
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaFabricDevicesLayer2HandoffsAddFabricDevicesLayer2HandoffsItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaFabricDevicesLayer2HandoffsAddFabricDevicesLayer2HandoffsV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -371,8 +371,8 @@ func expandRequestSdaFabricDevicesLayer2HandoffsAddFabricDevicesLayer2HandoffsIt
 	return &request
 }
 
-func expandRequestSdaFabricDevicesLayer2HandoffsAddFabricDevicesLayer2HandoffsItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer2Handoffs {
-	request := catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer2Handoffs{}
+func expandRequestSdaFabricDevicesLayer2HandoffsAddFabricDevicesLayer2HandoffsV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer2HandoffsV1 {
+	request := catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer2HandoffsV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".network_device_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".network_device_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".network_device_id")))) {
 		request.NetworkDeviceID = interfaceToString(v)
 	}
@@ -394,10 +394,10 @@ func expandRequestSdaFabricDevicesLayer2HandoffsAddFabricDevicesLayer2HandoffsIt
 	return &request
 }
 
-func searchSdaGetFabricDevicesLayer2Handoffs(m interface{}, queryParams catalystcentersdkgo.GetFabricDevicesLayer2HandoffsQueryParams, vID string, vInterfaceName string) (*catalystcentersdkgo.ResponseSdaGetFabricDevicesLayer2HandoffsResponse, error) {
+func searchSdaGetFabricDevicesLayer2Handoffs(m interface{}, queryParams catalystcentersdkgo.GetFabricDevicesLayer2HandoffsV1QueryParams, vID string, vInterfaceName string) (*catalystcentersdkgo.ResponseSdaGetFabricDevicesLayer2HandoffsV1Response, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseSdaGetFabricDevicesLayer2HandoffsResponse
+	var foundItem *catalystcentersdkgo.ResponseSdaGetFabricDevicesLayer2HandoffsV1Response
 
 	queryParams.Offset = 1
 	nResponse, _, err := client.Sda.GetFabricDevicesLayer2Handoffs(&queryParams)

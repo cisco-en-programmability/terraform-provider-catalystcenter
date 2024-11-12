@@ -2469,8 +2469,8 @@ func dataSourceConfigurationTemplateProjectRead(ctx context.Context, d *schema.R
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetsAListOfProjects")
-		queryParams1 := catalystcentersdkgo.GetsAListOfProjectsQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetsAListOfProjectsV1")
+		queryParams1 := catalystcentersdkgo.GetsAListOfProjectsV1QueryParams{}
 
 		if okName {
 			queryParams1.Name = vName.(string)
@@ -2479,24 +2479,24 @@ func dataSourceConfigurationTemplateProjectRead(ctx context.Context, d *schema.R
 			queryParams1.SortOrder = vSortOrder.(string)
 		}
 
-		response1, restyResp1, err := client.ConfigurationTemplates.GetsAListOfProjects(&queryParams1)
+		response1, restyResp1, err := client.ConfigurationTemplates.GetsAListOfProjectsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetsAListOfProjects", err,
-				"Failure at GetsAListOfProjects, unexpected response", ""))
+				"Failure when executing 2 GetsAListOfProjectsV1", err,
+				"Failure at GetsAListOfProjectsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenConfigurationTemplatesGetsAListOfProjectsItems(response1)
+		vItems1 := flattenConfigurationTemplatesGetsAListOfProjectsV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetsAListOfProjects response",
+				"Failure when setting GetsAListOfProjectsV1 response",
 				err))
 			return diags
 		}
@@ -2506,18 +2506,18 @@ func dataSourceConfigurationTemplateProjectRead(ctx context.Context, d *schema.R
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetsTheDetailsOfAGivenProject")
+		log.Printf("[DEBUG] Selected method: GetsTheDetailsOfAGivenProjectV1")
 		vvProjectID := vProjectID.(string)
 
-		response2, restyResp2, err := client.ConfigurationTemplates.GetsTheDetailsOfAGivenProject(vvProjectID)
+		response2, restyResp2, err := client.ConfigurationTemplates.GetsTheDetailsOfAGivenProjectV1(vvProjectID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetsTheDetailsOfAGivenProject", err,
-				"Failure at GetsTheDetailsOfAGivenProject, unexpected response", ""))
+				"Failure when executing 2 GetsTheDetailsOfAGivenProjectV1", err,
+				"Failure at GetsTheDetailsOfAGivenProjectV1, unexpected response", ""))
 			return diags
 		}
 
@@ -2526,7 +2526,7 @@ func dataSourceConfigurationTemplateProjectRead(ctx context.Context, d *schema.R
 		vItem2 := flattenConfigurationTemplatesGetsTheDetailsOfAGivenProjectItem(response2)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetsTheDetailsOfAGivenProject response",
+				"Failure when setting GetsTheDetailsOfAGivenProjectV1 response",
 				err))
 			return diags
 		}
@@ -2538,14 +2538,14 @@ func dataSourceConfigurationTemplateProjectRead(ctx context.Context, d *schema.R
 	return diags
 }
 
-func flattenConfigurationTemplatesGetsAListOfProjectsItems(items *catalystcentersdkgo.ResponseConfigurationTemplatesGetsAListOfProjects) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsAListOfProjectsV1Items(items *catalystcentersdkgo.ResponseConfigurationTemplatesGetsAListOfProjectsV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["tags"] = flattenConfigurationTemplatesGetsAListOfProjectsItemsTags(item.Tags)
+		respItem["tags"] = flattenConfigurationTemplatesGetsAListOfProjectsV1ItemsTags(item.Tags)
 		respItem["create_time"] = item.CreateTime
 		respItem["description"] = item.Description
 		respItem["id"] = item.ID
@@ -2557,7 +2557,7 @@ func flattenConfigurationTemplatesGetsAListOfProjectsItems(items *catalystcenter
 	return respItems
 }
 
-func flattenConfigurationTemplatesGetsAListOfProjectsItemsTags(items *[]catalystcentersdkgo.ResponseItemConfigurationTemplatesGetsAListOfProjectsTags) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsAListOfProjectsV1ItemsTags(items *[]catalystcentersdkgo.ResponseItemConfigurationTemplatesGetsAListOfProjectsV1Tags) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -2571,7 +2571,7 @@ func flattenConfigurationTemplatesGetsAListOfProjectsItemsTags(items *[]catalyst
 	return respItems
 }
 
-func flattenConfigurationTemplatesGetsAListOfProjectsItemsTemplates(items *[]catalystcentersdkgo.ResponseItemConfigurationTemplatesGetsAListOfProjectsTemplates) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsAListOfProjectsItemsTemplates(items *[]catalystcentersdkgo.ResponseItemConfigurationTemplatesGetsAListOfProjectsV1Templates) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -3011,12 +3011,12 @@ func flattenConfigurationTemplatesGetsAListOfProjectsItemsTemplatesValidationErr
 
 }
 
-func flattenConfigurationTemplatesGetsTheDetailsOfAGivenProjectItem(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsTheDetailsOfAGivenProject) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsTheDetailsOfAGivenProjectItem(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsTheDetailsOfAGivenProjectV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["tags"] = flattenConfigurationTemplatesGetsTheDetailsOfAGivenProjectItemTags(item.Tags)
+	respItem["tags"] = flattenConfigurationTemplatesGetsTheDetailsOfAGivenProjectV1ItemTags(item.Tags)
 	respItem["create_time"] = item.CreateTime
 	respItem["description"] = item.Description
 	respItem["id"] = item.ID
@@ -3028,7 +3028,7 @@ func flattenConfigurationTemplatesGetsTheDetailsOfAGivenProjectItem(item *cataly
 	}
 }
 
-func flattenConfigurationTemplatesGetsTheDetailsOfAGivenProjectItemTags(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsTheDetailsOfAGivenProjectTags) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsTheDetailsOfAGivenProjectV1ItemTags(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsTheDetailsOfAGivenProjectV1Tags) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -3042,7 +3042,7 @@ func flattenConfigurationTemplatesGetsTheDetailsOfAGivenProjectItemTags(items *[
 	return respItems
 }
 
-func flattenConfigurationTemplatesGetsTheDetailsOfAGivenProjectItemTemplates(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsTheDetailsOfAGivenProjectTemplates) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsTheDetailsOfAGivenProjectItemTemplates(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsTheDetailsOfAGivenProjectV1Templates) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

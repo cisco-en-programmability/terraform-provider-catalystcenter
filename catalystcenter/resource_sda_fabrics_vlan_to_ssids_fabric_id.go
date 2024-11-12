@@ -19,7 +19,7 @@ func resourceSdaFabricsVLANToSSIDsFabricID() *schema.Resource {
 	return &schema.Resource{
 		Description: `It manages read and update operations on Fabric Wireless.
 
-- Add update, or remove SSID mappings to a VLAN. If the payload doesn't contain a 'vlanName' which has SSIDs mapping
+- Add, update, or remove SSID mappings to a VLAN. If the payload doesn't contain a 'vlanName' which has SSIDs mapping
 done earlier then all the mapped SSIDs of the 'vlanName' is cleared. The request must include all SSIDs currently mapped
 to a VLAN, as determined by the response from the GET operation for the same fabricId used in the request. If an
 already-mapped SSID is not included in the payload, its mapping will be removed by this API. Conversely, if a new SSID
@@ -163,19 +163,19 @@ func resourceSdaFabricsVLANToSSIDsFabricIDRead(ctx context.Context, d *schema.Re
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSite")
 
-		queryParams1 := catalystcentersdkgo.RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteQueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1QueryParams{}
 		item1, err := searchFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSite(m, queryParams1, vID, vName)
 		if err != nil || item1 == nil {
 			d.SetId("")
 			return diags
 		}
 
-		items := []catalystcentersdkgo.ResponseFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteResponse{
+		items := []catalystcentersdkgo.ResponseFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1Response{
 			*item1,
 		}
 
 		// Review flatten function used
-		vItem1 := flattenFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteItems(&items)
+		vItem1 := flattenFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1Items(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSite search response",
@@ -195,7 +195,7 @@ func resourceSdaFabricsVLANToSSIDsFabricIDUpdate(ctx context.Context, d *schema.
 	resourceMap := separateResourceID(resourceID)
 	vvFabricID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVLAN(ctx, "parameters.0", d)
+		request1 := expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVLANV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.FabricWireless.AddUpdateOrRemoveSSIDMappingToAVLAN(vvFabricID, request1)
 		if err != nil || response1 == nil {
@@ -254,9 +254,9 @@ func resourceSdaFabricsVLANToSSIDsFabricIDDelete(ctx context.Context, d *schema.
 		"Failure at SdaFabricsVLANToSSIDsFabricIDDelete, unexpected response", ""))
 	return diags
 }
-func expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVLAN(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestFabricWirelessAddUpdateOrRemoveSSIDMappingToAVLAN {
-	request := catalystcentersdkgo.RequestFabricWirelessAddUpdateOrRemoveSSIDMappingToAVLAN{}
-	if v := expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVLANItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVLANV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestFabricWirelessAddUpdateOrRemoveSSIDMappingToAVLANV1 {
+	request := catalystcentersdkgo.RequestFabricWirelessAddUpdateOrRemoveSSIDMappingToAVLANV1{}
+	if v := expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVLANV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -265,8 +265,8 @@ func expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVL
 	return &request
 }
 
-func expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVLANItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemFabricWirelessAddUpdateOrRemoveSSIDMappingToAVLAN {
-	request := []catalystcentersdkgo.RequestItemFabricWirelessAddUpdateOrRemoveSSIDMappingToAVLAN{}
+func expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVLANV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemFabricWirelessAddUpdateOrRemoveSSIDMappingToAVLANV1 {
+	request := []catalystcentersdkgo.RequestItemFabricWirelessAddUpdateOrRemoveSSIDMappingToAVLANV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -277,7 +277,7 @@ func expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVL
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVLANItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVLANV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -288,13 +288,13 @@ func expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVL
 	return &request
 }
 
-func expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVLANItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemFabricWirelessAddUpdateOrRemoveSSIDMappingToAVLAN {
-	request := catalystcentersdkgo.RequestItemFabricWirelessAddUpdateOrRemoveSSIDMappingToAVLAN{}
+func expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVLANV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemFabricWirelessAddUpdateOrRemoveSSIDMappingToAVLANV1 {
+	request := catalystcentersdkgo.RequestItemFabricWirelessAddUpdateOrRemoveSSIDMappingToAVLANV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".vlan_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".vlan_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".vlan_name")))) {
 		request.VLANName = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ssid_details")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ssid_details")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ssid_details")))) {
-		request.SSIDDetails = expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVLANItemSSIDDetailsArray(ctx, key+".ssid_details", d)
+		request.SSIDDetails = expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVLANV1ItemSSIDDetailsArray(ctx, key+".ssid_details", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -302,8 +302,8 @@ func expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVL
 	return &request
 }
 
-func expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVLANItemSSIDDetailsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemFabricWirelessAddUpdateOrRemoveSSIDMappingToAVLANSSIDDetails {
-	request := []catalystcentersdkgo.RequestItemFabricWirelessAddUpdateOrRemoveSSIDMappingToAVLANSSIDDetails{}
+func expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVLANV1ItemSSIDDetailsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemFabricWirelessAddUpdateOrRemoveSSIDMappingToAVLANV1SSIDDetails {
+	request := []catalystcentersdkgo.RequestItemFabricWirelessAddUpdateOrRemoveSSIDMappingToAVLANV1SSIDDetails{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -314,7 +314,7 @@ func expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVL
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVLANItemSSIDDetails(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVLANV1ItemSSIDDetails(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -325,8 +325,8 @@ func expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVL
 	return &request
 }
 
-func expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVLANItemSSIDDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemFabricWirelessAddUpdateOrRemoveSSIDMappingToAVLANSSIDDetails {
-	request := catalystcentersdkgo.RequestItemFabricWirelessAddUpdateOrRemoveSSIDMappingToAVLANSSIDDetails{}
+func expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVLANV1ItemSSIDDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemFabricWirelessAddUpdateOrRemoveSSIDMappingToAVLANV1SSIDDetails {
+	request := catalystcentersdkgo.RequestItemFabricWirelessAddUpdateOrRemoveSSIDMappingToAVLANV1SSIDDetails{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -339,10 +339,10 @@ func expandRequestSdaFabricsVLANToSSIDsFabricIDAddUpdateOrRemoveSSIDMappingToAVL
 	return &request
 }
 
-func searchFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSite(m interface{}, queryParams catalystcentersdkgo.RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteQueryParams, vID string, vName string) (*catalystcentersdkgo.ResponseFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteResponse, error) {
+func searchFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSite(m interface{}, queryParams catalystcentersdkgo.RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1QueryParams, vID string, vName string) (*catalystcentersdkgo.ResponseFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1Response, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteResponse
+	var foundItem *catalystcentersdkgo.ResponseFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1Response
 	// var ite *catalystcentersdkgo.ResponseFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSite
 	if vID != "" {
 		queryParams.Offset = 1

@@ -56,26 +56,26 @@ func dataSourceProvisioningSettingsRead(ctx context.Context, d *schema.ResourceD
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetProvisioningSettings")
+		log.Printf("[DEBUG] Selected method: GetProvisioningSettingsV1")
 
-		response1, restyResp1, err := client.SystemSettings.GetProvisioningSettings()
+		response1, restyResp1, err := client.SystemSettings.GetProvisioningSettingsV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetProvisioningSettings", err,
-				"Failure at GetProvisioningSettings, unexpected response", ""))
+				"Failure when executing 2 GetProvisioningSettingsV1", err,
+				"Failure at GetProvisioningSettingsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSystemSettingsGetProvisioningSettingsItem(response1.Response)
+		vItem1 := flattenSystemSettingsGetProvisioningSettingsV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetProvisioningSettings response",
+				"Failure when setting GetProvisioningSettingsV1 response",
 				err))
 			return diags
 		}
@@ -87,7 +87,7 @@ func dataSourceProvisioningSettingsRead(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func flattenSystemSettingsGetProvisioningSettingsItem(item *catalystcentersdkgo.ResponseSystemSettingsGetProvisioningSettingsResponse) []map[string]interface{} {
+func flattenSystemSettingsGetProvisioningSettingsV1Item(item *catalystcentersdkgo.ResponseSystemSettingsGetProvisioningSettingsV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

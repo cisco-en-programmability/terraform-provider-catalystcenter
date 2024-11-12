@@ -343,26 +343,26 @@ func dataSourceDeviceInterfaceOspfRead(ctx context.Context, d *schema.ResourceDa
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetOspfInterfaces")
+		log.Printf("[DEBUG] Selected method: GetOspfInterfacesV1")
 
-		response1, restyResp1, err := client.Devices.GetOspfInterfaces()
+		response1, restyResp1, err := client.Devices.GetOspfInterfacesV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetOspfInterfaces", err,
-				"Failure at GetOspfInterfaces, unexpected response", ""))
+				"Failure when executing 2 GetOspfInterfacesV1", err,
+				"Failure at GetOspfInterfacesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetOspfInterfacesItems(response1.Response)
+		vItems1 := flattenDevicesGetOspfInterfacesV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetOspfInterfaces response",
+				"Failure when setting GetOspfInterfacesV1 response",
 				err))
 			return diags
 		}
@@ -374,14 +374,14 @@ func dataSourceDeviceInterfaceOspfRead(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func flattenDevicesGetOspfInterfacesItems(items *[]catalystcentersdkgo.ResponseDevicesGetOspfInterfacesResponse) []map[string]interface{} {
+func flattenDevicesGetOspfInterfacesV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetOspfInterfacesV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["addresses"] = flattenDevicesGetOspfInterfacesItemsAddresses(item.Addresses)
+		respItem["addresses"] = flattenDevicesGetOspfInterfacesV1ItemsAddresses(item.Addresses)
 		respItem["admin_status"] = item.AdminStatus
 		respItem["class_name"] = item.ClassName
 		respItem["description"] = item.Description
@@ -421,27 +421,27 @@ func flattenDevicesGetOspfInterfacesItems(items *[]catalystcentersdkgo.ResponseD
 	return respItems
 }
 
-func flattenDevicesGetOspfInterfacesItemsAddresses(items *[]catalystcentersdkgo.ResponseDevicesGetOspfInterfacesResponseAddresses) []map[string]interface{} {
+func flattenDevicesGetOspfInterfacesV1ItemsAddresses(items *[]catalystcentersdkgo.ResponseDevicesGetOspfInterfacesV1ResponseAddresses) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["address"] = flattenDevicesGetOspfInterfacesItemsAddressesAddress(item.Address)
+		respItem["address"] = flattenDevicesGetOspfInterfacesV1ItemsAddressesAddress(item.Address)
 		respItem["type"] = item.Type
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesGetOspfInterfacesItemsAddressesAddress(item *catalystcentersdkgo.ResponseDevicesGetOspfInterfacesResponseAddressesAddress) []map[string]interface{} {
+func flattenDevicesGetOspfInterfacesV1ItemsAddressesAddress(item *catalystcentersdkgo.ResponseDevicesGetOspfInterfacesV1ResponseAddressesAddress) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["ip_address"] = flattenDevicesGetOspfInterfacesItemsAddressesAddressIPAddress(item.IPAddress)
-	respItem["ip_mask"] = flattenDevicesGetOspfInterfacesItemsAddressesAddressIPMask(item.IPMask)
+	respItem["ip_address"] = flattenDevicesGetOspfInterfacesV1ItemsAddressesAddressIPAddress(item.IPAddress)
+	respItem["ip_mask"] = flattenDevicesGetOspfInterfacesV1ItemsAddressesAddressIPMask(item.IPMask)
 	respItem["is_inverse_mask"] = boolPtrToString(item.IsInverseMask)
 
 	return []map[string]interface{}{
@@ -450,7 +450,7 @@ func flattenDevicesGetOspfInterfacesItemsAddressesAddress(item *catalystcentersd
 
 }
 
-func flattenDevicesGetOspfInterfacesItemsAddressesAddressIPAddress(item *catalystcentersdkgo.ResponseDevicesGetOspfInterfacesResponseAddressesAddressIPAddress) []map[string]interface{} {
+func flattenDevicesGetOspfInterfacesV1ItemsAddressesAddressIPAddress(item *catalystcentersdkgo.ResponseDevicesGetOspfInterfacesV1ResponseAddressesAddressIPAddress) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -463,7 +463,7 @@ func flattenDevicesGetOspfInterfacesItemsAddressesAddressIPAddress(item *catalys
 
 }
 
-func flattenDevicesGetOspfInterfacesItemsAddressesAddressIPMask(item *catalystcentersdkgo.ResponseDevicesGetOspfInterfacesResponseAddressesAddressIPMask) []map[string]interface{} {
+func flattenDevicesGetOspfInterfacesV1ItemsAddressesAddressIPMask(item *catalystcentersdkgo.ResponseDevicesGetOspfInterfacesV1ResponseAddressesAddressIPMask) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

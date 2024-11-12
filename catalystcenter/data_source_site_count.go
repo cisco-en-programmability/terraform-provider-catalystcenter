@@ -59,31 +59,31 @@ func dataSourceSiteCountRead(ctx context.Context, d *schema.ResourceData, m inte
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSiteCount")
-		queryParams1 := catalystcentersdkgo.GetSiteCountQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetSiteCountV1")
+		queryParams1 := catalystcentersdkgo.GetSiteCountV1QueryParams{}
 
 		if okSiteID {
 			queryParams1.SiteID = vSiteID.(string)
 		}
 
-		response1, restyResp1, err := client.Sites.GetSiteCount(&queryParams1)
+		response1, restyResp1, err := client.Sites.GetSiteCountV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSiteCount", err,
-				"Failure at GetSiteCount, unexpected response", ""))
+				"Failure when executing 2 GetSiteCountV1", err,
+				"Failure at GetSiteCountV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSitesGetSiteCountItem(response1)
+		vItem1 := flattenSitesGetSiteCountV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSiteCount response",
+				"Failure when setting GetSiteCountV1 response",
 				err))
 			return diags
 		}
@@ -95,7 +95,7 @@ func dataSourceSiteCountRead(ctx context.Context, d *schema.ResourceData, m inte
 	return diags
 }
 
-func flattenSitesGetSiteCountItem(item *catalystcentersdkgo.ResponseSitesGetSiteCount) []map[string]interface{} {
+func flattenSitesGetSiteCountV1Item(item *catalystcentersdkgo.ResponseSitesGetSiteCountV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

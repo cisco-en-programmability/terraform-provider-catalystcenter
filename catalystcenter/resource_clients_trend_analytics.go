@@ -276,35 +276,31 @@ func resourceClientsTrendAnalyticsCreate(ctx context.Context, d *schema.Resource
 
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
-	request1 := expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClients(ctx, "parameters.0", d)
+	request1 := expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClientsV1(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.RetrievesTheTrendAnalyticsDataRelatedToClientsHeaderParams{}
+	headerParams1 := catalystcentersdkgo.RetrievesTheTrendAnalyticsDataRelatedToClientsV1HeaderParams{}
 
 	headerParams1.XCaLLERID = vXCaLLERID.(string)
 
-	response1, restyResp1, err := client.Clients.RetrievesTheTrendAnalyticsDataRelatedToClients(request1, &headerParams1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Clients.RetrievesTheTrendAnalyticsDataRelatedToClientsV1(request1, &headerParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing RetrievesTheTrendAnalyticsDataRelatedToClients", err))
+			"Failure when executing RetrievesTheTrendAnalyticsDataRelatedToClientsV1", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	//Analizar verificacion.
-
-	vItems1 := flattenClientsRetrievesTheTrendAnalyticsDataRelatedToClientsItems(response1.Response)
+	vItems1 := flattenClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1Items(response1.Response)
 	if err := d.Set("items", vItems1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting RetrievesTheTrendAnalyticsDataRelatedToClients response",
+			"Failure when setting RetrievesTheTrendAnalyticsDataRelatedToClientsV1 response",
 			err))
 		return diags
 	}
@@ -326,8 +322,8 @@ func resourceClientsTrendAnalyticsDelete(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClients(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClients {
-	request := catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClients{}
+func expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClientsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1 {
+	request := catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -344,19 +340,19 @@ func expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToCl
 		request.Attributes = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClientsFiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClientsV1FiltersArray(ctx, key+".filters", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".aggregate_attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".aggregate_attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".aggregate_attributes")))) {
-		request.AggregateAttributes = expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClientsAggregateAttributesArray(ctx, key+".aggregate_attributes", d)
+		request.AggregateAttributes = expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClientsV1AggregateAttributesArray(ctx, key+".aggregate_attributes", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".page")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".page")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".page")))) {
-		request.Page = expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClientsPage(ctx, key+".page.0", d)
+		request.Page = expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClientsV1Page(ctx, key+".page.0", d)
 	}
 	return &request
 }
 
-func expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClientsFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClientsFilters {
-	request := []catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClientsFilters{}
+func expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClientsV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1Filters {
+	request := []catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1Filters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -367,7 +363,7 @@ func expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToCl
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClientsFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClientsV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -375,8 +371,8 @@ func expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToCl
 	return &request
 }
 
-func expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClientsFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClientsFilters {
-	request := catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClientsFilters{}
+func expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClientsV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1Filters {
+	request := catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1Filters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -389,8 +385,8 @@ func expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToCl
 	return &request
 }
 
-func expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClientsAggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClientsAggregateAttributes {
-	request := []catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClientsAggregateAttributes{}
+func expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClientsV1AggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1AggregateAttributes {
+	request := []catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1AggregateAttributes{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -401,7 +397,7 @@ func expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToCl
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClientsAggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClientsV1AggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -409,8 +405,8 @@ func expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToCl
 	return &request
 }
 
-func expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClientsAggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClientsAggregateAttributes {
-	request := catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClientsAggregateAttributes{}
+func expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClientsV1AggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1AggregateAttributes {
+	request := catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1AggregateAttributes{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -420,8 +416,8 @@ func expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToCl
 	return &request
 }
 
-func expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClientsPage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClientsPage {
-	request := catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClientsPage{}
+func expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToClientsV1Page(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1Page {
+	request := catalystcentersdkgo.RequestClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1Page{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".limit")))) {
 		request.Limit = interfaceToIntPtr(v)
 	}
@@ -434,7 +430,7 @@ func expandRequestClientsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToCl
 	return &request
 }
 
-func flattenClientsRetrievesTheTrendAnalyticsDataRelatedToClientsItems(items *[]catalystcentersdkgo.ResponseClientsRetrievesTheTrendAnalyticsDataRelatedToClientsResponse) []map[string]interface{} {
+func flattenClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1Items(items *[]catalystcentersdkgo.ResponseClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -442,13 +438,13 @@ func flattenClientsRetrievesTheTrendAnalyticsDataRelatedToClientsItems(items *[]
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["timestamp"] = item.Timestamp
-		respItem["groups"] = flattenClientsRetrievesTheTrendAnalyticsDataRelatedToClientsItemsGroups(item.Groups)
+		respItem["groups"] = flattenClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1ItemsGroups(item.Groups)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenClientsRetrievesTheTrendAnalyticsDataRelatedToClientsItemsGroups(items *[]catalystcentersdkgo.ResponseClientsRetrievesTheTrendAnalyticsDataRelatedToClientsResponseGroups) []map[string]interface{} {
+func flattenClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1ItemsGroups(items *[]catalystcentersdkgo.ResponseClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1ResponseGroups) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -456,14 +452,14 @@ func flattenClientsRetrievesTheTrendAnalyticsDataRelatedToClientsItemsGroups(ite
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["id"] = item.ID
-		respItem["attributes"] = flattenClientsRetrievesTheTrendAnalyticsDataRelatedToClientsItemsGroupsAttributes(item.Attributes)
-		respItem["aggregate_attributes"] = flattenClientsRetrievesTheTrendAnalyticsDataRelatedToClientsItemsGroupsAggregateAttributes(item.AggregateAttributes)
+		respItem["attributes"] = flattenClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1ItemsGroupsAttributes(item.Attributes)
+		respItem["aggregate_attributes"] = flattenClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1ItemsGroupsAggregateAttributes(item.AggregateAttributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenClientsRetrievesTheTrendAnalyticsDataRelatedToClientsItemsGroupsAttributes(items *[]catalystcentersdkgo.ResponseClientsRetrievesTheTrendAnalyticsDataRelatedToClientsResponseGroupsAttributes) []map[string]interface{} {
+func flattenClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1ItemsGroupsAttributes(items *[]catalystcentersdkgo.ResponseClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1ResponseGroupsAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -477,7 +473,7 @@ func flattenClientsRetrievesTheTrendAnalyticsDataRelatedToClientsItemsGroupsAttr
 	return respItems
 }
 
-func flattenClientsRetrievesTheTrendAnalyticsDataRelatedToClientsItemsGroupsAggregateAttributes(items *[]catalystcentersdkgo.ResponseClientsRetrievesTheTrendAnalyticsDataRelatedToClientsResponseGroupsAggregateAttributes) []map[string]interface{} {
+func flattenClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1ItemsGroupsAggregateAttributes(items *[]catalystcentersdkgo.ResponseClientsRetrievesTheTrendAnalyticsDataRelatedToClientsV1ResponseGroupsAggregateAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -102,32 +102,32 @@ func dataSourceNetworkDeviceEquipmentRead(ctx context.Context, d *schema.Resourc
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTheDetailsOfPhysicalComponentsOfTheGivenDevice")
+		log.Printf("[DEBUG] Selected method: GetTheDetailsOfPhysicalComponentsOfTheGivenDeviceV1")
 		vvDeviceUUID := vDeviceUUID.(string)
-		queryParams1 := catalystcentersdkgo.GetTheDetailsOfPhysicalComponentsOfTheGivenDeviceQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetTheDetailsOfPhysicalComponentsOfTheGivenDeviceV1QueryParams{}
 
 		if okType {
 			queryParams1.Type = vType.(string)
 		}
 
-		response1, restyResp1, err := client.Devices.GetTheDetailsOfPhysicalComponentsOfTheGivenDevice(vvDeviceUUID, &queryParams1)
+		response1, restyResp1, err := client.Devices.GetTheDetailsOfPhysicalComponentsOfTheGivenDeviceV1(vvDeviceUUID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTheDetailsOfPhysicalComponentsOfTheGivenDevice", err,
-				"Failure at GetTheDetailsOfPhysicalComponentsOfTheGivenDevice, unexpected response", ""))
+				"Failure when executing 2 GetTheDetailsOfPhysicalComponentsOfTheGivenDeviceV1", err,
+				"Failure at GetTheDetailsOfPhysicalComponentsOfTheGivenDeviceV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetTheDetailsOfPhysicalComponentsOfTheGivenDeviceItems(response1.Response)
+		vItems1 := flattenDevicesGetTheDetailsOfPhysicalComponentsOfTheGivenDeviceV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTheDetailsOfPhysicalComponentsOfTheGivenDevice response",
+				"Failure when setting GetTheDetailsOfPhysicalComponentsOfTheGivenDeviceV1 response",
 				err))
 			return diags
 		}
@@ -139,7 +139,7 @@ func dataSourceNetworkDeviceEquipmentRead(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func flattenDevicesGetTheDetailsOfPhysicalComponentsOfTheGivenDeviceItems(items *[]catalystcentersdkgo.ResponseDevicesGetTheDetailsOfPhysicalComponentsOfTheGivenDeviceResponse) []map[string]interface{} {
+func flattenDevicesGetTheDetailsOfPhysicalComponentsOfTheGivenDeviceV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetTheDetailsOfPhysicalComponentsOfTheGivenDeviceV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

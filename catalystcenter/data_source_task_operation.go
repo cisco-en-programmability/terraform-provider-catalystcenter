@@ -155,29 +155,29 @@ func dataSourceTaskOperationRead(ctx context.Context, d *schema.ResourceData, m 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTaskByOperationID")
+		log.Printf("[DEBUG] Selected method: GetTaskByOperationIDV1")
 		vvOperationID := vOperationID.(string)
 		vvOffset := vOffset.(int)
 		vvLimit := vLimit.(int)
 
-		response1, restyResp1, err := client.Task.GetTaskByOperationID(vvOperationID, vvOffset, vvLimit)
+		response1, restyResp1, err := client.Task.GetTaskByOperationIDV1(vvOperationID, vvOffset, vvLimit)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTaskByOperationID", err,
-				"Failure at GetTaskByOperationID, unexpected response", ""))
+				"Failure when executing 2 GetTaskByOperationIDV1", err,
+				"Failure at GetTaskByOperationIDV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenTaskGetTaskByOperationIDItems(response1.Response)
+		vItems1 := flattenTaskGetTaskByOperationIDV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTaskByOperationID response",
+				"Failure when setting GetTaskByOperationIDV1 response",
 				err))
 			return diags
 		}
@@ -189,7 +189,7 @@ func dataSourceTaskOperationRead(ctx context.Context, d *schema.ResourceData, m 
 	return diags
 }
 
-func flattenTaskGetTaskByOperationIDItems(items *[]catalystcentersdkgo.ResponseTaskGetTaskByOperationIDResponse) []map[string]interface{} {
+func flattenTaskGetTaskByOperationIDV1Items(items *[]catalystcentersdkgo.ResponseTaskGetTaskByOperationIDV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

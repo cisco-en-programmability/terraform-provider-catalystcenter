@@ -1,6 +1,6 @@
 
 resource "catalystcenter_assurance_issues_query_count" "example" {
-  provider    = catalystcenter
+  provider    = meraki
   xca_lle_rid = "string"
   parameters {
 

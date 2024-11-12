@@ -1,6 +1,6 @@
 
 resource "catalystcenter_telemetry_settings_apply" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     device_ids = ["string"]

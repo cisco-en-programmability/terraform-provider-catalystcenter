@@ -47,26 +47,26 @@ func dataSourceLanAutomationCountRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: LanAutomationSessionCount")
+		log.Printf("[DEBUG] Selected method: LanAutomationSessionCountV1")
 
-		response1, restyResp1, err := client.LanAutomation.LanAutomationSessionCount()
+		response1, restyResp1, err := client.LanAutomation.LanAutomationSessionCountV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 LanAutomationSessionCount", err,
-				"Failure at LanAutomationSessionCount, unexpected response", ""))
+				"Failure when executing 2 LanAutomationSessionCountV1", err,
+				"Failure at LanAutomationSessionCountV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenLanAutomationLanAutomationSessionCountItem(response1.Response)
+		vItem1 := flattenLanAutomationLanAutomationSessionCountV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting LanAutomationSessionCount response",
+				"Failure when setting LanAutomationSessionCountV1 response",
 				err))
 			return diags
 		}
@@ -78,7 +78,7 @@ func dataSourceLanAutomationCountRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenLanAutomationLanAutomationSessionCountItem(item *catalystcentersdkgo.ResponseLanAutomationLanAutomationSessionCountResponse) []map[string]interface{} {
+func flattenLanAutomationLanAutomationSessionCountV1Item(item *catalystcentersdkgo.ResponseLanAutomationLanAutomationSessionCountV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

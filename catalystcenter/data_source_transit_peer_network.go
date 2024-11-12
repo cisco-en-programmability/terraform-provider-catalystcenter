@@ -137,29 +137,29 @@ func dataSourceTransitPeerNetworkRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTransitPeerNetworkInfo")
-		queryParams1 := catalystcentersdkgo.GetTransitPeerNetworkInfoQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetTransitPeerNetworkInfoV1")
+		queryParams1 := catalystcentersdkgo.GetTransitPeerNetworkInfoV1QueryParams{}
 
 		queryParams1.TransitPeerNetworkName = vTransitPeerNetworkName.(string)
 
-		response1, restyResp1, err := client.Sda.GetTransitPeerNetworkInfo(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetTransitPeerNetworkInfoV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTransitPeerNetworkInfo", err,
-				"Failure at GetTransitPeerNetworkInfo, unexpected response", ""))
+				"Failure when executing 2 GetTransitPeerNetworkInfoV1", err,
+				"Failure at GetTransitPeerNetworkInfoV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetTransitPeerNetworkInfoItem(response1)
+		vItem1 := flattenSdaGetTransitPeerNetworkInfoV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTransitPeerNetworkInfo response",
+				"Failure when setting GetTransitPeerNetworkInfoV1 response",
 				err))
 			return diags
 		}
@@ -171,15 +171,15 @@ func dataSourceTransitPeerNetworkRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenSdaGetTransitPeerNetworkInfoItem(item *catalystcentersdkgo.ResponseSdaGetTransitPeerNetworkInfo) []map[string]interface{} {
+func flattenSdaGetTransitPeerNetworkInfoV1Item(item *catalystcentersdkgo.ResponseSdaGetTransitPeerNetworkInfoV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["transit_peer_network_name"] = item.TransitPeerNetworkName
 	respItem["transit_peer_network_type"] = item.TransitPeerNetworkType
-	respItem["ip_transit_settings"] = flattenSdaGetTransitPeerNetworkInfoItemIPTransitSettings(item.IPTransitSettings)
-	respItem["sda_transit_settings"] = flattenSdaGetTransitPeerNetworkInfoItemSdaTransitSettings(item.SdaTransitSettings)
+	respItem["ip_transit_settings"] = flattenSdaGetTransitPeerNetworkInfoV1ItemIPTransitSettings(item.IPTransitSettings)
+	respItem["sda_transit_settings"] = flattenSdaGetTransitPeerNetworkInfoV1ItemSdaTransitSettings(item.SdaTransitSettings)
 	respItem["status"] = item.Status
 	respItem["description"] = item.Description
 	respItem["transit_peer_network_id"] = item.TransitPeerNetworkID
@@ -188,7 +188,7 @@ func flattenSdaGetTransitPeerNetworkInfoItem(item *catalystcentersdkgo.ResponseS
 	}
 }
 
-func flattenSdaGetTransitPeerNetworkInfoItemIPTransitSettings(item *catalystcentersdkgo.ResponseSdaGetTransitPeerNetworkInfoIPTransitSettings) []map[string]interface{} {
+func flattenSdaGetTransitPeerNetworkInfoV1ItemIPTransitSettings(item *catalystcentersdkgo.ResponseSdaGetTransitPeerNetworkInfoV1IPTransitSettings) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -202,12 +202,12 @@ func flattenSdaGetTransitPeerNetworkInfoItemIPTransitSettings(item *catalystcent
 
 }
 
-func flattenSdaGetTransitPeerNetworkInfoItemSdaTransitSettings(item *catalystcentersdkgo.ResponseSdaGetTransitPeerNetworkInfoSdaTransitSettings) []map[string]interface{} {
+func flattenSdaGetTransitPeerNetworkInfoV1ItemSdaTransitSettings(item *catalystcentersdkgo.ResponseSdaGetTransitPeerNetworkInfoV1SdaTransitSettings) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["transit_control_plane_settings"] = flattenSdaGetTransitPeerNetworkInfoItemSdaTransitSettingsTransitControlPlaneSettings(item.TransitControlPlaneSettings)
+	respItem["transit_control_plane_settings"] = flattenSdaGetTransitPeerNetworkInfoV1ItemSdaTransitSettingsTransitControlPlaneSettings(item.TransitControlPlaneSettings)
 
 	return []map[string]interface{}{
 		respItem,
@@ -215,7 +215,7 @@ func flattenSdaGetTransitPeerNetworkInfoItemSdaTransitSettings(item *catalystcen
 
 }
 
-func flattenSdaGetTransitPeerNetworkInfoItemSdaTransitSettingsTransitControlPlaneSettings(items *[]catalystcentersdkgo.ResponseSdaGetTransitPeerNetworkInfoSdaTransitSettingsTransitControlPlaneSettings) []map[string]interface{} {
+func flattenSdaGetTransitPeerNetworkInfoV1ItemSdaTransitSettingsTransitControlPlaneSettings(items *[]catalystcentersdkgo.ResponseSdaGetTransitPeerNetworkInfoV1SdaTransitSettingsTransitControlPlaneSettings) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -141,27 +141,27 @@ func dataSourceTaskTreeRead(ctx context.Context, d *schema.ResourceData, m inter
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTaskTree")
+		log.Printf("[DEBUG] Selected method: GetTaskTreeV1")
 		vvTaskID := vTaskID.(string)
 
-		response1, restyResp1, err := client.Task.GetTaskTree(vvTaskID)
+		response1, restyResp1, err := client.Task.GetTaskTreeV1(vvTaskID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTaskTree", err,
-				"Failure at GetTaskTree, unexpected response", ""))
+				"Failure when executing 2 GetTaskTreeV1", err,
+				"Failure at GetTaskTreeV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenTaskGetTaskTreeItems(response1.Response)
+		vItems1 := flattenTaskGetTaskTreeV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTaskTree response",
+				"Failure when setting GetTaskTreeV1 response",
 				err))
 			return diags
 		}
@@ -173,7 +173,7 @@ func dataSourceTaskTreeRead(ctx context.Context, d *schema.ResourceData, m inter
 	return diags
 }
 
-func flattenTaskGetTaskTreeItems(items *[]catalystcentersdkgo.ResponseTaskGetTaskTreeResponse) []map[string]interface{} {
+func flattenTaskGetTaskTreeV1Items(items *[]catalystcentersdkgo.ResponseTaskGetTaskTreeV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

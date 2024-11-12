@@ -1,6 +1,6 @@
 
 resource "catalystcenter_pnp_device_site_claim" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     config_info {

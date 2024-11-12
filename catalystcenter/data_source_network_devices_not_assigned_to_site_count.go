@@ -47,26 +47,26 @@ func dataSourceNetworkDevicesNotAssignedToSiteCountRead(ctx context.Context, d *
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSiteNotAssignedNetworkDevicesCount")
+		log.Printf("[DEBUG] Selected method: GetSiteNotAssignedNetworkDevicesCountV1")
 
-		response1, restyResp1, err := client.SiteDesign.GetSiteNotAssignedNetworkDevicesCount()
+		response1, restyResp1, err := client.SiteDesign.GetSiteNotAssignedNetworkDevicesCountV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSiteNotAssignedNetworkDevicesCount", err,
-				"Failure at GetSiteNotAssignedNetworkDevicesCount, unexpected response", ""))
+				"Failure when executing 2 GetSiteNotAssignedNetworkDevicesCountV1", err,
+				"Failure at GetSiteNotAssignedNetworkDevicesCountV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSiteDesignGetSiteNotAssignedNetworkDevicesCountItem(response1.Response)
+		vItem1 := flattenSiteDesignGetSiteNotAssignedNetworkDevicesCountV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSiteNotAssignedNetworkDevicesCount response",
+				"Failure when setting GetSiteNotAssignedNetworkDevicesCountV1 response",
 				err))
 			return diags
 		}
@@ -78,7 +78,7 @@ func dataSourceNetworkDevicesNotAssignedToSiteCountRead(ctx context.Context, d *
 	return diags
 }
 
-func flattenSiteDesignGetSiteNotAssignedNetworkDevicesCountItem(item *catalystcentersdkgo.ResponseSiteDesignGetSiteNotAssignedNetworkDevicesCountResponse) []map[string]interface{} {
+func flattenSiteDesignGetSiteNotAssignedNetworkDevicesCountV1Item(item *catalystcentersdkgo.ResponseSiteDesignGetSiteNotAssignedNetworkDevicesCountV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

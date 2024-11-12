@@ -22,8 +22,6 @@ resource "catalystcenter_event_subscription_syslog" "example" {
   provider = catalystcenter
 
   parameters {
-    payload {
-
 
     description = "string"
     filter {
@@ -46,12 +44,11 @@ resource "catalystcenter_event_subscription_syslog" "example" {
       instance_id = "string"
       subscription_details {
 
-          connector_type = "string"
-        }
+        connector_type = "string"
       }
-      subscription_id = "string"
-      version         = "string"
     }
+    subscription_id = "string"
+    version         = "string"
   }
 }
 
@@ -65,7 +62,7 @@ output "catalystcenter_event_subscription_syslog_example" {
 
 ### Optional
 
-- `parameters` (Block List) Array of RequestEventManagementCreateSyslogEventSubscription (see [below for nested schema](#nestedblock--parameters))
+- `parameters` (Block List) Array of RequestEventManagementCreateSyslogEventSubscriptionV1 (see [below for nested schema](#nestedblock--parameters))
 
 ### Read-Only
 

@@ -12,9 +12,6 @@ description: |-
 It performs update operation on Sensors.
 
 - Intent API to deploy, schedule, or edit and existing SENSOR test template
-
-
-
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -23,7 +20,7 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 
 ```terraform
 resource "catalystcenter_sensor_test_template_edit" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     id                 = "string"
@@ -155,7 +152,7 @@ resource "catalystcenter_sensor_test_template_edit" "example" {
       switch_serial_number      = "string"
       switch_uuid               = "string"
       target_a_ps               = ["string"]
-      test_mac_addresses        = "string"
+      test_mac_addresses        = "------"
       wired_application_message = "string"
       wired_application_status  = "string"
       xor_sensor                = "false"

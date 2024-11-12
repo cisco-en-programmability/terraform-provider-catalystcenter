@@ -336,27 +336,27 @@ func dataSourceLicenseDeviceLicenseDetailsRead(ctx context.Context, d *schema.Re
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: DeviceLicenseDetails")
+		log.Printf("[DEBUG] Selected method: DeviceLicenseDetailsV1")
 		vvDeviceUUID := vDeviceUUID.(string)
 
-		response1, restyResp1, err := client.Licenses.DeviceLicenseDetails(vvDeviceUUID)
+		response1, restyResp1, err := client.Licenses.DeviceLicenseDetailsV1(vvDeviceUUID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 DeviceLicenseDetails", err,
-				"Failure at DeviceLicenseDetails, unexpected response", ""))
+				"Failure when executing 2 DeviceLicenseDetailsV1", err,
+				"Failure at DeviceLicenseDetailsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenLicensesDeviceLicenseDetailsItem(response1)
+		vItem1 := flattenLicensesDeviceLicenseDetailsV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting DeviceLicenseDetails response",
+				"Failure when setting DeviceLicenseDetailsV1 response",
 				err))
 			return diags
 		}
@@ -368,7 +368,7 @@ func dataSourceLicenseDeviceLicenseDetailsRead(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func flattenLicensesDeviceLicenseDetailsItem(item *catalystcentersdkgo.ResponseLicensesDeviceLicenseDetails) []map[string]interface{} {
+func flattenLicensesDeviceLicenseDetailsV1Item(item *catalystcentersdkgo.ResponseLicensesDeviceLicenseDetailsV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -391,16 +391,16 @@ func flattenLicensesDeviceLicenseDetailsItem(item *catalystcentersdkgo.ResponseL
 	respItem["feature_license"] = item.FeatureLicense
 	respItem["has_sup_cards"] = boolPtrToString(item.HasSupCards)
 	respItem["udi"] = item.Udi
-	respItem["stacked_devices"] = flattenLicensesDeviceLicenseDetailsItemStackedDevices(item.StackedDevices)
+	respItem["stacked_devices"] = flattenLicensesDeviceLicenseDetailsV1ItemStackedDevices(item.StackedDevices)
 	respItem["is_stacked_device"] = boolPtrToString(item.IsStackedDevice)
-	respItem["access_points"] = flattenLicensesDeviceLicenseDetailsItemAccessPoints(item.AccessPoints)
-	respItem["chassis_details"] = flattenLicensesDeviceLicenseDetailsItemChassisDetails(item.ChassisDetails)
+	respItem["access_points"] = flattenLicensesDeviceLicenseDetailsV1ItemAccessPoints(item.AccessPoints)
+	respItem["chassis_details"] = flattenLicensesDeviceLicenseDetailsV1ItemChassisDetails(item.ChassisDetails)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenLicensesDeviceLicenseDetailsItemStackedDevices(items *[]catalystcentersdkgo.ResponseLicensesDeviceLicenseDetailsStackedDevices) []map[string]interface{} {
+func flattenLicensesDeviceLicenseDetailsV1ItemStackedDevices(items *[]catalystcentersdkgo.ResponseLicensesDeviceLicenseDetailsV1StackedDevices) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -416,7 +416,7 @@ func flattenLicensesDeviceLicenseDetailsItemStackedDevices(items *[]catalystcent
 	return respItems
 }
 
-func flattenLicensesDeviceLicenseDetailsItemAccessPoints(items *[]catalystcentersdkgo.ResponseLicensesDeviceLicenseDetailsAccessPoints) []map[string]interface{} {
+func flattenLicensesDeviceLicenseDetailsV1ItemAccessPoints(items *[]catalystcentersdkgo.ResponseLicensesDeviceLicenseDetailsV1AccessPoints) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -430,14 +430,14 @@ func flattenLicensesDeviceLicenseDetailsItemAccessPoints(items *[]catalystcenter
 	return respItems
 }
 
-func flattenLicensesDeviceLicenseDetailsItemChassisDetails(item *catalystcentersdkgo.ResponseLicensesDeviceLicenseDetailsChassisDetails) []map[string]interface{} {
+func flattenLicensesDeviceLicenseDetailsV1ItemChassisDetails(item *catalystcentersdkgo.ResponseLicensesDeviceLicenseDetailsV1ChassisDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["board_serial_number"] = item.BoardSerialNumber
-	respItem["modules"] = flattenLicensesDeviceLicenseDetailsItemChassisDetailsModules(item.Modules)
-	respItem["supervisor_cards"] = flattenLicensesDeviceLicenseDetailsItemChassisDetailsSupervisorCards(item.SupervisorCards)
+	respItem["modules"] = flattenLicensesDeviceLicenseDetailsV1ItemChassisDetailsModules(item.Modules)
+	respItem["supervisor_cards"] = flattenLicensesDeviceLicenseDetailsV1ItemChassisDetailsSupervisorCards(item.SupervisorCards)
 	respItem["port"] = item.Port
 
 	return []map[string]interface{}{
@@ -446,7 +446,7 @@ func flattenLicensesDeviceLicenseDetailsItemChassisDetails(item *catalystcenters
 
 }
 
-func flattenLicensesDeviceLicenseDetailsItemChassisDetailsModules(items *[]catalystcentersdkgo.ResponseLicensesDeviceLicenseDetailsChassisDetailsModules) []map[string]interface{} {
+func flattenLicensesDeviceLicenseDetailsV1ItemChassisDetailsModules(items *[]catalystcentersdkgo.ResponseLicensesDeviceLicenseDetailsV1ChassisDetailsModules) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -462,7 +462,7 @@ func flattenLicensesDeviceLicenseDetailsItemChassisDetailsModules(items *[]catal
 	return respItems
 }
 
-func flattenLicensesDeviceLicenseDetailsItemChassisDetailsSupervisorCards(items *[]catalystcentersdkgo.ResponseLicensesDeviceLicenseDetailsChassisDetailsSupervisorCards) []map[string]interface{} {
+func flattenLicensesDeviceLicenseDetailsV1ItemChassisDetailsSupervisorCards(items *[]catalystcentersdkgo.ResponseLicensesDeviceLicenseDetailsV1ChassisDetailsSupervisorCards) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

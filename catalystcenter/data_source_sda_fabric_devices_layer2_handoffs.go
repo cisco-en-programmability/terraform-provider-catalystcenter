@@ -110,8 +110,8 @@ func dataSourceSdaFabricDevicesLayer2HandoffsRead(ctx context.Context, d *schema
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetFabricDevicesLayer2Handoffs")
-		queryParams1 := catalystcentersdkgo.GetFabricDevicesLayer2HandoffsQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetFabricDevicesLayer2HandoffsV1")
+		queryParams1 := catalystcentersdkgo.GetFabricDevicesLayer2HandoffsV1QueryParams{}
 
 		queryParams1.FabricID = vFabricID.(string)
 
@@ -125,24 +125,24 @@ func dataSourceSdaFabricDevicesLayer2HandoffsRead(ctx context.Context, d *schema
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.Sda.GetFabricDevicesLayer2Handoffs(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetFabricDevicesLayer2HandoffsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetFabricDevicesLayer2Handoffs", err,
-				"Failure at GetFabricDevicesLayer2Handoffs, unexpected response", ""))
+				"Failure when executing 2 GetFabricDevicesLayer2HandoffsV1", err,
+				"Failure at GetFabricDevicesLayer2HandoffsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaGetFabricDevicesLayer2HandoffsItems(response1.Response)
+		vItems1 := flattenSdaGetFabricDevicesLayer2HandoffsV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetFabricDevicesLayer2Handoffs response",
+				"Failure when setting GetFabricDevicesLayer2HandoffsV1 response",
 				err))
 			return diags
 		}
@@ -154,7 +154,7 @@ func dataSourceSdaFabricDevicesLayer2HandoffsRead(ctx context.Context, d *schema
 	return diags
 }
 
-func flattenSdaGetFabricDevicesLayer2HandoffsItems(items *[]catalystcentersdkgo.ResponseSdaGetFabricDevicesLayer2HandoffsResponse) []map[string]interface{} {
+func flattenSdaGetFabricDevicesLayer2HandoffsV1Items(items *[]catalystcentersdkgo.ResponseSdaGetFabricDevicesLayer2HandoffsV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

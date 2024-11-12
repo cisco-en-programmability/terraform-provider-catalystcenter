@@ -12,9 +12,6 @@ description: |-
 It performs update operation on Wireless.
 
 - Updates wireless provisioning
-
-
-
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -23,21 +20,20 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 
 ```terraform
 resource "catalystcenter_wireless_provision_device_update" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
-    payload {
-      device_name = "string"
-      dynamic_interfaces {
 
-        interface_gateway          = "string"
-        interface_ipaddress        = "string"
-        interface_name             = "string"
-        interface_netmask_in_cid_r = 1
-        lag_or_port_number         = 1
-        vlan_id                    = 1
-      }
-      managed_aplocations = ["string"]
+    device_name = "string"
+    dynamic_interfaces {
+
+      interface_gateway          = "string"
+      interface_ipaddress        = "string"
+      interface_name             = "string"
+      interface_netmask_in_cid_r = 1
+      lag_or_port_number         = 1
+      vlan_id                    = 1
     }
+    managed_aplocations = ["string"]
   }
 }
 
@@ -64,7 +60,7 @@ output "catalystcenter_wireless_provision_device_update_example" {
 
 Optional:
 
-- `payload` (Block List) Array of RequestWirelessProvisionUpdate (see [below for nested schema](#nestedblock--parameters--payload))
+- `payload` (Block List) Array of RequestWirelessProvisionUpdateV1 (see [below for nested schema](#nestedblock--parameters--payload))
 
 <a id="nestedblock--parameters--payload"></a>
 ### Nested Schema for `parameters.payload`

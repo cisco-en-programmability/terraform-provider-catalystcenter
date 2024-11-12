@@ -325,11 +325,13 @@ func resourcePnpGlobalSettings() *schema.Resource {
 										Description: `Cert`,
 										Type:        schema.TypeString,
 										Optional:    true,
+										Computed:    true,
 									},
 									"fqdn_addresses": &schema.Schema{
 										Description: `Fqdn Addresses`,
 										Type:        schema.TypeList,
 										Optional:    true,
+										Computed:    true,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
@@ -338,6 +340,7 @@ func resourcePnpGlobalSettings() *schema.Resource {
 										Description: `Ip Addresses`,
 										Type:        schema.TypeList,
 										Optional:    true,
+										Computed:    true,
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
@@ -346,11 +349,13 @@ func resourcePnpGlobalSettings() *schema.Resource {
 										Description: `Port`,
 										Type:        schema.TypeString,
 										Optional:    true,
+										Computed:    true,
 									},
 									"proxy": &schema.Schema{
 										Description: `Proxy`,
 										Type:        schema.TypeString,
 										Optional:    true,
+										Computed:    true,
 									},
 								},
 							},
@@ -364,6 +369,7 @@ func resourcePnpGlobalSettings() *schema.Resource {
 						"sava_mapping_list": &schema.Schema{
 							Type:     schema.TypeList,
 							Optional: true,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 
@@ -371,11 +377,13 @@ func resourcePnpGlobalSettings() *schema.Resource {
 										Description: `Cco User`,
 										Type:        schema.TypeString,
 										Optional:    true,
+										Computed:    true,
 									},
 									"expiry": &schema.Schema{
 										Description: `Expiry`,
 										Type:        schema.TypeString,
 										Optional:    true,
+										Computed:    true,
 									},
 									"profile": &schema.Schema{
 										Type:     schema.TypeList,
@@ -388,41 +396,49 @@ func resourcePnpGlobalSettings() *schema.Resource {
 													Description: `Address Fqdn`,
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 												},
 												"address_ip_v4": &schema.Schema{
 													Description: `Address Ip V4`,
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 												},
 												"cert": &schema.Schema{
 													Description: `Cert`,
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 												},
 												"make_default": &schema.Schema{
 													Description: `Make Default`,
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 												},
 												"name": &schema.Schema{
 													Description: `Name`,
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 												},
 												"port": &schema.Schema{
 													Description: `Port`,
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 												},
 												"profile_id": &schema.Schema{
 													Description: `Profile Id`,
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 												},
 												"proxy": &schema.Schema{
 													Description: `Proxy`,
 													Type:        schema.TypeString,
 													Optional:    true,
+													Computed:    true,
 												},
 											},
 										},
@@ -489,7 +505,7 @@ func resourcePnpGlobalSettingsRead(ctx context.Context, d *schema.ResourceData, 
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDeviceOnboardingPnpGetPnpGlobalSettingsItem(response1)
+		vItem1 := flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetPnpGlobalSettings response",
@@ -509,7 +525,7 @@ func resourcePnpGlobalSettingsUpdate(ctx context.Context, d *schema.ResourceData
 
 	// NOTE: Consider adding getAllItems and search function to get missing params
 	if d.HasChange("parameters") {
-		request1 := expandRequestPnpGlobalSettingsUpdatePnpGlobalSettings(ctx, "parameters.0", d)
+		request1 := expandRequestPnpGlobalSettingsUpdatePnpGlobalSettingsV1(ctx, "parameters.0", d)
 		if request1 != nil {
 			log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		}
@@ -541,8 +557,8 @@ func resourcePnpGlobalSettingsDelete(ctx context.Context, d *schema.ResourceData
 
 	return diags
 }
-func expandRequestPnpGlobalSettingsUpdatePnpGlobalSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpGlobalSettings {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpGlobalSettings{}
+func expandRequestPnpGlobalSettingsUpdatePnpGlobalSettingsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpGlobalSettingsV1 {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpGlobalSettingsV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -550,10 +566,10 @@ func expandRequestPnpGlobalSettingsUpdatePnpGlobalSettings(ctx context.Context, 
 		request.AcceptEula = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".default_profile")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".default_profile")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".default_profile")))) {
-		request.DefaultProfile = expandRequestPnpGlobalSettingsUpdatePnpGlobalSettingsDefaultProfile(ctx, key+".default_profile.0", d)
+		request.DefaultProfile = expandRequestPnpGlobalSettingsUpdatePnpGlobalSettingsV1DefaultProfile(ctx, key+".default_profile.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".sava_mapping_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".sava_mapping_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".sava_mapping_list")))) {
-		request.SavaMappingList = expandRequestPnpGlobalSettingsUpdatePnpGlobalSettingsSavaMappingListArray(ctx, key+".sava_mapping_list", d)
+		request.SavaMappingList = expandRequestPnpGlobalSettingsUpdatePnpGlobalSettingsV1SavaMappingListArray(ctx, key+".sava_mapping_list", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -561,8 +577,8 @@ func expandRequestPnpGlobalSettingsUpdatePnpGlobalSettings(ctx context.Context, 
 	return &request
 }
 
-func expandRequestPnpGlobalSettingsUpdatePnpGlobalSettingsDefaultProfile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpGlobalSettingsDefaultProfile {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpGlobalSettingsDefaultProfile{}
+func expandRequestPnpGlobalSettingsUpdatePnpGlobalSettingsV1DefaultProfile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpGlobalSettingsV1DefaultProfile {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpGlobalSettingsV1DefaultProfile{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".cert")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".cert")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".cert")))) {
 		request.Cert = interfaceToString(v)
 	}
@@ -584,8 +600,8 @@ func expandRequestPnpGlobalSettingsUpdatePnpGlobalSettingsDefaultProfile(ctx con
 	return &request
 }
 
-func expandRequestPnpGlobalSettingsUpdatePnpGlobalSettingsSavaMappingListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpGlobalSettingsSavaMappingList {
-	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpGlobalSettingsSavaMappingList{}
+func expandRequestPnpGlobalSettingsUpdatePnpGlobalSettingsV1SavaMappingListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpGlobalSettingsV1SavaMappingList {
+	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpGlobalSettingsV1SavaMappingList{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -596,7 +612,7 @@ func expandRequestPnpGlobalSettingsUpdatePnpGlobalSettingsSavaMappingListArray(c
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestPnpGlobalSettingsUpdatePnpGlobalSettingsSavaMappingList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestPnpGlobalSettingsUpdatePnpGlobalSettingsV1SavaMappingList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -607,8 +623,8 @@ func expandRequestPnpGlobalSettingsUpdatePnpGlobalSettingsSavaMappingListArray(c
 	return &request
 }
 
-func expandRequestPnpGlobalSettingsUpdatePnpGlobalSettingsSavaMappingList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpGlobalSettingsSavaMappingList {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpGlobalSettingsSavaMappingList{}
+func expandRequestPnpGlobalSettingsUpdatePnpGlobalSettingsV1SavaMappingList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpGlobalSettingsV1SavaMappingList {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpGlobalSettingsV1SavaMappingList{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".cco_user")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".cco_user")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".cco_user")))) {
 		request.CcoUser = interfaceToString(v)
 	}
@@ -616,7 +632,7 @@ func expandRequestPnpGlobalSettingsUpdatePnpGlobalSettingsSavaMappingList(ctx co
 		request.Expiry = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".profile")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".profile")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".profile")))) {
-		request.Profile = expandRequestPnpGlobalSettingsUpdatePnpGlobalSettingsSavaMappingListProfile(ctx, key+".profile.0", d)
+		request.Profile = expandRequestPnpGlobalSettingsUpdatePnpGlobalSettingsV1SavaMappingListProfile(ctx, key+".profile.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".smart_account_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".smart_account_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".smart_account_id")))) {
 		request.SmartAccountID = interfaceToString(v)
@@ -630,8 +646,8 @@ func expandRequestPnpGlobalSettingsUpdatePnpGlobalSettingsSavaMappingList(ctx co
 	return &request
 }
 
-func expandRequestPnpGlobalSettingsUpdatePnpGlobalSettingsSavaMappingListProfile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpGlobalSettingsSavaMappingListProfile {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpGlobalSettingsSavaMappingListProfile{}
+func expandRequestPnpGlobalSettingsUpdatePnpGlobalSettingsV1SavaMappingListProfile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpGlobalSettingsV1SavaMappingListProfile {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpGlobalSettingsV1SavaMappingListProfile{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".address_fqdn")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".address_fqdn")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".address_fqdn")))) {
 		request.AddressFqdn = interfaceToString(v)
 	}

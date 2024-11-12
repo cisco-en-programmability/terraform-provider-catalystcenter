@@ -18,9 +18,6 @@ It performs create operation on Devices.
 information about the usage of the API, please refer to the Open API specification document https://github.com/cisco-en-
 programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 AssuranceNetworkDevices-1.0.2-resolved.yaml
-
-
-
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -29,7 +26,7 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 
 ```terraform
 resource "catalystcenter_network_devices_query" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     aggregate_attributes {

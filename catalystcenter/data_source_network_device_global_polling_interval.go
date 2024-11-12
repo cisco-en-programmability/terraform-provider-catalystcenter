@@ -50,26 +50,26 @@ func dataSourceNetworkDeviceGlobalPollingIntervalRead(ctx context.Context, d *sc
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetPollingIntervalForAllDevices")
+		log.Printf("[DEBUG] Selected method: GetPollingIntervalForAllDevicesV1")
 
-		response1, restyResp1, err := client.Devices.GetPollingIntervalForAllDevices()
+		response1, restyResp1, err := client.Devices.GetPollingIntervalForAllDevicesV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetPollingIntervalForAllDevices", err,
-				"Failure at GetPollingIntervalForAllDevices, unexpected response", ""))
+				"Failure when executing 2 GetPollingIntervalForAllDevicesV1", err,
+				"Failure at GetPollingIntervalForAllDevicesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesGetPollingIntervalForAllDevicesItem(response1)
+		vItem1 := flattenDevicesGetPollingIntervalForAllDevicesV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetPollingIntervalForAllDevices response",
+				"Failure when setting GetPollingIntervalForAllDevicesV1 response",
 				err))
 			return diags
 		}
@@ -81,7 +81,7 @@ func dataSourceNetworkDeviceGlobalPollingIntervalRead(ctx context.Context, d *sc
 	return diags
 }
 
-func flattenDevicesGetPollingIntervalForAllDevicesItem(item *catalystcentersdkgo.ResponseDevicesGetPollingIntervalForAllDevices) []map[string]interface{} {
+func flattenDevicesGetPollingIntervalForAllDevicesV1Item(item *catalystcentersdkgo.ResponseDevicesGetPollingIntervalForAllDevicesV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

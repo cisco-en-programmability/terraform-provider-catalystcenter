@@ -52,26 +52,26 @@ func dataSourceApplicationSetsCountRead(ctx context.Context, d *schema.ResourceD
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetApplicationSetsCount")
+		log.Printf("[DEBUG] Selected method: GetApplicationSetsCountV1")
 
-		response1, restyResp1, err := client.ApplicationPolicy.GetApplicationSetsCount()
+		response1, restyResp1, err := client.ApplicationPolicy.GetApplicationSetsCountV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetApplicationSetsCount", err,
-				"Failure at GetApplicationSetsCount, unexpected response", ""))
+				"Failure when executing 2 GetApplicationSetsCountV1", err,
+				"Failure at GetApplicationSetsCountV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenApplicationPolicyGetApplicationSetsCountItem(response1)
+		vItem1 := flattenApplicationPolicyGetApplicationSetsCountV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetApplicationSetsCount response",
+				"Failure when setting GetApplicationSetsCountV1 response",
 				err))
 			return diags
 		}
@@ -83,7 +83,7 @@ func dataSourceApplicationSetsCountRead(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func flattenApplicationPolicyGetApplicationSetsCountItem(item *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationSetsCount) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationSetsCountV1Item(item *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationSetsCountV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

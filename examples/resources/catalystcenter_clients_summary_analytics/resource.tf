@@ -1,6 +1,6 @@
 
 resource "catalystcenter_clients_summary_analytics" "example" {
-  provider    = catalystcenter
+  provider    = meraki
   xca_lle_rid = "string"
   parameters {
 

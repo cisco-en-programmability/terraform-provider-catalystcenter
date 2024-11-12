@@ -12,9 +12,6 @@ description: |-
 It performs create operation on Reports.
 
 - This data source action is used for executing the report
-
-
-
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -23,7 +20,7 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 
 ```terraform
 resource "catalystcenter_flexible_report_execute" "example" {
-  provider  = catalystcenter
+  provider  = meraki
   report_id = "string"
   parameters {
 
@@ -64,7 +61,6 @@ Read-Only:
 - `end_time` (Number)
 - `errors` (List of String)
 - `execution_id` (String)
-- `process_status` (String)
 - `request_status` (String)
 - `start_time` (Number)
 - `warnings` (List of String)

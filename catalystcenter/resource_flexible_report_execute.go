@@ -56,12 +56,6 @@ func resourceFlexibleReportExecute() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"process_status": &schema.Schema{
-							Description: `Report execution status
-`,
-							Type:     schema.TypeString,
-							Computed: true,
-						},
 						"request_status": &schema.Schema{
 							Description: `Report  request status
 `,
@@ -118,14 +112,16 @@ func resourceFlexibleReportExecuteCreate(ctx context.Context, d *schema.Resource
 
 	vvReportID := vReportID.(string)
 
-	response1, restyResp1, err := client.Reports.ExecutingTheFlexibleReport(vvReportID)
+	// has_unknown_response: None
+
+	response1, restyResp1, err := client.Reports.ExecutingTheFlexibleReportV1(vvReportID)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ExecutingTheFlexibleReport", err))
+			"Failure when executing ExecutingTheFlexibleReportV1", err))
 		return diags
 	}
 
@@ -161,16 +157,15 @@ func resourceFlexibleReportExecuteCreate(ctx context.Context, d *schema.Resource
 		if response2.Status == "FAILURE" {
 			bapiError := response2.BapiError
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing ExecutingTheFlexibleReport", err,
-				"Failure at ExecutingTheFlexibleReport execution", bapiError))
+				"Failure when executing ExecutingTheFlexibleReportV1", err,
+				"Failure at ExecutingTheFlexibleReportV1 execution", bapiError))
 			return diags
 		}
 	}
-
-	vItem1 := flattenReportsExecutingTheFlexibleReportItem(response1)
+	vItem1 := flattenReportsExecutingTheFlexibleReportV1Item(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ExecutingTheFlexibleReport response",
+			"Failure when setting ExecutingTheFlexibleReportV1 response",
 			err))
 		return diags
 	}
@@ -192,7 +187,7 @@ func resourceFlexibleReportExecuteDelete(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func flattenReportsExecutingTheFlexibleReportItem(item *catalystcentersdkgo.ResponseReportsExecutingTheFlexibleReport) []map[string]interface{} {
+func flattenReportsExecutingTheFlexibleReportV1Item(item *catalystcentersdkgo.ResponseReportsExecutingTheFlexibleReportV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -200,16 +195,15 @@ func flattenReportsExecutingTheFlexibleReportItem(item *catalystcentersdkgo.Resp
 	respItem["execution_id"] = item.ExecutionID
 	respItem["start_time"] = item.StartTime
 	respItem["end_time"] = item.EndTime
-	respItem["process_status"] = item.ProcessStatus
 	respItem["request_status"] = item.RequestStatus
 	respItem["errors"] = item.Errors
-	respItem["warnings"] = flattenReportsExecutingTheFlexibleReportItemWarnings(item.Warnings)
+	respItem["warnings"] = flattenReportsExecutingTheFlexibleReportV1ItemWarnings(item.Warnings)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenReportsExecutingTheFlexibleReportItemWarnings(items *[]catalystcentersdkgo.ResponseReportsExecutingTheFlexibleReportWarnings) []interface{} {
+func flattenReportsExecutingTheFlexibleReportV1ItemWarnings(items *[]catalystcentersdkgo.ResponseReportsExecutingTheFlexibleReportV1Warnings) []interface{} {
 	if items == nil {
 		return nil
 	}

@@ -66,51 +66,6 @@ func dataSourceApplications() *schema.Resource {
 							Computed:    true,
 						},
 
-						"indicative_network_identity": &schema.Schema{
-							Type:     schema.TypeList,
-							Computed: true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-
-									"display_name": &schema.Schema{
-										Description: `displayName`,
-										Type:        schema.TypeString,
-										Computed:    true,
-									},
-
-									"id": &schema.Schema{
-										Description: `id`,
-										Type:        schema.TypeString,
-										Computed:    true,
-									},
-
-									"lower_port": &schema.Schema{
-										Description: `lowerPort`,
-										Type:        schema.TypeInt,
-										Computed:    true,
-									},
-
-									"ports": &schema.Schema{
-										Description: `ports`,
-										Type:        schema.TypeString,
-										Computed:    true,
-									},
-
-									"protocol": &schema.Schema{
-										Description: `protocol`,
-										Type:        schema.TypeString,
-										Computed:    true,
-									},
-
-									"upper_port": &schema.Schema{
-										Description: `upperPort`,
-										Type:        schema.TypeInt,
-										Computed:    true,
-									},
-								},
-							},
-						},
-
 						"name": &schema.Schema{
 							Description: `Name`,
 							Type:        schema.TypeString,
@@ -289,8 +244,8 @@ func dataSourceApplicationsRead(ctx context.Context, d *schema.ResourceData, m i
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetApplications2")
-		queryParams1 := catalystcentersdkgo.GetApplications2QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetApplicationsV1")
+		queryParams1 := catalystcentersdkgo.GetApplicationsV1QueryParams{}
 
 		if okOffset {
 			queryParams1.Offset = vOffset.(float64)
@@ -302,24 +257,24 @@ func dataSourceApplicationsRead(ctx context.Context, d *schema.ResourceData, m i
 			queryParams1.Name = vName.(string)
 		}
 
-		response1, restyResp1, err := client.ApplicationPolicy.GetApplications2(&queryParams1)
+		response1, restyResp1, err := client.ApplicationPolicy.GetApplicationsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetApplications2", err,
-				"Failure at GetApplications2, unexpected response", ""))
+				"Failure when executing 2 GetApplicationsV1", err,
+				"Failure at GetApplicationsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenApplicationPolicyGetApplications2Items(response1)
+		vItems1 := flattenApplicationPolicyGetApplicationsV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetApplications2 response",
+				"Failure when setting GetApplicationsV1 response",
 				err))
 			return diags
 		}
@@ -331,7 +286,7 @@ func dataSourceApplicationsRead(ctx context.Context, d *schema.ResourceData, m i
 	return diags
 }
 
-func flattenApplicationPolicyGetApplications2Items(items *catalystcentersdkgo.ResponseApplicationPolicyGetApplications2) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationsV1Items(items *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationsV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -340,16 +295,15 @@ func flattenApplicationPolicyGetApplications2Items(items *catalystcentersdkgo.Re
 		respItem := make(map[string]interface{})
 		respItem["id"] = item.ID
 		respItem["name"] = item.Name
-		respItem["network_applications"] = flattenApplicationPolicyGetApplications2ItemsNetworkApplications(item.NetworkApplications)
-
-		respItem["network_identity"] = flattenApplicationPolicyGetApplications2ItemsNetworkIDentity(item.NetworkIDentity)
-		respItem["application_set"] = flattenApplicationPolicyGetApplications2ItemsApplicationSet(item.ApplicationSet)
+		respItem["network_applications"] = flattenApplicationPolicyGetApplicationsV1ItemsNetworkApplications(item.NetworkApplications)
+		respItem["network_identity"] = flattenApplicationPolicyGetApplicationsV1ItemsNetworkIDentity(item.NetworkIDentity)
+		respItem["application_set"] = flattenApplicationPolicyGetApplicationsV1ItemsApplicationSet(item.ApplicationSet)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplications2ItemsNetworkApplications(items *[]catalystcentersdkgo.ResponseItemApplicationPolicyGetApplications2NetworkApplications) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationsV1ItemsNetworkApplications(items *[]catalystcentersdkgo.ResponseItemApplicationPolicyGetApplicationsV1NetworkApplications) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -378,7 +332,7 @@ func flattenApplicationPolicyGetApplications2ItemsNetworkApplications(items *[]c
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplications2ItemsNetworkIDentity(items *[]catalystcentersdkgo.ResponseItemApplicationPolicyGetApplications2NetworkIDentity) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationsV1ItemsNetworkIDentity(items *[]catalystcentersdkgo.ResponseItemApplicationPolicyGetApplicationsV1NetworkIDentity) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -396,7 +350,7 @@ func flattenApplicationPolicyGetApplications2ItemsNetworkIDentity(items *[]catal
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplications2ItemsApplicationSet(item *catalystcentersdkgo.ResponseItemApplicationPolicyGetApplications2ApplicationSet) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationsV1ItemsApplicationSet(item *catalystcentersdkgo.ResponseItemApplicationPolicyGetApplicationsV1ApplicationSet) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
