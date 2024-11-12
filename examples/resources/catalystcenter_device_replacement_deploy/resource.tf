@@ -1,6 +1,6 @@
 
 resource "catalystcenter_device_replacement_deploy" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     faulty_device_serial_number      = "string"

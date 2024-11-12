@@ -1,6 +1,6 @@
 
 resource "catalystcenter_wireless_controllers_wireless_mobility_groups_mobility_provision" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     data_link_encryption = "false"

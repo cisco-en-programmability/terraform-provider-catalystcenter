@@ -57,26 +57,26 @@ func dataSourceLicenseSettingRead(ctx context.Context, d *schema.ResourceData, m
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveLicenseSetting")
+		log.Printf("[DEBUG] Selected method: RetrieveLicenseSettingV1")
 
-		response1, restyResp1, err := client.Licenses.RetrieveLicenseSetting()
+		response1, restyResp1, err := client.Licenses.RetrieveLicenseSettingV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveLicenseSetting", err,
-				"Failure at RetrieveLicenseSetting, unexpected response", ""))
+				"Failure when executing 2 RetrieveLicenseSettingV1", err,
+				"Failure at RetrieveLicenseSettingV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenLicensesRetrieveLicenseSettingItem(response1.Response)
+		vItem1 := flattenLicensesRetrieveLicenseSettingV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveLicenseSetting response",
+				"Failure when setting RetrieveLicenseSettingV1 response",
 				err))
 			return diags
 		}
@@ -88,7 +88,7 @@ func dataSourceLicenseSettingRead(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func flattenLicensesRetrieveLicenseSettingItem(item *catalystcentersdkgo.ResponseLicensesRetrieveLicenseSettingResponse) []map[string]interface{} {
+func flattenLicensesRetrieveLicenseSettingV1Item(item *catalystcentersdkgo.ResponseLicensesRetrieveLicenseSettingV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

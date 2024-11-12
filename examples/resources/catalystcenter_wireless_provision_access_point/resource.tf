@@ -1,6 +1,6 @@
 
 resource "catalystcenter_wireless_provision_access_point" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     custom_ap_group_name   = "string"

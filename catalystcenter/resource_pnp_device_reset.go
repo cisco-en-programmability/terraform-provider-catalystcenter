@@ -168,38 +168,35 @@ func resourcePnpDeviceResetCreate(ctx context.Context, d *schema.ResourceData, m
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestPnpDeviceResetResetDevice(ctx, "parameters.0", d)
+	request1 := expandRequestPnpDeviceResetResetDeviceV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.DeviceOnboardingPnp.ResetDevice(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.DeviceOnboardingPnp.ResetDeviceV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ResetDevice", err))
+			"Failure when executing ResetDeviceV1", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	//REVIEW: '- Analizar como se puede comprobar la ejecucion.'
-	//Analizar verificacion.
-
-	vItem1 := flattenDeviceOnboardingPnpResetDeviceItem(response1)
+	vItem1 := flattenDeviceOnboardingPnpResetDeviceV1Item(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ResetDevice response",
+			"Failure when setting ResetDeviceV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
+
+	//REVIEW: '- Analizar como se puede comprobar la ejecucion.'
 
 }
 func resourcePnpDeviceResetRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -215,10 +212,10 @@ func resourcePnpDeviceResetDelete(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func expandRequestPnpDeviceResetResetDevice(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpResetDevice {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpResetDevice{}
+func expandRequestPnpDeviceResetResetDeviceV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceV1 {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_reset_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_reset_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_reset_list")))) {
-		request.DeviceResetList = expandRequestPnpDeviceResetResetDeviceDeviceResetListArray(ctx, key+".device_reset_list", d)
+		request.DeviceResetList = expandRequestPnpDeviceResetResetDeviceV1DeviceResetListArray(ctx, key+".device_reset_list", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".project_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".project_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".project_id")))) {
 		request.ProjectID = interfaceToString(v)
@@ -229,8 +226,8 @@ func expandRequestPnpDeviceResetResetDevice(ctx context.Context, key string, d *
 	return &request
 }
 
-func expandRequestPnpDeviceResetResetDeviceDeviceResetListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceDeviceResetList {
-	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceDeviceResetList{}
+func expandRequestPnpDeviceResetResetDeviceV1DeviceResetListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceV1DeviceResetList {
+	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceV1DeviceResetList{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -241,7 +238,7 @@ func expandRequestPnpDeviceResetResetDeviceDeviceResetListArray(ctx context.Cont
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestPnpDeviceResetResetDeviceDeviceResetList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestPnpDeviceResetResetDeviceV1DeviceResetList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -249,10 +246,10 @@ func expandRequestPnpDeviceResetResetDeviceDeviceResetListArray(ctx context.Cont
 	return &request
 }
 
-func expandRequestPnpDeviceResetResetDeviceDeviceResetList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceDeviceResetList {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceDeviceResetList{}
+func expandRequestPnpDeviceResetResetDeviceV1DeviceResetList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceV1DeviceResetList {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceV1DeviceResetList{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".config_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".config_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".config_list")))) {
-		request.ConfigList = expandRequestPnpDeviceResetResetDeviceDeviceResetListConfigListArray(ctx, key+".config_list", d)
+		request.ConfigList = expandRequestPnpDeviceResetResetDeviceV1DeviceResetListConfigListArray(ctx, key+".config_list", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_id")))) {
 		request.DeviceID = interfaceToString(v)
@@ -269,8 +266,8 @@ func expandRequestPnpDeviceResetResetDeviceDeviceResetList(ctx context.Context, 
 	return &request
 }
 
-func expandRequestPnpDeviceResetResetDeviceDeviceResetListConfigListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceDeviceResetListConfigList {
-	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceDeviceResetListConfigList{}
+func expandRequestPnpDeviceResetResetDeviceV1DeviceResetListConfigListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceV1DeviceResetListConfigList {
+	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceV1DeviceResetListConfigList{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -281,7 +278,7 @@ func expandRequestPnpDeviceResetResetDeviceDeviceResetListConfigListArray(ctx co
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestPnpDeviceResetResetDeviceDeviceResetListConfigList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestPnpDeviceResetResetDeviceV1DeviceResetListConfigList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -289,19 +286,19 @@ func expandRequestPnpDeviceResetResetDeviceDeviceResetListConfigListArray(ctx co
 	return &request
 }
 
-func expandRequestPnpDeviceResetResetDeviceDeviceResetListConfigList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceDeviceResetListConfigList {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceDeviceResetListConfigList{}
+func expandRequestPnpDeviceResetResetDeviceV1DeviceResetListConfigList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceV1DeviceResetListConfigList {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceV1DeviceResetListConfigList{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".config_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".config_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".config_id")))) {
 		request.ConfigID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".config_parameters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".config_parameters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".config_parameters")))) {
-		request.ConfigParameters = expandRequestPnpDeviceResetResetDeviceDeviceResetListConfigListConfigParametersArray(ctx, key+".config_parameters", d)
+		request.ConfigParameters = expandRequestPnpDeviceResetResetDeviceV1DeviceResetListConfigListConfigParametersArray(ctx, key+".config_parameters", d)
 	}
 	return &request
 }
 
-func expandRequestPnpDeviceResetResetDeviceDeviceResetListConfigListConfigParametersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceDeviceResetListConfigListConfigParameters {
-	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceDeviceResetListConfigListConfigParameters{}
+func expandRequestPnpDeviceResetResetDeviceV1DeviceResetListConfigListConfigParametersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceV1DeviceResetListConfigListConfigParameters {
+	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceV1DeviceResetListConfigListConfigParameters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -312,7 +309,7 @@ func expandRequestPnpDeviceResetResetDeviceDeviceResetListConfigListConfigParame
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestPnpDeviceResetResetDeviceDeviceResetListConfigListConfigParameters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestPnpDeviceResetResetDeviceV1DeviceResetListConfigListConfigParameters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -320,8 +317,8 @@ func expandRequestPnpDeviceResetResetDeviceDeviceResetListConfigListConfigParame
 	return &request
 }
 
-func expandRequestPnpDeviceResetResetDeviceDeviceResetListConfigListConfigParameters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceDeviceResetListConfigListConfigParameters {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceDeviceResetListConfigListConfigParameters{}
+func expandRequestPnpDeviceResetResetDeviceV1DeviceResetListConfigListConfigParameters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceV1DeviceResetListConfigListConfigParameters {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpResetDeviceV1DeviceResetListConfigListConfigParameters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -331,13 +328,13 @@ func expandRequestPnpDeviceResetResetDeviceDeviceResetListConfigListConfigParame
 	return &request
 }
 
-func flattenDeviceOnboardingPnpResetDeviceItem(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpResetDevice) []map[string]interface{} {
+func flattenDeviceOnboardingPnpResetDeviceV1Item(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpResetDeviceV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["json_array_response"] = flattenDeviceOnboardingPnpResetDeviceItemJSONArrayResponse(item.JSONArrayResponse)
-	respItem["json_response"] = flattenDeviceOnboardingPnpResetDeviceItemJSONResponse(item.JSONResponse)
+	respItem["json_array_response"] = flattenDeviceOnboardingPnpResetDeviceV1ItemJSONArrayResponse(item.JSONArrayResponse)
+	respItem["json_response"] = flattenDeviceOnboardingPnpResetDeviceV1ItemJSONResponse(item.JSONResponse)
 	respItem["message"] = item.Message
 	respItem["status_code"] = item.StatusCode
 	return []map[string]interface{}{
@@ -345,7 +342,7 @@ func flattenDeviceOnboardingPnpResetDeviceItem(item *catalystcentersdkgo.Respons
 	}
 }
 
-func flattenDeviceOnboardingPnpResetDeviceItemJSONArrayResponse(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpResetDeviceJSONArrayResponse) []interface{} {
+func flattenDeviceOnboardingPnpResetDeviceV1ItemJSONArrayResponse(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpResetDeviceV1JSONArrayResponse) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -357,7 +354,7 @@ func flattenDeviceOnboardingPnpResetDeviceItemJSONArrayResponse(items *[]catalys
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpResetDeviceItemJSONResponse(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpResetDeviceJSONResponse) interface{} {
+func flattenDeviceOnboardingPnpResetDeviceV1ItemJSONResponse(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpResetDeviceV1JSONResponse) interface{} {
 	if item == nil {
 		return nil
 	}

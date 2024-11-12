@@ -97,8 +97,8 @@ func dataSourceSdaFabricSitesRead(ctx context.Context, d *schema.ResourceData, m
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetFabricSites")
-		queryParams1 := catalystcentersdkgo.GetFabricSitesQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetFabricSitesV1")
+		queryParams1 := catalystcentersdkgo.GetFabricSitesV1QueryParams{}
 
 		if okID {
 			queryParams1.ID = vID.(string)
@@ -113,24 +113,24 @@ func dataSourceSdaFabricSitesRead(ctx context.Context, d *schema.ResourceData, m
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.Sda.GetFabricSites(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetFabricSitesV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetFabricSites", err,
-				"Failure at GetFabricSites, unexpected response", ""))
+				"Failure when executing 2 GetFabricSitesV1", err,
+				"Failure at GetFabricSitesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaGetFabricSitesItems(response1.Response)
+		vItems1 := flattenSdaGetFabricSitesV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetFabricSites response",
+				"Failure when setting GetFabricSitesV1 response",
 				err))
 			return diags
 		}
@@ -142,7 +142,7 @@ func dataSourceSdaFabricSitesRead(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func flattenSdaGetFabricSitesItems(items *[]catalystcentersdkgo.ResponseSdaGetFabricSitesResponse) []map[string]interface{} {
+func flattenSdaGetFabricSitesV1Items(items *[]catalystcentersdkgo.ResponseSdaGetFabricSitesV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -20,9 +20,6 @@ or a specific device list, or both. The stop processing will be executed automat
 satisfied, without specifically calling the stop API. The V2 API behaves similarly to V1 if no timeout or device list is
 provided, and the user needs to call the stop API for LAN Automation stop processing. With the V2 API, the user can also
 specify the level up to which the devices can be LAN automated.
-
-
-
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -31,33 +28,32 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 
 ```terraform
 resource "catalystcenter_lan_automation_v2" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
-    payload {
-      discovered_device_site_name_hierarchy = "string"
-      discovery_devices {
 
-        device_host_name            = "string"
-        device_management_ipaddress = "string"
-        device_serial_number        = "string"
-        device_site_name_hierarchy  = "string"
-      }
-      discovery_level   = 1
-      discovery_timeout = 1
-      host_name_file_id = "string"
-      host_name_prefix  = "string"
-      ip_pools {
+    discovered_device_site_name_hierarchy = "string"
+    discovery_devices {
 
-        ip_pool_name = "string"
-        ip_pool_role = "string"
-      }
-      isis_domain_pwd                    = "string"
-      multicast_enabled                  = "false"
-      peer_device_managment_ipaddress    = "string"
-      primary_device_interface_names     = ["string"]
-      primary_device_managment_ipaddress = "string"
-      redistribute_isis_to_bgp           = "false"
+      device_host_name            = "string"
+      device_management_ipaddress = "string"
+      device_serial_number        = "string"
+      device_site_name_hierarchy  = "string"
     }
+    discovery_level   = 1
+    discovery_timeout = 1
+    host_name_file_id = "string"
+    host_name_prefix  = "string"
+    ip_pools {
+
+      ip_pool_name = "string"
+      ip_pool_role = "string"
+    }
+    isis_domain_pwd                    = "string"
+    multicast_enabled                  = "false"
+    peer_device_managment_ipaddress    = "string"
+    primary_device_interface_names     = ["string"]
+    primary_device_managment_ipaddress = "string"
+    redistribute_isis_to_bgp           = "false"
   }
 }
 

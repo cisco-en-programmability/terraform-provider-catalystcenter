@@ -12,9 +12,6 @@ description: |-
 It performs create operation on Configuration Templates.
 
 - Exports the projects for given projectNames.
-
-
-
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -23,10 +20,8 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 
 ```terraform
 resource "catalystcenter_configuration_template_export_project" "example" {
-  provider   = catalystcenter
-  parameters {
-    payload = ["string"]
-  } 
+  provider   = meraki
+  parameters = ["string"]
 }
 
 output "catalystcenter_configuration_template_export_project_example" {
@@ -52,7 +47,7 @@ output "catalystcenter_configuration_template_export_project_example" {
 
 Optional:
 
-- `payload` (List of String) Array of RequestConfigurationTemplatesExportsTheProjectsForAGivenCriteria
+- `payload` (List of String) Array of RequestConfigurationTemplatesExportsTheProjectsForAGivenCriteriaV1
 
 
 <a id="nestedatt--item"></a>

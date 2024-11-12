@@ -16,19 +16,19 @@ func dataSourceImagesSiteWiseProductNames() *schema.Resource {
 		Description: `It performs read operation on Software Image Management (SWIM).
 
 - Returns a list of network device product names and associated sites for a given image identifier. Refer
-'/dna/intent/api/v1/images' API for obtaining 'imageId'.
+*/dna/intent/api/v1/images* API for obtaining *imageId*.
 `,
 
 		ReadContext: dataSourceImagesSiteWiseProductNamesRead,
 		Schema: map[string]*schema.Schema{
 			"assigned": &schema.Schema{
-				Description: `assigned query parameter. Filter with the assigned/unassigned, 'ASSIGNED' option will filter network device products that are associated with the given image. The 'NOT_ASSIGNED' option will filter network device products that have not yet been associated with the given image but apply to it. Available values: ASSIGNED, NOT_ASSIGNED
+				Description: `assigned query parameter. Filter with the assigned/unassigned, *ASSIGNED* option will filter network device products that are associated with the given image. The *NOT_ASSIGNED* option will filter network device products that have not yet been associated with the given image but apply to it. Available values: ASSIGNED, NOT_ASSIGNED
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"image_id": &schema.Schema{
-				Description: `imageId path parameter. Software image identifier. Refer '/dna/intent/api/v1/images' API for obtaining 'imageId'
+				Description: `imageId path parameter. Software image identifier. Refer */dna/intent/api/v1/images* API for obtaining *imageId*
 `,
 				Type:     schema.TypeString,
 				Required: true,
@@ -58,7 +58,7 @@ func dataSourceImagesSiteWiseProductNames() *schema.Resource {
 				Optional: true,
 			},
 			"recommended": &schema.Schema{
-				Description: `recommended query parameter. Filter with recommended source. If 'CISCO' then the network device product assigned was recommended by Cisco and 'USER' then the user has manually assigned. Available values: CISCO, USER
+				Description: `recommended query parameter. Filter with recommended source. If *CISCO* then the network device product assigned was recommended by Cisco and *USER* then the user has manually assigned. Available values: CISCO, USER
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -138,9 +138,9 @@ func dataSourceImagesSiteWiseProductNamesRead(ctx context.Context, d *schema.Res
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesNetworkDeviceProductNamesAssignedToASoftwareImage")
+		log.Printf("[DEBUG] Selected method: RetrievesNetworkDeviceProductNamesAssignedToASoftwareImageV1")
 		vvImageID := vImageID.(string)
-		queryParams1 := catalystcentersdkgo.RetrievesNetworkDeviceProductNamesAssignedToASoftwareImageQueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrievesNetworkDeviceProductNamesAssignedToASoftwareImageV1QueryParams{}
 
 		if okProductName {
 			queryParams1.ProductName = vProductName.(string)
@@ -161,24 +161,24 @@ func dataSourceImagesSiteWiseProductNamesRead(ctx context.Context, d *schema.Res
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.SoftwareImageManagementSwim.RetrievesNetworkDeviceProductNamesAssignedToASoftwareImage(vvImageID, &queryParams1)
+		response1, restyResp1, err := client.SoftwareImageManagementSwim.RetrievesNetworkDeviceProductNamesAssignedToASoftwareImageV1(vvImageID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesNetworkDeviceProductNamesAssignedToASoftwareImage", err,
-				"Failure at RetrievesNetworkDeviceProductNamesAssignedToASoftwareImage, unexpected response", ""))
+				"Failure when executing 2 RetrievesNetworkDeviceProductNamesAssignedToASoftwareImageV1", err,
+				"Failure at RetrievesNetworkDeviceProductNamesAssignedToASoftwareImageV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSoftwareImageManagementSwimRetrievesNetworkDeviceProductNamesAssignedToASoftwareImageItems(response1.Response)
+		vItems1 := flattenSoftwareImageManagementSwimRetrievesNetworkDeviceProductNamesAssignedToASoftwareImageV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesNetworkDeviceProductNamesAssignedToASoftwareImage response",
+				"Failure when setting RetrievesNetworkDeviceProductNamesAssignedToASoftwareImageV1 response",
 				err))
 			return diags
 		}
@@ -190,7 +190,7 @@ func dataSourceImagesSiteWiseProductNamesRead(ctx context.Context, d *schema.Res
 	return diags
 }
 
-func flattenSoftwareImageManagementSwimRetrievesNetworkDeviceProductNamesAssignedToASoftwareImageItems(items *[]catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrievesNetworkDeviceProductNamesAssignedToASoftwareImageResponse) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimRetrievesNetworkDeviceProductNamesAssignedToASoftwareImageV1Items(items *[]catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrievesNetworkDeviceProductNamesAssignedToASoftwareImageV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

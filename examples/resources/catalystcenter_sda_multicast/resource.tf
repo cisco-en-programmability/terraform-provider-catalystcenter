@@ -1,6 +1,7 @@
 
 resource "catalystcenter_sda_multicast" "example" {
   provider = catalystcenter
+
   parameters {
 
     multicast_method = "string"

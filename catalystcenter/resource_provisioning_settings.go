@@ -122,7 +122,7 @@ func resourceProvisioningSettingsRead(ctx context.Context, d *schema.ResourceDat
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSystemSettingsGetProvisioningSettingsItem(response1.Response)
+		vItem1 := flattenSystemSettingsGetProvisioningSettingsV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetProvisioningSettings response",
@@ -142,7 +142,7 @@ func resourceProvisioningSettingsUpdate(ctx context.Context, d *schema.ResourceD
 	var diags diag.Diagnostics
 
 	if d.HasChange("parameters") {
-		request1 := expandRequestProvisioningSettingsSetProvisioningSettings(ctx, "parameters.0", d)
+		request1 := expandRequestProvisioningSettingsSetProvisioningSettingsV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.SystemSettings.SetProvisioningSettings(request1)
 		if err != nil || response1 == nil {
@@ -201,8 +201,8 @@ func resourceProvisioningSettingsDelete(ctx context.Context, d *schema.ResourceD
 		"Failure at ProvisioningSettingsDelete, unexpected response", ""))
 	return diags
 }
-func expandRequestProvisioningSettingsSetProvisioningSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSystemSettingsSetProvisioningSettings {
-	request := catalystcentersdkgo.RequestSystemSettingsSetProvisioningSettings{}
+func expandRequestProvisioningSettingsSetProvisioningSettingsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSystemSettingsSetProvisioningSettingsV1 {
+	request := catalystcentersdkgo.RequestSystemSettingsSetProvisioningSettingsV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".require_itsm_approval")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".require_itsm_approval")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".require_itsm_approval")))) {
 		request.RequireItsmApproval = interfaceToBoolPtr(v)
 	}

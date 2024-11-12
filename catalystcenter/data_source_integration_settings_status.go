@@ -84,26 +84,26 @@ func dataSourceIntegrationSettingsStatusRead(ctx context.Context, d *schema.Reso
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetItsmIntegrationStatus")
+		log.Printf("[DEBUG] Selected method: GetItsmIntegrationStatusV1")
 
-		response1, restyResp1, err := client.ItsmIntegration.GetItsmIntegrationStatus()
+		response1, restyResp1, err := client.ItsmIntegration.GetItsmIntegrationStatusV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetItsmIntegrationStatus", err,
-				"Failure at GetItsmIntegrationStatus, unexpected response", ""))
+				"Failure when executing 2 GetItsmIntegrationStatusV1", err,
+				"Failure at GetItsmIntegrationStatusV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenItsmIntegrationGetItsmIntegrationStatusItems(response1.Response)
+		vItems1 := flattenItsmIntegrationGetItsmIntegrationStatusV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetItsmIntegrationStatus response",
+				"Failure when setting GetItsmIntegrationStatusV1 response",
 				err))
 			return diags
 		}
@@ -115,7 +115,7 @@ func dataSourceIntegrationSettingsStatusRead(ctx context.Context, d *schema.Reso
 	return diags
 }
 
-func flattenItsmIntegrationGetItsmIntegrationStatusItems(items *[]catalystcentersdkgo.ResponseItsmIntegrationGetItsmIntegrationStatusResponse) []map[string]interface{} {
+func flattenItsmIntegrationGetItsmIntegrationStatusV1Items(items *[]catalystcentersdkgo.ResponseItsmIntegrationGetItsmIntegrationStatusV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -125,13 +125,13 @@ func flattenItsmIntegrationGetItsmIntegrationStatusItems(items *[]catalystcenter
 		respItem["id"] = item.ID
 		respItem["name"] = item.Name
 		respItem["status"] = item.Status
-		respItem["configurations"] = flattenItsmIntegrationGetItsmIntegrationStatusItemsConfigurations(item.Configurations)
+		respItem["configurations"] = flattenItsmIntegrationGetItsmIntegrationStatusV1ItemsConfigurations(item.Configurations)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenItsmIntegrationGetItsmIntegrationStatusItemsConfigurations(items *[]catalystcentersdkgo.ResponseItsmIntegrationGetItsmIntegrationStatusResponseConfigurations) []map[string]interface{} {
+func flattenItsmIntegrationGetItsmIntegrationStatusV1ItemsConfigurations(items *[]catalystcentersdkgo.ResponseItsmIntegrationGetItsmIntegrationStatusV1ResponseConfigurations) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

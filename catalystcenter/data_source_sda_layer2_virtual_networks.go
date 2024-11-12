@@ -146,8 +146,8 @@ func dataSourceSdaLayer2VirtualNetworksRead(ctx context.Context, d *schema.Resou
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetLayer2VirtualNetworks")
-		queryParams1 := catalystcentersdkgo.GetLayer2VirtualNetworksQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetLayer2VirtualNetworksV1")
+		queryParams1 := catalystcentersdkgo.GetLayer2VirtualNetworksV1QueryParams{}
 
 		if okID {
 			queryParams1.ID = vID.(string)
@@ -174,24 +174,24 @@ func dataSourceSdaLayer2VirtualNetworksRead(ctx context.Context, d *schema.Resou
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.Sda.GetLayer2VirtualNetworks(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetLayer2VirtualNetworksV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetLayer2VirtualNetworks", err,
-				"Failure at GetLayer2VirtualNetworks, unexpected response", ""))
+				"Failure when executing 2 GetLayer2VirtualNetworksV1", err,
+				"Failure at GetLayer2VirtualNetworksV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaGetLayer2VirtualNetworksItems(response1.Response)
+		vItems1 := flattenSdaGetLayer2VirtualNetworksV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetLayer2VirtualNetworks response",
+				"Failure when setting GetLayer2VirtualNetworksV1 response",
 				err))
 			return diags
 		}
@@ -203,7 +203,7 @@ func dataSourceSdaLayer2VirtualNetworksRead(ctx context.Context, d *schema.Resou
 	return diags
 }
 
-func flattenSdaGetLayer2VirtualNetworksItems(items *[]catalystcentersdkgo.ResponseSdaGetLayer2VirtualNetworksResponse) []map[string]interface{} {
+func flattenSdaGetLayer2VirtualNetworksV1Items(items *[]catalystcentersdkgo.ResponseSdaGetLayer2VirtualNetworksV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -1,6 +1,6 @@
 
 resource "catalystcenter_sensor_test_template_edit" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     id                 = "string"
@@ -132,7 +132,7 @@ resource "catalystcenter_sensor_test_template_edit" "example" {
       switch_serial_number      = "string"
       switch_uuid               = "string"
       target_a_ps               = ["string"]
-      test_mac_addresses        = "string"
+      test_mac_addresses        = "------"
       wired_application_message = "string"
       wired_application_status  = "string"
       xor_sensor                = "false"

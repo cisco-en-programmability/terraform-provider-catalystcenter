@@ -526,11 +526,9 @@ func resourceWirelessAccespointConfigurationCreate(ctx context.Context, d *schem
 
 	request1 := expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.Wireless.ConfigureAccessPointsV1(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Wireless.ConfigureAccessPointsV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
@@ -584,6 +582,9 @@ func resourceWirelessAccespointConfigurationCreate(ctx context.Context, d *schem
 		}
 	}
 
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
 	vItem1 := flattenWirelessConfigureAccessPointsV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
@@ -594,7 +595,6 @@ func resourceWirelessAccespointConfigurationCreate(ctx context.Context, d *schem
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceWirelessAccespointConfigurationRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)

@@ -114,7 +114,7 @@ func resourceLicenseSettingRead(ctx context.Context, d *schema.ResourceData, m i
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenLicensesRetrieveLicenseSettingItem(response1.Response)
+		vItem1 := flattenLicensesRetrieveLicenseSettingV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrieveLicenseSetting response",
@@ -134,7 +134,7 @@ func resourceLicenseSettingUpdate(ctx context.Context, d *schema.ResourceData, m
 	var diags diag.Diagnostics
 
 	if d.HasChange("parameters") {
-		request1 := expandRequestLicenseSettingUpdateLicenseSetting(ctx, "parameters.0", d)
+		request1 := expandRequestLicenseSettingUpdateLicenseSettingV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.Licenses.UpdateLicenseSetting(request1)
 		if err != nil || response1 == nil {
@@ -167,8 +167,8 @@ func resourceLicenseSettingDelete(ctx context.Context, d *schema.ResourceData, m
 
 	return diags
 }
-func expandRequestLicenseSettingUpdateLicenseSetting(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLicensesUpdateLicenseSetting {
-	request := catalystcentersdkgo.RequestLicensesUpdateLicenseSetting{}
+func expandRequestLicenseSettingUpdateLicenseSettingV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLicensesUpdateLicenseSettingV1 {
+	request := catalystcentersdkgo.RequestLicensesUpdateLicenseSettingV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".default_smart_account_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".default_smart_account_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".default_smart_account_id")))) {
 		request.DefaultSmartAccountID = interfaceToString(v)
 	}

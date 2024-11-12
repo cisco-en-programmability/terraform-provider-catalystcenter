@@ -68,27 +68,27 @@ func dataSourceNetworkDeviceSummaryRead(ctx context.Context, d *schema.ResourceD
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceSummary")
+		log.Printf("[DEBUG] Selected method: GetDeviceSummaryV1")
 		vvID := vID.(string)
 
-		response1, restyResp1, err := client.Devices.GetDeviceSummary(vvID)
+		response1, restyResp1, err := client.Devices.GetDeviceSummaryV1(vvID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceSummary", err,
-				"Failure at GetDeviceSummary, unexpected response", ""))
+				"Failure when executing 2 GetDeviceSummaryV1", err,
+				"Failure at GetDeviceSummaryV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesGetDeviceSummaryItem(response1.Response)
+		vItem1 := flattenDevicesGetDeviceSummaryV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceSummary response",
+				"Failure when setting GetDeviceSummaryV1 response",
 				err))
 			return diags
 		}
@@ -100,7 +100,7 @@ func dataSourceNetworkDeviceSummaryRead(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func flattenDevicesGetDeviceSummaryItem(item *catalystcentersdkgo.ResponseDevicesGetDeviceSummaryResponse) []map[string]interface{} {
+func flattenDevicesGetDeviceSummaryV1Item(item *catalystcentersdkgo.ResponseDevicesGetDeviceSummaryV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

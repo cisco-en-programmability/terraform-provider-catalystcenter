@@ -317,8 +317,8 @@ func dataSourceEventSubscriptionEmailRead(ctx context.Context, d *schema.Resourc
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetEmailEventSubscriptions")
-		queryParams1 := catalystcentersdkgo.GetEmailEventSubscriptionsQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetEmailEventSubscriptionsV1")
+		queryParams1 := catalystcentersdkgo.GetEmailEventSubscriptionsV1QueryParams{}
 
 		if okEventIDs {
 			queryParams1.EventIDs = vEventIDs.(string)
@@ -351,24 +351,24 @@ func dataSourceEventSubscriptionEmailRead(ctx context.Context, d *schema.Resourc
 			queryParams1.Name = vName.(string)
 		}
 
-		response1, restyResp1, err := client.EventManagement.GetEmailEventSubscriptions(&queryParams1)
+		response1, restyResp1, err := client.EventManagement.GetEmailEventSubscriptionsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetEmailEventSubscriptions", err,
-				"Failure at GetEmailEventSubscriptions, unexpected response", ""))
+				"Failure when executing 2 GetEmailEventSubscriptionsV1", err,
+				"Failure at GetEmailEventSubscriptionsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenEventManagementGetEmailEventSubscriptionsItems(response1)
+		vItems1 := flattenEventManagementGetEmailEventSubscriptionsV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetEmailEventSubscriptions response",
+				"Failure when setting GetEmailEventSubscriptionsV1 response",
 				err))
 			return diags
 		}
@@ -380,7 +380,7 @@ func dataSourceEventSubscriptionEmailRead(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func flattenEventManagementGetEmailEventSubscriptionsItems(items *catalystcentersdkgo.ResponseEventManagementGetEmailEventSubscriptions) []map[string]interface{} {
+func flattenEventManagementGetEmailEventSubscriptionsV1Items(items *catalystcentersdkgo.ResponseEventManagementGetEmailEventSubscriptionsV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -391,8 +391,8 @@ func flattenEventManagementGetEmailEventSubscriptionsItems(items *catalystcenter
 		respItem["subscription_id"] = item.SubscriptionID
 		respItem["name"] = item.Name
 		respItem["description"] = item.Description
-		respItem["subscription_endpoints"] = flattenEventManagementGetEmailEventSubscriptionsItemsSubscriptionEndpoints(item.SubscriptionEndpoints)
-		respItem["filter"] = flattenEventManagementGetEmailEventSubscriptionsItemsFilter(item.Filter)
+		respItem["subscription_endpoints"] = flattenEventManagementGetEmailEventSubscriptionsV1ItemsSubscriptionEndpoints(item.SubscriptionEndpoints)
+		respItem["filter"] = flattenEventManagementGetEmailEventSubscriptionsV1ItemsFilter(item.Filter)
 		respItem["is_private"] = boolPtrToString(item.IsPrivate)
 		respItem["tenant_id"] = item.TenantID
 		respItems = append(respItems, respItem)
@@ -400,27 +400,7 @@ func flattenEventManagementGetEmailEventSubscriptionsItems(items *catalystcenter
 	return respItems
 }
 
-func flattenEventManagementGetEmailEventSubscriptionsItems2(items *[]catalystcentersdkgo.ResponseItemEventManagementGetEmailEventSubscriptions) []map[string]interface{} {
-	if items == nil {
-		return nil
-	}
-	var respItems []map[string]interface{}
-	for _, item := range *items {
-		respItem := make(map[string]interface{})
-		respItem["version"] = item.Version
-		respItem["subscription_id"] = item.SubscriptionID
-		respItem["name"] = item.Name
-		respItem["description"] = item.Description
-		respItem["subscription_endpoints"] = flattenEventManagementGetEmailEventSubscriptionsItemsSubscriptionEndpoints(item.SubscriptionEndpoints)
-		respItem["filter"] = flattenEventManagementGetEmailEventSubscriptionsItemsFilter(item.Filter)
-		respItem["is_private"] = boolPtrToString(item.IsPrivate)
-		respItem["tenant_id"] = item.TenantID
-		respItems = append(respItems, respItem)
-	}
-	return respItems
-}
-
-func flattenEventManagementGetEmailEventSubscriptionsItemsSubscriptionEndpoints(items *[]catalystcentersdkgo.ResponseItemEventManagementGetEmailEventSubscriptionsSubscriptionEndpoints) []map[string]interface{} {
+func flattenEventManagementGetEmailEventSubscriptionsV1ItemsSubscriptionEndpoints(items *[]catalystcentersdkgo.ResponseItemEventManagementGetEmailEventSubscriptionsV1SubscriptionEndpoints) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -428,14 +408,14 @@ func flattenEventManagementGetEmailEventSubscriptionsItemsSubscriptionEndpoints(
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["instance_id"] = item.InstanceID
-		respItem["subscription_details"] = flattenEventManagementGetEmailEventSubscriptionsItemsSubscriptionEndpointsSubscriptionDetails(item.SubscriptionDetails)
+		respItem["subscription_details"] = flattenEventManagementGetEmailEventSubscriptionsV1ItemsSubscriptionEndpointsSubscriptionDetails(item.SubscriptionDetails)
 		respItem["connector_type"] = item.ConnectorType
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenEventManagementGetEmailEventSubscriptionsItemsSubscriptionEndpointsSubscriptionDetails(item *catalystcentersdkgo.ResponseItemEventManagementGetEmailEventSubscriptionsSubscriptionEndpointsSubscriptionDetails) []map[string]interface{} {
+func flattenEventManagementGetEmailEventSubscriptionsV1ItemsSubscriptionEndpointsSubscriptionDetails(item *catalystcentersdkgo.ResponseItemEventManagementGetEmailEventSubscriptionsV1SubscriptionEndpointsSubscriptionDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -454,14 +434,14 @@ func flattenEventManagementGetEmailEventSubscriptionsItemsSubscriptionEndpointsS
 
 }
 
-func flattenEventManagementGetEmailEventSubscriptionsItemsFilter(item *catalystcentersdkgo.ResponseItemEventManagementGetEmailEventSubscriptionsFilter) []map[string]interface{} {
+func flattenEventManagementGetEmailEventSubscriptionsV1ItemsFilter(item *catalystcentersdkgo.ResponseItemEventManagementGetEmailEventSubscriptionsV1Filter) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["event_ids"] = item.EventIDs
 	respItem["others"] = item.Others
-	respItem["domains_subdomains"] = flattenEventManagementGetEmailEventSubscriptionsItemsFilterDomainsSubdomains(item.DomainsSubdomains)
+	respItem["domains_subdomains"] = flattenEventManagementGetEmailEventSubscriptionsV1ItemsFilterDomainsSubdomains(item.DomainsSubdomains)
 	respItem["types"] = item.Types
 	respItem["categories"] = item.Categories
 	respItem["severities"] = item.Severities
@@ -474,7 +454,7 @@ func flattenEventManagementGetEmailEventSubscriptionsItemsFilter(item *catalystc
 
 }
 
-func flattenEventManagementGetEmailEventSubscriptionsItemsFilterDomainsSubdomains(items *[]catalystcentersdkgo.ResponseItemEventManagementGetEmailEventSubscriptionsFilterDomainsSubdomains) []map[string]interface{} {
+func flattenEventManagementGetEmailEventSubscriptionsV1ItemsFilterDomainsSubdomains(items *[]catalystcentersdkgo.ResponseItemEventManagementGetEmailEventSubscriptionsV1FilterDomainsSubdomains) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

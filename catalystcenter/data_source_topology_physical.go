@@ -423,31 +423,31 @@ func dataSourceTopologyPhysicalRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetPhysicalTopology")
-		queryParams1 := catalystcentersdkgo.GetPhysicalTopologyQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetPhysicalTopologyV1")
+		queryParams1 := catalystcentersdkgo.GetPhysicalTopologyV1QueryParams{}
 
 		if okNodeType {
 			queryParams1.NodeType = vNodeType.(string)
 		}
 
-		response1, restyResp1, err := client.Topology.GetPhysicalTopology(&queryParams1)
+		response1, restyResp1, err := client.Topology.GetPhysicalTopologyV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetPhysicalTopology", err,
-				"Failure at GetPhysicalTopology, unexpected response", ""))
+				"Failure when executing 2 GetPhysicalTopologyV1", err,
+				"Failure at GetPhysicalTopologyV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenTopologyGetPhysicalTopologyItem(response1.Response)
+		vItem1 := flattenTopologyGetPhysicalTopologyV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetPhysicalTopology response",
+				"Failure when setting GetPhysicalTopologyV1 response",
 				err))
 			return diags
 		}
@@ -459,27 +459,27 @@ func dataSourceTopologyPhysicalRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenTopologyGetPhysicalTopologyItem(item *catalystcentersdkgo.ResponseTopologyGetPhysicalTopologyResponse) []map[string]interface{} {
+func flattenTopologyGetPhysicalTopologyV1Item(item *catalystcentersdkgo.ResponseTopologyGetPhysicalTopologyV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["id"] = item.ID
-	respItem["links"] = flattenTopologyGetPhysicalTopologyItemLinks(item.Links)
-	respItem["nodes"] = flattenTopologyGetPhysicalTopologyItemNodes(item.Nodes)
+	respItem["links"] = flattenTopologyGetPhysicalTopologyV1ItemLinks(item.Links)
+	respItem["nodes"] = flattenTopologyGetPhysicalTopologyV1ItemNodes(item.Nodes)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenTopologyGetPhysicalTopologyItemLinks(items *[]catalystcentersdkgo.ResponseTopologyGetPhysicalTopologyResponseLinks) []map[string]interface{} {
+func flattenTopologyGetPhysicalTopologyV1ItemLinks(items *[]catalystcentersdkgo.ResponseTopologyGetPhysicalTopologyV1ResponseLinks) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["additional_info"] = flattenTopologyGetPhysicalTopologyItemLinksAdditionalInfo(item.AdditionalInfo)
+		respItem["additional_info"] = flattenTopologyGetPhysicalTopologyV1ItemLinksAdditionalInfo(item.AdditionalInfo)
 		respItem["end_port_id"] = item.EndPortID
 		respItem["end_port_ipv4_address"] = item.EndPortIPv4Address
 		respItem["end_port_ipv4_mask"] = item.EndPortIPv4Mask
@@ -501,7 +501,7 @@ func flattenTopologyGetPhysicalTopologyItemLinks(items *[]catalystcentersdkgo.Re
 	return respItems
 }
 
-func flattenTopologyGetPhysicalTopologyItemLinksAdditionalInfo(item *catalystcentersdkgo.ResponseTopologyGetPhysicalTopologyResponseLinksAdditionalInfo) interface{} {
+func flattenTopologyGetPhysicalTopologyV1ItemLinksAdditionalInfo(item *catalystcentersdkgo.ResponseTopologyGetPhysicalTopologyV1ResponseLinksAdditionalInfo) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -511,7 +511,7 @@ func flattenTopologyGetPhysicalTopologyItemLinksAdditionalInfo(item *catalystcen
 
 }
 
-func flattenTopologyGetPhysicalTopologyItemNodes(items *[]catalystcentersdkgo.ResponseTopologyGetPhysicalTopologyResponseNodes) []map[string]interface{} {
+func flattenTopologyGetPhysicalTopologyV1ItemNodes(items *[]catalystcentersdkgo.ResponseTopologyGetPhysicalTopologyV1ResponseNodes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -519,8 +519,8 @@ func flattenTopologyGetPhysicalTopologyItemNodes(items *[]catalystcentersdkgo.Re
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["acl_applied"] = boolPtrToString(item.ACLApplied)
-		respItem["additional_info"] = flattenTopologyGetPhysicalTopologyItemNodesAdditionalInfo(item.AdditionalInfo)
-		respItem["custom_param"] = flattenTopologyGetPhysicalTopologyItemNodesCustomParam(item.CustomParam)
+		respItem["additional_info"] = flattenTopologyGetPhysicalTopologyV1ItemNodesAdditionalInfo(item.AdditionalInfo)
+		respItem["custom_param"] = flattenTopologyGetPhysicalTopologyV1ItemNodesCustomParam(item.CustomParam)
 		respItem["connected_device_id"] = item.ConnectedDeviceID
 		respItem["data_path_id"] = item.DataPathID
 		respItem["device_type"] = item.DeviceType
@@ -550,7 +550,7 @@ func flattenTopologyGetPhysicalTopologyItemNodes(items *[]catalystcentersdkgo.Re
 	return respItems
 }
 
-func flattenTopologyGetPhysicalTopologyItemNodesAdditionalInfo(item *catalystcentersdkgo.ResponseTopologyGetPhysicalTopologyResponseNodesAdditionalInfo) interface{} {
+func flattenTopologyGetPhysicalTopologyV1ItemNodesAdditionalInfo(item *catalystcentersdkgo.ResponseTopologyGetPhysicalTopologyV1ResponseNodesAdditionalInfo) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -560,7 +560,7 @@ func flattenTopologyGetPhysicalTopologyItemNodesAdditionalInfo(item *catalystcen
 
 }
 
-func flattenTopologyGetPhysicalTopologyItemNodesCustomParam(item *catalystcentersdkgo.ResponseTopologyGetPhysicalTopologyResponseNodesCustomParam) []map[string]interface{} {
+func flattenTopologyGetPhysicalTopologyV1ItemNodesCustomParam(item *catalystcentersdkgo.ResponseTopologyGetPhysicalTopologyV1ResponseNodesCustomParam) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

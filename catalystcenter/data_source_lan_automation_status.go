@@ -401,8 +401,8 @@ func dataSourceLanAutomationStatusRead(ctx context.Context, d *schema.ResourceDa
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: LanAutomationStatus")
-		queryParams1 := catalystcentersdkgo.LanAutomationStatusQueryParams{}
+		log.Printf("[DEBUG] Selected method: LanAutomationStatusV1")
+		queryParams1 := catalystcentersdkgo.LanAutomationStatusV1QueryParams{}
 
 		if okOffset {
 			queryParams1.Offset = vOffset.(float64)
@@ -411,24 +411,24 @@ func dataSourceLanAutomationStatusRead(ctx context.Context, d *schema.ResourceDa
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.LanAutomation.LanAutomationStatus(&queryParams1)
+		response1, restyResp1, err := client.LanAutomation.LanAutomationStatusV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 LanAutomationStatus", err,
-				"Failure at LanAutomationStatus, unexpected response", ""))
+				"Failure when executing 2 LanAutomationStatusV1", err,
+				"Failure at LanAutomationStatusV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenLanAutomationLanAutomationStatusItems(response1.Response)
+		vItems1 := flattenLanAutomationLanAutomationStatusV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting LanAutomationStatus response",
+				"Failure when setting LanAutomationStatusV1 response",
 				err))
 			return diags
 		}
@@ -438,27 +438,27 @@ func dataSourceLanAutomationStatusRead(ctx context.Context, d *schema.ResourceDa
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: LanAutomationStatusByID")
+		log.Printf("[DEBUG] Selected method: LanAutomationStatusByIDV1")
 		vvID := vID.(string)
 
-		response2, restyResp2, err := client.LanAutomation.LanAutomationStatusByID(vvID)
+		response2, restyResp2, err := client.LanAutomation.LanAutomationStatusByIDV1(vvID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 LanAutomationStatusByID", err,
-				"Failure at LanAutomationStatusByID, unexpected response", ""))
+				"Failure when executing 2 LanAutomationStatusByIDV1", err,
+				"Failure at LanAutomationStatusByIDV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenLanAutomationLanAutomationStatusByIDItem(response2.Response)
+		vItem2 := flattenLanAutomationLanAutomationStatusByIDV1Item(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting LanAutomationStatusByID response",
+				"Failure when setting LanAutomationStatusByIDV1 response",
 				err))
 			return diags
 		}
@@ -470,7 +470,7 @@ func dataSourceLanAutomationStatusRead(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func flattenLanAutomationLanAutomationStatusItems(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationStatusResponse) []map[string]interface{} {
+func flattenLanAutomationLanAutomationStatusV1Items(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationStatusV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -480,24 +480,24 @@ func flattenLanAutomationLanAutomationStatusItems(items *[]catalystcentersdkgo.R
 		respItem["id"] = item.ID
 		respItem["discovered_device_site_name_hierarchy"] = item.DiscoveredDeviceSiteNameHierarchy
 		respItem["primary_device_managment_ipaddress"] = item.PrimaryDeviceManagmentIPAddress
-		respItem["ip_pools"] = flattenLanAutomationLanAutomationStatusItemsIPPools(item.IPPools)
+		respItem["ip_pools"] = flattenLanAutomationLanAutomationStatusV1ItemsIPPools(item.IPPools)
 		respItem["primary_device_interface_names"] = item.PrimaryDeviceInterfaceNames
 		respItem["status"] = item.Status
 		respItem["action"] = item.Action
 		respItem["creation_time"] = item.CreationTime
 		respItem["multicast_enabled"] = boolPtrToString(item.MulticastEnabled)
 		respItem["peer_device_managment_ipaddress"] = item.PeerDeviceManagmentIPAddress
-		respItem["discovered_device_list"] = flattenLanAutomationLanAutomationStatusItemsDiscoveredDeviceList(item.DiscoveredDeviceList)
+		respItem["discovered_device_list"] = flattenLanAutomationLanAutomationStatusV1ItemsDiscoveredDeviceList(item.DiscoveredDeviceList)
 		respItem["redistribute_isis_to_bgp"] = boolPtrToString(item.RedistributeIsisToBgp)
 		respItem["discovery_level"] = item.DiscoveryLevel
 		respItem["discovery_timeout"] = item.DiscoveryTimeout
-		respItem["discovery_devices"] = flattenLanAutomationLanAutomationStatusItemsDiscoveryDevices(item.DiscoveryDevices)
+		respItem["discovery_devices"] = flattenLanAutomationLanAutomationStatusV1ItemsDiscoveryDevices(item.DiscoveryDevices)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenLanAutomationLanAutomationStatusItemsIPPools(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationStatusResponseIPPools) []map[string]interface{} {
+func flattenLanAutomationLanAutomationStatusV1ItemsIPPools(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationStatusV1ResponseIPPools) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -511,7 +511,7 @@ func flattenLanAutomationLanAutomationStatusItemsIPPools(items *[]catalystcenter
 	return respItems
 }
 
-func flattenLanAutomationLanAutomationStatusItemsDiscoveredDeviceList(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationStatusResponseDiscoveredDeviceList) []map[string]interface{} {
+func flattenLanAutomationLanAutomationStatusV1ItemsDiscoveredDeviceList(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationStatusV1ResponseDiscoveredDeviceList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -527,7 +527,7 @@ func flattenLanAutomationLanAutomationStatusItemsDiscoveredDeviceList(items *[]c
 	return respItems
 }
 
-func flattenLanAutomationLanAutomationStatusItemsDiscoveryDevices(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationStatusResponseDiscoveryDevices) []interface{} {
+func flattenLanAutomationLanAutomationStatusV1ItemsDiscoveryDevices(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationStatusV1ResponseDiscoveryDevices) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -539,7 +539,7 @@ func flattenLanAutomationLanAutomationStatusItemsDiscoveryDevices(items *[]catal
 	return respItems
 }
 
-func flattenLanAutomationLanAutomationStatusByIDItem(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationStatusByIDResponse) []map[string]interface{} {
+func flattenLanAutomationLanAutomationStatusByIDV1Item(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationStatusByIDV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -549,24 +549,24 @@ func flattenLanAutomationLanAutomationStatusByIDItem(items *[]catalystcentersdkg
 		respItem["id"] = item.ID
 		respItem["discovered_device_site_name_hierarchy"] = item.DiscoveredDeviceSiteNameHierarchy
 		respItem["primary_device_managment_ipaddress"] = item.PrimaryDeviceManagmentIPAddress
-		respItem["ip_pools"] = flattenLanAutomationLanAutomationStatusByIDItemIPPools(item.IPPools)
+		respItem["ip_pools"] = flattenLanAutomationLanAutomationStatusByIDV1ItemIPPools(item.IPPools)
 		respItem["primary_device_interface_names"] = item.PrimaryDeviceInterfaceNames
 		respItem["status"] = item.Status
 		respItem["action"] = item.Action
 		respItem["creation_time"] = item.CreationTime
 		respItem["multicast_enabled"] = boolPtrToString(item.MulticastEnabled)
 		respItem["peer_device_managment_ipaddress"] = item.PeerDeviceManagmentIPAddress
-		respItem["discovered_device_list"] = flattenLanAutomationLanAutomationStatusByIDItemDiscoveredDeviceList(item.DiscoveredDeviceList)
+		respItem["discovered_device_list"] = flattenLanAutomationLanAutomationStatusByIDV1ItemDiscoveredDeviceList(item.DiscoveredDeviceList)
 		respItem["redistribute_isis_to_bgp"] = boolPtrToString(item.RedistributeIsisToBgp)
 		respItem["discovery_level"] = item.DiscoveryLevel
 		respItem["discovery_timeout"] = item.DiscoveryTimeout
-		respItem["discovery_devices"] = flattenLanAutomationLanAutomationStatusByIDItemDiscoveryDevices(item.DiscoveryDevices)
+		respItem["discovery_devices"] = flattenLanAutomationLanAutomationStatusByIDV1ItemDiscoveryDevices(item.DiscoveryDevices)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenLanAutomationLanAutomationStatusByIDItemIPPools(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationStatusByIDResponseIPPools) []map[string]interface{} {
+func flattenLanAutomationLanAutomationStatusByIDV1ItemIPPools(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationStatusByIDV1ResponseIPPools) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -580,7 +580,7 @@ func flattenLanAutomationLanAutomationStatusByIDItemIPPools(items *[]catalystcen
 	return respItems
 }
 
-func flattenLanAutomationLanAutomationStatusByIDItemDiscoveredDeviceList(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationStatusByIDResponseDiscoveredDeviceList) []map[string]interface{} {
+func flattenLanAutomationLanAutomationStatusByIDV1ItemDiscoveredDeviceList(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationStatusByIDV1ResponseDiscoveredDeviceList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -596,7 +596,7 @@ func flattenLanAutomationLanAutomationStatusByIDItemDiscoveredDeviceList(items *
 	return respItems
 }
 
-func flattenLanAutomationLanAutomationStatusByIDItemDiscoveryDevices(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationStatusByIDResponseDiscoveryDevices) []interface{} {
+func flattenLanAutomationLanAutomationStatusByIDV1ItemDiscoveryDevices(items *[]catalystcentersdkgo.ResponseLanAutomationLanAutomationStatusByIDV1ResponseDiscoveryDevices) []interface{} {
 	if items == nil {
 		return nil
 	}

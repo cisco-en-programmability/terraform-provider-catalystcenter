@@ -358,8 +358,8 @@ func dataSourceLicenseDeviceLicenseSummaryRead(ctx context.Context, d *schema.Re
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: DeviceLicenseSummary")
-		queryParams1 := catalystcentersdkgo.DeviceLicenseSummaryQueryParams{}
+		log.Printf("[DEBUG] Selected method: DeviceLicenseSummaryV1")
+		queryParams1 := catalystcentersdkgo.DeviceLicenseSummaryV1QueryParams{}
 
 		queryParams1.PageNumber = vPageNumber.(float64)
 
@@ -389,24 +389,24 @@ func dataSourceLicenseDeviceLicenseSummaryRead(ctx context.Context, d *schema.Re
 			queryParams1.DeviceUUID = vDeviceUUID.(string)
 		}
 
-		response1, restyResp1, err := client.Licenses.DeviceLicenseSummary(&queryParams1)
+		response1, restyResp1, err := client.Licenses.DeviceLicenseSummaryV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 DeviceLicenseSummary", err,
-				"Failure at DeviceLicenseSummary, unexpected response", ""))
+				"Failure when executing 2 DeviceLicenseSummaryV1", err,
+				"Failure at DeviceLicenseSummaryV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenLicensesDeviceLicenseSummaryItems(response1.Response)
+		vItems1 := flattenLicensesDeviceLicenseSummaryV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting DeviceLicenseSummary response",
+				"Failure when setting DeviceLicenseSummaryV1 response",
 				err))
 			return diags
 		}
@@ -418,7 +418,7 @@ func dataSourceLicenseDeviceLicenseSummaryRead(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func flattenLicensesDeviceLicenseSummaryItems(items *[]catalystcentersdkgo.ResponseLicensesDeviceLicenseSummaryResponse) []map[string]interface{} {
+func flattenLicensesDeviceLicenseSummaryV1Items(items *[]catalystcentersdkgo.ResponseLicensesDeviceLicenseSummaryV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

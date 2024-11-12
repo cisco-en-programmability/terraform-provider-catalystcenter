@@ -20,7 +20,7 @@ Support Documentation' section to understand which fields are supported. For det
 API, please refer to the Open API specification document https://github.com/cisco-en-programmability/catalyst-center-
 api-specs/blob/main/Assurance/CE_Cat_Center_Org-AssuranceEvents-1.0.0-resolved.yaml
 
-- API to fetch the details of an assurance event using event 'id'. For detailed information about the usage of the API,
+- API to fetch the details of an assurance event using event *id*. For detailed information about the usage of the API,
 please refer to the Open API specification document https://github.com/cisco-en-programmability/catalyst-center-api-
 specs/blob/main/Assurance/CE_Cat_Center_Org-AssuranceEvents-1.0.0-resolved.yaml
 `,
@@ -28,46 +28,46 @@ specs/blob/main/Assurance/CE_Cat_Center_Org-AssuranceEvents-1.0.0-resolved.yaml
 		ReadContext: dataSourceAssuranceEventsRead,
 		Schema: map[string]*schema.Schema{
 			"ap_mac": &schema.Schema{
-				Description: `apMac query parameter. MAC address of the access point. This parameter is applicable for 'Unified AP' and 'Wireless Client' events.
-This field supports wildcard ('*') character-based search. Ex: '*50:0F*' or '50:0F*' or '*50:0F'
+				Description: `apMac query parameter. MAC address of the access point. This parameter is applicable for *Unified AP* and *Wireless Client* events.
+This field supports wildcard (***) character-based search. Ex: **50:0F** or *50:0F** or **50:0F*
 Examples:
-'apMac=50:0F:80:0F:F7:E0' (single apMac requested)
-'apMac=50:0F:80:0F:F7:E0&apMac=18:80:90:AB:7E:A0' (multiple apMac requested)
+*apMac=50:0F:80:0F:F7:E0* (single apMac requested)
+*apMac=50:0F:80:0F:F7:E0&apMac=18:80:90:AB:7E:A0* (multiple apMac requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"attribute": &schema.Schema{
-				Description: `attribute query parameter. The list of attributes that needs to be included in the response. If this parameter is not provided, then basic attributes ('id', 'name', 'timestamp', 'details', 'messageType', 'siteHierarchyId', 'siteHierarchy', 'deviceFamily', 'networkDeviceId', 'networkDeviceName', 'managementIpAddress') would be part of the response.
+				Description: `attribute query parameter. The list of attributes that needs to be included in the response. If this parameter is not provided, then basic attributes (*id*, *name*, *timestamp*, *details*, *messageType*, *siteHierarchyId*, *siteHierarchy*, *deviceFamily*, *networkDeviceId*, *networkDeviceName*, *managementIpAddress*) would be part of the response.
  Examples:
 
-'attribute=name' (single attribute requested)
-'attribute=name&attribute=networkDeviceName' (multiple attribute requested)
+*attribute=name* (single attribute requested)
+*attribute=name&attribute=networkDeviceName* (multiple attribute requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"client_mac": &schema.Schema{
-				Description: `clientMac query parameter. MAC address of the client. This parameter is applicable for 'Wired Client' and 'Wireless Client' events.
-This field supports wildcard ('*') character-based search. Ex: '*66:2B*' or '66:2B*' or '*66:2B'
+				Description: `clientMac query parameter. MAC address of the client. This parameter is applicable for *Wired Client* and *Wireless Client* events.
+This field supports wildcard (***) character-based search. Ex: **66:2B** or *66:2B** or **66:2B*
 Examples:
-'clientMac=66:2B:B8:D2:01:56' (single clientMac requested)
-'clientMac=66:2B:B8:D2:01:56&clientMac=DC:A6:32:F5:5A:89' (multiple clientMac requested)
+*clientMac=66:2B:B8:D2:01:56* (single clientMac requested)
+*clientMac=66:2B:B8:D2:01:56&clientMac=DC:A6:32:F5:5A:89* (multiple clientMac requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"device_family": &schema.Schema{
-				Description: `deviceFamily query parameter. Device family. Please note that multiple families across network device type and client type is not allowed. For example, choosing 'Routers' along with 'Wireless Client' or 'Unified AP' is not supported. Examples:
-'deviceFamily=Switches and Hubs' (single deviceFamily requested)
-'deviceFamily=Switches and Hubs&deviceFamily=Routers' (multiple deviceFamily requested)
+				Description: `deviceFamily query parameter. Device family. Please note that multiple families across network device type and client type is not allowed. For example, choosing *Routers* along with *Wireless Client* or *Unified AP* is not supported. Examples:
+*deviceFamily=Switches and Hubs* (single deviceFamily requested)
+*deviceFamily=Switches and Hubs&deviceFamily=Routers* (multiple deviceFamily requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"end_time": &schema.Schema{
 				Description: `endTime query parameter. End time to which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
-If 'endTime' is not provided, API will default to current time.
+If *endTime* is not provided, API will default to current time.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -87,25 +87,25 @@ If 'endTime' is not provided, API will default to current time.
 			"message_type": &schema.Schema{
 				Description: `messageType query parameter. Message type for the event.
 Examples:
-'messageType=Syslog' (single messageType requested)
-'messageType=Trap&messageType=Syslog' (multiple messageType requested)
+*messageType=Syslog* (single messageType requested)
+*messageType=Trap&messageType=Syslog* (multiple messageType requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"network_device_id": &schema.Schema{
-				Description: `networkDeviceId query parameter. The list of Network Device Uuids. (Ex. '6bef213c-19ca-4170-8375-b694e251101c')
+				Description: `networkDeviceId query parameter. The list of Network Device Uuids. (Ex. *6bef213c-19ca-4170-8375-b694e251101c*)
 Examples:
-'networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c' (single networkDeviceId requested)
-'networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c&networkDeviceId=32219612-819e-4b5e-a96b-cf22aca13dd9&networkDeviceId=2541e9a7-b80d-4955-8aa2-79b233318ba0' (multiple networkDeviceId with & separator)
+*networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c* (single networkDeviceId requested)
+*networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c&networkDeviceId=32219612-819e-4b5e-a96b-cf22aca13dd9&networkDeviceId=2541e9a7-b80d-4955-8aa2-79b233318ba0* (multiple networkDeviceId with & separator)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"network_device_name": &schema.Schema{
-				Description: `networkDeviceName query parameter. Network device name. This parameter is applicable for network device related families. This field supports wildcard ('*') character-based search. Ex: '*Branch*' or 'Branch*' or '*Branch' Examples:
-'networkDeviceName=Branch-3-Gateway' (single networkDeviceName requested)
-'networkDeviceName=Branch-3-Gateway&networkDeviceName=Branch-3-Switch' (multiple networkDeviceName requested)
+				Description: `networkDeviceName query parameter. Network device name. This parameter is applicable for network device related families. This field supports wildcard (***) character-based search. Ex: **Branch** or *Branch** or **Branch* Examples:
+*networkDeviceName=Branch-3-Gateway* (single networkDeviceName requested)
+*networkDeviceName=Branch-3-Gateway&networkDeviceName=Branch-3-Switch* (multiple networkDeviceName requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -123,30 +123,30 @@ Examples:
 				Optional: true,
 			},
 			"severity": &schema.Schema{
-				Description: `severity query parameter. Severity of the event between 0 and 6. This is applicable only for events related to network devices (other than AP) and 'Wired Client' events.
+				Description: `severity query parameter. Severity of the event between 0 and 6. This is applicable only for events related to network devices (other than AP) and *Wired Client* events.
 | Value | Severity    | | ----| ----------| | 0     | Emergency   | | 1     | Alert       | | 2     | Critical    | | 3     | Error       | | 4     | Warning     | | 5     | Notice      | | 6     | Info        |
 Examples:
-'severity=0' (single severity requested)
-'severity=0&severity=1' (multiple severity requested)
+*severity=0* (single severity requested)
+*severity=0&severity=1* (multiple severity requested)
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
 			},
 			"site_hierarchy_id": &schema.Schema{
-				Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. 'globalUuid/areaUuid/buildingUuid/floorUuid')
-This field supports wildcard asterisk ('*') character search support. E.g. '*uuid*, *uuid, uuid*'
+				Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. *globalUuid/areaUuid/buildingUuid/floorUuid*)
+This field supports wildcard asterisk (***) character search support. E.g. **uuid*, *uuid, uuid**
 Examples:
-'?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid '(single siteHierarchyId requested)
-'?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2' (multiple siteHierarchyId requested)
+*?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid *(single siteHierarchyId requested)
+*?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2* (multiple siteHierarchyId requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_id": &schema.Schema{
-				Description: `siteId query parameter. The UUID of the site. (Ex. 'flooruuid')
+				Description: `siteId query parameter. The UUID of the site. (Ex. *flooruuid*)
 Examples:
-'?siteId=id1' (single siteId requested)
-'?siteId=id1&siteId=id2&siteId=id3' (multiple siteId requested)
+*?siteId=id1* (single siteId requested)
+*?siteId=id1&siteId=id2&siteId=id3* (multiple siteId requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -159,17 +159,17 @@ Examples:
 			},
 			"start_time": &schema.Schema{
 				Description: `startTime query parameter. Start time from which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
-If 'startTime' is not provided, API will default to current time minus 24 hours.
+If *startTime* is not provided, API will default to current time minus 24 hours.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
 			},
 			"view": &schema.Schema{
-				Description: `view query parameter. The list of events views. Please refer to 'EventViews' for the supported list
+				Description: `view query parameter. The list of events views. Please refer to *EventViews* for the supported list
  Examples:
 
-'view=network' (single view requested)
-'view=network&view=ap' (multiple view requested)
+*view=network* (single view requested)
+*view=network&view=ap* (multiple view requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -1421,6 +1421,7 @@ func dataSourceAssuranceEventsRead(ctx context.Context, d *schema.ResourceData, 
 	vOrder, okOrder := d.GetOk("order")
 	vXCaLLERID, okXCaLLERID := d.GetOk("xca_lle_rid")
 	vID, okID := d.GetOk("id")
+
 	method1 := []bool{okDeviceFamily, okStartTime, okEndTime, okMessageType, okSeverity, okSiteID, okSiteHierarchyID, okNetworkDeviceName, okNetworkDeviceID, okApMac, okClientMac, okAttribute, okView, okOffset, okLimit, okSortBy, okOrder, okXCaLLERID}
 	log.Printf("[DEBUG] Selecting method. Method 1 %v", method1)
 	method2 := []bool{okID, okAttribute, okView, okXCaLLERID}
@@ -1428,10 +1429,10 @@ func dataSourceAssuranceEventsRead(ctx context.Context, d *schema.ResourceData, 
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: QueryAssuranceEvents")
+		log.Printf("[DEBUG] Selected method: QueryAssuranceEventsV1")
 
-		headerParams1 := catalystcentersdkgo.QueryAssuranceEventsHeaderParams{}
-		queryParams1 := catalystcentersdkgo.QueryAssuranceEventsQueryParams{}
+		headerParams1 := catalystcentersdkgo.QueryAssuranceEventsV1HeaderParams{}
+		queryParams1 := catalystcentersdkgo.QueryAssuranceEventsV1QueryParams{}
 
 		if okDeviceFamily {
 			queryParams1.DeviceFamily = vDeviceFamily.(string)
@@ -1488,24 +1489,24 @@ func dataSourceAssuranceEventsRead(ctx context.Context, d *schema.ResourceData, 
 			headerParams1.XCaLLERID = vXCaLLERID.(string)
 		}
 
-		response1, restyResp1, err := client.Devices.QueryAssuranceEvents(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Devices.QueryAssuranceEventsV1(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 QueryAssuranceEvents", err,
-				"Failure at QueryAssuranceEvents, unexpected response", ""))
+				"Failure when executing 2 QueryAssuranceEventsV1", err,
+				"Failure at QueryAssuranceEventsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesQueryAssuranceEventsItems(response1.Response)
+		vItems1 := flattenDevicesQueryAssuranceEventsV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting QueryAssuranceEvents response",
+				"Failure when setting QueryAssuranceEventsV1 response",
 				err))
 			return diags
 		}
@@ -1515,11 +1516,11 @@ func dataSourceAssuranceEventsRead(ctx context.Context, d *schema.ResourceData, 
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetDetailsOfASingleAssuranceEvent")
+		log.Printf("[DEBUG] Selected method: GetDetailsOfASingleAssuranceEventV1")
 		vvID := vID.(string)
 
-		headerParams2 := catalystcentersdkgo.GetDetailsOfASingleAssuranceEventHeaderParams{}
-		queryParams2 := catalystcentersdkgo.GetDetailsOfASingleAssuranceEventQueryParams{}
+		headerParams2 := catalystcentersdkgo.GetDetailsOfASingleAssuranceEventV1HeaderParams{}
+		queryParams2 := catalystcentersdkgo.GetDetailsOfASingleAssuranceEventV1QueryParams{}
 
 		if okAttribute {
 			queryParams2.Attribute = vAttribute.(string)
@@ -1531,24 +1532,24 @@ func dataSourceAssuranceEventsRead(ctx context.Context, d *schema.ResourceData, 
 			headerParams2.XCaLLERID = vXCaLLERID.(string)
 		}
 
-		response2, restyResp2, err := client.Devices.GetDetailsOfASingleAssuranceEvent(vvID, &headerParams2, &queryParams2)
+		response2, restyResp2, err := client.Devices.GetDetailsOfASingleAssuranceEventV1(vvID, &headerParams2, &queryParams2)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDetailsOfASingleAssuranceEvent", err,
-				"Failure at GetDetailsOfASingleAssuranceEvent, unexpected response", ""))
+				"Failure when executing 2 GetDetailsOfASingleAssuranceEventV1", err,
+				"Failure at GetDetailsOfASingleAssuranceEventV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenDevicesGetDetailsOfASingleAssuranceEventItem(response2.Response)
+		vItem2 := flattenDevicesGetDetailsOfASingleAssuranceEventV1Item(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDetailsOfASingleAssuranceEvent response",
+				"Failure when setting GetDetailsOfASingleAssuranceEventV1 response",
 				err))
 			return diags
 		}
@@ -1560,7 +1561,7 @@ func dataSourceAssuranceEventsRead(ctx context.Context, d *schema.ResourceData, 
 	return diags
 }
 
-func flattenDevicesQueryAssuranceEventsItems(items *[]catalystcentersdkgo.ResponseDevicesQueryAssuranceEventsResponse) []map[string]interface{} {
+func flattenDevicesQueryAssuranceEventsV1Items(items *[]catalystcentersdkgo.ResponseDevicesQueryAssuranceEventsV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1602,7 +1603,7 @@ func flattenDevicesQueryAssuranceEventsItems(items *[]catalystcentersdkgo.Respon
 		respItem["new_radio_channel_list"] = item.NewRadioChannelList
 		respItem["duid"] = item.Duid
 		respItem["roam_type"] = item.RoamType
-		respItem["candidate_a_ps"] = flattenDevicesQueryAssuranceEventsItemsCandidateAPs(item.CandidateAPs)
+		respItem["candidate_a_ps"] = flattenDevicesQueryAssuranceEventsV1ItemsCandidateAPs(item.CandidateAPs)
 		respItem["replaced_device_serial_number"] = item.ReplacedDeviceSerialNumber
 		respItem["old_radio_channel_list"] = item.OldRadioChannelList
 		respItem["ssid"] = item.SSID
@@ -1611,14 +1612,14 @@ func flattenDevicesQueryAssuranceEventsItems(items *[]catalystcentersdkgo.Respon
 		respItem["ipv4"] = item.IPv4
 		respItem["wlc_id"] = item.WlcID
 		respItem["ipv6"] = item.IPv6
-		respItem["missing_response_a_ps"] = flattenDevicesQueryAssuranceEventsItemsMissingResponseAPs(item.MissingResponseAPs)
+		respItem["missing_response_a_ps"] = flattenDevicesQueryAssuranceEventsV1ItemsMissingResponseAPs(item.MissingResponseAPs)
 		respItem["timestamp"] = item.Timestamp
 		respItem["severity"] = item.Severity
 		respItem["current_radio_power_level"] = item.CurrentRadioPowerLevel
 		respItem["new_radio_channel_width"] = item.NewRadioChannelWidth
 		respItem["assoc_snr"] = item.AssocSnr
 		respItem["auth_server_ip"] = item.AuthServerIP
-		respItem["child_events"] = flattenDevicesQueryAssuranceEventsItemsChildEvents(item.ChildEvents)
+		respItem["child_events"] = flattenDevicesQueryAssuranceEventsV1ItemsChildEvents(item.ChildEvents)
 		respItem["connected_interface_name"] = item.ConnectedInterfaceName
 		respItem["dhcp_server_ip"] = item.DhcpServerIP
 		respItem["management_ip_address"] = item.ManagementIPAddress
@@ -1633,14 +1634,14 @@ func flattenDevicesQueryAssuranceEventsItems(items *[]catalystcentersdkgo.Respon
 		respItem["udn_name"] = item.UdnName
 		respItem["facility"] = item.Facility
 		respItem["last_ap_reset_type"] = item.LastApResetType
-		respItem["invalid_ie_a_ps"] = flattenDevicesQueryAssuranceEventsItemsInvalidIeAPs(item.InvalidIeAPs)
+		respItem["invalid_ie_a_ps"] = flattenDevicesQueryAssuranceEventsV1ItemsInvalidIeAPs(item.InvalidIeAPs)
 		respItem["username"] = item.Username
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesQueryAssuranceEventsItemsCandidateAPs(items *[]catalystcentersdkgo.ResponseDevicesQueryAssuranceEventsResponseCandidateAPs) []map[string]interface{} {
+func flattenDevicesQueryAssuranceEventsV1ItemsCandidateAPs(items *[]catalystcentersdkgo.ResponseDevicesQueryAssuranceEventsV1ResponseCandidateAPs) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1657,7 +1658,7 @@ func flattenDevicesQueryAssuranceEventsItemsCandidateAPs(items *[]catalystcenter
 	return respItems
 }
 
-func flattenDevicesQueryAssuranceEventsItemsMissingResponseAPs(items *[]catalystcentersdkgo.ResponseDevicesQueryAssuranceEventsResponseMissingResponseAPs) []map[string]interface{} {
+func flattenDevicesQueryAssuranceEventsV1ItemsMissingResponseAPs(items *[]catalystcentersdkgo.ResponseDevicesQueryAssuranceEventsV1ResponseMissingResponseAPs) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1675,7 +1676,7 @@ func flattenDevicesQueryAssuranceEventsItemsMissingResponseAPs(items *[]catalyst
 	return respItems
 }
 
-func flattenDevicesQueryAssuranceEventsItemsChildEvents(items *[]catalystcentersdkgo.ResponseDevicesQueryAssuranceEventsResponseChildEvents) []map[string]interface{} {
+func flattenDevicesQueryAssuranceEventsV1ItemsChildEvents(items *[]catalystcentersdkgo.ResponseDevicesQueryAssuranceEventsV1ResponseChildEvents) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1698,7 +1699,7 @@ func flattenDevicesQueryAssuranceEventsItemsChildEvents(items *[]catalystcenters
 	return respItems
 }
 
-func flattenDevicesQueryAssuranceEventsItemsInvalidIeAPs(items *[]catalystcentersdkgo.ResponseDevicesQueryAssuranceEventsResponseInvalidIeAPs) []map[string]interface{} {
+func flattenDevicesQueryAssuranceEventsV1ItemsInvalidIeAPs(items *[]catalystcentersdkgo.ResponseDevicesQueryAssuranceEventsV1ResponseInvalidIeAPs) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1717,7 +1718,7 @@ func flattenDevicesQueryAssuranceEventsItemsInvalidIeAPs(items *[]catalystcenter
 	return respItems
 }
 
-func flattenDevicesGetDetailsOfASingleAssuranceEventItem(item *catalystcentersdkgo.ResponseDevicesGetDetailsOfASingleAssuranceEventResponse) []map[string]interface{} {
+func flattenDevicesGetDetailsOfASingleAssuranceEventV1Item(item *catalystcentersdkgo.ResponseDevicesGetDetailsOfASingleAssuranceEventV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1757,7 +1758,7 @@ func flattenDevicesGetDetailsOfASingleAssuranceEventItem(item *catalystcentersdk
 	respItem["new_radio_channel_list"] = item.NewRadioChannelList
 	respItem["duid"] = item.Duid
 	respItem["roam_type"] = item.RoamType
-	respItem["candidate_a_ps"] = flattenDevicesGetDetailsOfASingleAssuranceEventItemCandidateAPs(item.CandidateAPs)
+	respItem["candidate_a_ps"] = flattenDevicesGetDetailsOfASingleAssuranceEventV1ItemCandidateAPs(item.CandidateAPs)
 	respItem["replaced_device_serial_number"] = item.ReplacedDeviceSerialNumber
 	respItem["old_radio_channel_list"] = item.OldRadioChannelList
 	respItem["ssid"] = item.SSID
@@ -1766,14 +1767,14 @@ func flattenDevicesGetDetailsOfASingleAssuranceEventItem(item *catalystcentersdk
 	respItem["ipv4"] = item.IPv4
 	respItem["wlc_id"] = item.WlcID
 	respItem["ipv6"] = item.IPv6
-	respItem["missing_response_a_ps"] = flattenDevicesGetDetailsOfASingleAssuranceEventItemMissingResponseAPs(item.MissingResponseAPs)
+	respItem["missing_response_a_ps"] = flattenDevicesGetDetailsOfASingleAssuranceEventV1ItemMissingResponseAPs(item.MissingResponseAPs)
 	respItem["timestamp"] = item.Timestamp
 	respItem["severity"] = item.Severity
 	respItem["current_radio_power_level"] = item.CurrentRadioPowerLevel
 	respItem["new_radio_channel_width"] = item.NewRadioChannelWidth
 	respItem["assoc_snr"] = item.AssocSnr
 	respItem["auth_server_ip"] = item.AuthServerIP
-	respItem["child_events"] = flattenDevicesGetDetailsOfASingleAssuranceEventItemChildEvents(item.ChildEvents)
+	respItem["child_events"] = flattenDevicesGetDetailsOfASingleAssuranceEventV1ItemChildEvents(item.ChildEvents)
 	respItem["connected_interface_name"] = item.ConnectedInterfaceName
 	respItem["dhcp_server_ip"] = item.DhcpServerIP
 	respItem["management_ip_address"] = item.ManagementIPAddress
@@ -1788,14 +1789,14 @@ func flattenDevicesGetDetailsOfASingleAssuranceEventItem(item *catalystcentersdk
 	respItem["udn_name"] = item.UdnName
 	respItem["facility"] = item.Facility
 	respItem["last_ap_reset_type"] = item.LastApResetType
-	respItem["invalid_ie_a_ps"] = flattenDevicesGetDetailsOfASingleAssuranceEventItemInvalidIeAPs(item.InvalidIeAPs)
+	respItem["invalid_ie_a_ps"] = flattenDevicesGetDetailsOfASingleAssuranceEventV1ItemInvalidIeAPs(item.InvalidIeAPs)
 	respItem["username"] = item.Username
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenDevicesGetDetailsOfASingleAssuranceEventItemCandidateAPs(items *[]catalystcentersdkgo.ResponseDevicesGetDetailsOfASingleAssuranceEventResponseCandidateAPs) []map[string]interface{} {
+func flattenDevicesGetDetailsOfASingleAssuranceEventV1ItemCandidateAPs(items *[]catalystcentersdkgo.ResponseDevicesGetDetailsOfASingleAssuranceEventV1ResponseCandidateAPs) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1812,7 +1813,7 @@ func flattenDevicesGetDetailsOfASingleAssuranceEventItemCandidateAPs(items *[]ca
 	return respItems
 }
 
-func flattenDevicesGetDetailsOfASingleAssuranceEventItemMissingResponseAPs(items *[]catalystcentersdkgo.ResponseDevicesGetDetailsOfASingleAssuranceEventResponseMissingResponseAPs) []map[string]interface{} {
+func flattenDevicesGetDetailsOfASingleAssuranceEventV1ItemMissingResponseAPs(items *[]catalystcentersdkgo.ResponseDevicesGetDetailsOfASingleAssuranceEventV1ResponseMissingResponseAPs) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1830,7 +1831,7 @@ func flattenDevicesGetDetailsOfASingleAssuranceEventItemMissingResponseAPs(items
 	return respItems
 }
 
-func flattenDevicesGetDetailsOfASingleAssuranceEventItemChildEvents(items *[]catalystcentersdkgo.ResponseDevicesGetDetailsOfASingleAssuranceEventResponseChildEvents) []map[string]interface{} {
+func flattenDevicesGetDetailsOfASingleAssuranceEventV1ItemChildEvents(items *[]catalystcentersdkgo.ResponseDevicesGetDetailsOfASingleAssuranceEventV1ResponseChildEvents) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1853,7 +1854,7 @@ func flattenDevicesGetDetailsOfASingleAssuranceEventItemChildEvents(items *[]cat
 	return respItems
 }
 
-func flattenDevicesGetDetailsOfASingleAssuranceEventItemInvalidIeAPs(items *[]catalystcentersdkgo.ResponseDevicesGetDetailsOfASingleAssuranceEventResponseInvalidIeAPs) []map[string]interface{} {
+func flattenDevicesGetDetailsOfASingleAssuranceEventV1ItemInvalidIeAPs(items *[]catalystcentersdkgo.ResponseDevicesGetDetailsOfASingleAssuranceEventV1ResponseInvalidIeAPs) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

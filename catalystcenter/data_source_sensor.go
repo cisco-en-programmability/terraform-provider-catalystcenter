@@ -168,31 +168,31 @@ func dataSourceSensorRead(ctx context.Context, d *schema.ResourceData, m interfa
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: Sensors")
-		queryParams1 := catalystcentersdkgo.SensorsQueryParams{}
+		log.Printf("[DEBUG] Selected method: SensorsV1")
+		queryParams1 := catalystcentersdkgo.SensorsV1QueryParams{}
 
 		if okSiteID {
 			queryParams1.SiteID = vSiteID.(string)
 		}
 
-		response1, restyResp1, err := client.Sensors.Sensors(&queryParams1)
+		response1, restyResp1, err := client.Sensors.SensorsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 Sensors", err,
-				"Failure at Sensors, unexpected response", ""))
+				"Failure when executing 2 SensorsV1", err,
+				"Failure at SensorsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSensorsSensorsItems(response1.Response)
+		vItems1 := flattenSensorsSensorsV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting Sensors response",
+				"Failure when setting SensorsV1 response",
 				err))
 			return diags
 		}
@@ -204,7 +204,7 @@ func dataSourceSensorRead(ctx context.Context, d *schema.ResourceData, m interfa
 	return diags
 }
 
-func flattenSensorsSensorsItems(items *[]catalystcentersdkgo.ResponseSensorsSensorsResponse) []map[string]interface{} {
+func flattenSensorsSensorsV1Items(items *[]catalystcentersdkgo.ResponseSensorsSensorsV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -222,14 +222,14 @@ func flattenSensorsSensorsItems(items *[]catalystcentersdkgo.ResponseSensorsSens
 		respItem["version"] = item.Version
 		respItem["last_seen"] = item.LastSeen
 		respItem["type"] = item.Type
-		respItem["ssh"] = flattenSensorsSensorsItemsSSH(item.SSH)
+		respItem["ssh"] = flattenSensorsSensorsV1ItemsSSH(item.SSH)
 		respItem["led"] = boolPtrToString(item.Led)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSensorsSensorsItemsSSH(item *catalystcentersdkgo.ResponseSensorsSensorsResponseSSH) []map[string]interface{} {
+func flattenSensorsSensorsV1ItemsSSH(item *catalystcentersdkgo.ResponseSensorsSensorsV1ResponseSSH) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

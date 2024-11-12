@@ -14,9 +14,6 @@ It performs create operation on Site Design.
 
 - Create area/building/floor together in bulk. If site already exist, then that will be ignored. Sites in the request
 payload need not to be ordered.
-
-
-
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -25,23 +22,22 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 
 ```terraform
 resource "catalystcenter_sites_bulk" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
-    payload {
-      address               = "string"
-      country               = "string"
-      floor_number          = 1
-      height                = 1.0
-      latitude              = 1.0
-      length                = 1.0
-      longitude             = 1.0
-      name                  = "string"
-      parent_name_hierarchy = "string"
-      rf_model              = "string"
-      type                  = "string"
-      units_of_measure      = "string"
-      width                 = 1.0
-    }
+
+    address               = "string"
+    country               = "string"
+    floor_number          = 1
+    height                = 1.0
+    latitude              = 1.0
+    length                = 1.0
+    longitude             = 1.0
+    name                  = "string"
+    parent_name_hierarchy = "string"
+    rf_model              = "string"
+    type                  = "string"
+    units_of_measure      = "string"
+    width                 = 1.0
   }
 }
 
@@ -68,7 +64,7 @@ output "catalystcenter_sites_bulk_example" {
 
 Optional:
 
-- `payload` (Block List) Array of RequestSiteDesignCreateSites (see [below for nested schema](#nestedblock--parameters--payload))
+- `payload` (Block List) Array of RequestSiteDesignCreateSitesV1 (see [below for nested schema](#nestedblock--parameters--payload))
 
 <a id="nestedblock--parameters--payload"></a>
 ### Nested Schema for `parameters.payload`

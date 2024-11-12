@@ -72,26 +72,26 @@ func dataSourceNetworkDevicesDeviceControllabilitySettingsRead(ctx context.Conte
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceControllabilitySettings")
+		log.Printf("[DEBUG] Selected method: GetDeviceControllabilitySettingsV1")
 
-		response1, restyResp1, err := client.SiteDesign.GetDeviceControllabilitySettings()
+		response1, restyResp1, err := client.SiteDesign.GetDeviceControllabilitySettingsV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceControllabilitySettings", err,
-				"Failure at GetDeviceControllabilitySettings, unexpected response", ""))
+				"Failure when executing 2 GetDeviceControllabilitySettingsV1", err,
+				"Failure at GetDeviceControllabilitySettingsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSiteDesignGetDeviceControllabilitySettingsItem(response1.Response)
+		vItem1 := flattenSiteDesignGetDeviceControllabilitySettingsV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceControllabilitySettings response",
+				"Failure when setting GetDeviceControllabilitySettingsV1 response",
 				err))
 			return diags
 		}
@@ -103,7 +103,7 @@ func dataSourceNetworkDevicesDeviceControllabilitySettingsRead(ctx context.Conte
 	return diags
 }
 
-func flattenSiteDesignGetDeviceControllabilitySettingsItem(item *catalystcentersdkgo.ResponseSiteDesignGetDeviceControllabilitySettingsResponse) []map[string]interface{} {
+func flattenSiteDesignGetDeviceControllabilitySettingsV1Item(item *catalystcentersdkgo.ResponseSiteDesignGetDeviceControllabilitySettingsV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

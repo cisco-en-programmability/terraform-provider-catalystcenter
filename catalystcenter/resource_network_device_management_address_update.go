@@ -91,20 +91,18 @@ func resourceNetworkDeviceManagementAddressUpdateCreate(ctx context.Context, d *
 	vDeviceid := resourceItem["deviceid"]
 
 	vvDeviceid := vDeviceid.(string)
-	request1 := expandRequestNetworkDeviceManagementAddressUpdateUpdateDeviceManagementAddress(ctx, "parameters.0", d)
+	request1 := expandRequestNetworkDeviceManagementAddressUpdateUpdateDeviceManagementAddressV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.Devices.UpdateDeviceManagementAddress(vvDeviceid, request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Devices.UpdateDeviceManagementAddressV1(vvDeviceid, request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing UpdateDeviceManagementAddress", err))
+			"Failure when executing UpdateDeviceManagementAddressV1", err))
 		return diags
 	}
 
@@ -112,7 +110,7 @@ func resourceNetworkDeviceManagementAddressUpdateCreate(ctx context.Context, d *
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing UpdateDeviceManagementAddress", err))
+			"Failure when executing UpdateDeviceManagementAddressV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -146,22 +144,24 @@ func resourceNetworkDeviceManagementAddressUpdateCreate(ctx context.Context, d *
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing UpdateDeviceManagementAddress", err1))
+				"Failure when executing UpdateDeviceManagementAddressV1", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenDevicesUpdateDeviceManagementAddressItem(response1.Response)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
+	vItem1 := flattenDevicesUpdateDeviceManagementAddressV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting UpdateDeviceManagementAddress response",
+			"Failure when setting UpdateDeviceManagementAddressV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceNetworkDeviceManagementAddressUpdateRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -176,15 +176,15 @@ func resourceNetworkDeviceManagementAddressUpdateDelete(ctx context.Context, d *
 	return diags
 }
 
-func expandRequestNetworkDeviceManagementAddressUpdateUpdateDeviceManagementAddress(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateDeviceManagementAddress {
-	request := catalystcentersdkgo.RequestDevicesUpdateDeviceManagementAddress{}
+func expandRequestNetworkDeviceManagementAddressUpdateUpdateDeviceManagementAddressV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateDeviceManagementAddressV1 {
+	request := catalystcentersdkgo.RequestDevicesUpdateDeviceManagementAddressV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".new_ip")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".new_ip")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".new_ip")))) {
 		request.NewIP = interfaceToString(v)
 	}
 	return &request
 }
 
-func flattenDevicesUpdateDeviceManagementAddressItem(item *catalystcentersdkgo.ResponseDevicesUpdateDeviceManagementAddressResponse) []map[string]interface{} {
+func flattenDevicesUpdateDeviceManagementAddressV1Item(item *catalystcentersdkgo.ResponseDevicesUpdateDeviceManagementAddressV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

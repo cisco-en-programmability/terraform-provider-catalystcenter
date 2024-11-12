@@ -128,7 +128,7 @@ func resourceSdaTransitNetworks() *schema.Resource {
 
 									"id": &schema.Schema{
 										Description: `ID of the transit network (updating this field is not allowed).
-			`,
+`,
 										Type:     schema.TypeString,
 										Optional: true,
 										Computed: true,
@@ -142,14 +142,14 @@ func resourceSdaTransitNetworks() *schema.Resource {
 
 												"autonomous_system_number": &schema.Schema{
 													Description: `Autonomous system number of the IP transit network. Allowed range is [1 to 4294967295].
-			`,
+`,
 													Type:     schema.TypeString,
 													Optional: true,
 													Computed: true,
 												},
 												"routing_protocol_name": &schema.Schema{
 													Description: `Routing protocol name of the IP transit network.
-			`,
+`,
 													Type:     schema.TypeString,
 													Optional: true,
 													Computed: true,
@@ -159,7 +159,7 @@ func resourceSdaTransitNetworks() *schema.Resource {
 									},
 									"name": &schema.Schema{
 										Description: `Name of the transit network.
-			`,
+`,
 										Type:     schema.TypeString,
 										Optional: true,
 										Computed: true,
@@ -173,7 +173,7 @@ func resourceSdaTransitNetworks() *schema.Resource {
 
 												"control_plane_network_device_ids": &schema.Schema{
 													Description: `List of network device IDs that will be used as control plane nodes. Maximum 2 network device IDs can be provided for transit of type SDA_LISP_BGP_TRANSIT and maximum 4 network device IDs can be provided for transit of type SDA_LISP_PUB_SUB_TRANSIT.
-			`,
+`,
 													Type:     schema.TypeList,
 													Optional: true,
 													Computed: true,
@@ -183,7 +183,7 @@ func resourceSdaTransitNetworks() *schema.Resource {
 												},
 												"is_multicast_over_transit_enabled": &schema.Schema{
 													Description: `Set this to true to enable multicast over SD-Access transit.  This supports Native Multicast over SD-Access Transit. This is only applicable for transit of type SDA_LISP_PUB_SUB_TRANSIT. 
-			`,
+`,
 													// Type:        schema.TypeBool,
 													Type:         schema.TypeString,
 													ValidateFunc: validateStringHasValueFunc([]string{"", "true", "false"}),
@@ -195,7 +195,7 @@ func resourceSdaTransitNetworks() *schema.Resource {
 									},
 									"type": &schema.Schema{
 										Description: `Type of the transit network.
-			`,
+`,
 										Type:     schema.TypeString,
 										Optional: true,
 										Computed: true,
@@ -216,14 +216,14 @@ func resourceSdaTransitNetworksCreate(ctx context.Context, d *schema.ResourceDat
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters.0.payload"))
-	request1 := expandRequestSdaTransitNetworksAddTransitNetworks(ctx, "parameters.0", d)
+	request1 := expandRequestSdaTransitNetworksAddTransitNetworksV1(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vName := resourceItem["name"]
 	vvName := interfaceToString(vName)
 	vID := resourceItem["id"]
 	vvID := interfaceToString(vID)
-	queryParamImport := catalystcentersdkgo.GetTransitNetworksQueryParams{}
+	queryParamImport := catalystcentersdkgo.GetTransitNetworksV1QueryParams{}
 	queryParamImport.Name = vvName
 	item2, err := searchSdaGetTransitNetworks(m, queryParamImport, vvID)
 	if err == nil && item2 != nil {
@@ -272,7 +272,7 @@ func resourceSdaTransitNetworksCreate(ctx context.Context, d *schema.ResourceDat
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetTransitNetworksQueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetTransitNetworksV1QueryParams{}
 	queryParamValidate.Name = vvName
 	item3, err := searchSdaGetTransitNetworks(m, queryParamValidate, vvID)
 	if err != nil || item3 == nil {
@@ -303,7 +303,7 @@ func resourceSdaTransitNetworksRead(ctx context.Context, d *schema.ResourceData,
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetTransitNetworks")
-		queryParams1 := catalystcentersdkgo.GetTransitNetworksQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetTransitNetworksV1QueryParams{}
 		queryParams1.Name = vName
 
 		item1, err := searchSdaGetTransitNetworks(m, queryParams1, vvID)
@@ -313,11 +313,11 @@ func resourceSdaTransitNetworksRead(ctx context.Context, d *schema.ResourceData,
 		}
 		// Review flatten function used
 
-		items := []catalystcentersdkgo.ResponseSdaGetTransitNetworksResponse{
+		items := []catalystcentersdkgo.ResponseSdaGetTransitNetworksV1Response{
 			*item1,
 		}
 
-		vItem1 := flattenSdaGetTransitNetworksItems(&items)
+		vItem1 := flattenSdaGetTransitNetworksV1Items(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetTransitNetworks search response",
@@ -338,7 +338,7 @@ func resourceSdaTransitNetworksUpdate(ctx context.Context, d *schema.ResourceDat
 
 	vID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestSdaTransitNetworksUpdateTransitNetworks(ctx, "parameters.0", d)
+		request1 := expandRequestSdaTransitNetworksUpdateTransitNetworksV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		if request1 != nil && len(*request1) > 0 {
 			req := *request1
@@ -402,9 +402,10 @@ func resourceSdaTransitNetworksDelete(ctx context.Context, d *schema.ResourceDat
 		"Failure at SdaTransitNetworksDelete, unexpected response", ""))
 	return diags
 }
-func expandRequestSdaTransitNetworksAddTransitNetworks(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddTransitNetworks {
-	request := catalystcentersdkgo.RequestSdaAddTransitNetworks{}
-	if v := expandRequestSdaTransitNetworksAddTransitNetworksItemArray(ctx, key+".payload", d); v != nil {
+
+func expandRequestSdaTransitNetworksAddTransitNetworksV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddTransitNetworksV1 {
+	request := catalystcentersdkgo.RequestSdaAddTransitNetworksV1{}
+	if v := expandRequestSdaTransitNetworksAddTransitNetworksV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -413,8 +414,8 @@ func expandRequestSdaTransitNetworksAddTransitNetworks(ctx context.Context, key 
 	return &request
 }
 
-func expandRequestSdaTransitNetworksAddTransitNetworksItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddTransitNetworks {
-	request := []catalystcentersdkgo.RequestItemSdaAddTransitNetworks{}
+func expandRequestSdaTransitNetworksAddTransitNetworksV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddTransitNetworksV1 {
+	request := []catalystcentersdkgo.RequestItemSdaAddTransitNetworksV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -425,7 +426,7 @@ func expandRequestSdaTransitNetworksAddTransitNetworksItemArray(ctx context.Cont
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaTransitNetworksAddTransitNetworksItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaTransitNetworksAddTransitNetworksV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -436,8 +437,8 @@ func expandRequestSdaTransitNetworksAddTransitNetworksItemArray(ctx context.Cont
 	return &request
 }
 
-func expandRequestSdaTransitNetworksAddTransitNetworksItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddTransitNetworks {
-	request := catalystcentersdkgo.RequestItemSdaAddTransitNetworks{}
+func expandRequestSdaTransitNetworksAddTransitNetworksV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddTransitNetworksV1 {
+	request := catalystcentersdkgo.RequestItemSdaAddTransitNetworksV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -445,10 +446,10 @@ func expandRequestSdaTransitNetworksAddTransitNetworksItem(ctx context.Context, 
 		request.Type = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ip_transit_settings")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ip_transit_settings")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ip_transit_settings")))) {
-		request.IPTransitSettings = expandRequestSdaTransitNetworksAddTransitNetworksItemIPTransitSettings(ctx, key+".ip_transit_settings.0", d)
+		request.IPTransitSettings = expandRequestSdaTransitNetworksAddTransitNetworksV1ItemIPTransitSettings(ctx, key+".ip_transit_settings.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".sda_transit_settings")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".sda_transit_settings")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".sda_transit_settings")))) {
-		request.SdaTransitSettings = expandRequestSdaTransitNetworksAddTransitNetworksItemSdaTransitSettings(ctx, key+".sda_transit_settings.0", d)
+		request.SdaTransitSettings = expandRequestSdaTransitNetworksAddTransitNetworksV1ItemSdaTransitSettings(ctx, key+".sda_transit_settings.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -456,8 +457,8 @@ func expandRequestSdaTransitNetworksAddTransitNetworksItem(ctx context.Context, 
 	return &request
 }
 
-func expandRequestSdaTransitNetworksAddTransitNetworksItemIPTransitSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddTransitNetworksIPTransitSettings {
-	request := catalystcentersdkgo.RequestItemSdaAddTransitNetworksIPTransitSettings{}
+func expandRequestSdaTransitNetworksAddTransitNetworksV1ItemIPTransitSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddTransitNetworksV1IPTransitSettings {
+	request := catalystcentersdkgo.RequestItemSdaAddTransitNetworksV1IPTransitSettings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".routing_protocol_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".routing_protocol_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".routing_protocol_name")))) {
 		request.RoutingProtocolName = interfaceToString(v)
 	}
@@ -470,8 +471,8 @@ func expandRequestSdaTransitNetworksAddTransitNetworksItemIPTransitSettings(ctx 
 	return &request
 }
 
-func expandRequestSdaTransitNetworksAddTransitNetworksItemSdaTransitSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddTransitNetworksSdaTransitSettings {
-	request := catalystcentersdkgo.RequestItemSdaAddTransitNetworksSdaTransitSettings{}
+func expandRequestSdaTransitNetworksAddTransitNetworksV1ItemSdaTransitSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddTransitNetworksV1SdaTransitSettings {
+	request := catalystcentersdkgo.RequestItemSdaAddTransitNetworksV1SdaTransitSettings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_multicast_over_transit_enabled")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_multicast_over_transit_enabled")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_multicast_over_transit_enabled")))) {
 		request.IsMulticastOverTransitEnabled = interfaceToBoolPtr(v)
 	}
@@ -484,9 +485,9 @@ func expandRequestSdaTransitNetworksAddTransitNetworksItemSdaTransitSettings(ctx
 	return &request
 }
 
-func expandRequestSdaTransitNetworksUpdateTransitNetworks(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateTransitNetworks {
-	request := catalystcentersdkgo.RequestSdaUpdateTransitNetworks{}
-	if v := expandRequestSdaTransitNetworksUpdateTransitNetworksItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaTransitNetworksUpdateTransitNetworksV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateTransitNetworksV1 {
+	request := catalystcentersdkgo.RequestSdaUpdateTransitNetworksV1{}
+	if v := expandRequestSdaTransitNetworksUpdateTransitNetworksV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -495,8 +496,8 @@ func expandRequestSdaTransitNetworksUpdateTransitNetworks(ctx context.Context, k
 	return &request
 }
 
-func expandRequestSdaTransitNetworksUpdateTransitNetworksItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateTransitNetworks {
-	request := []catalystcentersdkgo.RequestItemSdaUpdateTransitNetworks{}
+func expandRequestSdaTransitNetworksUpdateTransitNetworksV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateTransitNetworksV1 {
+	request := []catalystcentersdkgo.RequestItemSdaUpdateTransitNetworksV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -507,7 +508,7 @@ func expandRequestSdaTransitNetworksUpdateTransitNetworksItemArray(ctx context.C
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaTransitNetworksUpdateTransitNetworksItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaTransitNetworksUpdateTransitNetworksV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -518,8 +519,8 @@ func expandRequestSdaTransitNetworksUpdateTransitNetworksItemArray(ctx context.C
 	return &request
 }
 
-func expandRequestSdaTransitNetworksUpdateTransitNetworksItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateTransitNetworks {
-	request := catalystcentersdkgo.RequestItemSdaUpdateTransitNetworks{}
+func expandRequestSdaTransitNetworksUpdateTransitNetworksV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateTransitNetworksV1 {
+	request := catalystcentersdkgo.RequestItemSdaUpdateTransitNetworksV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -530,10 +531,10 @@ func expandRequestSdaTransitNetworksUpdateTransitNetworksItem(ctx context.Contex
 		request.Type = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ip_transit_settings")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ip_transit_settings")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ip_transit_settings")))) {
-		request.IPTransitSettings = expandRequestSdaTransitNetworksUpdateTransitNetworksItemIPTransitSettings(ctx, key+".ip_transit_settings.0", d)
+		request.IPTransitSettings = expandRequestSdaTransitNetworksUpdateTransitNetworksV1ItemIPTransitSettings(ctx, key+".ip_transit_settings.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".sda_transit_settings")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".sda_transit_settings")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".sda_transit_settings")))) {
-		request.SdaTransitSettings = expandRequestSdaTransitNetworksUpdateTransitNetworksItemSdaTransitSettings(ctx, key+".sda_transit_settings.0", d)
+		request.SdaTransitSettings = expandRequestSdaTransitNetworksUpdateTransitNetworksV1ItemSdaTransitSettings(ctx, key+".sda_transit_settings.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -541,8 +542,8 @@ func expandRequestSdaTransitNetworksUpdateTransitNetworksItem(ctx context.Contex
 	return &request
 }
 
-func expandRequestSdaTransitNetworksUpdateTransitNetworksItemIPTransitSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateTransitNetworksIPTransitSettings {
-	request := catalystcentersdkgo.RequestItemSdaUpdateTransitNetworksIPTransitSettings{}
+func expandRequestSdaTransitNetworksUpdateTransitNetworksV1ItemIPTransitSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateTransitNetworksV1IPTransitSettings {
+	request := catalystcentersdkgo.RequestItemSdaUpdateTransitNetworksV1IPTransitSettings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".routing_protocol_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".routing_protocol_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".routing_protocol_name")))) {
 		request.RoutingProtocolName = interfaceToString(v)
 	}
@@ -555,8 +556,8 @@ func expandRequestSdaTransitNetworksUpdateTransitNetworksItemIPTransitSettings(c
 	return &request
 }
 
-func expandRequestSdaTransitNetworksUpdateTransitNetworksItemSdaTransitSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateTransitNetworksSdaTransitSettings {
-	request := catalystcentersdkgo.RequestItemSdaUpdateTransitNetworksSdaTransitSettings{}
+func expandRequestSdaTransitNetworksUpdateTransitNetworksV1ItemSdaTransitSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateTransitNetworksV1SdaTransitSettings {
+	request := catalystcentersdkgo.RequestItemSdaUpdateTransitNetworksV1SdaTransitSettings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_multicast_over_transit_enabled")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_multicast_over_transit_enabled")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_multicast_over_transit_enabled")))) {
 		request.IsMulticastOverTransitEnabled = interfaceToBoolPtr(v)
 	}
@@ -569,11 +570,11 @@ func expandRequestSdaTransitNetworksUpdateTransitNetworksItemSdaTransitSettings(
 	return &request
 }
 
-func searchSdaGetTransitNetworks(m interface{}, queryParams catalystcentersdkgo.GetTransitNetworksQueryParams, vID string) (*catalystcentersdkgo.ResponseSdaGetTransitNetworksResponse, error) {
+func searchSdaGetTransitNetworks(m interface{}, queryParams catalystcentersdkgo.GetTransitNetworksV1QueryParams, vID string) (*catalystcentersdkgo.ResponseSdaGetTransitNetworksV1Response, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseSdaGetTransitNetworksResponse
-	var ite *catalystcentersdkgo.ResponseSdaGetTransitNetworks
+	var foundItem *catalystcentersdkgo.ResponseSdaGetTransitNetworksV1Response
+	var ite *catalystcentersdkgo.ResponseSdaGetTransitNetworksV1
 	if vID != "" {
 		queryParams.Offset = 1
 		nResponse, _, err := client.Sda.GetTransitNetworks(nil)

@@ -1,6 +1,6 @@
 
 resource "catalystcenter_pnp_device_reset" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     device_reset_list {

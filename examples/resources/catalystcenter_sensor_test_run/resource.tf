@@ -1,6 +1,6 @@
 
 resource "catalystcenter_sensor_test_run" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     template_name = "string"

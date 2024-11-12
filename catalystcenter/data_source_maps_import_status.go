@@ -198,27 +198,27 @@ func dataSourceMapsImportStatusRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: ImportMapArchiveImportStatus")
+		log.Printf("[DEBUG] Selected method: ImportMapArchiveImportStatusV1")
 		vvImportContextUUID := vImportContextUUID.(string)
 
-		response1, restyResp1, err := client.Sites.ImportMapArchiveImportStatus(vvImportContextUUID)
+		response1, restyResp1, err := client.Sites.ImportMapArchiveImportStatusV1(vvImportContextUUID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 ImportMapArchiveImportStatus", err,
-				"Failure at ImportMapArchiveImportStatus, unexpected response", ""))
+				"Failure when executing 2 ImportMapArchiveImportStatusV1", err,
+				"Failure at ImportMapArchiveImportStatusV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSitesImportMapArchiveImportStatusItem(response1)
+		vItem1 := flattenSitesImportMapArchiveImportStatusV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting ImportMapArchiveImportStatus response",
+				"Failure when setting ImportMapArchiveImportStatusV1 response",
 				err))
 			return diags
 		}
@@ -230,35 +230,35 @@ func dataSourceMapsImportStatusRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenSitesImportMapArchiveImportStatusItem(item *catalystcentersdkgo.ResponseSitesImportMapArchiveImportStatus) []map[string]interface{} {
+func flattenSitesImportMapArchiveImportStatusV1Item(item *catalystcentersdkgo.ResponseSitesImportMapArchiveImportStatusV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["audit_log"] = flattenSitesImportMapArchiveImportStatusItemAuditLog(item.AuditLog)
+	respItem["audit_log"] = flattenSitesImportMapArchiveImportStatusV1ItemAuditLog(item.AuditLog)
 	respItem["status"] = item.Status
-	respItem["uuid"] = flattenSitesImportMapArchiveImportStatusItemUUID(item.UUID)
+	respItem["uuid"] = flattenSitesImportMapArchiveImportStatusV1ItemUUID(item.UUID)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenSitesImportMapArchiveImportStatusItemAuditLog(item *catalystcentersdkgo.ResponseSitesImportMapArchiveImportStatusAuditLog) []map[string]interface{} {
+func flattenSitesImportMapArchiveImportStatusV1ItemAuditLog(item *catalystcentersdkgo.ResponseSitesImportMapArchiveImportStatusV1AuditLog) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["children"] = flattenSitesImportMapArchiveImportStatusItemAuditLogChildren(item.Children)
-	respItem["entities_count"] = flattenSitesImportMapArchiveImportStatusItemAuditLogEntitiesCount(item.EntitiesCount)
+	respItem["children"] = item.Children
+	respItem["entities_count"] = flattenSitesImportMapArchiveImportStatusV1ItemAuditLogEntitiesCount(item.EntitiesCount)
 	respItem["entity_name"] = item.EntityName
 	respItem["entity_type"] = item.EntityType
-	respItem["error_entities_count"] = flattenSitesImportMapArchiveImportStatusItemAuditLogErrorEntitiesCount(item.ErrorEntitiesCount)
-	respItem["errors"] = flattenSitesImportMapArchiveImportStatusItemAuditLogErrors(item.Errors)
-	respItem["infos"] = flattenSitesImportMapArchiveImportStatusItemAuditLogInfos(item.Infos)
-	respItem["matching_entities_count"] = flattenSitesImportMapArchiveImportStatusItemAuditLogMatchingEntitiesCount(item.MatchingEntitiesCount)
+	respItem["error_entities_count"] = flattenSitesImportMapArchiveImportStatusV1ItemAuditLogErrorEntitiesCount(item.ErrorEntitiesCount)
+	respItem["errors"] = flattenSitesImportMapArchiveImportStatusV1ItemAuditLogErrors(item.Errors)
+	respItem["infos"] = flattenSitesImportMapArchiveImportStatusV1ItemAuditLogInfos(item.Infos)
+	respItem["matching_entities_count"] = flattenSitesImportMapArchiveImportStatusV1ItemAuditLogMatchingEntitiesCount(item.MatchingEntitiesCount)
 	respItem["sub_tasks_root_task_id"] = item.SubTasksRootTaskID
 	respItem["successfully_imported_floors"] = item.SuccessfullyImportedFloors
-	respItem["warnings"] = flattenSitesImportMapArchiveImportStatusItemAuditLogWarnings(item.Warnings)
+	respItem["warnings"] = flattenSitesImportMapArchiveImportStatusV1ItemAuditLogWarnings(item.Warnings)
 
 	return []map[string]interface{}{
 		respItem,
@@ -266,19 +266,7 @@ func flattenSitesImportMapArchiveImportStatusItemAuditLog(item *catalystcentersd
 
 }
 
-func flattenSitesImportMapArchiveImportStatusItemAuditLogChildren(items *[]catalystcentersdkgo.ResponseSitesImportMapArchiveImportStatusAuditLogChildren) []interface{} {
-	if items == nil {
-		return nil
-	}
-	var respItems []interface{}
-	for _, item := range *items {
-		respItem := item
-		respItems = append(respItems, responseInterfaceToString(respItem))
-	}
-	return respItems
-}
-
-func flattenSitesImportMapArchiveImportStatusItemAuditLogEntitiesCount(items *[]catalystcentersdkgo.ResponseSitesImportMapArchiveImportStatusAuditLogEntitiesCount) []map[string]interface{} {
+func flattenSitesImportMapArchiveImportStatusV1ItemAuditLogEntitiesCount(items *[]catalystcentersdkgo.ResponseSitesImportMapArchiveImportStatusV1AuditLogEntitiesCount) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -291,7 +279,7 @@ func flattenSitesImportMapArchiveImportStatusItemAuditLogEntitiesCount(items *[]
 	return respItems
 }
 
-func flattenSitesImportMapArchiveImportStatusItemAuditLogErrorEntitiesCount(items *[]catalystcentersdkgo.ResponseSitesImportMapArchiveImportStatusAuditLogErrorEntitiesCount) []map[string]interface{} {
+func flattenSitesImportMapArchiveImportStatusV1ItemAuditLogErrorEntitiesCount(items *[]catalystcentersdkgo.ResponseSitesImportMapArchiveImportStatusV1AuditLogErrorEntitiesCount) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -304,7 +292,7 @@ func flattenSitesImportMapArchiveImportStatusItemAuditLogErrorEntitiesCount(item
 	return respItems
 }
 
-func flattenSitesImportMapArchiveImportStatusItemAuditLogErrors(items *[]catalystcentersdkgo.ResponseSitesImportMapArchiveImportStatusAuditLogErrors) []map[string]interface{} {
+func flattenSitesImportMapArchiveImportStatusV1ItemAuditLogErrors(items *[]catalystcentersdkgo.ResponseSitesImportMapArchiveImportStatusV1AuditLogErrors) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -317,7 +305,7 @@ func flattenSitesImportMapArchiveImportStatusItemAuditLogErrors(items *[]catalys
 	return respItems
 }
 
-func flattenSitesImportMapArchiveImportStatusItemAuditLogInfos(items *[]catalystcentersdkgo.ResponseSitesImportMapArchiveImportStatusAuditLogInfos) []map[string]interface{} {
+func flattenSitesImportMapArchiveImportStatusV1ItemAuditLogInfos(items *[]catalystcentersdkgo.ResponseSitesImportMapArchiveImportStatusV1AuditLogInfos) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -330,7 +318,7 @@ func flattenSitesImportMapArchiveImportStatusItemAuditLogInfos(items *[]catalyst
 	return respItems
 }
 
-func flattenSitesImportMapArchiveImportStatusItemAuditLogMatchingEntitiesCount(items *[]catalystcentersdkgo.ResponseSitesImportMapArchiveImportStatusAuditLogMatchingEntitiesCount) []map[string]interface{} {
+func flattenSitesImportMapArchiveImportStatusV1ItemAuditLogMatchingEntitiesCount(items *[]catalystcentersdkgo.ResponseSitesImportMapArchiveImportStatusV1AuditLogMatchingEntitiesCount) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -343,7 +331,7 @@ func flattenSitesImportMapArchiveImportStatusItemAuditLogMatchingEntitiesCount(i
 	return respItems
 }
 
-func flattenSitesImportMapArchiveImportStatusItemAuditLogWarnings(items *[]catalystcentersdkgo.ResponseSitesImportMapArchiveImportStatusAuditLogWarnings) []map[string]interface{} {
+func flattenSitesImportMapArchiveImportStatusV1ItemAuditLogWarnings(items *[]catalystcentersdkgo.ResponseSitesImportMapArchiveImportStatusV1AuditLogWarnings) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -356,7 +344,7 @@ func flattenSitesImportMapArchiveImportStatusItemAuditLogWarnings(items *[]catal
 	return respItems
 }
 
-func flattenSitesImportMapArchiveImportStatusItemUUID(item *catalystcentersdkgo.ResponseSitesImportMapArchiveImportStatusUUID) []map[string]interface{} {
+func flattenSitesImportMapArchiveImportStatusV1ItemUUID(item *catalystcentersdkgo.ResponseSitesImportMapArchiveImportStatusV1UUID) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

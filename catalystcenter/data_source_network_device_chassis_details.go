@@ -145,27 +145,27 @@ func dataSourceNetworkDeviceChassisDetailsRead(ctx context.Context, d *schema.Re
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetChassisDetailsForDevice")
+		log.Printf("[DEBUG] Selected method: GetChassisDetailsForDeviceV1")
 		vvDeviceID := vDeviceID.(string)
 
-		response1, restyResp1, err := client.Devices.GetChassisDetailsForDevice(vvDeviceID)
+		response1, restyResp1, err := client.Devices.GetChassisDetailsForDeviceV1(vvDeviceID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetChassisDetailsForDevice", err,
-				"Failure at GetChassisDetailsForDevice, unexpected response", ""))
+				"Failure when executing 2 GetChassisDetailsForDeviceV1", err,
+				"Failure at GetChassisDetailsForDeviceV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetChassisDetailsForDeviceItems(response1.Response)
+		vItems1 := flattenDevicesGetChassisDetailsForDeviceV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetChassisDetailsForDevice response",
+				"Failure when setting GetChassisDetailsForDeviceV1 response",
 				err))
 			return diags
 		}
@@ -177,7 +177,7 @@ func dataSourceNetworkDeviceChassisDetailsRead(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func flattenDevicesGetChassisDetailsForDeviceItems(items *[]catalystcentersdkgo.ResponseDevicesGetChassisDetailsForDeviceResponse) []map[string]interface{} {
+func flattenDevicesGetChassisDetailsForDeviceV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetChassisDetailsForDeviceV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -235,8 +235,8 @@ func dataSourceDeviceReplacementRead(ctx context.Context, d *schema.ResourceData
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: ReturnListOfReplacementDevicesWithReplacementDetails")
-		queryParams1 := catalystcentersdkgo.ReturnListOfReplacementDevicesWithReplacementDetailsQueryParams{}
+		log.Printf("[DEBUG] Selected method: ReturnListOfReplacementDevicesWithReplacementDetailsV1")
+		queryParams1 := catalystcentersdkgo.ReturnListOfReplacementDevicesWithReplacementDetailsV1QueryParams{}
 
 		if okFaultyDeviceName {
 			queryParams1.FaultyDeviceName = vFaultyDeviceName.(string)
@@ -272,24 +272,24 @@ func dataSourceDeviceReplacementRead(ctx context.Context, d *schema.ResourceData
 			queryParams1.Limit = vLimit.(int)
 		}
 
-		response1, restyResp1, err := client.DeviceReplacement.ReturnListOfReplacementDevicesWithReplacementDetails(&queryParams1)
+		response1, restyResp1, err := client.DeviceReplacement.ReturnListOfReplacementDevicesWithReplacementDetailsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 ReturnListOfReplacementDevicesWithReplacementDetails", err,
-				"Failure at ReturnListOfReplacementDevicesWithReplacementDetails, unexpected response", ""))
+				"Failure when executing 2 ReturnListOfReplacementDevicesWithReplacementDetailsV1", err,
+				"Failure at ReturnListOfReplacementDevicesWithReplacementDetailsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetailsItems(response1.Response)
+		vItems1 := flattenDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetailsV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting ReturnListOfReplacementDevicesWithReplacementDetails response",
+				"Failure when setting ReturnListOfReplacementDevicesWithReplacementDetailsV1 response",
 				err))
 			return diags
 		}
@@ -301,7 +301,7 @@ func dataSourceDeviceReplacementRead(ctx context.Context, d *schema.ResourceData
 	return diags
 }
 
-func flattenDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetailsItems(items *[]catalystcentersdkgo.ResponseDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetailsResponse) []map[string]interface{} {
+func flattenDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetailsV1Items(items *[]catalystcentersdkgo.ResponseDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetailsV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

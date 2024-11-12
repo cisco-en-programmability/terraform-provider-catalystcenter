@@ -14,9 +14,6 @@ It performs update operation on Device Onboarding (PnP).
 
 - Updates the PnP Server profile in a registered Virtual Account in the PnP database. The response payload returns the
 updated smart & virtual account info
-
-
-
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -25,7 +22,7 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 
 ```terraform
 resource "catalystcenter_pnp_server_profile_update" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     cco_user = "string"

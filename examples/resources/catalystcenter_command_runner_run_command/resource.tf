@@ -1,6 +1,6 @@
 
 resource "catalystcenter_command_runner_run_command" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     commands     = ["string"]

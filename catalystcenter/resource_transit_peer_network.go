@@ -2,7 +2,6 @@ package catalystcenter
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"reflect"
 	"time"
@@ -219,29 +218,29 @@ func resourceTransitPeerNetworkCreate(ctx context.Context, d *schema.ResourceDat
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestTransitPeerNetworkAddTransitPeerNetwork(ctx, "parameters.0", d)
+	request1 := expandRequestTransitPeerNetworkAddTransitPeerNetworkV1(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vTransitPeerNetworkName := resourceItem["transit_peer_network_name"]
 	vvTransitPeerNetworkName := interfaceToString(vTransitPeerNetworkName)
-	queryParamImport := catalystcentersdkgo.GetTransitPeerNetworkInfoQueryParams{}
+	queryParamImport := catalystcentersdkgo.GetTransitPeerNetworkInfoV1QueryParams{}
 	queryParamImport.TransitPeerNetworkName = vvTransitPeerNetworkName
-	item2, _, err := client.Sda.GetTransitPeerNetworkInfo(&queryParamImport)
-	if err == nil && item2 != nil {
+	item2, _, err := client.Sda.GetTransitPeerNetworkInfoV1(&queryParamImport)
+	if err != nil || item2 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["transit_peer_network_name"] = item2.TransitPeerNetworkName
 		d.SetId(joinResourceID(resourceMap))
 		return resourceTransitPeerNetworkRead(ctx, d, m)
 	}
-	resp1, restyResp1, err := client.Sda.AddTransitPeerNetwork(request1)
+	resp1, restyResp1, err := client.Sda.AddTransitPeerNetworkV1(request1)
 	if err != nil || resp1 == nil {
 		if restyResp1 != nil {
 			diags = append(diags, diagErrorWithResponse(
-				"Failure when executing AddTransitPeerNetwork", err, restyResp1.String()))
+				"Failure when executing AddTransitPeerNetworkV1", err, restyResp1.String()))
 			return diags
 		}
 		diags = append(diags, diagError(
-			"Failure when executing AddTransitPeerNetwork", err))
+			"Failure when executing AddTransitPeerNetworkV1", err))
 		return diags
 	}
 	executionId := resp1.ExecutionID
@@ -258,7 +257,7 @@ func resourceTransitPeerNetworkCreate(ctx context.Context, d *schema.ResourceDat
 				"Failure at GetExecutionByID, unexpected response", ""))
 			return diags
 		}
-		for statusIsPending(response2.Status) {
+		for response2.Status == "IN_PROGRESS" {
 			time.Sleep(10 * time.Second)
 			response2, restyResp2, err = client.Task.GetBusinessAPIExecutionDetails(executionId)
 			if err != nil || response2 == nil {
@@ -271,20 +270,20 @@ func resourceTransitPeerNetworkCreate(ctx context.Context, d *schema.ResourceDat
 				return diags
 			}
 		}
-		if statusIsFailure(response2.Status) {
+		if response2.Status == "FAILURE" {
 			log.Printf("[DEBUG] Error %s", response2.BapiError)
 			diags = append(diags, diagError(
-				"Failure when executing AddTransitPeerNetwork", err))
+				"Failure when executing AddTransitPeerNetworkV1", err))
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetTransitPeerNetworkInfoQueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetTransitPeerNetworkInfoV1QueryParams{}
 	queryParamValidate.TransitPeerNetworkName = vvTransitPeerNetworkName
-	item3, _, err := client.Sda.GetTransitPeerNetworkInfo(&queryParamValidate)
+	item3, _, err := client.Sda.GetTransitPeerNetworkInfoV1(&queryParamValidate)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing AddTransitPeerNetwork", err,
-			"Failure at AddTransitPeerNetwork, unexpected response", ""))
+			"Failure when executing AddTransitPeerNetworkV1", err,
+			"Failure at AddTransitPeerNetworkV1, unexpected response", ""))
 		return diags
 	}
 
@@ -307,12 +306,14 @@ func resourceTransitPeerNetworkRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTransitPeerNetworkInfo")
-		queryParams1 := catalystcentersdkgo.GetTransitPeerNetworkInfoQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetTransitPeerNetworkInfoV1")
+		queryParams1 := catalystcentersdkgo.GetTransitPeerNetworkInfoV1QueryParams{}
 
 		queryParams1.TransitPeerNetworkName = vTransitPeerNetworkName
 
-		response1, restyResp1, err := client.Sda.GetTransitPeerNetworkInfo(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sda.GetTransitPeerNetworkInfoV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
@@ -324,10 +325,10 @@ func resourceTransitPeerNetworkRead(ctx context.Context, d *schema.ResourceData,
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetTransitPeerNetworkInfoItem(response1)
+		vItem1 := flattenSdaGetTransitPeerNetworkInfoV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTransitPeerNetworkInfo response",
+				"Failure when setting GetTransitPeerNetworkInfoV1 response",
 				err))
 			return diags
 		}
@@ -339,13 +340,7 @@ func resourceTransitPeerNetworkRead(ctx context.Context, d *schema.ResourceData,
 }
 
 func resourceTransitPeerNetworkUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var diags diag.Diagnostics
-	err := errors.New("Update not possible in this resource")
-	diags = append(diags, diagErrorWithAltAndResponse(
-		"Failure when executing TransitPeerNetworkUpdate", err, "Update method is not supported",
-		"Failure at TransitPeerNetworkUpdate, unexpected response", ""))
-
-	return diags
+	return resourceTransitPeerNetworkRead(ctx, d, m)
 }
 
 func resourceTransitPeerNetworkDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -357,23 +352,23 @@ func resourceTransitPeerNetworkDelete(ctx context.Context, d *schema.ResourceDat
 	resourceID := d.Id()
 	resourceMap := separateResourceID(resourceID)
 
-	queryParamDelete := catalystcentersdkgo.DeleteTransitPeerNetworkQueryParams{}
+	queryParamDelete := catalystcentersdkgo.DeleteTransitPeerNetworkV1QueryParams{}
 
 	vvTransitPeerNetworkName := resourceMap["transit_peer_network_name"]
 	queryParamDelete.TransitPeerNetworkName = vvTransitPeerNetworkName
 
-	response1, restyResp1, err := client.Sda.DeleteTransitPeerNetwork(&queryParamDelete)
+	response1, restyResp1, err := client.Sda.DeleteTransitPeerNetworkV1(&queryParamDelete)
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] resty response for delete operation => %v", restyResp1.String())
 			diags = append(diags, diagErrorWithAltAndResponse(
-				"Failure when executing DeleteTransitPeerNetwork", err, restyResp1.String(),
-				"Failure at DeleteTransitPeerNetwork, unexpected response", ""))
+				"Failure when executing DeleteTransitPeerNetworkV1", err, restyResp1.String(),
+				"Failure at DeleteTransitPeerNetworkV1, unexpected response", ""))
 			return diags
 		}
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing DeleteTransitPeerNetwork", err,
-			"Failure at DeleteTransitPeerNetwork, unexpected response", ""))
+			"Failure when executing DeleteTransitPeerNetworkV1", err,
+			"Failure at DeleteTransitPeerNetworkV1, unexpected response", ""))
 		return diags
 	}
 
@@ -391,7 +386,7 @@ func resourceTransitPeerNetworkDelete(ctx context.Context, d *schema.ResourceDat
 				"Failure at GetExecutionByID, unexpected response", ""))
 			return diags
 		}
-		for statusIsPending(response2.Status) {
+		for response2.Status == "IN_PROGRESS" {
 			time.Sleep(10 * time.Second)
 			response2, restyResp2, err = client.Task.GetBusinessAPIExecutionDetails(executionId)
 			if err != nil || response2 == nil {
@@ -404,10 +399,10 @@ func resourceTransitPeerNetworkDelete(ctx context.Context, d *schema.ResourceDat
 				return diags
 			}
 		}
-		if statusIsFailure(response2.Status) {
+		if response2.Status == "FAILURE" {
 			log.Printf("[DEBUG] Error %s", response2.BapiError)
 			diags = append(diags, diagError(
-				"Failure when executing DeleteTransitPeerNetwork", err))
+				"Failure when executing DeleteTransitPeerNetworkV1", err))
 			return diags
 		}
 	}
@@ -418,8 +413,8 @@ func resourceTransitPeerNetworkDelete(ctx context.Context, d *schema.ResourceDat
 
 	return diags
 }
-func expandRequestTransitPeerNetworkAddTransitPeerNetwork(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddTransitPeerNetwork {
-	request := catalystcentersdkgo.RequestSdaAddTransitPeerNetwork{}
+func expandRequestTransitPeerNetworkAddTransitPeerNetworkV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddTransitPeerNetworkV1 {
+	request := catalystcentersdkgo.RequestSdaAddTransitPeerNetworkV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".transit_peer_network_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".transit_peer_network_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".transit_peer_network_name")))) {
 		request.TransitPeerNetworkName = interfaceToString(v)
 	}
@@ -427,10 +422,10 @@ func expandRequestTransitPeerNetworkAddTransitPeerNetwork(ctx context.Context, k
 		request.TransitPeerNetworkType = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ip_transit_settings")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ip_transit_settings")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ip_transit_settings")))) {
-		request.IPTransitSettings = expandRequestTransitPeerNetworkAddTransitPeerNetworkIPTransitSettings(ctx, key+".ip_transit_settings.0", d)
+		request.IPTransitSettings = expandRequestTransitPeerNetworkAddTransitPeerNetworkV1IPTransitSettings(ctx, key+".ip_transit_settings.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".sda_transit_settings")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".sda_transit_settings")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".sda_transit_settings")))) {
-		request.SdaTransitSettings = expandRequestTransitPeerNetworkAddTransitPeerNetworkSdaTransitSettings(ctx, key+".sda_transit_settings.0", d)
+		request.SdaTransitSettings = expandRequestTransitPeerNetworkAddTransitPeerNetworkV1SdaTransitSettings(ctx, key+".sda_transit_settings.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -438,8 +433,8 @@ func expandRequestTransitPeerNetworkAddTransitPeerNetwork(ctx context.Context, k
 	return &request
 }
 
-func expandRequestTransitPeerNetworkAddTransitPeerNetworkIPTransitSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddTransitPeerNetworkIPTransitSettings {
-	request := catalystcentersdkgo.RequestSdaAddTransitPeerNetworkIPTransitSettings{}
+func expandRequestTransitPeerNetworkAddTransitPeerNetworkV1IPTransitSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddTransitPeerNetworkV1IPTransitSettings {
+	request := catalystcentersdkgo.RequestSdaAddTransitPeerNetworkV1IPTransitSettings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".routing_protocol_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".routing_protocol_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".routing_protocol_name")))) {
 		request.RoutingProtocolName = interfaceToString(v)
 	}
@@ -452,10 +447,10 @@ func expandRequestTransitPeerNetworkAddTransitPeerNetworkIPTransitSettings(ctx c
 	return &request
 }
 
-func expandRequestTransitPeerNetworkAddTransitPeerNetworkSdaTransitSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddTransitPeerNetworkSdaTransitSettings {
-	request := catalystcentersdkgo.RequestSdaAddTransitPeerNetworkSdaTransitSettings{}
+func expandRequestTransitPeerNetworkAddTransitPeerNetworkV1SdaTransitSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddTransitPeerNetworkV1SdaTransitSettings {
+	request := catalystcentersdkgo.RequestSdaAddTransitPeerNetworkV1SdaTransitSettings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".transit_control_plane_settings")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".transit_control_plane_settings")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".transit_control_plane_settings")))) {
-		request.TransitControlPlaneSettings = expandRequestTransitPeerNetworkAddTransitPeerNetworkSdaTransitSettingsTransitControlPlaneSettingsArray(ctx, key+".transit_control_plane_settings", d)
+		request.TransitControlPlaneSettings = expandRequestTransitPeerNetworkAddTransitPeerNetworkV1SdaTransitSettingsTransitControlPlaneSettingsArray(ctx, key+".transit_control_plane_settings", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -463,8 +458,8 @@ func expandRequestTransitPeerNetworkAddTransitPeerNetworkSdaTransitSettings(ctx 
 	return &request
 }
 
-func expandRequestTransitPeerNetworkAddTransitPeerNetworkSdaTransitSettingsTransitControlPlaneSettingsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSdaAddTransitPeerNetworkSdaTransitSettingsTransitControlPlaneSettings {
-	request := []catalystcentersdkgo.RequestSdaAddTransitPeerNetworkSdaTransitSettingsTransitControlPlaneSettings{}
+func expandRequestTransitPeerNetworkAddTransitPeerNetworkV1SdaTransitSettingsTransitControlPlaneSettingsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSdaAddTransitPeerNetworkV1SdaTransitSettingsTransitControlPlaneSettings {
+	request := []catalystcentersdkgo.RequestSdaAddTransitPeerNetworkV1SdaTransitSettingsTransitControlPlaneSettings{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -475,7 +470,7 @@ func expandRequestTransitPeerNetworkAddTransitPeerNetworkSdaTransitSettingsTrans
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestTransitPeerNetworkAddTransitPeerNetworkSdaTransitSettingsTransitControlPlaneSettings(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestTransitPeerNetworkAddTransitPeerNetworkV1SdaTransitSettingsTransitControlPlaneSettings(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -486,8 +481,8 @@ func expandRequestTransitPeerNetworkAddTransitPeerNetworkSdaTransitSettingsTrans
 	return &request
 }
 
-func expandRequestTransitPeerNetworkAddTransitPeerNetworkSdaTransitSettingsTransitControlPlaneSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddTransitPeerNetworkSdaTransitSettingsTransitControlPlaneSettings {
-	request := catalystcentersdkgo.RequestSdaAddTransitPeerNetworkSdaTransitSettingsTransitControlPlaneSettings{}
+func expandRequestTransitPeerNetworkAddTransitPeerNetworkV1SdaTransitSettingsTransitControlPlaneSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddTransitPeerNetworkV1SdaTransitSettingsTransitControlPlaneSettings {
+	request := catalystcentersdkgo.RequestSdaAddTransitPeerNetworkV1SdaTransitSettingsTransitControlPlaneSettings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".site_name_hierarchy")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".site_name_hierarchy")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".site_name_hierarchy")))) {
 		request.SiteNameHierarchy = interfaceToString(v)
 	}

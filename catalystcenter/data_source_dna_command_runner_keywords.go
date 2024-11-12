@@ -53,26 +53,26 @@ func dataSourceDnaCommandRunnerKeywordsRead(ctx context.Context, d *schema.Resou
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAllKeywordsOfClisAcceptedByCommandRunner")
+		log.Printf("[DEBUG] Selected method: GetAllKeywordsOfClisAcceptedByCommandRunnerV1")
 
-		response1, restyResp1, err := client.CommandRunner.GetAllKeywordsOfClisAcceptedByCommandRunner()
+		response1, restyResp1, err := client.CommandRunner.GetAllKeywordsOfClisAcceptedByCommandRunnerV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAllKeywordsOfClisAcceptedByCommandRunner", err,
-				"Failure at GetAllKeywordsOfClisAcceptedByCommandRunner, unexpected response", ""))
+				"Failure when executing 2 GetAllKeywordsOfClisAcceptedByCommandRunnerV1", err,
+				"Failure at GetAllKeywordsOfClisAcceptedByCommandRunnerV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenCommandRunnerGetAllKeywordsOfClisAcceptedByCommandRunnerItems(response1)
+		vItems1 := flattenCommandRunnerGetAllKeywordsOfClisAcceptedByCommandRunnerV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAllKeywordsOfClisAcceptedByCommandRunner response",
+				"Failure when setting GetAllKeywordsOfClisAcceptedByCommandRunnerV1 response",
 				err))
 			return diags
 		}
@@ -84,7 +84,7 @@ func dataSourceDnaCommandRunnerKeywordsRead(ctx context.Context, d *schema.Resou
 	return diags
 }
 
-func flattenCommandRunnerGetAllKeywordsOfClisAcceptedByCommandRunnerItems(items *catalystcentersdkgo.ResponseCommandRunnerGetAllKeywordsOfClisAcceptedByCommandRunner) []map[string]interface{} {
+func flattenCommandRunnerGetAllKeywordsOfClisAcceptedByCommandRunnerV1Items(items *catalystcentersdkgo.ResponseCommandRunnerGetAllKeywordsOfClisAcceptedByCommandRunnerV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

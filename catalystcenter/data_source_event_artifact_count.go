@@ -46,26 +46,26 @@ func dataSourceEventArtifactCountRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: EventArtifactCount")
+		log.Printf("[DEBUG] Selected method: EventArtifactCountV1")
 
-		response1, restyResp1, err := client.EventManagement.EventArtifactCount()
+		response1, restyResp1, err := client.EventManagement.EventArtifactCountV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 EventArtifactCount", err,
-				"Failure at EventArtifactCount, unexpected response", ""))
+				"Failure when executing 2 EventArtifactCountV1", err,
+				"Failure at EventArtifactCountV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenEventManagementEventArtifactCountItem(response1)
+		vItem1 := flattenEventManagementEventArtifactCountV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting EventArtifactCount response",
+				"Failure when setting EventArtifactCountV1 response",
 				err))
 			return diags
 		}
@@ -77,7 +77,7 @@ func dataSourceEventArtifactCountRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenEventManagementEventArtifactCountItem(item *catalystcentersdkgo.ResponseEventManagementEventArtifactCount) []map[string]interface{} {
+func flattenEventManagementEventArtifactCountV1Item(item *catalystcentersdkgo.ResponseEventManagementEventArtifactCountV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

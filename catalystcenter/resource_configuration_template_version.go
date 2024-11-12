@@ -170,8 +170,8 @@ func resourceConfigurationTemplateVersionDelete(ctx context.Context, d *schema.R
 	return diags
 }
 
-func expandRequestConfigurationTemplateVersionVersionTemplate(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesVersionTemplate {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesVersionTemplate{}
+func expandRequestConfigurationTemplateVersionVersionTemplate(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesVersionTemplateV1 {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesVersionTemplateV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".comments")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".comments")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".comments")))) {
 		request.Comments = interfaceToString(v)
 	}
@@ -181,7 +181,7 @@ func expandRequestConfigurationTemplateVersionVersionTemplate(ctx context.Contex
 	return &request
 }
 
-func flattenConfigurationTemplatesVersionTemplateItem(item *catalystcentersdkgo.ResponseConfigurationTemplatesVersionTemplateResponse) []map[string]interface{} {
+func flattenConfigurationTemplatesVersionTemplateItem(item *catalystcentersdkgo.ResponseConfigurationTemplatesVersionTemplateV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

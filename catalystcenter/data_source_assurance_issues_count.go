@@ -116,9 +116,9 @@ Examples: entityId=68:ca:e4:79:3f:20 (single entity id requested) entityId=68:ca
 				Optional: true,
 			},
 			"mac_address": &schema.Schema{
-				Description: `macAddress query parameter. The macAddress of the network device or client This field supports wildcard ('*') character-based search.  Ex: '*AB:AB:AB*' or 'AB:AB:AB*' or '*AB:AB:AB' Examples:
-'macAddress=AB:AB:AB:CD:CD:CD' (single macAddress requested)
-'macAddress=AB:AB:AB:CD:CD:DC&macAddress=AB:AB:AB:CD:CD:FE' (multiple macAddress requested)
+				Description: `macAddress query parameter. The macAddress of the network device or client This field supports wildcard (***) character-based search.  Ex: **AB:AB:AB** or *AB:AB:AB** or **AB:AB:AB* Examples:
+*macAddress=AB:AB:AB:CD:CD:CD* (single macAddress requested)
+*macAddress=AB:AB:AB:CD:CD:DC&macAddress=AB:AB:AB:CD:CD:FE* (multiple macAddress requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -130,20 +130,20 @@ Examples: entityId=68:ca:e4:79:3f:20 (single entity id requested) entityId=68:ca
 				Optional: true,
 			},
 			"network_device_id": &schema.Schema{
-				Description: `networkDeviceId query parameter. The list of Network Device Uuids. (Ex. '6bef213c-19ca-4170-8375-b694e251101c')
+				Description: `networkDeviceId query parameter. The list of Network Device Uuids. (Ex. *6bef213c-19ca-4170-8375-b694e251101c*)
 Examples:
-'networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c' (single networkDeviceId requested)
-'networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c&networkDeviceId=32219612-819e-4b5e-a96b-cf22aca13dd9&networkDeviceId=2541e9a7-b80d-4955-8aa2-79b233318ba0' (multiple networkDeviceIds with & separator)
+*networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c* (single networkDeviceId requested)
+*networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c&networkDeviceId=32219612-819e-4b5e-a96b-cf22aca13dd9&networkDeviceId=2541e9a7-b80d-4955-8aa2-79b233318ba0* (multiple networkDeviceIds with & separator)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"network_device_ip_address": &schema.Schema{
-				Description: `networkDeviceIpAddress query parameter. The list of Network Device management IP Address. (Ex. '121.1.1.10')
-This field supports wildcard ('*') character-based search.  Ex: '*1.1*' or '1.1*' or '*1.1'
+				Description: `networkDeviceIpAddress query parameter. The list of Network Device management IP Address. (Ex. *121.1.1.10*)
+This field supports wildcard (***) character-based search.  Ex: **1.1** or *1.1** or **1.1*
 Examples:
-'networkDeviceIpAddress=121.1.1.10'
-'networkDeviceIpAddress=121.1.1.10&networkDeviceIpAddress=172.20.1.10&networkDeviceIpAddress=10.10.20.10' (multiple networkDevice IP Address with & separator)
+*networkDeviceIpAddress=121.1.1.10*
+*networkDeviceIpAddress=121.1.1.10&networkDeviceIpAddress=172.20.1.10&networkDeviceIpAddress=10.10.20.10* (multiple networkDevice IP Address with & separator)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -161,48 +161,48 @@ Examples:
 				Optional: true,
 			},
 			"site_hierarchy": &schema.Schema{
-				Description: `siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. 'Global/AreaName/BuildingName/FloorName')
+				Description: `siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. *Global/AreaName/BuildingName/FloorName*)
 This field supports wildcard asterisk (*) character search support. E.g. */San*, */San, /San*
 Examples:
-'?siteHierarchy=Global/AreaName/BuildingName/FloorName' (single siteHierarchy requested)
-'?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2' (multiple siteHierarchies requested)
+*?siteHierarchy=Global/AreaName/BuildingName/FloorName* (single siteHierarchy requested)
+*?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2* (multiple siteHierarchies requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_hierarchy_id": &schema.Schema{
-				Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. 'globalUuid/areaUuid/buildingUuid/floorUuid')
-This field supports wildcard asterisk (*) character search support. E.g. '*uuid*, *uuid, uuid*
+				Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. *globalUuid/areaUuid/buildingUuid/floorUuid*)
+This field supports wildcard asterisk (*) character search support. E.g. **uuid*, *uuid, uuid*
 Examples:
-'?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid '(single siteHierarchyId requested)
-'?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2' (multiple siteHierarchyIds requested)
+*?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid *(single siteHierarchyId requested)
+*?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2* (multiple siteHierarchyIds requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_id": &schema.Schema{
-				Description: `siteId query parameter. The UUID of the site. (Ex. 'flooruuid')
+				Description: `siteId query parameter. The UUID of the site. (Ex. *flooruuid*)
 This field supports wildcard asterisk (*) character search support. E.g.*flooruuid*, *flooruuid, flooruuid*
 Examples:
-'?siteId=id1' (single id requested)
-'?siteId=id1&siteId=id2&siteId=id3' (multiple ids requested)
+*?siteId=id1* (single id requested)
+*?siteId=id1&siteId=id2&siteId=id3* (multiple ids requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_name": &schema.Schema{
-				Description: `siteName query parameter. The name of the site. (Ex. 'FloorName')
+				Description: `siteName query parameter. The name of the site. (Ex. *FloorName*)
 This field supports wildcard asterisk (*) character search support. E.g. *San*, *San, San*
 Examples:
-'?siteName=building1' (single siteName requested)
-'?siteName=building1&siteName=building2&siteName=building3' (multiple siteNames requested)
+*?siteName=building1* (single siteName requested)
+*?siteName=building1&siteName=building2&siteName=building3* (multiple siteNames requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"start_time": &schema.Schema{
 				Description: `startTime query parameter. Start time from which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
-If 'startTime' is not provided, API will default to current time.
+If *startTime* is not provided, API will default to current time.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -280,10 +280,10 @@ func dataSourceAssuranceIssuesCountRead(ctx context.Context, d *schema.ResourceD
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTheTotalNumberOfIssuesForGivenSetOfFilters2")
+		log.Printf("[DEBUG] Selected method: GetTheTotalNumberOfIssuesForGivenSetOfFiltersKnowYourNetworkV1")
 
-		headerParams1 := catalystcentersdkgo.GetTheTotalNumberOfIssuesForGivenSetOfFilters2HeaderParams{}
-		queryParams1 := catalystcentersdkgo.GetTheTotalNumberOfIssuesForGivenSetOfFilters2QueryParams{}
+		headerParams1 := catalystcentersdkgo.GetTheTotalNumberOfIssuesForGivenSetOfFiltersKnowYourNetworkV1HeaderParams{}
+		queryParams1 := catalystcentersdkgo.GetTheTotalNumberOfIssuesForGivenSetOfFiltersKnowYourNetworkV1QueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -371,24 +371,24 @@ func dataSourceAssuranceIssuesCountRead(ctx context.Context, d *schema.ResourceD
 		}
 		headerParams1.XCaLLERID = vXCaLLERID.(string)
 
-		response1, restyResp1, err := client.Issues.GetTheTotalNumberOfIssuesForGivenSetOfFilters2(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Issues.GetTheTotalNumberOfIssuesForGivenSetOfFiltersKnowYourNetworkV1(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTheTotalNumberOfIssuesForGivenSetOfFilters2", err,
-				"Failure at GetTheTotalNumberOfIssuesForGivenSetOfFilters2, unexpected response", ""))
+				"Failure when executing 2 GetTheTotalNumberOfIssuesForGivenSetOfFiltersKnowYourNetworkV1", err,
+				"Failure at GetTheTotalNumberOfIssuesForGivenSetOfFiltersKnowYourNetworkV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenIssuesGetTheTotalNumberOfIssuesForGivenSetOfFilters2Item(response1.Response)
+		vItem1 := flattenIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersKnowYourNetworkV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTheTotalNumberOfIssuesForGivenSetOfFilters2 response",
+				"Failure when setting GetTheTotalNumberOfIssuesForGivenSetOfFiltersKnowYourNetworkV1 response",
 				err))
 			return diags
 		}
@@ -400,7 +400,7 @@ func dataSourceAssuranceIssuesCountRead(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func flattenIssuesGetTheTotalNumberOfIssuesForGivenSetOfFilters2Item(item *catalystcentersdkgo.ResponseIssuesGetTheTotalNumberOfIssuesForGivenSetOfFilters2Response) []map[string]interface{} {
+func flattenIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersKnowYourNetworkV1Item(item *catalystcentersdkgo.ResponseIssuesGetTheTotalNumberOfIssuesForGivenSetOfFiltersKnowYourNetworkV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

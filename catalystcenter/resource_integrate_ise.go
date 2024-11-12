@@ -85,28 +85,22 @@ func resourceIntegrateIseCreate(ctx context.Context, d *schema.ResourceData, m i
 	vID := resourceItem["id"]
 
 	vvID := vID.(string)
-	request1 := expandRequestIntegrateIseAcceptCiscoIseServerCertificateForCiscoIseServerIntegration(ctx, "parameters.0", d)
+	request1 := expandRequestIntegrateIseAcceptCiscoIseServerCertificateForCiscoIseServerIntegrationV1(ctx, "parameters.0", d)
 
-	response1, err := client.SystemSettings.AcceptCiscoIseServerCertificateForCiscoIseServerIntegration(vvID, request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
-
-	if err != nil || response1 == nil {
-		diags = append(diags, diagError(
-			"Failure when executing AcceptCiscoIseServerCertificateForCiscoIseServerIntegration", err))
-		return diags
-	}
+	response1, err := client.SystemSettings.AcceptCiscoIseServerCertificateForCiscoIseServerIntegrationV1(vvID, request1)
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
-
-	//Analizar verificacion.
-
-	vItem1 := response1.String()
-	if err := d.Set("item", vItem1); err != nil {
+	if err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting AcceptCiscoIseServerCertificateForCiscoIseServerIntegration response",
+			"Failure when setting AcceptCiscoIseServerCertificateForCiscoIseServerIntegrationV1 response",
+			err))
+		return diags
+	}
+	if err := d.Set("item", response1); err != nil {
+		diags = append(diags, diagError(
+			"Failure when setting AcceptCiscoIseServerCertificateForCiscoIseServerIntegrationV1 response",
 			err))
 		return diags
 	}
@@ -128,8 +122,8 @@ func resourceIntegrateIseDelete(ctx context.Context, d *schema.ResourceData, m i
 	return diags
 }
 
-func expandRequestIntegrateIseAcceptCiscoIseServerCertificateForCiscoIseServerIntegration(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSystemSettingsAcceptCiscoIseServerCertificateForCiscoIseServerIntegration {
-	request := catalystcentersdkgo.RequestSystemSettingsAcceptCiscoIseServerCertificateForCiscoIseServerIntegration{}
+func expandRequestIntegrateIseAcceptCiscoIseServerCertificateForCiscoIseServerIntegrationV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSystemSettingsAcceptCiscoIseServerCertificateForCiscoIseServerIntegrationV1 {
+	request := catalystcentersdkgo.RequestSystemSettingsAcceptCiscoIseServerCertificateForCiscoIseServerIntegrationV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_cert_accepted_by_user")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_cert_accepted_by_user")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_cert_accepted_by_user")))) {
 		request.IsCertAcceptedByUser = interfaceToBoolPtr(v)
 	}

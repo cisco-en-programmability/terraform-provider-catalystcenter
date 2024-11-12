@@ -81,7 +81,7 @@ func resourceImageDeviceActivation() *schema.Resource {
 							ForceNew: true,
 						},
 						"payload": &schema.Schema{
-							Description: `Array of RequestSoftwareImageManagementSwimTriggerSoftwareImageActivation`,
+							Description: `Array of RequestSoftwareImageManagementSwimTriggerSoftwareImageActivationV1`,
 							Type:        schema.TypeList,
 							Optional:    true,
 							ForceNew:    true,
@@ -155,27 +155,25 @@ func resourceImageDeviceActivationCreate(ctx context.Context, d *schema.Resource
 
 	vClientURL := resourceItem["client_url"]
 
-	request1 := expandRequestImageDeviceActivationTriggerSoftwareImageActivation(ctx, "parameters.0", d)
+	request1 := expandRequestImageDeviceActivationTriggerSoftwareImageActivationV1(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.TriggerSoftwareImageActivationHeaderParams{}
-	queryParams1 := catalystcentersdkgo.TriggerSoftwareImageActivationQueryParams{}
+	headerParams1 := catalystcentersdkgo.TriggerSoftwareImageActivationV1HeaderParams{}
+	queryParams1 := catalystcentersdkgo.TriggerSoftwareImageActivationV1QueryParams{}
 
 	headerParams1.ClientType = vClientType.(string)
 
 	headerParams1.ClientURL = vClientURL.(string)
 
-	response1, restyResp1, err := client.SoftwareImageManagementSwim.TriggerSoftwareImageActivation(request1, &headerParams1, &queryParams1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.SoftwareImageManagementSwim.TriggerSoftwareImageActivationV1(request1, &headerParams1, &queryParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing TriggerSoftwareImageActivation", err))
+			"Failure when executing TriggerSoftwareImageActivationV1", err))
 		return diags
 	}
 
@@ -183,7 +181,7 @@ func resourceImageDeviceActivationCreate(ctx context.Context, d *schema.Resource
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing TriggerSoftwareImageActivation", err))
+			"Failure when executing TriggerSoftwareImageActivationV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -217,22 +215,24 @@ func resourceImageDeviceActivationCreate(ctx context.Context, d *schema.Resource
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing TriggerSoftwareImageActivation", err1))
+				"Failure when executing TriggerSoftwareImageActivationV1", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenSoftwareImageManagementSwimTriggerSoftwareImageActivationItem(response1.Response)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
+	vItem1 := flattenSoftwareImageManagementSwimTriggerSoftwareImageActivationV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting TriggerSoftwareImageActivation response",
+			"Failure when setting TriggerSoftwareImageActivationV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceImageDeviceActivationRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -247,16 +247,16 @@ func resourceImageDeviceActivationDelete(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func expandRequestImageDeviceActivationTriggerSoftwareImageActivation(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSoftwareImageManagementSwimTriggerSoftwareImageActivation {
-	request := catalystcentersdkgo.RequestSoftwareImageManagementSwimTriggerSoftwareImageActivation{}
-	if v := expandRequestImageDeviceActivationTriggerSoftwareImageActivationItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestImageDeviceActivationTriggerSoftwareImageActivationV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSoftwareImageManagementSwimTriggerSoftwareImageActivationV1 {
+	request := catalystcentersdkgo.RequestSoftwareImageManagementSwimTriggerSoftwareImageActivationV1{}
+	if v := expandRequestImageDeviceActivationTriggerSoftwareImageActivationV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	return &request
 }
 
-func expandRequestImageDeviceActivationTriggerSoftwareImageActivationItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSoftwareImageManagementSwimTriggerSoftwareImageActivation {
-	request := []catalystcentersdkgo.RequestItemSoftwareImageManagementSwimTriggerSoftwareImageActivation{}
+func expandRequestImageDeviceActivationTriggerSoftwareImageActivationV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSoftwareImageManagementSwimTriggerSoftwareImageActivationV1 {
+	request := []catalystcentersdkgo.RequestItemSoftwareImageManagementSwimTriggerSoftwareImageActivationV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -267,7 +267,7 @@ func expandRequestImageDeviceActivationTriggerSoftwareImageActivationItemArray(c
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestImageDeviceActivationTriggerSoftwareImageActivationItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestImageDeviceActivationTriggerSoftwareImageActivationV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -275,8 +275,8 @@ func expandRequestImageDeviceActivationTriggerSoftwareImageActivationItemArray(c
 	return &request
 }
 
-func expandRequestImageDeviceActivationTriggerSoftwareImageActivationItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSoftwareImageManagementSwimTriggerSoftwareImageActivation {
-	request := catalystcentersdkgo.RequestItemSoftwareImageManagementSwimTriggerSoftwareImageActivation{}
+func expandRequestImageDeviceActivationTriggerSoftwareImageActivationV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSoftwareImageManagementSwimTriggerSoftwareImageActivationV1 {
+	request := catalystcentersdkgo.RequestItemSoftwareImageManagementSwimTriggerSoftwareImageActivationV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".activate_lower_image_version")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".activate_lower_image_version")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".activate_lower_image_version")))) {
 		request.ActivateLowerImageVersion = interfaceToBoolPtr(v)
 	}
@@ -298,7 +298,7 @@ func expandRequestImageDeviceActivationTriggerSoftwareImageActivationItem(ctx co
 	return &request
 }
 
-func flattenSoftwareImageManagementSwimTriggerSoftwareImageActivationItem(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimTriggerSoftwareImageActivationResponse) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimTriggerSoftwareImageActivationV1Item(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimTriggerSoftwareImageActivationV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -92,8 +92,8 @@ func dataSourceNetworkDeviceModuleCountRead(ctx context.Context, d *schema.Resou
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetModuleCount")
-		queryParams1 := catalystcentersdkgo.GetModuleCountQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetModuleCountV1")
+		queryParams1 := catalystcentersdkgo.GetModuleCountV1QueryParams{}
 
 		queryParams1.DeviceID = vDeviceID.(string)
 
@@ -110,24 +110,24 @@ func dataSourceNetworkDeviceModuleCountRead(ctx context.Context, d *schema.Resou
 			queryParams1.OperationalStateCodeList = interfaceToSliceString(vOperationalStateCodeList)
 		}
 
-		response1, restyResp1, err := client.Devices.GetModuleCount(&queryParams1)
+		response1, restyResp1, err := client.Devices.GetModuleCountV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetModuleCount", err,
-				"Failure at GetModuleCount, unexpected response", ""))
+				"Failure when executing 2 GetModuleCountV1", err,
+				"Failure at GetModuleCountV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesGetModuleCountItem(response1)
+		vItem1 := flattenDevicesGetModuleCountV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetModuleCount response",
+				"Failure when setting GetModuleCountV1 response",
 				err))
 			return diags
 		}
@@ -139,7 +139,7 @@ func dataSourceNetworkDeviceModuleCountRead(ctx context.Context, d *schema.Resou
 	return diags
 }
 
-func flattenDevicesGetModuleCountItem(item *catalystcentersdkgo.ResponseDevicesGetModuleCount) []map[string]interface{} {
+func flattenDevicesGetModuleCountV1Item(item *catalystcentersdkgo.ResponseDevicesGetModuleCountV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

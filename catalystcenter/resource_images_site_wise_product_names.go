@@ -20,16 +20,16 @@ func resourceImagesSiteWiseProductNames() *schema.Resource {
 	return &schema.Resource{
 		Description: `It manages create, read, update and delete operations on Software Image Management (SWIM).
 
-- Assign network device product name and sites for the given image identifier. Refer '/dna/intent/api/v1/images' API for
+- Assign network device product name and sites for the given image identifier. Refer */dna/intent/api/v1/images* API for
 obtaining imageId
 
 - This resource unassigns the network device product name from all the sites for the given software image.
-        Refer to '/dna/intent/api/v1/images' and '/dna/intent/api/v1/images/{imageId}/siteWiseProductNames' GET APIs for
-obtaining  'imageId' and 'productNameOrdinal' respectively.
+        Refer to */dna/intent/api/v1/images* and */dna/intent/api/v1/images/{imageId}/siteWiseProductNames* GET APIs for
+obtaining  *imageId* and *productNameOrdinal* respectively.
 
 - Update the list of sites for the network device product name assigned to the software image. Refer to
-'/dna/intent/api/v1/images' and '/dna/intent/api/v1/images/{imageId}/siteWiseProductNames' GET APIs for obtaining
-'imageId' and 'productNameOrdinal' respectively.
+*/dna/intent/api/v1/images* and */dna/intent/api/v1/images/{imageId}/siteWiseProductNames* GET APIs for obtaining
+*imageId* and *productNameOrdinal* respectively.
 `,
 
 		CreateContext: resourceImagesSiteWiseProductNamesCreate,
@@ -104,7 +104,7 @@ obtaining  'imageId' and 'productNameOrdinal' respectively.
 					Schema: map[string]*schema.Schema{
 
 						"image_id": &schema.Schema{
-							Description: `imageId path parameter. Software image identifier. Refer '/dna/intent/api/v1/images' API for obtaining 'imageId'
+							Description: `imageId path parameter. Software image identifier. Refer */dna/intent/api/v1/images* API for obtaining *imageId*
 `,
 							Type:     schema.TypeString,
 							Required: true,
@@ -139,7 +139,7 @@ func resourceImagesSiteWiseProductNamesCreate(ctx context.Context, d *schema.Res
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestImagesSiteWiseProductNamesAssignNetworkDeviceProductNameToTheGivenSoftwareImage(ctx, "parameters.0", d)
+	request1 := expandRequestImagesSiteWiseProductNamesAssignNetworkDeviceProductNameToTheGivenSoftwareImageV1(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vProductNameOrdinal := resourceItem["product_name_ordinal"]
@@ -149,7 +149,7 @@ func resourceImagesSiteWiseProductNamesCreate(ctx context.Context, d *schema.Res
 	vImageID := resourceItem["image_id"]
 
 	vvImageID := interfaceToString(vImageID)
-	queryParamImport := catalystcentersdkgo.RetrievesNetworkDeviceProductNamesAssignedToASoftwareImageQueryParams{}
+	queryParamImport := catalystcentersdkgo.RetrievesNetworkDeviceProductNamesAssignedToASoftwareImageV1QueryParams{}
 
 	item2, err := searchSoftwareImageManagementSwimRetrievesNetworkDeviceProductNamesAssignedToASoftwareImage(m, queryParamImport, vvImageID, vvProductNameOrdinal)
 	if err == nil && item2 != nil {
@@ -198,7 +198,7 @@ func resourceImagesSiteWiseProductNamesCreate(ctx context.Context, d *schema.Res
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.RetrievesNetworkDeviceProductNamesAssignedToASoftwareImageQueryParams{}
+	queryParamValidate := catalystcentersdkgo.RetrievesNetworkDeviceProductNamesAssignedToASoftwareImageV1QueryParams{}
 
 	item3, err := searchSoftwareImageManagementSwimRetrievesNetworkDeviceProductNamesAssignedToASoftwareImage(m, queryParamValidate, vvImageID, vvProductNameOrdinal)
 	if err != nil || item3 == nil {
@@ -229,18 +229,18 @@ func resourceImagesSiteWiseProductNamesRead(ctx context.Context, d *schema.Resou
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: RetrievesNetworkDeviceProductNamesAssignedToASoftwareImage")
 		vvImageID := vImageID
-		queryParams1 := catalystcentersdkgo.RetrievesNetworkDeviceProductNamesAssignedToASoftwareImageQueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrievesNetworkDeviceProductNamesAssignedToASoftwareImageV1QueryParams{}
 		item1, err := searchSoftwareImageManagementSwimRetrievesNetworkDeviceProductNamesAssignedToASoftwareImage(m, queryParams1, vvImageID, vvProductNameOrdinal)
 		if err != nil || item1 == nil {
 			d.SetId("")
 			return diags
 		}
-		items := []catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrievesNetworkDeviceProductNamesAssignedToASoftwareImageResponse{
+		items := []catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrievesNetworkDeviceProductNamesAssignedToASoftwareImageV1Response{
 			*item1,
 		}
 
 		// Review flatten function used
-		vItem1 := flattenSoftwareImageManagementSwimRetrievesNetworkDeviceProductNamesAssignedToASoftwareImageItems(&items)
+		vItem1 := flattenSoftwareImageManagementSwimRetrievesNetworkDeviceProductNamesAssignedToASoftwareImageV1Items(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrievesNetworkDeviceProductNamesAssignedToASoftwareImage search response",
@@ -261,7 +261,7 @@ func resourceImagesSiteWiseProductNamesUpdate(ctx context.Context, d *schema.Res
 	vvImageID := resourceMap["image_id"]
 	vvProductNameOrdinal, _ := strconv.ParseFloat(resourceMap["product_name_ordinal"], 64)
 	if d.HasChange("parameters") {
-		request1 := expandRequestImagesSiteWiseProductNamesUpdateTheListOfSitesForTheNetworkDeviceProductNameAssignedToTheSoftwareImage(ctx, "parameters.0", d)
+		request1 := expandRequestImagesSiteWiseProductNamesUpdateTheListOfSitesForTheNetworkDeviceProductNameAssignedToTheSoftwareImageV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.SoftwareImageManagementSwim.UpdateTheListOfSitesForTheNetworkDeviceProductNameAssignedToTheSoftwareImage(vvImageID, vvProductNameOrdinal, request1)
 		if err != nil || response1 == nil {
@@ -372,8 +372,9 @@ func resourceImagesSiteWiseProductNamesDelete(ctx context.Context, d *schema.Res
 
 	return diags
 }
-func expandRequestImagesSiteWiseProductNamesAssignNetworkDeviceProductNameToTheGivenSoftwareImage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSoftwareImageManagementSwimAssignNetworkDeviceProductNameToTheGivenSoftwareImage {
-	request := catalystcentersdkgo.RequestSoftwareImageManagementSwimAssignNetworkDeviceProductNameToTheGivenSoftwareImage{}
+
+func expandRequestImagesSiteWiseProductNamesAssignNetworkDeviceProductNameToTheGivenSoftwareImageV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSoftwareImageManagementSwimAssignNetworkDeviceProductNameToTheGivenSoftwareImageV1 {
+	request := catalystcentersdkgo.RequestSoftwareImageManagementSwimAssignNetworkDeviceProductNameToTheGivenSoftwareImageV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".product_name_ordinal")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".product_name_ordinal")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".product_name_ordinal")))) {
 		request.ProductNameOrdinal = interfaceToFloat64Ptr(v)
 	}
@@ -386,8 +387,8 @@ func expandRequestImagesSiteWiseProductNamesAssignNetworkDeviceProductNameToTheG
 	return &request
 }
 
-func expandRequestImagesSiteWiseProductNamesUpdateTheListOfSitesForTheNetworkDeviceProductNameAssignedToTheSoftwareImage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSoftwareImageManagementSwimUpdateTheListOfSitesForTheNetworkDeviceProductNameAssignedToTheSoftwareImage {
-	request := catalystcentersdkgo.RequestSoftwareImageManagementSwimUpdateTheListOfSitesForTheNetworkDeviceProductNameAssignedToTheSoftwareImage{}
+func expandRequestImagesSiteWiseProductNamesUpdateTheListOfSitesForTheNetworkDeviceProductNameAssignedToTheSoftwareImageV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSoftwareImageManagementSwimUpdateTheListOfSitesForTheNetworkDeviceProductNameAssignedToTheSoftwareImageV1 {
+	request := catalystcentersdkgo.RequestSoftwareImageManagementSwimUpdateTheListOfSitesForTheNetworkDeviceProductNameAssignedToTheSoftwareImageV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".site_ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".site_ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".site_ids")))) {
 		request.SiteIDs = interfaceToSliceString(v)
 	}
@@ -397,10 +398,10 @@ func expandRequestImagesSiteWiseProductNamesUpdateTheListOfSitesForTheNetworkDev
 	return &request
 }
 
-func searchSoftwareImageManagementSwimRetrievesNetworkDeviceProductNamesAssignedToASoftwareImage(m interface{}, queryParams catalystcentersdkgo.RetrievesNetworkDeviceProductNamesAssignedToASoftwareImageQueryParams, vImageID string, vProductNameOrdinal string) (*catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrievesNetworkDeviceProductNamesAssignedToASoftwareImageResponse, error) {
+func searchSoftwareImageManagementSwimRetrievesNetworkDeviceProductNamesAssignedToASoftwareImage(m interface{}, queryParams catalystcentersdkgo.RetrievesNetworkDeviceProductNamesAssignedToASoftwareImageV1QueryParams, vImageID string, vProductNameOrdinal string) (*catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrievesNetworkDeviceProductNamesAssignedToASoftwareImageV1Response, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrievesNetworkDeviceProductNamesAssignedToASoftwareImageResponse
+	var foundItem *catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrievesNetworkDeviceProductNamesAssignedToASoftwareImageV1Response
 	// var ite *catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrievesNetworkDeviceProductNamesAssignedToASoftwareImage
 	if vProductNameOrdinal != "" {
 

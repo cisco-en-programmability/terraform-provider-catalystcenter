@@ -1,6 +1,6 @@
 
 resource "catalystcenter_wireless_controllers_wireless_mobility_groups_mobility_reset" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     network_device_id = "string"

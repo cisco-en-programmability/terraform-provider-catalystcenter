@@ -69,27 +69,27 @@ func dataSourceWirelessControllersManagedApLocationsCountRead(ctx context.Contex
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetManagedApLocationsCountForSpecificWirelessController")
+		log.Printf("[DEBUG] Selected method: GetManagedApLocationsCountForSpecificWirelessControllerV1")
 		vvNetworkDeviceID := vNetworkDeviceID.(string)
 
-		response1, restyResp1, err := client.Wireless.GetManagedApLocationsCountForSpecificWirelessController(vvNetworkDeviceID)
+		response1, restyResp1, err := client.Wireless.GetManagedApLocationsCountForSpecificWirelessControllerV1(vvNetworkDeviceID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetManagedApLocationsCountForSpecificWirelessController", err,
-				"Failure at GetManagedApLocationsCountForSpecificWirelessController, unexpected response", ""))
+				"Failure when executing 2 GetManagedApLocationsCountForSpecificWirelessControllerV1", err,
+				"Failure at GetManagedApLocationsCountForSpecificWirelessControllerV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessGetManagedApLocationsCountForSpecificWirelessControllerItem(response1.Response)
+		vItem1 := flattenWirelessGetManagedApLocationsCountForSpecificWirelessControllerV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetManagedApLocationsCountForSpecificWirelessController response",
+				"Failure when setting GetManagedApLocationsCountForSpecificWirelessControllerV1 response",
 				err))
 			return diags
 		}
@@ -101,7 +101,7 @@ func dataSourceWirelessControllersManagedApLocationsCountRead(ctx context.Contex
 	return diags
 }
 
-func flattenWirelessGetManagedApLocationsCountForSpecificWirelessControllerItem(item *catalystcentersdkgo.ResponseWirelessGetManagedApLocationsCountForSpecificWirelessControllerResponse) []map[string]interface{} {
+func flattenWirelessGetManagedApLocationsCountForSpecificWirelessControllerV1Item(item *catalystcentersdkgo.ResponseWirelessGetManagedApLocationsCountForSpecificWirelessControllerV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

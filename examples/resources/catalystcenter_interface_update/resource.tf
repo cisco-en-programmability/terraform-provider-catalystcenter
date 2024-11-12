@@ -1,6 +1,6 @@
 
 resource "catalystcenter_interface_update" "example" {
-  provider        = catalystcenter
+  provider        = meraki
   deployment_mode = "string"
   interface_uuid  = "string"
   parameters {

@@ -169,8 +169,8 @@ func dataSourceSystemHealthRead(ctx context.Context, d *schema.ResourceData, m i
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: SystemHealthAPI")
-		queryParams1 := catalystcentersdkgo.SystemHealthAPIQueryParams{}
+		log.Printf("[DEBUG] Selected method: SystemHealthAPIV1")
+		queryParams1 := catalystcentersdkgo.SystemHealthAPIV1QueryParams{}
 
 		if okSummary {
 			queryParams1.Summary = vSummary.(bool)
@@ -188,24 +188,24 @@ func dataSourceSystemHealthRead(ctx context.Context, d *schema.ResourceData, m i
 			queryParams1.Offset = vOffset.(float64)
 		}
 
-		response1, restyResp1, err := client.HealthAndPerformance.SystemHealthAPI(&queryParams1)
+		response1, restyResp1, err := client.HealthAndPerformance.SystemHealthAPIV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 SystemHealthAPI", err,
-				"Failure at SystemHealthAPI, unexpected response", ""))
+				"Failure when executing 2 SystemHealthAPIV1", err,
+				"Failure at SystemHealthAPIV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenHealthAndPerformanceSystemHealthAPIItem(response1)
+		vItem1 := flattenHealthAndPerformanceSystemHealthAPIV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting SystemHealthAPI response",
+				"Failure when setting SystemHealthAPIV1 response",
 				err))
 			return diags
 		}
@@ -217,12 +217,12 @@ func dataSourceSystemHealthRead(ctx context.Context, d *schema.ResourceData, m i
 	return diags
 }
 
-func flattenHealthAndPerformanceSystemHealthAPIItem(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemHealthAPI) []map[string]interface{} {
+func flattenHealthAndPerformanceSystemHealthAPIV1Item(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemHealthAPIV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["health_events"] = flattenHealthAndPerformanceSystemHealthAPIItemHealthEvents(item.HealthEvents)
+	respItem["health_events"] = flattenHealthAndPerformanceSystemHealthAPIV1ItemHealthEvents(item.HealthEvents)
 	respItem["version"] = item.Version
 	respItem["host_name"] = item.HostName
 	respItem["cimcaddress"] = item.Cimcaddress
@@ -231,7 +231,7 @@ func flattenHealthAndPerformanceSystemHealthAPIItem(item *catalystcentersdkgo.Re
 	}
 }
 
-func flattenHealthAndPerformanceSystemHealthAPIItemHealthEvents(items *[]catalystcentersdkgo.ResponseHealthAndPerformanceSystemHealthAPIHealthEvents) []map[string]interface{} {
+func flattenHealthAndPerformanceSystemHealthAPIV1ItemHealthEvents(items *[]catalystcentersdkgo.ResponseHealthAndPerformanceSystemHealthAPIV1HealthEvents) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

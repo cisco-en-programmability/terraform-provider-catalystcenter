@@ -1,6 +1,6 @@
 
 resource "catalystcenter_swim_image_url" "example" {
-  provider        = catalystcenter
+  provider        = meraki
   schedule_at     = "string"
   schedule_desc   = "string"
   schedule_origin = "string"

@@ -1,6 +1,6 @@
 
 resource "catalystcenter_event_webhook_update" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     description = "string"

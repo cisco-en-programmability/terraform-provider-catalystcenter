@@ -76,7 +76,7 @@ func resourceApplicationSets() *schema.Resource {
 				},
 			},
 			"parameters": &schema.Schema{
-				Description: `Array of RequestApplicationPolicyCreateApplicationSet`,
+				Description: `Array of RequestApplicationPolicyCreateApplicationSetV1`,
 				Type:        schema.TypeList,
 				Optional:    true,
 				Computed:    true,
@@ -111,14 +111,14 @@ func resourceApplicationSetsCreate(ctx context.Context, d *schema.ResourceData, 
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters.0.payload"))
-	request1 := expandRequestApplicationSetsCreateApplicationSet(ctx, "parameters.0", d)
+	request1 := expandRequestApplicationSetsCreateApplicationSetV1(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vName := resourceItem["name"]
 	vvName := interfaceToString(vName)
-	queryParamImport := catalystcentersdkgo.GetApplicationSetsQueryParams{}
+	queryParamImport := catalystcentersdkgo.GetApplicationSetsV1QueryParams{}
 	queryParamImport.Name = vvName
-	item2, err := searchApplicationPolicyGetApplicationSets(m, queryParamImport, "")
+	item2, err := searchApplicationPolicyGetApplicationSetsV1(m, queryParamImport, "")
 	if err == nil && item2 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["name"] = vvName
@@ -165,9 +165,9 @@ func resourceApplicationSetsCreate(ctx context.Context, d *schema.ResourceData, 
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetApplicationSetsQueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetApplicationSetsV1QueryParams{}
 	queryParamValidate.Name = vvName
-	item3, err := searchApplicationPolicyGetApplicationSets(m, queryParamValidate, "")
+	item3, err := searchApplicationPolicyGetApplicationSetsV1(m, queryParamValidate, "")
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
 			"Failure when executing CreateApplicationSet", err,
@@ -194,18 +194,18 @@ func resourceApplicationSetsRead(ctx context.Context, d *schema.ResourceData, m 
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetApplicationSets")
-		queryParams1 := catalystcentersdkgo.GetApplicationSetsQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetApplicationSetsV1QueryParams{}
 		queryParams1.Name = vvName
-		item1, err := searchApplicationPolicyGetApplicationSets(m, queryParams1, vvID)
+		item1, err := searchApplicationPolicyGetApplicationSetsV1(m, queryParams1, vvID)
 		if err != nil || item1 == nil {
 			d.SetId("")
 			return diags
 		}
 		// Review flatten function used
-		items := []catalystcentersdkgo.ResponseApplicationPolicyGetApplicationSetsResponse{
+		items := []catalystcentersdkgo.ResponseApplicationPolicyGetApplicationSetsV1Response{
 			*item1,
 		}
-		vItem1 := flattenApplicationPolicyGetApplicationSetsItems(&items)
+		vItem1 := flattenApplicationPolicyGetApplicationSetsV1Items(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetApplicationSets search response",
@@ -238,7 +238,9 @@ func resourceApplicationSetsDelete(ctx context.Context, d *schema.ResourceData, 
 
 	vvID := resourceMap["id"]
 
-	response1, restyResp1, err := client.ApplicationPolicy.DeleteApplicationSet(vvID)
+	response1, restyResp1, err := client.ApplicationPolicy.DeleteApplicationSet(&catalystcentersdkgo.DeleteApplicationSetV1QueryParams{
+		ID: vvID,
+	})
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] resty response for delete operation => %v", restyResp1.String())
@@ -288,9 +290,9 @@ func resourceApplicationSetsDelete(ctx context.Context, d *schema.ResourceData, 
 
 	return diags
 }
-func expandRequestApplicationSetsCreateApplicationSet(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyCreateApplicationSet {
-	request := catalystcentersdkgo.RequestApplicationPolicyCreateApplicationSet{}
-	if v := expandRequestApplicationSetsCreateApplicationSetItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestApplicationSetsCreateApplicationSetV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyCreateApplicationSetV1 {
+	request := catalystcentersdkgo.RequestApplicationPolicyCreateApplicationSetV1{}
+	if v := expandRequestApplicationSetsCreateApplicationSetV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -299,8 +301,8 @@ func expandRequestApplicationSetsCreateApplicationSet(ctx context.Context, key s
 	return &request
 }
 
-func expandRequestApplicationSetsCreateApplicationSetItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationSet {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationSet{}
+func expandRequestApplicationSetsCreateApplicationSetV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationSetV1 {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationSetV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -311,7 +313,7 @@ func expandRequestApplicationSetsCreateApplicationSetItemArray(ctx context.Conte
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestApplicationSetsCreateApplicationSetItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestApplicationSetsCreateApplicationSetV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -322,8 +324,8 @@ func expandRequestApplicationSetsCreateApplicationSetItemArray(ctx context.Conte
 	return &request
 }
 
-func expandRequestApplicationSetsCreateApplicationSetItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationSet {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationSet{}
+func expandRequestApplicationSetsCreateApplicationSetV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationSetV1 {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationSetV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -333,18 +335,17 @@ func expandRequestApplicationSetsCreateApplicationSetItem(ctx context.Context, k
 	return &request
 }
 
-func searchApplicationPolicyGetApplicationSets(m interface{}, queryParams catalystcentersdkgo.GetApplicationSetsQueryParams, vID string) (*catalystcentersdkgo.ResponseApplicationPolicyGetApplicationSetsResponse, error) {
+func searchApplicationPolicyGetApplicationSetsV1(m interface{}, queryParams catalystcentersdkgo.GetApplicationSetsV1QueryParams, vID string) (*catalystcentersdkgo.ResponseApplicationPolicyGetApplicationSetsV1Response, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationSetsResponse
-	var ite *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationSets
+	var foundItem *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationSetsV1Response
+	var ite *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationSetsV1
 	if vID != "" {
 		queryParams.Offset = 1
 		queryParams.Name = ""
 		nResponse, _, err := client.ApplicationPolicy.GetApplicationSets(&queryParams)
 		maxPageSize := len(*nResponse.Response)
 		for len(*nResponse.Response) > 0 {
-
 			for _, item := range *nResponse.Response {
 				if vID == item.ID {
 					foundItem = &item
@@ -353,14 +354,14 @@ func searchApplicationPolicyGetApplicationSets(m interface{}, queryParams cataly
 			}
 			queryParams.Limit = float64(maxPageSize)
 			queryParams.Offset += float64(maxPageSize)
-			nResponse, _, err = client.ApplicationPolicy.GetApplicationSets(&queryParams)
+			nResponse, _, err = client.ApplicationPolicy.GetApplicationSetsV1(&queryParams)
 			if nResponse == nil || nResponse.Response == nil {
 				break
 			}
 		}
 		return nil, err
 	} else if queryParams.Name != "" {
-		ite, _, err = client.ApplicationPolicy.GetApplicationSets(&queryParams)
+		ite, _, err = client.ApplicationPolicy.GetApplicationSetsV1(&queryParams)
 		if err != nil || ite == nil {
 			return foundItem, err
 		}
@@ -377,4 +378,5 @@ func searchApplicationPolicyGetApplicationSets(m interface{}, queryParams cataly
 		return foundItem, err
 	}
 	return foundItem, err
+
 }

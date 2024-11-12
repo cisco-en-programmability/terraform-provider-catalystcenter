@@ -1,6 +1,6 @@
 
 resource "catalystcenter_assurance_issues_update" "example" {
-  provider        = catalystcenter
+  provider        = meraki
   accept_language = "string"
   id              = "string"
   xca_lle_rid     = "string"

@@ -1,6 +1,6 @@
 
 resource "catalystcenter_global_credential_update" "example" {
-  provider             = catalystcenter
+  provider             = meraki
   global_credential_id = "string"
   parameters {
 

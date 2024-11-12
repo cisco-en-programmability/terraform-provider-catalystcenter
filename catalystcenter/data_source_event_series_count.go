@@ -104,8 +104,8 @@ func dataSourceEventSeriesCountRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: CountOfNotifications")
-		queryParams1 := catalystcentersdkgo.CountOfNotificationsQueryParams{}
+		log.Printf("[DEBUG] Selected method: CountOfNotificationsV1")
+		queryParams1 := catalystcentersdkgo.CountOfNotificationsV1QueryParams{}
 
 		if okEventIDs {
 			queryParams1.EventIDs = vEventIDs.(string)
@@ -135,24 +135,24 @@ func dataSourceEventSeriesCountRead(ctx context.Context, d *schema.ResourceData,
 			queryParams1.Source = vSource.(string)
 		}
 
-		response1, restyResp1, err := client.EventManagement.CountOfNotifications(&queryParams1)
+		response1, restyResp1, err := client.EventManagement.CountOfNotificationsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 CountOfNotifications", err,
-				"Failure at CountOfNotifications, unexpected response", ""))
+				"Failure when executing 2 CountOfNotificationsV1", err,
+				"Failure at CountOfNotificationsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenEventManagementCountOfNotificationsItem(response1)
+		vItem1 := flattenEventManagementCountOfNotificationsV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting CountOfNotifications response",
+				"Failure when setting CountOfNotificationsV1 response",
 				err))
 			return diags
 		}
@@ -164,7 +164,7 @@ func dataSourceEventSeriesCountRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenEventManagementCountOfNotificationsItem(item *catalystcentersdkgo.ResponseEventManagementCountOfNotifications) []map[string]interface{} {
+func flattenEventManagementCountOfNotificationsV1Item(item *catalystcentersdkgo.ResponseEventManagementCountOfNotificationsV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

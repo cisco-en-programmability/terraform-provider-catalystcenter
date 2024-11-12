@@ -125,20 +125,18 @@ func resourceWirelessAccessPointsProvisionCreate(ctx context.Context, d *schema.
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestWirelessAccessPointsProvisionApProvision(ctx, "parameters.0", d)
+	request1 := expandRequestWirelessAccessPointsProvisionApProvisionV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.Wireless.ApProvision(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Wireless.ApProvisionV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ApProvision", err))
+			"Failure when executing ApProvisionV1", err))
 		return diags
 	}
 
@@ -146,7 +144,7 @@ func resourceWirelessAccessPointsProvisionCreate(ctx context.Context, d *schema.
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing APProvision", err))
+			"Failure when executing APProvisionV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -180,22 +178,24 @@ func resourceWirelessAccessPointsProvisionCreate(ctx context.Context, d *schema.
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing APProvision", err1))
+				"Failure when executing APProvisionV1", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenWirelessApProvisionItem(response1.Response)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
+	vItem1 := flattenWirelessApProvisionV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ApProvision response",
+			"Failure when setting ApProvisionV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceWirelessAccessPointsProvisionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -210,10 +210,10 @@ func resourceWirelessAccessPointsProvisionDelete(ctx context.Context, d *schema.
 	return diags
 }
 
-func expandRequestWirelessAccessPointsProvisionApProvision(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessApProvision {
-	request := catalystcentersdkgo.RequestWirelessApProvision{}
+func expandRequestWirelessAccessPointsProvisionApProvisionV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessApProvisionV1 {
+	request := catalystcentersdkgo.RequestWirelessApProvisionV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".network_devices")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".network_devices")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".network_devices")))) {
-		request.NetworkDevices = expandRequestWirelessAccessPointsProvisionApProvisionNetworkDevicesArray(ctx, key+".network_devices", d)
+		request.NetworkDevices = expandRequestWirelessAccessPointsProvisionApProvisionV1NetworkDevicesArray(ctx, key+".network_devices", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rf_profile_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rf_profile_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rf_profile_name")))) {
 		request.RfProfileName = interfaceToString(v)
@@ -227,8 +227,8 @@ func expandRequestWirelessAccessPointsProvisionApProvision(ctx context.Context, 
 	return &request
 }
 
-func expandRequestWirelessAccessPointsProvisionApProvisionNetworkDevicesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessApProvisionNetworkDevices {
-	request := []catalystcentersdkgo.RequestWirelessApProvisionNetworkDevices{}
+func expandRequestWirelessAccessPointsProvisionApProvisionV1NetworkDevicesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessApProvisionV1NetworkDevices {
+	request := []catalystcentersdkgo.RequestWirelessApProvisionV1NetworkDevices{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -239,7 +239,7 @@ func expandRequestWirelessAccessPointsProvisionApProvisionNetworkDevicesArray(ct
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestWirelessAccessPointsProvisionApProvisionNetworkDevices(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestWirelessAccessPointsProvisionApProvisionV1NetworkDevices(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -247,8 +247,8 @@ func expandRequestWirelessAccessPointsProvisionApProvisionNetworkDevicesArray(ct
 	return &request
 }
 
-func expandRequestWirelessAccessPointsProvisionApProvisionNetworkDevices(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessApProvisionNetworkDevices {
-	request := catalystcentersdkgo.RequestWirelessApProvisionNetworkDevices{}
+func expandRequestWirelessAccessPointsProvisionApProvisionV1NetworkDevices(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessApProvisionV1NetworkDevices {
+	request := catalystcentersdkgo.RequestWirelessApProvisionV1NetworkDevices{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_id")))) {
 		request.DeviceID = interfaceToString(v)
 	}
@@ -258,7 +258,7 @@ func expandRequestWirelessAccessPointsProvisionApProvisionNetworkDevices(ctx con
 	return &request
 }
 
-func flattenWirelessApProvisionItem(item *catalystcentersdkgo.ResponseWirelessApProvisionResponse) []map[string]interface{} {
+func flattenWirelessApProvisionV1Item(item *catalystcentersdkgo.ResponseWirelessApProvisionV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

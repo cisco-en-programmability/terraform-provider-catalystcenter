@@ -16,7 +16,7 @@ import (
 // resourceAction
 func resourcePnpDeviceAuthorize() *schema.Resource {
 	return &schema.Resource{
-		Description: `It performs create operation on Cisco Catalyst Center System.
+		Description: `It performs create operation on Cisco DNA Center System.
 
 - Authorizes one of more devices. A device can only be authorized if Authorization is set in Device Settings.
 `,
@@ -100,38 +100,35 @@ func resourcePnpDeviceAuthorizeCreate(ctx context.Context, d *schema.ResourceDat
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestPnpDeviceAuthorizeAuthorizeDevice(ctx, "parameters.0", d)
+	request1 := expandRequestPnpDeviceAuthorizeAuthorizeDeviceV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.DeviceOnboardingPnp.AuthorizeDevice(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.DeviceOnboardingPnp.AuthorizeDeviceV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing AuthorizeDevice", err))
+			"Failure when executing AuthorizeDeviceV1", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	//REVIEW: '- Analizar como se puede comprobar la ejecucion.'
-	//Analizar verificacion.
-
-	vItem1 := flattenDeviceOnboardingPnpAuthorizeDeviceItem(response1)
+	vItem1 := flattenDeviceOnboardingPnpAuthorizeDeviceV1Item(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting AuthorizeDevice response",
+			"Failure when setting AuthorizeDeviceV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
+
+	//REVIEW: '- Analizar como se puede comprobar la ejecucion.'
 
 }
 func resourcePnpDeviceAuthorizeRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -147,20 +144,20 @@ func resourcePnpDeviceAuthorizeDelete(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func expandRequestPnpDeviceAuthorizeAuthorizeDevice(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAuthorizeDevice {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAuthorizeDevice{}
+func expandRequestPnpDeviceAuthorizeAuthorizeDeviceV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAuthorizeDeviceV1 {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAuthorizeDeviceV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_id_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_id_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_id_list")))) {
 		request.DeviceIDList = interfaceToSliceString(v)
 	}
 	return &request
 }
 
-func flattenDeviceOnboardingPnpAuthorizeDeviceItem(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpAuthorizeDevice) []map[string]interface{} {
+func flattenDeviceOnboardingPnpAuthorizeDeviceV1Item(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpAuthorizeDeviceV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["json_response"] = flattenDeviceOnboardingPnpAuthorizeDeviceItemJSONResponse(item.JSONResponse)
+	respItem["json_response"] = flattenDeviceOnboardingPnpAuthorizeDeviceV1ItemJSONResponse(item.JSONResponse)
 	respItem["message"] = item.Message
 	respItem["status_code"] = item.StatusCode
 	respItem["json_array_response"] = item.JSONArrayResponse
@@ -169,7 +166,7 @@ func flattenDeviceOnboardingPnpAuthorizeDeviceItem(item *catalystcentersdkgo.Res
 	}
 }
 
-func flattenDeviceOnboardingPnpAuthorizeDeviceItemJSONResponse(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpAuthorizeDeviceJSONResponse) []map[string]interface{} {
+func flattenDeviceOnboardingPnpAuthorizeDeviceV1ItemJSONResponse(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpAuthorizeDeviceV1JSONResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -26,13 +26,12 @@ resource "catalystcenter_sda_extranet_policies" "example" {
   provider = catalystcenter
 
   parameters {
-    payload {
-      extranet_policy_name             = "string"
-      fabric_ids                       = ["string"]
-      id                               = "string"
-      provider_virtual_network_name    = "string"
-      subscriber_virtual_network_names = ["string"]
-    }
+
+    extranet_policy_name             = "string"
+    fabric_ids                       = ["string"]
+    id                               = "string"
+    provider_virtual_network_name    = "string"
+    subscriber_virtual_network_names = ["string"]
   }
 }
 

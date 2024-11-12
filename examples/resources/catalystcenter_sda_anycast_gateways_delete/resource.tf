@@ -1,6 +1,6 @@
 
 resource "catalystcenter_sda_anycast_gateways_delete" "example" {
-  provider = catalystcenter
+  provider = meraki
   id       = "string"
   parameters {
 

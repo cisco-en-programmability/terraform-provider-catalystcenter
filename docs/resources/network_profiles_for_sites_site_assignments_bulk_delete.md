@@ -14,9 +14,6 @@ It performs delete operation on Site Design.
 
 - Unassigns a given network profile for sites from multiple sites. The profile must be removed from the containing
 building first if this site is a floor.
-
-
-
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -25,7 +22,7 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 
 ```terraform
 resource "catalystcenter_network_profiles_for_sites_site_assignments_bulk_delete" "example" {
-  provider   = catalystcenter
+  provider   = meraki
   profile_id = "string"
   site_id    = "string"
   parameters {
@@ -56,8 +53,8 @@ output "catalystcenter_network_profiles_for_sites_site_assignments_bulk_delete_e
 
 Required:
 
-- `profile_id` (String) profileId path parameter. The 'id' of the network profile, retrievable from 'GET /intent/api/v1/networkProfilesForSites'
-- `site_id` (String) siteId query parameter. The 'id' of the site, retrievable from 'GET /intent/api/v1/sites'
+- `profile_id` (String) profileId path parameter. The *id* of the network profile, retrievable from *GET /intent/api/v1/networkProfilesForSites*
+- `site_id` (String) siteId query parameter. The *id* of the site, retrievable from *GET /intent/api/v1/sites*
 
 
 <a id="nestedatt--item"></a>

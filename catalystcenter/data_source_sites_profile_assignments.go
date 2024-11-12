@@ -17,7 +17,7 @@ func dataSourceSitesProfileAssignments() *schema.Resource {
 
 - Retrieves the list of profiles that the given site has been assigned.  These profiles may either be directly assigned
 to this site, or were assigned to a parent site and have been inherited.
-These assigments can be modified via the '/dna/intent/api/v1/networkProfilesForSites/{profileId}/siteAssignments'
+These assigments can be modified via the */dna/intent/api/v1/networkProfilesForSites/{profileId}/siteAssignments*
 resources.
 `,
 
@@ -36,7 +36,7 @@ resources.
 				Optional: true,
 			},
 			"site_id": &schema.Schema{
-				Description: `siteId path parameter. The 'id' of the site, retrievable from '/dna/intent/api/v1/sites'
+				Description: `siteId path parameter. The *id* of the site, retrievable from */dna/intent/api/v1/sites*
 `,
 				Type:     schema.TypeString,
 				Required: true,
@@ -70,9 +70,9 @@ func dataSourceSitesProfileAssignmentsRead(ctx context.Context, d *schema.Resour
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesTheListOfNetworkProfilesThatTheGivenSiteHasBeenAssigned")
+		log.Printf("[DEBUG] Selected method: RetrievesTheListOfNetworkProfilesThatTheGivenSiteHasBeenAssignedV1")
 		vvSiteID := vSiteID.(string)
-		queryParams1 := catalystcentersdkgo.RetrievesTheListOfNetworkProfilesThatTheGivenSiteHasBeenAssignedQueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrievesTheListOfNetworkProfilesThatTheGivenSiteHasBeenAssignedV1QueryParams{}
 
 		if okOffset {
 			queryParams1.Offset = vOffset.(float64)
@@ -81,24 +81,24 @@ func dataSourceSitesProfileAssignmentsRead(ctx context.Context, d *schema.Resour
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.SiteDesign.RetrievesTheListOfNetworkProfilesThatTheGivenSiteHasBeenAssigned(vvSiteID, &queryParams1)
+		response1, restyResp1, err := client.SiteDesign.RetrievesTheListOfNetworkProfilesThatTheGivenSiteHasBeenAssignedV1(vvSiteID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesTheListOfNetworkProfilesThatTheGivenSiteHasBeenAssigned", err,
-				"Failure at RetrievesTheListOfNetworkProfilesThatTheGivenSiteHasBeenAssigned, unexpected response", ""))
+				"Failure when executing 2 RetrievesTheListOfNetworkProfilesThatTheGivenSiteHasBeenAssignedV1", err,
+				"Failure at RetrievesTheListOfNetworkProfilesThatTheGivenSiteHasBeenAssignedV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSiteDesignRetrievesTheListOfNetworkProfilesThatTheGivenSiteHasBeenAssignedItems(response1.Response)
+		vItems1 := flattenSiteDesignRetrievesTheListOfNetworkProfilesThatTheGivenSiteHasBeenAssignedV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesTheListOfNetworkProfilesThatTheGivenSiteHasBeenAssigned response",
+				"Failure when setting RetrievesTheListOfNetworkProfilesThatTheGivenSiteHasBeenAssignedV1 response",
 				err))
 			return diags
 		}
@@ -110,7 +110,7 @@ func dataSourceSitesProfileAssignmentsRead(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func flattenSiteDesignRetrievesTheListOfNetworkProfilesThatTheGivenSiteHasBeenAssignedItems(items *[]catalystcentersdkgo.ResponseSiteDesignRetrievesTheListOfNetworkProfilesThatTheGivenSiteHasBeenAssignedResponse) []map[string]interface{} {
+func flattenSiteDesignRetrievesTheListOfNetworkProfilesThatTheGivenSiteHasBeenAssignedV1Items(items *[]catalystcentersdkgo.ResponseSiteDesignRetrievesTheListOfNetworkProfilesThatTheGivenSiteHasBeenAssignedV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

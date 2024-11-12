@@ -22,9 +22,8 @@ It manages create, read, update and delete operations on Application Policy.
 ```terraform
 resource "catalystcenter_app_policy_queuing_profile" "example" {
   provider = catalystcenter
-  parameters {
-    payload {
 
+  parameters {
 
     clause {
 
@@ -43,16 +42,15 @@ resource "catalystcenter_app_policy_queuing_profile" "example" {
       is_common_between_all_interface_speeds = "false"
       tc_dscp_settings {
 
-          dscp          = "string"
-          instance_id   = 1
-          traffic_class = "string"
-        }
-        type = "string"
+        dscp          = "string"
+        instance_id   = 1
+        traffic_class = "string"
       }
-      description = "string"
-      id          = "string"
-      name        = "string"
+      type = "string"
     }
+    description = "string"
+    id          = "string"
+    name        = "string"
   }
 }
 
@@ -66,7 +64,7 @@ output "catalystcenter_app_policy_queuing_profile_example" {
 
 ### Optional
 
-- `parameters` (Block List) Array of RequestApplicationPolicyCreateApplicationPolicyQueuingProfile (see [below for nested schema](#nestedblock--parameters))
+- `parameters` (Block List) Array of RequestApplicationPolicyCreateApplicationPolicyQueuingProfileV1 (see [below for nested schema](#nestedblock--parameters))
 
 ### Read-Only
 

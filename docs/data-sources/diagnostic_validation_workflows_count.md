@@ -34,7 +34,7 @@ output "catalystcenter_diagnostic_validation_workflows_count_example" {
 ### Optional
 
 - `end_time` (Number) endTime query parameter. Workflows started before the given time (as milliseconds since UNIX epoch).
-- `run_status` (String) runStatus query parameter. Execution status of the workflow. If the workflow is successfully submitted, runStatus is 'PENDING'. If the workflow execution has started, runStatus is 'IN_PROGRESS'. If the workflow executed is completed with all validations executed, runStatus is 'COMPLETED'. If the workflow execution fails while running validations, runStatus is 'FAILED'.
+- `run_status` (String) runStatus query parameter. Execution status of the workflow. If the workflow is successfully submitted, runStatus is *PENDING*. If the workflow execution has started, runStatus is *IN_PROGRESS*. If the workflow executed is completed with all validations executed, runStatus is *COMPLETED*. If the workflow execution fails while running validations, runStatus is *FAILED*.
 - `start_time` (Number) startTime query parameter. Workflows started after the given time (as milliseconds since UNIX epoch).
 
 ### Read-Only

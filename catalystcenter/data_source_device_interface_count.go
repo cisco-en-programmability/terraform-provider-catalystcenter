@@ -50,26 +50,26 @@ func dataSourceDeviceInterfaceCountRead(ctx context.Context, d *schema.ResourceD
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceInterfaceCountForMultipleDevices")
+		log.Printf("[DEBUG] Selected method: GetDeviceInterfaceCountForMultipleDevicesV1")
 
-		response1, restyResp1, err := client.Devices.GetDeviceInterfaceCountForMultipleDevices()
+		response1, restyResp1, err := client.Devices.GetDeviceInterfaceCountForMultipleDevicesV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceInterfaceCountForMultipleDevices", err,
-				"Failure at GetDeviceInterfaceCountForMultipleDevices, unexpected response", ""))
+				"Failure when executing 2 GetDeviceInterfaceCountForMultipleDevicesV1", err,
+				"Failure at GetDeviceInterfaceCountForMultipleDevicesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesGetDeviceInterfaceCountForMultipleDevicesItem(response1)
+		vItem1 := flattenDevicesGetDeviceInterfaceCountForMultipleDevicesV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceInterfaceCountForMultipleDevices response",
+				"Failure when setting GetDeviceInterfaceCountForMultipleDevicesV1 response",
 				err))
 			return diags
 		}
@@ -81,7 +81,7 @@ func dataSourceDeviceInterfaceCountRead(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func flattenDevicesGetDeviceInterfaceCountForMultipleDevicesItem(item *catalystcentersdkgo.ResponseDevicesGetDeviceInterfaceCountForMultipleDevices) []map[string]interface{} {
+func flattenDevicesGetDeviceInterfaceCountForMultipleDevicesV1Item(item *catalystcentersdkgo.ResponseDevicesGetDeviceInterfaceCountForMultipleDevicesV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

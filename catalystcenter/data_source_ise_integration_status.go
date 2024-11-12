@@ -120,26 +120,26 @@ func dataSourceIseIntegrationStatusRead(ctx context.Context, d *schema.ResourceD
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: CiscoIseServerIntegrationStatus")
+		log.Printf("[DEBUG] Selected method: CiscoIseServerIntegrationStatusV1")
 
-		response1, restyResp1, err := client.SystemSettings.CiscoIseServerIntegrationStatus()
+		response1, restyResp1, err := client.SystemSettings.CiscoIseServerIntegrationStatusV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 CiscoIseServerIntegrationStatus", err,
-				"Failure at CiscoIseServerIntegrationStatus, unexpected response", ""))
+				"Failure when executing 2 CiscoIseServerIntegrationStatusV1", err,
+				"Failure at CiscoIseServerIntegrationStatusV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSystemSettingsCiscoIseServerIntegrationStatusItem(response1)
+		vItem1 := flattenSystemSettingsCiscoIseServerIntegrationStatusV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting CiscoIseServerIntegrationStatus response",
+				"Failure when setting CiscoIseServerIntegrationStatusV1 response",
 				err))
 			return diags
 		}
@@ -151,7 +151,7 @@ func dataSourceIseIntegrationStatusRead(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func flattenSystemSettingsCiscoIseServerIntegrationStatusItem(item *catalystcentersdkgo.ResponseSystemSettingsCiscoIseServerIntegrationStatus) []map[string]interface{} {
+func flattenSystemSettingsCiscoIseServerIntegrationStatusV1Item(item *catalystcentersdkgo.ResponseSystemSettingsCiscoIseServerIntegrationStatusV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -159,13 +159,13 @@ func flattenSystemSettingsCiscoIseServerIntegrationStatusItem(item *catalystcent
 	respItem["aaa_server_setting_id"] = item.AAAServerSettingID
 	respItem["overall_status"] = item.OverallStatus
 	respItem["overall_error_message"] = item.OverallErrorMessage
-	respItem["steps"] = flattenSystemSettingsCiscoIseServerIntegrationStatusItemSteps(item.Steps)
+	respItem["steps"] = flattenSystemSettingsCiscoIseServerIntegrationStatusV1ItemSteps(item.Steps)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenSystemSettingsCiscoIseServerIntegrationStatusItemSteps(items *[]catalystcentersdkgo.ResponseSystemSettingsCiscoIseServerIntegrationStatusSteps) []map[string]interface{} {
+func flattenSystemSettingsCiscoIseServerIntegrationStatusV1ItemSteps(items *[]catalystcentersdkgo.ResponseSystemSettingsCiscoIseServerIntegrationStatusV1Steps) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

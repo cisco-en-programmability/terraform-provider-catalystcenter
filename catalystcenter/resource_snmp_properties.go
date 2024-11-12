@@ -75,7 +75,7 @@ func resourceSNMPProperties() *schema.Resource {
 				},
 			},
 			"parameters": &schema.Schema{
-				Description: `Array of RequestDiscoveryCreateUpdateSNMPProperties`,
+				Description: `Array of RequestDiscoveryCreateUpdateSNMPPropertiesV1`,
 				Type:        schema.TypeList,
 				Optional:    true,
 				Computed:    true,
@@ -129,7 +129,7 @@ func resourceSNMPPropertiesCreate(ctx context.Context, d *schema.ResourceData, m
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestSNMPPropertiesCreateUpdateSNMPProperties(ctx, "parameters.0", d)
+	request1 := expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesV1(ctx, "parameters.0", d)
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
@@ -219,10 +219,10 @@ func resourceSNMPPropertiesRead(ctx context.Context, d *schema.ResourceData, m i
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
-		items := []catalystcentersdkgo.ResponseDiscoveryGetSNMPPropertiesResponse{
+		items := []catalystcentersdkgo.ResponseDiscoveryGetSNMPPropertiesV1Response{
 			*response1,
 		}
-		vItem1 := flattenDiscoveryGetSNMPPropertiesItems(&items)
+		vItem1 := flattenDiscoveryGetSNMPPropertiesV1Items(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetSNMPProperties search response",
@@ -253,20 +253,19 @@ func resourceSNMPPropertiesDelete(ctx context.Context, d *schema.ResourceData, m
 
 	return diags
 }
-func expandRequestSNMPPropertiesCreateUpdateSNMPProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryCreateUpdateSNMPProperties {
-	request := catalystcentersdkgo.RequestDiscoveryCreateUpdateSNMPProperties{}
-	if v := expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesItemArray(ctx, key, d); v != nil {
+func expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryCreateUpdateSNMPPropertiesV1 {
+	request := catalystcentersdkgo.RequestDiscoveryCreateUpdateSNMPPropertiesV1{}
+	if v := expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
 	}
-
 	return &request
 }
 
-func expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDiscoveryCreateUpdateSNMPProperties {
-	request := []catalystcentersdkgo.RequestItemDiscoveryCreateUpdateSNMPProperties{}
+func expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDiscoveryCreateUpdateSNMPPropertiesV1 {
+	request := []catalystcentersdkgo.RequestItemDiscoveryCreateUpdateSNMPPropertiesV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -277,7 +276,7 @@ func expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesItemArray(ctx context.
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -288,8 +287,8 @@ func expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesItemArray(ctx context.
 	return &request
 }
 
-func expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDiscoveryCreateUpdateSNMPProperties {
-	request := catalystcentersdkgo.RequestItemDiscoveryCreateUpdateSNMPProperties{}
+func expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDiscoveryCreateUpdateSNMPPropertiesV1 {
+	request := catalystcentersdkgo.RequestItemDiscoveryCreateUpdateSNMPPropertiesV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -311,11 +310,11 @@ func expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesItem(ctx context.Conte
 	return &request
 }
 
-func searchDiscoveryGetSNMPProperties(m interface{}, vID string, vName string) (*catalystcentersdkgo.ResponseDiscoveryGetSNMPPropertiesResponse, error) {
+func searchDiscoveryGetSNMPProperties(m interface{}, vID string, vName string) (*catalystcentersdkgo.ResponseDiscoveryGetSNMPPropertiesV1Response, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseDiscoveryGetSNMPPropertiesResponse
-	var ite *catalystcentersdkgo.ResponseDiscoveryGetSNMPProperties
+	var foundItem *catalystcentersdkgo.ResponseDiscoveryGetSNMPPropertiesV1Response
+	var ite *catalystcentersdkgo.ResponseDiscoveryGetSNMPPropertiesV1
 	ite, _, err = client.Discovery.GetSNMPProperties()
 	if err != nil {
 		return foundItem, err
@@ -329,7 +328,7 @@ func searchDiscoveryGetSNMPProperties(m interface{}, vID string, vName string) (
 	for _, item := range itemsCopy {
 		// Call get by _ method and set value to foundItem and return
 		if item.InstanceTenantID == vID || item.SystemPropertyName == vName {
-			var getItem *catalystcentersdkgo.ResponseDiscoveryGetSNMPPropertiesResponse
+			var getItem *catalystcentersdkgo.ResponseDiscoveryGetSNMPPropertiesV1Response
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

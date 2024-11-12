@@ -115,7 +115,7 @@ func resourceGlobalCredentialSNMPv2ReadCommunity() *schema.Resource {
 				},
 			},
 			"parameters": &schema.Schema{
-				Description: `Array of RequestDiscoveryCreateSNMPReadCommunity`,
+				Description: `Array of RequestDiscoveryCreateSNMPReadCommunityV1`,
 				Type:        schema.TypeList,
 				Required:    true,
 				MaxItems:    1,
@@ -176,7 +176,7 @@ func resourceGlobalCredentialSNMPv2ReadCommunityCreate(ctx context.Context, d *s
 	vvReadCommunity := interfaceToString(vReadCommunity)
 	vID := resourceItem["id"]
 	vvID := interfaceToString(vID)
-	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
+	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
 	// resourceID := d.Id()
 	// if resourceID != "" {
 	// 	log.Printf("[DEBUG] ResourceID => %s", resourceID)
@@ -249,7 +249,7 @@ func resourceGlobalCredentialSNMPv2ReadCommunityRead(ctx context.Context, d *sch
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method 1: GetGlobalCredentials")
-		queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
 
 		queryParams1.CredentialSubType = vCredentialSubType
 
@@ -269,10 +269,10 @@ func resourceGlobalCredentialSNMPv2ReadCommunityRead(ctx context.Context, d *sch
 
 		//TODO FOR DNAC
 
-		items := []catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse{
+		items := []catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response{
 			*response1,
 		}
-		vItem1 := flattenDiscoveryGetGlobalCredentialsItems(&items)
+		vItem1 := flattenDiscoveryGetGlobalCredentialsV1Items(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetGlobalCredentials search response",
@@ -294,7 +294,7 @@ func resourceGlobalCredentialSNMPv2ReadCommunityUpdate(ctx context.Context, d *s
 	vCredentialSubType := "SNMPV2_READ_COMMUNITY"
 	vID := resourceMap["id"]
 
-	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
+	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
 	queryParams1.CredentialSubType = vCredentialSubType
 	item, err := searchDiscoveryGetGlobalCredentialsSmpv2Read(m, queryParams1, vID)
 	if err != nil || item == nil {
@@ -366,7 +366,7 @@ func resourceGlobalCredentialSNMPv2ReadCommunityDelete(ctx context.Context, d *s
 	resourceMap := separateResourceID(resourceID)
 	vID := resourceMap["id"]
 
-	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
+	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
 
 	queryParams1.CredentialSubType = "SNMPV2_READ_COMMUNITY"
 	item, err := searchDiscoveryGetGlobalCredentialsSmpv2Write(m, queryParams1, vID)
@@ -388,8 +388,8 @@ func resourceGlobalCredentialSNMPv2ReadCommunityDelete(ctx context.Context, d *s
 	}
 	return diags
 }
-func expandRequestGlobalCredentialSNMPv2ReadCommunityCreateSNMPReadCommunity(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryCreateSNMPReadCommunity {
-	request := catalystcentersdkgo.RequestDiscoveryCreateSNMPReadCommunity{}
+func expandRequestGlobalCredentialSNMPv2ReadCommunityCreateSNMPReadCommunity(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryCreateSNMPReadCommunityV1 {
+	request := catalystcentersdkgo.RequestDiscoveryCreateSNMPReadCommunityV1{}
 	if v := expandRequestGlobalCredentialSNMPv2ReadCommunityCreateSNMPReadCommunityItemArray(ctx, key+".", d); v != nil {
 		request = *v
 	}
@@ -400,8 +400,8 @@ func expandRequestGlobalCredentialSNMPv2ReadCommunityCreateSNMPReadCommunity(ctx
 	return &request
 }
 
-func expandRequestGlobalCredentialSNMPv2ReadCommunityCreateSNMPReadCommunityItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDiscoveryCreateSNMPReadCommunity {
-	request := []catalystcentersdkgo.RequestItemDiscoveryCreateSNMPReadCommunity{}
+func expandRequestGlobalCredentialSNMPv2ReadCommunityCreateSNMPReadCommunityItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDiscoveryCreateSNMPReadCommunityV1 {
+	request := []catalystcentersdkgo.RequestItemDiscoveryCreateSNMPReadCommunityV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -424,8 +424,8 @@ func expandRequestGlobalCredentialSNMPv2ReadCommunityCreateSNMPReadCommunityItem
 	return &request
 }
 
-func expandRequestGlobalCredentialSNMPv2ReadCommunityCreateSNMPReadCommunityItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDiscoveryCreateSNMPReadCommunity {
-	request := catalystcentersdkgo.RequestItemDiscoveryCreateSNMPReadCommunity{}
+func expandRequestGlobalCredentialSNMPv2ReadCommunityCreateSNMPReadCommunityItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDiscoveryCreateSNMPReadCommunityV1 {
+	request := catalystcentersdkgo.RequestItemDiscoveryCreateSNMPReadCommunityV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".comments")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".comments")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".comments")))) {
 		request.Comments = interfaceToString(v)
 	}
@@ -445,8 +445,8 @@ func expandRequestGlobalCredentialSNMPv2ReadCommunityCreateSNMPReadCommunityItem
 	return &request
 }
 
-func expandRequestGlobalCredentialSNMPv2ReadCommunityUpdateSNMPReadCommunity(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdateSNMPReadCommunity {
-	request := catalystcentersdkgo.RequestDiscoveryUpdateSNMPReadCommunity{}
+func expandRequestGlobalCredentialSNMPv2ReadCommunityUpdateSNMPReadCommunity(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdateSNMPReadCommunityV1 {
+	request := catalystcentersdkgo.RequestDiscoveryUpdateSNMPReadCommunityV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".comments")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".comments")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".comments")))) {
 		request.Comments = interfaceToString(v)
 	}
@@ -469,11 +469,11 @@ func expandRequestGlobalCredentialSNMPv2ReadCommunityUpdateSNMPReadCommunity(ctx
 	return &request
 }
 
-func searchDiscoveryGetGlobalCredentialsSmpv2Read(m interface{}, queryParams catalystcentersdkgo.GetGlobalCredentialsQueryParams, vID string) (*catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse, error) {
+func searchDiscoveryGetGlobalCredentialsSmpv2Read(m interface{}, queryParams catalystcentersdkgo.GetGlobalCredentialsV1QueryParams, vID string) (*catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse
-	var ite *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentials
+	var foundItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response
+	var ite *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1
 	queryParams.CredentialSubType = "SNMPV2_READ_COMMUNITY"
 	ite, _, err = client.Discovery.GetGlobalCredentials(&queryParams)
 	if err != nil {
@@ -487,7 +487,7 @@ func searchDiscoveryGetGlobalCredentialsSmpv2Read(m interface{}, queryParams cat
 	for _, item := range *itemsCopy.Response {
 		// Call get by _ method and set value to foundItem and return
 		if item.ID == vID {
-			var getItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse
+			var getItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

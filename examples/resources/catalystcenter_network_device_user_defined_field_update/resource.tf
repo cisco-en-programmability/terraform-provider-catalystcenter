@@ -1,6 +1,6 @@
 
 resource "catalystcenter_network_device_user_defined_field_update" "example" {
-  provider  = catalystcenter
+  provider  = meraki
   device_id = "string"
   parameters {
 

@@ -1,6 +1,6 @@
 
 resource "catalystcenter_wireless_access_points_factory_reset_request_provision" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     ap_mac_addresses     = ["string"]

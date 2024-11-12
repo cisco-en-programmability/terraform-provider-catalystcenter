@@ -80,14 +80,16 @@ func resourceGlobalCredentialDeleteCreate(ctx context.Context, d *schema.Resourc
 
 	vvGlobalCredentialID := vGlobalCredentialID.(string)
 
-	response1, restyResp1, err := client.Discovery.DeleteGlobalCredentialsByID(vvGlobalCredentialID)
+	// has_unknown_response: None
+
+	response1, restyResp1, err := client.Discovery.DeleteGlobalCredentialsByIDV1(vvGlobalCredentialID)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing DeleteGlobalCredentialsByID", err))
+			"Failure when executing DeleteGlobalCredentialsByIDV1", err))
 		return diags
 	}
 
@@ -95,7 +97,7 @@ func resourceGlobalCredentialDeleteCreate(ctx context.Context, d *schema.Resourc
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing DeleteGlobalCredentialsById", err))
+			"Failure when executing DeleteGlobalCredentialsByIdV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -129,22 +131,20 @@ func resourceGlobalCredentialDeleteCreate(ctx context.Context, d *schema.Resourc
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing DeleteGlobalCredentialsById", err1))
+				"Failure when executing DeleteGlobalCredentialsByIdV1", err1))
 			return diags
 		}
 	}
-
-	vItem1 := flattenDiscoveryDeleteGlobalCredentialsByIDItem(response1.Response)
+	vItem1 := flattenDiscoveryDeleteGlobalCredentialsByIDV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting DeleteGlobalCredentialsByID response",
+			"Failure when setting DeleteGlobalCredentialsByIDV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceGlobalCredentialDeleteRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -159,7 +159,7 @@ func resourceGlobalCredentialDeleteDelete(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func flattenDiscoveryDeleteGlobalCredentialsByIDItem(item *catalystcentersdkgo.ResponseDiscoveryDeleteGlobalCredentialsByIDResponse) []map[string]interface{} {
+func flattenDiscoveryDeleteGlobalCredentialsByIDV1Item(item *catalystcentersdkgo.ResponseDiscoveryDeleteGlobalCredentialsByIDV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

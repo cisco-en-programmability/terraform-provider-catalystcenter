@@ -176,31 +176,31 @@ func dataSourceIntentCustomIssueDefinitionsRead(ctx context.Context, d *schema.R
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionID")
+		log.Printf("[DEBUG] Selected method: GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1")
 		vvID := vID.(string)
 
-		headerParams1 := catalystcentersdkgo.GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDHeaderParams{}
+		headerParams1 := catalystcentersdkgo.GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1HeaderParams{}
 
 		headerParams1.XCaLLERID = vXCaLLERID.(string)
 
-		response1, restyResp1, err := client.Issues.GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionID(vvID, &headerParams1)
+		response1, restyResp1, err := client.Issues.GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1(vvID, &headerParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionID", err,
-				"Failure at GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionID, unexpected response", ""))
+				"Failure when executing 2 GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1", err,
+				"Failure at GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDItem(response1.Response)
+		vItem1 := flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionID response",
+				"Failure when setting GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1 response",
 				err))
 			return diags
 		}
@@ -212,7 +212,7 @@ func dataSourceIntentCustomIssueDefinitionsRead(ctx context.Context, d *schema.R
 	return diags
 }
 
-func flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDItem(item *catalystcentersdkgo.ResponseIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDResponse) []map[string]interface{} {
+func flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1Item(item *catalystcentersdkgo.ResponseIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -222,7 +222,7 @@ func flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDI
 	respItem["description"] = item.Description
 	respItem["profile_id"] = item.ProfileID
 	respItem["trigger_id"] = item.TriggerID
-	respItem["rules"] = flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDItemRules(item.Rules)
+	respItem["rules"] = flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1ItemRules(item.Rules)
 	respItem["is_enabled"] = boolPtrToString(item.IsEnabled)
 	respItem["priority"] = item.Priority
 	respItem["is_deletable"] = boolPtrToString(item.IsDeletable)
@@ -234,7 +234,7 @@ func flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDI
 	}
 }
 
-func flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDItemRules(items *[]catalystcentersdkgo.ResponseIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDResponseRules) []map[string]interface{} {
+func flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1ItemRules(items *[]catalystcentersdkgo.ResponseIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1ResponseRules) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

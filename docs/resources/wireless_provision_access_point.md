@@ -12,9 +12,6 @@ description: |-
 It performs create operation on Wireless.
 
 - Access Point Provision and ReProvision
-
-
-
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -23,16 +20,15 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 
 ```terraform
 resource "catalystcenter_wireless_provision_access_point" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
-    payload {
-      custom_ap_group_name   = "string"
-      custom_flex_group_name = ["string"]
-      device_name            = "string"
-      rf_profile             = "string"
-      site_name_hierarchy    = "string"
-      type                   = "string"
-    }
+
+    custom_ap_group_name   = "string"
+    custom_flex_group_name = ["string"]
+    device_name            = "string"
+    rf_profile             = "string"
+    site_name_hierarchy    = "string"
+    type                   = "string"
   }
 }
 
@@ -59,7 +55,7 @@ output "catalystcenter_wireless_provision_access_point_example" {
 
 Optional:
 
-- `payload` (Block List) Array of RequestWirelessAPProvision2 (see [below for nested schema](#nestedblock--parameters--payload))
+- `payload` (Block List) Array of RequestWirelessAPProvisionConnectivityV1 (see [below for nested schema](#nestedblock--parameters--payload))
 
 <a id="nestedblock--parameters--payload"></a>
 ### Nested Schema for `parameters.payload`

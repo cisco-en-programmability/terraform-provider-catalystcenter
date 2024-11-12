@@ -255,8 +255,8 @@ func dataSourceWirelessProfilesRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetWirelessProfiles")
-		queryParams1 := catalystcentersdkgo.GetWirelessProfilesQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetWirelessProfilesV1")
+		queryParams1 := catalystcentersdkgo.GetWirelessProfilesV1QueryParams{}
 
 		if okLimit {
 			queryParams1.Limit = vLimit.(float64)
@@ -265,24 +265,24 @@ func dataSourceWirelessProfilesRead(ctx context.Context, d *schema.ResourceData,
 			queryParams1.Offset = vOffset.(float64)
 		}
 
-		response1, restyResp1, err := client.Wireless.GetWirelessProfiles(&queryParams1)
+		response1, restyResp1, err := client.Wireless.GetWirelessProfilesV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetWirelessProfiles", err,
-				"Failure at GetWirelessProfiles, unexpected response", ""))
+				"Failure when executing 2 GetWirelessProfilesV1", err,
+				"Failure at GetWirelessProfilesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenWirelessGetWirelessProfilesItems(response1.Response)
+		vItems1 := flattenWirelessGetWirelessProfilesV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetWirelessProfiles response",
+				"Failure when setting GetWirelessProfilesV1 response",
 				err))
 			return diags
 		}
@@ -292,27 +292,27 @@ func dataSourceWirelessProfilesRead(ctx context.Context, d *schema.ResourceData,
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetWirelessProfileByID")
+		log.Printf("[DEBUG] Selected method: GetWirelessProfileByIDV1")
 		vvID := vID.(string)
 
-		response2, restyResp2, err := client.Wireless.GetWirelessProfileByID(vvID)
+		response2, restyResp2, err := client.Wireless.GetWirelessProfileByIDV1(vvID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetWirelessProfileByID", err,
-				"Failure at GetWirelessProfileByID, unexpected response", ""))
+				"Failure when executing 2 GetWirelessProfileByIDV1", err,
+				"Failure at GetWirelessProfileByIDV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenWirelessGetWirelessProfileByIDItem(response2.Response)
+		vItem2 := flattenWirelessGetWirelessProfileByIDV1Item(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetWirelessProfileByID response",
+				"Failure when setting GetWirelessProfileByIDV1 response",
 				err))
 			return diags
 		}
@@ -324,7 +324,7 @@ func dataSourceWirelessProfilesRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenWirelessGetWirelessProfilesItems(items *[]catalystcentersdkgo.ResponseWirelessGetWirelessProfilesResponse) []map[string]interface{} {
+func flattenWirelessGetWirelessProfilesV1Items(items *[]catalystcentersdkgo.ResponseWirelessGetWirelessProfilesV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -332,14 +332,14 @@ func flattenWirelessGetWirelessProfilesItems(items *[]catalystcentersdkgo.Respon
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["wireless_profile_name"] = item.WirelessProfileName
-		respItem["ssid_details"] = flattenWirelessGetWirelessProfilesItemsSSIDDetails(item.SSIDDetails)
+		respItem["ssid_details"] = flattenWirelessGetWirelessProfilesV1ItemsSSIDDetails(item.SSIDDetails)
 		respItem["id"] = item.ID
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenWirelessGetWirelessProfilesItemsSSIDDetails(items *[]catalystcentersdkgo.ResponseWirelessGetWirelessProfilesResponseSSIDDetails) []map[string]interface{} {
+func flattenWirelessGetWirelessProfilesV1ItemsSSIDDetails(items *[]catalystcentersdkgo.ResponseWirelessGetWirelessProfilesV1ResponseSSIDDetails) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -347,7 +347,7 @@ func flattenWirelessGetWirelessProfilesItemsSSIDDetails(items *[]catalystcenters
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["ssid_name"] = item.SSIDName
-		respItem["flex_connect"] = flattenWirelessGetWirelessProfilesItemsSSIDDetailsFlexConnect(item.FlexConnect)
+		respItem["flex_connect"] = flattenWirelessGetWirelessProfilesV1ItemsSSIDDetailsFlexConnect(item.FlexConnect)
 		respItem["enable_fabric"] = boolPtrToString(item.EnableFabric)
 		respItem["wlan_profile_name"] = item.WLANProfileName
 		respItem["interface_name"] = item.InterfaceName
@@ -358,7 +358,7 @@ func flattenWirelessGetWirelessProfilesItemsSSIDDetails(items *[]catalystcenters
 	return respItems
 }
 
-func flattenWirelessGetWirelessProfilesItemsSSIDDetailsFlexConnect(item *catalystcentersdkgo.ResponseWirelessGetWirelessProfilesResponseSSIDDetailsFlexConnect) []map[string]interface{} {
+func flattenWirelessGetWirelessProfilesV1ItemsSSIDDetailsFlexConnect(item *catalystcentersdkgo.ResponseWirelessGetWirelessProfilesV1ResponseSSIDDetailsFlexConnect) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -372,20 +372,20 @@ func flattenWirelessGetWirelessProfilesItemsSSIDDetailsFlexConnect(item *catalys
 
 }
 
-func flattenWirelessGetWirelessProfileByIDItem(item *catalystcentersdkgo.ResponseWirelessGetWirelessProfileByIDResponse) []map[string]interface{} {
+func flattenWirelessGetWirelessProfileByIDV1Item(item *catalystcentersdkgo.ResponseWirelessGetWirelessProfileByIDV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["wireless_profile_name"] = item.WirelessProfileName
-	respItem["ssid_details"] = flattenWirelessGetWirelessProfileByIDItemSSIDDetails(item.SSIDDetails)
+	respItem["ssid_details"] = flattenWirelessGetWirelessProfileByIDV1ItemSSIDDetails(item.SSIDDetails)
 	respItem["id"] = item.ID
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenWirelessGetWirelessProfileByIDItemSSIDDetails(items *[]catalystcentersdkgo.ResponseWirelessGetWirelessProfileByIDResponseSSIDDetails) []map[string]interface{} {
+func flattenWirelessGetWirelessProfileByIDV1ItemSSIDDetails(items *[]catalystcentersdkgo.ResponseWirelessGetWirelessProfileByIDV1ResponseSSIDDetails) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -393,7 +393,7 @@ func flattenWirelessGetWirelessProfileByIDItemSSIDDetails(items *[]catalystcente
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["ssid_name"] = item.SSIDName
-		respItem["flex_connect"] = flattenWirelessGetWirelessProfileByIDItemSSIDDetailsFlexConnect(item.FlexConnect)
+		respItem["flex_connect"] = flattenWirelessGetWirelessProfileByIDV1ItemSSIDDetailsFlexConnect(item.FlexConnect)
 		respItem["enable_fabric"] = boolPtrToString(item.EnableFabric)
 		respItem["wlan_profile_name"] = item.WLANProfileName
 		respItem["interface_name"] = item.InterfaceName
@@ -404,7 +404,7 @@ func flattenWirelessGetWirelessProfileByIDItemSSIDDetails(items *[]catalystcente
 	return respItems
 }
 
-func flattenWirelessGetWirelessProfileByIDItemSSIDDetailsFlexConnect(item *catalystcentersdkgo.ResponseWirelessGetWirelessProfileByIDResponseSSIDDetailsFlexConnect) []map[string]interface{} {
+func flattenWirelessGetWirelessProfileByIDV1ItemSSIDDetailsFlexConnect(item *catalystcentersdkgo.ResponseWirelessGetWirelessProfileByIDV1ResponseSSIDDetailsFlexConnect) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

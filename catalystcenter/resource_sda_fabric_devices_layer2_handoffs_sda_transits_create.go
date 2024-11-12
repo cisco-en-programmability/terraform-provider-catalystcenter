@@ -64,7 +64,7 @@ func resourceSdaFabricDevicesLayer2HandoffsSdaTransitsCreate() *schema.Resource 
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"payload": &schema.Schema{
-							Description: `Array of RequestSdaAddFabricDevicesLayer3HandoffsWithSdaTransit`,
+							Description: `Array of RequestSdaAddFabricDevicesLayer3HandoffsWithSdaTransitV1`,
 							Type:        schema.TypeList,
 							Optional:    true,
 							ForceNew:    true,
@@ -146,20 +146,18 @@ func resourceSdaFabricDevicesLayer2HandoffsSdaTransitsCreateCreate(ctx context.C
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestSdaFabricDevicesLayer2HandoffsSdaTransitsCreateAddFabricDevicesLayer3HandoffsWithSdaTransit(ctx, "parameters.0", d)
+	request1 := expandRequestSdaFabricDevicesLayer2HandoffsSdaTransitsCreateAddFabricDevicesLayer3HandoffsWithSdaTransitV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.Sda.AddFabricDevicesLayer3HandoffsWithSdaTransit(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Sda.AddFabricDevicesLayer3HandoffsWithSdaTransitV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing AddFabricDevicesLayer3HandoffsWithSdaTransit", err))
+			"Failure when executing AddFabricDevicesLayer3HandoffsWithSdaTransitV1", err))
 		return diags
 	}
 
@@ -167,7 +165,7 @@ func resourceSdaFabricDevicesLayer2HandoffsSdaTransitsCreateCreate(ctx context.C
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing AddFabricDevicesLayer3HandoffsWithSdaTransit", err))
+			"Failure when executing AddFabricDevicesLayer3HandoffsWithSdaTransitV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -201,22 +199,24 @@ func resourceSdaFabricDevicesLayer2HandoffsSdaTransitsCreateCreate(ctx context.C
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing AddFabricDevicesLayer3HandoffsWithSdaTransit", err1))
+				"Failure when executing AddFabricDevicesLayer3HandoffsWithSdaTransitV1", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenSdaAddFabricDevicesLayer3HandoffsWithSdaTransitItem(response1.Response)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
+	vItem1 := flattenSdaAddFabricDevicesLayer3HandoffsWithSdaTransitV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting AddFabricDevicesLayer3HandoffsWithSdaTransit response",
+			"Failure when setting AddFabricDevicesLayer3HandoffsWithSdaTransitV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceSdaFabricDevicesLayer2HandoffsSdaTransitsCreateRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -231,16 +231,16 @@ func resourceSdaFabricDevicesLayer2HandoffsSdaTransitsCreateDelete(ctx context.C
 	return diags
 }
 
-func expandRequestSdaFabricDevicesLayer2HandoffsSdaTransitsCreateAddFabricDevicesLayer3HandoffsWithSdaTransit(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddFabricDevicesLayer3HandoffsWithSdaTransit {
-	request := catalystcentersdkgo.RequestSdaAddFabricDevicesLayer3HandoffsWithSdaTransit{}
-	if v := expandRequestSdaFabricDevicesLayer2HandoffsSdaTransitsCreateAddFabricDevicesLayer3HandoffsWithSdaTransitItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaFabricDevicesLayer2HandoffsSdaTransitsCreateAddFabricDevicesLayer3HandoffsWithSdaTransitV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddFabricDevicesLayer3HandoffsWithSdaTransitV1 {
+	request := catalystcentersdkgo.RequestSdaAddFabricDevicesLayer3HandoffsWithSdaTransitV1{}
+	if v := expandRequestSdaFabricDevicesLayer2HandoffsSdaTransitsCreateAddFabricDevicesLayer3HandoffsWithSdaTransitV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	return &request
 }
 
-func expandRequestSdaFabricDevicesLayer2HandoffsSdaTransitsCreateAddFabricDevicesLayer3HandoffsWithSdaTransitItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer3HandoffsWithSdaTransit {
-	request := []catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer3HandoffsWithSdaTransit{}
+func expandRequestSdaFabricDevicesLayer2HandoffsSdaTransitsCreateAddFabricDevicesLayer3HandoffsWithSdaTransitV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer3HandoffsWithSdaTransitV1 {
+	request := []catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer3HandoffsWithSdaTransitV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -251,7 +251,7 @@ func expandRequestSdaFabricDevicesLayer2HandoffsSdaTransitsCreateAddFabricDevice
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaFabricDevicesLayer2HandoffsSdaTransitsCreateAddFabricDevicesLayer3HandoffsWithSdaTransitItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaFabricDevicesLayer2HandoffsSdaTransitsCreateAddFabricDevicesLayer3HandoffsWithSdaTransitV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -259,8 +259,8 @@ func expandRequestSdaFabricDevicesLayer2HandoffsSdaTransitsCreateAddFabricDevice
 	return &request
 }
 
-func expandRequestSdaFabricDevicesLayer2HandoffsSdaTransitsCreateAddFabricDevicesLayer3HandoffsWithSdaTransitItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer3HandoffsWithSdaTransit {
-	request := catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer3HandoffsWithSdaTransit{}
+func expandRequestSdaFabricDevicesLayer2HandoffsSdaTransitsCreateAddFabricDevicesLayer3HandoffsWithSdaTransitV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer3HandoffsWithSdaTransitV1 {
+	request := catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer3HandoffsWithSdaTransitV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".network_device_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".network_device_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".network_device_id")))) {
 		request.NetworkDeviceID = interfaceToString(v)
 	}
@@ -285,7 +285,7 @@ func expandRequestSdaFabricDevicesLayer2HandoffsSdaTransitsCreateAddFabricDevice
 	return &request
 }
 
-func flattenSdaAddFabricDevicesLayer3HandoffsWithSdaTransitItem(item *catalystcentersdkgo.ResponseSdaAddFabricDevicesLayer3HandoffsWithSdaTransitResponse) []map[string]interface{} {
+func flattenSdaAddFabricDevicesLayer3HandoffsWithSdaTransitV1Item(item *catalystcentersdkgo.ResponseSdaAddFabricDevicesLayer3HandoffsWithSdaTransitV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

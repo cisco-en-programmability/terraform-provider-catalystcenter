@@ -1,11 +1,11 @@
 
 resource "catalystcenter_template_preview" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     device_id       = "string"
-    params          = "string"
-    resource_params = "string"
+    params          = "------"
+    resource_params = "------"
     template_id     = "string"
   }
 }

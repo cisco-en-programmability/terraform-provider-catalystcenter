@@ -61,8 +61,8 @@ func dataSourceProductNamesCountRead(ctx context.Context, d *schema.ResourceData
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: CountOfNetworkProductNames")
-		queryParams1 := catalystcentersdkgo.CountOfNetworkProductNamesQueryParams{}
+		log.Printf("[DEBUG] Selected method: CountOfNetworkProductNamesV1")
+		queryParams1 := catalystcentersdkgo.CountOfNetworkProductNamesV1QueryParams{}
 
 		if okProductName {
 			queryParams1.ProductName = vProductName.(string)
@@ -71,24 +71,24 @@ func dataSourceProductNamesCountRead(ctx context.Context, d *schema.ResourceData
 			queryParams1.ProductID = vProductID.(string)
 		}
 
-		response1, restyResp1, err := client.SoftwareImageManagementSwim.CountOfNetworkProductNames(&queryParams1)
+		response1, restyResp1, err := client.SoftwareImageManagementSwim.CountOfNetworkProductNamesV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 CountOfNetworkProductNames", err,
-				"Failure at CountOfNetworkProductNames, unexpected response", ""))
+				"Failure when executing 2 CountOfNetworkProductNamesV1", err,
+				"Failure at CountOfNetworkProductNamesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSoftwareImageManagementSwimCountOfNetworkProductNamesItem(response1.Response)
+		vItem1 := flattenSoftwareImageManagementSwimCountOfNetworkProductNamesV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting CountOfNetworkProductNames response",
+				"Failure when setting CountOfNetworkProductNamesV1 response",
 				err))
 			return diags
 		}
@@ -100,7 +100,7 @@ func dataSourceProductNamesCountRead(ctx context.Context, d *schema.ResourceData
 	return diags
 }
 
-func flattenSoftwareImageManagementSwimCountOfNetworkProductNamesItem(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimCountOfNetworkProductNamesResponse) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimCountOfNetworkProductNamesV1Item(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimCountOfNetworkProductNamesV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -106,29 +106,29 @@ func dataSourceSdaVirtualNetworkV2Read(ctx context.Context, d *schema.ResourceDa
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetVirtualNetworkWithScalableGroups")
-		queryParams1 := catalystcentersdkgo.GetVirtualNetworkWithScalableGroupsQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetVirtualNetworkWithScalableGroupsV1")
+		queryParams1 := catalystcentersdkgo.GetVirtualNetworkWithScalableGroupsV1QueryParams{}
 
 		queryParams1.VirtualNetworkName = vVirtualNetworkName.(string)
 
-		response1, restyResp1, err := client.Sda.GetVirtualNetworkWithScalableGroups(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetVirtualNetworkWithScalableGroupsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetVirtualNetworkWithScalableGroups", err,
-				"Failure at GetVirtualNetworkWithScalableGroups, unexpected response", ""))
+				"Failure when executing 2 GetVirtualNetworkWithScalableGroupsV1", err,
+				"Failure at GetVirtualNetworkWithScalableGroupsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetVirtualNetworkWithScalableGroupsItem(response1)
+		vItem1 := flattenSdaGetVirtualNetworkWithScalableGroupsV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetVirtualNetworkWithScalableGroups response",
+				"Failure when setting GetVirtualNetworkWithScalableGroupsV1 response",
 				err))
 			return diags
 		}
@@ -140,7 +140,7 @@ func dataSourceSdaVirtualNetworkV2Read(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func flattenSdaGetVirtualNetworkWithScalableGroupsItem(item *catalystcentersdkgo.ResponseSdaGetVirtualNetworkWithScalableGroups) []map[string]interface{} {
+func flattenSdaGetVirtualNetworkWithScalableGroupsV1Item(item *catalystcentersdkgo.ResponseSdaGetVirtualNetworkWithScalableGroupsV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

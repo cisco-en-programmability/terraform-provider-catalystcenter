@@ -15,7 +15,7 @@ func dataSourceRoles() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on User and Roles.
 
-- Get all roles for the Cisco Catalyst Center System.
+- Get all roles for the Cisco DNA Center System.
 `,
 
 		ReadContext: dataSourceRolesRead,
@@ -136,30 +136,30 @@ func dataSourceRolesRead(ctx context.Context, d *schema.ResourceData, m interfac
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetRolesAPI")
+		log.Printf("[DEBUG] Selected method: GetRolesAPIV1")
 
-		headerParams1 := catalystcentersdkgo.GetRolesAPIHeaderParams{}
+		headerParams1 := catalystcentersdkgo.GetRolesAPIV1HeaderParams{}
 
 		headerParams1.InvokeSource = vInvokeSource.(string)
 
-		response1, restyResp1, err := client.UserandRoles.GetRolesAPI(&headerParams1)
+		response1, restyResp1, err := client.UserandRoles.GetRolesAPIV1(&headerParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetRolesAPI", err,
-				"Failure at GetRolesAPI, unexpected response", ""))
+				"Failure when executing 2 GetRolesAPIV1", err,
+				"Failure at GetRolesAPIV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenUserandRolesGetRolesAPIItem(response1.Response)
+		vItem1 := flattenUserandRolesGetRolesAPIV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetRolesAPI response",
+				"Failure when setting GetRolesAPIV1 response",
 				err))
 			return diags
 		}
@@ -171,26 +171,26 @@ func dataSourceRolesRead(ctx context.Context, d *schema.ResourceData, m interfac
 	return diags
 }
 
-func flattenUserandRolesGetRolesAPIItem(item *catalystcentersdkgo.ResponseUserandRolesGetRolesAPIResponse) []map[string]interface{} {
+func flattenUserandRolesGetRolesAPIV1Item(item *catalystcentersdkgo.ResponseUserandRolesGetRolesAPIV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["roles"] = flattenUserandRolesGetRolesAPIItemRoles(item.Roles)
+	respItem["roles"] = flattenUserandRolesGetRolesAPIV1ItemRoles(item.Roles)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenUserandRolesGetRolesAPIItemRoles(items *[]catalystcentersdkgo.ResponseUserandRolesGetRolesAPIResponseRoles) []map[string]interface{} {
+func flattenUserandRolesGetRolesAPIV1ItemRoles(items *[]catalystcentersdkgo.ResponseUserandRolesGetRolesAPIV1ResponseRoles) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["resource_types"] = flattenUserandRolesGetRolesAPIItemRolesResourceTypes(item.ResourceTypes)
-		respItem["meta"] = flattenUserandRolesGetRolesAPIItemRolesMeta(item.Meta)
+		respItem["resource_types"] = flattenUserandRolesGetRolesAPIV1ItemRolesResourceTypes(item.ResourceTypes)
+		respItem["meta"] = flattenUserandRolesGetRolesAPIV1ItemRolesMeta(item.Meta)
 		respItem["role_id"] = item.RoleID
 		respItem["name"] = item.Name
 		respItem["description"] = item.Description
@@ -200,7 +200,7 @@ func flattenUserandRolesGetRolesAPIItemRoles(items *[]catalystcentersdkgo.Respon
 	return respItems
 }
 
-func flattenUserandRolesGetRolesAPIItemRolesResourceTypes(items *[]catalystcentersdkgo.ResponseUserandRolesGetRolesAPIResponseRolesResourceTypes) []map[string]interface{} {
+func flattenUserandRolesGetRolesAPIV1ItemRolesResourceTypes(items *[]catalystcentersdkgo.ResponseUserandRolesGetRolesAPIV1ResponseRolesResourceTypes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -214,7 +214,7 @@ func flattenUserandRolesGetRolesAPIItemRolesResourceTypes(items *[]catalystcente
 	return respItems
 }
 
-func flattenUserandRolesGetRolesAPIItemRolesMeta(item *catalystcentersdkgo.ResponseUserandRolesGetRolesAPIResponseRolesMeta) []map[string]interface{} {
+func flattenUserandRolesGetRolesAPIV1ItemRolesMeta(item *catalystcentersdkgo.ResponseUserandRolesGetRolesAPIV1ResponseRolesMeta) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

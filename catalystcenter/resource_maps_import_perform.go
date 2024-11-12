@@ -31,8 +31,11 @@ performing the import.
 				Computed: true,
 			},
 			"item": &schema.Schema{
-				Type:     schema.TypeString,
+				Type:     schema.TypeList,
 				Computed: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
 			},
 			"parameters": &schema.Schema{
 				Type:     schema.TypeList,
@@ -66,28 +69,32 @@ func resourceMapsImportPerformCreate(ctx context.Context, d *schema.ResourceData
 
 	vvImportContextUUID := vImportContextUUID.(string)
 
-	_, response1, err := client.Sites.ImportMapArchivePerformImport(vvImportContextUUID)
+	// has_unknown_response: None
+
+	response1, restyResp1, err := client.Sites.ImportMapArchivePerformImportV1(vvImportContextUUID)
 
 	if err != nil || response1 == nil {
+		if restyResp1 != nil {
+			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+		}
 		diags = append(diags, diagError(
-			"Failure when executing ImportMapArchivePerformImport", err))
+			"Failure when executing ImportMapArchivePerformImportV1", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	//Analizar verificacion.
-
-	vItem1 := response1.String()
-	if err := d.Set("item", vItem1); err != nil {
+	if err := d.Set("item", response1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ImportMapArchivePerformImport response",
+			"Failure when setting ImportMapArchivePerformImportV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
+
+	//Analizar verificacion.
 
 }
 func resourceMapsImportPerformRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

@@ -159,8 +159,8 @@ func dataSourceSdaPortAssignmentsRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetPortAssignments")
-		queryParams1 := catalystcentersdkgo.GetPortAssignmentsQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetPortAssignmentsV1")
+		queryParams1 := catalystcentersdkgo.GetPortAssignmentsV1QueryParams{}
 
 		if okFabricID {
 			queryParams1.FabricID = vFabricID.(string)
@@ -184,24 +184,24 @@ func dataSourceSdaPortAssignmentsRead(ctx context.Context, d *schema.ResourceDat
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.Sda.GetPortAssignments(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetPortAssignmentsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetPortAssignments", err,
-				"Failure at GetPortAssignments, unexpected response", ""))
+				"Failure when executing 2 GetPortAssignmentsV1", err,
+				"Failure at GetPortAssignmentsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaGetPortAssignmentsItems(response1.Response)
+		vItems1 := flattenSdaGetPortAssignmentsV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetPortAssignments response",
+				"Failure when setting GetPortAssignmentsV1 response",
 				err))
 			return diags
 		}
@@ -213,7 +213,7 @@ func dataSourceSdaPortAssignmentsRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenSdaGetPortAssignmentsItems(items *[]catalystcentersdkgo.ResponseSdaGetPortAssignmentsResponse) []map[string]interface{} {
+func flattenSdaGetPortAssignmentsV1Items(items *[]catalystcentersdkgo.ResponseSdaGetPortAssignmentsV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

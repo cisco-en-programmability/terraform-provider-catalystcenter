@@ -95,7 +95,7 @@ output "catalystcenter_assurance_issues_example" {
 
 - `accept_language` (String) Accept-Language header parameter. This header parameter can be used to specify the language in which issue description and suggested actions need to be returned. Available options are 'en' (English), 'ja' (Japanese), 'ko' (Korean), 'zh' (Chinese). If this parameter is not present the issue details are returned in English language.
 - `ai_driven` (Boolean) aiDriven query parameter. Flag whether the issue is AI driven issue
-- `attribute` (String) attribute query parameter. List of attributes related to the issue. If these are provided, then only those attributes will be part of response along with the default attributes. Please refer to the 'IssuesResponseAttribute' Model for supported attributes. Examples: 'attribute=deviceType' (single attribute requested) 'attribute=deviceType&attribute=updatedBy' (multiple attributes requested)
+- `attribute` (String) attribute query parameter. List of attributes related to the issue. If these are provided, then only those attributes will be part of response along with the default attributes. Please refer to the *IssuesResponseAttribute* Model for supported attributes. Examples: *attribute=deviceType* (single attribute requested) *attribute=deviceType&attribute=updatedBy* (multiple attributes requested)
 - `category` (String) category query parameter. Categories of the issue. Supports single category and multiple categories. Examples: category=availability (single status requested) category=availability&category=onboarding (multiple categories requested)
 - `device_type` (String) deviceType query parameter. Device Type of the device to which this issue belongs to. Supports single device type and multiple device types. Examples: deviceType=wireless controller (single device type requested) deviceType=wireless controller&deviceType=core (multiple device types requested)
 - `end_time` (Number) endTime query parameter. End time to which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
@@ -115,50 +115,50 @@ Examples: entityId=68:ca:e4:79:3f:20 (single entity id requested) entityId=68:ca
 - `is_global` (Boolean) isGlobal query parameter. Global issues are those issues which impacts across many devices, sites. They are also displayed on Issue Dashboard in Catalyst Center UI. Non-Global issues are displayed only on Client 360 or Device 360 pages. If this flag is 'true', only global issues are returned. If it if 'false', all issues are returned.
 - `issue_id` (String) issueId query parameter. UUID of the issue Examples: issueId=e52aecfe-b142-4287-a587-11a16ba6dd26 (single issue id requested) issueId=e52aecfe-b142-4287-a587-11a16ba6dd26&issueId=864d0421-02c0-43a6-9c52-81cad45f66d8 (multiple issue ids requested)
 - `limit` (Number) limit query parameter. Maximum number of issues to return
-- `mac_address` (String) macAddress query parameter. The macAddress of the network device or client This field supports wildcard ('*') character-based search.  Ex: '*AB:AB:AB*' or 'AB:AB:AB*' or '*AB:AB:AB' Examples:
-'macAddress=AB:AB:AB:CD:CD:CD' (single macAddress requested)
-'macAddress=AB:AB:AB:CD:CD:DC&macAddress=AB:AB:AB:CD:CD:FE' (multiple macAddress requested)
+- `mac_address` (String) macAddress query parameter. The macAddress of the network device or client This field supports wildcard (***) character-based search.  Ex: **AB:AB:AB** or *AB:AB:AB** or **AB:AB:AB* Examples:
+*macAddress=AB:AB:AB:CD:CD:CD* (single macAddress requested)
+*macAddress=AB:AB:AB:CD:CD:DC&macAddress=AB:AB:AB:CD:CD:FE* (multiple macAddress requested)
 - `name` (String) name query parameter. The name of the issue Examples: name=ap_down (single issue name requested) name=ap_down&name=wlc_monitor (multiple issue names requested) Issue names can be retrieved using the API /data/api/v1/assuranceIssueConfigurations
-- `network_device_id` (String) networkDeviceId query parameter. The list of Network Device Uuids. (Ex. '6bef213c-19ca-4170-8375-b694e251101c')
+- `network_device_id` (String) networkDeviceId query parameter. The list of Network Device Uuids. (Ex. *6bef213c-19ca-4170-8375-b694e251101c*)
 Examples:
-'networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c' (single networkDeviceId requested)
-'networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c&networkDeviceId=32219612-819e-4b5e-a96b-cf22aca13dd9&networkDeviceId=2541e9a7-b80d-4955-8aa2-79b233318ba0' (multiple networkDeviceIds with & separator)
-- `network_device_ip_address` (String) networkDeviceIpAddress query parameter. The list of Network Device management IP Address. (Ex. '121.1.1.10')
-This field supports wildcard ('*') character-based search.  Ex: '*1.1*' or '1.1*' or '*1.1'
+*networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c* (single networkDeviceId requested)
+*networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c&networkDeviceId=32219612-819e-4b5e-a96b-cf22aca13dd9&networkDeviceId=2541e9a7-b80d-4955-8aa2-79b233318ba0* (multiple networkDeviceIds with & separator)
+- `network_device_ip_address` (String) networkDeviceIpAddress query parameter. The list of Network Device management IP Address. (Ex. *121.1.1.10*)
+This field supports wildcard (***) character-based search.  Ex: **1.1** or *1.1** or **1.1*
 Examples:
-'networkDeviceIpAddress=121.1.1.10'
-'networkDeviceIpAddress=121.1.1.10&networkDeviceIpAddress=172.20.1.10&networkDeviceIpAddress=10.10.20.10' (multiple networkDevice IP Address with & separator)
+*networkDeviceIpAddress=121.1.1.10*
+*networkDeviceIpAddress=121.1.1.10&networkDeviceIpAddress=172.20.1.10&networkDeviceIpAddress=10.10.20.10* (multiple networkDevice IP Address with & separator)
 - `offset` (Number) offset query parameter. Specifies the starting point within all records returned by the API. It's one based offset. The starting value is 1.
 - `order` (String) order query parameter. The sort order of the field ascending or descending.
 - `priority` (String) priority query parameter. Priority of the issue. Supports single priority and multiple priorities Examples: priority=P1 (single priority requested) priority=P1&priority=P2&priority=P3 (multiple priorities requested)
 - `severity` (String) severity query parameter. Severity of the issue. Supports single severity and multiple severities. Examples: severity=high (single severity requested) severity=high&severity=medium (multiple severities requested)
-- `site_hierarchy` (String) siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. 'Global/AreaName/BuildingName/FloorName')
+- `site_hierarchy` (String) siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. *Global/AreaName/BuildingName/FloorName*)
 This field supports wildcard asterisk (*) character search support. E.g. */San*, */San, /San*
 Examples:
-'?siteHierarchy=Global/AreaName/BuildingName/FloorName' (single siteHierarchy requested)
-'?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2' (multiple siteHierarchies requested)
-- `site_hierarchy_id` (String) siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. 'globalUuid/areaUuid/buildingUuid/floorUuid')
-This field supports wildcard asterisk (*) character search support. E.g. '*uuid*, *uuid, uuid*
+*?siteHierarchy=Global/AreaName/BuildingName/FloorName* (single siteHierarchy requested)
+*?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2* (multiple siteHierarchies requested)
+- `site_hierarchy_id` (String) siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. *globalUuid/areaUuid/buildingUuid/floorUuid*)
+This field supports wildcard asterisk (*) character search support. E.g. **uuid*, *uuid, uuid*
 Examples:
-'?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid '(single siteHierarchyId requested)
-'?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2' (multiple siteHierarchyIds requested)
-- `site_id` (String) siteId query parameter. The UUID of the site. (Ex. 'flooruuid')
+*?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid *(single siteHierarchyId requested)
+*?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2* (multiple siteHierarchyIds requested)
+- `site_id` (String) siteId query parameter. The UUID of the site. (Ex. *flooruuid*)
 This field supports wildcard asterisk (*) character search support. E.g.*flooruuid*, *flooruuid, flooruuid*
 Examples:
-'?siteId=id1' (single id requested)
-'?siteId=id1&siteId=id2&siteId=id3' (multiple ids requested)
-- `site_name` (String) siteName query parameter. The name of the site. (Ex. 'FloorName')
+*?siteId=id1* (single id requested)
+*?siteId=id1&siteId=id2&siteId=id3* (multiple ids requested)
+- `site_name` (String) siteName query parameter. The name of the site. (Ex. *FloorName*)
 This field supports wildcard asterisk (*) character search support. E.g. *San*, *San, San*
 Examples:
-'?siteName=building1' (single siteName requested)
-'?siteName=building1&siteName=building2&siteName=building3' (multiple siteNames requested)
+*?siteName=building1* (single siteName requested)
+*?siteName=building1&siteName=building2&siteName=building3* (multiple siteNames requested)
 - `sort_by` (String) sortBy query parameter.
 - `start_time` (Number) startTime query parameter. Start time from which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
-If 'startTime' is not provided, API will default to current time.
+If *startTime* is not provided, API will default to current time.
 - `status` (String) status query parameter. Status of the issue. Supports single status and multiple statuses. Examples: status=active (single status requested) status=active&status=resolved (multiple statuses requested)
 - `updated_by` (String) updatedBy query parameter. The user who last updated this issue. Examples: updatedBy=admin (single updatedBy requested) updatedBy=admin&updatedBy=john (multiple updatedBy requested)
-- `view` (String) view query parameter. The name of the View. Each view represents a specific data set. Please refer to the 'IssuesView' Model for supported views. View is predefined set of attributes supported by the API. Only the attributes related to the given view will be part of the API response along with default attributes. If multiple views are provided, then response will contain attributes from all those views. If no views are specified, all attributes will be returned.
-| View Name | Included Attributes | | --| --| | 'update' | updatedTime, updatedBy | | 'site' | siteName, siteHierarchy, siteId, siteHierarchyId | Examples: 'view=update' (single view requested) 'view=update&view=site' (multiple views requested)
+- `view` (String) view query parameter. The name of the View. Each view represents a specific data set. Please refer to the *IssuesView* Model for supported views. View is predefined set of attributes supported by the API. Only the attributes related to the given view will be part of the API response along with default attributes. If multiple views are provided, then response will contain attributes from all those views. If no views are specified, all attributes will be returned.
+| View Name | Included Attributes | | --| --| | *update* | updatedTime, updatedBy | | *site* | siteName, siteHierarchy, siteId, siteHierarchyId | Examples: *view=update* (single view requested) *view=update&view=site* (multiple views requested)
 - `xca_lle_rid` (String) X-CALLER-ID header parameter. Caller ID can be used to trace the caller for queries executed on database. The caller id is like a optional attribute which can be added to API invocation like ui, python, postman, test-automation etc
 
 ### Read-Only

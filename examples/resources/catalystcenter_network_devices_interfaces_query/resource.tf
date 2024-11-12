@@ -1,6 +1,6 @@
 
 resource "catalystcenter_network_devices_interfaces_query" "example" {
-  provider  = catalystcenter
+  provider  = meraki
   device_id = "string"
   parameters {
 

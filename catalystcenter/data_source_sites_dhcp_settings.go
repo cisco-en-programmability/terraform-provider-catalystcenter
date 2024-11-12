@@ -15,8 +15,8 @@ func dataSourceSitesDhcpSettings() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Network Settings.
 
-- Retrieve DHCP settings for a site; 'null' values indicate that the setting will be inherited from the parent site;
-empty objects ('{}') indicate that the setting is unset at a site.
+- Retrieve DHCP settings for a site; *null* values indicate that the setting will be inherited from the parent site;
+empty objects (*{}*) indicate that the setting is unset at a site.
 `,
 
 		ReadContext: dataSourceSitesDhcpSettingsRead,
@@ -28,7 +28,7 @@ empty objects ('{}') indicate that the setting is unset at a site.
 				Required: true,
 			},
 			"inherited": &schema.Schema{
-				Description: `_inherited query parameter. Include settings explicitly set for this site and settings inherited from sites higher in the site hierarchy; when 'false', 'null' values indicate that the site inherits that setting from the parent site or a site higher in the site hierarchy.
+				Description: `_inherited query parameter. Include settings explicitly set for this site and settings inherited from sites higher in the site hierarchy; when *false*, *null* values indicate that the site inherits that setting from the parent site or a site higher in the site hierarchy.
 `,
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -88,32 +88,32 @@ func dataSourceSitesDhcpSettingsRead(ctx context.Context, d *schema.ResourceData
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveDHCPSettingsForASite")
+		log.Printf("[DEBUG] Selected method: RetrieveDHCPSettingsForASiteV1")
 		vvID := vID.(string)
-		queryParams1 := catalystcentersdkgo.RetrieveDHCPSettingsForASiteQueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrieveDHCPSettingsForASiteV1QueryParams{}
 
 		if okInherited {
 			queryParams1.Inherited = vInherited.(bool)
 		}
 
-		response1, restyResp1, err := client.NetworkSettings.RetrieveDHCPSettingsForASite(vvID, &queryParams1)
+		response1, restyResp1, err := client.NetworkSettings.RetrieveDHCPSettingsForASiteV1(vvID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveDHCPSettingsForASite", err,
-				"Failure at RetrieveDHCPSettingsForASite, unexpected response", ""))
+				"Failure when executing 2 RetrieveDHCPSettingsForASiteV1", err,
+				"Failure at RetrieveDHCPSettingsForASiteV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenNetworkSettingsRetrieveDHCPSettingsForASiteItem(response1.Response)
+		vItem1 := flattenNetworkSettingsRetrieveDHCPSettingsForASiteV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveDHCPSettingsForASite response",
+				"Failure when setting RetrieveDHCPSettingsForASiteV1 response",
 				err))
 			return diags
 		}
@@ -125,18 +125,18 @@ func dataSourceSitesDhcpSettingsRead(ctx context.Context, d *schema.ResourceData
 	return diags
 }
 
-func flattenNetworkSettingsRetrieveDHCPSettingsForASiteItem(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveDHCPSettingsForASiteResponse) []map[string]interface{} {
+func flattenNetworkSettingsRetrieveDHCPSettingsForASiteV1Item(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveDHCPSettingsForASiteV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["dhcp"] = flattenNetworkSettingsRetrieveDHCPSettingsForASiteItemDhcp(item.Dhcp)
+	respItem["dhcp"] = flattenNetworkSettingsRetrieveDHCPSettingsForASiteV1ItemDhcp(item.Dhcp)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenNetworkSettingsRetrieveDHCPSettingsForASiteItemDhcp(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveDHCPSettingsForASiteResponseDhcp) []map[string]interface{} {
+func flattenNetworkSettingsRetrieveDHCPSettingsForASiteV1ItemDhcp(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveDHCPSettingsForASiteV1ResponseDhcp) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

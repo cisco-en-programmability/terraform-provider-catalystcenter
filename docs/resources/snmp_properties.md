@@ -20,13 +20,12 @@ resource "catalystcenter_snmp_properties" "example" {
   provider = catalystcenter
 
   parameters {
-    payload {
-      id                   = "string"
-      instance_tenant_id   = "string"
-      instance_uuid        = "string"
-      int_value            = 1
-      system_property_name = "string"
-    }
+
+    id                   = "string"
+    instance_tenant_id   = "string"
+    instance_uuid        = "string"
+    int_value            = 1
+    system_property_name = "string"
   }
 }
 
@@ -40,7 +39,7 @@ output "catalystcenter_snmp_properties_example" {
 
 ### Optional
 
-- `parameters` (Block List) Array of RequestDiscoveryCreateUpdateSNMPProperties (see [below for nested schema](#nestedblock--parameters))
+- `parameters` (Block List) Array of RequestDiscoveryCreateUpdateSNMPPropertiesV1 (see [below for nested schema](#nestedblock--parameters))
 
 ### Read-Only
 

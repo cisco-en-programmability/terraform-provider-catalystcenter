@@ -82,8 +82,8 @@ func dataSourceSdaPortAssignmentsCountRead(ctx context.Context, d *schema.Resour
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetPortAssignmentCount")
-		queryParams1 := catalystcentersdkgo.GetPortAssignmentCountQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetPortAssignmentCountV1")
+		queryParams1 := catalystcentersdkgo.GetPortAssignmentCountV1QueryParams{}
 
 		if okFabricID {
 			queryParams1.FabricID = vFabricID.(string)
@@ -101,24 +101,24 @@ func dataSourceSdaPortAssignmentsCountRead(ctx context.Context, d *schema.Resour
 			queryParams1.VoiceVLANName = vVoiceVLANName.(string)
 		}
 
-		response1, restyResp1, err := client.Sda.GetPortAssignmentCount(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetPortAssignmentCountV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetPortAssignmentCount", err,
-				"Failure at GetPortAssignmentCount, unexpected response", ""))
+				"Failure when executing 2 GetPortAssignmentCountV1", err,
+				"Failure at GetPortAssignmentCountV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetPortAssignmentCountItem(response1.Response)
+		vItem1 := flattenSdaGetPortAssignmentCountV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetPortAssignmentCount response",
+				"Failure when setting GetPortAssignmentCountV1 response",
 				err))
 			return diags
 		}
@@ -130,7 +130,7 @@ func dataSourceSdaPortAssignmentsCountRead(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func flattenSdaGetPortAssignmentCountItem(item *catalystcentersdkgo.ResponseSdaGetPortAssignmentCountResponse) []map[string]interface{} {
+func flattenSdaGetPortAssignmentCountV1Item(item *catalystcentersdkgo.ResponseSdaGetPortAssignmentCountV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -149,6 +149,89 @@ In the [docs directory](./docs/) you can find the documentation source for this 
 
 You can find the documentation online for the previously released versions at [Terraform Registry - Cisco Catalyst Center provider](https://registry.terraform.io/providers/cisco-en-programmability/catalystcenter/latest/docs).
 
+
+# Automatic Version Management for Resources and DataSources
+In this Terraform provider, version management is handled dynamically for **all resources** and **datasources**. The version of a resource or datasource is automatically selected based on the available versions in the environment, allowing users to either use a default version or specify a particular version when needed. Below is an explanation of how this automatic version selection works for both resources and datasources.
+
+## General Version Selection Behavior
+For all resources and datasources, the behavior follows these general rules:
+
+1. **If multiple versions of a resource or datasource exist (e.g., `resource_v1`, `resource_v2`)**:
+   * By **default**, the **oldest** available version will be selected. That is, if both `resource_v1` and `resource_v2` are available, the provider will automatically select `v1` unless explicitly specified otherwise.
+   * If a user wants to use the latest version (e.g., `v2`), they need to specify it explicitly in the configuration.
+
+2. **If only one version of a resource or datasource exists (e.g., only `resource_v1`)**:
+   * **The resource or datasource will automatically be used in that version**, without needing to specify the version suffix in the configuration.
+
+3. **If only the latest version is available (e.g., only `resource_v2` and not `resource_v1`)**:
+   * The resource or datasource will automatically refer to the **latest available version**, i.e., `resource_v2`.
+
+
+## Example Usage with Resources
+### Case 1: Both `resource_v1` and `resource_v2` are available
+If both `resource_v1` and `resource_v2` are available in your environment, the provider will select `resource_v1` by default. If you want to use `resource_v2`, you can specify it explicitly:
+
+```hcl
+# Using version 1 (default)
+resource "resource" "default" {
+  # This resource will refer to `resource_v1` by default
+}
+
+# Explicitly using version 2
+resource "resource_v2" "default" {
+  # This resource will refer to `resource_v2`
+}   
+```
+### Case 2: Only resource\_v1 exists
+If only resource\_v1 is available in your environment, there is no need to specify the version, as the provider will automatically use that version:
+
+```hcl
+resource "resource" "default" {
+
+# This resource will refer to `resource_v1` since it's the only version available
+}          
+```
+### Case 3: Only resource\_v2 exists
+If only resource\_v2 is available in your environment, the provider will automatically refer to that version, since resource\_v1 is not available:
+
+```hcl
+resource "resource" "default" {
+
+# This resource will refer to `resource_v2` since `resource_v1` is not available
+}          
+```
+## Example Usage with DataSources
+The same version selection logic applies to datasources. Below is how version management works for datasources:
+
+### Case 1: Both datasource\_v1 and datasource\_v2 are available
+```hcl
+# Using version 1 (default)
+data "datasource" "default" {
+
+# This datasource will refer to `datasource_v1` by default
+}
+
+# Explicitly using version 2
+data "datasource_v2" "default" {
+
+# This datasource will refer to `datasource_v2`
+}   
+```
+### Case 2: Only datasource\_v1 exists
+```hcl
+data "datasource" "default" {
+
+# This datasource will refer to `datasource_v1` since it's the only version available
+}      
+```
+### Case 3: Only datasource\_v2 exists
+```hcl
+data "datasource" "default" {
+
+# This datasource will refer to `datasource_v2` since `datasource_v1` is not available
+}          
+```
+
 # Contributing
 
 Ongoing development efforts and contributions to this provider are tracked as issues in this repository.

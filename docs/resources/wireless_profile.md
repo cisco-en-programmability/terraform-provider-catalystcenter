@@ -5,7 +5,7 @@ subcategory: ""
 description: |-
   It manages create, read, update and delete operations on Wireless.
   Delete the Wireless Profile whose name is provided.Updates the wireless Network Profile with updated details provided. All sites to be present in the network profile
-  should be provided.Creates Wireless Network Profile on Cisco Catalyst Center and associates sites and SSIDs to it.
+  should be provided.Creates Wireless Network Profile on Cisco DNA Center and associates sites and SSIDs to it.
 ---
 
 # catalystcenter_wireless_profile (Resource)
@@ -17,7 +17,7 @@ It manages create, read, update and delete operations on Wireless.
 - Updates the wireless Network Profile with updated details provided. All sites to be present in the network profile
 should be provided.
 
-- Creates Wireless Network Profile on Cisco Catalyst Center and associates sites and SSIDs to it.
+- Creates Wireless Network Profile on Cisco DNA Center and associates sites and SSIDs to it.
 
 ## Example Usage
 

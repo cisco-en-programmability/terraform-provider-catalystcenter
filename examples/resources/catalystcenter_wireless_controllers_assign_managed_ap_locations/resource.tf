@@ -1,6 +1,6 @@
 
 resource "catalystcenter_wireless_controllers_assign_managed_ap_locations" "example" {
-  provider  = catalystcenter
+  provider  = meraki
   device_id = "string"
   parameters {
 

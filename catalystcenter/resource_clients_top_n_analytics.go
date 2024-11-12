@@ -277,35 +277,31 @@ func resourceClientsTopNAnalyticsCreate(ctx context.Context, d *schema.ResourceD
 
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
-	request1 := expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClients(ctx, "parameters.0", d)
+	request1 := expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsV1(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.RetrievesTheTopNAnalyticsDataRelatedToClientsHeaderParams{}
+	headerParams1 := catalystcentersdkgo.RetrievesTheTopNAnalyticsDataRelatedToClientsV1HeaderParams{}
 
 	headerParams1.XCaLLERID = vXCaLLERID.(string)
 
-	response1, restyResp1, err := client.Clients.RetrievesTheTopNAnalyticsDataRelatedToClients(request1, &headerParams1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Clients.RetrievesTheTopNAnalyticsDataRelatedToClientsV1(request1, &headerParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing RetrievesTheTopNAnalyticsDataRelatedToClients", err))
+			"Failure when executing RetrievesTheTopNAnalyticsDataRelatedToClientsV1", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	//Analizar verificacion.
-
-	vItems1 := flattenClientsRetrievesTheTopNAnalyticsDataRelatedToClientsItems(response1.Response)
+	vItems1 := flattenClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1Items(response1.Response)
 	if err := d.Set("items", vItems1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting RetrievesTheTopNAnalyticsDataRelatedToClients response",
+			"Failure when setting RetrievesTheTopNAnalyticsDataRelatedToClientsV1 response",
 			err))
 		return diags
 	}
@@ -327,8 +323,8 @@ func resourceClientsTopNAnalyticsDelete(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClients(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClients {
-	request := catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClients{}
+func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1 {
+	request := catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -345,19 +341,19 @@ func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClie
 		request.Attributes = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsFiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsV1FiltersArray(ctx, key+".filters", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".aggregate_attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".aggregate_attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".aggregate_attributes")))) {
-		request.AggregateAttributes = expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsAggregateAttributesArray(ctx, key+".aggregate_attributes", d)
+		request.AggregateAttributes = expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsV1AggregateAttributesArray(ctx, key+".aggregate_attributes", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".page")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".page")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".page")))) {
-		request.Page = expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsPage(ctx, key+".page.0", d)
+		request.Page = expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsV1Page(ctx, key+".page.0", d)
 	}
 	return &request
 }
 
-func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsFilters {
-	request := []catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsFilters{}
+func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1Filters {
+	request := []catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1Filters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -368,7 +364,7 @@ func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClie
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -376,8 +372,8 @@ func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClie
 	return &request
 }
 
-func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsFilters {
-	request := catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsFilters{}
+func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1Filters {
+	request := catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1Filters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -390,8 +386,8 @@ func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClie
 	return &request
 }
 
-func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsAggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsAggregateAttributes {
-	request := []catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsAggregateAttributes{}
+func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsV1AggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1AggregateAttributes {
+	request := []catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1AggregateAttributes{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -402,7 +398,7 @@ func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClie
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsAggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsV1AggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -410,8 +406,8 @@ func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClie
 	return &request
 }
 
-func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsAggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsAggregateAttributes {
-	request := catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsAggregateAttributes{}
+func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsV1AggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1AggregateAttributes {
+	request := catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1AggregateAttributes{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -421,8 +417,8 @@ func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClie
 	return &request
 }
 
-func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsPage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsPage {
-	request := catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsPage{}
+func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsV1Page(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1Page {
+	request := catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1Page{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".limit")))) {
 		request.Limit = interfaceToIntPtr(v)
 	}
@@ -430,13 +426,13 @@ func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClie
 		request.Cursor = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".sort_by")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".sort_by")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".sort_by")))) {
-		request.SortBy = expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsPageSortByArray(ctx, key+".sort_by", d)
+		request.SortBy = expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsV1PageSortByArray(ctx, key+".sort_by", d)
 	}
 	return &request
 }
 
-func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsPageSortByArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsPageSortBy {
-	request := []catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsPageSortBy{}
+func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsV1PageSortByArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1PageSortBy {
+	request := []catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1PageSortBy{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -447,7 +443,7 @@ func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClie
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsPageSortBy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsV1PageSortBy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -455,8 +451,8 @@ func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClie
 	return &request
 }
 
-func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsPageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsPageSortBy {
-	request := catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsPageSortBy{}
+func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClientsV1PageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1PageSortBy {
+	request := catalystcentersdkgo.RequestClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1PageSortBy{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -466,7 +462,7 @@ func expandRequestClientsTopNAnalyticsRetrievesTheTopNAnalyticsDataRelatedToClie
 	return &request
 }
 
-func flattenClientsRetrievesTheTopNAnalyticsDataRelatedToClientsItems(items *[]catalystcentersdkgo.ResponseClientsRetrievesTheTopNAnalyticsDataRelatedToClientsResponse) []map[string]interface{} {
+func flattenClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1Items(items *[]catalystcentersdkgo.ResponseClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -474,14 +470,14 @@ func flattenClientsRetrievesTheTopNAnalyticsDataRelatedToClientsItems(items *[]c
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["id"] = item.ID
-		respItem["attributes"] = flattenClientsRetrievesTheTopNAnalyticsDataRelatedToClientsItemsAttributes(item.Attributes)
-		respItem["aggregate_attributes"] = flattenClientsRetrievesTheTopNAnalyticsDataRelatedToClientsItemsAggregateAttributes(item.AggregateAttributes)
+		respItem["attributes"] = flattenClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1ItemsAttributes(item.Attributes)
+		respItem["aggregate_attributes"] = flattenClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1ItemsAggregateAttributes(item.AggregateAttributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenClientsRetrievesTheTopNAnalyticsDataRelatedToClientsItemsAttributes(items *[]catalystcentersdkgo.ResponseClientsRetrievesTheTopNAnalyticsDataRelatedToClientsResponseAttributes) []map[string]interface{} {
+func flattenClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1ItemsAttributes(items *[]catalystcentersdkgo.ResponseClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1ResponseAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -495,7 +491,7 @@ func flattenClientsRetrievesTheTopNAnalyticsDataRelatedToClientsItemsAttributes(
 	return respItems
 }
 
-func flattenClientsRetrievesTheTopNAnalyticsDataRelatedToClientsItemsAggregateAttributes(items *[]catalystcentersdkgo.ResponseClientsRetrievesTheTopNAnalyticsDataRelatedToClientsResponseAggregateAttributes) []map[string]interface{} {
+func flattenClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1ItemsAggregateAttributes(items *[]catalystcentersdkgo.ResponseClientsRetrievesTheTopNAnalyticsDataRelatedToClientsV1ResponseAggregateAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

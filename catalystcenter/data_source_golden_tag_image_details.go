@@ -131,7 +131,7 @@ func dataSourceGoldenTagImageDetailsRead(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func flattenSoftwareImageManagementSwimGetGoldenTagStatusOfAnImageDetailsItem(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetGoldenTagStatusOfAnImageResponse) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimGetGoldenTagStatusOfAnImageDetailsItem(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetGoldenTagStatusOfAnImageV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -106,31 +106,31 @@ func dataSourceSdaPortAssignmentForAccessPointRead(ctx context.Context, d *schem
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetPortAssignmentForAccessPointInSdaFabric")
-		queryParams1 := catalystcentersdkgo.GetPortAssignmentForAccessPointInSdaFabricQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetPortAssignmentForAccessPointInSdaFabricV1")
+		queryParams1 := catalystcentersdkgo.GetPortAssignmentForAccessPointInSdaFabricV1QueryParams{}
 
 		queryParams1.DeviceManagementIPAddress = vDeviceManagementIPAddress.(string)
 
 		queryParams1.InterfaceName = vInterfaceName.(string)
 
-		response1, restyResp1, err := client.Sda.GetPortAssignmentForAccessPointInSdaFabric(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetPortAssignmentForAccessPointInSdaFabricV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetPortAssignmentForAccessPointInSdaFabric", err,
-				"Failure at GetPortAssignmentForAccessPointInSdaFabric, unexpected response", ""))
+				"Failure when executing 2 GetPortAssignmentForAccessPointInSdaFabricV1", err,
+				"Failure at GetPortAssignmentForAccessPointInSdaFabricV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetPortAssignmentForAccessPointInSdaFabricItem(response1)
+		vItem1 := flattenSdaGetPortAssignmentForAccessPointInSdaFabricV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetPortAssignmentForAccessPointInSdaFabric response",
+				"Failure when setting GetPortAssignmentForAccessPointInSdaFabricV1 response",
 				err))
 			return diags
 		}
@@ -142,7 +142,7 @@ func dataSourceSdaPortAssignmentForAccessPointRead(ctx context.Context, d *schem
 	return diags
 }
 
-func flattenSdaGetPortAssignmentForAccessPointInSdaFabricItem(item *catalystcentersdkgo.ResponseSdaGetPortAssignmentForAccessPointInSdaFabric) []map[string]interface{} {
+func flattenSdaGetPortAssignmentForAccessPointInSdaFabricV1Item(item *catalystcentersdkgo.ResponseSdaGetPortAssignmentForAccessPointInSdaFabricV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

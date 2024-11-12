@@ -2,7 +2,6 @@ package catalystcenter
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"reflect"
 	"time"
@@ -698,105 +697,129 @@ func resourceSdaFabricBorderDevice() *schema.Resource {
 				},
 			},
 			"parameters": &schema.Schema{
-				Description: `Array of RequestSdaAddBorderDeviceInSDAFabric`,
+				Description: `Array of RequestSdaAddBorderDeviceInSDAFabricV1`,
 				Type:        schema.TypeList,
 				Optional:    true,
 				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"payload": &schema.Schema{
-							Description: `Array of RequestApplicationPolicyCreateApplication`,
-							Type:        schema.TypeList,
-							Optional:    true,
-							Computed:    true,
+
+						"border_priority": &schema.Schema{
+							Description: `Border priority associated with a given device. Allowed range for Border Priority is [1-9]. A lower value indicates higher priority. E.g., a priority of 1 takes precedence over 5. Default priority would be set to 10.
+`,
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
+						},
+						"border_session_type": &schema.Schema{
+							Description: `Border Session Type
+`,
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
+						},
+						"border_with_external_connectivity": &schema.Schema{
+							Description: `Border With External Connectivity (Note: True for transit and False for non-transit border)
+`,
+							// Type:        schema.TypeBool,
+							Type:         schema.TypeString,
+							ValidateFunc: validateStringHasValueFunc([]string{"", "true", "false"}),
+							Optional:     true,
+							Computed:     true,
+						},
+						"connected_to_internet": &schema.Schema{
+							Description: `Connected to Internet
+`,
+							// Type:        schema.TypeBool,
+							Type:         schema.TypeString,
+							ValidateFunc: validateStringHasValueFunc([]string{"", "true", "false"}),
+							Optional:     true,
+							Computed:     true,
+						},
+						"device_management_ip_address": &schema.Schema{
+							Description: `Management Ip Address of the provisioned Device
+`,
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
+						},
+						"device_role": &schema.Schema{
+							Description: `Supported Device Roles in SD-Access fabric. Allowed roles are "Border_Node","Control_Plane_Node","Edge_Node". E.g. ["Border_Node"] or ["Border_Node", "Control_Plane_Node"] or ["Border_Node", "Control_Plane_Node","Edge_Node"]
+`,
+							Type:     schema.TypeList,
+							Optional: true,
+							Computed: true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"external_connectivity_ip_pool_name": &schema.Schema{
+							Description: `External Connectivity IpPool Name
+`,
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
+						},
+						"external_connectivity_settings": &schema.Schema{
+							Type:     schema.TypeList,
+							Optional: true,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 
-									"border_priority": &schema.Schema{
-										Description: `Border priority associated with a given device. Allowed range for Border Priority is [1-9]. A lower value indicates higher priority. E.g., a priority of 1 takes precedence over 5. Default priority would be set to 10.
+									"external_autonomou_system_number": &schema.Schema{
+										Description: `External Autonomous System Number peer (e.g.,1-65535)
 `,
 										Type:     schema.TypeString,
 										Optional: true,
 										Computed: true,
 									},
-									"border_session_type": &schema.Schema{
-										Description: `Border Session Type
+									"interface_description": &schema.Schema{
+										Description: `Interface Description
 `,
 										Type:     schema.TypeString,
 										Optional: true,
 										Computed: true,
 									},
-									"border_with_external_connectivity": &schema.Schema{
-										Description: `Border With External Connectivity (Note: True for transit and False for non-transit border)
-`,
-										// Type:        schema.TypeBool,
-										Type:         schema.TypeString,
-										ValidateFunc: validateStringHasValueFunc([]string{"", "true", "false"}),
-										Optional:     true,
-										Computed:     true,
-									},
-									"connected_to_internet": &schema.Schema{
-										Description: `Connected to Internet
-`,
-										// Type:        schema.TypeBool,
-										Type:         schema.TypeString,
-										ValidateFunc: validateStringHasValueFunc([]string{"", "true", "false"}),
-										Optional:     true,
-										Computed:     true,
-									},
-									"device_management_ip_address": &schema.Schema{
-										Description: `Management Ip Address of the provisioned Device
+									"interface_name": &schema.Schema{
+										Description: `Interface Name
 `,
 										Type:     schema.TypeString,
 										Optional: true,
 										Computed: true,
 									},
-									"device_role": &schema.Schema{
-										Description: `Supported Device Roles in SD-Access fabric. Allowed roles are "Border_Node","Control_Plane_Node","Edge_Node". E.g. ["Border_Node"] or ["Border_Node", "Control_Plane_Node"] or ["Border_Node", "Control_Plane_Node","Edge_Node"]
-`,
-										Type:     schema.TypeList,
-										Optional: true,
-										Computed: true,
-										Elem: &schema.Schema{
-											Type: schema.TypeString,
-										},
-									},
-									"external_connectivity_ip_pool_name": &schema.Schema{
-										Description: `External Connectivity IpPool Name
-`,
-										Type:     schema.TypeString,
-										Optional: true,
-										Computed: true,
-									},
-									"external_connectivity_settings": &schema.Schema{
+									"l2_handoff": &schema.Schema{
 										Type:     schema.TypeList,
 										Optional: true,
 										Computed: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 
-												"external_autonomou_system_number": &schema.Schema{
-													Description: `External Autonomous System Number peer (e.g.,1-65535)
+												"virtual_network_name": &schema.Schema{
+													Description: `Virtual Network Name, that is associated to Fabric Site
 `,
 													Type:     schema.TypeString,
 													Optional: true,
 													Computed: true,
 												},
-												"interface_description": &schema.Schema{
-													Description: `Interface Description
+												"vlan_name": &schema.Schema{
+													Description: `Vlan Name of L2 Handoff
 `,
 													Type:     schema.TypeString,
 													Optional: true,
 													Computed: true,
 												},
-												"interface_name": &schema.Schema{
-													Description: `Interface Name
-`,
-													Type:     schema.TypeString,
-													Optional: true,
-													Computed: true,
-												},
-												"l2_handoff": &schema.Schema{
+											},
+										},
+									},
+									"l3_handoff": &schema.Schema{
+										Type:     schema.TypeList,
+										Optional: true,
+										Computed: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+
+												"virtual_network": &schema.Schema{
 													Type:     schema.TypeList,
 													Optional: true,
 													Computed: true,
@@ -810,8 +833,8 @@ func resourceSdaFabricBorderDevice() *schema.Resource {
 																Optional: true,
 																Computed: true,
 															},
-															"vlan_name": &schema.Schema{
-																Description: `Vlan Name of L2 Handoff
+															"vlan_id": &schema.Schema{
+																Description: `Vlan Id (e.g.,2-4096 except for reserved VLANs (1002-1005, 2046, 4095))
 `,
 																Type:     schema.TypeString,
 																Optional: true,
@@ -820,80 +843,46 @@ func resourceSdaFabricBorderDevice() *schema.Resource {
 														},
 													},
 												},
-												"l3_handoff": &schema.Schema{
-													Type:     schema.TypeList,
-													Optional: true,
-													Computed: true,
-													Elem: &schema.Resource{
-														Schema: map[string]*schema.Schema{
-
-															"virtual_network": &schema.Schema{
-																Type:     schema.TypeList,
-																Optional: true,
-																Computed: true,
-																Elem: &schema.Resource{
-																	Schema: map[string]*schema.Schema{
-
-																		"virtual_network_name": &schema.Schema{
-																			Description: `Virtual Network Name, that is associated to Fabric Site
-`,
-																			Type:     schema.TypeString,
-																			Optional: true,
-																			Computed: true,
-																		},
-																		"vlan_id": &schema.Schema{
-																			Description: `Vlan Id (e.g.,2-4096 except for reserved VLANs (1002-1005, 2046, 4095))
-`,
-																			Type:     schema.TypeString,
-																			Optional: true,
-																			Computed: true,
-																		},
-																	},
-																},
-															},
-														},
-													},
-												},
 											},
 										},
 									},
-									"external_domain_routing_protocol_name": &schema.Schema{
-										Description: `External Domain Routing Protocol Name
-`,
-										Type:     schema.TypeString,
-										Optional: true,
-										Computed: true,
-									},
-									"internal_autonomou_system_number": &schema.Schema{
-										Description: `Internal Autonomous System Number
-`,
-										Type:     schema.TypeString,
-										Optional: true,
-										Computed: true,
-									},
-									"route_distribution_protocol": &schema.Schema{
-										Description: `Route Distribution Protocol for Control Plane Device. Allowed values are "LISP_BGP" or "LISP_PUB_SUB". Default value is "LISP_BGP"
-`,
-										Type:     schema.TypeString,
-										Optional: true,
-										Computed: true,
-									},
-									"sda_transit_network_name": &schema.Schema{
-										Description: `SD-Access Transit Network Name
-`,
-										Type:     schema.TypeString,
-										Optional: true,
-										Computed: true,
-									},
-									"site_name_hierarchy": &schema.Schema{
-										Description: `Site Name Hierarchy of provisioned Device(site should be part of Fabric Site)
-`,
-										Type:     schema.TypeString,
-										Optional: true,
-										Computed: true,
-									},
 								},
 							},
+						},
+						"external_domain_routing_protocol_name": &schema.Schema{
+							Description: `External Domain Routing Protocol Name
+`,
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
+						},
+						"internal_autonomou_system_number": &schema.Schema{
+							Description: `Internal Autonomous System Number
+`,
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
+						},
+						"route_distribution_protocol": &schema.Schema{
+							Description: `Route Distribution Protocol for Control Plane Device. Allowed values are "LISP_BGP" or "LISP_PUB_SUB". Default value is "LISP_BGP"
+`,
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
+						},
+						"sda_transit_network_name": &schema.Schema{
+							Description: `SD-Access Transit Network Name
+`,
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
+						},
+						"site_name_hierarchy": &schema.Schema{
+							Description: `Site Name Hierarchy of provisioned Device(site should be part of Fabric Site)
+`,
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
 						},
 					},
 				},
@@ -907,30 +896,30 @@ func resourceSdaFabricBorderDeviceCreate(ctx context.Context, d *schema.Resource
 
 	var diags diag.Diagnostics
 
-	resourceItem := *getResourceItem(d.Get("parameters.0.payload"))
-	request1 := expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabric(ctx, "parameters.0", d)
+	resourceItem := *getResourceItem(d.Get("parameters"))
+	request1 := expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricV1(ctx, "parameters", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vDeviceManagementIPAddress := resourceItem["device_management_ip_address"]
 	vvDeviceManagementIPAddress := interfaceToString(vDeviceManagementIPAddress)
-	queryParamImport := catalystcentersdkgo.GetBorderDeviceDetailFromSdaFabricQueryParams{}
+	queryParamImport := catalystcentersdkgo.GetBorderDeviceDetailFromSdaFabricV1QueryParams{}
 	queryParamImport.DeviceManagementIPAddress = vvDeviceManagementIPAddress
-	item2, _, err := client.Sda.GetBorderDeviceDetailFromSdaFabric(&queryParamImport)
-	if err == nil && item2 != nil {
+	item2, _, err := client.Sda.GetBorderDeviceDetailFromSdaFabricV1(&queryParamImport)
+	if err != nil || item2 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["device_management_ip_address"] = vvDeviceManagementIPAddress
 		d.SetId(joinResourceID(resourceMap))
 		return resourceSdaFabricBorderDeviceRead(ctx, d, m)
 	}
-	resp1, restyResp1, err := client.Sda.AddBorderDeviceInSdaFabric(request1)
+	resp1, restyResp1, err := client.Sda.AddBorderDeviceInSdaFabricV1(request1)
 	if err != nil || resp1 == nil {
 		if restyResp1 != nil {
 			diags = append(diags, diagErrorWithResponse(
-				"Failure when executing AddBorderDeviceInSdaFabric", err, restyResp1.String()))
+				"Failure when executing AddBorderDeviceInSdaFabricV1", err, restyResp1.String()))
 			return diags
 		}
 		diags = append(diags, diagError(
-			"Failure when executing AddBorderDeviceInSdaFabric", err))
+			"Failure when executing AddBorderDeviceInSdaFabricV1", err))
 		return diags
 	}
 	executionId := resp1.ExecutionID
@@ -947,7 +936,7 @@ func resourceSdaFabricBorderDeviceCreate(ctx context.Context, d *schema.Resource
 				"Failure at GetExecutionByID, unexpected response", ""))
 			return diags
 		}
-		for statusIsPending(response2.Status) {
+		for response2.Status == "IN_PROGRESS" {
 			time.Sleep(10 * time.Second)
 			response2, restyResp2, err = client.Task.GetBusinessAPIExecutionDetails(executionId)
 			if err != nil || response2 == nil {
@@ -960,20 +949,20 @@ func resourceSdaFabricBorderDeviceCreate(ctx context.Context, d *schema.Resource
 				return diags
 			}
 		}
-		if statusIsFailure(response2.Status) {
+		if response2.Status == "FAILURE" {
 			log.Printf("[DEBUG] Error %s", response2.BapiError)
 			diags = append(diags, diagError(
-				"Failure when executing AddBorderDeviceInSdaFabric", err))
+				"Failure when executing AddBorderDeviceInSdaFabricV1", err))
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetBorderDeviceDetailFromSdaFabricQueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetBorderDeviceDetailFromSdaFabricV1QueryParams{}
 	queryParamValidate.DeviceManagementIPAddress = vvDeviceManagementIPAddress
-	item3, _, err := client.Sda.GetBorderDeviceDetailFromSdaFabric(&queryParamValidate)
+	item3, _, err := client.Sda.GetBorderDeviceDetailFromSdaFabricV1(&queryParamValidate)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing AddBorderDeviceInSdaFabric", err,
-			"Failure at AddBorderDeviceInSdaFabric, unexpected response", ""))
+			"Failure when executing AddBorderDeviceInSdaFabricV1", err,
+			"Failure at AddBorderDeviceInSdaFabricV1, unexpected response", ""))
 		return diags
 	}
 
@@ -996,12 +985,14 @@ func resourceSdaFabricBorderDeviceRead(ctx context.Context, d *schema.ResourceDa
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetBorderDeviceDetailFromSdaFabric")
-		queryParams1 := catalystcentersdkgo.GetBorderDeviceDetailFromSdaFabricQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetBorderDeviceDetailFromSdaFabricV1")
+		queryParams1 := catalystcentersdkgo.GetBorderDeviceDetailFromSdaFabricV1QueryParams{}
 
 		queryParams1.DeviceManagementIPAddress = vDeviceManagementIPAddress
 
-		response1, restyResp1, err := client.Sda.GetBorderDeviceDetailFromSdaFabric(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sda.GetBorderDeviceDetailFromSdaFabricV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
@@ -1013,10 +1004,10 @@ func resourceSdaFabricBorderDeviceRead(ctx context.Context, d *schema.ResourceDa
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetBorderDeviceDetailFromSdaFabricItem(response1)
+		vItem1 := flattenSdaGetBorderDeviceDetailFromSdaFabricV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetBorderDeviceDetailFromSdaFabric response",
+				"Failure when setting GetBorderDeviceDetailFromSdaFabricV1 response",
 				err))
 			return diags
 		}
@@ -1028,13 +1019,7 @@ func resourceSdaFabricBorderDeviceRead(ctx context.Context, d *schema.ResourceDa
 }
 
 func resourceSdaFabricBorderDeviceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var diags diag.Diagnostics
-	err := errors.New("Update not possible in this resource")
-	diags = append(diags, diagErrorWithAltAndResponse(
-		"Failure when executing SdaFabricBorderDeviceUpdate", err, "Update method is not supported",
-		"Failure at SdaFabricBorderDeviceUpdate, unexpected response", ""))
-
-	return diags
+	return resourceSdaFabricBorderDeviceRead(ctx, d, m)
 }
 
 func resourceSdaFabricBorderDeviceDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -1046,23 +1031,23 @@ func resourceSdaFabricBorderDeviceDelete(ctx context.Context, d *schema.Resource
 	resourceID := d.Id()
 	resourceMap := separateResourceID(resourceID)
 
-	queryParamDelete := catalystcentersdkgo.DeleteBorderDeviceFromSdaFabricQueryParams{}
+	queryParamDelete := catalystcentersdkgo.DeleteBorderDeviceFromSdaFabricV1QueryParams{}
 
 	vvDeviceManagementIPAddress := resourceMap["device_management_ip_address"]
 	queryParamDelete.DeviceManagementIPAddress = vvDeviceManagementIPAddress
 
-	response1, restyResp1, err := client.Sda.DeleteBorderDeviceFromSdaFabric(&queryParamDelete)
+	response1, restyResp1, err := client.Sda.DeleteBorderDeviceFromSdaFabricV1(&queryParamDelete)
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] resty response for delete operation => %v", restyResp1.String())
 			diags = append(diags, diagErrorWithAltAndResponse(
-				"Failure when executing DeleteBorderDeviceFromSdaFabric", err, restyResp1.String(),
-				"Failure at DeleteBorderDeviceFromSdaFabric, unexpected response", ""))
+				"Failure when executing DeleteBorderDeviceFromSdaFabricV1", err, restyResp1.String(),
+				"Failure at DeleteBorderDeviceFromSdaFabricV1, unexpected response", ""))
 			return diags
 		}
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing DeleteBorderDeviceFromSdaFabric", err,
-			"Failure at DeleteBorderDeviceFromSdaFabric, unexpected response", ""))
+			"Failure when executing DeleteBorderDeviceFromSdaFabricV1", err,
+			"Failure at DeleteBorderDeviceFromSdaFabricV1, unexpected response", ""))
 		return diags
 	}
 
@@ -1080,7 +1065,7 @@ func resourceSdaFabricBorderDeviceDelete(ctx context.Context, d *schema.Resource
 				"Failure at GetExecutionByID, unexpected response", ""))
 			return diags
 		}
-		for statusIsPending(response2.Status) {
+		for response2.Status == "IN_PROGRESS" {
 			time.Sleep(10 * time.Second)
 			response2, restyResp2, err = client.Task.GetBusinessAPIExecutionDetails(executionId)
 			if err != nil || response2 == nil {
@@ -1093,10 +1078,10 @@ func resourceSdaFabricBorderDeviceDelete(ctx context.Context, d *schema.Resource
 				return diags
 			}
 		}
-		if statusIsFailure(response2.Status) {
+		if response2.Status == "FAILURE" {
 			log.Printf("[DEBUG] Error %s", response2.BapiError)
 			diags = append(diags, diagError(
-				"Failure when executing DeleteBorderDeviceFromSdaFabric", err))
+				"Failure when executing DeleteBorderDeviceFromSdaFabricV1", err))
 			return diags
 		}
 	}
@@ -1107,9 +1092,9 @@ func resourceSdaFabricBorderDeviceDelete(ctx context.Context, d *schema.Resource
 
 	return diags
 }
-func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabric(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddBorderDeviceInSdaFabric {
-	request := catalystcentersdkgo.RequestSdaAddBorderDeviceInSdaFabric{}
-	if v := expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddBorderDeviceInSdaFabricV1 {
+	request := catalystcentersdkgo.RequestSdaAddBorderDeviceInSdaFabricV1{}
+	if v := expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -1118,8 +1103,8 @@ func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabric(ctx context.Co
 	return &request
 }
 
-func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabric {
-	request := []catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabric{}
+func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricV1 {
+	request := []catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1130,7 +1115,7 @@ func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemArray(ctx c
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1141,8 +1126,8 @@ func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemArray(ctx c
 	return &request
 }
 
-func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabric {
-	request := catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabric{}
+func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricV1 {
+	request := catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_management_ip_address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_management_ip_address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_management_ip_address")))) {
 		request.DeviceManagementIPAddress = interfaceToString(v)
 	}
@@ -1180,7 +1165,7 @@ func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItem(ctx contex
 		request.BorderWithExternalConnectivity = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".external_connectivity_settings")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".external_connectivity_settings")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".external_connectivity_settings")))) {
-		request.ExternalConnectivitySettings = expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalConnectivitySettingsArray(ctx, key+".external_connectivity_settings", d)
+		request.ExternalConnectivitySettings = expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricV1ItemExternalConnectivitySettingsArray(ctx, key+".external_connectivity_settings", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -1188,8 +1173,8 @@ func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItem(ctx contex
 	return &request
 }
 
-func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalConnectivitySettingsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricExternalConnectivitySettings {
-	request := []catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricExternalConnectivitySettings{}
+func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricV1ItemExternalConnectivitySettingsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricV1ExternalConnectivitySettings {
+	request := []catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricV1ExternalConnectivitySettings{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1200,7 +1185,7 @@ func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalCon
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalConnectivitySettings(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricV1ItemExternalConnectivitySettings(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1211,8 +1196,8 @@ func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalCon
 	return &request
 }
 
-func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalConnectivitySettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricExternalConnectivitySettings {
-	request := catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricExternalConnectivitySettings{}
+func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricV1ItemExternalConnectivitySettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricV1ExternalConnectivitySettings {
+	request := catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricV1ExternalConnectivitySettings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".interface_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".interface_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".interface_name")))) {
 		request.InterfaceName = interfaceToString(v)
 	}
@@ -1223,10 +1208,10 @@ func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalCon
 		request.ExternalAutonomouSystemNumber = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".l3_handoff")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".l3_handoff")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".l3_handoff")))) {
-		request.L3Handoff = expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalConnectivitySettingsL3HandoffArray(ctx, key+".l3_handoff", d)
+		request.L3Handoff = expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricV1ItemExternalConnectivitySettingsL3HandoffArray(ctx, key+".l3_handoff", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".l2_handoff")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".l2_handoff")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".l2_handoff")))) {
-		request.L2Handoff = expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalConnectivitySettingsL2HandoffArray(ctx, key+".l2_handoff", d)
+		request.L2Handoff = expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricV1ItemExternalConnectivitySettingsL2HandoffArray(ctx, key+".l2_handoff", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -1234,8 +1219,8 @@ func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalCon
 	return &request
 }
 
-func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalConnectivitySettingsL3HandoffArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricExternalConnectivitySettingsL3Handoff {
-	request := []catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricExternalConnectivitySettingsL3Handoff{}
+func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricV1ItemExternalConnectivitySettingsL3HandoffArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricV1ExternalConnectivitySettingsL3Handoff {
+	request := []catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricV1ExternalConnectivitySettingsL3Handoff{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1246,7 +1231,7 @@ func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalCon
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalConnectivitySettingsL3Handoff(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricV1ItemExternalConnectivitySettingsL3Handoff(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1257,10 +1242,10 @@ func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalCon
 	return &request
 }
 
-func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalConnectivitySettingsL3Handoff(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricExternalConnectivitySettingsL3Handoff {
-	request := catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricExternalConnectivitySettingsL3Handoff{}
+func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricV1ItemExternalConnectivitySettingsL3Handoff(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricV1ExternalConnectivitySettingsL3Handoff {
+	request := catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricV1ExternalConnectivitySettingsL3Handoff{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".virtual_network")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".virtual_network")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".virtual_network")))) {
-		request.VirtualNetwork = expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalConnectivitySettingsL3HandoffVirtualNetwork(ctx, key+".virtual_network.0", d)
+		request.VirtualNetwork = expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricV1ItemExternalConnectivitySettingsL3HandoffVirtualNetwork(ctx, key+".virtual_network.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -1268,8 +1253,8 @@ func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalCon
 	return &request
 }
 
-func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalConnectivitySettingsL3HandoffVirtualNetwork(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricExternalConnectivitySettingsL3HandoffVirtualNetwork {
-	request := catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricExternalConnectivitySettingsL3HandoffVirtualNetwork{}
+func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricV1ItemExternalConnectivitySettingsL3HandoffVirtualNetwork(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricV1ExternalConnectivitySettingsL3HandoffVirtualNetwork {
+	request := catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricV1ExternalConnectivitySettingsL3HandoffVirtualNetwork{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".virtual_network_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".virtual_network_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".virtual_network_name")))) {
 		request.VirtualNetworkName = interfaceToString(v)
 	}
@@ -1282,8 +1267,8 @@ func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalCon
 	return &request
 }
 
-func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalConnectivitySettingsL2HandoffArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricExternalConnectivitySettingsL2Handoff {
-	request := []catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricExternalConnectivitySettingsL2Handoff{}
+func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricV1ItemExternalConnectivitySettingsL2HandoffArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricV1ExternalConnectivitySettingsL2Handoff {
+	request := []catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricV1ExternalConnectivitySettingsL2Handoff{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1294,7 +1279,7 @@ func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalCon
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalConnectivitySettingsL2Handoff(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricV1ItemExternalConnectivitySettingsL2Handoff(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1305,8 +1290,8 @@ func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalCon
 	return &request
 }
 
-func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricItemExternalConnectivitySettingsL2Handoff(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricExternalConnectivitySettingsL2Handoff {
-	request := catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricExternalConnectivitySettingsL2Handoff{}
+func expandRequestSdaFabricBorderDeviceAddBorderDeviceInSdaFabricV1ItemExternalConnectivitySettingsL2Handoff(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricV1ExternalConnectivitySettingsL2Handoff {
+	request := catalystcentersdkgo.RequestItemSdaAddBorderDeviceInSdaFabricV1ExternalConnectivitySettingsL2Handoff{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".virtual_network_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".virtual_network_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".virtual_network_name")))) {
 		request.VirtualNetworkName = interfaceToString(v)
 	}

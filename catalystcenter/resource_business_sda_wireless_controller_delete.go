@@ -84,21 +84,23 @@ func resourceBusinessSdaWirelessControllerDeleteCreate(ctx context.Context, d *s
 
 	vPersistbapioutput := resourceItem["persistbapioutput"]
 
-	headerParams1 := catalystcentersdkgo.RemoveWLCFromFabricDomainHeaderParams{}
-	queryParams1 := catalystcentersdkgo.RemoveWLCFromFabricDomainQueryParams{}
+	headerParams1 := catalystcentersdkgo.RemoveWLCFromFabricDomainV1HeaderParams{}
+	queryParams1 := catalystcentersdkgo.RemoveWLCFromFabricDomainV1QueryParams{}
 
 	queryParams1.DeviceIPAddress = vDeviceIPAddress.(string)
 
 	headerParams1.Persistbapioutput = vPersistbapioutput.(string)
 
-	response1, restyResp1, err := client.FabricWireless.RemoveWLCFromFabricDomain(&headerParams1, &queryParams1)
+	// has_unknown_response: None
+
+	response1, restyResp1, err := client.FabricWireless.RemoveWLCFromFabricDomainV1(&headerParams1, &queryParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing RemoveWLCFromFabricDomain", err))
+			"Failure when executing RemoveWLCFromFabricDomainV1", err))
 		return diags
 	}
 
@@ -134,16 +136,15 @@ func resourceBusinessSdaWirelessControllerDeleteCreate(ctx context.Context, d *s
 		if response2.Status == "FAILURE" {
 			bapiError := response2.BapiError
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing RemoveWLCFromFabricDomain", err,
-				"Failure at RemoveWLCFromFabricDomain execution", bapiError))
+				"Failure when executing RemoveWLCFromFabricDomainV1", err,
+				"Failure at RemoveWLCFromFabricDomainV1 execution", bapiError))
 			return diags
 		}
 	}
-
-	vItem1 := flattenFabricWirelessRemoveWLCFromFabricDomainItem(response1)
+	vItem1 := flattenFabricWirelessRemoveWLCFromFabricDomainV1Item(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting RemoveWLCFromFabricDomain response",
+			"Failure when setting RemoveWLCFromFabricDomainV1 response",
 			err))
 		return diags
 	}
@@ -165,7 +166,7 @@ func resourceBusinessSdaWirelessControllerDeleteDelete(ctx context.Context, d *s
 	return diags
 }
 
-func flattenFabricWirelessRemoveWLCFromFabricDomainItem(item *catalystcentersdkgo.ResponseFabricWirelessRemoveWLCFromFabricDomain) []map[string]interface{} {
+func flattenFabricWirelessRemoveWLCFromFabricDomainV1Item(item *catalystcentersdkgo.ResponseFabricWirelessRemoveWLCFromFabricDomainV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

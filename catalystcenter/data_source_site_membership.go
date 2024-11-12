@@ -129,9 +129,9 @@ func dataSourceSiteMembershipRead(ctx context.Context, d *schema.ResourceData, m
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetMembership")
+		log.Printf("[DEBUG] Selected method: GetMembershipV1")
 		vvSiteID := vSiteID.(string)
-		queryParams1 := catalystcentersdkgo.GetMembershipQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetMembershipV1QueryParams{}
 
 		if okOffset {
 			queryParams1.Offset = vOffset.(float64)
@@ -146,24 +146,24 @@ func dataSourceSiteMembershipRead(ctx context.Context, d *schema.ResourceData, m
 			queryParams1.SerialNumber = vSerialNumber.(string)
 		}
 
-		response1, restyResp1, err := client.Sites.GetMembership(vvSiteID, &queryParams1)
+		response1, restyResp1, err := client.Sites.GetMembershipV1(vvSiteID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetMembership", err,
-				"Failure at GetMembership, unexpected response", ""))
+				"Failure when executing 2 GetMembershipV1", err,
+				"Failure at GetMembershipV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSitesGetMembershipItem(response1)
+		vItem1 := flattenSitesGetMembershipV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetMembership response",
+				"Failure when setting GetMembershipV1 response",
 				err))
 			return diags
 		}
@@ -175,24 +175,24 @@ func dataSourceSiteMembershipRead(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func flattenSitesGetMembershipItem(item *catalystcentersdkgo.ResponseSitesGetMembership) []map[string]interface{} {
+func flattenSitesGetMembershipV1Item(item *catalystcentersdkgo.ResponseSitesGetMembershipV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["site"] = flattenSitesGetMembershipItemSite(item.Site)
-	respItem["device"] = flattenSitesGetMembershipItemDevice(item.Device)
+	respItem["site"] = flattenSitesGetMembershipV1ItemSite(item.Site)
+	respItem["device"] = flattenSitesGetMembershipV1ItemDevice(item.Device)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenSitesGetMembershipItemSite(item *catalystcentersdkgo.ResponseSitesGetMembershipSite) []map[string]interface{} {
+func flattenSitesGetMembershipV1ItemSite(item *catalystcentersdkgo.ResponseSitesGetMembershipV1Site) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["response"] = flattenSitesGetMembershipItemSiteResponse(item.Response)
+	respItem["response"] = flattenSitesGetMembershipV1ItemSiteResponse(item.Response)
 	respItem["version"] = item.Version
 
 	return []map[string]interface{}{
@@ -201,7 +201,7 @@ func flattenSitesGetMembershipItemSite(item *catalystcentersdkgo.ResponseSitesGe
 
 }
 
-func flattenSitesGetMembershipItemSiteResponse(items *[]catalystcentersdkgo.ResponseSitesGetMembershipSiteResponse) []interface{} {
+func flattenSitesGetMembershipV1ItemSiteResponse(items *[]catalystcentersdkgo.ResponseSitesGetMembershipV1SiteResponse) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -213,14 +213,14 @@ func flattenSitesGetMembershipItemSiteResponse(items *[]catalystcentersdkgo.Resp
 	return respItems
 }
 
-func flattenSitesGetMembershipItemDevice(items *[]catalystcentersdkgo.ResponseSitesGetMembershipDevice) []map[string]interface{} {
+func flattenSitesGetMembershipV1ItemDevice(items *[]catalystcentersdkgo.ResponseSitesGetMembershipV1Device) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["response"] = flattenSitesGetMembershipItemDeviceResponse(item.Response)
+		respItem["response"] = flattenSitesGetMembershipV1ItemDeviceResponse(item.Response)
 		respItem["version"] = item.Version
 		respItem["site_id"] = item.SiteID
 		respItems = append(respItems, respItem)
@@ -228,7 +228,7 @@ func flattenSitesGetMembershipItemDevice(items *[]catalystcentersdkgo.ResponseSi
 	return respItems
 }
 
-func flattenSitesGetMembershipItemDeviceResponse(items *[]catalystcentersdkgo.ResponseSitesGetMembershipDeviceResponse) []interface{} {
+func flattenSitesGetMembershipV1ItemDeviceResponse(items *[]catalystcentersdkgo.ResponseSitesGetMembershipV1DeviceResponse) []interface{} {
 	if items == nil {
 		return nil
 	}

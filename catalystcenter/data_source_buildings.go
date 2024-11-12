@@ -96,27 +96,27 @@ func dataSourceBuildingsRead(ctx context.Context, d *schema.ResourceData, m inte
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetsABuilding")
+		log.Printf("[DEBUG] Selected method: GetsABuildingV2")
 		vvID := vID.(string)
 
-		response1, restyResp1, err := client.SiteDesign.GetsABuilding(vvID)
+		response1, restyResp1, err := client.SiteDesign.GetsABuildingV2(vvID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetsABuilding", err,
-				"Failure at GetsABuilding, unexpected response", ""))
+				"Failure when executing 2 GetsABuildingV2", err,
+				"Failure at GetsABuildingV2, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSiteDesignGetsABuildingItem(response1.Response)
+		vItem1 := flattenSiteDesignGetsABuildingV2Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetsABuilding response",
+				"Failure when setting GetsABuildingV2 response",
 				err))
 			return diags
 		}
@@ -128,7 +128,7 @@ func dataSourceBuildingsRead(ctx context.Context, d *schema.ResourceData, m inte
 	return diags
 }
 
-func flattenSiteDesignGetsABuildingItem(item *catalystcentersdkgo.ResponseSiteDesignGetsABuildingResponse) []map[string]interface{} {
+func flattenSiteDesignGetsABuildingV2Item(item *catalystcentersdkgo.ResponseSiteDesignGetsABuildingV2Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

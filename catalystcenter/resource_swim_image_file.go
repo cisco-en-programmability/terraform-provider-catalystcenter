@@ -20,20 +20,15 @@ import (
 // resourceAction
 func resourceSwimImageFile() *schema.Resource {
 	return &schema.Resource{
-		Description: `It manages create and read operations on Software Image Management (SWIM).
+		Description: `It performs create operation on Software Image Management (SWIM).
 
-- Fetches a software image from local file system and uploads to Catalyst Center. Supported software image files extensions
-are bin, img, tar, smu, pie, aes, iso, ova, tar_gz and qcow2.
-Upload the file to the **file** form data field
+- Fetches a software image from local file system and uploads to DNA Center. Supported software image files extensions
+are bin, img, tar, smu, pie, aes, iso, ova, tar_gz and qcow2
 `,
 
 		CreateContext: resourceSwimImageFileCreate,
 		ReadContext:   resourceSwimImageFileRead,
 		DeleteContext: resourceSwimImageFileDelete,
-		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
-		},
-
 		Schema: map[string]*schema.Schema{
 			"last_updated": &schema.Schema{
 				Type:     schema.TypeString,
@@ -49,146 +44,7 @@ Upload the file to the **file** form data field
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-
-						"created_time": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-
-						"extended_attributes": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-
-						"family": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-
-						"feature": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-
-						"file_service_id": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-
-						"file_size": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-
-						"image_integrity_status": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-
-						"image_name": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-
-						"image_series": &schema.Schema{
-							Type:     schema.TypeList,
-							Computed: true,
-							Elem: &schema.Schema{
-								Type: schema.TypeString,
-							},
-						},
-
-						"image_source": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-
-						"image_type": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-
-						"image_uuid": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-
-						"import_source_type": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-
-						"is_tagged_golden": &schema.Schema{
-
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-
-						"md5_checksum": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-
-						"name": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-
-						"profile_info": &schema.Schema{
-							Type:     schema.TypeList,
-							Computed: true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-
-									"description": &schema.Schema{
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-
-									"extended_attributes": &schema.Schema{
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-
-									"memory": &schema.Schema{
-										Type:     schema.TypeInt,
-										Computed: true,
-									},
-
-									"product_type": &schema.Schema{
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-
-									"profile_name": &schema.Schema{
-										Type:     schema.TypeString,
-										Computed: true,
-									},
-
-									"shares": &schema.Schema{
-										Type:     schema.TypeInt,
-										Computed: true,
-									},
-
-									"v_cpu": &schema.Schema{
-										Type:     schema.TypeInt,
-										Computed: true,
-									},
-								},
-							},
-						},
-
-						"sha_check_sum": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-
-						"vendor": &schema.Schema{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-
-						"version": &schema.Schema{
+						"url": &schema.Schema{
 							Type:     schema.TypeString,
 							Computed: true,
 						},
@@ -263,7 +119,7 @@ func resourceSwimImageFileCreate(ctx context.Context, d *schema.ResourceData, m 
 	vFilePath := resourceItem["file_path"]
 
 	if vFileName.(string) != "" {
-		query := catalystcentersdkgo.GetSoftwareImageDetailsQueryParams{
+		query := catalystcentersdkgo.GetSoftwareImageDetailsV1QueryParams{
 			Name: vFileName.(string),
 		}
 		item, err := searchSoftwareImageManagementSwimGetSoftwareImageDetailsFile(m, query)
@@ -280,7 +136,7 @@ func resourceSwimImageFileCreate(ctx context.Context, d *schema.ResourceData, m 
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method 1: ImportLocalSoftwareImage")
-		queryParams1 := catalystcentersdkgo.ImportLocalSoftwareImageQueryParams{}
+		queryParams1 := catalystcentersdkgo.ImportLocalSoftwareImageV1QueryParams{}
 
 		if okIsThirdParty {
 			queryParams1.IsThirdParty = vIsThirdParty.(bool)
@@ -380,7 +236,6 @@ func resourceSwimImageFileCreate(ctx context.Context, d *schema.ResourceData, m 
 	d.SetId(joinResourceID(resourceMap))
 	return resourceSwimImageFileRead(ctx, d, m)
 }
-
 func resourceSwimImageFileRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
 
@@ -393,7 +248,7 @@ func resourceSwimImageFileRead(ctx context.Context, d *schema.ResourceData, m in
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method 1: GetSoftwareImageDetails")
-		queryParams1 := catalystcentersdkgo.GetSoftwareImageDetailsQueryParams{
+		queryParams1 := catalystcentersdkgo.GetSoftwareImageDetailsV1QueryParams{
 			Name: vName,
 		}
 
@@ -411,10 +266,10 @@ func resourceSwimImageFileRead(ctx context.Context, d *schema.ResourceData, m in
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
-		items := []catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsResponse{
+		items := []catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsV1Response{
 			*response1,
 		}
-		vItem1 := flattenSoftwareImageManagementSwimGetSoftwareImageDetailsItems(&items)
+		vItem1 := flattenSoftwareImageManagementSwimGetSoftwareImageDetailsV1Items(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting ImportLocalSoftwareImage response",
@@ -424,7 +279,6 @@ func resourceSwimImageFileRead(ctx context.Context, d *schema.ResourceData, m in
 
 	}
 	return diags
-
 }
 
 func resourceSwimImageFileDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -439,11 +293,11 @@ func resourceSwimImageFileDelete(ctx context.Context, d *schema.ResourceData, m 
 	return diags
 }
 
-func searchSoftwareImageManagementSwimGetSoftwareImageDetailsFile(m interface{}, queryParams catalystcentersdkgo.GetSoftwareImageDetailsQueryParams) (*catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsResponse, error) {
+func searchSoftwareImageManagementSwimGetSoftwareImageDetailsFile(m interface{}, queryParams catalystcentersdkgo.GetSoftwareImageDetailsV1QueryParams) (*catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsV1Response, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsResponse
-	var ite *catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetails
+	var foundItem *catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsV1Response
+	var ite *catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsV1
 	ite, _, err = client.SoftwareImageManagementSwim.GetSoftwareImageDetails(&queryParams)
 	if err != nil {
 		return foundItem, err
@@ -456,7 +310,7 @@ func searchSoftwareImageManagementSwimGetSoftwareImageDetailsFile(m interface{},
 	for _, item := range itemsCopy {
 		// Call get by _ method and set value to foundItem and return
 		if item.Name == queryParams.Name {
-			var getItem *catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsResponse
+			var getItem *catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsV1Response
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

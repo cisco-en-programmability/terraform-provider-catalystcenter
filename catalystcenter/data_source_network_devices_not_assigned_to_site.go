@@ -64,8 +64,8 @@ func dataSourceNetworkDevicesNotAssignedToSiteRead(ctx context.Context, d *schem
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSiteNotAssignedNetworkDevices")
-		queryParams1 := catalystcentersdkgo.GetSiteNotAssignedNetworkDevicesQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetSiteNotAssignedNetworkDevicesV1")
+		queryParams1 := catalystcentersdkgo.GetSiteNotAssignedNetworkDevicesV1QueryParams{}
 
 		if okOffset {
 			queryParams1.Offset = vOffset.(float64)
@@ -74,24 +74,24 @@ func dataSourceNetworkDevicesNotAssignedToSiteRead(ctx context.Context, d *schem
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.SiteDesign.GetSiteNotAssignedNetworkDevices(&queryParams1)
+		response1, restyResp1, err := client.SiteDesign.GetSiteNotAssignedNetworkDevicesV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSiteNotAssignedNetworkDevices", err,
-				"Failure at GetSiteNotAssignedNetworkDevices, unexpected response", ""))
+				"Failure when executing 2 GetSiteNotAssignedNetworkDevicesV1", err,
+				"Failure at GetSiteNotAssignedNetworkDevicesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSiteDesignGetSiteNotAssignedNetworkDevicesItem(response1.Response)
+		vItem1 := flattenSiteDesignGetSiteNotAssignedNetworkDevicesV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSiteNotAssignedNetworkDevices response",
+				"Failure when setting GetSiteNotAssignedNetworkDevicesV1 response",
 				err))
 			return diags
 		}
@@ -103,7 +103,7 @@ func dataSourceNetworkDevicesNotAssignedToSiteRead(ctx context.Context, d *schem
 	return diags
 }
 
-func flattenSiteDesignGetSiteNotAssignedNetworkDevicesItem(item *catalystcentersdkgo.ResponseSiteDesignGetSiteNotAssignedNetworkDevicesResponse) []map[string]interface{} {
+func flattenSiteDesignGetSiteNotAssignedNetworkDevicesV1Item(item *catalystcentersdkgo.ResponseSiteDesignGetSiteNotAssignedNetworkDevicesV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

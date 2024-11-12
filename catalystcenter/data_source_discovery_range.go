@@ -460,28 +460,28 @@ func dataSourceDiscoveryRangeRead(ctx context.Context, d *schema.ResourceData, m
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDiscoveriesByRange")
+		log.Printf("[DEBUG] Selected method: GetDiscoveriesByRangeV1")
 		vvStartIndex := vStartIndex.(int)
 		vvRecordsToReturn := vRecordsToReturn.(int)
 
-		response1, restyResp1, err := client.Discovery.GetDiscoveriesByRange(vvStartIndex, vvRecordsToReturn)
+		response1, restyResp1, err := client.Discovery.GetDiscoveriesByRangeV1(vvStartIndex, vvRecordsToReturn)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDiscoveriesByRange", err,
-				"Failure at GetDiscoveriesByRange, unexpected response", ""))
+				"Failure when executing 2 GetDiscoveriesByRangeV1", err,
+				"Failure at GetDiscoveriesByRangeV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDiscoveryGetDiscoveriesByRangeItems(response1.Response)
+		vItems1 := flattenDiscoveryGetDiscoveriesByRangeV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDiscoveriesByRange response",
+				"Failure when setting GetDiscoveriesByRangeV1 response",
 				err))
 			return diags
 		}
@@ -493,14 +493,14 @@ func dataSourceDiscoveryRangeRead(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func flattenDiscoveryGetDiscoveriesByRangeItems(items *[]catalystcentersdkgo.ResponseDiscoveryGetDiscoveriesByRangeResponse) []map[string]interface{} {
+func flattenDiscoveryGetDiscoveriesByRangeV1Items(items *[]catalystcentersdkgo.ResponseDiscoveryGetDiscoveriesByRangeV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["attribute_info"] = flattenDiscoveryGetDiscoveriesByRangeItemsAttributeInfo(item.AttributeInfo)
+		respItem["attribute_info"] = flattenDiscoveryGetDiscoveriesByRangeV1ItemsAttributeInfo(item.AttributeInfo)
 		respItem["cdp_level"] = item.CdpLevel
 		respItem["device_ids"] = item.DeviceIDs
 		respItem["discovery_condition"] = item.DiscoveryCondition
@@ -508,8 +508,8 @@ func flattenDiscoveryGetDiscoveriesByRangeItems(items *[]catalystcentersdkgo.Res
 		respItem["discovery_type"] = item.DiscoveryType
 		respItem["enable_password_list"] = item.EnablePasswordList
 		respItem["global_credential_id_list"] = item.GlobalCredentialIDList
-		respItem["http_read_credential"] = flattenDiscoveryGetDiscoveriesByRangeItemsHTTPReadCredential(item.HTTPReadCredential)
-		respItem["http_write_credential"] = flattenDiscoveryGetDiscoveriesByRangeItemsHTTPWriteCredential(item.HTTPWriteCredential)
+		respItem["http_read_credential"] = flattenDiscoveryGetDiscoveriesByRangeV1ItemsHTTPReadCredential(item.HTTPReadCredential)
+		respItem["http_write_credential"] = flattenDiscoveryGetDiscoveriesByRangeV1ItemsHTTPWriteCredential(item.HTTPWriteCredential)
 		respItem["id"] = item.ID
 		respItem["ip_address_list"] = item.IPAddressList
 		respItem["ip_filter_list"] = item.IPFilterList
@@ -541,7 +541,7 @@ func flattenDiscoveryGetDiscoveriesByRangeItems(items *[]catalystcentersdkgo.Res
 	return respItems
 }
 
-func flattenDiscoveryGetDiscoveriesByRangeItemsAttributeInfo(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveriesByRangeResponseAttributeInfo) interface{} {
+func flattenDiscoveryGetDiscoveriesByRangeV1ItemsAttributeInfo(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveriesByRangeV1ResponseAttributeInfo) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -551,7 +551,7 @@ func flattenDiscoveryGetDiscoveriesByRangeItemsAttributeInfo(item *catalystcente
 
 }
 
-func flattenDiscoveryGetDiscoveriesByRangeItemsHTTPReadCredential(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveriesByRangeResponseHTTPReadCredential) []map[string]interface{} {
+func flattenDiscoveryGetDiscoveriesByRangeV1ItemsHTTPReadCredential(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveriesByRangeV1ResponseHTTPReadCredential) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -573,7 +573,7 @@ func flattenDiscoveryGetDiscoveriesByRangeItemsHTTPReadCredential(item *catalyst
 
 }
 
-func flattenDiscoveryGetDiscoveriesByRangeItemsHTTPWriteCredential(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveriesByRangeResponseHTTPWriteCredential) []map[string]interface{} {
+func flattenDiscoveryGetDiscoveriesByRangeV1ItemsHTTPWriteCredential(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveriesByRangeV1ResponseHTTPWriteCredential) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

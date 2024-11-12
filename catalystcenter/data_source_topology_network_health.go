@@ -125,31 +125,31 @@ func dataSourceTopologyNetworkHealthRead(ctx context.Context, d *schema.Resource
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetOverallNetworkHealth")
-		queryParams1 := catalystcentersdkgo.GetOverallNetworkHealthQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetOverallNetworkHealthV1")
+		queryParams1 := catalystcentersdkgo.GetOverallNetworkHealthV1QueryParams{}
 
 		if okTimestamp {
 			queryParams1.Timestamp = vTimestamp.(float64)
 		}
 
-		response1, restyResp1, err := client.Topology.GetOverallNetworkHealth(&queryParams1)
+		response1, restyResp1, err := client.Topology.GetOverallNetworkHealthV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetOverallNetworkHealth", err,
-				"Failure at GetOverallNetworkHealth, unexpected response", ""))
+				"Failure when executing 2 GetOverallNetworkHealthV1", err,
+				"Failure at GetOverallNetworkHealthV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenTopologyGetOverallNetworkHealthItems(response1.Response)
+		vItems1 := flattenTopologyGetOverallNetworkHealthV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetOverallNetworkHealth response",
+				"Failure when setting GetOverallNetworkHealthV1 response",
 				err))
 			return diags
 		}
@@ -161,7 +161,7 @@ func dataSourceTopologyNetworkHealthRead(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func flattenTopologyGetOverallNetworkHealthItems(items *[]catalystcentersdkgo.ResponseTopologyGetOverallNetworkHealthResponse) []map[string]interface{} {
+func flattenTopologyGetOverallNetworkHealthV1Items(items *[]catalystcentersdkgo.ResponseTopologyGetOverallNetworkHealthV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

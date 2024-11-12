@@ -85,20 +85,18 @@ func resourceDeviceReplacementDeployCreate(ctx context.Context, d *schema.Resour
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestDeviceReplacementDeployDeployDeviceReplacementWorkflow(ctx, "parameters.0", d)
+	request1 := expandRequestDeviceReplacementDeployDeployDeviceReplacementWorkflowV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.DeviceReplacement.DeployDeviceReplacementWorkflow(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.DeviceReplacement.DeployDeviceReplacementWorkflowV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing DeployDeviceReplacementWorkflow", err))
+			"Failure when executing DeployDeviceReplacementWorkflowV1", err))
 		return diags
 	}
 
@@ -106,7 +104,7 @@ func resourceDeviceReplacementDeployCreate(ctx context.Context, d *schema.Resour
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing DeployDeviceReplacementWorkflow", err))
+			"Failure when executing DeployDeviceReplacementWorkflowV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -140,22 +138,24 @@ func resourceDeviceReplacementDeployCreate(ctx context.Context, d *schema.Resour
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing DeployDeviceReplacementWorkflow", err1))
+				"Failure when executing DeployDeviceReplacementWorkflowV1", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenDeviceReplacementDeployDeviceReplacementWorkflowItem(response1.Response)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
+	vItem1 := flattenDeviceReplacementDeployDeviceReplacementWorkflowV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting DeployDeviceReplacementWorkflow response",
+			"Failure when setting DeployDeviceReplacementWorkflowV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceDeviceReplacementDeployRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -170,8 +170,8 @@ func resourceDeviceReplacementDeployDelete(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func expandRequestDeviceReplacementDeployDeployDeviceReplacementWorkflow(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceReplacementDeployDeviceReplacementWorkflow {
-	request := catalystcentersdkgo.RequestDeviceReplacementDeployDeviceReplacementWorkflow{}
+func expandRequestDeviceReplacementDeployDeployDeviceReplacementWorkflowV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceReplacementDeployDeviceReplacementWorkflowV1 {
+	request := catalystcentersdkgo.RequestDeviceReplacementDeployDeviceReplacementWorkflowV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".faulty_device_serial_number")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".faulty_device_serial_number")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".faulty_device_serial_number")))) {
 		request.FaultyDeviceSerialNumber = interfaceToString(v)
 	}
@@ -181,7 +181,7 @@ func expandRequestDeviceReplacementDeployDeployDeviceReplacementWorkflow(ctx con
 	return &request
 }
 
-func flattenDeviceReplacementDeployDeviceReplacementWorkflowItem(item *catalystcentersdkgo.ResponseDeviceReplacementDeployDeviceReplacementWorkflowResponse) []map[string]interface{} {
+func flattenDeviceReplacementDeployDeviceReplacementWorkflowV1Item(item *catalystcentersdkgo.ResponseDeviceReplacementDeployDeviceReplacementWorkflowV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

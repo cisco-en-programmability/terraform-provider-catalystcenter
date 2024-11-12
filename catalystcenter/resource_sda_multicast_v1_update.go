@@ -64,7 +64,7 @@ func resourceSdaMulticastV1Update() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"payload": &schema.Schema{
-							Description: `Array of RequestSdaUpdateMulticast`,
+							Description: `Array of RequestSdaUpdateMulticastV1`,
 							Type:        schema.TypeList,
 							Optional:    true,
 							ForceNew:    true,
@@ -102,20 +102,18 @@ func resourceSdaMulticastV1UpdateCreate(ctx context.Context, d *schema.ResourceD
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestSdaMulticastV1UpdateUpdateMulticast(ctx, "parameters.0", d)
+	request1 := expandRequestSdaMulticastV1UpdateUpdateMulticastV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.Sda.UpdateMulticast(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Sda.UpdateMulticastV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing UpdateMulticast", err))
+			"Failure when executing UpdateMulticastV1", err))
 		return diags
 	}
 
@@ -123,7 +121,7 @@ func resourceSdaMulticastV1UpdateCreate(ctx context.Context, d *schema.ResourceD
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing UpdateMulticast", err))
+			"Failure when executing UpdateMulticastV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -157,22 +155,24 @@ func resourceSdaMulticastV1UpdateCreate(ctx context.Context, d *schema.ResourceD
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing UpdateMulticast", err1))
+				"Failure when executing UpdateMulticastV1", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenSdaUpdateMulticastItem(response1.Response)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
+	vItem1 := flattenSdaUpdateMulticastV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting UpdateMulticast response",
+			"Failure when setting UpdateMulticastV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceSdaMulticastV1UpdateRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -187,16 +187,16 @@ func resourceSdaMulticastV1UpdateDelete(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func expandRequestSdaMulticastV1UpdateUpdateMulticast(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateMulticast {
-	request := catalystcentersdkgo.RequestSdaUpdateMulticast{}
-	if v := expandRequestSdaMulticastV1UpdateUpdateMulticastItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaMulticastV1UpdateUpdateMulticastV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateMulticastV1 {
+	request := catalystcentersdkgo.RequestSdaUpdateMulticastV1{}
+	if v := expandRequestSdaMulticastV1UpdateUpdateMulticastV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	return &request
 }
 
-func expandRequestSdaMulticastV1UpdateUpdateMulticastItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateMulticast {
-	request := []catalystcentersdkgo.RequestItemSdaUpdateMulticast{}
+func expandRequestSdaMulticastV1UpdateUpdateMulticastV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateMulticastV1 {
+	request := []catalystcentersdkgo.RequestItemSdaUpdateMulticastV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -207,7 +207,7 @@ func expandRequestSdaMulticastV1UpdateUpdateMulticastItemArray(ctx context.Conte
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaMulticastV1UpdateUpdateMulticastItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaMulticastV1UpdateUpdateMulticastV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -215,8 +215,8 @@ func expandRequestSdaMulticastV1UpdateUpdateMulticastItemArray(ctx context.Conte
 	return &request
 }
 
-func expandRequestSdaMulticastV1UpdateUpdateMulticastItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateMulticast {
-	request := catalystcentersdkgo.RequestItemSdaUpdateMulticast{}
+func expandRequestSdaMulticastV1UpdateUpdateMulticastV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateMulticastV1 {
+	request := catalystcentersdkgo.RequestItemSdaUpdateMulticastV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".fabric_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".fabric_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".fabric_id")))) {
 		request.FabricID = interfaceToString(v)
 	}
@@ -226,7 +226,7 @@ func expandRequestSdaMulticastV1UpdateUpdateMulticastItem(ctx context.Context, k
 	return &request
 }
 
-func flattenSdaUpdateMulticastItem(item *catalystcentersdkgo.ResponseSdaUpdateMulticastResponse) []map[string]interface{} {
+func flattenSdaUpdateMulticastV1Item(item *catalystcentersdkgo.ResponseSdaUpdateMulticastV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

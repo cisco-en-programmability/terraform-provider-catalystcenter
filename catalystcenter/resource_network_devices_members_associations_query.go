@@ -148,15 +148,15 @@ func resourceNetworkDevicesMembersAssociationsQueryDelete(ctx context.Context, d
 	return diags
 }
 
-func expandRequestNetworkDevicesMembersAssociationsQueryQueryTheTagsAssociatedWithNetworkDevices(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagQueryTheTagsAssociatedWithNetworkDevices {
-	request := catalystcentersdkgo.RequestTagQueryTheTagsAssociatedWithNetworkDevices{}
+func expandRequestNetworkDevicesMembersAssociationsQueryQueryTheTagsAssociatedWithNetworkDevices(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagQueryTheTagsAssociatedWithNetworkDevicesV1 {
+	request := catalystcentersdkgo.RequestTagQueryTheTagsAssociatedWithNetworkDevicesV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ids")))) {
 		request.IDs = interfaceToSliceString(v)
 	}
 	return &request
 }
 
-func flattenTagQueryTheTagsAssociatedWithNetworkDevicesItems(items *[]catalystcentersdkgo.ResponseTagQueryTheTagsAssociatedWithNetworkDevicesResponse) []map[string]interface{} {
+func flattenTagQueryTheTagsAssociatedWithNetworkDevicesItems(items *[]catalystcentersdkgo.ResponseTagQueryTheTagsAssociatedWithNetworkDevicesV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -170,7 +170,7 @@ func flattenTagQueryTheTagsAssociatedWithNetworkDevicesItems(items *[]catalystce
 	return respItems
 }
 
-func flattenTagQueryTheTagsAssociatedWithNetworkDevicesItemsTags(items *[]catalystcentersdkgo.ResponseTagQueryTheTagsAssociatedWithNetworkDevicesResponseTags) []map[string]interface{} {
+func flattenTagQueryTheTagsAssociatedWithNetworkDevicesItemsTags(items *[]catalystcentersdkgo.ResponseTagQueryTheTagsAssociatedWithNetworkDevicesV1ResponseTags) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

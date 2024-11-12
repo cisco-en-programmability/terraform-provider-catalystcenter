@@ -435,31 +435,31 @@ func dataSourceDeviceCredentialRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceCredentialDetails")
-		queryParams1 := catalystcentersdkgo.GetDeviceCredentialDetailsQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetDeviceCredentialDetailsV1")
+		queryParams1 := catalystcentersdkgo.GetDeviceCredentialDetailsV1QueryParams{}
 
 		if okSiteID {
 			queryParams1.SiteID = vSiteID.(string)
 		}
 
-		response1, restyResp1, err := client.NetworkSettings.GetDeviceCredentialDetails(&queryParams1)
+		response1, restyResp1, err := client.NetworkSettings.GetDeviceCredentialDetailsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceCredentialDetails", err,
-				"Failure at GetDeviceCredentialDetails, unexpected response", ""))
+				"Failure when executing 2 GetDeviceCredentialDetailsV1", err,
+				"Failure at GetDeviceCredentialDetailsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenNetworkSettingsGetDeviceCredentialDetailsItem(response1)
+		vItem1 := flattenNetworkSettingsGetDeviceCredentialDetailsV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceCredentialDetails response",
+				"Failure when setting GetDeviceCredentialDetailsV1 response",
 				err))
 			return diags
 		}
@@ -471,23 +471,23 @@ func dataSourceDeviceCredentialRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenNetworkSettingsGetDeviceCredentialDetailsItem(item *catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialDetails) []map[string]interface{} {
+func flattenNetworkSettingsGetDeviceCredentialDetailsV1Item(item *catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialDetailsV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["snmp_v3"] = flattenNetworkSettingsGetDeviceCredentialDetailsItemSNMPV3(item.SNMPV3)
-	respItem["http_read"] = flattenNetworkSettingsGetDeviceCredentialDetailsItemHTTPRead(item.HTTPRead)
-	respItem["http_write"] = flattenNetworkSettingsGetDeviceCredentialDetailsItemHTTPWrite(item.HTTPWrite)
-	respItem["snmp_v2_write"] = flattenNetworkSettingsGetDeviceCredentialDetailsItemSNMPV2Write(item.SNMPV2Write)
-	respItem["snmp_v2_read"] = flattenNetworkSettingsGetDeviceCredentialDetailsItemSNMPV2Read(item.SNMPV2Read)
-	respItem["cli"] = flattenNetworkSettingsGetDeviceCredentialDetailsItemCli(item.Cli)
+	respItem["snmp_v3"] = flattenNetworkSettingsGetDeviceCredentialDetailsV1ItemSNMPV3(item.SNMPV3)
+	respItem["http_read"] = flattenNetworkSettingsGetDeviceCredentialDetailsV1ItemHTTPRead(item.HTTPRead)
+	respItem["http_write"] = flattenNetworkSettingsGetDeviceCredentialDetailsV1ItemHTTPWrite(item.HTTPWrite)
+	respItem["snmp_v2_write"] = flattenNetworkSettingsGetDeviceCredentialDetailsV1ItemSNMPV2Write(item.SNMPV2Write)
+	respItem["snmp_v2_read"] = flattenNetworkSettingsGetDeviceCredentialDetailsV1ItemSNMPV2Read(item.SNMPV2Read)
+	respItem["cli"] = flattenNetworkSettingsGetDeviceCredentialDetailsV1ItemCli(item.Cli)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenNetworkSettingsGetDeviceCredentialDetailsItemSNMPV3(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialDetailsSNMPV3) []map[string]interface{} {
+func flattenNetworkSettingsGetDeviceCredentialDetailsV1ItemSNMPV3(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialDetailsV1SNMPV3) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -511,7 +511,7 @@ func flattenNetworkSettingsGetDeviceCredentialDetailsItemSNMPV3(items *[]catalys
 	return respItems
 }
 
-func flattenNetworkSettingsGetDeviceCredentialDetailsItemHTTPRead(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialDetailsHTTPRead) []map[string]interface{} {
+func flattenNetworkSettingsGetDeviceCredentialDetailsV1ItemHTTPRead(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialDetailsV1HTTPRead) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -533,7 +533,7 @@ func flattenNetworkSettingsGetDeviceCredentialDetailsItemHTTPRead(items *[]catal
 	return respItems
 }
 
-func flattenNetworkSettingsGetDeviceCredentialDetailsItemHTTPWrite(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialDetailsHTTPWrite) []map[string]interface{} {
+func flattenNetworkSettingsGetDeviceCredentialDetailsV1ItemHTTPWrite(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialDetailsV1HTTPWrite) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -555,7 +555,7 @@ func flattenNetworkSettingsGetDeviceCredentialDetailsItemHTTPWrite(items *[]cata
 	return respItems
 }
 
-func flattenNetworkSettingsGetDeviceCredentialDetailsItemSNMPV2Write(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialDetailsSNMPV2Write) []map[string]interface{} {
+func flattenNetworkSettingsGetDeviceCredentialDetailsV1ItemSNMPV2Write(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialDetailsV1SNMPV2Write) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -574,7 +574,7 @@ func flattenNetworkSettingsGetDeviceCredentialDetailsItemSNMPV2Write(items *[]ca
 	return respItems
 }
 
-func flattenNetworkSettingsGetDeviceCredentialDetailsItemSNMPV2Read(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialDetailsSNMPV2Read) []map[string]interface{} {
+func flattenNetworkSettingsGetDeviceCredentialDetailsV1ItemSNMPV2Read(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialDetailsV1SNMPV2Read) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -593,7 +593,7 @@ func flattenNetworkSettingsGetDeviceCredentialDetailsItemSNMPV2Read(items *[]cat
 	return respItems
 }
 
-func flattenNetworkSettingsGetDeviceCredentialDetailsItemCli(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialDetailsCli) []map[string]interface{} {
+func flattenNetworkSettingsGetDeviceCredentialDetailsV1ItemCli(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialDetailsV1Cli) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

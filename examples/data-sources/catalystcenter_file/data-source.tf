@@ -1,7 +1,6 @@
 
 data "catalystcenter_file" "example" {
   provider = catalystcenter
-  dirpath  = "string"
   file_id  = "string"
 }
 

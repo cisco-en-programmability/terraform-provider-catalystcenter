@@ -58,11 +58,11 @@ Examples:
 name=BGP_Down (single entity uuid requested)
 name=BGP_Down&name=BGP_Flap (multiple issue names separated by & operator)
 - `priority` (String) priority query parameter. Issue priority, possible values are P1, P2, P3, P4.
-'P1': A critical issue that needs immediate attention and can have a wide impact on network operations.
-'P2': A major issue that can potentially impact multiple devices or clients.
-'P3': A minor issue that has a localized or minimal impact.
-'P4': A warning issue that may not be an immediate problem but addressing it can optimize the network performance.
-- `profile_id` (String) profileId query parameter. The profile identier to fetch the profile associated issue defintions. The default is 'global'. Please refer Network design profiles documentation for more details.
+*P1*: A critical issue that needs immediate attention and can have a wide impact on network operations.
+*P2*: A major issue that can potentially impact multiple devices or clients.
+*P3*: A minor issue that has a localized or minimal impact.
+*P4*: A warning issue that may not be an immediate problem but addressing it can optimize the network performance.
+- `profile_id` (String) profileId query parameter. The profile identier to fetch the profile associated issue defintions. The default is *global*. Please refer Network design profiles documentation for more details.
 
 ### Read-Only
 

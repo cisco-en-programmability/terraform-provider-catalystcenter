@@ -121,26 +121,26 @@ func dataSourceIntegrationSettingsItsmInstancesRead(ctx context.Context, d *sche
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAllItsmIntegrationSettings")
+		log.Printf("[DEBUG] Selected method: GetAllItsmIntegrationSettingsV1")
 
-		response1, restyResp1, err := client.ItsmIntegration.GetAllItsmIntegrationSettings()
+		response1, restyResp1, err := client.ItsmIntegration.GetAllItsmIntegrationSettingsV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAllItsmIntegrationSettings", err,
-				"Failure at GetAllItsmIntegrationSettings, unexpected response", ""))
+				"Failure when executing 2 GetAllItsmIntegrationSettingsV1", err,
+				"Failure at GetAllItsmIntegrationSettingsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenItsmIntegrationGetAllItsmIntegrationSettingsItems(response1)
+		vItems1 := flattenItsmIntegrationGetAllItsmIntegrationSettingsV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAllItsmIntegrationSettings response",
+				"Failure when setting GetAllItsmIntegrationSettingsV1 response",
 				err))
 			return diags
 		}
@@ -152,7 +152,7 @@ func dataSourceIntegrationSettingsItsmInstancesRead(ctx context.Context, d *sche
 	return diags
 }
 
-func flattenItsmIntegrationGetAllItsmIntegrationSettingsItems(items *catalystcentersdkgo.ResponseItsmIntegrationGetAllItsmIntegrationSettings) []map[string]interface{} {
+func flattenItsmIntegrationGetAllItsmIntegrationSettingsV1Items(items *catalystcentersdkgo.ResponseItsmIntegrationGetAllItsmIntegrationSettingsV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -169,7 +169,7 @@ func flattenItsmIntegrationGetAllItsmIntegrationSettingsItems(items *catalystcen
 		respItem["created_date"] = item.CreatedDate
 		respItem["created_by"] = item.CreatedBy
 		respItem["updated_by"] = item.UpdatedBy
-		respItem["software_version_log"] = flattenItsmIntegrationGetAllItsmIntegrationSettingsItemsSoftwareVersionLog(item.SoftwareVersionLog)
+		respItem["software_version_log"] = flattenItsmIntegrationGetAllItsmIntegrationSettingsV1ItemsSoftwareVersionLog(item.SoftwareVersionLog)
 		respItem["schema_version"] = item.SchemaVersion
 		respItem["tenant_id"] = item.TenantID
 		respItems = append(respItems, respItem)
@@ -177,7 +177,7 @@ func flattenItsmIntegrationGetAllItsmIntegrationSettingsItems(items *catalystcen
 	return respItems
 }
 
-func flattenItsmIntegrationGetAllItsmIntegrationSettingsItemsSoftwareVersionLog(items *[]catalystcentersdkgo.ResponseItemItsmIntegrationGetAllItsmIntegrationSettingsSoftwareVersionLog) []interface{} {
+func flattenItsmIntegrationGetAllItsmIntegrationSettingsV1ItemsSoftwareVersionLog(items *[]catalystcentersdkgo.ResponseItemItsmIntegrationGetAllItsmIntegrationSettingsV1SoftwareVersionLog) []interface{} {
 	if items == nil {
 		return nil
 	}

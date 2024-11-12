@@ -115,8 +115,8 @@ func dataSourceItsmCmdbSyncStatusRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetCmdbSyncStatus")
-		queryParams1 := catalystcentersdkgo.GetCmdbSyncStatusQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetCmdbSyncStatusV1")
+		queryParams1 := catalystcentersdkgo.GetCmdbSyncStatusV1QueryParams{}
 
 		if okStatus {
 			queryParams1.Status = vStatus.(string)
@@ -125,24 +125,24 @@ func dataSourceItsmCmdbSyncStatusRead(ctx context.Context, d *schema.ResourceDat
 			queryParams1.Date = vDate.(string)
 		}
 
-		response1, restyResp1, err := client.Itsm.GetCmdbSyncStatus(&queryParams1)
+		response1, restyResp1, err := client.Itsm.GetCmdbSyncStatusV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetCmdbSyncStatus", err,
-				"Failure at GetCmdbSyncStatus, unexpected response", ""))
+				"Failure when executing 2 GetCmdbSyncStatusV1", err,
+				"Failure at GetCmdbSyncStatusV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenItsmGetCmdbSyncStatusItems(response1)
+		vItems1 := flattenItsmGetCmdbSyncStatusV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetCmdbSyncStatus response",
+				"Failure when setting GetCmdbSyncStatusV1 response",
 				err))
 			return diags
 		}
@@ -154,7 +154,7 @@ func dataSourceItsmCmdbSyncStatusRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenItsmGetCmdbSyncStatusItems(items *catalystcentersdkgo.ResponseItsmGetCmdbSyncStatus) []map[string]interface{} {
+func flattenItsmGetCmdbSyncStatusV1Items(items *catalystcentersdkgo.ResponseItsmGetCmdbSyncStatusV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -163,7 +163,7 @@ func flattenItsmGetCmdbSyncStatusItems(items *catalystcentersdkgo.ResponseItsmGe
 		respItem := make(map[string]interface{})
 		respItem["success_count"] = item.SuccessCount
 		respItem["failure_count"] = item.FailureCount
-		respItem["devices"] = flattenItsmGetCmdbSyncStatusItemsDevices(item.Devices)
+		respItem["devices"] = flattenItsmGetCmdbSyncStatusV1ItemsDevices(item.Devices)
 		respItem["unknown_error_count"] = item.UnknownErrorCount
 		respItem["message"] = item.Message
 		respItem["sync_time"] = item.SyncTime
@@ -172,7 +172,7 @@ func flattenItsmGetCmdbSyncStatusItems(items *catalystcentersdkgo.ResponseItsmGe
 	return respItems
 }
 
-func flattenItsmGetCmdbSyncStatusItemsDevices(items *[]catalystcentersdkgo.ResponseItemItsmGetCmdbSyncStatusDevices) []map[string]interface{} {
+func flattenItsmGetCmdbSyncStatusV1ItemsDevices(items *[]catalystcentersdkgo.ResponseItemItsmGetCmdbSyncStatusV1Devices) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

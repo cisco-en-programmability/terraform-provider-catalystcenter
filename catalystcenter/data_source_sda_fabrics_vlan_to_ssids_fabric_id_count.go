@@ -55,27 +55,27 @@ func dataSourceSdaFabricsVLANToSSIDsFabricIDCountRead(ctx context.Context, d *sc
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: ReturnsTheCountOfVLANsMappedToSSIDsInAFabricSite")
+		log.Printf("[DEBUG] Selected method: ReturnsTheCountOfVLANsMappedToSSIDsInAFabricSiteV1")
 		vvFabricID := vFabricID.(string)
 
-		response1, restyResp1, err := client.FabricWireless.ReturnsTheCountOfVLANsMappedToSSIDsInAFabricSite(vvFabricID)
+		response1, restyResp1, err := client.FabricWireless.ReturnsTheCountOfVLANsMappedToSSIDsInAFabricSiteV1(vvFabricID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 ReturnsTheCountOfVLANsMappedToSSIDsInAFabricSite", err,
-				"Failure at ReturnsTheCountOfVLANsMappedToSSIDsInAFabricSite, unexpected response", ""))
+				"Failure when executing 2 ReturnsTheCountOfVLANsMappedToSSIDsInAFabricSiteV1", err,
+				"Failure at ReturnsTheCountOfVLANsMappedToSSIDsInAFabricSiteV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenFabricWirelessReturnsTheCountOfVLANsMappedToSSIDsInAFabricSiteItem(response1.Response)
+		vItem1 := flattenFabricWirelessReturnsTheCountOfVLANsMappedToSSIDsInAFabricSiteV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting ReturnsTheCountOfVLANsMappedToSSIDsInAFabricSite response",
+				"Failure when setting ReturnsTheCountOfVLANsMappedToSSIDsInAFabricSiteV1 response",
 				err))
 			return diags
 		}
@@ -87,7 +87,7 @@ func dataSourceSdaFabricsVLANToSSIDsFabricIDCountRead(ctx context.Context, d *sc
 	return diags
 }
 
-func flattenFabricWirelessReturnsTheCountOfVLANsMappedToSSIDsInAFabricSiteItem(item *catalystcentersdkgo.ResponseFabricWirelessReturnsTheCountOfVLANsMappedToSSIDsInAFabricSiteResponse) []map[string]interface{} {
+func flattenFabricWirelessReturnsTheCountOfVLANsMappedToSSIDsInAFabricSiteV1Item(item *catalystcentersdkgo.ResponseFabricWirelessReturnsTheCountOfVLANsMappedToSSIDsInAFabricSiteV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -67,26 +67,26 @@ func dataSourceMapsSupportedAccessPointsRead(ctx context.Context, d *schema.Reso
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: MapsSupportedAccessPoints")
+		log.Printf("[DEBUG] Selected method: MapsSupportedAccessPointsV1")
 
-		response1, restyResp1, err := client.Sites.MapsSupportedAccessPoints()
+		response1, restyResp1, err := client.Sites.MapsSupportedAccessPointsV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 MapsSupportedAccessPoints", err,
-				"Failure at MapsSupportedAccessPoints, unexpected response", ""))
+				"Failure when executing 2 MapsSupportedAccessPointsV1", err,
+				"Failure at MapsSupportedAccessPointsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSitesMapsSupportedAccessPointsItems(response1)
+		vItems1 := flattenSitesMapsSupportedAccessPointsV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting MapsSupportedAccessPoints response",
+				"Failure when setting MapsSupportedAccessPointsV1 response",
 				err))
 			return diags
 		}
@@ -98,21 +98,21 @@ func dataSourceMapsSupportedAccessPointsRead(ctx context.Context, d *schema.Reso
 	return diags
 }
 
-func flattenSitesMapsSupportedAccessPointsItems(items *catalystcentersdkgo.ResponseSitesMapsSupportedAccessPoints) []map[string]interface{} {
+func flattenSitesMapsSupportedAccessPointsV1Items(items *catalystcentersdkgo.ResponseSitesMapsSupportedAccessPointsV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["antenna_patterns"] = flattenSitesMapsSupportedAccessPointsItemsAntennaPatterns(item.AntennaPatterns)
+		respItem["antenna_patterns"] = flattenSitesMapsSupportedAccessPointsV1ItemsAntennaPatterns(item.AntennaPatterns)
 		respItem["ap_type"] = item.ApType
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSitesMapsSupportedAccessPointsItemsAntennaPatterns(items *[]catalystcentersdkgo.ResponseItemSitesMapsSupportedAccessPointsAntennaPatterns) []map[string]interface{} {
+func flattenSitesMapsSupportedAccessPointsV1ItemsAntennaPatterns(items *[]catalystcentersdkgo.ResponseItemSitesMapsSupportedAccessPointsV1AntennaPatterns) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

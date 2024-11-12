@@ -1,6 +1,6 @@
 
 resource "catalystcenter_pnp_virtual_account_deregister" "example" {
-  provider = catalystcenter
+  provider = meraki
   domain   = "string"
   name     = "string"
 }

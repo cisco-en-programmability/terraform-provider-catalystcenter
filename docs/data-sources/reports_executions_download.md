@@ -20,9 +20,12 @@ format available from content-disposition response header.
 ```terraform
 data "catalystcenter_reports_executions_download" "example" {
   provider     = catalystcenter
-  dirpath      = "string"
   execution_id = "string"
   report_id    = "string"
+}
+
+output "catalystcenter_reports_executions_download_example" {
+  value = data.catalystcenter_reports_executions_download.example.item
 }
 ```
 
@@ -38,3 +41,4 @@ data "catalystcenter_reports_executions_download" "example" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+- `item` (String)

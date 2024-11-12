@@ -405,27 +405,27 @@ func dataSourceNetworkDeviceBySerialNumberRead(ctx context.Context, d *schema.Re
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceBySerialNumber")
+		log.Printf("[DEBUG] Selected method: GetDeviceBySerialNumberV1")
 		vvSerialNumber := vSerialNumber.(string)
 
-		response1, restyResp1, err := client.Devices.GetDeviceBySerialNumber(vvSerialNumber)
+		response1, restyResp1, err := client.Devices.GetDeviceBySerialNumberV1(vvSerialNumber)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceBySerialNumber", err,
-				"Failure at GetDeviceBySerialNumber, unexpected response", ""))
+				"Failure when executing 2 GetDeviceBySerialNumberV1", err,
+				"Failure at GetDeviceBySerialNumberV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesGetDeviceBySerialNumberItem(response1.Response)
+		vItem1 := flattenDevicesGetDeviceBySerialNumberV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceBySerialNumber response",
+				"Failure when setting GetDeviceBySerialNumberV1 response",
 				err))
 			return diags
 		}
@@ -437,7 +437,7 @@ func dataSourceNetworkDeviceBySerialNumberRead(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func flattenDevicesGetDeviceBySerialNumberItem(item *catalystcentersdkgo.ResponseDevicesGetDeviceBySerialNumberResponse) []map[string]interface{} {
+func flattenDevicesGetDeviceBySerialNumberV1Item(item *catalystcentersdkgo.ResponseDevicesGetDeviceBySerialNumberV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

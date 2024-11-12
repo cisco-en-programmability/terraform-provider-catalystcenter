@@ -51,7 +51,7 @@ output "catalystcenter_tasks_example" {
 ### Optional
 
 - `end_time` (Number) endTime query parameter. This is the epoch millisecond end time upto which task records need to be fetched
-- `id` (String) id path parameter. the 'id' of the task to retrieve
+- `id` (String) id path parameter. the *id* of the task to retrieve
 - `limit` (Number) limit query parameter. The number of records to show for this page.
 - `offset` (Number) offset query parameter. The first record to show for this page; the first record is numbered 1.
 - `order` (String) order query parameter. Whether ascending or descending order should be used to sort the response.

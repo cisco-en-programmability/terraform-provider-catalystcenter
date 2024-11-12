@@ -1,6 +1,6 @@
 
 resource "catalystcenter_configuration_template_export_project" "example" {
-  provider   = catalystcenter
+  provider   = meraki
   parameters = ["string"]
 }
 

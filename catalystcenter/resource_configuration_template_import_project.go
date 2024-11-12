@@ -74,16 +74,18 @@ func resourceConfigurationTemplateImportProjectCreate(ctx context.Context, d *sc
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	queryParams1 := catalystcentersdkgo.ImportsTheProjectsProvidedQueryParams{}
+	queryParams1 := catalystcentersdkgo.ImportsTheProjectsProvidedV1QueryParams{}
 
-	response1, restyResp1, err := client.ConfigurationTemplates.ImportsTheProjectsProvided(&queryParams1)
+	// has_unknown_response: None
+
+	response1, restyResp1, err := client.ConfigurationTemplates.ImportsTheProjectsProvidedV1(&queryParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ImportsTheProjectsProvided", err))
+			"Failure when executing ImportsTheProjectsProvidedV1", err))
 		return diags
 	}
 
@@ -91,7 +93,7 @@ func resourceConfigurationTemplateImportProjectCreate(ctx context.Context, d *sc
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing ImportsTheProjectsProvided", err))
+			"Failure when executing ImportsTheProjectsProvidedV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -125,15 +127,15 @@ func resourceConfigurationTemplateImportProjectCreate(ctx context.Context, d *sc
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing ImportsTheProjectsProvided", err1))
+				"Failure when executing ImportsTheProjectsProvidedV1", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenConfigurationTemplatesImportsTheProjectsProvidedItem(response1.Response)
+	vItem1 := flattenConfigurationTemplatesImportsTheProjectsProvidedV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ImportsTheProjectsProvided response",
+			"Failure when setting ImportsTheProjectsProvidedV1 response",
 			err))
 		return diags
 	}
@@ -155,7 +157,7 @@ func resourceConfigurationTemplateImportProjectDelete(ctx context.Context, d *sc
 	return diags
 }
 
-func flattenConfigurationTemplatesImportsTheProjectsProvidedItem(item *catalystcentersdkgo.ResponseConfigurationTemplatesImportsTheProjectsProvidedResponse) []map[string]interface{} {
+func flattenConfigurationTemplatesImportsTheProjectsProvidedV1Item(item *catalystcentersdkgo.ResponseConfigurationTemplatesImportsTheProjectsProvidedResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

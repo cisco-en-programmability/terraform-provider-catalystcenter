@@ -166,31 +166,31 @@ func dataSourceWirelessControllersWirelessMobilityGroupsRead(ctx context.Context
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAllMobilityGroups")
-		queryParams1 := catalystcentersdkgo.GetAllMobilityGroupsQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetAllMobilityGroupsV1")
+		queryParams1 := catalystcentersdkgo.GetAllMobilityGroupsV1QueryParams{}
 
 		if okNetworkDeviceID {
 			queryParams1.NetworkDeviceID = vNetworkDeviceID.(string)
 		}
 
-		response1, restyResp1, err := client.Wireless.GetAllMobilityGroups(&queryParams1)
+		response1, restyResp1, err := client.Wireless.GetAllMobilityGroupsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAllMobilityGroups", err,
-				"Failure at GetAllMobilityGroups, unexpected response", ""))
+				"Failure when executing 2 GetAllMobilityGroupsV1", err,
+				"Failure at GetAllMobilityGroupsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenWirelessGetAllMobilityGroupsItems(response1.Response)
+		vItems1 := flattenWirelessGetAllMobilityGroupsV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAllMobilityGroups response",
+				"Failure when setting GetAllMobilityGroupsV1 response",
 				err))
 			return diags
 		}
@@ -202,7 +202,7 @@ func dataSourceWirelessControllersWirelessMobilityGroupsRead(ctx context.Context
 	return diags
 }
 
-func flattenWirelessGetAllMobilityGroupsItems(items *[]catalystcentersdkgo.ResponseWirelessGetAllMobilityGroupsResponse) []map[string]interface{} {
+func flattenWirelessGetAllMobilityGroupsV1Items(items *[]catalystcentersdkgo.ResponseWirelessGetAllMobilityGroupsV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -215,13 +215,13 @@ func flattenWirelessGetAllMobilityGroupsItems(items *[]catalystcentersdkgo.Respo
 		respItem["network_device_id"] = item.NetworkDeviceID
 		respItem["dtls_high_cipher"] = boolPtrToString(item.DtlsHighCipher)
 		respItem["data_link_encryption"] = boolPtrToString(item.DataLinkEncryption)
-		respItem["mobility_peers"] = flattenWirelessGetAllMobilityGroupsItemsMobilityPeers(item.MobilityPeers)
+		respItem["mobility_peers"] = flattenWirelessGetAllMobilityGroupsV1ItemsMobilityPeers(item.MobilityPeers)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenWirelessGetAllMobilityGroupsItemsMobilityPeers(items *[]catalystcentersdkgo.ResponseWirelessGetAllMobilityGroupsResponseMobilityPeers) []map[string]interface{} {
+func flattenWirelessGetAllMobilityGroupsV1ItemsMobilityPeers(items *[]catalystcentersdkgo.ResponseWirelessGetAllMobilityGroupsV1ResponseMobilityPeers) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

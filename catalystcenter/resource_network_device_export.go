@@ -108,20 +108,18 @@ func resourceNetworkDeviceExportCreate(ctx context.Context, d *schema.ResourceDa
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestNetworkDeviceExportExportDeviceList(ctx, "parameters.0", d)
+	request1 := expandRequestNetworkDeviceExportExportDeviceListV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.Devices.ExportDeviceList(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Devices.ExportDeviceListV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ExportDeviceList", err))
+			"Failure when executing ExportDeviceListV1", err))
 		return diags
 	}
 
@@ -129,7 +127,7 @@ func resourceNetworkDeviceExportCreate(ctx context.Context, d *schema.ResourceDa
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing ExportDeviceList", err))
+			"Failure when executing ExportDeviceListV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -163,22 +161,24 @@ func resourceNetworkDeviceExportCreate(ctx context.Context, d *schema.ResourceDa
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing ExportDeviceList", err1))
+				"Failure when executing ExportDeviceListV1", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenDevicesExportDeviceListItem(response1.Response)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
+	vItem1 := flattenDevicesExportDeviceListV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ExportDeviceList response",
+			"Failure when setting ExportDeviceListV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceNetworkDeviceExportRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -193,8 +193,8 @@ func resourceNetworkDeviceExportDelete(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func expandRequestNetworkDeviceExportExportDeviceList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesExportDeviceList {
-	request := catalystcentersdkgo.RequestDevicesExportDeviceList{}
+func expandRequestNetworkDeviceExportExportDeviceListV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesExportDeviceListV1 {
+	request := catalystcentersdkgo.RequestDevicesExportDeviceListV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_uuids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_uuids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_uuids")))) {
 		request.DeviceUUIDs = interfaceToSliceString(v)
 	}
@@ -210,7 +210,7 @@ func expandRequestNetworkDeviceExportExportDeviceList(ctx context.Context, key s
 	return &request
 }
 
-func flattenDevicesExportDeviceListItem(item *catalystcentersdkgo.ResponseDevicesExportDeviceListResponse) []map[string]interface{} {
+func flattenDevicesExportDeviceListV1Item(item *catalystcentersdkgo.ResponseDevicesExportDeviceListV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

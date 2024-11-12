@@ -54,27 +54,27 @@ func dataSourceSitesWirelessSettingsSSIDsCountRead(ctx context.Context, d *schem
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSSIDCountBySite")
+		log.Printf("[DEBUG] Selected method: GetSSIDCountBySiteV1")
 		vvSiteID := vSiteID.(string)
 
-		response1, restyResp1, err := client.Wireless.GetSSIDCountBySite(vvSiteID)
+		response1, restyResp1, err := client.Wireless.GetSSIDCountBySiteV1(vvSiteID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSSIDCountBySite", err,
-				"Failure at GetSSIDCountBySite, unexpected response", ""))
+				"Failure when executing 2 GetSSIDCountBySiteV1", err,
+				"Failure at GetSSIDCountBySiteV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessGetSSIDCountBySiteItem(response1.Response)
+		vItem1 := flattenWirelessGetSSIDCountBySiteV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSSIDCountBySite response",
+				"Failure when setting GetSSIDCountBySiteV1 response",
 				err))
 			return diags
 		}
@@ -86,7 +86,7 @@ func dataSourceSitesWirelessSettingsSSIDsCountRead(ctx context.Context, d *schem
 	return diags
 }
 
-func flattenWirelessGetSSIDCountBySiteItem(item *catalystcentersdkgo.ResponseWirelessGetSSIDCountBySiteResponse) []map[string]interface{} {
+func flattenWirelessGetSSIDCountBySiteV1Item(item *catalystcentersdkgo.ResponseWirelessGetSSIDCountBySiteV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

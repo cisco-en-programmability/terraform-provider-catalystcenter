@@ -125,11 +125,9 @@ func resourceLanAutomationUpdateV2Create(ctx context.Context, d *schema.Resource
 	vvID := vID.(string)
 	request1 := expandRequestLanAutomationUpdateV2LanAutomationStopAndUpdateDevicesV2(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.LanAutomation.LanAutomationStopAndUpdateDevicesV2(vvID, request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.LanAutomation.LanAutomationStopAndUpdateDevicesV2(vvID, request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
@@ -183,6 +181,9 @@ func resourceLanAutomationUpdateV2Create(ctx context.Context, d *schema.Resource
 		}
 	}
 
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
 	vItem1 := flattenLanAutomationLanAutomationStopAndUpdateDevicesV2Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
@@ -193,7 +194,6 @@ func resourceLanAutomationUpdateV2Create(ctx context.Context, d *schema.Resource
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceLanAutomationUpdateV2Read(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)

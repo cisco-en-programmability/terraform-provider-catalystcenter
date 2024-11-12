@@ -82,6 +82,8 @@ func resourceSpProfileDeleteV2Create(ctx context.Context, d *schema.ResourceData
 
 	vvSpProfileName := vSpProfileName.(string)
 
+	// has_unknown_response: None
+
 	response1, restyResp1, err := client.NetworkSettings.DeleteSpProfileV2(vvSpProfileName)
 
 	if err != nil || response1 == nil {
@@ -135,7 +137,6 @@ func resourceSpProfileDeleteV2Create(ctx context.Context, d *schema.ResourceData
 			return diags
 		}
 	}
-
 	vItem1 := flattenNetworkSettingsDeleteSpProfileV2Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
@@ -146,7 +147,6 @@ func resourceSpProfileDeleteV2Create(ctx context.Context, d *schema.ResourceData
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceSpProfileDeleteV2Read(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)

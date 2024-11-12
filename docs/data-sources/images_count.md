@@ -4,14 +4,14 @@ page_title: "catalystcenter_images_count Data Source - terraform-provider-cataly
 subcategory: ""
 description: |-
   It performs read operation on Software Image Management (SWIM).
-  Returns the count of software images for given 'siteId'. The default value of siteId is global
+  Returns the count of software images for given siteId. The default value of siteId is global
 ---
 
 # catalystcenter_images_count (Data Source)
 
 It performs read operation on Software Image Management (SWIM).
 
-- Returns the count of software images for given 'siteId'. The default value of siteId is global
+- Returns the count of software images for given *siteId*. The default value of siteId is global
 
 ## Example Usage
 
@@ -40,15 +40,15 @@ output "catalystcenter_images_count_example" {
 
 ### Optional
 
-- `golden` (String) golden query parameter. When set to 'true', it will retrieve the images marked tagged golden. When set to 'false', it will retrieve the images marked not tagged golden.
-- `has_addon_images` (Boolean) hasAddonImages query parameter. When set to 'true', it will retrieve the images which have add-on images. When set to 'false', it will retrieve the images which do not have add-on images.
-- `imported` (Boolean) imported query parameter. When the value is set to 'true', it will include physically imported images. Conversely, when the value is set to 'false', it will include image records from the cloud. The identifier for cloud images can be utilised to download images from Cisco.com to the disk.
+- `golden` (String) golden query parameter. When set to *true*, it will retrieve the images marked tagged golden. When set to *false*, it will retrieve the images marked not tagged golden.
+- `has_addon_images` (Boolean) hasAddonImages query parameter. When set to *true*, it will retrieve the images which have add-on images. When set to *false*, it will retrieve the images which do not have add-on images.
+- `imported` (Boolean) imported query parameter. When the value is set to *true*, it will include physically imported images. Conversely, when the value is set to *false*, it will include image records from the cloud. The identifier for cloud images can be utilised to download images from Cisco.com to the disk.
 - `integrity` (String) integrity query parameter. Filter with verified images using Integrity Verification Available values: UNKNOWN, VERIFIED
-- `is_addon_images` (Boolean) isAddonImages query parameter. When set to 'true', it will retrieve the images that an add-on image.  When set to 'false', it will retrieve the images that are not add-on images
+- `is_addon_images` (Boolean) isAddonImages query parameter. When set to *true*, it will retrieve the images that an add-on image.  When set to *false*, it will retrieve the images that are not add-on images
 - `name` (String) name query parameter. Filter with software image or add-on name. Supports partial case-insensitive search. A minimum of 3 characters is required for the search
-- `product_name_ordinal` (Number) productNameOrdinal query parameter. The product name ordinal is a unique value for each network device product. The productNameOrdinal can be obtained from the response of the API '/dna/intent/api/v1/siteWiseProductNames'.
+- `product_name_ordinal` (Number) productNameOrdinal query parameter. The product name ordinal is a unique value for each network device product. The productNameOrdinal can be obtained from the response of the API */dna/intent/api/v1/siteWiseProductNames*.
 - `site_id` (String) siteId query parameter. Site identifier to get the list of all available products under the site. The default value is the global site.  See https://developer.cisco.com/docs/dna-center/get-site for siteId
-- `supervisor_product_name_ordinal` (Number) supervisorProductNameOrdinal query parameter. The supervisor engine module ordinal is a unique value for each supervisor module. The 'supervisorProductNameOrdinal' can be obtained from the response of API '/dna/intent/api/v1/siteWiseProductNames'
+- `supervisor_product_name_ordinal` (Number) supervisorProductNameOrdinal query parameter. The supervisor engine module ordinal is a unique value for each supervisor module. The *supervisorProductNameOrdinal* can be obtained from the response of API */dna/intent/api/v1/siteWiseProductNames*
 - `version` (String) version query parameter. Filter with image version. Supports partial case-insensitive search. A minimum of 3 characters is required for the search
 
 ### Read-Only

@@ -4,7 +4,7 @@ page_title: "catalystcenter_sites_telemetry_settings Resource - terraform-provid
 subcategory: ""
 description: |-
   It manages read and update operations on Network Settings.
-  Sets telemetry settings for the given site; 'null' values indicate that the setting will be inherited from the parent
+  Sets telemetry settings for the given site; null values indicate that the setting will be inherited from the parent
   site.
 ---
 
@@ -12,7 +12,7 @@ description: |-
 
 It manages read and update operations on Network Settings.
 
-- Sets telemetry settings for the given site; 'null' values indicate that the setting will be inherited from the parent
+- Sets telemetry settings for the given site; *null* values indicate that the setting will be inherited from the parent
 site.
 
 ## Example Usage
@@ -78,7 +78,7 @@ output "catalystcenter_sites_telemetry_settings_example" {
 
 Required:
 
-- `id` (String) id path parameter. Site Id, retrievable from the 'id' attribute in '/dna/intent/api/v1/sites'
+- `id` (String) id path parameter. Site Id, retrievable from the *id* attribute in */dna/intent/api/v1/sites*
 
 Optional:
 

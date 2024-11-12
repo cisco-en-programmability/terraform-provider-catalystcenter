@@ -115,7 +115,7 @@ func resourceGlobalCredentialSNMPv2WriteCommunity() *schema.Resource {
 				},
 			},
 			"parameters": &schema.Schema{
-				Description: `Array of RequestDiscoveryCreateSNMPWriteCommunity`,
+				Description: `Array of RequestDiscoveryCreateSNMPWriteCommunityV1`,
 				Type:        schema.TypeList,
 				Required:    true,
 				MaxItems:    1,
@@ -179,7 +179,7 @@ func resourceGlobalCredentialSNMPv2WriteCommunityCreate(ctx context.Context, d *
 	vID := resourceItem["id"]
 	vvID := interfaceToString(vID)
 
-	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
+	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
 
 	queryParams1.CredentialSubType = "SNMPV2_WRITE_COMMUNITY"
 	item, err := searchDiscoveryGetGlobalCredentialsSmpv2Write(m, queryParams1, vvID)
@@ -247,7 +247,7 @@ func resourceGlobalCredentialSNMPv2WriteCommunityRead(ctx context.Context, d *sc
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method 1: GetGlobalCredentials")
-		queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
 
 		queryParams1.CredentialSubType = vCredentialSubType
 
@@ -266,10 +266,10 @@ func resourceGlobalCredentialSNMPv2WriteCommunityRead(ctx context.Context, d *sc
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
 		//TODO FOR DNAC
-		items := []catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse{
+		items := []catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response{
 			*response1,
 		}
-		vItem1 := flattenDiscoveryGetGlobalCredentialsItems(&items)
+		vItem1 := flattenDiscoveryGetGlobalCredentialsV1Items(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetGlobalCredentials search response",
@@ -291,7 +291,7 @@ func resourceGlobalCredentialSNMPv2WriteCommunityUpdate(ctx context.Context, d *
 	vCredentialSubType := "SNMPV2_WRITE_COMMUNITY"
 	vID := resourceMap["id"]
 
-	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
+	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
 	queryParams1.CredentialSubType = vCredentialSubType
 	item, err := searchDiscoveryGetGlobalCredentialsSmpv2Write(m, queryParams1, vID)
 	if err != nil || item == nil {
@@ -361,7 +361,7 @@ func resourceGlobalCredentialSNMPv2WriteCommunityDelete(ctx context.Context, d *
 	resourceMap := separateResourceID(resourceID)
 	vID := resourceMap["id"]
 
-	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
+	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
 
 	queryParams1.CredentialSubType = "SNMPV2_WRITE_COMMUNITY"
 	item, err := searchDiscoveryGetGlobalCredentialsSmpv2Write(m, queryParams1, vID)
@@ -383,8 +383,8 @@ func resourceGlobalCredentialSNMPv2WriteCommunityDelete(ctx context.Context, d *
 	}
 	return diags
 }
-func expandRequestGlobalCredentialSNMPv2WriteCommunityCreateSNMPWriteCommunity(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryCreateSNMPWriteCommunity {
-	request := catalystcentersdkgo.RequestDiscoveryCreateSNMPWriteCommunity{}
+func expandRequestGlobalCredentialSNMPv2WriteCommunityCreateSNMPWriteCommunity(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryCreateSNMPWriteCommunityV1 {
+	request := catalystcentersdkgo.RequestDiscoveryCreateSNMPWriteCommunityV1{}
 	if v := expandRequestGlobalCredentialSNMPv2WriteCommunityCreateSNMPWriteCommunityItemArray(ctx, key+".", d); v != nil {
 		request = *v
 	}
@@ -395,8 +395,8 @@ func expandRequestGlobalCredentialSNMPv2WriteCommunityCreateSNMPWriteCommunity(c
 	return &request
 }
 
-func expandRequestGlobalCredentialSNMPv2WriteCommunityCreateSNMPWriteCommunityItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDiscoveryCreateSNMPWriteCommunity {
-	request := []catalystcentersdkgo.RequestItemDiscoveryCreateSNMPWriteCommunity{}
+func expandRequestGlobalCredentialSNMPv2WriteCommunityCreateSNMPWriteCommunityItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDiscoveryCreateSNMPWriteCommunityV1 {
+	request := []catalystcentersdkgo.RequestItemDiscoveryCreateSNMPWriteCommunityV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -419,8 +419,8 @@ func expandRequestGlobalCredentialSNMPv2WriteCommunityCreateSNMPWriteCommunityIt
 	return &request
 }
 
-func expandRequestGlobalCredentialSNMPv2WriteCommunityCreateSNMPWriteCommunityItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDiscoveryCreateSNMPWriteCommunity {
-	request := catalystcentersdkgo.RequestItemDiscoveryCreateSNMPWriteCommunity{}
+func expandRequestGlobalCredentialSNMPv2WriteCommunityCreateSNMPWriteCommunityItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDiscoveryCreateSNMPWriteCommunityV1 {
+	request := catalystcentersdkgo.RequestItemDiscoveryCreateSNMPWriteCommunityV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".comments")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".comments")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".comments")))) {
 		request.Comments = interfaceToString(v)
 	}
@@ -440,8 +440,8 @@ func expandRequestGlobalCredentialSNMPv2WriteCommunityCreateSNMPWriteCommunityIt
 	return &request
 }
 
-func expandRequestGlobalCredentialSNMPv2WriteCommunityUpdateSNMPWriteCommunity(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdateSNMPWriteCommunity {
-	request := catalystcentersdkgo.RequestDiscoveryUpdateSNMPWriteCommunity{}
+func expandRequestGlobalCredentialSNMPv2WriteCommunityUpdateSNMPWriteCommunity(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdateSNMPWriteCommunityV1 {
+	request := catalystcentersdkgo.RequestDiscoveryUpdateSNMPWriteCommunityV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".comments")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".comments")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".comments")))) {
 		request.Comments = interfaceToString(v)
 	}
@@ -464,11 +464,11 @@ func expandRequestGlobalCredentialSNMPv2WriteCommunityUpdateSNMPWriteCommunity(c
 	return &request
 }
 
-func searchDiscoveryGetGlobalCredentialsSmpv2Write(m interface{}, queryParams catalystcentersdkgo.GetGlobalCredentialsQueryParams, vID string) (*catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse, error) {
+func searchDiscoveryGetGlobalCredentialsSmpv2Write(m interface{}, queryParams catalystcentersdkgo.GetGlobalCredentialsV1QueryParams, vID string) (*catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse
-	var ite *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentials
+	var foundItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response
+	var ite *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1
 	queryParams.CredentialSubType = "SNMPV2_WRITE_COMMUNITY"
 	ite, _, err = client.Discovery.GetGlobalCredentials(&queryParams)
 	if err != nil {
@@ -482,7 +482,7 @@ func searchDiscoveryGetGlobalCredentialsSmpv2Write(m interface{}, queryParams ca
 	for _, item := range *itemsCopy.Response {
 		// Call get by _ method and set value to foundItem and return
 		if item.ID == vID {
-			var getItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse
+			var getItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

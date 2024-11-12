@@ -63,7 +63,7 @@ func resourceCompliance() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"categories": &schema.Schema{
-							Description: `Category can have any value among 'INTENT'(mapped to compliance types: NETWORK_SETTINGS,NETWORK_PROFILEWORKFLOW,FABRIC,APPLICATION_VISIBILITY), 'RUNNING_CONFIG' , 'IMAGE' , 'PSIRT' , 'EOX' , 'NETWORK_SETTINGS'
+							Description: `Category can have any value among 'INTENT'(mapped to compliance types: NETWORK_SETTINGS,NETWORK_PROFILE,WORKFLOW,FABRIC,APPLICATION_VISIBILITY), 'RUNNING_CONFIG' , 'IMAGE' , 'PSIRT' , 'EOX' , 'NETWORK_SETTINGS'
 `,
 							Type:     schema.TypeList,
 							Optional: true,
@@ -105,20 +105,18 @@ func resourceComplianceCreate(ctx context.Context, d *schema.ResourceData, m int
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestComplianceRunCompliance(ctx, "parameters.0", d)
+	request1 := expandRequestComplianceRunComplianceV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.Compliance.RunCompliance(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Compliance.RunComplianceV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing RunCompliance", err))
+			"Failure when executing RunComplianceV1", err))
 		return diags
 	}
 
@@ -126,7 +124,7 @@ func resourceComplianceCreate(ctx context.Context, d *schema.ResourceData, m int
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing RunCompliance", err))
+			"Failure when executing RunComplianceV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -160,22 +158,24 @@ func resourceComplianceCreate(ctx context.Context, d *schema.ResourceData, m int
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing RunCompliance", err1))
+				"Failure when executing RunComplianceV1", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenComplianceRunComplianceItem(response1.Response)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
+	vItem1 := flattenComplianceRunComplianceV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting RunCompliance response",
+			"Failure when setting RunComplianceV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceComplianceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -190,8 +190,8 @@ func resourceComplianceDelete(ctx context.Context, d *schema.ResourceData, m int
 	return diags
 }
 
-func expandRequestComplianceRunCompliance(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestComplianceRunCompliance {
-	request := catalystcentersdkgo.RequestComplianceRunCompliance{}
+func expandRequestComplianceRunComplianceV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestComplianceRunComplianceV1 {
+	request := catalystcentersdkgo.RequestComplianceRunComplianceV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".trigger_full")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".trigger_full")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".trigger_full")))) {
 		request.TriggerFull = interfaceToBoolPtr(v)
 	}
@@ -204,7 +204,7 @@ func expandRequestComplianceRunCompliance(ctx context.Context, key string, d *sc
 	return &request
 }
 
-func flattenComplianceRunComplianceItem(item *catalystcentersdkgo.ResponseComplianceRunComplianceResponse) []map[string]interface{} {
+func flattenComplianceRunComplianceV1Item(item *catalystcentersdkgo.ResponseComplianceRunComplianceV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

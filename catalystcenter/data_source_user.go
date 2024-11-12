@@ -15,7 +15,7 @@ func dataSourceUser() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on User and Roles.
 
-- Get all users for the Cisco Catalyst Center System.
+- Get all users for the Cisco DNA Center System.
 `,
 
 		ReadContext: dataSourceUserRead,
@@ -116,8 +116,8 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetUsersAPI")
-		queryParams1 := catalystcentersdkgo.GetUsersAPIQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetUsersAPIV1")
+		queryParams1 := catalystcentersdkgo.GetUsersAPIV1QueryParams{}
 
 		queryParams1.InvokeSource = vInvokeSource.(string)
 
@@ -125,24 +125,24 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface
 			queryParams1.AuthSource = vAuthSource.(string)
 		}
 
-		response1, restyResp1, err := client.UserandRoles.GetUsersAPI(&queryParams1)
+		response1, restyResp1, err := client.UserandRoles.GetUsersAPIV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetUsersAPI", err,
-				"Failure at GetUsersAPI, unexpected response", ""))
+				"Failure when executing 2 GetUsersAPIV1", err,
+				"Failure at GetUsersAPIV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenUserandRolesGetUsersAPIItem(response1.Response)
+		vItem1 := flattenUserandRolesGetUsersAPIV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetUsersAPI response",
+				"Failure when setting GetUsersAPIV1 response",
 				err))
 			return diags
 		}
@@ -154,18 +154,18 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface
 	return diags
 }
 
-func flattenUserandRolesGetUsersAPIItem(item *catalystcentersdkgo.ResponseUserandRolesGetUsersAPIResponse) []map[string]interface{} {
+func flattenUserandRolesGetUsersAPIV1Item(item *catalystcentersdkgo.ResponseUserandRolesGetUsersAPIV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["users"] = flattenUserandRolesGetUsersAPIItemUsers(item.Users)
+	respItem["users"] = flattenUserandRolesGetUsersAPIV1ItemUsers(item.Users)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenUserandRolesGetUsersAPIItemUsers(items *[]catalystcentersdkgo.ResponseUserandRolesGetUsersAPIResponseUsers) []map[string]interface{} {
+func flattenUserandRolesGetUsersAPIV1ItemUsers(items *[]catalystcentersdkgo.ResponseUserandRolesGetUsersAPIV1ResponseUsers) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

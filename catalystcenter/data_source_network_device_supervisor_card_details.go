@@ -75,27 +75,27 @@ func dataSourceNetworkDeviceSupervisorCardDetailsRead(ctx context.Context, d *sc
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSupervisorCardDetail")
+		log.Printf("[DEBUG] Selected method: GetSupervisorCardDetailV1")
 		vvDeviceUUID := vDeviceUUID.(string)
 
-		response1, restyResp1, err := client.Devices.GetSupervisorCardDetail(vvDeviceUUID)
+		response1, restyResp1, err := client.Devices.GetSupervisorCardDetailV1(vvDeviceUUID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSupervisorCardDetail", err,
-				"Failure at GetSupervisorCardDetail, unexpected response", ""))
+				"Failure when executing 2 GetSupervisorCardDetailV1", err,
+				"Failure at GetSupervisorCardDetailV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetSupervisorCardDetailItems(response1.Response)
+		vItems1 := flattenDevicesGetSupervisorCardDetailV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSupervisorCardDetail response",
+				"Failure when setting GetSupervisorCardDetailV1 response",
 				err))
 			return diags
 		}
@@ -107,7 +107,7 @@ func dataSourceNetworkDeviceSupervisorCardDetailsRead(ctx context.Context, d *sc
 	return diags
 }
 
-func flattenDevicesGetSupervisorCardDetailItems(items *[]catalystcentersdkgo.ResponseDevicesGetSupervisorCardDetailResponse) []map[string]interface{} {
+func flattenDevicesGetSupervisorCardDetailV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetSupervisorCardDetailV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

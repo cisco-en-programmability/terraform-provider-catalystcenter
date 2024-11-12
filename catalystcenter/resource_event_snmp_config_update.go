@@ -177,31 +177,27 @@ func resourceEventSNMPConfigUpdateCreate(ctx context.Context, d *schema.Resource
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestEventSNMPConfigUpdateUpdateSNMPDestination(ctx, "parameters.0", d)
+	request1 := expandRequestEventSNMPConfigUpdateUpdateSNMPDestinationV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.EventManagement.UpdateSNMPDestination(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.EventManagement.UpdateSNMPDestinationV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing UpdateSNMPDestination", err))
+			"Failure when executing UpdateSNMPDestinationV1", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	//Analizar verificacion.
-
-	vItem1 := flattenEventManagementUpdateSNMPDestinationItem(response1)
+	vItem1 := flattenEventManagementUpdateSNMPDestinationV1Item(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting UpdateSNMPDestination response",
+			"Failure when setting UpdateSNMPDestinationV1 response",
 			err))
 		return diags
 	}
@@ -223,8 +219,8 @@ func resourceEventSNMPConfigUpdateDelete(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func expandRequestEventSNMPConfigUpdateUpdateSNMPDestination(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateSNMPDestination {
-	request := catalystcentersdkgo.RequestEventManagementUpdateSNMPDestination{}
+func expandRequestEventSNMPConfigUpdateUpdateSNMPDestinationV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateSNMPDestinationV1 {
+	request := catalystcentersdkgo.RequestEventManagementUpdateSNMPDestinationV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".config_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".config_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".config_id")))) {
 		request.ConfigID = interfaceToString(v)
 	}
@@ -267,12 +263,12 @@ func expandRequestEventSNMPConfigUpdateUpdateSNMPDestination(ctx context.Context
 	return &request
 }
 
-func flattenEventManagementUpdateSNMPDestinationItem(item *catalystcentersdkgo.ResponseEventManagementUpdateSNMPDestination) []map[string]interface{} {
+func flattenEventManagementUpdateSNMPDestinationV1Item(item *catalystcentersdkgo.ResponseEventManagementUpdateSNMPDestinationV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["error_message"] = flattenEventManagementUpdateSNMPDestinationItemErrorMessage(item.ErrorMessage)
+	respItem["error_message"] = flattenEventManagementUpdateSNMPDestinationV1ItemErrorMessage(item.ErrorMessage)
 	respItem["api_status"] = item.APIStatus
 	respItem["status_message"] = item.StatusMessage
 	return []map[string]interface{}{
@@ -280,7 +276,7 @@ func flattenEventManagementUpdateSNMPDestinationItem(item *catalystcentersdkgo.R
 	}
 }
 
-func flattenEventManagementUpdateSNMPDestinationItemErrorMessage(item *catalystcentersdkgo.ResponseEventManagementUpdateSNMPDestinationErrorMessage) []map[string]interface{} {
+func flattenEventManagementUpdateSNMPDestinationV1ItemErrorMessage(item *catalystcentersdkgo.ResponseEventManagementUpdateSNMPDestinationV1ErrorMessage) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

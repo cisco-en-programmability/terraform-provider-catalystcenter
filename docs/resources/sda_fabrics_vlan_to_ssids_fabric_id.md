@@ -4,7 +4,7 @@ page_title: "catalystcenter_sda_fabrics_vlan_to_ssids_fabric_id Resource - terra
 subcategory: ""
 description: |-
   It manages read and update operations on Fabric Wireless.
-  Add update, or remove SSID mappings to a VLAN. If the payload doesn't contain a 'vlanName' which has SSIDs mapping
+  Add, update, or remove SSID mappings to a VLAN. If the payload doesn't contain a 'vlanName' which has SSIDs mapping
   done earlier then all the mapped SSIDs of the 'vlanName' is cleared. The request must include all SSIDs currently mapped
   to a VLAN, as determined by the response from the GET operation for the same fabricId used in the request. If an
   already-mapped SSID is not included in the payload, its mapping will be removed by this API. Conversely, if a new SSID
@@ -17,7 +17,7 @@ description: |-
 
 It manages read and update operations on Fabric Wireless.
 
-- Add update, or remove SSID mappings to a VLAN. If the payload doesn't contain a 'vlanName' which has SSIDs mapping
+- Add, update, or remove SSID mappings to a VLAN. If the payload doesn't contain a 'vlanName' which has SSIDs mapping
 done earlier then all the mapped SSIDs of the 'vlanName' is cleared. The request must include all SSIDs currently mapped
 to a VLAN, as determined by the response from the GET operation for the same fabricId used in the request. If an
 already-mapped SSID is not included in the payload, its mapping will be removed by this API. Conversely, if a new SSID

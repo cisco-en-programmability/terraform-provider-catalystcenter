@@ -24,11 +24,10 @@ resource "catalystcenter_sda_fabric_zones" "example" {
   provider = catalystcenter
 
   parameters {
-    payload {
-      authentication_profile_name = "string"
-      id                          = "string"
-      site_id                     = "string"
-    }
+
+    authentication_profile_name = "string"
+    id                          = "string"
+    site_id                     = "string"
   }
 }
 

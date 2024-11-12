@@ -1,6 +1,6 @@
 
 resource "catalystcenter_network_device_user_defined_field_delete" "example" {
-  provider  = catalystcenter
+  provider  = meraki
   device_id = "string"
   name      = "string"
   parameters {

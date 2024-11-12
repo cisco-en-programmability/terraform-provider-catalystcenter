@@ -120,8 +120,8 @@ func dataSourceTaskCountRead(ctx context.Context, d *schema.ResourceData, m inte
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTaskCount")
-		queryParams1 := catalystcentersdkgo.GetTaskCountQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetTaskCountV1")
+		queryParams1 := catalystcentersdkgo.GetTaskCountV1QueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(string)
@@ -154,24 +154,24 @@ func dataSourceTaskCountRead(ctx context.Context, d *schema.ResourceData, m inte
 			queryParams1.ParentID = vParentID.(string)
 		}
 
-		response1, restyResp1, err := client.Task.GetTaskCount(&queryParams1)
+		response1, restyResp1, err := client.Task.GetTaskCountV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTaskCount", err,
-				"Failure at GetTaskCount, unexpected response", ""))
+				"Failure when executing 2 GetTaskCountV1", err,
+				"Failure at GetTaskCountV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenTaskGetTaskCountItem(response1)
+		vItem1 := flattenTaskGetTaskCountV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTaskCount response",
+				"Failure when setting GetTaskCountV1 response",
 				err))
 			return diags
 		}
@@ -183,7 +183,7 @@ func dataSourceTaskCountRead(ctx context.Context, d *schema.ResourceData, m inte
 	return diags
 }
 
-func flattenTaskGetTaskCountItem(item *catalystcentersdkgo.ResponseTaskGetTaskCount) []map[string]interface{} {
+func flattenTaskGetTaskCountV1Item(item *catalystcentersdkgo.ResponseTaskGetTaskCountV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

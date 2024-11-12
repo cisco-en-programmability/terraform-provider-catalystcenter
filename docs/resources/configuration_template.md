@@ -22,7 +22,197 @@ It manages create, read, update and delete operations on Configuration Templates
 ```terraform
 resource "catalystcenter_configuration_template" "example" {
   provider = catalystcenter
+  item {
 
+
+
+    containing_templates {
+
+
+
+      device_types {
+
+
+
+
+      }
+
+
+
+
+      rollback_template_params {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        range {
+
+
+
+
+        }
+
+        selection {
+
+
+
+
+
+        }
+      }
+      tags {
+
+
+
+      }
+
+      template_params {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        range {
+
+
+
+
+        }
+
+        selection {
+
+
+
+
+
+        }
+      }
+
+    }
+
+
+
+    device_types {
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+    rollback_template_params {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      range {
+
+
+
+
+      }
+
+      selection {
+
+
+
+
+
+      }
+    }
+
+
+
+    tags {
+
+
+
+    }
+
+    template_params {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      range {
+
+
+
+
+      }
+
+      selection {
+
+
+
+
+
+      }
+    }
+    validation_errors {
+
+
+
+
+
+    }
+
+  }
   parameters {
 
     author    = "string"
@@ -70,7 +260,7 @@ resource "catalystcenter_configuration_template" "example" {
           default_selected_values = ["string"]
           id                      = "string"
           selection_type          = "string"
-          selection_values        = "string"
+          selection_values        = "------"
         }
       }
       tags {
@@ -108,7 +298,7 @@ resource "catalystcenter_configuration_template" "example" {
           default_selected_values = ["string"]
           id                      = "string"
           selection_type          = "string"
-          selection_values        = "string"
+          selection_values        = "------"
         }
       }
       version = "string"
@@ -161,7 +351,7 @@ resource "catalystcenter_configuration_template" "example" {
         default_selected_values = ["string"]
         id                      = "string"
         selection_type          = "string"
-        selection_values        = "string"
+        selection_values        = "------"
       }
     }
     software_type    = "string"
@@ -203,13 +393,13 @@ resource "catalystcenter_configuration_template" "example" {
         default_selected_values = ["string"]
         id                      = "string"
         selection_type          = "string"
-        selection_values        = "string"
+        selection_values        = "------"
       }
     }
     validation_errors {
 
-      rollback_template_errors = "string"
-      template_errors          = "string"
+      rollback_template_errors = "------"
+      template_errors          = "------"
       template_id              = "string"
       template_version         = "string"
     }
@@ -238,10 +428,6 @@ output "catalystcenter_configuration_template_example" {
 <a id="nestedblock--parameters"></a>
 ### Nested Schema for `parameters`
 
-Required:
-
-- `project_id` (String) Project UUID
-
 Optional:
 
 - `author` (String) Author of template
@@ -258,6 +444,7 @@ Optional:
 - `latest_version_time` (Number) Latest versioned template time
 - `name` (String) Name of template
 - `parent_template_id` (String) Parent templateID
+- `project_id` (String) Project UUID
 - `project_name` (String) Project name
 - `rollback_template_content` (String) Rollback template content
 - `rollback_template_params` (Block List) (see [below for nested schema](#nestedblock--parameters--rollback_template_params))

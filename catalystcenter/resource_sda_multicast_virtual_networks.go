@@ -4,10 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"reflect"
 	"time"
-
-	"log"
 
 	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
 
@@ -297,7 +296,7 @@ func resourceSdaMulticastVirtualNetworksCreate(ctx context.Context, d *schema.Re
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters.0.payload"))
-	request1 := expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworks(ctx, "parameters.0", d)
+	request1 := expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksV1(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vID := resourceItem["id"]
@@ -307,7 +306,7 @@ func resourceSdaMulticastVirtualNetworksCreate(ctx context.Context, d *schema.Re
 	vName := resourceItem["virtual_network_name"]
 	vvName := interfaceToString(vName)
 
-	queryParamImport := catalystcentersdkgo.GetMulticastVirtualNetworksQueryParams{}
+	queryParamImport := catalystcentersdkgo.GetMulticastVirtualNetworksV1QueryParams{}
 	queryParamImport.FabricID = vvFabricID
 	queryParamImport.VirtualNetworkName = vvName
 	item2, err := searchSdaGetMulticastVirtualNetworks(m, queryParamImport, vvID)
@@ -358,7 +357,7 @@ func resourceSdaMulticastVirtualNetworksCreate(ctx context.Context, d *schema.Re
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetMulticastVirtualNetworksQueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetMulticastVirtualNetworksV1QueryParams{}
 	queryParamValidate.FabricID = vvFabricID
 	queryParamValidate.VirtualNetworkName = vvName
 	item3, err := searchSdaGetMulticastVirtualNetworks(m, queryParamValidate, vvID)
@@ -389,7 +388,7 @@ func resourceSdaMulticastVirtualNetworksRead(ctx context.Context, d *schema.Reso
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetMulticastVirtualNetworks")
-		queryParams1 := catalystcentersdkgo.GetMulticastVirtualNetworksQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetMulticastVirtualNetworksV1QueryParams{}
 		queryParams1.FabricID = vvFabricID
 		queryParams1.VirtualNetworkName = vvName
 		item1, err := searchSdaGetMulticastVirtualNetworks(m, queryParams1, vvID)
@@ -398,10 +397,10 @@ func resourceSdaMulticastVirtualNetworksRead(ctx context.Context, d *schema.Reso
 			return diags
 		}
 		// Review flatten function used
-		items := []catalystcentersdkgo.ResponseSdaGetMulticastVirtualNetworksResponse{
+		items := []catalystcentersdkgo.ResponseSdaGetMulticastVirtualNetworksV1Response{
 			*item1,
 		}
-		vItem1 := flattenSdaGetMulticastVirtualNetworksItems(&items)
+		vItem1 := flattenSdaGetMulticastVirtualNetworksV1Items(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetMulticastVirtualNetworks search response",
@@ -421,7 +420,7 @@ func resourceSdaMulticastVirtualNetworksUpdate(ctx context.Context, d *schema.Re
 	resourceMap := separateResourceID(resourceID)
 	vID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworks(ctx, "parameters.0", d)
+		request1 := expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		if request1 != nil && len(*request1) > 0 {
 			req := *request1
@@ -536,9 +535,9 @@ func resourceSdaMulticastVirtualNetworksDelete(ctx context.Context, d *schema.Re
 
 	return diags
 }
-func expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworks(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddMulticastVirtualNetworks {
-	request := catalystcentersdkgo.RequestSdaAddMulticastVirtualNetworks{}
-	if v := expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddMulticastVirtualNetworksV1 {
+	request := catalystcentersdkgo.RequestSdaAddMulticastVirtualNetworksV1{}
+	if v := expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -547,8 +546,8 @@ func expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworks(ctx con
 	return &request
 }
 
-func expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddMulticastVirtualNetworks {
-	request := []catalystcentersdkgo.RequestItemSdaAddMulticastVirtualNetworks{}
+func expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddMulticastVirtualNetworksV1 {
+	request := []catalystcentersdkgo.RequestItemSdaAddMulticastVirtualNetworksV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -559,7 +558,7 @@ func expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksItemArra
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -570,8 +569,8 @@ func expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksItemArra
 	return &request
 }
 
-func expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddMulticastVirtualNetworks {
-	request := catalystcentersdkgo.RequestItemSdaAddMulticastVirtualNetworks{}
+func expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddMulticastVirtualNetworksV1 {
+	request := catalystcentersdkgo.RequestItemSdaAddMulticastVirtualNetworksV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".fabric_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".fabric_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".fabric_id")))) {
 		request.FabricID = interfaceToString(v)
 	}
@@ -585,7 +584,7 @@ func expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksItem(ctx
 		request.IPv4SsmRanges = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".multicast_r_ps")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".multicast_r_ps")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".multicast_r_ps")))) {
-		request.MulticastRPs = expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksItemMulticastRPsArray(ctx, key+".multicast_r_ps", d)
+		request.MulticastRPs = expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksV1ItemMulticastRPsArray(ctx, key+".multicast_r_ps", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -593,8 +592,8 @@ func expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksItem(ctx
 	return &request
 }
 
-func expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksItemMulticastRPsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddMulticastVirtualNetworksMulticastRPs {
-	request := []catalystcentersdkgo.RequestItemSdaAddMulticastVirtualNetworksMulticastRPs{}
+func expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksV1ItemMulticastRPsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddMulticastVirtualNetworksV1MulticastRPs {
+	request := []catalystcentersdkgo.RequestItemSdaAddMulticastVirtualNetworksV1MulticastRPs{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -605,7 +604,7 @@ func expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksItemMult
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksItemMulticastRPs(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksV1ItemMulticastRPs(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -616,8 +615,8 @@ func expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksItemMult
 	return &request
 }
 
-func expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksItemMulticastRPs(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddMulticastVirtualNetworksMulticastRPs {
-	request := catalystcentersdkgo.RequestItemSdaAddMulticastVirtualNetworksMulticastRPs{}
+func expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksV1ItemMulticastRPs(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddMulticastVirtualNetworksV1MulticastRPs {
+	request := catalystcentersdkgo.RequestItemSdaAddMulticastVirtualNetworksV1MulticastRPs{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rp_device_location")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rp_device_location")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rp_device_location")))) {
 		request.RpDeviceLocation = interfaceToString(v)
 	}
@@ -648,9 +647,9 @@ func expandRequestSdaMulticastVirtualNetworksAddMulticastVirtualNetworksItemMult
 	return &request
 }
 
-func expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworks(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateMulticastVirtualNetworks {
-	request := catalystcentersdkgo.RequestSdaUpdateMulticastVirtualNetworks{}
-	if v := expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateMulticastVirtualNetworksV1 {
+	request := catalystcentersdkgo.RequestSdaUpdateMulticastVirtualNetworksV1{}
+	if v := expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -659,8 +658,8 @@ func expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworks(ctx 
 	return &request
 }
 
-func expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateMulticastVirtualNetworks {
-	request := []catalystcentersdkgo.RequestItemSdaUpdateMulticastVirtualNetworks{}
+func expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateMulticastVirtualNetworksV1 {
+	request := []catalystcentersdkgo.RequestItemSdaUpdateMulticastVirtualNetworksV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -671,7 +670,7 @@ func expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksItemA
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -682,8 +681,8 @@ func expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksItemA
 	return &request
 }
 
-func expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateMulticastVirtualNetworks {
-	request := catalystcentersdkgo.RequestItemSdaUpdateMulticastVirtualNetworks{}
+func expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateMulticastVirtualNetworksV1 {
+	request := catalystcentersdkgo.RequestItemSdaUpdateMulticastVirtualNetworksV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -700,7 +699,7 @@ func expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksItem(
 		request.IPv4SsmRanges = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".multicast_r_ps")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".multicast_r_ps")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".multicast_r_ps")))) {
-		request.MulticastRPs = expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksItemMulticastRPsArray(ctx, key+".multicast_r_ps", d)
+		request.MulticastRPs = expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksV1ItemMulticastRPsArray(ctx, key+".multicast_r_ps", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -708,8 +707,8 @@ func expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksItem(
 	return &request
 }
 
-func expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksItemMulticastRPsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateMulticastVirtualNetworksMulticastRPs {
-	request := []catalystcentersdkgo.RequestItemSdaUpdateMulticastVirtualNetworksMulticastRPs{}
+func expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksV1ItemMulticastRPsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateMulticastVirtualNetworksV1MulticastRPs {
+	request := []catalystcentersdkgo.RequestItemSdaUpdateMulticastVirtualNetworksV1MulticastRPs{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -720,7 +719,7 @@ func expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksItemM
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksItemMulticastRPs(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksV1ItemMulticastRPs(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -731,8 +730,8 @@ func expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksItemM
 	return &request
 }
 
-func expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksItemMulticastRPs(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateMulticastVirtualNetworksMulticastRPs {
-	request := catalystcentersdkgo.RequestItemSdaUpdateMulticastVirtualNetworksMulticastRPs{}
+func expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksV1ItemMulticastRPs(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateMulticastVirtualNetworksV1MulticastRPs {
+	request := catalystcentersdkgo.RequestItemSdaUpdateMulticastVirtualNetworksV1MulticastRPs{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rp_device_location")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rp_device_location")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rp_device_location")))) {
 		request.RpDeviceLocation = interfaceToString(v)
 	}
@@ -763,11 +762,11 @@ func expandRequestSdaMulticastVirtualNetworksUpdateMulticastVirtualNetworksItemM
 	return &request
 }
 
-func searchSdaGetMulticastVirtualNetworks(m interface{}, queryParams catalystcentersdkgo.GetMulticastVirtualNetworksQueryParams, vID string) (*catalystcentersdkgo.ResponseSdaGetMulticastVirtualNetworksResponse, error) {
+func searchSdaGetMulticastVirtualNetworks(m interface{}, queryParams catalystcentersdkgo.GetMulticastVirtualNetworksV1QueryParams, vID string) (*catalystcentersdkgo.ResponseSdaGetMulticastVirtualNetworksV1Response, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseSdaGetMulticastVirtualNetworksResponse
-	var ite *catalystcentersdkgo.ResponseSdaGetMulticastVirtualNetworks
+	var foundItem *catalystcentersdkgo.ResponseSdaGetMulticastVirtualNetworksV1Response
+	var ite *catalystcentersdkgo.ResponseSdaGetMulticastVirtualNetworksV1
 	if vID != "" {
 		queryParams.Offset = 1
 		nResponse, _, err := client.Sda.GetMulticastVirtualNetworks(nil)

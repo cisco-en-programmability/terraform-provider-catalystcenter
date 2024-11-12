@@ -64,7 +64,7 @@ func resourceSdaAnycastGatewaysUpdate() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"payload": &schema.Schema{
-							Description: `Array of RequestSdaUpdateAnycastGateways`,
+							Description: `Array of RequestSdaUpdateAnycastGatewaysV1`,
 							Type:        schema.TypeList,
 							Optional:    true,
 							ForceNew:    true,
@@ -246,20 +246,18 @@ func resourceSdaAnycastGatewaysUpdateCreate(ctx context.Context, d *schema.Resou
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGateways(ctx, "parameters.0", d)
+	request1 := expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.Sda.UpdateAnycastGateways(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Sda.UpdateAnycastGatewaysV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing UpdateAnycastGateways", err))
+			"Failure when executing UpdateAnycastGatewaysV1", err))
 		return diags
 	}
 
@@ -267,7 +265,7 @@ func resourceSdaAnycastGatewaysUpdateCreate(ctx context.Context, d *schema.Resou
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing UpdateAnycastGateways", err))
+			"Failure when executing UpdateAnycastGatewaysV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -301,22 +299,24 @@ func resourceSdaAnycastGatewaysUpdateCreate(ctx context.Context, d *schema.Resou
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing UpdateAnycastGateways", err1))
+				"Failure when executing UpdateAnycastGatewaysV1", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenSdaUpdateAnycastGatewaysItem(response1.Response)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
+	vItem1 := flattenSdaUpdateAnycastGatewaysV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting UpdateAnycastGateways response",
+			"Failure when setting UpdateAnycastGatewaysV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceSdaAnycastGatewaysUpdateRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -331,16 +331,16 @@ func resourceSdaAnycastGatewaysUpdateDelete(ctx context.Context, d *schema.Resou
 	return diags
 }
 
-func expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGateways(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateAnycastGateways {
-	request := catalystcentersdkgo.RequestSdaUpdateAnycastGateways{}
-	if v := expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateAnycastGatewaysV1 {
+	request := catalystcentersdkgo.RequestSdaUpdateAnycastGatewaysV1{}
+	if v := expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	return &request
 }
 
-func expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateAnycastGateways {
-	request := []catalystcentersdkgo.RequestItemSdaUpdateAnycastGateways{}
+func expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateAnycastGatewaysV1 {
+	request := []catalystcentersdkgo.RequestItemSdaUpdateAnycastGatewaysV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -351,7 +351,7 @@ func expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysItemArray(ctx con
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -359,8 +359,8 @@ func expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysItemArray(ctx con
 	return &request
 }
 
-func expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateAnycastGateways {
-	request := catalystcentersdkgo.RequestItemSdaUpdateAnycastGateways{}
+func expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateAnycastGatewaysV1 {
+	request := catalystcentersdkgo.RequestItemSdaUpdateAnycastGatewaysV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -418,7 +418,7 @@ func expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysItem(ctx context.
 	return &request
 }
 
-func flattenSdaUpdateAnycastGatewaysItem(item *catalystcentersdkgo.ResponseSdaUpdateAnycastGatewaysResponse) []map[string]interface{} {
+func flattenSdaUpdateAnycastGatewaysV1Item(item *catalystcentersdkgo.ResponseSdaUpdateAnycastGatewaysV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

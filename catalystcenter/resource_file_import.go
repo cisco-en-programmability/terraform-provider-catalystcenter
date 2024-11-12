@@ -56,6 +56,7 @@ func resourceFileImport() *schema.Resource {
 							Description: `nameSpace path parameter.`,
 							Type:        schema.TypeString,
 							Required:    true,
+							ForceNew:    true,
 						},
 					},
 				},

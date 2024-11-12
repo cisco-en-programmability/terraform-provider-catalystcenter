@@ -1,0 +1,154 @@
+package catalystcenter
+
+import (
+	"context"
+
+	"log"
+
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+)
+
+func dataSourceTagsNetworkDevicesMembersAssociations() *schema.Resource {
+	return &schema.Resource{
+		Description: `It performs read operation on Tag.
+
+- Fetches the tags associated with network devices. Devices that don't have any tags associated will not be included in
+the response. A tag is a user-defined or system-defined construct to group resources. When a device is tagged, it is
+called a member of the tag.
+`,
+
+		ReadContext: dataSourceTagsNetworkDevicesMembersAssociationsRead,
+		Schema: map[string]*schema.Schema{
+			"limit": &schema.Schema{
+				Description: `limit query parameter. The number of records to show for this page. minimum: 1, maximum: 500
+`,
+				Type:     schema.TypeFloat,
+				Optional: true,
+			},
+			"offset": &schema.Schema{
+				Description: `offset query parameter. The first record to show for this page; the first record is numbered 1. minimum: 1
+`,
+				Type:     schema.TypeFloat,
+				Optional: true,
+			},
+
+			"items": &schema.Schema{
+				Type:     schema.TypeList,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+
+						"id": &schema.Schema{
+							Description: `Id of the member (network device or interface)
+`,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
+						"tags": &schema.Schema{
+							Type:     schema.TypeList,
+							Computed: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+
+									"id": &schema.Schema{
+										Description: `Tag id
+`,
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+
+									"name": &schema.Schema{
+										Description: `Tag name
+`,
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+}
+
+func dataSourceTagsNetworkDevicesMembersAssociationsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	client := m.(*catalystcentersdkgo.Client)
+
+	var diags diag.Diagnostics
+	vOffset, okOffset := d.GetOk("offset")
+	vLimit, okLimit := d.GetOk("limit")
+
+	selectedMethod := 1
+	if selectedMethod == 1 {
+		log.Printf("[DEBUG] Selected method: RetrieveTagsAssociatedWithNetworkDevicesV1")
+		queryParams1 := catalystcentersdkgo.RetrieveTagsAssociatedWithNetworkDevicesV1QueryParams{}
+
+		if okOffset {
+			queryParams1.Offset = vOffset.(float64)
+		}
+		if okLimit {
+			queryParams1.Limit = vLimit.(float64)
+		}
+
+		response1, restyResp1, err := client.Tag.RetrieveTagsAssociatedWithNetworkDevicesV1(&queryParams1)
+
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveTagsAssociatedWithNetworkDevicesV1", err,
+				"Failure at RetrieveTagsAssociatedWithNetworkDevicesV1, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenTagRetrieveTagsAssociatedWithNetworkDevicesV1Items(response1.Response)
+		if err := d.Set("items", vItems1); err != nil {
+			diags = append(diags, diagError(
+				"Failure when setting RetrieveTagsAssociatedWithNetworkDevicesV1 response",
+				err))
+			return diags
+		}
+
+		d.SetId(getUnixTimeString())
+		return diags
+
+	}
+	return diags
+}
+
+func flattenTagRetrieveTagsAssociatedWithNetworkDevicesV1Items(items *[]catalystcentersdkgo.ResponseTagRetrieveTagsAssociatedWithNetworkDevicesV1Response) []map[string]interface{} {
+	if items == nil {
+		return nil
+	}
+	var respItems []map[string]interface{}
+	for _, item := range *items {
+		respItem := make(map[string]interface{})
+		respItem["id"] = item.ID
+		respItem["tags"] = flattenTagRetrieveTagsAssociatedWithNetworkDevicesV1ItemsTags(item.Tags)
+		respItems = append(respItems, respItem)
+	}
+	return respItems
+}
+
+func flattenTagRetrieveTagsAssociatedWithNetworkDevicesV1ItemsTags(items *[]catalystcentersdkgo.ResponseTagRetrieveTagsAssociatedWithNetworkDevicesV1ResponseTags) []map[string]interface{} {
+	if items == nil {
+		return nil
+	}
+	var respItems []map[string]interface{}
+	for _, item := range *items {
+		respItem := make(map[string]interface{})
+		respItem["id"] = item.ID
+		respItem["name"] = item.Name
+		respItems = append(respItems, respItem)
+	}
+	return respItems
+}

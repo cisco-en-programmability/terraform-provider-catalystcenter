@@ -126,7 +126,7 @@ func resourceFlexibleReportScheduleUpdate(ctx context.Context, d *schema.Resourc
 	vvReportID := resourceMap["report_id"]
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvReportID)
-		request1 := expandRequestFlexibleReportScheduleUpdateScheduleOfFlexibleReport(ctx, "parameters.0", d)
+		request1 := expandRequestFlexibleReportScheduleUpdateScheduleOfFlexibleReportV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.Reports.UpdateScheduleOfFlexibleReport(vvReportID, request1)
 		if err != nil || response1 == nil {
@@ -158,17 +158,17 @@ func resourceFlexibleReportScheduleDelete(ctx context.Context, d *schema.Resourc
 		"Failure at FlexibleReportScheduleDelete, unexpected response", ""))
 	return diags
 }
-func expandRequestFlexibleReportScheduleUpdateScheduleOfFlexibleReport(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestReportsUpdateScheduleOfFlexibleReport {
-	request := catalystcentersdkgo.RequestReportsUpdateScheduleOfFlexibleReport{}
-	request.Schedule = expandRequestFlexibleReportScheduleUpdateScheduleOfFlexibleReportSchedule(ctx, key, d)
+func expandRequestFlexibleReportScheduleUpdateScheduleOfFlexibleReportV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestReportsUpdateScheduleOfFlexibleReportV1 {
+	request := catalystcentersdkgo.RequestReportsUpdateScheduleOfFlexibleReportV1{}
+	request.Schedule = expandRequestFlexibleReportScheduleUpdateScheduleOfFlexibleReportV1Schedule(ctx, key, d)
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
 	}
 	return &request
 }
 
-func expandRequestFlexibleReportScheduleUpdateScheduleOfFlexibleReportSchedule(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestReportsUpdateScheduleOfFlexibleReportSchedule {
-	var request catalystcentersdkgo.RequestReportsUpdateScheduleOfFlexibleReportSchedule
+func expandRequestFlexibleReportScheduleUpdateScheduleOfFlexibleReportV1Schedule(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestReportsUpdateScheduleOfFlexibleReportV1Schedule {
+	var request catalystcentersdkgo.RequestReportsUpdateScheduleOfFlexibleReportV1Schedule
 	request = d.Get(fixKeyAccess(key))
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil

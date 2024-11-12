@@ -7,7 +7,7 @@ description: |-
   Returns the list of events discovered by Catalyst Center, determined by the complex filters. Please refer to the 'API
   Support Documentation' section to understand which fields are supported. For detailed information about the usage of the
   API, please refer to the Open API specification document https://github.com/cisco-en-programmability/catalyst-center-
-  api-specs/blob/main/Assurance/CECatCenter_Org-AssuranceEvents-1.0.0-resolved.yamlAPI to fetch the details of an assurance event using event 'id'. For detailed information about the usage of the API,
+  api-specs/blob/main/Assurance/CECatCenter_Org-AssuranceEvents-1.0.0-resolved.yamlAPI to fetch the details of an assurance event using event id. For detailed information about the usage of the API,
   please refer to the Open API specification document https://github.com/cisco-en-programmability/catalyst-center-api-
   specs/blob/main/Assurance/CECatCenter_Org-AssuranceEvents-1.0.0-resolved.yaml
 ---
@@ -21,7 +21,7 @@ Support Documentation' section to understand which fields are supported. For det
 API, please refer to the Open API specification document https://github.com/cisco-en-programmability/catalyst-center-
 api-specs/blob/main/Assurance/CE_Cat_Center_Org-AssuranceEvents-1.0.0-resolved.yaml
 
-- API to fetch the details of an assurance event using event 'id'. For detailed information about the usage of the API,
+- API to fetch the details of an assurance event using event *id*. For detailed information about the usage of the API,
 please refer to the Open API specification document https://github.com/cisco-en-programmability/catalyst-center-api-
 specs/blob/main/Assurance/CE_Cat_Center_Org-AssuranceEvents-1.0.0-resolved.yaml
 
@@ -72,63 +72,63 @@ output "catalystcenter_assurance_events_example" {
 
 ### Optional
 
-- `ap_mac` (String) apMac query parameter. MAC address of the access point. This parameter is applicable for 'Unified AP' and 'Wireless Client' events.
-This field supports wildcard ('*') character-based search. Ex: '*50:0F*' or '50:0F*' or '*50:0F'
+- `ap_mac` (String) apMac query parameter. MAC address of the access point. This parameter is applicable for *Unified AP* and *Wireless Client* events.
+This field supports wildcard (***) character-based search. Ex: **50:0F** or *50:0F** or **50:0F*
 Examples:
-'apMac=50:0F:80:0F:F7:E0' (single apMac requested)
-'apMac=50:0F:80:0F:F7:E0&apMac=18:80:90:AB:7E:A0' (multiple apMac requested)
-- `attribute` (String) attribute query parameter. The list of attributes that needs to be included in the response. If this parameter is not provided, then basic attributes ('id', 'name', 'timestamp', 'details', 'messageType', 'siteHierarchyId', 'siteHierarchy', 'deviceFamily', 'networkDeviceId', 'networkDeviceName', 'managementIpAddress') would be part of the response.
+*apMac=50:0F:80:0F:F7:E0* (single apMac requested)
+*apMac=50:0F:80:0F:F7:E0&apMac=18:80:90:AB:7E:A0* (multiple apMac requested)
+- `attribute` (String) attribute query parameter. The list of attributes that needs to be included in the response. If this parameter is not provided, then basic attributes (*id*, *name*, *timestamp*, *details*, *messageType*, *siteHierarchyId*, *siteHierarchy*, *deviceFamily*, *networkDeviceId*, *networkDeviceName*, *managementIpAddress*) would be part of the response.
  Examples:
 
-'attribute=name' (single attribute requested)
-'attribute=name&attribute=networkDeviceName' (multiple attribute requested)
-- `client_mac` (String) clientMac query parameter. MAC address of the client. This parameter is applicable for 'Wired Client' and 'Wireless Client' events.
-This field supports wildcard ('*') character-based search. Ex: '*66:2B*' or '66:2B*' or '*66:2B'
+*attribute=name* (single attribute requested)
+*attribute=name&attribute=networkDeviceName* (multiple attribute requested)
+- `client_mac` (String) clientMac query parameter. MAC address of the client. This parameter is applicable for *Wired Client* and *Wireless Client* events.
+This field supports wildcard (***) character-based search. Ex: **66:2B** or *66:2B** or **66:2B*
 Examples:
-'clientMac=66:2B:B8:D2:01:56' (single clientMac requested)
-'clientMac=66:2B:B8:D2:01:56&clientMac=DC:A6:32:F5:5A:89' (multiple clientMac requested)
-- `device_family` (String) deviceFamily query parameter. Device family. Please note that multiple families across network device type and client type is not allowed. For example, choosing 'Routers' along with 'Wireless Client' or 'Unified AP' is not supported. Examples:
-'deviceFamily=Switches and Hubs' (single deviceFamily requested)
-'deviceFamily=Switches and Hubs&deviceFamily=Routers' (multiple deviceFamily requested)
+*clientMac=66:2B:B8:D2:01:56* (single clientMac requested)
+*clientMac=66:2B:B8:D2:01:56&clientMac=DC:A6:32:F5:5A:89* (multiple clientMac requested)
+- `device_family` (String) deviceFamily query parameter. Device family. Please note that multiple families across network device type and client type is not allowed. For example, choosing *Routers* along with *Wireless Client* or *Unified AP* is not supported. Examples:
+*deviceFamily=Switches and Hubs* (single deviceFamily requested)
+*deviceFamily=Switches and Hubs&deviceFamily=Routers* (multiple deviceFamily requested)
 - `end_time` (Number) endTime query parameter. End time to which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
-If 'endTime' is not provided, API will default to current time.
+If *endTime* is not provided, API will default to current time.
 - `id` (String) id path parameter. Unique identifier for the event
 - `limit` (Number) limit query parameter. Maximum number of records to return
 - `message_type` (String) messageType query parameter. Message type for the event.
 Examples:
-'messageType=Syslog' (single messageType requested)
-'messageType=Trap&messageType=Syslog' (multiple messageType requested)
-- `network_device_id` (String) networkDeviceId query parameter. The list of Network Device Uuids. (Ex. '6bef213c-19ca-4170-8375-b694e251101c')
+*messageType=Syslog* (single messageType requested)
+*messageType=Trap&messageType=Syslog* (multiple messageType requested)
+- `network_device_id` (String) networkDeviceId query parameter. The list of Network Device Uuids. (Ex. *6bef213c-19ca-4170-8375-b694e251101c*)
 Examples:
-'networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c' (single networkDeviceId requested)
-'networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c&networkDeviceId=32219612-819e-4b5e-a96b-cf22aca13dd9&networkDeviceId=2541e9a7-b80d-4955-8aa2-79b233318ba0' (multiple networkDeviceId with & separator)
-- `network_device_name` (String) networkDeviceName query parameter. Network device name. This parameter is applicable for network device related families. This field supports wildcard ('*') character-based search. Ex: '*Branch*' or 'Branch*' or '*Branch' Examples:
-'networkDeviceName=Branch-3-Gateway' (single networkDeviceName requested)
-'networkDeviceName=Branch-3-Gateway&networkDeviceName=Branch-3-Switch' (multiple networkDeviceName requested)
+*networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c* (single networkDeviceId requested)
+*networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c&networkDeviceId=32219612-819e-4b5e-a96b-cf22aca13dd9&networkDeviceId=2541e9a7-b80d-4955-8aa2-79b233318ba0* (multiple networkDeviceId with & separator)
+- `network_device_name` (String) networkDeviceName query parameter. Network device name. This parameter is applicable for network device related families. This field supports wildcard (***) character-based search. Ex: **Branch** or *Branch** or **Branch* Examples:
+*networkDeviceName=Branch-3-Gateway* (single networkDeviceName requested)
+*networkDeviceName=Branch-3-Gateway&networkDeviceName=Branch-3-Switch* (multiple networkDeviceName requested)
 - `offset` (Number) offset query parameter. Specifies the starting point within all records returned by the API. It's one based offset. The starting value is 1.
 - `order` (String) order query parameter. The sort order of the field ascending or descending.
-- `severity` (Number) severity query parameter. Severity of the event between 0 and 6. This is applicable only for events related to network devices (other than AP) and 'Wired Client' events.
+- `severity` (Number) severity query parameter. Severity of the event between 0 and 6. This is applicable only for events related to network devices (other than AP) and *Wired Client* events.
 | Value | Severity    | | ----| ----------| | 0     | Emergency   | | 1     | Alert       | | 2     | Critical    | | 3     | Error       | | 4     | Warning     | | 5     | Notice      | | 6     | Info        |
 Examples:
-'severity=0' (single severity requested)
-'severity=0&severity=1' (multiple severity requested)
-- `site_hierarchy_id` (String) siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. 'globalUuid/areaUuid/buildingUuid/floorUuid')
-This field supports wildcard asterisk ('*') character search support. E.g. '*uuid*, *uuid, uuid*'
+*severity=0* (single severity requested)
+*severity=0&severity=1* (multiple severity requested)
+- `site_hierarchy_id` (String) siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. *globalUuid/areaUuid/buildingUuid/floorUuid*)
+This field supports wildcard asterisk (***) character search support. E.g. **uuid*, *uuid, uuid**
 Examples:
-'?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid '(single siteHierarchyId requested)
-'?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2' (multiple siteHierarchyId requested)
-- `site_id` (String) siteId query parameter. The UUID of the site. (Ex. 'flooruuid')
+*?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid *(single siteHierarchyId requested)
+*?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2* (multiple siteHierarchyId requested)
+- `site_id` (String) siteId query parameter. The UUID of the site. (Ex. *flooruuid*)
 Examples:
-'?siteId=id1' (single siteId requested)
-'?siteId=id1&siteId=id2&siteId=id3' (multiple siteId requested)
+*?siteId=id1* (single siteId requested)
+*?siteId=id1&siteId=id2&siteId=id3* (multiple siteId requested)
 - `sort_by` (String) sortBy query parameter. A field within the response to sort by.
 - `start_time` (Number) startTime query parameter. Start time from which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
-If 'startTime' is not provided, API will default to current time minus 24 hours.
-- `view` (String) view query parameter. The list of events views. Please refer to 'EventViews' for the supported list
+If *startTime* is not provided, API will default to current time minus 24 hours.
+- `view` (String) view query parameter. The list of events views. Please refer to *EventViews* for the supported list
  Examples:
 
-'view=network' (single view requested)
-'view=network&view=ap' (multiple view requested)
+*view=network* (single view requested)
+*view=network&view=ap* (multiple view requested)
 - `xca_lle_rid` (String) X-CALLER-ID header parameter. Caller ID is used to trace the origin of API calls and their associated queries executed on the database. It's an optional header parameter that can be added to an API request.
 
 ### Read-Only

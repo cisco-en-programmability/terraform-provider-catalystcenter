@@ -165,8 +165,8 @@ func dataSourceEventRead(ctx context.Context, d *schema.ResourceData, m interfac
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetEvents")
-		queryParams1 := catalystcentersdkgo.GetEventsQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetEventsV1")
+		queryParams1 := catalystcentersdkgo.GetEventsV1QueryParams{}
 
 		if okEventID {
 			queryParams1.EventID = vEventID.(string)
@@ -186,24 +186,24 @@ func dataSourceEventRead(ctx context.Context, d *schema.ResourceData, m interfac
 			queryParams1.Order = vOrder.(string)
 		}
 
-		response1, restyResp1, err := client.EventManagement.GetEvents(&queryParams1)
+		response1, restyResp1, err := client.EventManagement.GetEventsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetEvents", err,
-				"Failure at GetEvents, unexpected response", ""))
+				"Failure when executing 2 GetEventsV1", err,
+				"Failure at GetEventsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenEventManagementGetEventsItems(response1)
+		vItems1 := flattenEventManagementGetEventsV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetEvents response",
+				"Failure when setting GetEventsV1 response",
 				err))
 			return diags
 		}
@@ -215,7 +215,7 @@ func dataSourceEventRead(ctx context.Context, d *schema.ResourceData, m interfac
 	return diags
 }
 
-func flattenEventManagementGetEventsItems(items *catalystcentersdkgo.ResponseEventManagementGetEvents) []map[string]interface{} {
+func flattenEventManagementGetEventsV1Items(items *catalystcentersdkgo.ResponseEventManagementGetEventsV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -233,14 +233,14 @@ func flattenEventManagementGetEventsItems(items *catalystcentersdkgo.ResponseEve
 		respItem["type"] = item.Type
 		respItem["tags"] = item.Tags
 		respItem["severity"] = item.Severity
-		respItem["details"] = flattenEventManagementGetEventsItemsDetails(item.Details)
+		respItem["details"] = flattenEventManagementGetEventsV1ItemsDetails(item.Details)
 		respItem["subscription_types"] = item.SubscriptionTypes
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenEventManagementGetEventsItemsDetails(item *catalystcentersdkgo.ResponseItemEventManagementGetEventsDetails) interface{} {
+func flattenEventManagementGetEventsV1ItemsDetails(item *catalystcentersdkgo.ResponseItemEventManagementGetEventsV1Details) interface{} {
 	if item == nil {
 		return nil
 	}

@@ -4,16 +4,16 @@ page_title: "catalystcenter_sites_ntp_settings Resource - terraform-provider-cat
 subcategory: ""
 description: |-
   It manages read and update operations on Network Settings.
-  Set NTP settings for a site; 'null' values indicate that the setting will be inherited from the parent site; empty
-  objects ('{}') indicate that the settings is unset.
+  Set NTP settings for a site; null values indicate that the setting will be inherited from the parent site; empty
+  objects ({}) indicate that the settings is unset.
 ---
 
 # catalystcenter_sites_ntp_settings (Resource)
 
 It manages read and update operations on Network Settings.
 
-- Set NTP settings for a site; 'null' values indicate that the setting will be inherited from the parent site; empty
-objects ('{}') indicate that the settings is unset.
+- Set NTP settings for a site; *null* values indicate that the setting will be inherited from the parent site; empty
+objects (*{}*) indicate that the settings is unset.
 
 ## Example Usage
 

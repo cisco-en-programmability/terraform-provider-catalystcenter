@@ -1,6 +1,6 @@
 
 resource "catalystcenter_clients_trend_analytics_id" "example" {
-  provider    = catalystcenter
+  provider    = meraki
   id          = "string"
   xca_lle_rid = "string"
   parameters {

@@ -113,26 +113,26 @@ func dataSourceSecurityAdvisoriesRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAdvisoriesList")
+		log.Printf("[DEBUG] Selected method: GetAdvisoriesListV1")
 
-		response1, restyResp1, err := client.SecurityAdvisories.GetAdvisoriesList()
+		response1, restyResp1, err := client.SecurityAdvisories.GetAdvisoriesListV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAdvisoriesList", err,
-				"Failure at GetAdvisoriesList, unexpected response", ""))
+				"Failure when executing 2 GetAdvisoriesListV1", err,
+				"Failure at GetAdvisoriesListV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSecurityAdvisoriesGetAdvisoriesListItem(response1.Response)
+		vItem1 := flattenSecurityAdvisoriesGetAdvisoriesListV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAdvisoriesList response",
+				"Failure when setting GetAdvisoriesListV1 response",
 				err))
 			return diags
 		}
@@ -144,7 +144,7 @@ func dataSourceSecurityAdvisoriesRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenSecurityAdvisoriesGetAdvisoriesListItem(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoriesListResponse) []map[string]interface{} {
+func flattenSecurityAdvisoriesGetAdvisoriesListV1Item(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoriesListV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -158,13 +158,13 @@ func flattenSecurityAdvisoriesGetAdvisoriesListItem(item *catalystcentersdkgo.Re
 	respItem["detection_type"] = item.DetectionType
 	respItem["default_detection_type"] = item.DefaultDetectionType
 	respItem["default_config_match_pattern"] = item.DefaultConfigMatchPattern
-	respItem["fixed_versions"] = flattenSecurityAdvisoriesGetAdvisoriesListItemFixedVersions(item.FixedVersions)
+	respItem["fixed_versions"] = flattenSecurityAdvisoriesGetAdvisoriesListV1ItemFixedVersions(item.FixedVersions)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenSecurityAdvisoriesGetAdvisoriesListItemFixedVersions(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoriesListResponseFixedVersions) interface{} {
+func flattenSecurityAdvisoriesGetAdvisoriesListV1ItemFixedVersions(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoriesListV1ResponseFixedVersions) interface{} {
 	if item == nil {
 		return nil
 	}

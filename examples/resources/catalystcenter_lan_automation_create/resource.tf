@@ -1,6 +1,6 @@
 
 resource "catalystcenter_lan_automation_create" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     discovered_device_site_name_hierarchy = "string"

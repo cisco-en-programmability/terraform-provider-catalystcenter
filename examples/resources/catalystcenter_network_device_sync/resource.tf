@@ -1,6 +1,6 @@
 
 resource "catalystcenter_network_device_sync" "example" {
-  provider   = catalystcenter
+  provider   = meraki
   force_sync = "false"
   parameters = ["string"]
 }

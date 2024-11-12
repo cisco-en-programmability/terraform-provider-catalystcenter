@@ -110,8 +110,8 @@ func dataSourceNetworkDeviceImageUpdatesCountRead(ctx context.Context, d *schema
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: CountOfNetworkDeviceImageUpdates")
-		queryParams1 := catalystcentersdkgo.CountOfNetworkDeviceImageUpdatesQueryParams{}
+		log.Printf("[DEBUG] Selected method: CountOfNetworkDeviceImageUpdatesV1")
+		queryParams1 := catalystcentersdkgo.CountOfNetworkDeviceImageUpdatesV1QueryParams{}
 
 		if okID {
 			queryParams1.ID = vID.(string)
@@ -141,24 +141,24 @@ func dataSourceNetworkDeviceImageUpdatesCountRead(ctx context.Context, d *schema
 			queryParams1.EndTime = vEndTime.(float64)
 		}
 
-		response1, restyResp1, err := client.SoftwareImageManagementSwim.CountOfNetworkDeviceImageUpdates(&queryParams1)
+		response1, restyResp1, err := client.SoftwareImageManagementSwim.CountOfNetworkDeviceImageUpdatesV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 CountOfNetworkDeviceImageUpdates", err,
-				"Failure at CountOfNetworkDeviceImageUpdates, unexpected response", ""))
+				"Failure when executing 2 CountOfNetworkDeviceImageUpdatesV1", err,
+				"Failure at CountOfNetworkDeviceImageUpdatesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSoftwareImageManagementSwimCountOfNetworkDeviceImageUpdatesItem(response1.Response)
+		vItem1 := flattenSoftwareImageManagementSwimCountOfNetworkDeviceImageUpdatesV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting CountOfNetworkDeviceImageUpdates response",
+				"Failure when setting CountOfNetworkDeviceImageUpdatesV1 response",
 				err))
 			return diags
 		}
@@ -170,7 +170,7 @@ func dataSourceNetworkDeviceImageUpdatesCountRead(ctx context.Context, d *schema
 	return diags
 }
 
-func flattenSoftwareImageManagementSwimCountOfNetworkDeviceImageUpdatesItem(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimCountOfNetworkDeviceImageUpdatesResponse) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimCountOfNetworkDeviceImageUpdatesV1Item(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimCountOfNetworkDeviceImageUpdatesV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

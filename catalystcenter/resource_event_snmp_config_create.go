@@ -171,31 +171,27 @@ func resourceEventSNMPConfigCreateCreate(ctx context.Context, d *schema.Resource
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestEventSNMPConfigCreateCreateSNMPDestination(ctx, "parameters.0", d)
+	request1 := expandRequestEventSNMPConfigCreateCreateSNMPDestinationV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.EventManagement.CreateSNMPDestination(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.EventManagement.CreateSNMPDestinationV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing CreateSNMPDestination", err))
+			"Failure when executing CreateSNMPDestinationV1", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	//Analizar verificacion.
-
-	vItem1 := flattenEventManagementCreateSNMPDestinationItem(response1)
+	vItem1 := flattenEventManagementCreateSNMPDestinationV1Item(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting CreateSNMPDestination response",
+			"Failure when setting CreateSNMPDestinationV1 response",
 			err))
 		return diags
 	}
@@ -217,8 +213,8 @@ func resourceEventSNMPConfigCreateDelete(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func expandRequestEventSNMPConfigCreateCreateSNMPDestination(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementCreateSNMPDestination {
-	request := catalystcentersdkgo.RequestEventManagementCreateSNMPDestination{}
+func expandRequestEventSNMPConfigCreateCreateSNMPDestinationV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementCreateSNMPDestinationV1 {
+	request := catalystcentersdkgo.RequestEventManagementCreateSNMPDestinationV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -258,12 +254,12 @@ func expandRequestEventSNMPConfigCreateCreateSNMPDestination(ctx context.Context
 	return &request
 }
 
-func flattenEventManagementCreateSNMPDestinationItem(item *catalystcentersdkgo.ResponseEventManagementCreateSNMPDestination) []map[string]interface{} {
+func flattenEventManagementCreateSNMPDestinationV1Item(item *catalystcentersdkgo.ResponseEventManagementCreateSNMPDestinationV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["error_message"] = flattenEventManagementCreateSNMPDestinationItemErrorMessage(item.ErrorMessage)
+	respItem["error_message"] = flattenEventManagementCreateSNMPDestinationV1ItemErrorMessage(item.ErrorMessage)
 	respItem["api_status"] = item.APIStatus
 	respItem["status_message"] = item.StatusMessage
 	return []map[string]interface{}{
@@ -271,12 +267,12 @@ func flattenEventManagementCreateSNMPDestinationItem(item *catalystcentersdkgo.R
 	}
 }
 
-func flattenEventManagementCreateSNMPDestinationItemErrorMessage(item *catalystcentersdkgo.ResponseEventManagementCreateSNMPDestinationErrorMessage) []map[string]interface{} {
+func flattenEventManagementCreateSNMPDestinationV1ItemErrorMessage(item *catalystcentersdkgo.ResponseEventManagementCreateSNMPDestinationV1ErrorMessage) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["errors"] = flattenEventManagementCreateSNMPDestinationItemErrorMessageErrors(item.Errors)
+	respItem["errors"] = flattenEventManagementCreateSNMPDestinationV1ItemErrorMessageErrors(item.Errors)
 
 	return []map[string]interface{}{
 		respItem,
@@ -284,7 +280,7 @@ func flattenEventManagementCreateSNMPDestinationItemErrorMessage(item *catalystc
 
 }
 
-func flattenEventManagementCreateSNMPDestinationItemErrorMessageErrors(items *[]catalystcentersdkgo.ResponseEventManagementCreateSNMPDestinationErrorMessageErrors) []interface{} {
+func flattenEventManagementCreateSNMPDestinationV1ItemErrorMessageErrors(items *[]catalystcentersdkgo.ResponseEventManagementCreateSNMPDestinationV1ErrorMessageErrors) []interface{} {
 	if items == nil {
 		return nil
 	}

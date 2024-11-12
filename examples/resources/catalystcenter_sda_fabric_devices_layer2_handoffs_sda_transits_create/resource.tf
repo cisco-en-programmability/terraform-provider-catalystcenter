@@ -1,6 +1,6 @@
 
 resource "catalystcenter_sda_fabric_devices_layer2_handoffs_sda_transits_create" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     affinity_id_decider               = 1

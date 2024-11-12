@@ -5,8 +5,8 @@ subcategory: ""
 description: |-
   It manages read and update operations on Devices.
   Update the resync interval (in minutes) for the given network device id.
-  To disable periodic resync, set interval as '0'.
-  To use global settings, set interval as 'null'.
+  To disable periodic resync, set interval as 0.
+  To use global settings, set interval as null.
 ---
 
 # catalystcenter_network_devices_resync_interval_settings_id (Resource)
@@ -14,8 +14,8 @@ description: |-
 It manages read and update operations on Devices.
 
 - Update the resync interval (in minutes) for the given network device id.
-To disable periodic resync, set interval as '0'.
-To use global settings, set interval as 'null'.
+To disable periodic resync, set interval as *0*.
+To use global settings, set interval as *null*.
 
 ## Example Usage
 
@@ -57,7 +57,7 @@ Required:
 
 Optional:
 
-- `interval` (Number) Resync interval in minutes. To disable periodic resync, set interval as '0'. To use global settings, set interval as 'null'.
+- `interval` (Number) Resync interval in minutes. To disable periodic resync, set interval as *0*. To use global settings, set interval as *null*.
 
 
 <a id="nestedatt--item"></a>

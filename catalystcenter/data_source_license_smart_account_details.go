@@ -99,7 +99,7 @@ func dataSourceLicenseSmartAccountDetailsRead(ctx context.Context, d *schema.Res
 	return diags
 }
 
-func flattenLicensesSmartAccountDetailsItems(items *[]catalystcentersdkgo.ResponseLicensesSmartAccountDetailsResponse) []map[string]interface{} {
+func flattenLicensesSmartAccountDetailsItems(items *[]catalystcentersdkgo.ResponseLicensesSmartAccountDetailsV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -115,7 +115,7 @@ func flattenLicensesSmartAccountDetailsItems(items *[]catalystcentersdkgo.Respon
 	return respItems
 }
 
-func flattenLicensesSmartAccountDetailsItem(item *catalystcentersdkgo.ResponseLicensesSmartAccountDetailsResponse) []map[string]interface{} {
+func flattenLicensesSmartAccountDetailsItem(item *catalystcentersdkgo.ResponseLicensesSmartAccountDetailsV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

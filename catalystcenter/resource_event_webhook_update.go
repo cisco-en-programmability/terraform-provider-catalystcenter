@@ -180,31 +180,27 @@ func resourceEventWebhookUpdateCreate(ctx context.Context, d *schema.ResourceDat
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestEventWebhookUpdateUpdateWebhookDestination(ctx, "parameters.0", d)
+	request1 := expandRequestEventWebhookUpdateUpdateWebhookDestinationV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.EventManagement.UpdateWebhookDestination(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.EventManagement.UpdateWebhookDestinationV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing UpdateWebhookDestination", err))
+			"Failure when executing UpdateWebhookDestinationV1", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	//Analizar verificacion.
-
-	vItem1 := flattenEventManagementUpdateWebhookDestinationItem(response1)
+	vItem1 := flattenEventManagementUpdateWebhookDestinationV1Item(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting UpdateWebhookDestination response",
+			"Failure when setting UpdateWebhookDestinationV1 response",
 			err))
 		return diags
 	}
@@ -226,8 +222,8 @@ func resourceEventWebhookUpdateDelete(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func expandRequestEventWebhookUpdateUpdateWebhookDestination(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateWebhookDestination {
-	request := catalystcentersdkgo.RequestEventManagementUpdateWebhookDestination{}
+func expandRequestEventWebhookUpdateUpdateWebhookDestinationV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateWebhookDestinationV1 {
+	request := catalystcentersdkgo.RequestEventManagementUpdateWebhookDestinationV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".webhook_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".webhook_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".webhook_id")))) {
 		request.WebhookID = interfaceToString(v)
 	}
@@ -247,7 +243,7 @@ func expandRequestEventWebhookUpdateUpdateWebhookDestination(ctx context.Context
 		request.TrustCert = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".headers")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".headers")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".headers")))) {
-		request.Headers = expandRequestEventWebhookUpdateUpdateWebhookDestinationHeadersArray(ctx, key+".headers", d)
+		request.Headers = expandRequestEventWebhookUpdateUpdateWebhookDestinationV1HeadersArray(ctx, key+".headers", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_proxy_route")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_proxy_route")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_proxy_route")))) {
 		request.IsProxyRoute = interfaceToBoolPtr(v)
@@ -255,8 +251,8 @@ func expandRequestEventWebhookUpdateUpdateWebhookDestination(ctx context.Context
 	return &request
 }
 
-func expandRequestEventWebhookUpdateUpdateWebhookDestinationHeadersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestEventManagementUpdateWebhookDestinationHeaders {
-	request := []catalystcentersdkgo.RequestEventManagementUpdateWebhookDestinationHeaders{}
+func expandRequestEventWebhookUpdateUpdateWebhookDestinationV1HeadersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestEventManagementUpdateWebhookDestinationV1Headers {
+	request := []catalystcentersdkgo.RequestEventManagementUpdateWebhookDestinationV1Headers{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -267,7 +263,7 @@ func expandRequestEventWebhookUpdateUpdateWebhookDestinationHeadersArray(ctx con
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventWebhookUpdateUpdateWebhookDestinationHeaders(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventWebhookUpdateUpdateWebhookDestinationV1Headers(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -275,8 +271,8 @@ func expandRequestEventWebhookUpdateUpdateWebhookDestinationHeadersArray(ctx con
 	return &request
 }
 
-func expandRequestEventWebhookUpdateUpdateWebhookDestinationHeaders(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateWebhookDestinationHeaders {
-	request := catalystcentersdkgo.RequestEventManagementUpdateWebhookDestinationHeaders{}
+func expandRequestEventWebhookUpdateUpdateWebhookDestinationV1Headers(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateWebhookDestinationV1Headers {
+	request := catalystcentersdkgo.RequestEventManagementUpdateWebhookDestinationV1Headers{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -292,12 +288,12 @@ func expandRequestEventWebhookUpdateUpdateWebhookDestinationHeaders(ctx context.
 	return &request
 }
 
-func flattenEventManagementUpdateWebhookDestinationItem(item *catalystcentersdkgo.ResponseEventManagementUpdateWebhookDestination) []map[string]interface{} {
+func flattenEventManagementUpdateWebhookDestinationV1Item(item *catalystcentersdkgo.ResponseEventManagementUpdateWebhookDestinationV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["error_message"] = flattenEventManagementUpdateWebhookDestinationItemErrorMessage(item.ErrorMessage)
+	respItem["error_message"] = flattenEventManagementUpdateWebhookDestinationV1ItemErrorMessage(item.ErrorMessage)
 	respItem["api_status"] = item.APIStatus
 	respItem["status_message"] = item.StatusMessage
 	return []map[string]interface{}{
@@ -305,7 +301,7 @@ func flattenEventManagementUpdateWebhookDestinationItem(item *catalystcentersdkg
 	}
 }
 
-func flattenEventManagementUpdateWebhookDestinationItemErrorMessage(item *catalystcentersdkgo.ResponseEventManagementUpdateWebhookDestinationErrorMessage) []map[string]interface{} {
+func flattenEventManagementUpdateWebhookDestinationV1ItemErrorMessage(item *catalystcentersdkgo.ResponseEventManagementUpdateWebhookDestinationV1ErrorMessage) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

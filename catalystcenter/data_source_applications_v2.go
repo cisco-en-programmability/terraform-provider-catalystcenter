@@ -434,8 +434,8 @@ func dataSourceApplicationsV2Read(ctx context.Context, d *schema.ResourceData, m
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetApplications")
-		queryParams1 := catalystcentersdkgo.GetApplicationsQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetApplicationsV2")
+		queryParams1 := catalystcentersdkgo.GetApplicationsV2QueryParams{}
 
 		queryParams1.Attributes = vAttributes.(string)
 
@@ -446,24 +446,24 @@ func dataSourceApplicationsV2Read(ctx context.Context, d *schema.ResourceData, m
 
 		queryParams1.Limit = vLimit.(float64)
 
-		response1, restyResp1, err := client.ApplicationPolicy.GetApplications(&queryParams1)
+		response1, restyResp1, err := client.ApplicationPolicy.GetApplicationsV2(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetApplications", err,
-				"Failure at GetApplications, unexpected response", ""))
+				"Failure when executing 2 GetApplicationsV2", err,
+				"Failure at GetApplicationsV2, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenApplicationPolicyGetApplicationsItems(response1.Response)
+		vItems1 := flattenApplicationPolicyGetApplicationsV2Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetApplications response",
+				"Failure when setting GetApplicationsV2 response",
 				err))
 			return diags
 		}
@@ -475,7 +475,7 @@ func dataSourceApplicationsV2Read(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func flattenApplicationPolicyGetApplicationsItems(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationsResponse) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationsV2Items(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationsV2Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -486,13 +486,13 @@ func flattenApplicationPolicyGetApplicationsItems(items *[]catalystcentersdkgo.R
 		respItem["instance_id"] = item.InstanceID
 		respItem["display_name"] = item.DisplayName
 		respItem["instance_version"] = item.InstanceVersion
-		respItem["identity_source"] = flattenApplicationPolicyGetApplicationsItemsIDentitySource(item.IDentitySource)
-		respItem["indicative_network_identity"] = flattenApplicationPolicyGetApplicationsItemsIndicativeNetworkIDentity(item.IndicativeNetworkIDentity)
+		respItem["identity_source"] = flattenApplicationPolicyGetApplicationsV2ItemsIDentitySource(item.IDentitySource)
+		respItem["indicative_network_identity"] = flattenApplicationPolicyGetApplicationsV2ItemsIndicativeNetworkIDentity(item.IndicativeNetworkIDentity)
 		respItem["name"] = item.Name
 		respItem["namespace"] = item.Namespace
-		respItem["network_applications"] = flattenApplicationPolicyGetApplicationsItemsNetworkApplications(item.NetworkApplications)
-		respItem["network_identity"] = flattenApplicationPolicyGetApplicationsItemsNetworkIDentity(item.NetworkIDentity)
-		respItem["parent_scalable_group"] = flattenApplicationPolicyGetApplicationsItemsParentScalableGroup(item.ParentScalableGroup)
+		respItem["network_applications"] = flattenApplicationPolicyGetApplicationsV2ItemsNetworkApplications(item.NetworkApplications)
+		respItem["network_identity"] = flattenApplicationPolicyGetApplicationsV2ItemsNetworkIDentity(item.NetworkIDentity)
+		respItem["parent_scalable_group"] = flattenApplicationPolicyGetApplicationsV2ItemsParentScalableGroup(item.ParentScalableGroup)
 		respItem["qualifier"] = item.Qualifier
 		respItem["scalable_group_external_handle"] = item.ScalableGroupExternalHandle
 		respItem["scalable_group_type"] = item.ScalableGroupType
@@ -502,7 +502,7 @@ func flattenApplicationPolicyGetApplicationsItems(items *[]catalystcentersdkgo.R
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplicationsItemsIDentitySource(item *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationsResponseIDentitySource) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationsV2ItemsIDentitySource(item *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationsV2ResponseIDentitySource) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -516,7 +516,7 @@ func flattenApplicationPolicyGetApplicationsItemsIDentitySource(item *catalystce
 
 }
 
-func flattenApplicationPolicyGetApplicationsItemsIndicativeNetworkIDentity(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationsResponseIndicativeNetworkIDentity) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationsV2ItemsIndicativeNetworkIDentity(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationsV2ResponseIndicativeNetworkIDentity) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -534,7 +534,7 @@ func flattenApplicationPolicyGetApplicationsItemsIndicativeNetworkIDentity(items
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplicationsItemsNetworkApplications(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationsResponseNetworkApplications) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationsV2ItemsNetworkApplications(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationsV2ResponseNetworkApplications) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -563,7 +563,7 @@ func flattenApplicationPolicyGetApplicationsItemsNetworkApplications(items *[]ca
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplicationsItemsNetworkIDentity(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationsResponseNetworkIDentity) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationsV2ItemsNetworkIDentity(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationsV2ResponseNetworkIDentity) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -573,7 +573,7 @@ func flattenApplicationPolicyGetApplicationsItemsNetworkIDentity(items *[]cataly
 		respItem["id"] = item.ID
 		respItem["display_name"] = item.DisplayName
 		respItem["ipv4_subnet"] = item.IPv4Subnet
-		respItem["ipv6_subnet"] = flattenApplicationPolicyGetApplicationsItemsNetworkIDentityIPv6Subnet(item.IPv6Subnet)
+		respItem["ipv6_subnet"] = flattenApplicationPolicyGetApplicationsV2ItemsNetworkIDentityIPv6Subnet(item.IPv6Subnet)
 		respItem["lower_port"] = item.LowerPort
 		respItem["ports"] = item.Ports
 		respItem["protocol"] = item.Protocol
@@ -583,7 +583,7 @@ func flattenApplicationPolicyGetApplicationsItemsNetworkIDentity(items *[]cataly
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplicationsItemsNetworkIDentityIPv6Subnet(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationsResponseNetworkIDentityIPv6Subnet) []interface{} {
+func flattenApplicationPolicyGetApplicationsV2ItemsNetworkIDentityIPv6Subnet(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationsV2ResponseNetworkIDentityIPv6Subnet) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -595,7 +595,7 @@ func flattenApplicationPolicyGetApplicationsItemsNetworkIDentityIPv6Subnet(items
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplicationsItemsParentScalableGroup(item *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationsResponseParentScalableGroup) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationsV2ItemsParentScalableGroup(item *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationsV2ResponseParentScalableGroup) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

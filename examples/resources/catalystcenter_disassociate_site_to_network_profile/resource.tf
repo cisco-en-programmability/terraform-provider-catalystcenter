@@ -1,6 +1,6 @@
 
 resource "catalystcenter_disassociate_site_to_network_profile" "example" {
-  provider           = catalystcenter
+  provider           = meraki
   network_profile_id = "string"
   site_id            = "string"
   parameters {

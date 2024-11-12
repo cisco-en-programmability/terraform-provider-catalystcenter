@@ -522,9 +522,9 @@ func dataSourceDeviceEnrichmentDetailsRead(ctx context.Context, d *schema.Resour
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceEnrichmentDetails")
+		log.Printf("[DEBUG] Selected method: GetDeviceEnrichmentDetailsV1")
 
-		headerParams1 := catalystcentersdkgo.GetDeviceEnrichmentDetailsHeaderParams{}
+		headerParams1 := catalystcentersdkgo.GetDeviceEnrichmentDetailsV1HeaderParams{}
 
 		headerParams1.EntityType = vEntityType.(string)
 
@@ -532,24 +532,24 @@ func dataSourceDeviceEnrichmentDetailsRead(ctx context.Context, d *schema.Resour
 
 		headerParams1.Persistbapioutput = vPersistbapioutput.(string)
 
-		response1, restyResp1, err := client.Devices.GetDeviceEnrichmentDetails(&headerParams1)
+		response1, restyResp1, err := client.Devices.GetDeviceEnrichmentDetailsV1(&headerParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceEnrichmentDetails", err,
-				"Failure at GetDeviceEnrichmentDetails, unexpected response", ""))
+				"Failure when executing 2 GetDeviceEnrichmentDetailsV1", err,
+				"Failure at GetDeviceEnrichmentDetailsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetDeviceEnrichmentDetailsItems(response1)
+		vItems1 := flattenDevicesGetDeviceEnrichmentDetailsV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceEnrichmentDetails response",
+				"Failure when setting GetDeviceEnrichmentDetailsV1 response",
 				err))
 			return diags
 		}
@@ -561,27 +561,27 @@ func dataSourceDeviceEnrichmentDetailsRead(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func flattenDevicesGetDeviceEnrichmentDetailsItems(items *catalystcentersdkgo.ResponseDevicesGetDeviceEnrichmentDetails) []map[string]interface{} {
+func flattenDevicesGetDeviceEnrichmentDetailsV1Items(items *catalystcentersdkgo.ResponseDevicesGetDeviceEnrichmentDetailsV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["device_details"] = flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetails(item.DeviceDetails)
+		respItem["device_details"] = flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetails(item.DeviceDetails)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetails(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsDeviceDetails) []map[string]interface{} {
+func flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetails(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsV1DeviceDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["family"] = item.Family
 	respItem["type"] = item.Type
-	respItem["location"] = flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsLocation(item.Location)
+	respItem["location"] = flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsLocation(item.Location)
 	respItem["error_code"] = item.ErrorCode
 	respItem["mac_address"] = item.MacAddress
 	respItem["role"] = item.Role
@@ -599,8 +599,8 @@ func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetails(item *catalystce
 	respItem["reachability_status"] = item.ReachabilityStatus
 	respItem["snmp_contact"] = item.SNMPContact
 	respItem["snmp_location"] = item.SNMPLocation
-	respItem["tunnel_udp_port"] = flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsTunnelUDPPort(item.TunnelUDPPort)
-	respItem["waas_device_mode"] = flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsWaasDeviceMode(item.WaasDeviceMode)
+	respItem["tunnel_udp_port"] = flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsTunnelUDPPort(item.TunnelUDPPort)
+	respItem["waas_device_mode"] = flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsWaasDeviceMode(item.WaasDeviceMode)
 	respItem["series"] = item.Series
 	respItem["inventory_status_detail"] = item.InventoryStatusDetail
 	respItem["collection_interval"] = item.CollectionInterval
@@ -611,12 +611,12 @@ func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetails(item *catalystce
 	respItem["up_time"] = item.UpTime
 	respItem["last_update_time"] = item.LastUpdateTime
 	respItem["error_description"] = item.ErrorDescription
-	respItem["location_name"] = flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsLocationName(item.LocationName)
+	respItem["location_name"] = flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsLocationName(item.LocationName)
 	respItem["tag_count"] = item.TagCount
 	respItem["last_updated"] = item.LastUpdated
 	respItem["instance_uuid"] = item.InstanceUUID
 	respItem["id"] = item.ID
-	respItem["neighbor_topology"] = flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopology(item.NeighborTopology)
+	respItem["neighbor_topology"] = flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopology(item.NeighborTopology)
 
 	return []map[string]interface{}{
 		respItem,
@@ -624,7 +624,7 @@ func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetails(item *catalystce
 
 }
 
-func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsLocation(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsDeviceDetailsLocation) interface{} {
+func flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsLocation(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsV1DeviceDetailsLocation) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -634,7 +634,7 @@ func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsLocation(item *ca
 
 }
 
-func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsTunnelUDPPort(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsDeviceDetailsTunnelUDPPort) interface{} {
+func flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsTunnelUDPPort(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsV1DeviceDetailsTunnelUDPPort) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -644,7 +644,7 @@ func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsTunnelUDPPort(ite
 
 }
 
-func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsWaasDeviceMode(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsDeviceDetailsWaasDeviceMode) interface{} {
+func flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsWaasDeviceMode(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsV1DeviceDetailsWaasDeviceMode) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -654,7 +654,7 @@ func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsWaasDeviceMode(it
 
 }
 
-func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsLocationName(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsDeviceDetailsLocationName) interface{} {
+func flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsLocationName(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsV1DeviceDetailsLocationName) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -664,21 +664,21 @@ func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsLocationName(item
 
 }
 
-func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopology(items *[]catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsDeviceDetailsNeighborTopology) []map[string]interface{} {
+func flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopology(items *[]catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsV1DeviceDetailsNeighborTopology) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["nodes"] = flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyNodes(item.Nodes)
-		respItem["links"] = flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyLinks(item.Links)
+		respItem["nodes"] = flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopologyNodes(item.Nodes)
+		respItem["links"] = flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopologyLinks(item.Links)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyNodes(items *[]catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsDeviceDetailsNeighborTopologyNodes) []map[string]interface{} {
+func flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopologyNodes(items *[]catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsV1DeviceDetailsNeighborTopologyNodes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -694,21 +694,21 @@ func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyN
 		respItem["family"] = item.Family
 		respItem["ip"] = item.IP
 		respItem["software_version"] = item.SoftwareVersion
-		respItem["user_id"] = flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyNodesUserID(item.UserID)
+		respItem["user_id"] = flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopologyNodesUserID(item.UserID)
 		respItem["node_type"] = item.NodeType
-		respItem["radio_frequency"] = flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyNodesRadioFrequency(item.RadioFrequency)
-		respItem["clients"] = flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyNodesClients(item.Clients)
-		respItem["count"] = flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyNodesCount(item.Count)
+		respItem["radio_frequency"] = flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopologyNodesRadioFrequency(item.RadioFrequency)
+		respItem["clients"] = flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopologyNodesClients(item.Clients)
+		respItem["count"] = flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopologyNodesCount(item.Count)
 		respItem["health_score"] = item.HealthScore
 		respItem["level"] = item.Level
-		respItem["fabric_group"] = flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyNodesFabricGroup(item.FabricGroup)
-		respItem["connected_device"] = flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyNodesConnectedDevice(item.ConnectedDevice)
+		respItem["fabric_group"] = flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopologyNodesFabricGroup(item.FabricGroup)
+		respItem["connected_device"] = flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopologyNodesConnectedDevice(item.ConnectedDevice)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyNodesUserID(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsDeviceDetailsNeighborTopologyNodesUserID) interface{} {
+func flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopologyNodesUserID(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsV1DeviceDetailsNeighborTopologyNodesUserID) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -718,7 +718,7 @@ func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyN
 
 }
 
-func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyNodesRadioFrequency(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsDeviceDetailsNeighborTopologyNodesRadioFrequency) interface{} {
+func flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopologyNodesRadioFrequency(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsV1DeviceDetailsNeighborTopologyNodesRadioFrequency) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -728,7 +728,7 @@ func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyN
 
 }
 
-func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyNodesClients(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsDeviceDetailsNeighborTopologyNodesClients) interface{} {
+func flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopologyNodesClients(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsV1DeviceDetailsNeighborTopologyNodesClients) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -738,7 +738,7 @@ func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyN
 
 }
 
-func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyNodesCount(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsDeviceDetailsNeighborTopologyNodesCount) interface{} {
+func flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopologyNodesCount(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsV1DeviceDetailsNeighborTopologyNodesCount) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -748,7 +748,7 @@ func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyN
 
 }
 
-func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyNodesFabricGroup(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsDeviceDetailsNeighborTopologyNodesFabricGroup) interface{} {
+func flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopologyNodesFabricGroup(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsV1DeviceDetailsNeighborTopologyNodesFabricGroup) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -758,7 +758,7 @@ func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyN
 
 }
 
-func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyNodesConnectedDevice(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsDeviceDetailsNeighborTopologyNodesConnectedDevice) interface{} {
+func flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopologyNodesConnectedDevice(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsV1DeviceDetailsNeighborTopologyNodesConnectedDevice) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -768,7 +768,7 @@ func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyN
 
 }
 
-func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyLinks(items *[]catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsDeviceDetailsNeighborTopologyLinks) []map[string]interface{} {
+func flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopologyLinks(items *[]catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsV1DeviceDetailsNeighborTopologyLinks) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -777,16 +777,16 @@ func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyL
 		respItem := make(map[string]interface{})
 		respItem["source"] = item.Source
 		respItem["link_status"] = item.LinkStatus
-		respItem["label"] = flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyLinksLabel(item.Label)
+		respItem["label"] = flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopologyLinksLabel(item.Label)
 		respItem["target"] = item.Target
-		respItem["id"] = flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyLinksID(item.ID)
-		respItem["port_utilization"] = flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyLinksPortUtilization(item.PortUtilization)
+		respItem["id"] = flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopologyLinksID(item.ID)
+		respItem["port_utilization"] = flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopologyLinksPortUtilization(item.PortUtilization)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyLinksLabel(items *[]catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsDeviceDetailsNeighborTopologyLinksLabel) []interface{} {
+func flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopologyLinksLabel(items *[]catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsV1DeviceDetailsNeighborTopologyLinksLabel) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -798,7 +798,7 @@ func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyL
 	return respItems
 }
 
-func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyLinksID(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsDeviceDetailsNeighborTopologyLinksID) interface{} {
+func flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopologyLinksID(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsV1DeviceDetailsNeighborTopologyLinksID) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -808,7 +808,7 @@ func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyL
 
 }
 
-func flattenDevicesGetDeviceEnrichmentDetailsItemsDeviceDetailsNeighborTopologyLinksPortUtilization(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsDeviceDetailsNeighborTopologyLinksPortUtilization) interface{} {
+func flattenDevicesGetDeviceEnrichmentDetailsV1ItemsDeviceDetailsNeighborTopologyLinksPortUtilization(item *catalystcentersdkgo.ResponseItemDevicesGetDeviceEnrichmentDetailsV1DeviceDetailsNeighborTopologyLinksPortUtilization) interface{} {
 	if item == nil {
 		return nil
 	}

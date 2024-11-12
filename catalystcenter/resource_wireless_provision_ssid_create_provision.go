@@ -292,24 +292,22 @@ func resourceWirelessProvisionSSIDCreateProvisionCreate(ctx context.Context, d *
 
 	vPersistbapioutput := resourceItem["persistbapioutput"]
 
-	request1 := expandRequestWirelessProvisionSSIDCreateProvisionCreateAndProvisionSSID(ctx, "parameters.0", d)
+	request1 := expandRequestWirelessProvisionSSIDCreateProvisionCreateAndProvisionSSIDV1(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.CreateAndProvisionSSIDHeaderParams{}
+	headerParams1 := catalystcentersdkgo.CreateAndProvisionSSIDV1HeaderParams{}
 
 	headerParams1.Persistbapioutput = vPersistbapioutput.(string)
 
-	response1, restyResp1, err := client.Wireless.CreateAndProvisionSSID(request1, &headerParams1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Wireless.CreateAndProvisionSSIDV1(request1, &headerParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing CreateAndProvisionSSID", err))
+			"Failure when executing CreateAndProvisionSSIDV1", err))
 		return diags
 	}
 
@@ -345,23 +343,25 @@ func resourceWirelessProvisionSSIDCreateProvisionCreate(ctx context.Context, d *
 		if response2.Status == "FAILURE" {
 			bapiError := response2.BapiError
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing CreateAndProvisionSSID", err,
-				"Failure at CreateAndProvisionSSID execution", bapiError))
+				"Failure when executing CreateAndProvisionSSIDV1", err,
+				"Failure at CreateAndProvisionSSIDV1 execution", bapiError))
 			return diags
 		}
 	}
 
-	vItem1 := flattenWirelessCreateAndProvisionSSIDItem(response1)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
+	vItem1 := flattenWirelessCreateAndProvisionSSIDV1Item(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting CreateAndProvisionSSID response",
+			"Failure when setting CreateAndProvisionSSIDV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceWirelessProvisionSSIDCreateProvisionRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -376,13 +376,13 @@ func resourceWirelessProvisionSSIDCreateProvisionDelete(ctx context.Context, d *
 	return diags
 }
 
-func expandRequestWirelessProvisionSSIDCreateProvisionCreateAndProvisionSSID(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateAndProvisionSSID {
-	request := catalystcentersdkgo.RequestWirelessCreateAndProvisionSSID{}
+func expandRequestWirelessProvisionSSIDCreateProvisionCreateAndProvisionSSIDV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateAndProvisionSSIDV1 {
+	request := catalystcentersdkgo.RequestWirelessCreateAndProvisionSSIDV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".managed_aplocations")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".managed_aplocations")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".managed_aplocations")))) {
 		request.ManagedApLocations = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ssid_details")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ssid_details")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ssid_details")))) {
-		request.SSIDDetails = expandRequestWirelessProvisionSSIDCreateProvisionCreateAndProvisionSSIDSSIDDetails(ctx, key+".ssid_details.0", d)
+		request.SSIDDetails = expandRequestWirelessProvisionSSIDCreateProvisionCreateAndProvisionSSIDV1SSIDDetails(ctx, key+".ssid_details.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ssid_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ssid_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ssid_type")))) {
 		request.SSIDType = interfaceToString(v)
@@ -391,13 +391,13 @@ func expandRequestWirelessProvisionSSIDCreateProvisionCreateAndProvisionSSID(ctx
 		request.EnableFabric = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".flex_connect")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".flex_connect")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".flex_connect")))) {
-		request.FlexConnect = expandRequestWirelessProvisionSSIDCreateProvisionCreateAndProvisionSSIDFlexConnect(ctx, key+".flex_connect.0", d)
+		request.FlexConnect = expandRequestWirelessProvisionSSIDCreateProvisionCreateAndProvisionSSIDV1FlexConnect(ctx, key+".flex_connect.0", d)
 	}
 	return &request
 }
 
-func expandRequestWirelessProvisionSSIDCreateProvisionCreateAndProvisionSSIDSSIDDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateAndProvisionSSIDSSIDDetails {
-	request := catalystcentersdkgo.RequestWirelessCreateAndProvisionSSIDSSIDDetails{}
+func expandRequestWirelessProvisionSSIDCreateProvisionCreateAndProvisionSSIDV1SSIDDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateAndProvisionSSIDV1SSIDDetails {
+	request := catalystcentersdkgo.RequestWirelessCreateAndProvisionSSIDV1SSIDDetails{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -449,8 +449,8 @@ func expandRequestWirelessProvisionSSIDCreateProvisionCreateAndProvisionSSIDSSID
 	return &request
 }
 
-func expandRequestWirelessProvisionSSIDCreateProvisionCreateAndProvisionSSIDFlexConnect(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateAndProvisionSSIDFlexConnect {
-	request := catalystcentersdkgo.RequestWirelessCreateAndProvisionSSIDFlexConnect{}
+func expandRequestWirelessProvisionSSIDCreateProvisionCreateAndProvisionSSIDV1FlexConnect(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateAndProvisionSSIDV1FlexConnect {
+	request := catalystcentersdkgo.RequestWirelessCreateAndProvisionSSIDV1FlexConnect{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".enable_flex_connect")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".enable_flex_connect")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".enable_flex_connect")))) {
 		request.EnableFlexConnect = interfaceToBoolPtr(v)
 	}
@@ -460,7 +460,7 @@ func expandRequestWirelessProvisionSSIDCreateProvisionCreateAndProvisionSSIDFlex
 	return &request
 }
 
-func flattenWirelessCreateAndProvisionSSIDItem(item *catalystcentersdkgo.ResponseWirelessCreateAndProvisionSSID) []map[string]interface{} {
+func flattenWirelessCreateAndProvisionSSIDV1Item(item *catalystcentersdkgo.ResponseWirelessCreateAndProvisionSSIDV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

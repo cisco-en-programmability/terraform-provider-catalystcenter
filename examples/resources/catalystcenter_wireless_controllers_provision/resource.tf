@@ -1,6 +1,6 @@
 
 resource "catalystcenter_wireless_controllers_provision" "example" {
-  provider  = catalystcenter
+  provider  = meraki
   device_id = "string"
   parameters {
 

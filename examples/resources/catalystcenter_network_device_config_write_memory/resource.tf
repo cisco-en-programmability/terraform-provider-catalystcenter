@@ -1,6 +1,6 @@
 
 resource "catalystcenter_network_device_config_write_memory" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     device_id = ["string"]

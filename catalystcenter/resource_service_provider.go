@@ -186,7 +186,7 @@ func resourceServiceProviderCreate(ctx context.Context, d *schema.ResourceData, 
 	var diags diag.Diagnostics
 
 	//resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestServiceProviderCreateSpProfile(ctx, "parameters.0", d)
+	request1 := expandRequestServiceProviderCreateSpProfileV1(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vvSpProfileName := ""
@@ -288,10 +288,10 @@ func resourceServiceProviderRead(ctx context.Context, d *schema.ResourceData, m 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
 		//TODO FOR DNAC
-		items := []catalystcentersdkgo.ResponseNetworkSettingsGetServiceProviderDetailsResponse{
+		items := []catalystcentersdkgo.ResponseNetworkSettingsGetServiceProviderDetailsV1Response{
 			*response1,
 		}
-		vItem1 := flattenNetworkSettingsGetServiceProviderDetailsItems(&items)
+		vItem1 := flattenNetworkSettingsGetServiceProviderDetailsV1Items(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetServiceProviderDetails search response",
@@ -322,7 +322,7 @@ func resourceServiceProviderUpdate(ctx context.Context, d *schema.ResourceData, 
 	}
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] Name used for update operation %s", vSpProfileName)
-		request1 := expandRequestServiceProviderUpdateSpProfile(ctx, "parameters.0", d)
+		request1 := expandRequestServiceProviderUpdateSpProfileV1(ctx, "parameters.0", d)
 		newQos := *request1.Settings.Qos
 		if d.HasChange("parameters.0.settings.0.qos.0.profile_name") {
 			old, _ := d.GetChange("parameters.0.settings.0.qos.0.profile_name")
@@ -463,19 +463,19 @@ func resourceServiceProviderDelete(ctx context.Context, d *schema.ResourceData, 
 	}
 	return diags
 }
-func expandRequestServiceProviderCreateSpProfile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateSpProfile {
-	request := catalystcentersdkgo.RequestNetworkSettingsCreateSpProfile{}
-	request.Settings = expandRequestServiceProviderCreateSpProfileSettings(ctx, key, d)
+func expandRequestServiceProviderCreateSpProfileV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateSpProfileV1 {
+	request := catalystcentersdkgo.RequestNetworkSettingsCreateSpProfileV1{}
+	request.Settings = expandRequestServiceProviderCreateSpProfileV1Settings(ctx, key, d)
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
 	}
 	return &request
 }
 
-func expandRequestServiceProviderCreateSpProfileSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateSpProfileSettings {
-	request := catalystcentersdkgo.RequestNetworkSettingsCreateSpProfileSettings{}
+func expandRequestServiceProviderCreateSpProfileV1Settings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateSpProfileV1Settings {
+	request := catalystcentersdkgo.RequestNetworkSettingsCreateSpProfileV1Settings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".qos")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".qos")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".qos")))) {
-		request.Qos = expandRequestServiceProviderCreateSpProfileSettingsQosArray(ctx, key+".qos", d)
+		request.Qos = expandRequestServiceProviderCreateSpProfileV1SettingsQosArray(ctx, key+".qos", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -483,8 +483,8 @@ func expandRequestServiceProviderCreateSpProfileSettings(ctx context.Context, ke
 	return &request
 }
 
-func expandRequestServiceProviderCreateSpProfileSettingsQosArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestNetworkSettingsCreateSpProfileSettingsQos {
-	request := []catalystcentersdkgo.RequestNetworkSettingsCreateSpProfileSettingsQos{}
+func expandRequestServiceProviderCreateSpProfileV1SettingsQosArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestNetworkSettingsCreateSpProfileV1SettingsQos {
+	request := []catalystcentersdkgo.RequestNetworkSettingsCreateSpProfileV1SettingsQos{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -495,7 +495,7 @@ func expandRequestServiceProviderCreateSpProfileSettingsQosArray(ctx context.Con
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestServiceProviderCreateSpProfileSettingsQos(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestServiceProviderCreateSpProfileV1SettingsQos(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -506,8 +506,8 @@ func expandRequestServiceProviderCreateSpProfileSettingsQosArray(ctx context.Con
 	return &request
 }
 
-func expandRequestServiceProviderCreateSpProfileSettingsQos(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateSpProfileSettingsQos {
-	request := catalystcentersdkgo.RequestNetworkSettingsCreateSpProfileSettingsQos{}
+func expandRequestServiceProviderCreateSpProfileV1SettingsQos(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateSpProfileV1SettingsQos {
+	request := catalystcentersdkgo.RequestNetworkSettingsCreateSpProfileV1SettingsQos{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".profile_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".profile_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".profile_name")))) {
 		request.ProfileName = interfaceToString(v)
 	}
@@ -523,19 +523,19 @@ func expandRequestServiceProviderCreateSpProfileSettingsQos(ctx context.Context,
 	return &request
 }
 
-func expandRequestServiceProviderUpdateSpProfile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateSpProfile {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateSpProfile{}
-	request.Settings = expandRequestServiceProviderUpdateSpProfileSettings(ctx, key, d)
+func expandRequestServiceProviderUpdateSpProfileV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateSpProfileV1 {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateSpProfileV1{}
+	request.Settings = expandRequestServiceProviderUpdateSpProfileV1Settings(ctx, key, d)
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
 	}
 	return &request
 }
 
-func expandRequestServiceProviderUpdateSpProfileSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateSpProfileSettings {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateSpProfileSettings{}
+func expandRequestServiceProviderUpdateSpProfileV1Settings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateSpProfileV1Settings {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateSpProfileV1Settings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".qos")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".qos")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".qos")))) {
-		request.Qos = expandRequestServiceProviderUpdateSpProfileSettingsQosArray(ctx, key+".qos", d)
+		request.Qos = expandRequestServiceProviderUpdateSpProfileV1SettingsQosArray(ctx, key+".qos", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -543,8 +543,8 @@ func expandRequestServiceProviderUpdateSpProfileSettings(ctx context.Context, ke
 	return &request
 }
 
-func expandRequestServiceProviderUpdateSpProfileSettingsQosArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestNetworkSettingsUpdateSpProfileSettingsQos {
-	request := []catalystcentersdkgo.RequestNetworkSettingsUpdateSpProfileSettingsQos{}
+func expandRequestServiceProviderUpdateSpProfileV1SettingsQosArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestNetworkSettingsUpdateSpProfileV1SettingsQos {
+	request := []catalystcentersdkgo.RequestNetworkSettingsUpdateSpProfileV1SettingsQos{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -555,7 +555,7 @@ func expandRequestServiceProviderUpdateSpProfileSettingsQosArray(ctx context.Con
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestServiceProviderUpdateSpProfileSettingsQos(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestServiceProviderUpdateSpProfileV1SettingsQos(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -566,8 +566,8 @@ func expandRequestServiceProviderUpdateSpProfileSettingsQosArray(ctx context.Con
 	return &request
 }
 
-func expandRequestServiceProviderUpdateSpProfileSettingsQos(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateSpProfileSettingsQos {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateSpProfileSettingsQos{}
+func expandRequestServiceProviderUpdateSpProfileV1SettingsQos(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateSpProfileV1SettingsQos {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateSpProfileV1SettingsQos{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".profile_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".profile_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".profile_name")))) {
 		request.ProfileName = interfaceToString(v)
 	}
@@ -586,13 +586,13 @@ func expandRequestServiceProviderUpdateSpProfileSettingsQos(ctx context.Context,
 	return &request
 }
 
-func searchNetworkSettingsGetServiceProviderDetails(m interface{}, vSProfileName string) (*catalystcentersdkgo.ResponseNetworkSettingsGetServiceProviderDetailsResponse, error) {
+func searchNetworkSettingsGetServiceProviderDetails(m interface{}, vSProfileName string) (*catalystcentersdkgo.ResponseNetworkSettingsGetServiceProviderDetailsV1Response, error) {
 	log.Printf("[DEBUG] Search")
 	log.Printf("[DEBUG] Search sp profile name =>%s", vSProfileName)
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseNetworkSettingsGetServiceProviderDetailsResponse
-	var ite *catalystcentersdkgo.ResponseNetworkSettingsGetServiceProviderDetails
+	var foundItem *catalystcentersdkgo.ResponseNetworkSettingsGetServiceProviderDetailsV1Response
+	var ite *catalystcentersdkgo.ResponseNetworkSettingsGetServiceProviderDetailsV1
 	ite, resty, err := client.NetworkSettings.GetServiceProviderDetails()
 	log.Printf("[DEBUG] Load data")
 	if resty != nil {
@@ -618,7 +618,7 @@ func searchNetworkSettingsGetServiceProviderDetails(m interface{}, vSProfileName
 			for _, item2 := range *item.Value {
 				if item2.SpProfileName == vSProfileName {
 					log.Printf("[DEBUG] Search finded item")
-					var getItem *catalystcentersdkgo.ResponseNetworkSettingsGetServiceProviderDetailsResponse
+					var getItem *catalystcentersdkgo.ResponseNetworkSettingsGetServiceProviderDetailsV1Response
 					getItem = &item
 					foundItem = getItem
 					return foundItem, err

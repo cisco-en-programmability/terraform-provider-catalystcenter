@@ -793,29 +793,29 @@ func dataSourceSdaFabricBorderDeviceRead(ctx context.Context, d *schema.Resource
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetBorderDeviceDetailFromSdaFabric")
-		queryParams1 := catalystcentersdkgo.GetBorderDeviceDetailFromSdaFabricQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetBorderDeviceDetailFromSdaFabricV1")
+		queryParams1 := catalystcentersdkgo.GetBorderDeviceDetailFromSdaFabricV1QueryParams{}
 
 		queryParams1.DeviceManagementIPAddress = vDeviceManagementIPAddress.(string)
 
-		response1, restyResp1, err := client.Sda.GetBorderDeviceDetailFromSdaFabric(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetBorderDeviceDetailFromSdaFabricV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetBorderDeviceDetailFromSdaFabric", err,
-				"Failure at GetBorderDeviceDetailFromSdaFabric, unexpected response", ""))
+				"Failure when executing 2 GetBorderDeviceDetailFromSdaFabricV1", err,
+				"Failure at GetBorderDeviceDetailFromSdaFabricV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetBorderDeviceDetailFromSdaFabricItem(response1)
+		vItem1 := flattenSdaGetBorderDeviceDetailFromSdaFabricV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetBorderDeviceDetailFromSdaFabric response",
+				"Failure when setting GetBorderDeviceDetailFromSdaFabricV1 response",
 				err))
 			return diags
 		}
@@ -827,20 +827,20 @@ func dataSourceSdaFabricBorderDeviceRead(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItem(item *catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabric) []map[string]interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1Item(item *catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["status"] = item.Status
 	respItem["description"] = item.Description
-	respItem["payload"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayload(item.Payload)
+	respItem["payload"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayload(item.Payload)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayload(item *catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayload) []map[string]interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayload(item *catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1Payload) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -862,24 +862,24 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayload(item *catalystcente
 	respItem["namespace"] = item.Namespace
 	respItem["provisioning_state"] = item.ProvisioningState
 	respItem["resource_version"] = item.ResourceVersion
-	respItem["target_id_list"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadTargetIDList(item.TargetIDList)
+	respItem["target_id_list"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadTargetIDList(item.TargetIDList)
 	respItem["type"] = item.Type
-	respItem["cfs_change_info"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadCfsChangeInfo(item.CfsChangeInfo)
-	respItem["custom_provisions"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadCustomProvisions(item.CustomProvisions)
-	respItem["configs"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadConfigs(item.Configs)
-	respItem["managed_sites"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadManagedSites(item.ManagedSites)
+	respItem["cfs_change_info"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadCfsChangeInfo(item.CfsChangeInfo)
+	respItem["custom_provisions"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadCustomProvisions(item.CustomProvisions)
+	respItem["configs"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadConfigs(item.Configs)
+	respItem["managed_sites"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadManagedSites(item.ManagedSites)
 	respItem["network_device_id"] = item.NetworkDeviceID
 	respItem["roles"] = item.Roles
 	respItem["save_wan_connectivity_details_only"] = boolPtrToString(item.SaveWanConnectivityDetailsOnly)
 	respItem["site_id"] = item.SiteID
-	respItem["akc_settings_cfs"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadAkcSettingsCfs(item.AkcSettingsCfs)
-	respItem["device_interface_info"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadDeviceInterfaceInfo(item.DeviceInterfaceInfo)
-	respItem["device_settings"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadDeviceSettings(item.DeviceSettings)
-	respItem["network_widesettings"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettings(item.NetworkWidesettings)
-	respItem["other_device"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadOtherDevice(item.OtherDevice)
-	respItem["transit_networks"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadTransitNetworks(item.TransitNetworks)
-	respItem["virtual_network"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadVirtualNetwork(item.VirtualNetwork)
-	respItem["wlan"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadWLAN(item.WLAN)
+	respItem["akc_settings_cfs"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadAkcSettingsCfs(item.AkcSettingsCfs)
+	respItem["device_interface_info"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadDeviceInterfaceInfo(item.DeviceInterfaceInfo)
+	respItem["device_settings"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadDeviceSettings(item.DeviceSettings)
+	respItem["network_widesettings"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettings(item.NetworkWidesettings)
+	respItem["other_device"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadOtherDevice(item.OtherDevice)
+	respItem["transit_networks"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadTransitNetworks(item.TransitNetworks)
+	respItem["virtual_network"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadVirtualNetwork(item.VirtualNetwork)
+	respItem["wlan"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadWLAN(item.WLAN)
 
 	return []map[string]interface{}{
 		respItem,
@@ -887,7 +887,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayload(item *catalystcente
 
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadTargetIDList(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadTargetIDList) []interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadTargetIDList(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadTargetIDList) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -899,7 +899,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadTargetIDList(items *
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadCfsChangeInfo(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadCfsChangeInfo) []interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadCfsChangeInfo(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadCfsChangeInfo) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -911,7 +911,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadCfsChangeInfo(items 
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadCustomProvisions(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadCustomProvisions) []interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadCustomProvisions(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadCustomProvisions) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -923,7 +923,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadCustomProvisions(ite
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadConfigs(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadConfigs) []interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadConfigs(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadConfigs) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -935,7 +935,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadConfigs(items *[]cat
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadManagedSites(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadManagedSites) []interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadManagedSites(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadManagedSites) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -947,7 +947,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadManagedSites(items *
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadAkcSettingsCfs(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadAkcSettingsCfs) []interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadAkcSettingsCfs(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadAkcSettingsCfs) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -959,7 +959,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadAkcSettingsCfs(items
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadDeviceInterfaceInfo(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadDeviceInterfaceInfo) []interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadDeviceInterfaceInfo(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadDeviceInterfaceInfo) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -971,7 +971,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadDeviceInterfaceInfo(
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadDeviceSettings(item *catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadDeviceSettings) []map[string]interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadDeviceSettings(item *catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadDeviceSettings) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -982,7 +982,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadDeviceSettings(item 
 	respItem["instance_tenant_id"] = item.InstanceTenantID
 	respItem["deploy_pending"] = item.DeployPending
 	respItem["instance_version"] = item.InstanceVersion
-	respItem["connected_to"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadDeviceSettingsConnectedTo(item.ConnectedTo)
+	respItem["connected_to"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadDeviceSettingsConnectedTo(item.ConnectedTo)
 	respItem["cpu"] = item.CPU
 	respItem["dhcp_enabled"] = boolPtrToString(item.DhcpEnabled)
 	respItem["external_connectivity_ip_pool"] = item.ExternalConnectivityIPPool
@@ -991,7 +991,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadDeviceSettings(item 
 	respItem["memory"] = item.Memory
 	respItem["node_type"] = item.NodeType
 	respItem["storage"] = item.Storage
-	respItem["ext_connectivity_settings"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadDeviceSettingsExtConnectivitySettings(item.ExtConnectivitySettings)
+	respItem["ext_connectivity_settings"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadDeviceSettingsExtConnectivitySettings(item.ExtConnectivitySettings)
 
 	return []map[string]interface{}{
 		respItem,
@@ -999,7 +999,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadDeviceSettings(item 
 
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadDeviceSettingsConnectedTo(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadDeviceSettingsConnectedTo) []interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadDeviceSettingsConnectedTo(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadDeviceSettingsConnectedTo) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1011,7 +1011,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadDeviceSettingsConnec
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadDeviceSettingsExtConnectivitySettings(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadDeviceSettingsExtConnectivitySettings) []map[string]interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadDeviceSettingsExtConnectivitySettings(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadDeviceSettingsExtConnectivitySettings) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1028,14 +1028,14 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadDeviceSettingsExtCon
 		respItem["interface_uuid"] = item.InterfaceUUID
 		respItem["policy_propagation_enabled"] = boolPtrToString(item.PolicyPropagationEnabled)
 		respItem["policy_sgt_tag"] = item.PolicySgtTag
-		respItem["l2_handoff"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadDeviceSettingsExtConnectivitySettingsL2Handoff(item.L2Handoff)
-		respItem["l3_handoff"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadDeviceSettingsExtConnectivitySettingsL3Handoff(item.L3Handoff)
+		respItem["l2_handoff"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadDeviceSettingsExtConnectivitySettingsL2Handoff(item.L2Handoff)
+		respItem["l3_handoff"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadDeviceSettingsExtConnectivitySettingsL3Handoff(item.L3Handoff)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadDeviceSettingsExtConnectivitySettingsL2Handoff(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadDeviceSettingsExtConnectivitySettingsL2Handoff) []interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadDeviceSettingsExtConnectivitySettingsL2Handoff(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadDeviceSettingsExtConnectivitySettingsL2Handoff) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1047,7 +1047,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadDeviceSettingsExtCon
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadDeviceSettingsExtConnectivitySettingsL3Handoff(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadDeviceSettingsExtConnectivitySettingsL3Handoff) []map[string]interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadDeviceSettingsExtConnectivitySettingsL3Handoff(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadDeviceSettingsExtConnectivitySettingsL3Handoff) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1063,13 +1063,13 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadDeviceSettingsExtCon
 		respItem["local_ip_address"] = item.LocalIPAddress
 		respItem["remote_ip_address"] = item.RemoteIPAddress
 		respItem["vlan_id"] = item.VLANID
-		respItem["virtual_network"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadDeviceSettingsExtConnectivitySettingsL3HandoffVirtualNetwork(item.VirtualNetwork)
+		respItem["virtual_network"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadDeviceSettingsExtConnectivitySettingsL3HandoffVirtualNetwork(item.VirtualNetwork)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadDeviceSettingsExtConnectivitySettingsL3HandoffVirtualNetwork(item *catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadDeviceSettingsExtConnectivitySettingsL3HandoffVirtualNetwork) []map[string]interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadDeviceSettingsExtConnectivitySettingsL3HandoffVirtualNetwork(item *catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadDeviceSettingsExtConnectivitySettingsL3HandoffVirtualNetwork) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1082,7 +1082,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadDeviceSettingsExtCon
 
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettings(item *catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadNetworkWidesettings) []map[string]interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettings(item *catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadNetworkWidesettings) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1093,16 +1093,16 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettings(
 	respItem["instance_tenant_id"] = item.InstanceTenantID
 	respItem["deploy_pending"] = item.DeployPending
 	respItem["instance_version"] = item.InstanceVersion
-	respItem["aaa"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsAAA(item.AAA)
-	respItem["cmx"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsCmx(item.Cmx)
-	respItem["dhcp"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsDhcp(item.Dhcp)
-	respItem["dns"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsDNS(item.DNS)
-	respItem["ldap"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsLdap(item.Ldap)
-	respItem["native_vlan"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsNativeVLAN(item.NativeVLAN)
-	respItem["netflow"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsNetflow(item.Netflow)
-	respItem["ntp"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsNtp(item.Ntp)
-	respItem["snmp"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsSNMP(item.SNMP)
-	respItem["syslogs"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsSyslogs(item.Syslogs)
+	respItem["aaa"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsAAA(item.AAA)
+	respItem["cmx"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsCmx(item.Cmx)
+	respItem["dhcp"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsDhcp(item.Dhcp)
+	respItem["dns"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsDNS(item.DNS)
+	respItem["ldap"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsLdap(item.Ldap)
+	respItem["native_vlan"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsNativeVLAN(item.NativeVLAN)
+	respItem["netflow"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsNetflow(item.Netflow)
+	respItem["ntp"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsNtp(item.Ntp)
+	respItem["snmp"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsSNMP(item.SNMP)
+	respItem["syslogs"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsSyslogs(item.Syslogs)
 
 	return []map[string]interface{}{
 		respItem,
@@ -1110,7 +1110,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettings(
 
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsAAA(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadNetworkWidesettingsAAA) []interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsAAA(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadNetworkWidesettingsAAA) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1122,7 +1122,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsA
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsCmx(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadNetworkWidesettingsCmx) []interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsCmx(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadNetworkWidesettingsCmx) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1134,7 +1134,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsC
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsDhcp(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadNetworkWidesettingsDhcp) []map[string]interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsDhcp(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadNetworkWidesettingsDhcp) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1142,13 +1142,13 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsD
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["id"] = item.ID
-		respItem["ip_address"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsDhcpIPAddress(item.IPAddress)
+		respItem["ip_address"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsDhcpIPAddress(item.IPAddress)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsDhcpIPAddress(item *catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadNetworkWidesettingsDhcpIPAddress) []map[string]interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsDhcpIPAddress(item *catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadNetworkWidesettingsDhcpIPAddress) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1164,7 +1164,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsD
 
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsDNS(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadNetworkWidesettingsDNS) []map[string]interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsDNS(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadNetworkWidesettingsDNS) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1173,13 +1173,13 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsD
 		respItem := make(map[string]interface{})
 		respItem["id"] = item.ID
 		respItem["domain_name"] = item.DomainName
-		respItem["ip"] = flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsDNSIP(item.IP)
+		respItem["ip"] = flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsDNSIP(item.IP)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsDNSIP(item *catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadNetworkWidesettingsDNSIP) []map[string]interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsDNSIP(item *catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadNetworkWidesettingsDNSIP) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1195,7 +1195,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsD
 
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsLdap(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadNetworkWidesettingsLdap) []interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsLdap(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadNetworkWidesettingsLdap) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1207,7 +1207,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsL
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsNativeVLAN(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadNetworkWidesettingsNativeVLAN) []interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsNativeVLAN(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadNetworkWidesettingsNativeVLAN) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1219,7 +1219,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsN
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsNetflow(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadNetworkWidesettingsNetflow) []interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsNetflow(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadNetworkWidesettingsNetflow) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1231,7 +1231,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsN
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsNtp(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadNetworkWidesettingsNtp) []interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsNtp(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadNetworkWidesettingsNtp) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1243,7 +1243,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsN
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsSNMP(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadNetworkWidesettingsSNMP) []interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsSNMP(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadNetworkWidesettingsSNMP) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1255,7 +1255,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsS
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsSyslogs(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadNetworkWidesettingsSyslogs) []interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadNetworkWidesettingsSyslogs(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadNetworkWidesettingsSyslogs) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1267,7 +1267,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadNetworkWidesettingsS
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadOtherDevice(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadOtherDevice) []interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadOtherDevice(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadOtherDevice) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1279,7 +1279,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadOtherDevice(items *[
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadTransitNetworks(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadTransitNetworks) []map[string]interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadTransitNetworks(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadTransitNetworks) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1292,7 +1292,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadTransitNetworks(item
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadVirtualNetwork(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadVirtualNetwork) []interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadVirtualNetwork(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadVirtualNetwork) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1304,7 +1304,7 @@ func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadVirtualNetwork(items
 	return respItems
 }
 
-func flattenSdaGetBorderDeviceDetailFromSdaFabricItemPayloadWLAN(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricPayloadWLAN) []interface{} {
+func flattenSdaGetBorderDeviceDetailFromSdaFabricV1ItemPayloadWLAN(items *[]catalystcentersdkgo.ResponseSdaGetBorderDeviceDetailFromSdaFabricV1PayloadWLAN) []interface{} {
 	if items == nil {
 		return nil
 	}

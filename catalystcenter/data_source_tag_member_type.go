@@ -53,26 +53,26 @@ func dataSourceTagMemberTypeRead(ctx context.Context, d *schema.ResourceData, m 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTagResourceTypes")
+		log.Printf("[DEBUG] Selected method: GetTagResourceTypesV1")
 
-		response1, restyResp1, err := client.Tag.GetTagResourceTypes()
+		response1, restyResp1, err := client.Tag.GetTagResourceTypesV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTagResourceTypes", err,
-				"Failure at GetTagResourceTypes, unexpected response", ""))
+				"Failure when executing 2 GetTagResourceTypesV1", err,
+				"Failure at GetTagResourceTypesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenTagGetTagResourceTypesItems(response1)
+		vItems1 := flattenTagGetTagResourceTypesV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTagResourceTypes response",
+				"Failure when setting GetTagResourceTypesV1 response",
 				err))
 			return diags
 		}
@@ -84,7 +84,7 @@ func dataSourceTagMemberTypeRead(ctx context.Context, d *schema.ResourceData, m 
 	return diags
 }
 
-func flattenTagGetTagResourceTypesItems(items *catalystcentersdkgo.ResponseTagGetTagResourceTypes) []map[string]interface{} {
+func flattenTagGetTagResourceTypesV1Items(items *catalystcentersdkgo.ResponseTagGetTagResourceTypesV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

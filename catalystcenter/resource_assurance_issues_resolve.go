@@ -97,35 +97,31 @@ func resourceAssuranceIssuesResolveCreate(ctx context.Context, d *schema.Resourc
 
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
-	request1 := expandRequestAssuranceIssuesResolveResolveTheGivenListsOfIssues(ctx, "parameters.0", d)
+	request1 := expandRequestAssuranceIssuesResolveResolveTheGivenListsOfIssuesV1(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.ResolveTheGivenListsOfIssuesHeaderParams{}
+	headerParams1 := catalystcentersdkgo.ResolveTheGivenListsOfIssuesV1HeaderParams{}
 
 	headerParams1.XCaLLERID = vXCaLLERID.(string)
 
-	response1, restyResp1, err := client.Issues.ResolveTheGivenListsOfIssues(request1, &headerParams1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Issues.ResolveTheGivenListsOfIssuesV1(request1, &headerParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ResolveTheGivenListsOfIssues", err))
+			"Failure when executing ResolveTheGivenListsOfIssuesV1", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	//Analizar verificacion.
-
-	vItem1 := flattenIssuesResolveTheGivenListsOfIssuesItem(response1.Response)
+	vItem1 := flattenIssuesResolveTheGivenListsOfIssuesV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ResolveTheGivenListsOfIssues response",
+			"Failure when setting ResolveTheGivenListsOfIssuesV1 response",
 			err))
 		return diags
 	}
@@ -147,15 +143,15 @@ func resourceAssuranceIssuesResolveDelete(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func expandRequestAssuranceIssuesResolveResolveTheGivenListsOfIssues(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesResolveTheGivenListsOfIssues {
-	request := catalystcentersdkgo.RequestIssuesResolveTheGivenListsOfIssues{}
+func expandRequestAssuranceIssuesResolveResolveTheGivenListsOfIssuesV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesResolveTheGivenListsOfIssuesV1 {
+	request := catalystcentersdkgo.RequestIssuesResolveTheGivenListsOfIssuesV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".issue_ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".issue_ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".issue_ids")))) {
 		request.IssueIDs = interfaceToSliceString(v)
 	}
 	return &request
 }
 
-func flattenIssuesResolveTheGivenListsOfIssuesItem(item *catalystcentersdkgo.ResponseIssuesResolveTheGivenListsOfIssuesResponse) []map[string]interface{} {
+func flattenIssuesResolveTheGivenListsOfIssuesV1Item(item *catalystcentersdkgo.ResponseIssuesResolveTheGivenListsOfIssuesV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

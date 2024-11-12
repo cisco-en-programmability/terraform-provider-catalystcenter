@@ -53,26 +53,26 @@ func dataSourceFileNamespacesRead(ctx context.Context, d *schema.ResourceData, m
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetListOfAvailableNamespaces")
+		log.Printf("[DEBUG] Selected method: GetListOfAvailableNamespacesV1")
 
-		response1, restyResp1, err := client.File.GetListOfAvailableNamespaces()
+		response1, restyResp1, err := client.File.GetListOfAvailableNamespacesV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetListOfAvailableNamespaces", err,
-				"Failure at GetListOfAvailableNamespaces, unexpected response", ""))
+				"Failure when executing 2 GetListOfAvailableNamespacesV1", err,
+				"Failure at GetListOfAvailableNamespacesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenFileGetListOfAvailableNamespacesItems(response1)
+		vItems1 := flattenFileGetListOfAvailableNamespacesV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetListOfAvailableNamespaces response",
+				"Failure when setting GetListOfAvailableNamespacesV1 response",
 				err))
 			return diags
 		}
@@ -84,7 +84,7 @@ func dataSourceFileNamespacesRead(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func flattenFileGetListOfAvailableNamespacesItems(items *catalystcentersdkgo.ResponseFileGetListOfAvailableNamespaces) []map[string]interface{} {
+func flattenFileGetListOfAvailableNamespacesV1Items(items *catalystcentersdkgo.ResponseFileGetListOfAvailableNamespacesV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

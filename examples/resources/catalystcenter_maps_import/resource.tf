@@ -1,6 +1,6 @@
 
 resource "catalystcenter_maps_import" "example" {
-  provider            = catalystcenter
+  provider            = meraki
   import_context_uuid = "string"
   parameters {
 

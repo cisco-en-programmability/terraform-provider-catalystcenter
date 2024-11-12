@@ -76,26 +76,26 @@ func dataSourceImagesDistributionServerSettingsRead(ctx context.Context, d *sche
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveImageDistributionServers")
+		log.Printf("[DEBUG] Selected method: RetrieveImageDistributionServersV1")
 
-		response1, restyResp1, err := client.SoftwareImageManagementSwim.RetrieveImageDistributionServers()
+		response1, restyResp1, err := client.SoftwareImageManagementSwim.RetrieveImageDistributionServersV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveImageDistributionServers", err,
-				"Failure at RetrieveImageDistributionServers, unexpected response", ""))
+				"Failure when executing 2 RetrieveImageDistributionServersV1", err,
+				"Failure at RetrieveImageDistributionServersV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSoftwareImageManagementSwimRetrieveImageDistributionServersItems(response1.Response)
+		vItems1 := flattenSoftwareImageManagementSwimRetrieveImageDistributionServersV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveImageDistributionServers response",
+				"Failure when setting RetrieveImageDistributionServersV1 response",
 				err))
 			return diags
 		}
@@ -107,7 +107,7 @@ func dataSourceImagesDistributionServerSettingsRead(ctx context.Context, d *sche
 	return diags
 }
 
-func flattenSoftwareImageManagementSwimRetrieveImageDistributionServersItems(items *[]catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrieveImageDistributionServersResponse) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimRetrieveImageDistributionServersV1Items(items *[]catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrieveImageDistributionServersV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

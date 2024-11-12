@@ -61,26 +61,26 @@ func dataSourceFlexibleReportSchedulesRead(ctx context.Context, d *schema.Resour
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAllFlexibleReportSchedules")
+		log.Printf("[DEBUG] Selected method: GetAllFlexibleReportSchedulesV1")
 
-		response1, restyResp1, err := client.Reports.GetAllFlexibleReportSchedules()
+		response1, restyResp1, err := client.Reports.GetAllFlexibleReportSchedulesV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAllFlexibleReportSchedules", err,
-				"Failure at GetAllFlexibleReportSchedules, unexpected response", ""))
+				"Failure when executing 2 GetAllFlexibleReportSchedulesV1", err,
+				"Failure at GetAllFlexibleReportSchedulesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenReportsGetAllFlexibleReportSchedulesItems(response1)
+		vItems1 := flattenReportsGetAllFlexibleReportSchedulesV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAllFlexibleReportSchedules response",
+				"Failure when setting GetAllFlexibleReportSchedulesV1 response",
 				err))
 			return diags
 		}
@@ -92,7 +92,7 @@ func dataSourceFlexibleReportSchedulesRead(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func flattenReportsGetAllFlexibleReportSchedulesItems(items *catalystcentersdkgo.ResponseReportsGetAllFlexibleReportSchedules) []map[string]interface{} {
+func flattenReportsGetAllFlexibleReportSchedulesV1Items(items *catalystcentersdkgo.ResponseReportsGetAllFlexibleReportSchedulesV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -100,14 +100,14 @@ func flattenReportsGetAllFlexibleReportSchedulesItems(items *catalystcentersdkgo
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["report_id"] = item.ReportID
-		respItem["schedule"] = flattenReportsGetAllFlexibleReportSchedulesItemsSchedule(item.Schedule)
+		respItem["schedule"] = flattenReportsGetAllFlexibleReportSchedulesV1ItemsSchedule(item.Schedule)
 		respItem["report_name"] = item.ReportName
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenReportsGetAllFlexibleReportSchedulesItemsSchedule(item *catalystcentersdkgo.ResponseItemReportsGetAllFlexibleReportSchedulesSchedule) interface{} {
+func flattenReportsGetAllFlexibleReportSchedulesV1ItemsSchedule(item *catalystcentersdkgo.ResponseItemReportsGetAllFlexibleReportSchedulesV1Schedule) interface{} {
 	if item == nil {
 		return nil
 	}

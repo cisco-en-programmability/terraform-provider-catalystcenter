@@ -1,6 +1,6 @@
 
 resource "catalystcenter_event_snmp_config_update" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     auth_password     = "string"

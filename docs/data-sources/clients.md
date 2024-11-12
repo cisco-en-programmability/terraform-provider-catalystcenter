@@ -76,54 +76,54 @@ output "catalystcenter_clients_example" {
 
 ### Optional
 
-- `attribute` (String) attribute query parameter. List of attributes related to resource that can be requested to only be part of the response along with the required attributes. Refer to ClientAttribute schema for list of attributes supported Examples: 'attribute=band' (single attribute requested) 'attribute=band&attribute=ssid&attribute=overallScore' (multiple attribute requested)
+- `attribute` (String) attribute query parameter. List of attributes related to resource that can be requested to only be part of the response along with the required attributes. Refer to ClientAttribute schema for list of attributes supported Examples: *attribute=band* (single attribute requested) *attribute=band&attribute=ssid&attribute=overallScore* (multiple attribute requested)
 - `band` (String) band query parameter. WiFi frequency band that client or Access Point operates. Band value is represented in Giga Hertz GHz Examples:
-'band=5GHZ' (single band requested)
-'band=2.4GHZ&band=6GHZ' (multiple band requested)
-- `connected_network_device_name` (String) connectedNetworkDeviceName query parameter. Name of the neighbor network device that client is connected to. This field supports wildcard ('*') character-based search. If the value contains the ('*') character, please use the /query API for regex search. Ex: '*ap-25*' or 'ap-25*' or '*ap-25'
+*band=5GHZ* (single band requested)
+*band=2.4GHZ&band=6GHZ* (multiple band requested)
+- `connected_network_device_name` (String) connectedNetworkDeviceName query parameter. Name of the neighbor network device that client is connected to. This field supports wildcard (***) character-based search. If the value contains the (***) character, please use the /query API for regex search. Ex: **ap-25** or *ap-25** or **ap-25*
 Examples:
-'connectedNetworkDeviceName=ap-25' (single connectedNetworkDeviceName requested)
-'connectedNetworkDeviceName=ap-25&ap-34' (multiple connectedNetworkDeviceName requested)
+*connectedNetworkDeviceName=ap-25* (single connectedNetworkDeviceName requested)
+*connectedNetworkDeviceName=ap-25&ap-34* (multiple connectedNetworkDeviceName requested)
 - `end_time` (Number) endTime query parameter. End time to which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
 - `id` (String) id path parameter. id is the client mac address. It can be specified is any notational conventions  01:23:45:67:89:AB or 01-23-45-67-89-AB or 0123.4567.89AB and is case insensitive
-- `ipv4_address` (String) ipv4Address query parameter. IPv4 Address of the network entity either network device or client This field supports wildcard ('*') character-based search.  Ex: '*1.1*' or '1.1*' or '*1.1'
+- `ipv4_address` (String) ipv4Address query parameter. IPv4 Address of the network entity either network device or client This field supports wildcard (***) character-based search.  Ex: **1.1** or *1.1** or **1.1*
 Examples:
-'ipv4Address=1.1.1.1' (single ipv4Address requested)
-'ipv4Address=1.1.1.1&ipv4Address=2.2.2.2' (multiple ipv4Address requested)
-- `ipv6_address` (String) ipv6Address query parameter. IPv6 Address of the network entity either network device or client This field supports wildcard ('*') character-based search. Ex: '*2001:db8*' or '2001:db8*' or '*2001:db8'
+*ipv4Address=1.1.1.1* (single ipv4Address requested)
+*ipv4Address=1.1.1.1&ipv4Address=2.2.2.2* (multiple ipv4Address requested)
+- `ipv6_address` (String) ipv6Address query parameter. IPv6 Address of the network entity either network device or client This field supports wildcard (***) character-based search. Ex: **2001:db8** or *2001:db8** or **2001:db8*
 Examples:
-'ipv6Address=2001:db8:0:0:0:0:2:1' (single ipv6Address requested)
-'ipv6Address=2001:db8:0:0:0:0:2:1&ipv6Address=2001:db8:85a3:8d3:1319:8a2e:370:7348' (multiple ipv6Address requested)
+*ipv6Address=2001:db8:0:0:0:0:2:1* (single ipv6Address requested)
+*ipv6Address=2001:db8:0:0:0:0:2:1&ipv6Address=2001:db8:85a3:8d3:1319:8a2e:370:7348* (multiple ipv6Address requested)
 - `limit` (Number) limit query parameter. Maximum number of records to return
-- `mac_address` (String) macAddress query parameter. The macAddress of the network device or client This field supports wildcard ('*') character-based search.  Ex: '*AB:AB:AB*' or 'AB:AB:AB*' or '*AB:AB:AB' Examples:
-'macAddress=AB:AB:AB:CD:CD:CD' (single macAddress requested)
-'macAddress=AB:AB:AB:CD:CD:DC&macAddress=AB:AB:AB:CD:CD:FE' (multiple macAddress requested)
+- `mac_address` (String) macAddress query parameter. The macAddress of the network device or client This field supports wildcard (***) character-based search.  Ex: **AB:AB:AB** or *AB:AB:AB** or **AB:AB:AB* Examples:
+*macAddress=AB:AB:AB:CD:CD:CD* (single macAddress requested)
+*macAddress=AB:AB:AB:CD:CD:DC&macAddress=AB:AB:AB:CD:CD:FE* (multiple macAddress requested)
 - `offset` (Number) offset query parameter. Specifies the starting point within all records returned by the API. It's one based offset. The starting value is 1.
 - `order` (String) order query parameter. The sort order of the field ascending or descending.
-- `os_type` (String) osType query parameter. Client device operating system type. This field supports wildcard ('*') character-based search. If the value contains the ('*') character, please use the /query API for regex search.  Ex: '*iOS*' or 'iOS*' or '*iOS' Examples:
-'osType=iOS' (single osType requested)
-'osType=iOS&osType=Android' (multiple osType requested)
-- `os_version` (String) osVersion query parameter. Client device operating system version This field supports wildcard ('*') character-based search. If the value contains the ('*') character, please use the /query API for regex search.  Ex: '*14.3*' or '14.3*' or '*14.3' Examples:
-'osVersion=14.3' (single osVersion requested)
-'osVersion=14.3&osVersion=10.1' (multiple osVersion requested)
-- `site_hierarchy` (String) siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. "Global/AreaName/BuildingName/FloorName") This field supports wildcard ('*') character-based search. If the value contains the ('*') character, please use the /query API for regex search.  Ex: '*BuildingName*' or 'BuildingName*' or '*BuildingName' Examples: 'siteHierarchy=Global/AreaName/BuildingName/FloorName' (single siteHierarchy requested) 'siteHierarchy=Global/AreaName/BuildingName1/FloorName1&siteHierarchy=Global/AreaName/BuildingName1/FloorName2' (multiple siteHierarchy requested)
-- `site_hierarchy_id` (String) siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. "globalUuid/areaUuid/buildingUuid/floorUuid") This field supports wildcard ('*') character-based search.  Ex: '*buildingUuid*' or 'buildingUuid*' or '*buildingUuid' Examples: 'siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid' (single siteHierarchyId requested) 'siteHierarchyId=globalUuid/areaUuid/buildingUuid1/floorUuid1&siteHierarchyId=globalUuid/areaUuid/buildingUuid1/floorUuid2' (multiple siteHierarchyId requested)
-- `site_id` (String) siteId query parameter. The site UUID without the top level hierarchy. (Ex."floorUuid") Examples: 'siteId=floorUuid' (single siteId requested) 'siteId=floorUuid1&siteId=floorUuid2' (multiple siteId requested)
+- `os_type` (String) osType query parameter. Client device operating system type. This field supports wildcard (***) character-based search. If the value contains the (***) character, please use the /query API for regex search.  Ex: **iOS** or *iOS** or **iOS* Examples:
+*osType=iOS* (single osType requested)
+*osType=iOS&osType=Android* (multiple osType requested)
+- `os_version` (String) osVersion query parameter. Client device operating system version This field supports wildcard (***) character-based search. If the value contains the (***) character, please use the /query API for regex search.  Ex: **14.3** or *14.3** or **14.3* Examples:
+*osVersion=14.3* (single osVersion requested)
+*osVersion=14.3&osVersion=10.1* (multiple osVersion requested)
+- `site_hierarchy` (String) siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. "Global/AreaName/BuildingName/FloorName") This field supports wildcard (***) character-based search. If the value contains the (***) character, please use the /query API for regex search.  Ex: **BuildingName** or *BuildingName** or **BuildingName* Examples: *siteHierarchy=Global/AreaName/BuildingName/FloorName* (single siteHierarchy requested) *siteHierarchy=Global/AreaName/BuildingName1/FloorName1&siteHierarchy=Global/AreaName/BuildingName1/FloorName2* (multiple siteHierarchy requested)
+- `site_hierarchy_id` (String) siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. "globalUuid/areaUuid/buildingUuid/floorUuid") This field supports wildcard (***) character-based search.  Ex: **buildingUuid** or *buildingUuid** or **buildingUuid* Examples: *siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid* (single siteHierarchyId requested) *siteHierarchyId=globalUuid/areaUuid/buildingUuid1/floorUuid1&siteHierarchyId=globalUuid/areaUuid/buildingUuid1/floorUuid2* (multiple siteHierarchyId requested)
+- `site_id` (String) siteId query parameter. The site UUID without the top level hierarchy. (Ex."floorUuid") Examples: *siteId=floorUuid* (single siteId requested) *siteId=floorUuid1&siteId=floorUuid2* (multiple siteId requested)
 - `sort_by` (String) sortBy query parameter. A field within the response to sort by.
-- `ssid` (String) ssid query parameter. SSID is the name of wireless network to which client connects to. It is also referred to as WLAN ID Wireless Local Area Network Identifier. This field supports wildcard ('*') character-based search. If the value contains the ('*') character, please use the /query API for regex search.  Ex: '*Alpha*' or 'Alpha*' or '*Alpha'
+- `ssid` (String) ssid query parameter. SSID is the name of wireless network to which client connects to. It is also referred to as WLAN ID Wireless Local Area Network Identifier. This field supports wildcard (***) character-based search. If the value contains the (***) character, please use the /query API for regex search.  Ex: **Alpha** or *Alpha** or **Alpha*
 Examples:
-'ssid=Alpha' (single ssid requested)
-'ssid=Alpha&ssid=Guest' (multiple ssid requested)
+*ssid=Alpha* (single ssid requested)
+*ssid=Alpha&ssid=Guest* (multiple ssid requested)
 - `start_time` (Number) startTime query parameter. Start time from which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
-If 'startTime' is not provided, API will default to current time.
+If *startTime* is not provided, API will default to current time.
 - `type` (String) type query parameter. The client device type whether client is connected to network through Wired or Wireless medium.
 - `view` (String) view query parameter. Client related Views Refer to ClientView schema for list of views supported Examples:
-'view=Wireless' (single view requested)
-'view=WirelessHealth&view=WirelessTraffic' (multiple view requested)
-- `wlc_name` (String) wlcName query parameter. Wireless Controller name that reports the wireless client. This field supports wildcard ('*') character-based search. If the value contains the ('*') character, please use the /query API for regex search. Ex: '*wlc-25*' or 'wlc-25*' or '*wlc-25'
+*view=Wireless* (single view requested)
+*view=WirelessHealth&view=WirelessTraffic* (multiple view requested)
+- `wlc_name` (String) wlcName query parameter. Wireless Controller name that reports the wireless client. This field supports wildcard (***) character-based search. If the value contains the (***) character, please use the /query API for regex search. Ex: **wlc-25** or *wlc-25** or **wlc-25*
 Examples:
-'wlcName=wlc-25' (single wlcName requested)
-'wlcName=wlc-25&wlc-34' (multiple wlcName requested)
+*wlcName=wlc-25* (single wlcName requested)
+*wlcName=wlc-25&wlc-34* (multiple wlcName requested)
 - `xca_lle_rid` (String) X-CALLER-ID header parameter. Caller ID is used to trace the origin of API calls and their associated queries executed on the database. It's an optional header parameter that can be added to an API request.
 
 ### Read-Only

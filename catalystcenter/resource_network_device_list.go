@@ -598,7 +598,7 @@ func resourceNetworkDeviceListCreate(ctx context.Context, d *schema.ResourceData
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestNetworkDeviceListAddDevice2(ctx, "parameters.0", d)
+	request1 := expandRequestNetworkDeviceListAddDeviceKnowYourNetworkV1(ctx, "parameters.0", d)
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
@@ -619,7 +619,7 @@ func resourceNetworkDeviceListCreate(ctx context.Context, d *schema.ResourceData
 	}
 	vvIPAddress = strings.Join(vIPAddress, ",")
 
-	queryParams1 := catalystcentersdkgo.GetDeviceListQueryParams{}
+	queryParams1 := catalystcentersdkgo.GetDeviceListV1QueryParams{}
 	if vSerialNumber != "" {
 		queryParams1.SerialNumber = []string{vvSerialNumber}
 	}
@@ -635,7 +635,7 @@ func resourceNetworkDeviceListCreate(ctx context.Context, d *schema.ResourceData
 		d.SetId(joinResourceID(resourceMap))
 		return resourceNetworkDeviceListRead(ctx, d, m)
 	}
-	resp1, restyResp1, err := client.Devices.AddDevice2(request1)
+	resp1, restyResp1, err := client.Devices.AddDeviceKnowYourNetwork(request1)
 	log.Printf("ADDDEVICE ERROR %v", restyResp1)
 	if err != nil || resp1 == nil {
 		if restyResp1 != nil {
@@ -697,7 +697,7 @@ func resourceNetworkDeviceListRead(ctx context.Context, d *schema.ResourceData, 
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method 1: GetDeviceList")
-		queryParams1 := catalystcentersdkgo.GetDeviceListQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetDeviceListV1QueryParams{}
 		if vSerialNumber != "" {
 			queryParams1.SerialNumber = []string{vSerialNumber}
 		}
@@ -721,7 +721,7 @@ func resourceNetworkDeviceListRead(ctx context.Context, d *schema.ResourceData, 
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesGetDeviceListItems(response1.Response)
+		vItem1 := flattenDevicesGetDeviceListV1Items(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetDeviceList search response",
@@ -744,7 +744,7 @@ func resourceNetworkDeviceListUpdate(ctx context.Context, d *schema.ResourceData
 	vvIPAddress := resourceMap["ip_address"]
 	vIPAddress := strings.Split(vvIPAddress, ",")
 
-	queryParams1 := catalystcentersdkgo.GetDeviceListQueryParams{}
+	queryParams1 := catalystcentersdkgo.GetDeviceListV1QueryParams{}
 	if vSerialNumber != "" {
 		queryParams1.SerialNumber = []string{vSerialNumber}
 	}
@@ -760,7 +760,7 @@ func resourceNetworkDeviceListUpdate(ctx context.Context, d *schema.ResourceData
 	// NOTE: Consider adding getAllItems and search function to get missing params
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] Name used for update operation %s", vSerialNumber)
-		request1 := expandRequestNetworkDeviceListSyncDevices2(ctx, "parameters.0", d)
+		request1 := expandRequestNetworkDeviceListUpdateDeviceDetailsV1(ctx, "parameters.0", d)
 		if request1 != nil {
 			log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		}
@@ -821,8 +821,94 @@ func resourceNetworkDeviceListDelete(ctx context.Context, d *schema.ResourceData
 
 	return diags
 }
-func expandRequestNetworkDeviceListAddDevice2(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesAddDevice2 {
-	request := catalystcentersdkgo.RequestDevicesAddDevice2{}
+func expandRequestNetworkDeviceListAddDeviceKnowYourNetworkV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesAddDeviceKnowYourNetworkV1 {
+	request := catalystcentersdkgo.RequestDevicesAddDeviceKnowYourNetworkV1{}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".cli_transport")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".cli_transport")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".cli_transport")))) {
+		request.CliTransport = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".compute_device")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".compute_device")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".compute_device")))) {
+		request.ComputeDevice = interfaceToBoolPtr(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".enable_password")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".enable_password")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".enable_password")))) {
+		request.EnablePassword = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".extended_discovery_info")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".extended_discovery_info")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".extended_discovery_info")))) {
+		request.ExtendedDiscoveryInfo = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".http_password")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".http_password")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".http_password")))) {
+		request.HTTPPassword = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".http_port")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".http_port")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".http_port")))) {
+		request.HTTPPort = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".http_secure")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".http_secure")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".http_secure")))) {
+		request.HTTPSecure = interfaceToBoolPtr(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".http_user_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".http_user_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".http_user_name")))) {
+		request.HTTPUserName = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ip_address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ip_address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ip_address")))) {
+		request.IPAddress = interfaceToSliceString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".meraki_org_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".meraki_org_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".meraki_org_id")))) {
+		request.MerakiOrgID = interfaceToSliceString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".netconf_port")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".netconf_port")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".netconf_port")))) {
+		request.NetconfPort = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".password")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".password")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".password")))) {
+		request.Password = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".serial_number")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".serial_number")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".serial_number")))) {
+		request.SerialNumber = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_auth_passphrase")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_auth_passphrase")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_auth_passphrase")))) {
+		request.SNMPAuthPassphrase = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_auth_protocol")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_auth_protocol")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_auth_protocol")))) {
+		request.SNMPAuthProtocol = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_mode")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_mode")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_mode")))) {
+		request.SNMPMode = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_priv_passphrase")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_priv_passphrase")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_priv_passphrase")))) {
+		request.SNMPPrivPassphrase = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_priv_protocol")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_priv_protocol")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_priv_protocol")))) {
+		request.SNMPPrivProtocol = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_ro_community")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_ro_community")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_ro_community")))) {
+		request.SNMPROCommunity = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_rw_community")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_rw_community")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_rw_community")))) {
+		request.SNMPRWCommunity = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_retry")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_retry")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_retry")))) {
+		request.SNMPRetry = interfaceToIntPtr(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_timeout")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_timeout")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_timeout")))) {
+		request.SNMPTimeout = interfaceToIntPtr(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_user_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_user_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_user_name")))) {
+		request.SNMPUserName = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_version")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_version")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_version")))) {
+		request.SNMPVersion = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".type")))) {
+		request.Type = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".user_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".user_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".user_name")))) {
+		request.UserName = interfaceToString(v)
+	}
+	if isEmptyValue(reflect.ValueOf(request)) {
+		return nil
+	}
+	return &request
+}
+
+func expandRequestNetworkDeviceListUpdateDeviceDetailsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateDeviceDetailsV1 {
+	request := catalystcentersdkgo.RequestDevicesUpdateDeviceDetailsV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".cli_transport")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".cli_transport")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".cli_transport")))) {
 		request.CliTransport = interfaceToString(v)
 	}
@@ -899,7 +985,7 @@ func expandRequestNetworkDeviceListAddDevice2(ctx context.Context, key string, d
 		request.Type = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".update_mgmt_ipaddress_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".update_mgmt_ipaddress_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".update_mgmt_ipaddress_list")))) {
-		request.UpdateMgmtIPaddressList = expandRequestNetworkDeviceListAddDevice2UpdateMgmtIPaddressListArray(ctx, key+".update_mgmt_ipaddress_list", d)
+		request.UpdateMgmtIPaddressList = expandRequestNetworkDeviceListUpdateDeviceDetailsV1UpdateMgmtIPaddressListArray(ctx, key+".update_mgmt_ipaddress_list", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".user_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".user_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".user_name")))) {
 		request.UserName = interfaceToString(v)
@@ -910,8 +996,8 @@ func expandRequestNetworkDeviceListAddDevice2(ctx context.Context, key string, d
 	return &request
 }
 
-func expandRequestNetworkDeviceListAddDevice2UpdateMgmtIPaddressListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesAddDevice2UpdateMgmtIPaddressList {
-	request := []catalystcentersdkgo.RequestDevicesAddDevice2UpdateMgmtIPaddressList{}
+func expandRequestNetworkDeviceListUpdateDeviceDetailsV1UpdateMgmtIPaddressListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesUpdateDeviceDetailsV1UpdateMgmtIPaddressList {
+	request := []catalystcentersdkgo.RequestDevicesUpdateDeviceDetailsV1UpdateMgmtIPaddressList{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -922,7 +1008,7 @@ func expandRequestNetworkDeviceListAddDevice2UpdateMgmtIPaddressListArray(ctx co
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestNetworkDeviceListAddDevice2UpdateMgmtIPaddressList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestNetworkDeviceListUpdateDeviceDetailsV1UpdateMgmtIPaddressList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -933,8 +1019,8 @@ func expandRequestNetworkDeviceListAddDevice2UpdateMgmtIPaddressListArray(ctx co
 	return &request
 }
 
-func expandRequestNetworkDeviceListAddDevice2UpdateMgmtIPaddressList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesAddDevice2UpdateMgmtIPaddressList {
-	request := catalystcentersdkgo.RequestDevicesAddDevice2UpdateMgmtIPaddressList{}
+func expandRequestNetworkDeviceListUpdateDeviceDetailsV1UpdateMgmtIPaddressList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateDeviceDetailsV1UpdateMgmtIPaddressList {
+	request := catalystcentersdkgo.RequestDevicesUpdateDeviceDetailsV1UpdateMgmtIPaddressList{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".exist_mgmt_ip_address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".exist_mgmt_ip_address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".exist_mgmt_ip_address")))) {
 		request.ExistMgmtIPAddress = interfaceToString(v)
 	}
@@ -947,136 +1033,11 @@ func expandRequestNetworkDeviceListAddDevice2UpdateMgmtIPaddressList(ctx context
 	return &request
 }
 
-func expandRequestNetworkDeviceListSyncDevices2(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateDeviceDetails {
-	request := catalystcentersdkgo.RequestDevicesUpdateDeviceDetails{}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".cli_transport")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".cli_transport")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".cli_transport")))) {
-		request.CliTransport = interfaceToString(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".compute_device")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".compute_device")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".compute_device")))) {
-		request.ComputeDevice = interfaceToBoolPtr(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".enable_password")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".enable_password")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".enable_password")))) {
-		request.EnablePassword = interfaceToString(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".extended_discovery_info")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".extended_discovery_info")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".extended_discovery_info")))) {
-		request.ExtendedDiscoveryInfo = interfaceToString(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".http_password")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".http_password")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".http_password")))) {
-		request.HTTPPassword = interfaceToString(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".http_port")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".http_port")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".http_port")))) {
-		request.HTTPPort = interfaceToString(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".http_secure")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".http_secure")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".http_secure")))) {
-		request.HTTPSecure = interfaceToBoolPtr(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".http_user_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".http_user_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".http_user_name")))) {
-		request.HTTPUserName = interfaceToString(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ip_address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ip_address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ip_address")))) {
-		request.IPAddress = interfaceToSliceString(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".meraki_org_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".meraki_org_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".meraki_org_id")))) {
-		request.MerakiOrgID = interfaceToSliceString(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".netconf_port")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".netconf_port")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".netconf_port")))) {
-		request.NetconfPort = interfaceToString(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".password")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".password")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".password")))) {
-		request.Password = interfaceToString(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".serial_number")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".serial_number")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".serial_number")))) {
-		request.SerialNumber = interfaceToString(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_auth_passphrase")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_auth_passphrase")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_auth_passphrase")))) {
-		request.SNMPAuthPassphrase = interfaceToString(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_auth_protocol")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_auth_protocol")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_auth_protocol")))) {
-		request.SNMPAuthProtocol = interfaceToString(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_mode")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_mode")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_mode")))) {
-		request.SNMPMode = interfaceToString(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_priv_passphrase")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_priv_passphrase")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_priv_passphrase")))) {
-		request.SNMPPrivPassphrase = interfaceToString(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_priv_protocol")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_priv_protocol")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_priv_protocol")))) {
-		request.SNMPPrivProtocol = interfaceToString(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_ro_community")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_ro_community")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_ro_community")))) {
-		request.SNMPROCommunity = interfaceToString(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_rw_community")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_rw_community")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_rw_community")))) {
-		request.SNMPRWCommunity = interfaceToString(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_retry")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_retry")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_retry")))) {
-		request.SNMPRetry = interfaceToIntPtr(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_timeout")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_timeout")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_timeout")))) {
-		request.SNMPTimeout = interfaceToIntPtr(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_user_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_user_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_user_name")))) {
-		request.SNMPUserName = interfaceToString(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_version")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_version")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_version")))) {
-		request.SNMPVersion = interfaceToString(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".type")))) {
-		request.Type = interfaceToString(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".update_mgmt_ipaddress_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".update_mgmt_ipaddress_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".update_mgmt_ipaddress_list")))) {
-		request.UpdateMgmtIPaddressList = expandRequestNetworkDeviceListSyncDevices2UpdateMgmtIPaddressListArray(ctx, key+".update_mgmt_ipaddress_list", d)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".user_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".user_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".user_name")))) {
-		request.UserName = interfaceToString(v)
-	}
-	if isEmptyValue(reflect.ValueOf(request)) {
-		return nil
-	}
-	return &request
-}
-
-func expandRequestNetworkDeviceListSyncDevices2UpdateMgmtIPaddressListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesUpdateDeviceDetailsUpdateMgmtIPaddressList {
-	request := []catalystcentersdkgo.RequestDevicesUpdateDeviceDetailsUpdateMgmtIPaddressList{}
-	key = fixKeyAccess(key)
-	o := d.Get(key)
-	if o == nil {
-		return nil
-	}
-	objs := o.([]interface{})
-	if len(objs) == 0 {
-		return nil
-	}
-	for item_no := range objs {
-		i := expandRequestNetworkDeviceListSyncDevices2UpdateMgmtIPaddressList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
-		if i != nil {
-			request = append(request, *i)
-		}
-	}
-	if isEmptyValue(reflect.ValueOf(request)) {
-		return nil
-	}
-	return &request
-}
-
-func expandRequestNetworkDeviceListSyncDevices2UpdateMgmtIPaddressList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateDeviceDetailsUpdateMgmtIPaddressList {
-	request := catalystcentersdkgo.RequestDevicesUpdateDeviceDetailsUpdateMgmtIPaddressList{}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".exist_mgmt_ip_address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".exist_mgmt_ip_address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".exist_mgmt_ip_address")))) {
-		request.ExistMgmtIPAddress = interfaceToString(v)
-	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".new_mgmt_ip_address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".new_mgmt_ip_address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".new_mgmt_ip_address")))) {
-		request.NewMgmtIPAddress = interfaceToString(v)
-	}
-	if isEmptyValue(reflect.ValueOf(request)) {
-		return nil
-	}
-	return &request
-}
-func searchDevicesGetDeviceList(m interface{}, queryParams catalystcentersdkgo.GetDeviceListQueryParams) (*catalystcentersdkgo.ResponseDevicesGetDeviceListResponse, error) {
+func searchDevicesGetDeviceList(m interface{}, queryParams catalystcentersdkgo.GetDeviceListV1QueryParams) (*catalystcentersdkgo.ResponseDevicesGetDeviceListV1Response, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseDevicesGetDeviceListResponse
-	var ite *catalystcentersdkgo.ResponseDevicesGetDeviceList
+	var foundItem *catalystcentersdkgo.ResponseDevicesGetDeviceListV1Response
+	var ite *catalystcentersdkgo.ResponseDevicesGetDeviceListV1
 	ite, _, err = client.Devices.GetDeviceList(&queryParams)
 	if err != nil {
 		return nil, err
@@ -1093,12 +1054,12 @@ func searchDevicesGetDeviceList(m interface{}, queryParams catalystcentersdkgo.G
 	for _, item := range itemsCopy {
 		// Call get by _ method and set value to foundItem and return
 		if strings.Contains(strings.Join(queryParams.SerialNumber, ","), item.SerialNumber) {
-			var getItem *catalystcentersdkgo.ResponseDevicesGetDeviceListResponse
+			var getItem *catalystcentersdkgo.ResponseDevicesGetDeviceListV1Response
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err
 		} else if strings.Contains(strings.Join(queryParams.ManagementIPAddress, ","), item.ManagementIPAddress) {
-			var getItem *catalystcentersdkgo.ResponseDevicesGetDeviceListResponse
+			var getItem *catalystcentersdkgo.ResponseDevicesGetDeviceListV1Response
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

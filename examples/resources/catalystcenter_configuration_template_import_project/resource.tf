@@ -1,6 +1,6 @@
 
 resource "catalystcenter_configuration_template_import_project" "example" {
-  provider   = catalystcenter
+  provider   = meraki
   do_version = "false"
 }
 

@@ -153,8 +153,8 @@ func dataSourcePnpDeviceCountRead(ctx context.Context, d *schema.ResourceData, m
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceCount")
-		queryParams1 := catalystcentersdkgo.GetDeviceCountQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetDeviceCountV1")
+		queryParams1 := catalystcentersdkgo.GetDeviceCountV1QueryParams{}
 
 		if okSerialNumber {
 			queryParams1.SerialNumber = interfaceToSliceString(vSerialNumber)
@@ -190,24 +190,24 @@ func dataSourcePnpDeviceCountRead(ctx context.Context, d *schema.ResourceData, m
 			queryParams1.LastContact = vLastContact.(bool)
 		}
 
-		response1, restyResp1, err := client.DeviceOnboardingPnp.GetDeviceCount(&queryParams1)
+		response1, restyResp1, err := client.DeviceOnboardingPnp.GetDeviceCountV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceCount", err,
-				"Failure at GetDeviceCount, unexpected response", ""))
+				"Failure when executing 2 GetDeviceCountV1", err,
+				"Failure at GetDeviceCountV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDeviceOnboardingPnpGetDeviceCountItem(response1)
+		vItem1 := flattenDeviceOnboardingPnpGetDeviceCountV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceCount response",
+				"Failure when setting GetDeviceCountV1 response",
 				err))
 			return diags
 		}
@@ -219,7 +219,7 @@ func dataSourcePnpDeviceCountRead(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func flattenDeviceOnboardingPnpGetDeviceCountItem(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceCount) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceCountV1Item(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceCountV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -99,27 +99,27 @@ func dataSourceSecurityAdvisoriesIDsPerDeviceRead(ctx context.Context, d *schema
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAdvisoryDeviceDetail")
+		log.Printf("[DEBUG] Selected method: GetAdvisoryDeviceDetailV1")
 		vvDeviceID := vDeviceID.(string)
 
-		response1, restyResp1, err := client.SecurityAdvisories.GetAdvisoryDeviceDetail(vvDeviceID)
+		response1, restyResp1, err := client.SecurityAdvisories.GetAdvisoryDeviceDetailV1(vvDeviceID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAdvisoryDeviceDetail", err,
-				"Failure at GetAdvisoryDeviceDetail, unexpected response", ""))
+				"Failure when executing 2 GetAdvisoryDeviceDetailV1", err,
+				"Failure at GetAdvisoryDeviceDetailV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSecurityAdvisoriesGetAdvisoryDeviceDetailItem(response1.Response)
+		vItem1 := flattenSecurityAdvisoriesGetAdvisoryDeviceDetailV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAdvisoryDeviceDetail response",
+				"Failure when setting GetAdvisoryDeviceDetailV1 response",
 				err))
 			return diags
 		}
@@ -131,7 +131,7 @@ func dataSourceSecurityAdvisoriesIDsPerDeviceRead(ctx context.Context, d *schema
 	return diags
 }
 
-func flattenSecurityAdvisoriesGetAdvisoryDeviceDetailItem(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoryDeviceDetailResponse) []map[string]interface{} {
+func flattenSecurityAdvisoriesGetAdvisoryDeviceDetailV1Item(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoryDeviceDetailV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

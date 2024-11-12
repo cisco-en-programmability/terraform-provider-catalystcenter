@@ -106,31 +106,31 @@ func dataSourceSdaPortAssignmentForUserDeviceRead(ctx context.Context, d *schema
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetPortAssignmentForUserDeviceInSdaFabric")
-		queryParams1 := catalystcentersdkgo.GetPortAssignmentForUserDeviceInSdaFabricQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetPortAssignmentForUserDeviceInSdaFabricV1")
+		queryParams1 := catalystcentersdkgo.GetPortAssignmentForUserDeviceInSdaFabricV1QueryParams{}
 
 		queryParams1.DeviceManagementIPAddress = vDeviceManagementIPAddress.(string)
 
 		queryParams1.InterfaceName = vInterfaceName.(string)
 
-		response1, restyResp1, err := client.Sda.GetPortAssignmentForUserDeviceInSdaFabric(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetPortAssignmentForUserDeviceInSdaFabricV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetPortAssignmentForUserDeviceInSdaFabric", err,
-				"Failure at GetPortAssignmentForUserDeviceInSdaFabric, unexpected response", ""))
+				"Failure when executing 2 GetPortAssignmentForUserDeviceInSdaFabricV1", err,
+				"Failure at GetPortAssignmentForUserDeviceInSdaFabricV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetPortAssignmentForUserDeviceInSdaFabricItem(response1)
+		vItem1 := flattenSdaGetPortAssignmentForUserDeviceInSdaFabricV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetPortAssignmentForUserDeviceInSdaFabric response",
+				"Failure when setting GetPortAssignmentForUserDeviceInSdaFabricV1 response",
 				err))
 			return diags
 		}
@@ -142,7 +142,7 @@ func dataSourceSdaPortAssignmentForUserDeviceRead(ctx context.Context, d *schema
 	return diags
 }
 
-func flattenSdaGetPortAssignmentForUserDeviceInSdaFabricItem(item *catalystcentersdkgo.ResponseSdaGetPortAssignmentForUserDeviceInSdaFabric) []map[string]interface{} {
+func flattenSdaGetPortAssignmentForUserDeviceInSdaFabricV1Item(item *catalystcentersdkgo.ResponseSdaGetPortAssignmentForUserDeviceInSdaFabricV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -1,6 +1,6 @@
 
 resource "catalystcenter_site_assign_credential" "example" {
-  provider = catalystcenter
+  provider = meraki
   site_id  = "string"
   parameters {
 

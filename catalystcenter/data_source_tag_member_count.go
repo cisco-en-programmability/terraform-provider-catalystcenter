@@ -69,9 +69,9 @@ func dataSourceTagMemberCountRead(ctx context.Context, d *schema.ResourceData, m
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTagMemberCount")
+		log.Printf("[DEBUG] Selected method: GetTagMemberCountV1")
 		vvID := vID.(string)
-		queryParams1 := catalystcentersdkgo.GetTagMemberCountQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetTagMemberCountV1QueryParams{}
 
 		queryParams1.MemberType = vMemberType.(string)
 
@@ -79,24 +79,24 @@ func dataSourceTagMemberCountRead(ctx context.Context, d *schema.ResourceData, m
 			queryParams1.MemberAssociationType = vMemberAssociationType.(string)
 		}
 
-		response1, restyResp1, err := client.Tag.GetTagMemberCount(vvID, &queryParams1)
+		response1, restyResp1, err := client.Tag.GetTagMemberCountV1(vvID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTagMemberCount", err,
-				"Failure at GetTagMemberCount, unexpected response", ""))
+				"Failure when executing 2 GetTagMemberCountV1", err,
+				"Failure at GetTagMemberCountV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenTagGetTagMemberCountItem(response1)
+		vItem1 := flattenTagGetTagMemberCountV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTagMemberCount response",
+				"Failure when setting GetTagMemberCountV1 response",
 				err))
 			return diags
 		}
@@ -108,7 +108,7 @@ func dataSourceTagMemberCountRead(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func flattenTagGetTagMemberCountItem(item *catalystcentersdkgo.ResponseTagGetTagMemberCount) []map[string]interface{} {
+func flattenTagGetTagMemberCountV1Item(item *catalystcentersdkgo.ResponseTagGetTagMemberCountV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

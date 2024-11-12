@@ -1,6 +1,6 @@
 
 resource "catalystcenter_itsm_integration_events_retry" "example" {
-  provider   = catalystcenter
+  provider   = meraki
   parameters = ["string"]
 }
 

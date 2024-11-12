@@ -112,10 +112,10 @@ func dataSourceCustomIssueDefinitionsCountRead(ctx context.Context, d *schema.Re
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTheTotalCustomIssueDefinitionsCountBasedOnTheProvidedFilters")
+		log.Printf("[DEBUG] Selected method: GetTheTotalCustomIssueDefinitionsCountBasedOnTheProvidedFiltersV1")
 
-		headerParams1 := catalystcentersdkgo.GetTheTotalCustomIssueDefinitionsCountBasedOnTheProvidedFiltersHeaderParams{}
-		queryParams1 := catalystcentersdkgo.GetTheTotalCustomIssueDefinitionsCountBasedOnTheProvidedFiltersQueryParams{}
+		headerParams1 := catalystcentersdkgo.GetTheTotalCustomIssueDefinitionsCountBasedOnTheProvidedFiltersV1HeaderParams{}
+		queryParams1 := catalystcentersdkgo.GetTheTotalCustomIssueDefinitionsCountBasedOnTheProvidedFiltersV1QueryParams{}
 
 		if okID {
 			queryParams1.ID = vID.(string)
@@ -143,24 +143,24 @@ func dataSourceCustomIssueDefinitionsCountRead(ctx context.Context, d *schema.Re
 		}
 		headerParams1.XCaLLERID = vXCaLLERID.(string)
 
-		response1, restyResp1, err := client.Issues.GetTheTotalCustomIssueDefinitionsCountBasedOnTheProvidedFilters(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Issues.GetTheTotalCustomIssueDefinitionsCountBasedOnTheProvidedFiltersV1(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTheTotalCustomIssueDefinitionsCountBasedOnTheProvidedFilters", err,
-				"Failure at GetTheTotalCustomIssueDefinitionsCountBasedOnTheProvidedFilters, unexpected response", ""))
+				"Failure when executing 2 GetTheTotalCustomIssueDefinitionsCountBasedOnTheProvidedFiltersV1", err,
+				"Failure at GetTheTotalCustomIssueDefinitionsCountBasedOnTheProvidedFiltersV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenIssuesGetTheTotalCustomIssueDefinitionsCountBasedOnTheProvidedFiltersItem(response1.Response)
+		vItem1 := flattenIssuesGetTheTotalCustomIssueDefinitionsCountBasedOnTheProvidedFiltersV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTheTotalCustomIssueDefinitionsCountBasedOnTheProvidedFilters response",
+				"Failure when setting GetTheTotalCustomIssueDefinitionsCountBasedOnTheProvidedFiltersV1 response",
 				err))
 			return diags
 		}
@@ -172,7 +172,7 @@ func dataSourceCustomIssueDefinitionsCountRead(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func flattenIssuesGetTheTotalCustomIssueDefinitionsCountBasedOnTheProvidedFiltersItem(item *catalystcentersdkgo.ResponseIssuesGetTheTotalCustomIssueDefinitionsCountBasedOnTheProvidedFiltersResponse) []map[string]interface{} {
+func flattenIssuesGetTheTotalCustomIssueDefinitionsCountBasedOnTheProvidedFiltersV1Item(item *catalystcentersdkgo.ResponseIssuesGetTheTotalCustomIssueDefinitionsCountBasedOnTheProvidedFiltersV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

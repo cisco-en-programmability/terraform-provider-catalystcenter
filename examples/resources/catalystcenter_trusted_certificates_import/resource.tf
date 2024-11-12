@@ -1,6 +1,6 @@
 
 resource "catalystcenter_trusted_certificates_import" "example" {
-  provider = catalystcenter
+  provider = meraki
 }
 
 output "catalystcenter_trusted_certificates_import_example" {

@@ -1,8 +1,6 @@
 
 resource "catalystcenter_file_import" "example" {
-  provider   = catalystcenter
-  file_name  = "string"
-  file_path  = "string"
+  provider   = meraki
   name_space = "string"
   parameters {
 

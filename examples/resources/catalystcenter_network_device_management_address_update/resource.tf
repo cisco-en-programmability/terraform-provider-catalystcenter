@@ -1,6 +1,6 @@
 
 resource "catalystcenter_network_device_management_address_update" "example" {
-  provider = catalystcenter
+  provider = meraki
   deviceid = "string"
   parameters {
 

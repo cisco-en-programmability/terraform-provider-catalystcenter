@@ -1,6 +1,6 @@
 
 resource "catalystcenter_users_external_authentication_create" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     enable = "false"

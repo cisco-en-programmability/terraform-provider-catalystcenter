@@ -19,17 +19,17 @@ func resourceSiteHealthSummariesSummaryAnalyticsCreate() *schema.Resource {
 		Description: `It performs create operation on Sites.
 
 - Query an aggregated summary of all site health This data source action provides the latest health data from a given
-'endTime' If data is not ready for the provided endTime, the request will fail, and the error message will indicate the
+*endTime* If data is not ready for the provided endTime, the request will fail, and the error message will indicate the
 recommended endTime to use to retrieve a complete data set. This behavior may occur if the provided endTime=currentTime,
-since we are not a real time system. When 'endTime' is not provided, the API returns the latest data. This data source
-action also provides issue data. The 'startTime' query param can be used to specify the beginning point of time range to
-retrieve the active issue counts in. When this param is not provided, the default 'startTime' will be 24 hours before
+since we are not a real time system. When *endTime* is not provided, the API returns the latest data. This data source
+action also provides issue data. The *startTime* query param can be used to specify the beginning point of time range to
+retrieve the active issue counts in. When this param is not provided, the default *startTime* will be 24 hours before
 endTime.
 
  Aggregated response data will NOT have unique identifier data populated.
 
- List of unique identifier data: ['id', 'siteHierarchy',
-'siteHierarchyId', 'siteType', 'latitude', 'longitude'] Please refer to the 'API Support Documentation' section to
+ List of unique identifier data: [*id*, *siteHierarchy*,
+*siteHierarchyId*, *siteType*, *latitude*, *longitude*] Please refer to the 'API Support Documentation' section to
 understand which fields are supported. For detailed information about the usage of the API, please refer to the Open API
 specification document https://github.com/cisco-en-programmability/catalyst-center-api-
 specs/blob/main/Assurance/CE_Cat_Center_Org-siteHealthSummaries-1.0.3-resolved.yaml
@@ -308,22 +308,22 @@ specs/blob/main/Assurance/CE_Cat_Center_Org-siteHealthSummaries-1.0.3-resolved.y
 							ForceNew: true,
 						},
 						"site_hierarchy": &schema.Schema{
-							Description: `siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. 'Global/AreaName/BuildingName/FloorName')
-This field supports wildcard asterisk ('*') character search support. E.g. '*/San*, */San, /San*'
+							Description: `siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. *Global/AreaName/BuildingName/FloorName*)
+This field supports wildcard asterisk (***) character search support. E.g. **/San*, */San, /San**
 Examples:
-'?siteHierarchy=Global/AreaName/BuildingName/FloorName' (single siteHierarchy requested)
-'?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2' (multiple siteHierarchies requested)
+*?siteHierarchy=Global/AreaName/BuildingName/FloorName* (single siteHierarchy requested)
+*?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2* (multiple siteHierarchies requested)
 `,
 							Type:     schema.TypeString,
 							Optional: true,
 							ForceNew: true,
 						},
 						"site_hierarchy_id": &schema.Schema{
-							Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. 'globalUuid/areaUuid/buildingUuid/floorUuid')
-This field supports wildcard asterisk ('*') character search support. E.g. '*uuid*, *uuid, uuid*'
+							Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. *globalUuid/areaUuid/buildingUuid/floorUuid*)
+This field supports wildcard asterisk (***) character search support. E.g. **uuid*, *uuid, uuid**
 Examples:
-'?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid '(single siteHierarchyId requested)
-'?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2' (multiple siteHierarchyIds requested)
+*?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid *(single siteHierarchyId requested)
+*?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2* (multiple siteHierarchyIds requested)
 `,
 							Type:     schema.TypeString,
 							Optional: true,
@@ -331,10 +331,10 @@ Examples:
 						},
 						"site_type": &schema.Schema{
 							Description: `siteType query parameter. The type of the site. A site can be an area, building, or floor.
-Default when not provided will be '[floor,building,area]'
+Default when not provided will be *[floor,building,area]*
 Examples:
-'?siteType=area' (single siteType requested)
-'?siteType=area&siteType=building&siteType=floor' (multiple siteTypes requested)
+*?siteType=area* (single siteType requested)
+*?siteType=area&siteType=building&siteType=floor* (multiple siteTypes requested)
 `,
 							Type:     schema.TypeString,
 							Optional: true,
@@ -385,37 +385,28 @@ func resourceSiteHealthSummariesSummaryAnalyticsCreateCreate(ctx context.Context
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	resourceItem := *getResourceItem(d.Get("parameters"))
+	request1 := expandRequestSiteHealthSummariesSummaryAnalyticsCreateQueryAnAggregatedSummaryOfSiteHealthDataV1(ctx, "parameters.0", d)
+	queryParams1 := catalystcentersdkgo.QueryAnAggregatedSummaryOfSiteHealthDataV1QueryParams{}
 
-	vID := resourceItem["id"]
-	vvID := interfaceToString(vID)
+	// has_unknown_response: None
 
-	request1 := expandRequestSiteHealthSummariesSummaryAnalyticsCreateQueryAnAggregatedSummaryOfSiteHealthData(ctx, "parameters.0", d)
-	queryParams1 := catalystcentersdkgo.QueryAnAggregatedSummaryOfSiteHealthDataQueryParams{}
-	queryParams1.ID = vvID
-	response1, restyResp1, err := client.Sites.QueryAnAggregatedSummaryOfSiteHealthData(request1, &queryParams1)
-
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Sites.QueryAnAggregatedSummaryOfSiteHealthDataV1(request1, &queryParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing QueryAnAggregatedSummaryOfSiteHealthData", err))
+			"Failure when executing QueryAnAggregatedSummaryOfSiteHealthDataV1", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	//Analizar verificacion.
-
-	vItem1 := flattenSitesQueryAnAggregatedSummaryOfSiteHealthDataItem(response1.Response)
+	vItem1 := flattenSitesQueryAnAggregatedSummaryOfSiteHealthDataV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting QueryAnAggregatedSummaryOfSiteHealthData response",
+			"Failure when setting QueryAnAggregatedSummaryOfSiteHealthDataV1 response",
 			err))
 		return diags
 	}
@@ -437,8 +428,8 @@ func resourceSiteHealthSummariesSummaryAnalyticsCreateDelete(ctx context.Context
 	return diags
 }
 
-func expandRequestSiteHealthSummariesSummaryAnalyticsCreateQueryAnAggregatedSummaryOfSiteHealthData(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesQueryAnAggregatedSummaryOfSiteHealthData {
-	request := catalystcentersdkgo.RequestSitesQueryAnAggregatedSummaryOfSiteHealthData{}
+func expandRequestSiteHealthSummariesSummaryAnalyticsCreateQueryAnAggregatedSummaryOfSiteHealthDataV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesQueryAnAggregatedSummaryOfSiteHealthDataV1 {
+	request := catalystcentersdkgo.RequestSitesQueryAnAggregatedSummaryOfSiteHealthDataV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -454,7 +445,7 @@ func expandRequestSiteHealthSummariesSummaryAnalyticsCreateQueryAnAggregatedSumm
 	return &request
 }
 
-func flattenSitesQueryAnAggregatedSummaryOfSiteHealthDataItem(item *catalystcentersdkgo.ResponseSitesQueryAnAggregatedSummaryOfSiteHealthDataResponse) []map[string]interface{} {
+func flattenSitesQueryAnAggregatedSummaryOfSiteHealthDataV1Item(item *catalystcentersdkgo.ResponseSitesQueryAnAggregatedSummaryOfSiteHealthDataV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

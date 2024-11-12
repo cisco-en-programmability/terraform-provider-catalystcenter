@@ -97,30 +97,30 @@ func dataSourceGoldenTagImageRead(ctx context.Context, d *schema.ResourceData, m
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetGoldenTagStatusOfAnImage")
+		log.Printf("[DEBUG] Selected method: GetGoldenTagStatusOfAnImageV1")
 		vvSiteID := vSiteID.(string)
 		vvDeviceFamilyIDentifier := vDeviceFamilyIDentifier.(string)
 		vvDeviceRole := vDeviceRole.(string)
 		vvImageID := vImageID.(string)
 
-		response1, restyResp1, err := client.SoftwareImageManagementSwim.GetGoldenTagStatusOfAnImage(vvSiteID, vvDeviceFamilyIDentifier, vvDeviceRole, vvImageID)
+		response1, restyResp1, err := client.SoftwareImageManagementSwim.GetGoldenTagStatusOfAnImageV1(vvSiteID, vvDeviceFamilyIDentifier, vvDeviceRole, vvImageID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetGoldenTagStatusOfAnImage", err,
-				"Failure at GetGoldenTagStatusOfAnImage, unexpected response", ""))
+				"Failure when executing 2 GetGoldenTagStatusOfAnImageV1", err,
+				"Failure at GetGoldenTagStatusOfAnImageV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSoftwareImageManagementSwimGetGoldenTagStatusOfAnImageItem(response1.Response)
+		vItem1 := flattenSoftwareImageManagementSwimGetGoldenTagStatusOfAnImageV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetGoldenTagStatusOfAnImage response",
+				"Failure when setting GetGoldenTagStatusOfAnImageV1 response",
 				err))
 			return diags
 		}
@@ -132,7 +132,7 @@ func dataSourceGoldenTagImageRead(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func flattenSoftwareImageManagementSwimGetGoldenTagStatusOfAnImageItem(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetGoldenTagStatusOfAnImageResponse) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimGetGoldenTagStatusOfAnImageV1Item(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetGoldenTagStatusOfAnImageV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

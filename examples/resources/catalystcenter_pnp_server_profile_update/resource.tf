@@ -1,6 +1,6 @@
 
 resource "catalystcenter_pnp_server_profile_update" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     cco_user = "string"

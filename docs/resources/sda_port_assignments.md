@@ -26,19 +26,18 @@ resource "catalystcenter_sda_port_assignments" "example" {
   provider = catalystcenter
 
   parameters {
-    payload {
-      authenticate_template_name = "string"
-      connected_device_type      = "string"
-      data_vlan_name             = "string"
-      fabric_id                  = "string"
-      id                         = "string"
-      interface_description      = "string"
-      interface_name             = "string"
-      network_device_id          = "string"
-      scalable_group_name        = "string"
-      security_group_name        = "string"
-      voice_vlan_name            = "string"
-    }
+
+    authenticate_template_name = "string"
+    connected_device_type      = "string"
+    data_vlan_name             = "string"
+    fabric_id                  = "string"
+    id                         = "string"
+    interface_description      = "string"
+    interface_name             = "string"
+    network_device_id          = "string"
+    scalable_group_name        = "string"
+    security_group_name        = "string"
+    voice_vlan_name            = "string"
   }
 }
 
@@ -52,7 +51,7 @@ output "catalystcenter_sda_port_assignments_example" {
 
 ### Optional
 
-- `parameters` (Block List) Array of RequestSdaAddPortAssignments (see [below for nested schema](#nestedblock--parameters))
+- `parameters` (Block List) Array of RequestSdaAddPortAssignmentsV1 (see [below for nested schema](#nestedblock--parameters))
 
 ### Read-Only
 

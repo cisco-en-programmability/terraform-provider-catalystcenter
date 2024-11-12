@@ -119,26 +119,26 @@ func dataSourceTopologySiteRead(ctx context.Context, d *schema.ResourceData, m i
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSiteTopology")
+		log.Printf("[DEBUG] Selected method: GetSiteTopologyV1")
 
-		response1, restyResp1, err := client.Topology.GetSiteTopology()
+		response1, restyResp1, err := client.Topology.GetSiteTopologyV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSiteTopology", err,
-				"Failure at GetSiteTopology, unexpected response", ""))
+				"Failure when executing 2 GetSiteTopologyV1", err,
+				"Failure at GetSiteTopologyV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenTopologyGetSiteTopologyItem(response1.Response)
+		vItem1 := flattenTopologyGetSiteTopologyV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSiteTopology response",
+				"Failure when setting GetSiteTopologyV1 response",
 				err))
 			return diags
 		}
@@ -150,18 +150,18 @@ func dataSourceTopologySiteRead(ctx context.Context, d *schema.ResourceData, m i
 	return diags
 }
 
-func flattenTopologyGetSiteTopologyItem(item *catalystcentersdkgo.ResponseTopologyGetSiteTopologyResponse) []map[string]interface{} {
+func flattenTopologyGetSiteTopologyV1Item(item *catalystcentersdkgo.ResponseTopologyGetSiteTopologyV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["sites"] = flattenTopologyGetSiteTopologyItemSites(item.Sites)
+	respItem["sites"] = flattenTopologyGetSiteTopologyV1ItemSites(item.Sites)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenTopologyGetSiteTopologyItemSites(items *[]catalystcentersdkgo.ResponseTopologyGetSiteTopologyResponseSites) []map[string]interface{} {
+func flattenTopologyGetSiteTopologyV1ItemSites(items *[]catalystcentersdkgo.ResponseTopologyGetSiteTopologyV1ResponseSites) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

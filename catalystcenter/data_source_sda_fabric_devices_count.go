@@ -68,8 +68,8 @@ func dataSourceSdaFabricDevicesCountRead(ctx context.Context, d *schema.Resource
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetFabricDevicesCount")
-		queryParams1 := catalystcentersdkgo.GetFabricDevicesCountQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetFabricDevicesCountV1")
+		queryParams1 := catalystcentersdkgo.GetFabricDevicesCountV1QueryParams{}
 
 		queryParams1.FabricID = vFabricID.(string)
 
@@ -80,24 +80,24 @@ func dataSourceSdaFabricDevicesCountRead(ctx context.Context, d *schema.Resource
 			queryParams1.DeviceRoles = vDeviceRoles.(string)
 		}
 
-		response1, restyResp1, err := client.Sda.GetFabricDevicesCount(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetFabricDevicesCountV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetFabricDevicesCount", err,
-				"Failure at GetFabricDevicesCount, unexpected response", ""))
+				"Failure when executing 2 GetFabricDevicesCountV1", err,
+				"Failure at GetFabricDevicesCountV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetFabricDevicesCountItem(response1.Response)
+		vItem1 := flattenSdaGetFabricDevicesCountV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetFabricDevicesCount response",
+				"Failure when setting GetFabricDevicesCountV1 response",
 				err))
 			return diags
 		}
@@ -109,7 +109,7 @@ func dataSourceSdaFabricDevicesCountRead(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func flattenSdaGetFabricDevicesCountItem(item *catalystcentersdkgo.ResponseSdaGetFabricDevicesCountResponse) []map[string]interface{} {
+func flattenSdaGetFabricDevicesCountV1Item(item *catalystcentersdkgo.ResponseSdaGetFabricDevicesCountV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

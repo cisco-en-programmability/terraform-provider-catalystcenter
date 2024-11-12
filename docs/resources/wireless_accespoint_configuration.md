@@ -14,9 +14,6 @@ It performs create operation on Wireless.
 
 - User can configure multiple access points with required options using this intent API. This data source action does
 not support configuration of CleanAir or SI for IOS-XE devices with version greater than or equal to 17.9
-
-
-
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -25,7 +22,7 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 
 ```terraform
 resource "catalystcenter_wireless_accespoint_configuration" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     admin_status = "false"

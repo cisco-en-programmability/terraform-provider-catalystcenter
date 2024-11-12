@@ -1,6 +1,6 @@
 
 resource "catalystcenter_floors_upload_image" "example" {
-  provider = catalystcenter
+  provider = meraki
   id       = "string"
   parameters {
 

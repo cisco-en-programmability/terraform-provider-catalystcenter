@@ -56,31 +56,31 @@ func dataSourcePnpWorkflowCountRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetWorkflowCount")
-		queryParams1 := catalystcentersdkgo.GetWorkflowCountQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetWorkflowCountV1")
+		queryParams1 := catalystcentersdkgo.GetWorkflowCountV1QueryParams{}
 
 		if okName {
 			queryParams1.Name = interfaceToSliceString(vName)
 		}
 
-		response1, restyResp1, err := client.DeviceOnboardingPnp.GetWorkflowCount(&queryParams1)
+		response1, restyResp1, err := client.DeviceOnboardingPnp.GetWorkflowCountV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetWorkflowCount", err,
-				"Failure at GetWorkflowCount, unexpected response", ""))
+				"Failure when executing 2 GetWorkflowCountV1", err,
+				"Failure at GetWorkflowCountV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDeviceOnboardingPnpGetWorkflowCountItem(response1)
+		vItem1 := flattenDeviceOnboardingPnpGetWorkflowCountV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetWorkflowCount response",
+				"Failure when setting GetWorkflowCountV1 response",
 				err))
 			return diags
 		}
@@ -92,7 +92,7 @@ func dataSourcePnpWorkflowCountRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenDeviceOnboardingPnpGetWorkflowCountItem(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetWorkflowCount) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetWorkflowCountV1Item(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetWorkflowCountV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

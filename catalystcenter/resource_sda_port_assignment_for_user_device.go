@@ -175,33 +175,33 @@ func resourceSdaPortAssignmentForUserDeviceCreate(ctx context.Context, d *schema
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestSdaPortAssignmentForUserDeviceAddPortAssignmentForUserDeviceInSdaFabric(ctx, "parameters.0", d)
+	request1 := expandRequestSdaPortAssignmentForUserDeviceAddPortAssignmentForUserDeviceInSdaFabricV1(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vDeviceManagementIPAddress := resourceItem["device_management_ip_address"]
 	vvDeviceManagementIPAddress := interfaceToString(vDeviceManagementIPAddress)
 	vInterfaceName := resourceItem["interface_name"]
 	vvInterfaceName := interfaceToString(vInterfaceName)
-	queryParamImport := catalystcentersdkgo.GetPortAssignmentForUserDeviceInSdaFabricQueryParams{}
+	queryParamImport := catalystcentersdkgo.GetPortAssignmentForUserDeviceInSdaFabricV1QueryParams{}
 	queryParamImport.DeviceManagementIPAddress = vvDeviceManagementIPAddress
 	queryParamImport.InterfaceName = vvInterfaceName
-	item2, _, err := client.Sda.GetPortAssignmentForUserDeviceInSdaFabric(&queryParamImport)
-	if err == nil && item2 != nil {
+	item2, _, err := client.Sda.GetPortAssignmentForUserDeviceInSdaFabricV1(&queryParamImport)
+	if err != nil || item2 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["device_management_ip_address"] = item2.DeviceManagementIPAddress
 		resourceMap["interface_name"] = item2.InterfaceName
 		d.SetId(joinResourceID(resourceMap))
 		return resourceSdaPortAssignmentForUserDeviceRead(ctx, d, m)
 	}
-	resp1, restyResp1, err := client.Sda.AddPortAssignmentForUserDeviceInSdaFabric(request1)
+	resp1, restyResp1, err := client.Sda.AddPortAssignmentForUserDeviceInSdaFabricV1(request1)
 	if err != nil || resp1 == nil {
 		if restyResp1 != nil {
 			diags = append(diags, diagErrorWithResponse(
-				"Failure when executing AddPortAssignmentForUserDeviceInSdaFabric", err, restyResp1.String()))
+				"Failure when executing AddPortAssignmentForUserDeviceInSdaFabricV1", err, restyResp1.String()))
 			return diags
 		}
 		diags = append(diags, diagError(
-			"Failure when executing AddPortAssignmentForUserDeviceInSdaFabric", err))
+			"Failure when executing AddPortAssignmentForUserDeviceInSdaFabricV1", err))
 		return diags
 	}
 	executionId := resp1.ExecutionID
@@ -234,18 +234,18 @@ func resourceSdaPortAssignmentForUserDeviceCreate(ctx context.Context, d *schema
 		if response2.Status == "FAILURE" {
 			log.Printf("[DEBUG] Error %s", response2.BapiError)
 			diags = append(diags, diagError(
-				"Failure when executing AddPortAssignmentForUserDeviceInSdaFabric", err))
+				"Failure when executing AddPortAssignmentForUserDeviceInSdaFabricV1", err))
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetPortAssignmentForUserDeviceInSdaFabricQueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetPortAssignmentForUserDeviceInSdaFabricV1QueryParams{}
 	queryParamValidate.DeviceManagementIPAddress = vvDeviceManagementIPAddress
 	queryParamValidate.InterfaceName = vvInterfaceName
-	item3, _, err := client.Sda.GetPortAssignmentForUserDeviceInSdaFabric(&queryParamValidate)
+	item3, _, err := client.Sda.GetPortAssignmentForUserDeviceInSdaFabricV1(&queryParamValidate)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing AddPortAssignmentForUserDeviceInSdaFabric", err,
-			"Failure at AddPortAssignmentForUserDeviceInSdaFabric, unexpected response", ""))
+			"Failure when executing AddPortAssignmentForUserDeviceInSdaFabricV1", err,
+			"Failure at AddPortAssignmentForUserDeviceInSdaFabricV1, unexpected response", ""))
 		return diags
 	}
 
@@ -271,14 +271,16 @@ func resourceSdaPortAssignmentForUserDeviceRead(ctx context.Context, d *schema.R
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetPortAssignmentForUserDeviceInSdaFabric")
-		queryParams1 := catalystcentersdkgo.GetPortAssignmentForUserDeviceInSdaFabricQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetPortAssignmentForUserDeviceInSdaFabricV1")
+		queryParams1 := catalystcentersdkgo.GetPortAssignmentForUserDeviceInSdaFabricV1QueryParams{}
 
 		queryParams1.DeviceManagementIPAddress = vDeviceManagementIPAddress
 
 		queryParams1.InterfaceName = vInterfaceName
 
-		response1, restyResp1, err := client.Sda.GetPortAssignmentForUserDeviceInSdaFabric(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sda.GetPortAssignmentForUserDeviceInSdaFabricV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
@@ -290,10 +292,10 @@ func resourceSdaPortAssignmentForUserDeviceRead(ctx context.Context, d *schema.R
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetPortAssignmentForUserDeviceInSdaFabricItem(response1)
+		vItem1 := flattenSdaGetPortAssignmentForUserDeviceInSdaFabricV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetPortAssignmentForUserDeviceInSdaFabric response",
+				"Failure when setting GetPortAssignmentForUserDeviceInSdaFabricV1 response",
 				err))
 			return diags
 		}
@@ -317,7 +319,7 @@ func resourceSdaPortAssignmentForUserDeviceDelete(ctx context.Context, d *schema
 	resourceID := d.Id()
 	resourceMap := separateResourceID(resourceID)
 
-	queryParamDelete := catalystcentersdkgo.DeletePortAssignmentForUserDeviceInSdaFabricQueryParams{}
+	queryParamDelete := catalystcentersdkgo.DeletePortAssignmentForUserDeviceInSdaFabricV1QueryParams{}
 
 	vvDeviceManagementIPAddress := resourceMap["device_management_ip_address"]
 
@@ -326,18 +328,18 @@ func resourceSdaPortAssignmentForUserDeviceDelete(ctx context.Context, d *schema
 
 	queryParamDelete.InterfaceName = vvInterfaceName
 
-	response1, restyResp1, err := client.Sda.DeletePortAssignmentForUserDeviceInSdaFabric(&queryParamDelete)
+	response1, restyResp1, err := client.Sda.DeletePortAssignmentForUserDeviceInSdaFabricV1(&queryParamDelete)
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] resty response for delete operation => %v", restyResp1.String())
 			diags = append(diags, diagErrorWithAltAndResponse(
-				"Failure when executing DeletePortAssignmentForUserDeviceInSdaFabric", err, restyResp1.String(),
-				"Failure at DeletePortAssignmentForUserDeviceInSdaFabric, unexpected response", ""))
+				"Failure when executing DeletePortAssignmentForUserDeviceInSdaFabricV1", err, restyResp1.String(),
+				"Failure at DeletePortAssignmentForUserDeviceInSdaFabricV1, unexpected response", ""))
 			return diags
 		}
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing DeletePortAssignmentForUserDeviceInSdaFabric", err,
-			"Failure at DeletePortAssignmentForUserDeviceInSdaFabric, unexpected response", ""))
+			"Failure when executing DeletePortAssignmentForUserDeviceInSdaFabricV1", err,
+			"Failure at DeletePortAssignmentForUserDeviceInSdaFabricV1, unexpected response", ""))
 		return diags
 	}
 
@@ -371,7 +373,7 @@ func resourceSdaPortAssignmentForUserDeviceDelete(ctx context.Context, d *schema
 		if response2.Status == "FAILURE" {
 			log.Printf("[DEBUG] Error %s", response2.BapiError)
 			diags = append(diags, diagError(
-				"Failure when executing DeletePortAssignmentForUserDeviceInSdaFabric", err))
+				"Failure when executing DeletePortAssignmentForUserDeviceInSdaFabricV1", err))
 			return diags
 		}
 	}
@@ -382,8 +384,8 @@ func resourceSdaPortAssignmentForUserDeviceDelete(ctx context.Context, d *schema
 
 	return diags
 }
-func expandRequestSdaPortAssignmentForUserDeviceAddPortAssignmentForUserDeviceInSdaFabric(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddPortAssignmentForUserDeviceInSdaFabric {
-	request := catalystcentersdkgo.RequestSdaAddPortAssignmentForUserDeviceInSdaFabric{}
+func expandRequestSdaPortAssignmentForUserDeviceAddPortAssignmentForUserDeviceInSdaFabricV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddPortAssignmentForUserDeviceInSdaFabricV1 {
+	request := catalystcentersdkgo.RequestSdaAddPortAssignmentForUserDeviceInSdaFabricV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".site_name_hierarchy")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".site_name_hierarchy")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".site_name_hierarchy")))) {
 		request.SiteNameHierarchy = interfaceToString(v)
 	}

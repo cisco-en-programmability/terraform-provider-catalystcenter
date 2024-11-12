@@ -109,20 +109,18 @@ func resourceWirelessControllersAssignManagedApLocationsCreate(ctx context.Conte
 	vDeviceID := resourceItem["device_id"]
 
 	vvDeviceID := vDeviceID.(string)
-	request1 := expandRequestWirelessControllersAssignManagedApLocationsAssignManagedApLocationsForWLC(ctx, "parameters.0", d)
+	request1 := expandRequestWirelessControllersAssignManagedApLocationsAssignManagedApLocationsForWLCV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.Wireless.AssignManagedApLocationsForWLC(vvDeviceID, request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Wireless.AssignManagedApLocationsForWLCV1(vvDeviceID, request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing AssignManagedApLocationsForWLC", err))
+			"Failure when executing AssignManagedApLocationsForWLCV1", err))
 		return diags
 	}
 
@@ -130,7 +128,7 @@ func resourceWirelessControllersAssignManagedApLocationsCreate(ctx context.Conte
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing AssignManagedAPLocationsForWLC", err))
+			"Failure when executing AssignManagedAPLocationsForWLCV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -164,22 +162,24 @@ func resourceWirelessControllersAssignManagedApLocationsCreate(ctx context.Conte
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing AssignManagedAPLocationsForWLC", err1))
+				"Failure when executing AssignManagedAPLocationsForWLCV1", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenWirelessAssignManagedApLocationsForWLCItem(response1.Response)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
+	vItem1 := flattenWirelessAssignManagedApLocationsForWLCV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting AssignManagedApLocationsForWLC response",
+			"Failure when setting AssignManagedApLocationsForWLCV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceWirelessControllersAssignManagedApLocationsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -194,8 +194,8 @@ func resourceWirelessControllersAssignManagedApLocationsDelete(ctx context.Conte
 	return diags
 }
 
-func expandRequestWirelessControllersAssignManagedApLocationsAssignManagedApLocationsForWLC(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessAssignManagedApLocationsForWLC {
-	request := catalystcentersdkgo.RequestWirelessAssignManagedApLocationsForWLC{}
+func expandRequestWirelessControllersAssignManagedApLocationsAssignManagedApLocationsForWLCV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessAssignManagedApLocationsForWLCV1 {
+	request := catalystcentersdkgo.RequestWirelessAssignManagedApLocationsForWLCV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".primary_managed_aplocations_site_ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".primary_managed_aplocations_site_ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".primary_managed_aplocations_site_ids")))) {
 		request.PrimaryManagedApLocationsSiteIDs = interfaceToSliceString(v)
 	}
@@ -205,7 +205,7 @@ func expandRequestWirelessControllersAssignManagedApLocationsAssignManagedApLoca
 	return &request
 }
 
-func flattenWirelessAssignManagedApLocationsForWLCItem(item *catalystcentersdkgo.ResponseWirelessAssignManagedApLocationsForWLCResponse) []map[string]interface{} {
+func flattenWirelessAssignManagedApLocationsForWLCV1Item(item *catalystcentersdkgo.ResponseWirelessAssignManagedApLocationsForWLCV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -85,20 +85,18 @@ func resourceTelemetrySettingsApplyCreate(ctx context.Context, d *schema.Resourc
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestTelemetrySettingsApplyUpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSite(ctx, "parameters.0", d)
+	request1 := expandRequestTelemetrySettingsApplyUpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSiteV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.NetworkSettings.UpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSite(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.NetworkSettings.UpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSiteV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing UpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSite", err))
+			"Failure when executing UpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSiteV1", err))
 		return diags
 	}
 
@@ -106,7 +104,7 @@ func resourceTelemetrySettingsApplyCreate(ctx context.Context, d *schema.Resourc
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing UpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSite", err))
+			"Failure when executing UpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSiteV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -140,22 +138,24 @@ func resourceTelemetrySettingsApplyCreate(ctx context.Context, d *schema.Resourc
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing UpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSite", err1))
+				"Failure when executing UpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSiteV1", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenNetworkSettingsUpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSiteItem(response1.Response)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
+	vItem1 := flattenNetworkSettingsUpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSiteV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting UpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSite response",
+			"Failure when setting UpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSiteV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceTelemetrySettingsApplyRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -170,15 +170,15 @@ func resourceTelemetrySettingsApplyDelete(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func expandRequestTelemetrySettingsApplyUpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSite {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSite{}
+func expandRequestTelemetrySettingsApplyUpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSiteV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSiteV1 {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSiteV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_ids")))) {
 		request.DeviceIDs = interfaceToSliceString(v)
 	}
 	return &request
 }
 
-func flattenNetworkSettingsUpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSiteItem(item *catalystcentersdkgo.ResponseNetworkSettingsUpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSiteResponse) []map[string]interface{} {
+func flattenNetworkSettingsUpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSiteV1Item(item *catalystcentersdkgo.ResponseNetworkSettingsUpdateADevicesTelemetrySettingsToConformToTheTelemetrySettingsForItsSiteV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

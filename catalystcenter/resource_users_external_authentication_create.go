@@ -18,7 +18,7 @@ func resourceUsersExternalAuthenticationCreate() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs create operation on User and Roles.
 
-- Enable or disable external authentication on Cisco Catalyst Center System.
+- Enable or disable external authentication on Cisco DNA Center System.
 Please find the Administrator Guide for your particular release from the list linked below and follow the steps required
 to enable external authentication before trying to do so from this API.
 https://www.cisco.com/c/en/us/support/cloud-systems-management/dna-center/products-maintenance-guides-list.html
@@ -75,31 +75,27 @@ func resourceUsersExternalAuthenticationCreateCreate(ctx context.Context, d *sch
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestUsersExternalAuthenticationCreateManageExternalAuthenticationSettingAPI(ctx, "parameters.0", d)
+	request1 := expandRequestUsersExternalAuthenticationCreateManageExternalAuthenticationSettingAPIV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.UserandRoles.ManageExternalAuthenticationSettingAPI(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.UserandRoles.ManageExternalAuthenticationSettingAPIV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ManageExternalAuthenticationSettingAPI", err))
+			"Failure when executing ManageExternalAuthenticationSettingAPIV1", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	//Analizar verificacion.
-
-	vItem1 := flattenUserandRolesManageExternalAuthenticationSettingAPIItem(response1.Response)
+	vItem1 := flattenUserandRolesManageExternalAuthenticationSettingAPIV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ManageExternalAuthenticationSettingAPI response",
+			"Failure when setting ManageExternalAuthenticationSettingAPIV1 response",
 			err))
 		return diags
 	}
@@ -121,15 +117,15 @@ func resourceUsersExternalAuthenticationCreateDelete(ctx context.Context, d *sch
 	return diags
 }
 
-func expandRequestUsersExternalAuthenticationCreateManageExternalAuthenticationSettingAPI(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestUserandRolesManageExternalAuthenticationSettingAPI {
-	request := catalystcentersdkgo.RequestUserandRolesManageExternalAuthenticationSettingAPI{}
+func expandRequestUsersExternalAuthenticationCreateManageExternalAuthenticationSettingAPIV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestUserandRolesManageExternalAuthenticationSettingAPIV1 {
+	request := catalystcentersdkgo.RequestUserandRolesManageExternalAuthenticationSettingAPIV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".enable")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".enable")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".enable")))) {
 		request.Enable = interfaceToBoolPtr(v)
 	}
 	return &request
 }
 
-func flattenUserandRolesManageExternalAuthenticationSettingAPIItem(item *catalystcentersdkgo.ResponseUserandRolesManageExternalAuthenticationSettingAPIResponse) []map[string]interface{} {
+func flattenUserandRolesManageExternalAuthenticationSettingAPIV1Item(item *catalystcentersdkgo.ResponseUserandRolesManageExternalAuthenticationSettingAPIV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

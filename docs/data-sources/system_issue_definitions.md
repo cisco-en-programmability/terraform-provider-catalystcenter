@@ -5,7 +5,7 @@ subcategory: ""
 description: |-
   It performs read operation on Issues.
   Get all system issue defintions. The supported filters are id, name, profileId and definition enable status. An issue
-  trigger definition can be different across the profile and device type. So, 'profileId' and 'deviceType' in the query
+  trigger definition can be different across the profile and device type. So, profileId and deviceType in the query
   param is important and default is global profile and all device type. For detailed information about the usage of the
   API, please refer to the Open API specification document https://github.com/cisco-en-programmability/catalyst-center-
   api-specs/blob/main/Assurance/CECatCenter_Org-issueAndHealthDefinitions-1.0.0-resolved.yamlGet system issue defintion for the given id. Definition includes all properties from IssueTriggerDefinition schema by
@@ -19,7 +19,7 @@ description: |-
 It performs read operation on Issues.
 
 - Get all system issue defintions. The supported filters are id, name, profileId and definition enable status. An issue
-trigger definition can be different across the profile and device type. So, 'profileId' and 'deviceType' in the query
+trigger definition can be different across the profile and device type. So, *profileId* and *deviceType* in the query
 param is important and default is global profile and all device type. For detailed information about the usage of the
 API, please refer to the Open API specification document https://github.com/cisco-en-programmability/catalyst-center-
 api-specs/blob/main/Assurance/CE_Cat_Center_Org-issueAndHealthDefinitions-1.0.0-resolved.yaml
@@ -80,11 +80,11 @@ name=BGP_Down&name=BGP_Flap (multiple issue names separated by & operator)
 - `offset` (Number) offset query parameter. Specifies the starting point within all records returned by the API. It's one based offset. The starting value is 1.
 - `order` (String) order query parameter. The sort order of the field ascending or descending.
 - `priority` (String) priority query parameter. Issue priority, possible values are P1, P2, P3, P4.
-'P1': A critical issue that needs immediate attention and can have a wide impact on network operations.
-'P2': A major issue that can potentially impact multiple devices or clients.
-'P3': A minor issue that has a localized or minimal impact.
-'P4': A warning issue that may not be an immediate problem but addressing it can optimize the network performance.
-- `profile_id` (String) profileId query parameter. The profile identier to fetch the profile associated issue defintions. The default is 'global'. Please refer Network design profiles documentation for more details.
+*P1*: A critical issue that needs immediate attention and can have a wide impact on network operations.
+*P2*: A major issue that can potentially impact multiple devices or clients.
+*P3*: A minor issue that has a localized or minimal impact.
+*P4*: A warning issue that may not be an immediate problem but addressing it can optimize the network performance.
+- `profile_id` (String) profileId query parameter. The profile identier to fetch the profile associated issue defintions. The default is *global*. Please refer Network design profiles documentation for more details.
 - `sort_by` (String) sortBy query parameter. A field within the response to sort by.
 - `xca_lle_rid` (String) X-CALLER-ID header parameter. Caller ID is used to trace the origin of API calls and their associated queries executed on the database. It's an optional header parameter that can be added to an API request.
 

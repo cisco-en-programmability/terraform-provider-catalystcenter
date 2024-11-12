@@ -424,27 +424,27 @@ func dataSourceTopologyLayer3Read(ctx context.Context, d *schema.ResourceData, m
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetL3TopologyDetails")
+		log.Printf("[DEBUG] Selected method: GetL3TopologyDetailsV1")
 		vvTopologyType := vTopologyType.(string)
 
-		response1, restyResp1, err := client.Topology.GetL3TopologyDetails(vvTopologyType)
+		response1, restyResp1, err := client.Topology.GetL3TopologyDetailsV1(vvTopologyType)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetL3TopologyDetails", err,
-				"Failure at GetL3TopologyDetails, unexpected response", ""))
+				"Failure when executing 2 GetL3TopologyDetailsV1", err,
+				"Failure at GetL3TopologyDetailsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenTopologyGetL3TopologyDetailsItem(response1.Response)
+		vItem1 := flattenTopologyGetL3TopologyDetailsV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetL3TopologyDetails response",
+				"Failure when setting GetL3TopologyDetailsV1 response",
 				err))
 			return diags
 		}
@@ -456,27 +456,27 @@ func dataSourceTopologyLayer3Read(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func flattenTopologyGetL3TopologyDetailsItem(item *catalystcentersdkgo.ResponseTopologyGetL3TopologyDetailsResponse) []map[string]interface{} {
+func flattenTopologyGetL3TopologyDetailsV1Item(item *catalystcentersdkgo.ResponseTopologyGetL3TopologyDetailsV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["id"] = item.ID
-	respItem["links"] = flattenTopologyGetL3TopologyDetailsItemLinks(item.Links)
-	respItem["nodes"] = flattenTopologyGetL3TopologyDetailsItemNodes(item.Nodes)
+	respItem["links"] = flattenTopologyGetL3TopologyDetailsV1ItemLinks(item.Links)
+	respItem["nodes"] = flattenTopologyGetL3TopologyDetailsV1ItemNodes(item.Nodes)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenTopologyGetL3TopologyDetailsItemLinks(items *[]catalystcentersdkgo.ResponseTopologyGetL3TopologyDetailsResponseLinks) []map[string]interface{} {
+func flattenTopologyGetL3TopologyDetailsV1ItemLinks(items *[]catalystcentersdkgo.ResponseTopologyGetL3TopologyDetailsV1ResponseLinks) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["additional_info"] = flattenTopologyGetL3TopologyDetailsItemLinksAdditionalInfo(item.AdditionalInfo)
+		respItem["additional_info"] = flattenTopologyGetL3TopologyDetailsV1ItemLinksAdditionalInfo(item.AdditionalInfo)
 		respItem["end_port_id"] = item.EndPortID
 		respItem["end_port_ipv4_address"] = item.EndPortIPv4Address
 		respItem["end_port_ipv4_mask"] = item.EndPortIPv4Mask
@@ -498,7 +498,7 @@ func flattenTopologyGetL3TopologyDetailsItemLinks(items *[]catalystcentersdkgo.R
 	return respItems
 }
 
-func flattenTopologyGetL3TopologyDetailsItemLinksAdditionalInfo(item *catalystcentersdkgo.ResponseTopologyGetL3TopologyDetailsResponseLinksAdditionalInfo) interface{} {
+func flattenTopologyGetL3TopologyDetailsV1ItemLinksAdditionalInfo(item *catalystcentersdkgo.ResponseTopologyGetL3TopologyDetailsV1ResponseLinksAdditionalInfo) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -508,7 +508,7 @@ func flattenTopologyGetL3TopologyDetailsItemLinksAdditionalInfo(item *catalystce
 
 }
 
-func flattenTopologyGetL3TopologyDetailsItemNodes(items *[]catalystcentersdkgo.ResponseTopologyGetL3TopologyDetailsResponseNodes) []map[string]interface{} {
+func flattenTopologyGetL3TopologyDetailsV1ItemNodes(items *[]catalystcentersdkgo.ResponseTopologyGetL3TopologyDetailsV1ResponseNodes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -516,8 +516,8 @@ func flattenTopologyGetL3TopologyDetailsItemNodes(items *[]catalystcentersdkgo.R
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["acl_applied"] = boolPtrToString(item.ACLApplied)
-		respItem["additional_info"] = flattenTopologyGetL3TopologyDetailsItemNodesAdditionalInfo(item.AdditionalInfo)
-		respItem["custom_param"] = flattenTopologyGetL3TopologyDetailsItemNodesCustomParam(item.CustomParam)
+		respItem["additional_info"] = flattenTopologyGetL3TopologyDetailsV1ItemNodesAdditionalInfo(item.AdditionalInfo)
+		respItem["custom_param"] = flattenTopologyGetL3TopologyDetailsV1ItemNodesCustomParam(item.CustomParam)
 		respItem["connected_device_id"] = item.ConnectedDeviceID
 		respItem["data_path_id"] = item.DataPathID
 		respItem["device_type"] = item.DeviceType
@@ -547,7 +547,7 @@ func flattenTopologyGetL3TopologyDetailsItemNodes(items *[]catalystcentersdkgo.R
 	return respItems
 }
 
-func flattenTopologyGetL3TopologyDetailsItemNodesAdditionalInfo(item *catalystcentersdkgo.ResponseTopologyGetL3TopologyDetailsResponseNodesAdditionalInfo) interface{} {
+func flattenTopologyGetL3TopologyDetailsV1ItemNodesAdditionalInfo(item *catalystcentersdkgo.ResponseTopologyGetL3TopologyDetailsV1ResponseNodesAdditionalInfo) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -557,7 +557,7 @@ func flattenTopologyGetL3TopologyDetailsItemNodesAdditionalInfo(item *catalystce
 
 }
 
-func flattenTopologyGetL3TopologyDetailsItemNodesCustomParam(item *catalystcentersdkgo.ResponseTopologyGetL3TopologyDetailsResponseNodesCustomParam) []map[string]interface{} {
+func flattenTopologyGetL3TopologyDetailsV1ItemNodesCustomParam(item *catalystcentersdkgo.ResponseTopologyGetL3TopologyDetailsV1ResponseNodesCustomParam) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

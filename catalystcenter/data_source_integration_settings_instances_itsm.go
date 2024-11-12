@@ -149,27 +149,27 @@ func dataSourceIntegrationSettingsInstancesItsmRead(ctx context.Context, d *sche
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetItsmIntegrationSettingByID")
+		log.Printf("[DEBUG] Selected method: GetItsmIntegrationSettingByIDV1")
 		vvInstanceID := vInstanceID.(string)
 
-		response1, restyResp1, err := client.ItsmIntegration.GetItsmIntegrationSettingByID(vvInstanceID)
+		response1, restyResp1, err := client.ItsmIntegration.GetItsmIntegrationSettingByIDV1(vvInstanceID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetItsmIntegrationSettingByID", err,
-				"Failure at GetItsmIntegrationSettingByID, unexpected response", ""))
+				"Failure when executing 2 GetItsmIntegrationSettingByIDV1", err,
+				"Failure at GetItsmIntegrationSettingByIDV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenItsmIntegrationGetItsmIntegrationSettingByIDItem(response1)
+		vItem1 := flattenItsmIntegrationGetItsmIntegrationSettingByIDV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetItsmIntegrationSettingByID response",
+				"Failure when setting GetItsmIntegrationSettingByIDV1 response",
 				err))
 			return diags
 		}
@@ -181,7 +181,7 @@ func dataSourceIntegrationSettingsInstancesItsmRead(ctx context.Context, d *sche
 	return diags
 }
 
-func flattenItsmIntegrationGetItsmIntegrationSettingByIDItem(item *catalystcentersdkgo.ResponseItsmIntegrationGetItsmIntegrationSettingByID) []map[string]interface{} {
+func flattenItsmIntegrationGetItsmIntegrationSettingByIDV1Item(item *catalystcentersdkgo.ResponseItsmIntegrationGetItsmIntegrationSettingByIDV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -194,7 +194,7 @@ func flattenItsmIntegrationGetItsmIntegrationSettingByIDItem(item *catalystcente
 	respItem["name"] = item.Name
 	respItem["unique_key"] = item.UniqueKey
 	respItem["description"] = item.Description
-	respItem["data"] = flattenItsmIntegrationGetItsmIntegrationSettingByIDItemData(item.Data)
+	respItem["data"] = flattenItsmIntegrationGetItsmIntegrationSettingByIDV1ItemData(item.Data)
 	respItem["updated_date"] = item.UpdatedDate
 	respItem["updated_by"] = item.UpdatedBy
 	respItem["tenant_id"] = item.TenantID
@@ -203,12 +203,12 @@ func flattenItsmIntegrationGetItsmIntegrationSettingByIDItem(item *catalystcente
 	}
 }
 
-func flattenItsmIntegrationGetItsmIntegrationSettingByIDItemData(item *catalystcentersdkgo.ResponseItsmIntegrationGetItsmIntegrationSettingByIDData) []map[string]interface{} {
+func flattenItsmIntegrationGetItsmIntegrationSettingByIDV1ItemData(item *catalystcentersdkgo.ResponseItsmIntegrationGetItsmIntegrationSettingByIDV1Data) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["connection_settings"] = flattenItsmIntegrationGetItsmIntegrationSettingByIDItemDataConnectionSettings(item.ConnectionSettings)
+	respItem["connection_settings"] = flattenItsmIntegrationGetItsmIntegrationSettingByIDV1ItemDataConnectionSettings(item.ConnectionSettings)
 
 	return []map[string]interface{}{
 		respItem,
@@ -216,7 +216,7 @@ func flattenItsmIntegrationGetItsmIntegrationSettingByIDItemData(item *catalystc
 
 }
 
-func flattenItsmIntegrationGetItsmIntegrationSettingByIDItemDataConnectionSettings(item *catalystcentersdkgo.ResponseItsmIntegrationGetItsmIntegrationSettingByIDDataConnectionSettings) []map[string]interface{} {
+func flattenItsmIntegrationGetItsmIntegrationSettingByIDV1ItemDataConnectionSettings(item *catalystcentersdkgo.ResponseItsmIntegrationGetItsmIntegrationSettingByIDV1DataConnectionSettings) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

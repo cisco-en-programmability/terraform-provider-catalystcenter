@@ -250,7 +250,7 @@ func resourceSdaFabricDevicesLayer2HandoffsIPTransitsCreate(ctx context.Context,
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters.0.payload"))
-	request1 := expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsAddFabricDevicesLayer3HandoffsWithIPTransit(ctx, "parameters.0", d)
+	request1 := expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsAddFabricDevicesLayer3HandoffsWithIPTransitV1(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vID := resourceItem["id"]
@@ -259,7 +259,7 @@ func resourceSdaFabricDevicesLayer2HandoffsIPTransitsCreate(ctx context.Context,
 	vvFabricID := interfaceToString(vFabricID)
 	vInterfaceName := resourceItem["interface_name"]
 	vvInterfaceName := interfaceToString(vInterfaceName)
-	queryParamImport := catalystcentersdkgo.GetFabricDevicesLayer3HandoffsWithIPTransitQueryParams{}
+	queryParamImport := catalystcentersdkgo.GetFabricDevicesLayer3HandoffsWithIPTransitV1QueryParams{}
 	queryParamImport.FabricID = vvFabricID
 	item2, err := searchSdaGetFabricDevicesLayer3HandoffsWithIPTransit(m, queryParamImport, vvID, vvInterfaceName)
 	if err == nil && item2 != nil {
@@ -309,7 +309,7 @@ func resourceSdaFabricDevicesLayer2HandoffsIPTransitsCreate(ctx context.Context,
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetFabricDevicesLayer3HandoffsWithIPTransitQueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetFabricDevicesLayer3HandoffsWithIPTransitV1QueryParams{}
 	queryParamValidate.FabricID = vvFabricID
 	item3, err := searchSdaGetFabricDevicesLayer3HandoffsWithIPTransit(m, queryParamValidate, vvID, vvInterfaceName)
 	if err != nil || item3 == nil {
@@ -341,7 +341,7 @@ func resourceSdaFabricDevicesLayer2HandoffsIPTransitsRead(ctx context.Context, d
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetFabricDevicesLayer3HandoffsWithIPTransit")
-		queryParams1 := catalystcentersdkgo.GetFabricDevicesLayer3HandoffsWithIPTransitQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetFabricDevicesLayer3HandoffsWithIPTransitV1QueryParams{}
 
 		queryParams1.FabricID = vFabricID
 
@@ -351,12 +351,12 @@ func resourceSdaFabricDevicesLayer2HandoffsIPTransitsRead(ctx context.Context, d
 			return diags
 		}
 
-		items := []catalystcentersdkgo.ResponseSdaGetFabricDevicesLayer3HandoffsWithIPTransitResponse{
+		items := []catalystcentersdkgo.ResponseSdaGetFabricDevicesLayer3HandoffsWithIPTransitV1Response{
 			*item1,
 		}
 
 		// Review flatten function used
-		vItem1 := flattenSdaGetFabricDevicesLayer3HandoffsWithIPTransitItems(&items)
+		vItem1 := flattenSdaGetFabricDevicesLayer3HandoffsWithIPTransitV1Items(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetFabricDevicesLayer3HandoffsWithIPTransit search response",
@@ -376,7 +376,7 @@ func resourceSdaFabricDevicesLayer2HandoffsIPTransitsUpdate(ctx context.Context,
 	resourceMap := separateResourceID(resourceID)
 	vID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsUpdateFabricDevicesLayer3HandoffsWithIPTransit(ctx, "parameters.0", d)
+		request1 := expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsUpdateFabricDevicesLayer3HandoffsWithIPTransitV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		if request1 != nil && len(*request1) > 0 {
 			req := *request1
@@ -492,9 +492,9 @@ func resourceSdaFabricDevicesLayer2HandoffsIPTransitsDelete(ctx context.Context,
 
 	return diags
 }
-func expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsAddFabricDevicesLayer3HandoffsWithIPTransit(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddFabricDevicesLayer3HandoffsWithIPTransit {
-	request := catalystcentersdkgo.RequestSdaAddFabricDevicesLayer3HandoffsWithIPTransit{}
-	if v := expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsAddFabricDevicesLayer3HandoffsWithIPTransitItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsAddFabricDevicesLayer3HandoffsWithIPTransitV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddFabricDevicesLayer3HandoffsWithIPTransitV1 {
+	request := catalystcentersdkgo.RequestSdaAddFabricDevicesLayer3HandoffsWithIPTransitV1{}
+	if v := expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsAddFabricDevicesLayer3HandoffsWithIPTransitV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -503,8 +503,8 @@ func expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsAddFabricDevicesLayer3
 	return &request
 }
 
-func expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsAddFabricDevicesLayer3HandoffsWithIPTransitItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer3HandoffsWithIPTransit {
-	request := []catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer3HandoffsWithIPTransit{}
+func expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsAddFabricDevicesLayer3HandoffsWithIPTransitV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer3HandoffsWithIPTransitV1 {
+	request := []catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer3HandoffsWithIPTransitV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -515,7 +515,7 @@ func expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsAddFabricDevicesLayer3
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsAddFabricDevicesLayer3HandoffsWithIPTransitItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsAddFabricDevicesLayer3HandoffsWithIPTransitV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -526,8 +526,8 @@ func expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsAddFabricDevicesLayer3
 	return &request
 }
 
-func expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsAddFabricDevicesLayer3HandoffsWithIPTransitItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer3HandoffsWithIPTransit {
-	request := catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer3HandoffsWithIPTransit{}
+func expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsAddFabricDevicesLayer3HandoffsWithIPTransitV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer3HandoffsWithIPTransitV1 {
+	request := catalystcentersdkgo.RequestItemSdaAddFabricDevicesLayer3HandoffsWithIPTransitV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".network_device_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".network_device_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".network_device_id")))) {
 		request.NetworkDeviceID = interfaceToString(v)
 	}
@@ -570,9 +570,9 @@ func expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsAddFabricDevicesLayer3
 	return &request
 }
 
-func expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsUpdateFabricDevicesLayer3HandoffsWithIPTransit(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateFabricDevicesLayer3HandoffsWithIPTransit {
-	request := catalystcentersdkgo.RequestSdaUpdateFabricDevicesLayer3HandoffsWithIPTransit{}
-	if v := expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsUpdateFabricDevicesLayer3HandoffsWithIPTransitItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsUpdateFabricDevicesLayer3HandoffsWithIPTransitV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateFabricDevicesLayer3HandoffsWithIPTransitV1 {
+	request := catalystcentersdkgo.RequestSdaUpdateFabricDevicesLayer3HandoffsWithIPTransitV1{}
+	if v := expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsUpdateFabricDevicesLayer3HandoffsWithIPTransitV1ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -581,8 +581,8 @@ func expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsUpdateFabricDevicesLay
 	return &request
 }
 
-func expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsUpdateFabricDevicesLayer3HandoffsWithIPTransitItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateFabricDevicesLayer3HandoffsWithIPTransit {
-	request := []catalystcentersdkgo.RequestItemSdaUpdateFabricDevicesLayer3HandoffsWithIPTransit{}
+func expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsUpdateFabricDevicesLayer3HandoffsWithIPTransitV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateFabricDevicesLayer3HandoffsWithIPTransitV1 {
+	request := []catalystcentersdkgo.RequestItemSdaUpdateFabricDevicesLayer3HandoffsWithIPTransitV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -593,7 +593,7 @@ func expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsUpdateFabricDevicesLay
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsUpdateFabricDevicesLayer3HandoffsWithIPTransitItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsUpdateFabricDevicesLayer3HandoffsWithIPTransitV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -604,8 +604,8 @@ func expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsUpdateFabricDevicesLay
 	return &request
 }
 
-func expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsUpdateFabricDevicesLayer3HandoffsWithIPTransitItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateFabricDevicesLayer3HandoffsWithIPTransit {
-	request := catalystcentersdkgo.RequestItemSdaUpdateFabricDevicesLayer3HandoffsWithIPTransit{}
+func expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsUpdateFabricDevicesLayer3HandoffsWithIPTransitV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateFabricDevicesLayer3HandoffsWithIPTransitV1 {
+	request := catalystcentersdkgo.RequestItemSdaUpdateFabricDevicesLayer3HandoffsWithIPTransitV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -651,10 +651,10 @@ func expandRequestSdaFabricDevicesLayer2HandoffsIPTransitsUpdateFabricDevicesLay
 	return &request
 }
 
-func searchSdaGetFabricDevicesLayer3HandoffsWithIPTransit(m interface{}, queryParams catalystcentersdkgo.GetFabricDevicesLayer3HandoffsWithIPTransitQueryParams, vID string, vInterfaceName string) (*catalystcentersdkgo.ResponseSdaGetFabricDevicesLayer3HandoffsWithIPTransitResponse, error) {
+func searchSdaGetFabricDevicesLayer3HandoffsWithIPTransit(m interface{}, queryParams catalystcentersdkgo.GetFabricDevicesLayer3HandoffsWithIPTransitV1QueryParams, vID string, vInterfaceName string) (*catalystcentersdkgo.ResponseSdaGetFabricDevicesLayer3HandoffsWithIPTransitV1Response, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseSdaGetFabricDevicesLayer3HandoffsWithIPTransitResponse
+	var foundItem *catalystcentersdkgo.ResponseSdaGetFabricDevicesLayer3HandoffsWithIPTransitV1Response
 	// var ite *catalystcentersdkgo.ResponseSdaGetFabricDevicesLayer3HandoffsWithIPTransit
 
 	queryParams.Offset = 1

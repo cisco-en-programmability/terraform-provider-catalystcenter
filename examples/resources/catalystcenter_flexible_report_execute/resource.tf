@@ -1,6 +1,6 @@
 
 resource "catalystcenter_flexible_report_execute" "example" {
-  provider  = catalystcenter
+  provider  = meraki
   report_id = "string"
   parameters {
 

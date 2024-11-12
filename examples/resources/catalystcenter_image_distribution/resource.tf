@@ -1,6 +1,6 @@
 
 resource "catalystcenter_image_distribution" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     device_uuid = "string"

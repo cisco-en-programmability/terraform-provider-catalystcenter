@@ -54,31 +54,31 @@ func dataSourceSdaTransitNetworksCountRead(ctx context.Context, d *schema.Resour
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTransitNetworksCount")
-		queryParams1 := catalystcentersdkgo.GetTransitNetworksCountQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetTransitNetworksCountV1")
+		queryParams1 := catalystcentersdkgo.GetTransitNetworksCountV1QueryParams{}
 
 		if okType {
 			queryParams1.Type = vType.(string)
 		}
 
-		response1, restyResp1, err := client.Sda.GetTransitNetworksCount(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetTransitNetworksCountV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTransitNetworksCount", err,
-				"Failure at GetTransitNetworksCount, unexpected response", ""))
+				"Failure when executing 2 GetTransitNetworksCountV1", err,
+				"Failure at GetTransitNetworksCountV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetTransitNetworksCountItem(response1.Response)
+		vItem1 := flattenSdaGetTransitNetworksCountV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTransitNetworksCount response",
+				"Failure when setting GetTransitNetworksCountV1 response",
 				err))
 			return diags
 		}
@@ -90,7 +90,7 @@ func dataSourceSdaTransitNetworksCountRead(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func flattenSdaGetTransitNetworksCountItem(item *catalystcentersdkgo.ResponseSdaGetTransitNetworksCountResponse) []map[string]interface{} {
+func flattenSdaGetTransitNetworksCountV1Item(item *catalystcentersdkgo.ResponseSdaGetTransitNetworksCountV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

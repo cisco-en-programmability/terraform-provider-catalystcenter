@@ -4,7 +4,7 @@ page_title: "catalystcenter_images_addon_images Data Source - terraform-provider
 subcategory: ""
 description: |-
   It performs read operation on Software Image Management (SWIM).
-  Retrieves the list of applicable add-on images if available for the given software image. 'id' can be obtained from
+  Retrieves the list of applicable add-on images if available for the given software image. id can be obtained from
   the response of API [ /dna/intent/api/v1/images?hasAddonImages=true ].
 ---
 
@@ -12,7 +12,7 @@ description: |-
 
 It performs read operation on Software Image Management (SWIM).
 
-- Retrieves the list of applicable add-on images if available for the given software image. 'id' can be obtained from
+- Retrieves the list of applicable add-on images if available for the given software image. *id* can be obtained from
 the response of API [ /dna/intent/api/v1/images?hasAddonImages=true ].
 
 ## Example Usage
@@ -33,7 +33,7 @@ output "catalystcenter_images_addon_images_example" {
 
 ### Required
 
-- `id` (String) id path parameter. Software image identifier. Check '/dna/intent/api/v1/images?hasAddonImages=true' API to get the same.
+- `id` (String) id path parameter. Software image identifier. Check */dna/intent/api/v1/images?hasAddonImages=true* API to get the same.
 
 ### Read-Only
 

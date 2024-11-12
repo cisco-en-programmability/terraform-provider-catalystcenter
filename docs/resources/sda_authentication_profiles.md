@@ -20,16 +20,15 @@ resource "catalystcenter_sda_authentication_profiles" "example" {
   provider = catalystcenter
 
   parameters {
-    payload {
-      authentication_order          = "string"
-      authentication_profile_name   = "string"
-      dot1x_to_mab_fallback_timeout = 1
-      fabric_id                     = "string"
-      id                            = "string"
-      is_bpdu_guard_enabled         = "false"
-      number_of_hosts               = "string"
-      wake_on_lan                   = "false"
-    }
+
+    authentication_order          = "string"
+    authentication_profile_name   = "string"
+    dot1x_to_mab_fallback_timeout = 1
+    fabric_id                     = "string"
+    id                            = "string"
+    is_bpdu_guard_enabled         = "false"
+    number_of_hosts               = "string"
+    wake_on_lan                   = "false"
   }
 }
 

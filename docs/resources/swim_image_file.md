@@ -3,22 +3,17 @@
 page_title: "catalystcenter_swim_image_file Resource - terraform-provider-catalystcenter"
 subcategory: ""
 description: |-
-  It manages create and read operations on Software Image Management (SWIM).
-  Fetches a software image from local file system and uploads to Catalyst Center. Supported software image files extensions
-  are bin, img, tar, smu, pie, aes, iso, ova, tar_gz and qcow2.
-  Upload the file to the file form data field
+  It performs create operation on Software Image Management (SWIM).
+  Fetches a software image from local file system and uploads to DNA Center. Supported software image files extensions
+  are bin, img, tar, smu, pie, aes, iso, ova, tar_gz and qcow2
 ---
 
 # catalystcenter_swim_image_file (Resource)
 
-It manages create and read operations on Software Image Management (SWIM).
+It performs create operation on Software Image Management (SWIM).
 
-- Fetches a software image from local file system and uploads to Catalyst Center. Supported software image files extensions
-are bin, img, tar, smu, pie, aes, iso, ova, tar_gz and qcow2.
-Upload the file to the **file** form data field
-
-
-
+- Fetches a software image from local file system and uploads to DNA Center. Supported software image files extensions
+are bin, img, tar, smu, pie, aes, iso, ova, tar_gz and qcow2
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -27,9 +22,7 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 
 ```terraform
 resource "catalystcenter_swim_image_file" "example" {
-  provider                     = catalystcenter
-  file_name                    = "string"
-  file_path                    = "string"
+  provider                     = meraki
   is_third_party               = "false"
   third_party_application_type = "string"
   third_party_image_family     = "string"
@@ -75,37 +68,5 @@ Optional:
 
 Read-Only:
 
-- `created_time` (String)
-- `extended_attributes` (String)
-- `family` (String)
-- `feature` (String)
-- `file_service_id` (String)
-- `file_size` (String)
-- `image_integrity_status` (String)
-- `image_name` (String)
-- `image_series` (List of String)
-- `image_source` (String)
-- `image_type` (String)
-- `image_uuid` (String)
-- `import_source_type` (String)
-- `is_tagged_golden` (String)
-- `md5_checksum` (String)
-- `name` (String)
-- `profile_info` (List of Object) (see [below for nested schema](#nestedobjatt--item--profile_info))
-- `sha_check_sum` (String)
 - `task_id` (String)
-- `vendor` (String)
-- `version` (String)
-
-<a id="nestedobjatt--item--profile_info"></a>
-### Nested Schema for `item.profile_info`
-
-Read-Only:
-
-- `description` (String)
-- `extended_attributes` (String)
-- `memory` (Number)
-- `product_type` (String)
-- `profile_name` (String)
-- `shares` (Number)
-- `v_cpu` (Number)
+- `url` (String)

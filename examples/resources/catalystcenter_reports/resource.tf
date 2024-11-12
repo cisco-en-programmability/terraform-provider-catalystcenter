@@ -1,14 +1,66 @@
 
 resource "catalystcenter_reports" "example" {
   provider = catalystcenter
+  item {
 
+
+
+
+    executions {
+
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+    view {
+
+
+      field_groups {
+
+
+
+        fields {
+
+
+
+        }
+      }
+      filters {
+
+
+
+
+
+      }
+      format {
+
+
+
+
+      }
+
+
+
+    }
+
+
+  }
   parameters {
 
     data_category = "string"
     deliveries    = ["string"]
     name          = "string"
     report_id     = "string"
-    schedule      = "string"
+    schedule      = "------"
     tags          = ["string"]
     view {
 
@@ -27,7 +79,7 @@ resource "catalystcenter_reports" "example" {
         display_name = "string"
         name         = "string"
         type         = "string"
-        value        = "string"
+        value        = "------"
       }
       format {
 

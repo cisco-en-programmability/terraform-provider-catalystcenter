@@ -236,37 +236,33 @@ func resourceAssuranceIssuesUpdateCreate(ctx context.Context, d *schema.Resource
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
 	vvID := vID.(string)
-	request1 := expandRequestAssuranceIssuesUpdateUpdateTheGivenIssueByUpdatingSelectedFields(ctx, "parameters.0", d)
+	request1 := expandRequestAssuranceIssuesUpdateUpdateTheGivenIssueByUpdatingSelectedFieldsV1(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.UpdateTheGivenIssueByUpdatingSelectedFieldsHeaderParams{}
+	headerParams1 := catalystcentersdkgo.UpdateTheGivenIssueByUpdatingSelectedFieldsV1HeaderParams{}
 
 	headerParams1.AcceptLanguage = vAcceptLanguage.(string)
 
 	headerParams1.XCaLLERID = vXCaLLERID.(string)
 
-	response1, restyResp1, err := client.Issues.UpdateTheGivenIssueByUpdatingSelectedFields(vvID, request1, &headerParams1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Issues.UpdateTheGivenIssueByUpdatingSelectedFieldsV1(vvID, request1, &headerParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing UpdateTheGivenIssueByUpdatingSelectedFields", err))
+			"Failure when executing UpdateTheGivenIssueByUpdatingSelectedFieldsV1", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	//Analizar verificacion.
-
-	vItem1 := flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsItem(response1.Response)
+	vItem1 := flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting UpdateTheGivenIssueByUpdatingSelectedFields response",
+			"Failure when setting UpdateTheGivenIssueByUpdatingSelectedFieldsV1 response",
 			err))
 		return diags
 	}
@@ -288,15 +284,15 @@ func resourceAssuranceIssuesUpdateDelete(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func expandRequestAssuranceIssuesUpdateUpdateTheGivenIssueByUpdatingSelectedFields(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesUpdateTheGivenIssueByUpdatingSelectedFields {
-	request := catalystcentersdkgo.RequestIssuesUpdateTheGivenIssueByUpdatingSelectedFields{}
+func expandRequestAssuranceIssuesUpdateUpdateTheGivenIssueByUpdatingSelectedFieldsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1 {
+	request := catalystcentersdkgo.RequestIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".notes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".notes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".notes")))) {
 		request.Notes = interfaceToString(v)
 	}
 	return &request
 }
 
-func flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsItem(item *catalystcentersdkgo.ResponseIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsResponse) []map[string]interface{} {
+func flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1Item(item *catalystcentersdkgo.ResponseIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -322,14 +318,14 @@ func flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsItem(item *catalyst
 	respItem["site_hierarchy_id"] = item.SiteHierarchyID
 	respItem["site_name"] = item.SiteName
 	respItem["site_hierarchy"] = item.SiteHierarchy
-	respItem["suggested_actions"] = flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsItemSuggestedActions(item.SuggestedActions)
-	respItem["additional_attributes"] = flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsItemAdditionalAttributes(item.AdditionalAttributes)
+	respItem["suggested_actions"] = flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1ItemSuggestedActions(item.SuggestedActions)
+	respItem["additional_attributes"] = flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1ItemAdditionalAttributes(item.AdditionalAttributes)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsItemSuggestedActions(items *[]catalystcentersdkgo.ResponseIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsResponseSuggestedActions) []map[string]interface{} {
+func flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1ItemSuggestedActions(items *[]catalystcentersdkgo.ResponseIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1ResponseSuggestedActions) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -342,7 +338,7 @@ func flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsItemSuggestedAction
 	return respItems
 }
 
-func flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsItemAdditionalAttributes(items *[]catalystcentersdkgo.ResponseIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsResponseAdditionalAttributes) []map[string]interface{} {
+func flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1ItemAdditionalAttributes(items *[]catalystcentersdkgo.ResponseIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1ResponseAdditionalAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -413,28 +413,28 @@ func dataSourceNetworkDeviceRangeRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetNetworkDeviceByPaginationRange")
+		log.Printf("[DEBUG] Selected method: GetNetworkDeviceByPaginationRangeV1")
 		vvStartIndex := vStartIndex.(int)
 		vvRecordsToReturn := vRecordsToReturn.(int)
 
-		response1, restyResp1, err := client.Devices.GetNetworkDeviceByPaginationRange(vvStartIndex, vvRecordsToReturn)
+		response1, restyResp1, err := client.Devices.GetNetworkDeviceByPaginationRangeV1(vvStartIndex, vvRecordsToReturn)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetNetworkDeviceByPaginationRange", err,
-				"Failure at GetNetworkDeviceByPaginationRange, unexpected response", ""))
+				"Failure when executing 2 GetNetworkDeviceByPaginationRangeV1", err,
+				"Failure at GetNetworkDeviceByPaginationRangeV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetNetworkDeviceByPaginationRangeItems(response1.Response)
+		vItems1 := flattenDevicesGetNetworkDeviceByPaginationRangeV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetNetworkDeviceByPaginationRange response",
+				"Failure when setting GetNetworkDeviceByPaginationRangeV1 response",
 				err))
 			return diags
 		}
@@ -446,7 +446,7 @@ func dataSourceNetworkDeviceRangeRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenDevicesGetNetworkDeviceByPaginationRangeItems(items *[]catalystcentersdkgo.ResponseDevicesGetNetworkDeviceByPaginationRangeResponse) []map[string]interface{} {
+func flattenDevicesGetNetworkDeviceByPaginationRangeV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetNetworkDeviceByPaginationRangeV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

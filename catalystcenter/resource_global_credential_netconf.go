@@ -113,7 +113,7 @@ func resourceGlobalCredentialNetconf() *schema.Resource {
 				},
 			},
 			"parameters": &schema.Schema{
-				Description: `Array of RequestDiscoveryCreateNetconfCredentials`,
+				Description: `Array of RequestDiscoveryCreateNetconfCredentialsV1`,
 				Type:        schema.TypeList,
 				MaxItems:    1,
 				MinItems:    1,
@@ -169,7 +169,7 @@ func resourceGlobalCredentialNetconfCreate(ctx context.Context, d *schema.Resour
 	vvNetconfPort := interfaceToString(vNetconfPort)
 	vID := resourceItem["id"]
 	vvID := interfaceToString(vID)
-	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
+	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
 
 	queryParams1.CredentialSubType = "NETCONF"
 	item, err := searchDiscoveryGetGlobalCredentialsNetConf(m, queryParams1, vvNetconfPort, vvID)
@@ -235,7 +235,7 @@ func resourceGlobalCredentialNetconfRead(ctx context.Context, d *schema.Resource
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method 1: GetGlobalCredentials")
-		queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
 
 		queryParams1.CredentialSubType = vCredentialSubType
 
@@ -255,10 +255,10 @@ func resourceGlobalCredentialNetconfRead(ctx context.Context, d *schema.Resource
 
 		//TODO FOR DNAC
 
-		items := []catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse{
+		items := []catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response{
 			*response1,
 		}
-		vItem1 := flattenDiscoveryGetGlobalCredentialsItems(&items)
+		vItem1 := flattenDiscoveryGetGlobalCredentialsV1Items(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetGlobalCredentials search response",
@@ -280,7 +280,7 @@ func resourceGlobalCredentialNetconfUpdate(ctx context.Context, d *schema.Resour
 	vNetconfPort := resourceMap["netconf_port"]
 	vID := resourceMap["id"]
 
-	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
+	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
 
 	queryParams1.CredentialSubType = "NETCONF"
 	item, err := searchDiscoveryGetGlobalCredentialsNetConf(m, queryParams1, vNetconfPort, vID)
@@ -354,7 +354,7 @@ func resourceGlobalCredentialNetconfDelete(ctx context.Context, d *schema.Resour
 	vID := resourceMap["id"]
 	vNetconfPort := resourceMap["netconf_port"]
 
-	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
+	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
 
 	queryParams1.CredentialSubType = "NETCONF"
 	item, err := searchDiscoveryGetGlobalCredentialsNetConf(m, queryParams1, vNetconfPort, vID)
@@ -376,8 +376,8 @@ func resourceGlobalCredentialNetconfDelete(ctx context.Context, d *schema.Resour
 	}
 	return diags
 }
-func expandRequestGlobalCredentialNetconfCreateNetconfCredentials(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryCreateNetconfCredentials {
-	request := catalystcentersdkgo.RequestDiscoveryCreateNetconfCredentials{}
+func expandRequestGlobalCredentialNetconfCreateNetconfCredentials(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryCreateNetconfCredentialsV1 {
+	request := catalystcentersdkgo.RequestDiscoveryCreateNetconfCredentialsV1{}
 	if v := expandRequestGlobalCredentialNetconfCreateNetconfCredentialsItemArray(ctx, key, d); v != nil {
 		request = *v
 	}
@@ -388,8 +388,8 @@ func expandRequestGlobalCredentialNetconfCreateNetconfCredentials(ctx context.Co
 	return &request
 }
 
-func expandRequestGlobalCredentialNetconfCreateNetconfCredentialsItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDiscoveryCreateNetconfCredentials {
-	request := []catalystcentersdkgo.RequestItemDiscoveryCreateNetconfCredentials{}
+func expandRequestGlobalCredentialNetconfCreateNetconfCredentialsItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDiscoveryCreateNetconfCredentialsV1 {
+	request := []catalystcentersdkgo.RequestItemDiscoveryCreateNetconfCredentialsV1{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -412,8 +412,8 @@ func expandRequestGlobalCredentialNetconfCreateNetconfCredentialsItemArray(ctx c
 	return &request
 }
 
-func expandRequestGlobalCredentialNetconfCreateNetconfCredentialsItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDiscoveryCreateNetconfCredentials {
-	request := catalystcentersdkgo.RequestItemDiscoveryCreateNetconfCredentials{}
+func expandRequestGlobalCredentialNetconfCreateNetconfCredentialsItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDiscoveryCreateNetconfCredentialsV1 {
+	request := catalystcentersdkgo.RequestItemDiscoveryCreateNetconfCredentialsV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".comments")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".comments")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".comments")))) {
 		request.Comments = interfaceToString(v)
 	}
@@ -442,8 +442,8 @@ func expandRequestGlobalCredentialNetconfCreateNetconfCredentialsItem(ctx contex
 	return &request
 }
 
-func expandRequestGlobalCredentialNetconfUpdateNetconfCredentials(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdateNetconfCredentials {
-	request := catalystcentersdkgo.RequestDiscoveryUpdateNetconfCredentials{}
+func expandRequestGlobalCredentialNetconfUpdateNetconfCredentials(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdateNetconfCredentialsV1 {
+	request := catalystcentersdkgo.RequestDiscoveryUpdateNetconfCredentialsV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".comments")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".comments")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".comments")))) {
 		request.Comments = interfaceToString(v)
 	}
@@ -472,11 +472,11 @@ func expandRequestGlobalCredentialNetconfUpdateNetconfCredentials(ctx context.Co
 	return &request
 }
 
-func searchDiscoveryGetGlobalCredentialsNetConf(m interface{}, queryParams catalystcentersdkgo.GetGlobalCredentialsQueryParams, vNetconfPort string, vID string) (*catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse, error) {
+func searchDiscoveryGetGlobalCredentialsNetConf(m interface{}, queryParams catalystcentersdkgo.GetGlobalCredentialsV1QueryParams, vNetconfPort string, vID string) (*catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse
-	var ite *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentials
+	var foundItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response
+	var ite *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1
 	queryParams.CredentialSubType = "NETCONF"
 	ite, _, err = client.Discovery.GetGlobalCredentials(&queryParams)
 	if err != nil {
@@ -490,7 +490,7 @@ func searchDiscoveryGetGlobalCredentialsNetConf(m interface{}, queryParams catal
 	for _, item := range *itemsCopy.Response {
 		// Call get by _ method and set value to foundItem and return
 		if item.ID == vID || item.NetconfPort == vNetconfPort {
-			var getItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse
+			var getItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

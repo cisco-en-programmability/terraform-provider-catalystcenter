@@ -1,0 +1,1 @@
+terraform import catalystcenter_floors_settings_v2.example "id:=string"

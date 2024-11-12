@@ -93,20 +93,18 @@ func resourceNetworkDeviceUpdateRoleCreate(ctx context.Context, d *schema.Resour
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestNetworkDeviceUpdateRoleUpdateDeviceRole(ctx, "parameters.0", d)
+	request1 := expandRequestNetworkDeviceUpdateRoleUpdateDeviceRoleV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.Devices.UpdateDeviceRole(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Devices.UpdateDeviceRoleV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing UpdateDeviceRole", err))
+			"Failure when executing UpdateDeviceRoleV1", err))
 		return diags
 	}
 
@@ -114,7 +112,7 @@ func resourceNetworkDeviceUpdateRoleCreate(ctx context.Context, d *schema.Resour
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing UpdateDeviceRole", err))
+			"Failure when executing UpdateDeviceRoleV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -148,22 +146,24 @@ func resourceNetworkDeviceUpdateRoleCreate(ctx context.Context, d *schema.Resour
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing UpdateDeviceRole", err1))
+				"Failure when executing UpdateDeviceRoleV1", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenDevicesUpdateDeviceRoleItem(response1.Response)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
+	vItem1 := flattenDevicesUpdateDeviceRoleV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting UpdateDeviceRole response",
+			"Failure when setting UpdateDeviceRoleV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceNetworkDeviceUpdateRoleRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -178,8 +178,8 @@ func resourceNetworkDeviceUpdateRoleDelete(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func expandRequestNetworkDeviceUpdateRoleUpdateDeviceRole(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateDeviceRole {
-	request := catalystcentersdkgo.RequestDevicesUpdateDeviceRole{}
+func expandRequestNetworkDeviceUpdateRoleUpdateDeviceRoleV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateDeviceRoleV1 {
+	request := catalystcentersdkgo.RequestDevicesUpdateDeviceRoleV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -192,7 +192,7 @@ func expandRequestNetworkDeviceUpdateRoleUpdateDeviceRole(ctx context.Context, k
 	return &request
 }
 
-func flattenDevicesUpdateDeviceRoleItem(item *catalystcentersdkgo.ResponseDevicesUpdateDeviceRoleResponse) []map[string]interface{} {
+func flattenDevicesUpdateDeviceRoleV1Item(item *catalystcentersdkgo.ResponseDevicesUpdateDeviceRoleV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

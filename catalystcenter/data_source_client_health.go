@@ -258,31 +258,31 @@ func dataSourceClientHealthRead(ctx context.Context, d *schema.ResourceData, m i
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetOverallClientHealth")
-		queryParams1 := catalystcentersdkgo.GetOverallClientHealthQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetOverallClientHealthV1")
+		queryParams1 := catalystcentersdkgo.GetOverallClientHealthV1QueryParams{}
 
 		if okTimestamp {
 			queryParams1.Timestamp = vTimestamp.(float64)
 		}
 
-		response1, restyResp1, err := client.Clients.GetOverallClientHealth(&queryParams1)
+		response1, restyResp1, err := client.Clients.GetOverallClientHealthV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetOverallClientHealth", err,
-				"Failure at GetOverallClientHealth, unexpected response", ""))
+				"Failure when executing 2 GetOverallClientHealthV1", err,
+				"Failure at GetOverallClientHealthV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenClientsGetOverallClientHealthItems(response1.Response)
+		vItems1 := flattenClientsGetOverallClientHealthV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetOverallClientHealth response",
+				"Failure when setting GetOverallClientHealthV1 response",
 				err))
 			return diags
 		}
@@ -294,7 +294,7 @@ func dataSourceClientHealthRead(ctx context.Context, d *schema.ResourceData, m i
 	return diags
 }
 
-func flattenClientsGetOverallClientHealthItems(items *[]catalystcentersdkgo.ResponseClientsGetOverallClientHealthResponse) []map[string]interface{} {
+func flattenClientsGetOverallClientHealthV1Items(items *[]catalystcentersdkgo.ResponseClientsGetOverallClientHealthV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -302,20 +302,20 @@ func flattenClientsGetOverallClientHealthItems(items *[]catalystcentersdkgo.Resp
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["site_id"] = item.SiteID
-		respItem["score_detail"] = flattenClientsGetOverallClientHealthItemsScoreDetail(item.ScoreDetail)
+		respItem["score_detail"] = flattenClientsGetOverallClientHealthV1ItemsScoreDetail(item.ScoreDetail)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenClientsGetOverallClientHealthItemsScoreDetail(items *[]catalystcentersdkgo.ResponseClientsGetOverallClientHealthResponseScoreDetail) []map[string]interface{} {
+func flattenClientsGetOverallClientHealthV1ItemsScoreDetail(items *[]catalystcentersdkgo.ResponseClientsGetOverallClientHealthV1ResponseScoreDetail) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["score_category"] = flattenClientsGetOverallClientHealthItemsScoreDetailScoreCategory(item.ScoreCategory)
+		respItem["score_category"] = flattenClientsGetOverallClientHealthV1ItemsScoreDetailScoreCategory(item.ScoreCategory)
 		respItem["score_value"] = item.ScoreValue
 		respItem["client_count"] = item.ClientCount
 		respItem["client_unique_count"] = item.ClientUniqueCount
@@ -326,13 +326,13 @@ func flattenClientsGetOverallClientHealthItemsScoreDetail(items *[]catalystcente
 		respItem["endtime"] = item.Endtime
 		respItem["connected_to_udn_count"] = item.ConnectedToUdnCount
 		respItem["unconnected_to_udn_count"] = item.UnconnectedToUdnCount
-		respItem["score_list"] = flattenClientsGetOverallClientHealthItemsScoreDetailScoreList(item.ScoreList)
+		respItem["score_list"] = flattenClientsGetOverallClientHealthV1ItemsScoreDetailScoreList(item.ScoreList)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenClientsGetOverallClientHealthItemsScoreDetailScoreCategory(item *catalystcentersdkgo.ResponseClientsGetOverallClientHealthResponseScoreDetailScoreCategory) []map[string]interface{} {
+func flattenClientsGetOverallClientHealthV1ItemsScoreDetailScoreCategory(item *catalystcentersdkgo.ResponseClientsGetOverallClientHealthV1ResponseScoreDetailScoreCategory) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -346,14 +346,14 @@ func flattenClientsGetOverallClientHealthItemsScoreDetailScoreCategory(item *cat
 
 }
 
-func flattenClientsGetOverallClientHealthItemsScoreDetailScoreList(items *[]catalystcentersdkgo.ResponseClientsGetOverallClientHealthResponseScoreDetailScoreList) []map[string]interface{} {
+func flattenClientsGetOverallClientHealthV1ItemsScoreDetailScoreList(items *[]catalystcentersdkgo.ResponseClientsGetOverallClientHealthV1ResponseScoreDetailScoreList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["score_category"] = flattenClientsGetOverallClientHealthItemsScoreDetailScoreListScoreCategory(item.ScoreCategory)
+		respItem["score_category"] = flattenClientsGetOverallClientHealthV1ItemsScoreDetailScoreListScoreCategory(item.ScoreCategory)
 		respItem["score_value"] = item.ScoreValue
 		respItem["client_count"] = item.ClientCount
 		respItem["client_unique_count"] = item.ClientUniqueCount
@@ -369,7 +369,7 @@ func flattenClientsGetOverallClientHealthItemsScoreDetailScoreList(items *[]cata
 	return respItems
 }
 
-func flattenClientsGetOverallClientHealthItemsScoreDetailScoreListScoreCategory(item *catalystcentersdkgo.ResponseClientsGetOverallClientHealthResponseScoreDetailScoreListScoreCategory) []map[string]interface{} {
+func flattenClientsGetOverallClientHealthV1ItemsScoreDetailScoreListScoreCategory(item *catalystcentersdkgo.ResponseClientsGetOverallClientHealthV1ResponseScoreDetailScoreListScoreCategory) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

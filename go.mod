@@ -76,6 +76,6 @@ require (
 )
 
 require (
-	github.com/cisco-en-programmability/catalystcenter-go-sdk v1.0.0
+	github.com/cisco-en-programmability/catalystcenter-go-sdk v1.0.2
 	github.com/mattn/go-isatty v0.0.19 // indirect
 )

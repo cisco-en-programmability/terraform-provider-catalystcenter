@@ -76,27 +76,27 @@ func dataSourceNetworkDevicesAssignedToSiteIDRead(ctx context.Context, d *schema
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSiteAssignedNetworkDevice")
+		log.Printf("[DEBUG] Selected method: GetSiteAssignedNetworkDeviceV1")
 		vvID := vID.(string)
 
-		response1, restyResp1, err := client.SiteDesign.GetSiteAssignedNetworkDevice(vvID)
+		response1, restyResp1, err := client.SiteDesign.GetSiteAssignedNetworkDeviceV1(vvID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSiteAssignedNetworkDevice", err,
-				"Failure at GetSiteAssignedNetworkDevice, unexpected response", ""))
+				"Failure when executing 2 GetSiteAssignedNetworkDeviceV1", err,
+				"Failure at GetSiteAssignedNetworkDeviceV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSiteDesignGetSiteAssignedNetworkDeviceItem(response1.Response)
+		vItem1 := flattenSiteDesignGetSiteAssignedNetworkDeviceV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSiteAssignedNetworkDevice response",
+				"Failure when setting GetSiteAssignedNetworkDeviceV1 response",
 				err))
 			return diags
 		}
@@ -108,7 +108,7 @@ func dataSourceNetworkDevicesAssignedToSiteIDRead(ctx context.Context, d *schema
 	return diags
 }
 
-func flattenSiteDesignGetSiteAssignedNetworkDeviceItem(item *catalystcentersdkgo.ResponseSiteDesignGetSiteAssignedNetworkDeviceResponse) []map[string]interface{} {
+func flattenSiteDesignGetSiteAssignedNetworkDeviceV1Item(item *catalystcentersdkgo.ResponseSiteDesignGetSiteAssignedNetworkDeviceV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

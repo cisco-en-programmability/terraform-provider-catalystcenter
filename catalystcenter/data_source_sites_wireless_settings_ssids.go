@@ -1236,9 +1236,9 @@ func dataSourceSitesWirelessSettingsSSIDsRead(ctx context.Context, d *schema.Res
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSSIDBySite")
+		log.Printf("[DEBUG] Selected method: GetSSIDBySiteV1")
 		vvSiteID := vSiteID.(string)
-		queryParams1 := catalystcentersdkgo.GetSSIDBySiteQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetSSIDBySiteV1QueryParams{}
 
 		if okLimit {
 			queryParams1.Limit = vLimit.(float64)
@@ -1247,24 +1247,24 @@ func dataSourceSitesWirelessSettingsSSIDsRead(ctx context.Context, d *schema.Res
 			queryParams1.Offset = vOffset.(float64)
 		}
 
-		response1, restyResp1, err := client.Wireless.GetSSIDBySite(vvSiteID, &queryParams1)
+		response1, restyResp1, err := client.Wireless.GetSSIDBySiteV1(vvSiteID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSSIDBySite", err,
-				"Failure at GetSSIDBySite, unexpected response", ""))
+				"Failure when executing 2 GetSSIDBySiteV1", err,
+				"Failure at GetSSIDBySiteV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenWirelessGetSSIDBySiteItems(response1.Response)
+		vItems1 := flattenWirelessGetSSIDBySiteV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSSIDBySite response",
+				"Failure when setting GetSSIDBySiteV1 response",
 				err))
 			return diags
 		}
@@ -1274,28 +1274,28 @@ func dataSourceSitesWirelessSettingsSSIDsRead(ctx context.Context, d *schema.Res
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetSSIDByID")
+		log.Printf("[DEBUG] Selected method: GetSSIDByIDV1")
 		vvSiteID := vSiteID.(string)
 		vvID := vID.(string)
 
-		response2, restyResp2, err := client.Wireless.GetSSIDByID(vvSiteID, vvID)
+		response2, restyResp2, err := client.Wireless.GetSSIDByIDV1(vvSiteID, vvID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSSIDByID", err,
-				"Failure at GetSSIDByID, unexpected response", ""))
+				"Failure when executing 2 GetSSIDByIDV1", err,
+				"Failure at GetSSIDByIDV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenWirelessGetSSIDByIDItem(response2.Response)
+		vItem2 := flattenWirelessGetSSIDByIDV1Item(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSSIDByID response",
+				"Failure when setting GetSSIDByIDV1 response",
 				err))
 			return diags
 		}
@@ -1307,7 +1307,7 @@ func dataSourceSitesWirelessSettingsSSIDsRead(ctx context.Context, d *schema.Res
 	return diags
 }
 
-func flattenWirelessGetSSIDBySiteItems(items *[]catalystcentersdkgo.ResponseWirelessGetSSIDBySiteResponse) []map[string]interface{} {
+func flattenWirelessGetSSIDBySiteV1Items(items *[]catalystcentersdkgo.ResponseWirelessGetSSIDBySiteV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1337,7 +1337,7 @@ func flattenWirelessGetSSIDBySiteItems(items *[]catalystcentersdkgo.ResponseWire
 		respItem["aaa_override"] = boolPtrToString(item.AAAOverride)
 		respItem["coverage_hole_detection_enable"] = boolPtrToString(item.CoverageHoleDetectionEnable)
 		respItem["protected_management_frame"] = item.ProtectedManagementFrame
-		respItem["multi_psk_settings"] = flattenWirelessGetSSIDBySiteItemsMultipSKSettings(item.MultipSKSettings)
+		respItem["multi_psk_settings"] = flattenWirelessGetSSIDBySiteV1ItemsMultipSKSettings(item.MultipSKSettings)
 		respItem["client_rate_limit"] = item.ClientRateLimit
 		respItem["rsn_cipher_suite_gcmp256"] = boolPtrToString(item.RsnCipherSuiteGcmp256)
 		respItem["rsn_cipher_suite_ccmp256"] = boolPtrToString(item.RsnCipherSuiteCcmp256)
@@ -1391,7 +1391,7 @@ func flattenWirelessGetSSIDBySiteItems(items *[]catalystcentersdkgo.ResponseWire
 	return respItems
 }
 
-func flattenWirelessGetSSIDBySiteItemsMultipSKSettings(items *[]catalystcentersdkgo.ResponseWirelessGetSSIDBySiteResponseMultipSKSettings) []map[string]interface{} {
+func flattenWirelessGetSSIDBySiteV1ItemsMultipSKSettings(items *[]catalystcentersdkgo.ResponseWirelessGetSSIDBySiteV1ResponseMultipSKSettings) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1406,7 +1406,7 @@ func flattenWirelessGetSSIDBySiteItemsMultipSKSettings(items *[]catalystcentersd
 	return respItems
 }
 
-func flattenWirelessGetSSIDByIDItem(item *catalystcentersdkgo.ResponseWirelessGetSSIDByIDResponse) []map[string]interface{} {
+func flattenWirelessGetSSIDByIDV1Item(item *catalystcentersdkgo.ResponseWirelessGetSSIDByIDV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1434,7 +1434,7 @@ func flattenWirelessGetSSIDByIDItem(item *catalystcentersdkgo.ResponseWirelessGe
 	respItem["aaa_override"] = boolPtrToString(item.AAAOverride)
 	respItem["coverage_hole_detection_enable"] = boolPtrToString(item.CoverageHoleDetectionEnable)
 	respItem["protected_management_frame"] = item.ProtectedManagementFrame
-	respItem["multi_psk_settings"] = flattenWirelessGetSSIDByIDItemMultipSKSettings(item.MultipSKSettings)
+	respItem["multi_psk_settings"] = flattenWirelessGetSSIDByIDV1ItemMultipSKSettings(item.MultipSKSettings)
 	respItem["client_rate_limit"] = item.ClientRateLimit
 	respItem["rsn_cipher_suite_gcmp256"] = boolPtrToString(item.RsnCipherSuiteGcmp256)
 	respItem["rsn_cipher_suite_ccmp256"] = boolPtrToString(item.RsnCipherSuiteCcmp256)
@@ -1488,7 +1488,7 @@ func flattenWirelessGetSSIDByIDItem(item *catalystcentersdkgo.ResponseWirelessGe
 	}
 }
 
-func flattenWirelessGetSSIDByIDItemMultipSKSettings(items *[]catalystcentersdkgo.ResponseWirelessGetSSIDByIDResponseMultipSKSettings) []map[string]interface{} {
+func flattenWirelessGetSSIDByIDV1ItemMultipSKSettings(items *[]catalystcentersdkgo.ResponseWirelessGetSSIDByIDV1ResponseMultipSKSettings) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

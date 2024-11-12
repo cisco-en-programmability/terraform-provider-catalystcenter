@@ -18,7 +18,6 @@ It performs read operation on File.
 ```terraform
 data "catalystcenter_file" "example" {
   provider = catalystcenter
-  dirpath  = "string"
   file_id  = "string"
 }
 

@@ -1,6 +1,6 @@
 
 resource "catalystcenter_app_policy_intent_create" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     create_list {

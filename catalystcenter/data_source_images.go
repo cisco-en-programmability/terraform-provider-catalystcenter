@@ -22,19 +22,19 @@ list includes images that have been imported onto the disk, as well as the lates
 		ReadContext: dataSourceImagesRead,
 		Schema: map[string]*schema.Schema{
 			"golden": &schema.Schema{
-				Description: `golden query parameter. When set to 'true', it will retrieve the images marked as tagged golden. When set to 'false', it will retrieve the images marked as not tagged golden.
+				Description: `golden query parameter. When set to *true*, it will retrieve the images marked as tagged golden. When set to *false*, it will retrieve the images marked as not tagged golden.
 `,
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
 			"has_addon_images": &schema.Schema{
-				Description: `hasAddonImages query parameter. When set to 'true', it will retrieve the images which have add-on images. When set to 'false', it will retrieve the images which do not have add-on images.
+				Description: `hasAddonImages query parameter. When set to *true*, it will retrieve the images which have add-on images. When set to *false*, it will retrieve the images which do not have add-on images.
 `,
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
 			"imported": &schema.Schema{
-				Description: `imported query parameter. When the value is set to 'true', it will include physically imported images. Conversely, when the value is set to 'false', it will include image records from the cloud. The identifier for cloud images can be utilized to download images from Cisco.com to the disk.
+				Description: `imported query parameter. When the value is set to *true*, it will include physically imported images. Conversely, when the value is set to *false*, it will include image records from the cloud. The identifier for cloud images can be utilized to download images from Cisco.com to the disk.
 `,
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -46,7 +46,7 @@ list includes images that have been imported onto the disk, as well as the lates
 				Optional: true,
 			},
 			"is_addon_images": &schema.Schema{
-				Description: `isAddonImages query parameter. When set to 'true', it will retrieve the images that an add-on image.  When set to 'false', it will retrieve the images that are not add-on images
+				Description: `isAddonImages query parameter. When set to *true*, it will retrieve the images that an add-on image.  When set to *false*, it will retrieve the images that are not add-on images
 `,
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -70,19 +70,19 @@ list includes images that have been imported onto the disk, as well as the lates
 				Optional: true,
 			},
 			"product_name_ordinal": &schema.Schema{
-				Description: `productNameOrdinal query parameter. The product name ordinal is a unique value for each network device product. The productNameOrdinal can be obtained from the response of API '/dna/intent/api/v1/siteWiseProductNames'
+				Description: `productNameOrdinal query parameter. The product name ordinal is a unique value for each network device product. The productNameOrdinal can be obtained from the response of API */dna/intent/api/v1/siteWiseProductNames*
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
 			},
 			"site_id": &schema.Schema{
-				Description: `siteId query parameter. Site identifier to get the list of all available products under the site. The default value is the global site.  See https://developer.cisco.com/docs/dna-center/get-site for 'siteId'
+				Description: `siteId query parameter. Site identifier to get the list of all available products under the site. The default value is the global site.  See https://developer.cisco.com/docs/dna-center/get-site for *siteId*
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"supervisor_product_name_ordinal": &schema.Schema{
-				Description: `supervisorProductNameOrdinal query parameter. The supervisor engine module ordinal is a unique value for each supervisor module. The 'supervisorProductNameOrdinal' can be obtained from the response of API '/dna/intent/api/v1/siteWiseProductNames'
+				Description: `supervisorProductNameOrdinal query parameter. The supervisor engine module ordinal is a unique value for each supervisor module. The *supervisorProductNameOrdinal* can be obtained from the response of API */dna/intent/api/v1/siteWiseProductNames*
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -101,7 +101,7 @@ list includes images that have been imported onto the disk, as well as the lates
 					Schema: map[string]*schema.Schema{
 
 						"cisco_latest": &schema.Schema{
-							Description: `'true' if the image is latest/suggested from Cisco.com
+							Description: `*true* if the image is latest/suggested from Cisco.com
 `,
 							// Type:        schema.TypeBool,
 							Type:     schema.TypeString,
@@ -152,7 +152,7 @@ list includes images that have been imported onto the disk, as well as the lates
 						},
 
 						"has_addon_images": &schema.Schema{
-							Description: `Software images that have an applicable list of add-on images. The value of 'true' will return software images with add-on images, while the value of 'false' will return software images without add-on images
+							Description: `Software images that have an applicable list of add-on images. The value of *true* will return software images with add-on images, while the value of *false* will return software images without add-on images
 `,
 							// Type:        schema.TypeBool,
 							Type:     schema.TypeString,
@@ -189,7 +189,7 @@ list includes images that have been imported onto the disk, as well as the lates
 						},
 
 						"is_addon_image": &schema.Schema{
-							Description: `The value of 'true' will indicate the image as an add-on image, while the value of 'false' will indicate software image
+							Description: `The value of *true* will indicate the image as an add-on image, while the value of *false* will indicate software image
 `,
 							// Type:        schema.TypeBool,
 							Type:     schema.TypeString,
@@ -197,7 +197,7 @@ list includes images that have been imported onto the disk, as well as the lates
 						},
 
 						"is_golden_tagged": &schema.Schema{
-							Description: `The value of 'true' will indicate the image marked as golden, while the value of 'false' will indicate the image not marked as golden
+							Description: `The value of *true* will indicate the image marked as golden, while the value of *false* will indicate the image not marked as golden
 `,
 							// Type:        schema.TypeBool,
 							Type:     schema.TypeString,
@@ -239,14 +239,14 @@ list includes images that have been imported onto the disk, as well as the lates
 									},
 
 									"supervisor_product_name": &schema.Schema{
-										Description: `Name of the Supervisor Engine Module, supported by the 'productName'.                  Example: The 'Cisco Catalyst 9404R Switch' chassis is capable of supporting  different supervisor engine modules: the 'Cisco Catalyst 9400 Supervisor Engine-1', the 'Cisco Catalyst 9400 Supervisor Engine-1XL', the 'Cisco Catalyst 9400 Supervisor Engine-1XL-Y', etc.
+										Description: `Name of the Supervisor Engine Module, supported by the *productName*.                  Example: The *Cisco Catalyst 9404R Switch* chassis is capable of supporting  different supervisor engine modules: the *Cisco Catalyst 9400 Supervisor Engine-1*, the *Cisco Catalyst 9400 Supervisor Engine-1XL*, the *Cisco Catalyst 9400 Supervisor Engine-1XL-Y*, etc.
 `,
 										Type:     schema.TypeString,
 										Computed: true,
 									},
 
 									"supervisor_product_name_ordinal": &schema.Schema{
-										Description: `Supervisor Engine Module Ordinal, supported by the 'productNameOrdinal'. Example: The '286315691' chassis ordinal is capable of supporting different supervisor engine module ordinals: '286316172', '286316710', '286320394' etc.
+										Description: `Supervisor Engine Module Ordinal, supported by the *productNameOrdinal*. Example: The *286315691* chassis ordinal is capable of supporting different supervisor engine module ordinals: *286316172*, *286316710*, *286320394* etc.
 `,
 										Type:     schema.TypeFloat,
 										Computed: true,
@@ -294,8 +294,8 @@ func dataSourceImagesRead(ctx context.Context, d *schema.ResourceData, m interfa
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: ReturnsListOfSoftwareImages")
-		queryParams1 := catalystcentersdkgo.ReturnsListOfSoftwareImagesQueryParams{}
+		log.Printf("[DEBUG] Selected method: ReturnsListOfSoftwareImagesV1")
+		queryParams1 := catalystcentersdkgo.ReturnsListOfSoftwareImagesV1QueryParams{}
 
 		if okSiteID {
 			queryParams1.SiteID = vSiteID.(string)
@@ -334,24 +334,24 @@ func dataSourceImagesRead(ctx context.Context, d *schema.ResourceData, m interfa
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.SoftwareImageManagementSwim.ReturnsListOfSoftwareImages(&queryParams1)
+		response1, restyResp1, err := client.SoftwareImageManagementSwim.ReturnsListOfSoftwareImagesV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 ReturnsListOfSoftwareImages", err,
-				"Failure at ReturnsListOfSoftwareImages, unexpected response", ""))
+				"Failure when executing 2 ReturnsListOfSoftwareImagesV1", err,
+				"Failure at ReturnsListOfSoftwareImagesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSoftwareImageManagementSwimReturnsListOfSoftwareImagesItems(response1.Response)
+		vItems1 := flattenSoftwareImageManagementSwimReturnsListOfSoftwareImagesV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting ReturnsListOfSoftwareImages response",
+				"Failure when setting ReturnsListOfSoftwareImagesV1 response",
 				err))
 			return diags
 		}
@@ -363,7 +363,7 @@ func dataSourceImagesRead(ctx context.Context, d *schema.ResourceData, m interfa
 	return diags
 }
 
-func flattenSoftwareImageManagementSwimReturnsListOfSoftwareImagesItems(items *[]catalystcentersdkgo.ResponseSoftwareImageManagementSwimReturnsListOfSoftwareImagesResponse) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimReturnsListOfSoftwareImagesV1Items(items *[]catalystcentersdkgo.ResponseSoftwareImageManagementSwimReturnsListOfSoftwareImagesV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -380,15 +380,15 @@ func flattenSoftwareImageManagementSwimReturnsListOfSoftwareImagesItems(items *[
 		respItem["integrity_status"] = item.IntegrityStatus
 		respItem["is_addon_image"] = boolPtrToString(item.IsAddonImage)
 		respItem["has_addon_images"] = boolPtrToString(item.HasAddonImages)
-		respItem["golden_tagging_details"] = flattenSoftwareImageManagementSwimReturnsListOfSoftwareImagesItemsGoldenTaggingDetails(item.GoldenTaggingDetails)
-		respItem["product_names"] = flattenSoftwareImageManagementSwimReturnsListOfSoftwareImagesItemsProductNames(item.ProductNames)
+		respItem["golden_tagging_details"] = flattenSoftwareImageManagementSwimReturnsListOfSoftwareImagesV1ItemsGoldenTaggingDetails(item.GoldenTaggingDetails)
+		respItem["product_names"] = flattenSoftwareImageManagementSwimReturnsListOfSoftwareImagesV1ItemsProductNames(item.ProductNames)
 		respItem["is_golden_tagged"] = boolPtrToString(item.IsGoldenTagged)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSoftwareImageManagementSwimReturnsListOfSoftwareImagesItemsGoldenTaggingDetails(items *[]catalystcentersdkgo.ResponseSoftwareImageManagementSwimReturnsListOfSoftwareImagesResponseGoldenTaggingDetails) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimReturnsListOfSoftwareImagesV1ItemsGoldenTaggingDetails(items *[]catalystcentersdkgo.ResponseSoftwareImageManagementSwimReturnsListOfSoftwareImagesV1ResponseGoldenTaggingDetails) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -404,7 +404,7 @@ func flattenSoftwareImageManagementSwimReturnsListOfSoftwareImagesItemsGoldenTag
 	return respItems
 }
 
-func flattenSoftwareImageManagementSwimReturnsListOfSoftwareImagesItemsProductNames(items *[]catalystcentersdkgo.ResponseSoftwareImageManagementSwimReturnsListOfSoftwareImagesResponseProductNames) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimReturnsListOfSoftwareImagesV1ItemsProductNames(items *[]catalystcentersdkgo.ResponseSoftwareImageManagementSwimReturnsListOfSoftwareImagesV1ResponseProductNames) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

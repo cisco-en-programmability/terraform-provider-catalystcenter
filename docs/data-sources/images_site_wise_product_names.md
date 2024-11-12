@@ -5,7 +5,7 @@ subcategory: ""
 description: |-
   It performs read operation on Software Image Management (SWIM).
   Returns a list of network device product names and associated sites for a given image identifier. Refer
-  '/dna/intent/api/v1/images' API for obtaining 'imageId'.
+  /dna/intent/api/v1/images API for obtaining imageId.
 ---
 
 # catalystcenter_images_site_wise_product_names (Data Source)
@@ -13,7 +13,7 @@ description: |-
 It performs read operation on Software Image Management (SWIM).
 
 - Returns a list of network device product names and associated sites for a given image identifier. Refer
-'/dna/intent/api/v1/images' API for obtaining 'imageId'.
+*/dna/intent/api/v1/images* API for obtaining *imageId*.
 
 ## Example Usage
 
@@ -39,16 +39,16 @@ output "catalystcenter_images_site_wise_product_names_example" {
 
 ### Required
 
-- `image_id` (String) imageId path parameter. Software image identifier. Refer '/dna/intent/api/v1/images' API for obtaining 'imageId'
+- `image_id` (String) imageId path parameter. Software image identifier. Refer */dna/intent/api/v1/images* API for obtaining *imageId*
 
 ### Optional
 
-- `assigned` (String) assigned query parameter. Filter with the assigned/unassigned, 'ASSIGNED' option will filter network device products that are associated with the given image. The 'NOT_ASSIGNED' option will filter network device products that have not yet been associated with the given image but apply to it. Available values: ASSIGNED, NOT_ASSIGNED
+- `assigned` (String) assigned query parameter. Filter with the assigned/unassigned, *ASSIGNED* option will filter network device products that are associated with the given image. The *NOT_ASSIGNED* option will filter network device products that have not yet been associated with the given image but apply to it. Available values: ASSIGNED, NOT_ASSIGNED
 - `limit` (Number) limit query parameter. The number of records to show for this page. The minimum and maximum values are 1 and 500, respectively
 - `offset` (Number) offset query parameter. The first record to show for this page; the first record is numbered 1. The minimum value is 1
 - `product_id` (String) productId query parameter. Filter with product ID (PID)
 - `product_name` (String) productName query parameter. Filter with network device product name. Supports partial case-insensitive search. A minimum of 3 characters is required for the search.
-- `recommended` (String) recommended query parameter. Filter with recommended source. If 'CISCO' then the network device product assigned was recommended by Cisco and 'USER' then the user has manually assigned. Available values: CISCO, USER
+- `recommended` (String) recommended query parameter. Filter with recommended source. If *CISCO* then the network device product assigned was recommended by Cisco and *USER* then the user has manually assigned. Available values: CISCO, USER
 
 ### Read-Only
 

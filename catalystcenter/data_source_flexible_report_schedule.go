@@ -46,18 +46,18 @@ func dataSourceFlexibleReportScheduleRead(ctx context.Context, d *schema.Resourc
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetFlexibleReportScheduleByReportID")
+		log.Printf("[DEBUG] Selected method: GetFlexibleReportScheduleByReportIDV1")
 		vvReportID := vReportID.(string)
 
-		response1, restyResp1, err := client.Reports.GetFlexibleReportScheduleByReportID(vvReportID)
+		response1, restyResp1, err := client.Reports.GetFlexibleReportScheduleByReportIDV1(vvReportID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetFlexibleReportScheduleByReportID", err,
-				"Failure at GetFlexibleReportScheduleByReportID, unexpected response", ""))
+				"Failure when executing 2 GetFlexibleReportScheduleByReportIDV1", err,
+				"Failure at GetFlexibleReportScheduleByReportIDV1, unexpected response", ""))
 			return diags
 		}
 
@@ -66,7 +66,7 @@ func dataSourceFlexibleReportScheduleRead(ctx context.Context, d *schema.Resourc
 		vItem1 := restyResp1.String()
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetFlexibleReportScheduleByReportID response",
+				"Failure when setting GetFlexibleReportScheduleByReportIDV1 response",
 				err))
 			return diags
 		}

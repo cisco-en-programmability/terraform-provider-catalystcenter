@@ -66,26 +66,26 @@ func dataSourceEventConfigConnectorTypesRead(ctx context.Context, d *schema.Reso
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetConnectorTypes")
+		log.Printf("[DEBUG] Selected method: GetConnectorTypesV1")
 
-		response1, restyResp1, err := client.EventManagement.GetConnectorTypes()
+		response1, restyResp1, err := client.EventManagement.GetConnectorTypesV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetConnectorTypes", err,
-				"Failure at GetConnectorTypes, unexpected response", ""))
+				"Failure when executing 2 GetConnectorTypesV1", err,
+				"Failure at GetConnectorTypesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenEventManagementGetConnectorTypesItems(response1)
+		vItems1 := flattenEventManagementGetConnectorTypesV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetConnectorTypes response",
+				"Failure when setting GetConnectorTypesV1 response",
 				err))
 			return diags
 		}
@@ -97,7 +97,7 @@ func dataSourceEventConfigConnectorTypesRead(ctx context.Context, d *schema.Reso
 	return diags
 }
 
-func flattenEventManagementGetConnectorTypesItems(items *catalystcentersdkgo.ResponseEventManagementGetConnectorTypes) []map[string]interface{} {
+func flattenEventManagementGetConnectorTypesV1Items(items *catalystcentersdkgo.ResponseEventManagementGetConnectorTypesV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

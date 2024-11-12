@@ -1,6 +1,6 @@
 
 resource "catalystcenter_pnp_virtual_account_add" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     auto_sync_period = 1

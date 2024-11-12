@@ -14,9 +14,6 @@ It performs update operation on LAN Automation.
 
 - Invoke this API to perform a DAY-N update on LAN Automation-related devices. Supported features include Loopback0 IP
 update, hostname update, link addition, and link deletion.
-
-
-
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -25,7 +22,7 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 
 ```terraform
 resource "catalystcenter_lan_automation_update_device" "example" {
-  provider = catalystcenter
+  provider = meraki
   feature  = "string"
   parameters {
 
@@ -73,7 +70,7 @@ output "catalystcenter_lan_automation_update_device_example" {
 
 Required:
 
-- `feature` (String) feature query parameter. Feature ID for the update. Supported feature IDs include: LOOPBACK0_IPADDRESS_UPDATE, HOSTNAME_UPDATE, LINK_Add and LINK_DELETE.
+- `feature` (String) feature query parameter. Feature ID for the update. Supported feature IDs include: LOOPBACK0_IPADDRESS_UPDATE, HOSTNAME_UPDATE, LINK_ADD, and LINK_DELETE.
 
 Optional:
 

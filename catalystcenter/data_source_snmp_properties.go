@@ -75,26 +75,26 @@ func dataSourceSNMPPropertiesRead(ctx context.Context, d *schema.ResourceData, m
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSNMPProperties")
+		log.Printf("[DEBUG] Selected method: GetSNMPPropertiesV1")
 
-		response1, restyResp1, err := client.Discovery.GetSNMPProperties()
+		response1, restyResp1, err := client.Discovery.GetSNMPPropertiesV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSNMPProperties", err,
-				"Failure at GetSNMPProperties, unexpected response", ""))
+				"Failure when executing 2 GetSNMPPropertiesV1", err,
+				"Failure at GetSNMPPropertiesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDiscoveryGetSNMPPropertiesItems(response1.Response)
+		vItems1 := flattenDiscoveryGetSNMPPropertiesV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSNMPProperties response",
+				"Failure when setting GetSNMPPropertiesV1 response",
 				err))
 			return diags
 		}
@@ -106,7 +106,7 @@ func dataSourceSNMPPropertiesRead(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func flattenDiscoveryGetSNMPPropertiesItems(items *[]catalystcentersdkgo.ResponseDiscoveryGetSNMPPropertiesResponse) []map[string]interface{} {
+func flattenDiscoveryGetSNMPPropertiesV1Items(items *[]catalystcentersdkgo.ResponseDiscoveryGetSNMPPropertiesV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

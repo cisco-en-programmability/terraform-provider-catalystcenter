@@ -134,27 +134,27 @@ func dataSourceConfigurationTemplateVersionRead(ctx context.Context, d *schema.R
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetsAllTheVersionsOfAGivenTemplate")
+		log.Printf("[DEBUG] Selected method: GetsAllTheVersionsOfAGivenTemplateV1")
 		vvTemplateID := vTemplateID.(string)
 
-		response1, restyResp1, err := client.ConfigurationTemplates.GetsAllTheVersionsOfAGivenTemplate(vvTemplateID)
+		response1, restyResp1, err := client.ConfigurationTemplates.GetsAllTheVersionsOfAGivenTemplateV1(vvTemplateID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetsAllTheVersionsOfAGivenTemplate", err,
-				"Failure at GetsAllTheVersionsOfAGivenTemplate, unexpected response", ""))
+				"Failure when executing 2 GetsAllTheVersionsOfAGivenTemplateV1", err,
+				"Failure at GetsAllTheVersionsOfAGivenTemplateV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenConfigurationTemplatesGetsAllTheVersionsOfAGivenTemplateItems(response1)
+		vItems1 := flattenConfigurationTemplatesGetsAllTheVersionsOfAGivenTemplateV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetsAllTheVersionsOfAGivenTemplate response",
+				"Failure when setting GetsAllTheVersionsOfAGivenTemplateV1 response",
 				err))
 			return diags
 		}
@@ -166,7 +166,7 @@ func dataSourceConfigurationTemplateVersionRead(ctx context.Context, d *schema.R
 	return diags
 }
 
-func flattenConfigurationTemplatesGetsAllTheVersionsOfAGivenTemplateItems(items *catalystcentersdkgo.ResponseConfigurationTemplatesGetsAllTheVersionsOfAGivenTemplate) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsAllTheVersionsOfAGivenTemplateV1Items(items *catalystcentersdkgo.ResponseConfigurationTemplatesGetsAllTheVersionsOfAGivenTemplateV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -178,13 +178,13 @@ func flattenConfigurationTemplatesGetsAllTheVersionsOfAGivenTemplateItems(items 
 		respItem["project_id"] = item.ProjectID
 		respItem["project_name"] = item.ProjectName
 		respItem["template_id"] = item.TemplateID
-		respItem["versions_info"] = flattenConfigurationTemplatesGetsAllTheVersionsOfAGivenTemplateItemsVersionsInfo(item.VersionsInfo)
+		respItem["versions_info"] = flattenConfigurationTemplatesGetsAllTheVersionsOfAGivenTemplateV1ItemsVersionsInfo(item.VersionsInfo)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenConfigurationTemplatesGetsAllTheVersionsOfAGivenTemplateItemsVersionsInfo(items *[]catalystcentersdkgo.ResponseItemConfigurationTemplatesGetsAllTheVersionsOfAGivenTemplateVersionsInfo) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsAllTheVersionsOfAGivenTemplateV1ItemsVersionsInfo(items *[]catalystcentersdkgo.ResponseItemConfigurationTemplatesGetsAllTheVersionsOfAGivenTemplateV1VersionsInfo) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

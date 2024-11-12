@@ -1,3 +1,50 @@
+## 1.0.1-beta (November 12, 2024)
+FEATURES:
+* General Version Selection Behavior added. More info detailed in README.md.
+* **New Data Source:** `data_source_analytics_anc_policies`
+* **New Data Source:** `data_source_analytics_dictionaries`
+* **New Data Source:** `data_source_analytics_endpoints`
+* **New Data Source:** `data_source_analytics_endpoints_count`
+* **New Data Source:** `data_source_analytics_profiling_rules`
+* **New Data Source:** `data_source_analytics_profiling_rules_count`
+* **New Data Source:** `data_source_analytics_tasks`
+* **New Data Source:** `data_source_disasterrecovery_system_operationstatus`
+* **New Data Source:** `data_source_disasterrecovery_system_status`
+* **New Data Source:** `data_source_endpoint_analytics_profiling_rules`
+* **New Data Source:** `data_source_profiling_rules_count`
+* **New Data Source:** `data_source_security_rogue_wireless_containment_status`
+* **New Data Source:** `data_source_security_threats_level`
+* **New Data Source:** `data_source_security_threats_rogue_allowed_list`
+* **New Data Source:** `data_source_security_threats_rogue_allowed_list_count`
+* **New Data Source:** `data_source_security_threats_type`
+* **New Data Source:** `data_source_tags_interfaces_members_associations`
+* **New Data Source:** `data_source_tags_interfaces_members_associations_count`
+* **New Data Source:** `data_source_tags_network_devices_members_associations`
+* **New Data Source:** `data_source_tags_network_devices_members_associations_count`
+* **New Data Source:** `data_source_threat_detail`
+* **New Data Source:** `data_source_threat_detail_count`
+* **New Data Source:** `data_source_threat_summary`
+* **New Resource:** `resource_analytics_cmdb_endpoints`
+* **New Resource:** `resource_analytics_endpoints`
+* **New Resource:** `resource_analytics_endpoints_anc_policy_delete`
+* **New Resource:** `resource_analytics_endpoints_anc_policy_update`
+* **New Resource:** `resource_analytics_profiling_rules`
+* **New Resource:** `resource_analytics_profiling_rules_bulk`
+* **New Resource:** `resource_endpoint_analytics_profiling_rules`
+* **New Resource:** `resource_network_device_user_defined_field_delete`
+* **New Resource:** `resource_network_device_user_defined_field_update`
+* **New Resource:** `resource_profiling_rules_in_bulk_create`
+* **New Resource:** `resource_security_rogue_additional_details`
+* **New Resource:** `resource_security_rogue_additional_details_count`
+* **New Resource:** `resource_security_rogue_wireless_containment_start`
+* **New Resource:** `resource_security_rogue_wireless_containment_stop`
+* **New Resource:** `resource_security_threats_details`
+* **New Resource:** `resource_security_threats_details_count`
+* **New Resource:** `resource_security_threats_rogue_allowed_list`
+* **New Resource:** `resource_security_threats_summary`
+* **New Resource:** `resource_tags_interfaces_members_associations_query`
+* **New Resource:** `resource_tags_network_devices_members_associations_query`
+
 ## 1.0.0-beta (September 11, 2024)
 IMPROVEMENTS:
 * The provider has been updated with Catalyst Center API version `2.3.7.6`

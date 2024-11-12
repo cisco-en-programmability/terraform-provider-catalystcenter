@@ -192,7 +192,7 @@ func resourceHealthScoreDefinitionsUpdate(ctx context.Context, d *schema.Resourc
 	vvID := resourceMap["id"]
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvID)
-		request1 := expandRequestHealthScoreDefinitionsUpdateHealthScoreDefinitionForTheGivenID(ctx, "parameters.0", d)
+		request1 := expandRequestHealthScoreDefinitionsUpdateHealthScoreDefinitionForTheGivenIDV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.Devices.UpdateHealthScoreDefinitionForTheGivenID(vvID, request1)
 		if err != nil || response1 == nil {
@@ -224,8 +224,8 @@ func resourceHealthScoreDefinitionsDelete(ctx context.Context, d *schema.Resourc
 		"Failure at HealthScoreDefinitionsDelete, unexpected response", ""))
 	return diags
 }
-func expandRequestHealthScoreDefinitionsUpdateHealthScoreDefinitionForTheGivenID(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateHealthScoreDefinitionForTheGivenID {
-	request := catalystcentersdkgo.RequestDevicesUpdateHealthScoreDefinitionForTheGivenID{}
+func expandRequestHealthScoreDefinitionsUpdateHealthScoreDefinitionForTheGivenIDV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateHealthScoreDefinitionForTheGivenIDV1 {
+	request := catalystcentersdkgo.RequestDevicesUpdateHealthScoreDefinitionForTheGivenIDV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".include_for_overall_health")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".include_for_overall_health")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".include_for_overall_health")))) {
 		request.IncludeForOverallHealth = interfaceToBoolPtr(v)
 	}

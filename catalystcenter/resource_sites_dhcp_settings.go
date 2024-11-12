@@ -3,10 +3,9 @@ package catalystcenter
 import (
 	"context"
 	"errors"
+	"log"
 	"reflect"
 	"time"
-
-	"log"
 
 	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
 
@@ -18,8 +17,8 @@ func resourceSitesDhcpSettings() *schema.Resource {
 	return &schema.Resource{
 		Description: `It manages read and update operations on Network Settings.
 
-- Set DHCP settings for a site; 'null' values indicate that the setting will be inherited from the parent site; empty
-objects ('{}') indicate that the settings is unset.
+- Set DHCP settings for a site; *null* values indicate that the setting will be inherited from the parent site; empty
+objects (*{}*) indicate that the settings is unset.
 `,
 
 		CreateContext: resourceSitesDhcpSettingsCreate,
@@ -139,7 +138,7 @@ func resourceSitesDhcpSettingsRead(ctx context.Context, d *schema.ResourceData, 
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: RetrieveDHCPSettingsForASite")
 		vvID := vID
-		queryParams1 := catalystcentersdkgo.RetrieveDHCPSettingsForASiteQueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrieveDHCPSettingsForASiteV1QueryParams{}
 
 		response1, restyResp1, err := client.NetworkSettings.RetrieveDHCPSettingsForASite(vvID, &queryParams1)
 
@@ -153,7 +152,7 @@ func resourceSitesDhcpSettingsRead(ctx context.Context, d *schema.ResourceData, 
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenNetworkSettingsRetrieveDHCPSettingsForASiteItem(response1.Response)
+		vItem1 := flattenNetworkSettingsRetrieveDHCPSettingsForASiteV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrieveDHCPSettingsForASite response",
@@ -176,7 +175,7 @@ func resourceSitesDhcpSettingsUpdate(ctx context.Context, d *schema.ResourceData
 
 	vvID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestSitesDhcpSettingsSetDhcpSettingsForASite(ctx, "parameters.0", d)
+		request1 := expandRequestSitesDhcpSettingsSetDhcpSettingsForASiteV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.NetworkSettings.SetDhcpSettingsForASite(vvID, request1)
 		if err != nil || response1 == nil {
@@ -235,17 +234,17 @@ func resourceSitesDhcpSettingsDelete(ctx context.Context, d *schema.ResourceData
 		"Failure at SitesDhcpSettingsDelete, unexpected response", ""))
 	return diags
 }
-func expandRequestSitesDhcpSettingsSetDhcpSettingsForASite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetDhcpSettingsForASite {
-	request := catalystcentersdkgo.RequestNetworkSettingsSetDhcpSettingsForASite{}
-	request.Dhcp = expandRequestSitesDhcpSettingsSetDhcpSettingsForASiteDhcp(ctx, key, d)
+func expandRequestSitesDhcpSettingsSetDhcpSettingsForASiteV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetDhcpSettingsForASiteV1 {
+	request := catalystcentersdkgo.RequestNetworkSettingsSetDhcpSettingsForASiteV1{}
+	request.Dhcp = expandRequestSitesDhcpSettingsSetDhcpSettingsForASiteV1Dhcp(ctx, key, d)
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
 	}
 	return &request
 }
 
-func expandRequestSitesDhcpSettingsSetDhcpSettingsForASiteDhcp(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetDhcpSettingsForASiteDhcp {
-	request := catalystcentersdkgo.RequestNetworkSettingsSetDhcpSettingsForASiteDhcp{}
+func expandRequestSitesDhcpSettingsSetDhcpSettingsForASiteV1Dhcp(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetDhcpSettingsForASiteV1Dhcp {
+	request := catalystcentersdkgo.RequestNetworkSettingsSetDhcpSettingsForASiteV1Dhcp{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".servers")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".servers")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".servers")))) {
 		request.Servers = interfaceToSliceString(v)
 	}

@@ -124,27 +124,27 @@ func dataSourceDnacaapManagementExecutionStatusRead(ctx context.Context, d *sche
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetBusinessAPIExecutionDetails")
+		log.Printf("[DEBUG] Selected method: GetBusinessAPIExecutionDetailsV1")
 		vvExecutionID := vExecutionID.(string)
 
-		response1, restyResp1, err := client.Task.GetBusinessAPIExecutionDetails(vvExecutionID)
+		response1, restyResp1, err := client.Task.GetBusinessAPIExecutionDetailsV1(vvExecutionID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetBusinessAPIExecutionDetails", err,
-				"Failure at GetBusinessAPIExecutionDetails, unexpected response", ""))
+				"Failure when executing 2 GetBusinessAPIExecutionDetailsV1", err,
+				"Failure at GetBusinessAPIExecutionDetailsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenTaskGetBusinessAPIExecutionDetailsItem(response1)
+		vItem1 := flattenTaskGetBusinessAPIExecutionDetailsV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetBusinessAPIExecutionDetails response",
+				"Failure when setting GetBusinessAPIExecutionDetailsV1 response",
 				err))
 			return diags
 		}
@@ -156,7 +156,7 @@ func dataSourceDnacaapManagementExecutionStatusRead(ctx context.Context, d *sche
 	return diags
 }
 
-func flattenTaskGetBusinessAPIExecutionDetailsItem(item *catalystcentersdkgo.ResponseTaskGetBusinessAPIExecutionDetails) []map[string]interface{} {
+func flattenTaskGetBusinessAPIExecutionDetailsV1Item(item *catalystcentersdkgo.ResponseTaskGetBusinessAPIExecutionDetailsV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

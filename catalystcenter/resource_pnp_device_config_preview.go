@@ -121,20 +121,18 @@ func resourcePnpDeviceConfigPreviewCreate(ctx context.Context, d *schema.Resourc
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestPnpDeviceConfigPreviewPreviewConfig(ctx, "parameters.0", d)
+	request1 := expandRequestPnpDeviceConfigPreviewPreviewConfigV1(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.DeviceOnboardingPnp.PreviewConfig(request1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.DeviceOnboardingPnp.PreviewConfigV1(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing PreviewConfig", err))
+			"Failure when executing PreviewConfigV1", err))
 		return diags
 	}
 
@@ -142,7 +140,7 @@ func resourcePnpDeviceConfigPreviewCreate(ctx context.Context, d *schema.Resourc
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing PreviewConfig", err))
+			"Failure when executing PreviewConfigV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -176,22 +174,24 @@ func resourcePnpDeviceConfigPreviewCreate(ctx context.Context, d *schema.Resourc
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing PreviewConfig", err1))
+				"Failure when executing PreviewConfigV1", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenDeviceOnboardingPnpPreviewConfigItem(response1.Response)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
+	vItem1 := flattenDeviceOnboardingPnpPreviewConfigV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting PreviewConfig response",
+			"Failure when setting PreviewConfigV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourcePnpDeviceConfigPreviewRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -206,8 +206,8 @@ func resourcePnpDeviceConfigPreviewDelete(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func expandRequestPnpDeviceConfigPreviewPreviewConfig(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpPreviewConfig {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpPreviewConfig{}
+func expandRequestPnpDeviceConfigPreviewPreviewConfigV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpPreviewConfigV1 {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpPreviewConfigV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_id")))) {
 		request.DeviceID = interfaceToString(v)
 	}
@@ -220,7 +220,7 @@ func expandRequestPnpDeviceConfigPreviewPreviewConfig(ctx context.Context, key s
 	return &request
 }
 
-func flattenDeviceOnboardingPnpPreviewConfigItem(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpPreviewConfigResponse) []map[string]interface{} {
+func flattenDeviceOnboardingPnpPreviewConfigV1Item(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpPreviewConfigV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

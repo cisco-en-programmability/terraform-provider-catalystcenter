@@ -57,27 +57,27 @@ func dataSourceNetworkDevicePollingIntervalRead(ctx context.Context, d *schema.R
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetPollingIntervalByID")
+		log.Printf("[DEBUG] Selected method: GetPollingIntervalByIDV1")
 		vvID := vID.(string)
 
-		response1, restyResp1, err := client.Devices.GetPollingIntervalByID(vvID)
+		response1, restyResp1, err := client.Devices.GetPollingIntervalByIDV1(vvID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetPollingIntervalByID", err,
-				"Failure at GetPollingIntervalByID, unexpected response", ""))
+				"Failure when executing 2 GetPollingIntervalByIDV1", err,
+				"Failure at GetPollingIntervalByIDV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesGetPollingIntervalByIDItem(response1)
+		vItem1 := flattenDevicesGetPollingIntervalByIDV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetPollingIntervalByID response",
+				"Failure when setting GetPollingIntervalByIDV1 response",
 				err))
 			return diags
 		}
@@ -89,7 +89,7 @@ func dataSourceNetworkDevicePollingIntervalRead(ctx context.Context, d *schema.R
 	return diags
 }
 
-func flattenDevicesGetPollingIntervalByIDItem(item *catalystcentersdkgo.ResponseDevicesGetPollingIntervalByID) []map[string]interface{} {
+func flattenDevicesGetPollingIntervalByIDV1Item(item *catalystcentersdkgo.ResponseDevicesGetPollingIntervalByIDV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

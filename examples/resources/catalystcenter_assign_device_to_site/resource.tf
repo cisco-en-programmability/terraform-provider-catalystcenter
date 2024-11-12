@@ -1,6 +1,6 @@
 
 resource "catalystcenter_assign_device_to_site" "example" {
-  provider = catalystcenter
+  provider = meraki
   site_id  = "string"
   parameters {
 

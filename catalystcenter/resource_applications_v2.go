@@ -777,16 +777,16 @@ func resourceApplicationsV2Create(ctx context.Context, d *schema.ResourceData, m
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters.0.payload"))
-	request1 := expandRequestApplicationsV2CreateApplications(ctx, "parameters.0", d)
+	request1 := expandRequestApplicationsV2CreateApplicationsV2(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vID := resourceItem["id"]
 	vvID := interfaceToString(vID)
 	vName := resourceItem["name"]
 	vvName := interfaceToString(vName)
-	queryParamImport := catalystcentersdkgo.GetApplicationsQueryParams{}
+	queryParamImport := catalystcentersdkgo.GetApplicationsV2QueryParams{}
 	queryParamImport.Name = vvName
-	item2, err := searchApplicationPolicyGetApplications(m, queryParamImport, "")
+	item2, err := searchApplicationPolicyGetApplicationsV2(m, queryParamImport, "")
 	if err == nil && item2 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["id"] = item2.ID
@@ -833,9 +833,9 @@ func resourceApplicationsV2Create(ctx context.Context, d *schema.ResourceData, m
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetApplicationsQueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetApplicationsV2QueryParams{}
 	queryParamValidate.Name = vvName
-	item3, err := searchApplicationPolicyGetApplications(m, queryParamValidate, vvID)
+	item3, err := searchApplicationPolicyGetApplicationsV2(m, queryParamValidate, vvID)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
 			"Failure when executing CreateApplications", err,
@@ -862,18 +862,18 @@ func resourceApplicationsV2Read(ctx context.Context, d *schema.ResourceData, m i
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetApplications")
-		queryParams1 := catalystcentersdkgo.GetApplicationsQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetApplicationsV2QueryParams{}
 		queryParams1.Name = vvName
-		item1, err := searchApplicationPolicyGetApplications(m, queryParams1, vvID)
+		item1, err := searchApplicationPolicyGetApplicationsV2(m, queryParams1, vvID)
 		if err != nil || item1 == nil {
 			d.SetId("")
 			return diags
 		}
 		// Review flatten function used
-		items := []catalystcentersdkgo.ResponseApplicationPolicyGetApplicationsResponse{
+		items := []catalystcentersdkgo.ResponseApplicationPolicyGetApplicationsV2Response{
 			*item1,
 		}
-		vItem1 := flattenApplicationPolicyGetApplicationsItems(&items)
+		vItem1 := flattenApplicationPolicyGetApplicationsV2Items(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetApplications search response",
@@ -893,7 +893,7 @@ func resourceApplicationsV2Update(ctx context.Context, d *schema.ResourceData, m
 	resourceMap := separateResourceID(resourceID)
 	vID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestApplicationsV2EditApplications(ctx, "parameters.0", d)
+		request1 := expandRequestApplicationsV2EditApplicationsV2(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		if request1 != nil && len(*request1) > 0 {
 			req := *request1
@@ -958,7 +958,9 @@ func resourceApplicationsV2Delete(ctx context.Context, d *schema.ResourceData, m
 	resourceID := d.Id()
 	resourceMap := separateResourceID(resourceID)
 	vvID := resourceMap["id"]
-	response1, restyResp1, err := client.ApplicationPolicy.DeleteApplication(vvID)
+	response1, restyResp1, err := client.ApplicationPolicy.DeleteApplication(&catalystcentersdkgo.DeleteApplicationV1QueryParams{
+		ID: vvID,
+	})
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] resty response for delete operation => %v", restyResp1.String())
@@ -1008,9 +1010,9 @@ func resourceApplicationsV2Delete(ctx context.Context, d *schema.ResourceData, m
 
 	return diags
 }
-func expandRequestApplicationsV2CreateApplications(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyCreateApplications {
-	request := catalystcentersdkgo.RequestApplicationPolicyCreateApplications{}
-	if v := expandRequestApplicationsV2CreateApplicationsItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestApplicationsV2CreateApplicationsV2(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyCreateApplicationsV2 {
+	request := catalystcentersdkgo.RequestApplicationPolicyCreateApplicationsV2{}
+	if v := expandRequestApplicationsV2CreateApplicationsV2ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -1019,8 +1021,8 @@ func expandRequestApplicationsV2CreateApplications(ctx context.Context, key stri
 	return &request
 }
 
-func expandRequestApplicationsV2CreateApplicationsItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateApplications {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateApplications{}
+func expandRequestApplicationsV2CreateApplicationsV2ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsV2 {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsV2{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1031,7 +1033,7 @@ func expandRequestApplicationsV2CreateApplicationsItemArray(ctx context.Context,
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestApplicationsV2CreateApplicationsItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestApplicationsV2CreateApplicationsV2Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1042,22 +1044,22 @@ func expandRequestApplicationsV2CreateApplicationsItemArray(ctx context.Context,
 	return &request
 }
 
-func expandRequestApplicationsV2CreateApplicationsItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplications {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateApplications{}
+func expandRequestApplicationsV2CreateApplicationsV2Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsV2 {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsV2{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".network_applications")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".network_applications")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".network_applications")))) {
-		request.NetworkApplications = expandRequestApplicationsV2CreateApplicationsItemNetworkApplicationsArray(ctx, key+".network_applications", d)
+		request.NetworkApplications = expandRequestApplicationsV2CreateApplicationsV2ItemNetworkApplicationsArray(ctx, key+".network_applications", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".parent_scalable_group")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".parent_scalable_group")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".parent_scalable_group")))) {
-		request.ParentScalableGroup = expandRequestApplicationsV2CreateApplicationsItemParentScalableGroup(ctx, key+".parent_scalable_group.0", d)
+		request.ParentScalableGroup = expandRequestApplicationsV2CreateApplicationsV2ItemParentScalableGroup(ctx, key+".parent_scalable_group.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".network_identity")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".network_identity")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".network_identity")))) {
-		request.NetworkIDentity = expandRequestApplicationsV2CreateApplicationsItemNetworkIDentityArray(ctx, key+".network_identity", d)
+		request.NetworkIDentity = expandRequestApplicationsV2CreateApplicationsV2ItemNetworkIDentityArray(ctx, key+".network_identity", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".indicative_network_identity")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".indicative_network_identity")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".indicative_network_identity")))) {
-		request.IndicativeNetworkIDentity = expandRequestApplicationsV2CreateApplicationsItemIndicativeNetworkIDentityArray(ctx, key+".indicative_network_identity", d)
+		request.IndicativeNetworkIDentity = expandRequestApplicationsV2CreateApplicationsV2ItemIndicativeNetworkIDentityArray(ctx, key+".indicative_network_identity", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".scalable_group_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".scalable_group_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".scalable_group_type")))) {
 		request.ScalableGroupType = interfaceToString(v)
@@ -1071,8 +1073,8 @@ func expandRequestApplicationsV2CreateApplicationsItem(ctx context.Context, key 
 	return &request
 }
 
-func expandRequestApplicationsV2CreateApplicationsItemNetworkApplicationsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsNetworkApplications {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsNetworkApplications{}
+func expandRequestApplicationsV2CreateApplicationsV2ItemNetworkApplicationsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsV2NetworkApplications {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsV2NetworkApplications{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1083,7 +1085,7 @@ func expandRequestApplicationsV2CreateApplicationsItemNetworkApplicationsArray(c
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestApplicationsV2CreateApplicationsItemNetworkApplications(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestApplicationsV2CreateApplicationsV2ItemNetworkApplications(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1094,8 +1096,8 @@ func expandRequestApplicationsV2CreateApplicationsItemNetworkApplicationsArray(c
 	return &request
 }
 
-func expandRequestApplicationsV2CreateApplicationsItemNetworkApplications(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsNetworkApplications {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsNetworkApplications{}
+func expandRequestApplicationsV2CreateApplicationsV2ItemNetworkApplications(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsV2NetworkApplications {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsV2NetworkApplications{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".help_string")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".help_string")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".help_string")))) {
 		request.HelpString = interfaceToString(v)
 	}
@@ -1138,8 +1140,8 @@ func expandRequestApplicationsV2CreateApplicationsItemNetworkApplications(ctx co
 	return &request
 }
 
-func expandRequestApplicationsV2CreateApplicationsItemParentScalableGroup(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsParentScalableGroup {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsParentScalableGroup{}
+func expandRequestApplicationsV2CreateApplicationsV2ItemParentScalableGroup(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsV2ParentScalableGroup {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsV2ParentScalableGroup{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id_ref")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id_ref")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id_ref")))) {
 		request.IDRef = interfaceToString(v)
 	}
@@ -1149,8 +1151,8 @@ func expandRequestApplicationsV2CreateApplicationsItemParentScalableGroup(ctx co
 	return &request
 }
 
-func expandRequestApplicationsV2CreateApplicationsItemNetworkIDentityArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsNetworkIDentity {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsNetworkIDentity{}
+func expandRequestApplicationsV2CreateApplicationsV2ItemNetworkIDentityArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsV2NetworkIDentity {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsV2NetworkIDentity{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1161,7 +1163,7 @@ func expandRequestApplicationsV2CreateApplicationsItemNetworkIDentityArray(ctx c
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestApplicationsV2CreateApplicationsItemNetworkIDentity(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestApplicationsV2CreateApplicationsV2ItemNetworkIDentity(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1172,8 +1174,8 @@ func expandRequestApplicationsV2CreateApplicationsItemNetworkIDentityArray(ctx c
 	return &request
 }
 
-func expandRequestApplicationsV2CreateApplicationsItemNetworkIDentity(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsNetworkIDentity {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsNetworkIDentity{}
+func expandRequestApplicationsV2CreateApplicationsV2ItemNetworkIDentity(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsV2NetworkIDentity {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsV2NetworkIDentity{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".protocol")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".protocol")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".protocol")))) {
 		request.Protocol = interfaceToString(v)
 	}
@@ -1195,8 +1197,8 @@ func expandRequestApplicationsV2CreateApplicationsItemNetworkIDentity(ctx contex
 	return &request
 }
 
-func expandRequestApplicationsV2CreateApplicationsItemIndicativeNetworkIDentityArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsIndicativeNetworkIDentity {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsIndicativeNetworkIDentity{}
+func expandRequestApplicationsV2CreateApplicationsV2ItemIndicativeNetworkIDentityArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsV2IndicativeNetworkIDentity {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsV2IndicativeNetworkIDentity{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1207,7 +1209,7 @@ func expandRequestApplicationsV2CreateApplicationsItemIndicativeNetworkIDentityA
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestApplicationsV2CreateApplicationsItemIndicativeNetworkIDentity(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestApplicationsV2CreateApplicationsV2ItemIndicativeNetworkIDentity(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1218,8 +1220,8 @@ func expandRequestApplicationsV2CreateApplicationsItemIndicativeNetworkIDentityA
 	return &request
 }
 
-func expandRequestApplicationsV2CreateApplicationsItemIndicativeNetworkIDentity(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsIndicativeNetworkIDentity {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsIndicativeNetworkIDentity{}
+func expandRequestApplicationsV2CreateApplicationsV2ItemIndicativeNetworkIDentity(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsV2IndicativeNetworkIDentity {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationsV2IndicativeNetworkIDentity{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".protocol")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".protocol")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".protocol")))) {
 		request.Protocol = interfaceToString(v)
 	}
@@ -1244,9 +1246,9 @@ func expandRequestApplicationsV2CreateApplicationsItemIndicativeNetworkIDentity(
 	return &request
 }
 
-func expandRequestApplicationsV2EditApplications(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyEditApplications {
-	request := catalystcentersdkgo.RequestApplicationPolicyEditApplications{}
-	if v := expandRequestApplicationsV2EditApplicationsItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestApplicationsV2EditApplicationsV2(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyEditApplicationsV2 {
+	request := catalystcentersdkgo.RequestApplicationPolicyEditApplicationsV2{}
+	if v := expandRequestApplicationsV2EditApplicationsV2ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -1255,8 +1257,8 @@ func expandRequestApplicationsV2EditApplications(ctx context.Context, key string
 	return &request
 }
 
-func expandRequestApplicationsV2EditApplicationsItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyEditApplications {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyEditApplications{}
+func expandRequestApplicationsV2EditApplicationsV2ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsV2 {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsV2{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1267,7 +1269,7 @@ func expandRequestApplicationsV2EditApplicationsItemArray(ctx context.Context, k
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestApplicationsV2EditApplicationsItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestApplicationsV2EditApplicationsV2Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1278,8 +1280,8 @@ func expandRequestApplicationsV2EditApplicationsItemArray(ctx context.Context, k
 	return &request
 }
 
-func expandRequestApplicationsV2EditApplicationsItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyEditApplications {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyEditApplications{}
+func expandRequestApplicationsV2EditApplicationsV2Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsV2 {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsV2{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -1293,7 +1295,7 @@ func expandRequestApplicationsV2EditApplicationsItem(ctx context.Context, key st
 		request.InstanceVersion = interfaceToFloat64Ptr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".indicative_network_identity")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".indicative_network_identity")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".indicative_network_identity")))) {
-		request.IndicativeNetworkIDentity = expandRequestApplicationsV2EditApplicationsItemIndicativeNetworkIDentityArray(ctx, key+".indicative_network_identity", d)
+		request.IndicativeNetworkIDentity = expandRequestApplicationsV2EditApplicationsV2ItemIndicativeNetworkIDentityArray(ctx, key+".indicative_network_identity", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
@@ -1302,13 +1304,13 @@ func expandRequestApplicationsV2EditApplicationsItem(ctx context.Context, key st
 		request.Namespace = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".network_applications")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".network_applications")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".network_applications")))) {
-		request.NetworkApplications = expandRequestApplicationsV2EditApplicationsItemNetworkApplicationsArray(ctx, key+".network_applications", d)
+		request.NetworkApplications = expandRequestApplicationsV2EditApplicationsV2ItemNetworkApplicationsArray(ctx, key+".network_applications", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".network_identity")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".network_identity")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".network_identity")))) {
-		request.NetworkIDentity = expandRequestApplicationsV2EditApplicationsItemNetworkIDentityArray(ctx, key+".network_identity", d)
+		request.NetworkIDentity = expandRequestApplicationsV2EditApplicationsV2ItemNetworkIDentityArray(ctx, key+".network_identity", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".parent_scalable_group")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".parent_scalable_group")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".parent_scalable_group")))) {
-		request.ParentScalableGroup = expandRequestApplicationsV2EditApplicationsItemParentScalableGroup(ctx, key+".parent_scalable_group.0", d)
+		request.ParentScalableGroup = expandRequestApplicationsV2EditApplicationsV2ItemParentScalableGroup(ctx, key+".parent_scalable_group.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".qualifier")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".qualifier")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".qualifier")))) {
 		request.Qualifier = interfaceToString(v)
@@ -1328,8 +1330,8 @@ func expandRequestApplicationsV2EditApplicationsItem(ctx context.Context, key st
 	return &request
 }
 
-func expandRequestApplicationsV2EditApplicationsItemIndicativeNetworkIDentityArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsIndicativeNetworkIDentity {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsIndicativeNetworkIDentity{}
+func expandRequestApplicationsV2EditApplicationsV2ItemIndicativeNetworkIDentityArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsV2IndicativeNetworkIDentity {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsV2IndicativeNetworkIDentity{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1340,7 +1342,7 @@ func expandRequestApplicationsV2EditApplicationsItemIndicativeNetworkIDentityArr
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestApplicationsV2EditApplicationsItemIndicativeNetworkIDentity(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestApplicationsV2EditApplicationsV2ItemIndicativeNetworkIDentity(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1351,8 +1353,8 @@ func expandRequestApplicationsV2EditApplicationsItemIndicativeNetworkIDentityArr
 	return &request
 }
 
-func expandRequestApplicationsV2EditApplicationsItemIndicativeNetworkIDentity(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsIndicativeNetworkIDentity {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsIndicativeNetworkIDentity{}
+func expandRequestApplicationsV2EditApplicationsV2ItemIndicativeNetworkIDentity(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsV2IndicativeNetworkIDentity {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsV2IndicativeNetworkIDentity{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -1377,8 +1379,8 @@ func expandRequestApplicationsV2EditApplicationsItemIndicativeNetworkIDentity(ct
 	return &request
 }
 
-func expandRequestApplicationsV2EditApplicationsItemNetworkApplicationsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsNetworkApplications {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsNetworkApplications{}
+func expandRequestApplicationsV2EditApplicationsV2ItemNetworkApplicationsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsV2NetworkApplications {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsV2NetworkApplications{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1389,7 +1391,7 @@ func expandRequestApplicationsV2EditApplicationsItemNetworkApplicationsArray(ctx
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestApplicationsV2EditApplicationsItemNetworkApplications(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestApplicationsV2EditApplicationsV2ItemNetworkApplications(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1400,8 +1402,8 @@ func expandRequestApplicationsV2EditApplicationsItemNetworkApplicationsArray(ctx
 	return &request
 }
 
-func expandRequestApplicationsV2EditApplicationsItemNetworkApplications(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsNetworkApplications {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsNetworkApplications{}
+func expandRequestApplicationsV2EditApplicationsV2ItemNetworkApplications(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsV2NetworkApplications {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsV2NetworkApplications{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -1462,8 +1464,8 @@ func expandRequestApplicationsV2EditApplicationsItemNetworkApplications(ctx cont
 	return &request
 }
 
-func expandRequestApplicationsV2EditApplicationsItemNetworkIDentityArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsNetworkIDentity {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsNetworkIDentity{}
+func expandRequestApplicationsV2EditApplicationsV2ItemNetworkIDentityArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsV2NetworkIDentity {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsV2NetworkIDentity{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1474,7 +1476,7 @@ func expandRequestApplicationsV2EditApplicationsItemNetworkIDentityArray(ctx con
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestApplicationsV2EditApplicationsItemNetworkIDentity(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestApplicationsV2EditApplicationsV2ItemNetworkIDentity(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1485,8 +1487,8 @@ func expandRequestApplicationsV2EditApplicationsItemNetworkIDentityArray(ctx con
 	return &request
 }
 
-func expandRequestApplicationsV2EditApplicationsItemNetworkIDentity(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsNetworkIDentity {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsNetworkIDentity{}
+func expandRequestApplicationsV2EditApplicationsV2ItemNetworkIDentity(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsV2NetworkIDentity {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsV2NetworkIDentity{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -1497,7 +1499,7 @@ func expandRequestApplicationsV2EditApplicationsItemNetworkIDentity(ctx context.
 		request.IPv4Subnet = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ipv6_subnet")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ipv6_subnet")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ipv6_subnet")))) {
-		request.IPv6Subnet = expandRequestApplicationsV2EditApplicationsItemNetworkIDentityIPv6SubnetArray(ctx, key+".ipv6_subnet", d)
+		request.IPv6Subnet = expandRequestApplicationsV2EditApplicationsV2ItemNetworkIDentityIPv6SubnetArray(ctx, key+".ipv6_subnet", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".lower_port")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".lower_port")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".lower_port")))) {
 		request.LowerPort = interfaceToFloat64Ptr(v)
@@ -1517,8 +1519,8 @@ func expandRequestApplicationsV2EditApplicationsItemNetworkIDentity(ctx context.
 	return &request
 }
 
-func expandRequestApplicationsV2EditApplicationsItemNetworkIDentityIPv6SubnetArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsNetworkIDentityIPv6Subnet {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsNetworkIDentityIPv6Subnet{}
+func expandRequestApplicationsV2EditApplicationsV2ItemNetworkIDentityIPv6SubnetArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsV2NetworkIDentityIPv6Subnet {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsV2NetworkIDentityIPv6Subnet{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1529,7 +1531,7 @@ func expandRequestApplicationsV2EditApplicationsItemNetworkIDentityIPv6SubnetArr
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestApplicationsV2EditApplicationsItemNetworkIDentityIPv6Subnet(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestApplicationsV2EditApplicationsV2ItemNetworkIDentityIPv6Subnet(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1540,8 +1542,8 @@ func expandRequestApplicationsV2EditApplicationsItemNetworkIDentityIPv6SubnetArr
 	return &request
 }
 
-func expandRequestApplicationsV2EditApplicationsItemNetworkIDentityIPv6Subnet(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsNetworkIDentityIPv6Subnet {
-	var request catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsNetworkIDentityIPv6Subnet
+func expandRequestApplicationsV2EditApplicationsV2ItemNetworkIDentityIPv6Subnet(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsV2NetworkIDentityIPv6Subnet {
+	var request catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsV2NetworkIDentityIPv6Subnet
 	request = d.Get(fixKeyAccess(key))
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -1549,8 +1551,8 @@ func expandRequestApplicationsV2EditApplicationsItemNetworkIDentityIPv6Subnet(ct
 	return &request
 }
 
-func expandRequestApplicationsV2EditApplicationsItemParentScalableGroup(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsParentScalableGroup {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsParentScalableGroup{}
+func expandRequestApplicationsV2EditApplicationsV2ItemParentScalableGroup(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsV2ParentScalableGroup {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyEditApplicationsV2ParentScalableGroup{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id_ref")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id_ref")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id_ref")))) {
 		request.IDRef = interfaceToString(v)
 	}
@@ -1558,4 +1560,46 @@ func expandRequestApplicationsV2EditApplicationsItemParentScalableGroup(ctx cont
 		return nil
 	}
 	return &request
+}
+
+func searchApplicationPolicyGetApplicationsV2(m interface{}, queryParams catalystcentersdkgo.GetApplicationsV2QueryParams, vID string) (*catalystcentersdkgo.ResponseApplicationPolicyGetApplicationsV2Response, error) {
+	client := m.(*catalystcentersdkgo.Client)
+	var err error
+	var foundItem *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationsV2Response
+	var ite *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationsV2
+	if vID != "" {
+		queryParams.Offset = 1
+		nResponse, _, err := client.ApplicationPolicy.GetApplicationsV2(nil)
+		maxPageSize := len(*nResponse.Response)
+		for len(*nResponse.Response) > 0 {
+			time.Sleep(15 * time.Second)
+			for _, item := range *nResponse.Response {
+				if vID == item.ID {
+					foundItem = &item
+					return foundItem, err
+				}
+			}
+			queryParams.Limit = float64(maxPageSize)
+			queryParams.Offset += float64(maxPageSize)
+			nResponse, _, err = client.ApplicationPolicy.GetApplicationsV2(&queryParams)
+		}
+		return nil, err
+	} else if queryParams.Name != "" {
+		ite, _, err = client.ApplicationPolicy.GetApplicationsV2(&queryParams)
+		if err != nil || ite == nil {
+			return foundItem, err
+		}
+		itemsCopy := *ite.Response
+		if itemsCopy == nil {
+			return foundItem, err
+		}
+		for _, item := range itemsCopy {
+			if item.Name == queryParams.Name {
+				foundItem = &item
+				return foundItem, err
+			}
+		}
+		return foundItem, err
+	}
+	return foundItem, err
 }

@@ -29,84 +29,84 @@ specs/blob/main/Assurance/CE_Cat_Center_Org-interfaces-1.0.2-resolved.yaml
 				Optional: true,
 			},
 			"interface_id": &schema.Schema{
-				Description: `interfaceId query parameter. The list of Interface Uuids. (Ex. '6bef213c-19ca-4170-8375-b694e251101c')
+				Description: `interfaceId query parameter. The list of Interface Uuids. (Ex. *6bef213c-19ca-4170-8375-b694e251101c*)
 Examples:
-'interfaceId=6bef213c-19ca-4170-8375-b694e251101c' (single interface uuid )
-'interfaceId=6bef213c-19ca-4170-8375-b694e251101c&32219612-819e-4b5e-a96b-cf22aca13dd9&2541e9a7-b80d-4955-8aa2-79b233318ba0' (multiple Interface uuid with & separator)
+*interfaceId=6bef213c-19ca-4170-8375-b694e251101c* (single interface uuid )
+*interfaceId=6bef213c-19ca-4170-8375-b694e251101c&32219612-819e-4b5e-a96b-cf22aca13dd9&2541e9a7-b80d-4955-8aa2-79b233318ba0* (multiple Interface uuid with & separator)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"interface_name": &schema.Schema{
-				Description: `interfaceName query parameter. The list of Interface name (Ex. 'GigabitEthernet1/0/1') This field supports wildcard ('*') character-based search.  Ex: '*1/0/1*' or '1/0/1*' or '*1/0/1'
+				Description: `interfaceName query parameter. The list of Interface name (Ex. *GigabitEthernet1/0/1*) This field supports wildcard (***) character-based search.  Ex: **1/0/1** or *1/0/1** or **1/0/1*
 Examples:
-'interfaceNames=GigabitEthernet1/0/1' (single interface name)
-'interfaceNames=GigabitEthernet1/0/1&GigabitEthernet2/0/1&GigabitEthernet3/0/1' (multiple interface names with & separator)
+*interfaceNames=GigabitEthernet1/0/1* (single interface name)
+*interfaceNames=GigabitEthernet1/0/1&GigabitEthernet2/0/1&GigabitEthernet3/0/1* (multiple interface names with & separator)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"network_device_id": &schema.Schema{
-				Description: `networkDeviceId query parameter. The list of Network Device Uuids. (Ex. '6bef213c-19ca-4170-8375-b694e251101c')
+				Description: `networkDeviceId query parameter. The list of Network Device Uuids. (Ex. *6bef213c-19ca-4170-8375-b694e251101c*)
 Examples:
-'networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c' (single networkDeviceId requested)
-'networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c&networkDeviceId=32219612-819e-4b5e-a96b-cf22aca13dd9&networkDeviceId=2541e9a7-b80d-4955-8aa2-79b233318ba0' (multiple networkDeviceIds with & separator)
+*networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c* (single networkDeviceId requested)
+*networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c&networkDeviceId=32219612-819e-4b5e-a96b-cf22aca13dd9&networkDeviceId=2541e9a7-b80d-4955-8aa2-79b233318ba0* (multiple networkDeviceIds with & separator)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"network_device_ip_address": &schema.Schema{
-				Description: `networkDeviceIpAddress query parameter. The list of Network Device management IP Address. (Ex. '121.1.1.10')
-This field supports wildcard ('*') character-based search.  Ex: '*1.1*' or '1.1*' or '*1.1'
+				Description: `networkDeviceIpAddress query parameter. The list of Network Device management IP Address. (Ex. *121.1.1.10*)
+This field supports wildcard (***) character-based search.  Ex: **1.1** or *1.1** or **1.1*
 Examples:
-'networkDeviceIpAddress=121.1.1.10'
-'networkDeviceIpAddress=121.1.1.10&networkDeviceIpAddress=172.20.1.10&networkDeviceIpAddress=10.10.20.10' (multiple networkDevice IP Address with & separator)
+*networkDeviceIpAddress=121.1.1.10*
+*networkDeviceIpAddress=121.1.1.10&networkDeviceIpAddress=172.20.1.10&networkDeviceIpAddress=10.10.20.10* (multiple networkDevice IP Address with & separator)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"network_device_mac_address": &schema.Schema{
-				Description: `networkDeviceMacAddress query parameter. The list of Network Device MAC Address. (Ex. '64:f6:9d:07:9a:00')
-This field supports wildcard ('*') character-based search.  Ex: '*AB:AB:AB*' or 'AB:AB:AB*' or '*AB:AB:AB'
+				Description: `networkDeviceMacAddress query parameter. The list of Network Device MAC Address. (Ex. *64:f6:9d:07:9a:00*)
+This field supports wildcard (***) character-based search.  Ex: **AB:AB:AB** or *AB:AB:AB** or **AB:AB:AB*
 Examples:
-'networkDeviceMacAddress=64:f6:9d:07:9a:00'
-'networkDeviceMacAddress=64:f6:9d:07:9a:00&networkDeviceMacAddress=70:56:9d:07:ac:77' (multiple networkDevice MAC addresses with & separator)
+*networkDeviceMacAddress=64:f6:9d:07:9a:00*
+*networkDeviceMacAddress=64:f6:9d:07:9a:00&networkDeviceMacAddress=70:56:9d:07:ac:77* (multiple networkDevice MAC addresses with & separator)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_hierarchy": &schema.Schema{
-				Description: `siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. 'Global/AreaName/BuildingName/FloorName')
-This field supports wildcard asterisk ('*') character search support. E.g. '*/San*, */San, /San*'
+				Description: `siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. *Global/AreaName/BuildingName/FloorName*)
+This field supports wildcard asterisk (***) character search support. E.g. **/San*, */San, /San**
 Examples:
-'?siteHierarchy=Global/AreaName/BuildingName/FloorName' (single siteHierarchy requested)
-'?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2' (multiple siteHierarchies requested)
+*?siteHierarchy=Global/AreaName/BuildingName/FloorName* (single siteHierarchy requested)
+*?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2* (multiple siteHierarchies requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_hierarchy_id": &schema.Schema{
-				Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. 'globalUuid/areaUuid/buildingUuid/floorUuid')
-This field supports wildcard asterisk ('*') character search support. E.g. '*uuid*, *uuid, uuid*'
+				Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. *globalUuid/areaUuid/buildingUuid/floorUuid*)
+This field supports wildcard asterisk (***) character search support. E.g. **uuid*, *uuid, uuid**
 Examples:
-'?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid '(single siteHierarchyId requested)
-'?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2' (multiple siteHierarchyIds requested)
+*?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid *(single siteHierarchyId requested)
+*?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2* (multiple siteHierarchyIds requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_id": &schema.Schema{
-				Description: `siteId query parameter. The UUID of the site. (Ex. 'flooruuid')
+				Description: `siteId query parameter. The UUID of the site. (Ex. *flooruuid*)
 Examples:
-'?siteId=id1' (single id requested)
-'?siteId=id1&siteId=id2&siteId=id3' (multiple ids requested)
+*?siteId=id1* (single id requested)
+*?siteId=id1&siteId=id2&siteId=id3* (multiple ids requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"start_time": &schema.Schema{
 				Description: `startTime query parameter. Start time from which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
-If 'startTime' is not provided, API will default to current time.
+If *startTime* is not provided, API will default to current time.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -147,8 +147,8 @@ func dataSourceInterfacesCountRead(ctx context.Context, d *schema.ResourceData, 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetsTheTotalNetworkDeviceInterfaceCountsInTheSpecifiedTimeRangeWhenThereIsNoStartAndEndTimeSpecifiedReturnsTheLatestInterfacesTotalCount")
-		queryParams1 := catalystcentersdkgo.GetsTheTotalNetworkDeviceInterfaceCountsInTheSpecifiedTimeRangeWhenThereIsNoStartAndEndTimeSpecifiedReturnsTheLatestInterfacesTotalCountQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetsTheTotalNetworkDeviceInterfaceCountsInTheSpecifiedTimeRangeWhenThereIsNoStartAndEndTimeSpecifiedReturnsTheLatestInterfacesTotalCountV1")
+		queryParams1 := catalystcentersdkgo.GetsTheTotalNetworkDeviceInterfaceCountsInTheSpecifiedTimeRangeWhenThereIsNoStartAndEndTimeSpecifiedReturnsTheLatestInterfacesTotalCountV1QueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -181,24 +181,24 @@ func dataSourceInterfacesCountRead(ctx context.Context, d *schema.ResourceData, 
 			queryParams1.InterfaceName = vInterfaceName.(string)
 		}
 
-		response1, restyResp1, err := client.Devices.GetsTheTotalNetworkDeviceInterfaceCountsInTheSpecifiedTimeRangeWhenThereIsNoStartAndEndTimeSpecifiedReturnsTheLatestInterfacesTotalCount(&queryParams1)
+		response1, restyResp1, err := client.Devices.GetsTheTotalNetworkDeviceInterfaceCountsInTheSpecifiedTimeRangeWhenThereIsNoStartAndEndTimeSpecifiedReturnsTheLatestInterfacesTotalCountV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetsTheTotalNetworkDeviceInterfaceCountsInTheSpecifiedTimeRangeWhenThereIsNoStartAndEndTimeSpecifiedReturnsTheLatestInterfacesTotalCount", err,
-				"Failure at GetsTheTotalNetworkDeviceInterfaceCountsInTheSpecifiedTimeRangeWhenThereIsNoStartAndEndTimeSpecifiedReturnsTheLatestInterfacesTotalCount, unexpected response", ""))
+				"Failure when executing 2 GetsTheTotalNetworkDeviceInterfaceCountsInTheSpecifiedTimeRangeWhenThereIsNoStartAndEndTimeSpecifiedReturnsTheLatestInterfacesTotalCountV1", err,
+				"Failure at GetsTheTotalNetworkDeviceInterfaceCountsInTheSpecifiedTimeRangeWhenThereIsNoStartAndEndTimeSpecifiedReturnsTheLatestInterfacesTotalCountV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesGetsTheTotalNetworkDeviceInterfaceCountsInTheSpecifiedTimeRangeWhenThereIsNoStartAndEndTimeSpecifiedReturnsTheLatestInterfacesTotalCountItem(response1.Response)
+		vItem1 := flattenDevicesGetsTheTotalNetworkDeviceInterfaceCountsInTheSpecifiedTimeRangeWhenThereIsNoStartAndEndTimeSpecifiedReturnsTheLatestInterfacesTotalCountV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetsTheTotalNetworkDeviceInterfaceCountsInTheSpecifiedTimeRangeWhenThereIsNoStartAndEndTimeSpecifiedReturnsTheLatestInterfacesTotalCount response",
+				"Failure when setting GetsTheTotalNetworkDeviceInterfaceCountsInTheSpecifiedTimeRangeWhenThereIsNoStartAndEndTimeSpecifiedReturnsTheLatestInterfacesTotalCountV1 response",
 				err))
 			return diags
 		}
@@ -210,7 +210,7 @@ func dataSourceInterfacesCountRead(ctx context.Context, d *schema.ResourceData, 
 	return diags
 }
 
-func flattenDevicesGetsTheTotalNetworkDeviceInterfaceCountsInTheSpecifiedTimeRangeWhenThereIsNoStartAndEndTimeSpecifiedReturnsTheLatestInterfacesTotalCountItem(item *catalystcentersdkgo.ResponseDevicesGetsTheTotalNetworkDeviceInterfaceCountsInTheSpecifiedTimeRangeWhenThereIsNoStartAndEndTimeSpecifiedReturnsTheLatestInterfacesTotalCountResponse) []map[string]interface{} {
+func flattenDevicesGetsTheTotalNetworkDeviceInterfaceCountsInTheSpecifiedTimeRangeWhenThereIsNoStartAndEndTimeSpecifiedReturnsTheLatestInterfacesTotalCountV1Item(item *catalystcentersdkgo.ResponseDevicesGetsTheTotalNetworkDeviceInterfaceCountsInTheSpecifiedTimeRangeWhenThereIsNoStartAndEndTimeSpecifiedReturnsTheLatestInterfacesTotalCountV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

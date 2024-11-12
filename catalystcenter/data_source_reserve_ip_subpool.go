@@ -281,8 +281,8 @@ func dataSourceReserveIPSubpoolRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetReserveIPSubpool")
-		queryParams1 := catalystcentersdkgo.GetReserveIPSubpoolQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetReserveIPSubpoolV1")
+		queryParams1 := catalystcentersdkgo.GetReserveIPSubpoolV1QueryParams{}
 
 		if okSiteID {
 			queryParams1.SiteID = vSiteID.(string)
@@ -303,24 +303,24 @@ func dataSourceReserveIPSubpoolRead(ctx context.Context, d *schema.ResourceData,
 			queryParams1.GroupName = vGroupName.(string)
 		}
 
-		response1, restyResp1, err := client.NetworkSettings.GetReserveIPSubpool(&queryParams1)
+		response1, restyResp1, err := client.NetworkSettings.GetReserveIPSubpoolV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetReserveIPSubpool", err,
-				"Failure at GetReserveIPSubpool, unexpected response", ""))
+				"Failure when executing 2 GetReserveIPSubpoolV1", err,
+				"Failure at GetReserveIPSubpoolV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenNetworkSettingsGetReserveIPSubpoolItems(response1.Response)
+		vItems1 := flattenNetworkSettingsGetReserveIPSubpoolV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetReserveIPSubpool response",
+				"Failure when setting GetReserveIPSubpoolV1 response",
 				err))
 			return diags
 		}
@@ -332,7 +332,7 @@ func dataSourceReserveIPSubpoolRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenNetworkSettingsGetReserveIPSubpoolItems(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetReserveIPSubpoolResponse) []map[string]interface{} {
+func flattenNetworkSettingsGetReserveIPSubpoolV1Items(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetReserveIPSubpoolV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -341,7 +341,7 @@ func flattenNetworkSettingsGetReserveIPSubpoolItems(items *[]catalystcentersdkgo
 		respItem := make(map[string]interface{})
 		respItem["id"] = item.ID
 		respItem["group_name"] = item.GroupName
-		respItem["ip_pools"] = flattenNetworkSettingsGetReserveIPSubpoolItemsIPPools(item.IPPools)
+		respItem["ip_pools"] = flattenNetworkSettingsGetReserveIPSubpoolV1ItemsIPPools(item.IPPools)
 		respItem["site_id"] = item.SiteID
 		respItem["site_hierarchy"] = item.SiteHierarchy
 		respItem["type"] = item.Type
@@ -350,8 +350,7 @@ func flattenNetworkSettingsGetReserveIPSubpoolItems(items *[]catalystcentersdkgo
 	}
 	return respItems
 }
-
-func flattenNetworkSettingsGetReserveIPSubpoolParameters(items *catalystcentersdkgo.RequestNetworkSettingsReserveIPSubpool) []map[string]interface{} {
+func flattenNetworkSettingsGetReserveIPSubpoolParameters(items *catalystcentersdkgo.RequestNetworkSettingsReserveIPSubpoolV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -405,8 +404,7 @@ func flattenNetworkSettingsGetReserveIPSubpoolParametersDnsServers(items []strin
 	}
 	return respItems
 }
-
-func flattenNetworkSettingsGetReserveIPSubpoolItemsIPPools(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetReserveIPSubpoolResponseIPPools) []map[string]interface{} {
+func flattenNetworkSettingsGetReserveIPSubpoolV1ItemsIPPools(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetReserveIPSubpoolV1ResponseIPPools) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -414,7 +412,7 @@ func flattenNetworkSettingsGetReserveIPSubpoolItemsIPPools(items *[]catalystcent
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["ip_pool_name"] = item.IPPoolName
-		respItem["dhcp_server_ips"] = flattenNetworkSettingsGetReserveIPSubpoolItemsIPPoolsDhcpServerIPs(item.DhcpServerIPs)
+		respItem["dhcp_server_ips"] = flattenNetworkSettingsGetReserveIPSubpoolV1ItemsIPPoolsDhcpServerIPs(item.DhcpServerIPs)
 		respItem["gateways"] = item.Gateways
 		respItem["create_time"] = item.CreateTime
 		respItem["last_update_time"] = item.LastUpdateTime
@@ -426,10 +424,10 @@ func flattenNetworkSettingsGetReserveIPSubpoolItemsIPPools(items *[]catalystcent
 		respItem["overlapping"] = boolPtrToString(item.Overlapping)
 		respItem["configure_external_dhcp"] = boolPtrToString(item.ConfigureExternalDhcp)
 		respItem["used_percentage"] = item.UsedPercentage
-		respItem["client_options"] = flattenNetworkSettingsGetReserveIPSubpoolItemsIPPoolsClientOptions(item.ClientOptions)
+		respItem["client_options"] = flattenNetworkSettingsGetReserveIPSubpoolV1ItemsIPPoolsClientOptions(item.ClientOptions)
 		respItem["group_uuid"] = item.GroupUUID
-		respItem["dns_server_ips"] = flattenNetworkSettingsGetReserveIPSubpoolItemsIPPoolsDNSServerIPs(item.DNSServerIPs)
-		respItem["context"] = flattenNetworkSettingsGetReserveIPSubpoolItemsIPPoolsContext(item.Context)
+		respItem["dns_server_ips"] = flattenNetworkSettingsGetReserveIPSubpoolV1ItemsIPPoolsDNSServerIPs(item.DNSServerIPs)
+		respItem["context"] = flattenNetworkSettingsGetReserveIPSubpoolV1ItemsIPPoolsContext(item.Context)
 		respItem["ipv6"] = boolPtrToString(item.IPv6)
 		respItem["id"] = item.ID
 		respItem["ip_pool_cidr"] = item.IPPoolCidr
@@ -438,7 +436,7 @@ func flattenNetworkSettingsGetReserveIPSubpoolItemsIPPools(items *[]catalystcent
 	return respItems
 }
 
-func flattenNetworkSettingsGetReserveIPSubpoolItemsIPPoolsDhcpServerIPs(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetReserveIPSubpoolResponseIPPoolsDhcpServerIPs) []interface{} {
+func flattenNetworkSettingsGetReserveIPSubpoolV1ItemsIPPoolsDhcpServerIPs(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetReserveIPSubpoolV1ResponseIPPoolsDhcpServerIPs) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -450,7 +448,7 @@ func flattenNetworkSettingsGetReserveIPSubpoolItemsIPPoolsDhcpServerIPs(items *[
 	return respItems
 }
 
-func flattenNetworkSettingsGetReserveIPSubpoolItemsIPPoolsClientOptions(item *catalystcentersdkgo.ResponseNetworkSettingsGetReserveIPSubpoolResponseIPPoolsClientOptions) interface{} {
+func flattenNetworkSettingsGetReserveIPSubpoolV1ItemsIPPoolsClientOptions(item *catalystcentersdkgo.ResponseNetworkSettingsGetReserveIPSubpoolV1ResponseIPPoolsClientOptions) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -460,7 +458,7 @@ func flattenNetworkSettingsGetReserveIPSubpoolItemsIPPoolsClientOptions(item *ca
 
 }
 
-func flattenNetworkSettingsGetReserveIPSubpoolItemsIPPoolsDNSServerIPs(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetReserveIPSubpoolResponseIPPoolsDNSServerIPs) []interface{} {
+func flattenNetworkSettingsGetReserveIPSubpoolV1ItemsIPPoolsDNSServerIPs(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetReserveIPSubpoolV1ResponseIPPoolsDNSServerIPs) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -472,7 +470,7 @@ func flattenNetworkSettingsGetReserveIPSubpoolItemsIPPoolsDNSServerIPs(items *[]
 	return respItems
 }
 
-func flattenNetworkSettingsGetReserveIPSubpoolItemsIPPoolsContext(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetReserveIPSubpoolResponseIPPoolsContext) []map[string]interface{} {
+func flattenNetworkSettingsGetReserveIPSubpoolV1ItemsIPPoolsContext(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetReserveIPSubpoolV1ResponseIPPoolsContext) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -97,32 +97,32 @@ func dataSourceNetworkDeviceInterfacePoeRead(ctx context.Context, d *schema.Reso
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: ReturnsPoeInterfaceDetailsForTheDevice")
+		log.Printf("[DEBUG] Selected method: ReturnsPoeInterfaceDetailsForTheDeviceV1")
 		vvDeviceUUID := vDeviceUUID.(string)
-		queryParams1 := catalystcentersdkgo.ReturnsPoeInterfaceDetailsForTheDeviceQueryParams{}
+		queryParams1 := catalystcentersdkgo.ReturnsPoeInterfaceDetailsForTheDeviceV1QueryParams{}
 
 		if okInterfaceNameList {
 			queryParams1.InterfaceNameList = vInterfaceNameList.(string)
 		}
 
-		response1, restyResp1, err := client.Devices.ReturnsPoeInterfaceDetailsForTheDevice(vvDeviceUUID, &queryParams1)
+		response1, restyResp1, err := client.Devices.ReturnsPoeInterfaceDetailsForTheDeviceV1(vvDeviceUUID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 ReturnsPoeInterfaceDetailsForTheDevice", err,
-				"Failure at ReturnsPoeInterfaceDetailsForTheDevice, unexpected response", ""))
+				"Failure when executing 2 ReturnsPoeInterfaceDetailsForTheDeviceV1", err,
+				"Failure at ReturnsPoeInterfaceDetailsForTheDeviceV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesReturnsPoeInterfaceDetailsForTheDeviceItems(response1.Response)
+		vItems1 := flattenDevicesReturnsPoeInterfaceDetailsForTheDeviceV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting ReturnsPoeInterfaceDetailsForTheDevice response",
+				"Failure when setting ReturnsPoeInterfaceDetailsForTheDeviceV1 response",
 				err))
 			return diags
 		}
@@ -134,7 +134,7 @@ func dataSourceNetworkDeviceInterfacePoeRead(ctx context.Context, d *schema.Reso
 	return diags
 }
 
-func flattenDevicesReturnsPoeInterfaceDetailsForTheDeviceItems(items *[]catalystcentersdkgo.ResponseDevicesReturnsPoeInterfaceDetailsForTheDeviceResponse) []map[string]interface{} {
+func flattenDevicesReturnsPoeInterfaceDetailsForTheDeviceV1Items(items *[]catalystcentersdkgo.ResponseDevicesReturnsPoeInterfaceDetailsForTheDeviceV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

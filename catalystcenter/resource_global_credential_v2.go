@@ -1170,6 +1170,9 @@ func expandRequestGlobalCredentialV2CreateGlobalCredentialsV2HTTPSReadArray(ctx 
 
 func expandRequestGlobalCredentialV2CreateGlobalCredentialsV2HTTPSRead(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryCreateGlobalCredentialsV2HTTPSRead {
 	request := catalystcentersdkgo.RequestDiscoveryCreateGlobalCredentialsV2HTTPSRead{}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".description")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".description")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".description")))) {
+		request.Description = interfaceToString(v)
+	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".username")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".username")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".username")))) {
 		request.Username = interfaceToString(v)
 	}
@@ -1210,6 +1213,9 @@ func expandRequestGlobalCredentialV2CreateGlobalCredentialsV2HTTPSWriteArray(ctx
 
 func expandRequestGlobalCredentialV2CreateGlobalCredentialsV2HTTPSWrite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryCreateGlobalCredentialsV2HTTPSWrite {
 	request := catalystcentersdkgo.RequestDiscoveryCreateGlobalCredentialsV2HTTPSWrite{}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".description")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".description")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".description")))) {
+		request.Description = interfaceToString(v)
+	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".username")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".username")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".username")))) {
 		request.Username = interfaceToString(v)
 	}
@@ -1342,6 +1348,9 @@ func expandRequestGlobalCredentialV2UpdateGlobalCredentialsV2SNMPV3(ctx context.
 
 func expandRequestGlobalCredentialV2UpdateGlobalCredentialsV2HTTPSRead(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdateGlobalCredentialsV2HTTPSRead {
 	request := catalystcentersdkgo.RequestDiscoveryUpdateGlobalCredentialsV2HTTPSRead{}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".description")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".description")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".description")))) {
+		request.Description = interfaceToString(v)
+	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".username")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".username")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".username")))) {
 		request.Username = interfaceToString(v)
 	}
@@ -1362,6 +1371,9 @@ func expandRequestGlobalCredentialV2UpdateGlobalCredentialsV2HTTPSRead(ctx conte
 
 func expandRequestGlobalCredentialV2UpdateGlobalCredentialsV2HTTPSWrite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdateGlobalCredentialsV2HTTPSWrite {
 	request := catalystcentersdkgo.RequestDiscoveryUpdateGlobalCredentialsV2HTTPSWrite{}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".description")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".description")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".description")))) {
+		request.Description = interfaceToString(v)
+	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".username")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".username")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".username")))) {
 		request.Username = interfaceToString(v)
 	}

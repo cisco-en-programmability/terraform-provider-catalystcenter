@@ -122,35 +122,31 @@ func resourceClientsQueryCountCreate(ctx context.Context, d *schema.ResourceData
 
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
-	request1 := expandRequestClientsQueryCountRetrievesTheNumberOfClientsByApplyingComplexFilters(ctx, "parameters.0", d)
+	request1 := expandRequestClientsQueryCountRetrievesTheNumberOfClientsByApplyingComplexFiltersV1(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.RetrievesTheNumberOfClientsByApplyingComplexFiltersHeaderParams{}
+	headerParams1 := catalystcentersdkgo.RetrievesTheNumberOfClientsByApplyingComplexFiltersV1HeaderParams{}
 
 	headerParams1.XCaLLERID = vXCaLLERID.(string)
 
-	response1, restyResp1, err := client.Clients.RetrievesTheNumberOfClientsByApplyingComplexFilters(request1, &headerParams1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Clients.RetrievesTheNumberOfClientsByApplyingComplexFiltersV1(request1, &headerParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing RetrievesTheNumberOfClientsByApplyingComplexFilters", err))
+			"Failure when executing RetrievesTheNumberOfClientsByApplyingComplexFiltersV1", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	//Analizar verificacion.
-
-	vItem1 := flattenClientsRetrievesTheNumberOfClientsByApplyingComplexFiltersItem(response1.Response)
+	vItem1 := flattenClientsRetrievesTheNumberOfClientsByApplyingComplexFiltersV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting RetrievesTheNumberOfClientsByApplyingComplexFilters response",
+			"Failure when setting RetrievesTheNumberOfClientsByApplyingComplexFiltersV1 response",
 			err))
 		return diags
 	}
@@ -172,8 +168,8 @@ func resourceClientsQueryCountDelete(ctx context.Context, d *schema.ResourceData
 	return diags
 }
 
-func expandRequestClientsQueryCountRetrievesTheNumberOfClientsByApplyingComplexFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheNumberOfClientsByApplyingComplexFilters {
-	request := catalystcentersdkgo.RequestClientsRetrievesTheNumberOfClientsByApplyingComplexFilters{}
+func expandRequestClientsQueryCountRetrievesTheNumberOfClientsByApplyingComplexFiltersV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheNumberOfClientsByApplyingComplexFiltersV1 {
+	request := catalystcentersdkgo.RequestClientsRetrievesTheNumberOfClientsByApplyingComplexFiltersV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -181,13 +177,13 @@ func expandRequestClientsQueryCountRetrievesTheNumberOfClientsByApplyingComplexF
 		request.EndTime = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestClientsQueryCountRetrievesTheNumberOfClientsByApplyingComplexFiltersFiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestClientsQueryCountRetrievesTheNumberOfClientsByApplyingComplexFiltersV1FiltersArray(ctx, key+".filters", d)
 	}
 	return &request
 }
 
-func expandRequestClientsQueryCountRetrievesTheNumberOfClientsByApplyingComplexFiltersFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestClientsRetrievesTheNumberOfClientsByApplyingComplexFiltersFilters {
-	request := []catalystcentersdkgo.RequestClientsRetrievesTheNumberOfClientsByApplyingComplexFiltersFilters{}
+func expandRequestClientsQueryCountRetrievesTheNumberOfClientsByApplyingComplexFiltersV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestClientsRetrievesTheNumberOfClientsByApplyingComplexFiltersV1Filters {
+	request := []catalystcentersdkgo.RequestClientsRetrievesTheNumberOfClientsByApplyingComplexFiltersV1Filters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -198,7 +194,7 @@ func expandRequestClientsQueryCountRetrievesTheNumberOfClientsByApplyingComplexF
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestClientsQueryCountRetrievesTheNumberOfClientsByApplyingComplexFiltersFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestClientsQueryCountRetrievesTheNumberOfClientsByApplyingComplexFiltersV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -206,8 +202,8 @@ func expandRequestClientsQueryCountRetrievesTheNumberOfClientsByApplyingComplexF
 	return &request
 }
 
-func expandRequestClientsQueryCountRetrievesTheNumberOfClientsByApplyingComplexFiltersFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheNumberOfClientsByApplyingComplexFiltersFilters {
-	request := catalystcentersdkgo.RequestClientsRetrievesTheNumberOfClientsByApplyingComplexFiltersFilters{}
+func expandRequestClientsQueryCountRetrievesTheNumberOfClientsByApplyingComplexFiltersV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestClientsRetrievesTheNumberOfClientsByApplyingComplexFiltersV1Filters {
+	request := catalystcentersdkgo.RequestClientsRetrievesTheNumberOfClientsByApplyingComplexFiltersV1Filters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -220,7 +216,7 @@ func expandRequestClientsQueryCountRetrievesTheNumberOfClientsByApplyingComplexF
 	return &request
 }
 
-func flattenClientsRetrievesTheNumberOfClientsByApplyingComplexFiltersItem(item *catalystcentersdkgo.ResponseClientsRetrievesTheNumberOfClientsByApplyingComplexFiltersResponse) []map[string]interface{} {
+func flattenClientsRetrievesTheNumberOfClientsByApplyingComplexFiltersV1Item(item *catalystcentersdkgo.ResponseClientsRetrievesTheNumberOfClientsByApplyingComplexFiltersV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

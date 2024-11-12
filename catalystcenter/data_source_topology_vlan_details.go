@@ -55,26 +55,26 @@ func dataSourceTopologyVLANDetailsRead(ctx context.Context, d *schema.ResourceDa
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetVLANDetails")
+		log.Printf("[DEBUG] Selected method: GetVLANDetailsV1")
 
-		response1, restyResp1, err := client.Topology.GetVLANDetails()
+		response1, restyResp1, err := client.Topology.GetVLANDetailsV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetVLANDetails", err,
-				"Failure at GetVLANDetails, unexpected response", ""))
+				"Failure when executing 2 GetVLANDetailsV1", err,
+				"Failure at GetVLANDetailsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenTopologyGetVLANDetailsItems(response1)
+		vItems1 := flattenTopologyGetVLANDetailsV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetVLANDetails response",
+				"Failure when setting GetVLANDetailsV1 response",
 				err))
 			return diags
 		}
@@ -86,7 +86,7 @@ func dataSourceTopologyVLANDetailsRead(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func flattenTopologyGetVLANDetailsItems(items *catalystcentersdkgo.ResponseTopologyGetVLANDetails) []map[string]interface{} {
+func flattenTopologyGetVLANDetailsV1Items(items *catalystcentersdkgo.ResponseTopologyGetVLANDetailsV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

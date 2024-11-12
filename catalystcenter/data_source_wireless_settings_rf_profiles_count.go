@@ -47,26 +47,26 @@ func dataSourceWirelessSettingsRfProfilesCountRead(ctx context.Context, d *schem
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetRfProfilesCount")
+		log.Printf("[DEBUG] Selected method: GetRfProfilesCountV1")
 
-		response1, restyResp1, err := client.Wireless.GetRfProfilesCount()
+		response1, restyResp1, err := client.Wireless.GetRfProfilesCountV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetRfProfilesCount", err,
-				"Failure at GetRfProfilesCount, unexpected response", ""))
+				"Failure when executing 2 GetRfProfilesCountV1", err,
+				"Failure at GetRfProfilesCountV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessGetRfProfilesCountItem(response1.Response)
+		vItem1 := flattenWirelessGetRfProfilesCountV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetRfProfilesCount response",
+				"Failure when setting GetRfProfilesCountV1 response",
 				err))
 			return diags
 		}
@@ -78,7 +78,7 @@ func dataSourceWirelessSettingsRfProfilesCountRead(ctx context.Context, d *schem
 	return diags
 }
 
-func flattenWirelessGetRfProfilesCountItem(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesCountResponse) []map[string]interface{} {
+func flattenWirelessGetRfProfilesCountV1Item(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesCountV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

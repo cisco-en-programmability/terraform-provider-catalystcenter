@@ -18,8 +18,8 @@ func resourceSitesTimeZoneSettings() *schema.Resource {
 	return &schema.Resource{
 		Description: `It manages read and update operations on Network Settings.
 
-- Set time zone settings for a site; 'null' values indicate that the setting will be inherited from the parent site;
-empty objects ('{}') indicate that the settings is unset.
+- Set time zone settings for a site; *null* values indicate that the setting will be inherited from the parent site;
+empty objects (*{}*) indicate that the settings is unset.
 `,
 
 		CreateContext: resourceSitesTimeZoneSettingsCreate,
@@ -133,7 +133,7 @@ func resourceSitesTimeZoneSettingsRead(ctx context.Context, d *schema.ResourceDa
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: RetrieveTimeZoneSettingsForASite")
 		vvID := vID
-		queryParams1 := catalystcentersdkgo.RetrieveTimeZoneSettingsForASiteQueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrieveTimeZoneSettingsForASiteV1QueryParams{}
 
 		response1, restyResp1, err := client.NetworkSettings.RetrieveTimeZoneSettingsForASite(vvID, &queryParams1)
 
@@ -147,7 +147,7 @@ func resourceSitesTimeZoneSettingsRead(ctx context.Context, d *schema.ResourceDa
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenNetworkSettingsRetrieveTimeZoneSettingsForASiteItem(response1.Response)
+		vItem1 := flattenNetworkSettingsRetrieveTimeZoneSettingsForASiteV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrieveTimeZoneSettingsForASite response",
@@ -171,7 +171,7 @@ func resourceSitesTimeZoneSettingsUpdate(ctx context.Context, d *schema.Resource
 	vvID := resourceMap["id"]
 
 	if d.HasChange("parameters") {
-		request1 := expandRequestSitesTimeZoneSettingsSetTimeZoneForASite(ctx, "parameters.0", d)
+		request1 := expandRequestSitesTimeZoneSettingsSetTimeZoneForASiteV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.NetworkSettings.SetTimeZoneForASite(vvID, request1)
 		if err != nil || response1 == nil {
@@ -230,17 +230,17 @@ func resourceSitesTimeZoneSettingsDelete(ctx context.Context, d *schema.Resource
 		"Failure at SitesTimeZoneSettingsDelete, unexpected response", ""))
 	return diags
 }
-func expandRequestSitesTimeZoneSettingsSetTimeZoneForASite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetTimeZoneForASite {
-	request := catalystcentersdkgo.RequestNetworkSettingsSetTimeZoneForASite{}
-	request.TimeZone = expandRequestSitesTimeZoneSettingsSetTimeZoneForASiteTimeZone(ctx, key, d)
+func expandRequestSitesTimeZoneSettingsSetTimeZoneForASiteV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetTimeZoneForASiteV1 {
+	request := catalystcentersdkgo.RequestNetworkSettingsSetTimeZoneForASiteV1{}
+	request.TimeZone = expandRequestSitesTimeZoneSettingsSetTimeZoneForASiteV1TimeZone(ctx, key, d)
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
 	}
 	return &request
 }
 
-func expandRequestSitesTimeZoneSettingsSetTimeZoneForASiteTimeZone(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetTimeZoneForASiteTimeZone {
-	request := catalystcentersdkgo.RequestNetworkSettingsSetTimeZoneForASiteTimeZone{}
+func expandRequestSitesTimeZoneSettingsSetTimeZoneForASiteV1TimeZone(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetTimeZoneForASiteV1TimeZone {
+	request := catalystcentersdkgo.RequestNetworkSettingsSetTimeZoneForASiteV1TimeZone{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".identifier")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".identifier")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".identifier")))) {
 		request.IDentifier = interfaceToString(v)
 	}

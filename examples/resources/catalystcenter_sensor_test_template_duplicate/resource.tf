@@ -1,6 +1,6 @@
 
 resource "catalystcenter_sensor_test_template_duplicate" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     new_template_name = "string"

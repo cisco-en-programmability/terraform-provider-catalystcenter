@@ -38,6 +38,11 @@ format available from content-disposition response header.
 				Type:     schema.TypeString,
 				Required: true,
 			},
+
+			"item": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -51,7 +56,7 @@ func dataSourceReportsExecutionsDownloadRead(ctx context.Context, d *schema.Reso
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: DownloadReportContent")
+		log.Printf("[DEBUG] Selected method: DownloadReportContentV1")
 		vvReportID := vReportID.(string)
 		vvExecutionID := vExecutionID.(string)
 
@@ -59,7 +64,8 @@ func dataSourceReportsExecutionsDownloadRead(ctx context.Context, d *schema.Reso
 
 		if err != nil {
 			diags = append(diags, diagError(
-				"Failure when executing DownloadReportContent", err))
+				"Failure when setting DownloadReportContentV1 response",
+				err))
 			return diags
 		}
 

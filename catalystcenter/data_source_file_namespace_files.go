@@ -111,27 +111,27 @@ func dataSourceFileNamespaceFilesRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetListOfFiles")
+		log.Printf("[DEBUG] Selected method: GetListOfFilesV1")
 		vvNameSpace := vNameSpace.(string)
 
-		response1, restyResp1, err := client.File.GetListOfFiles(vvNameSpace)
+		response1, restyResp1, err := client.File.GetListOfFilesV1(vvNameSpace)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetListOfFiles", err,
-				"Failure at GetListOfFiles, unexpected response", ""))
+				"Failure when executing 2 GetListOfFilesV1", err,
+				"Failure at GetListOfFilesV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenFileGetListOfFilesItems(response1.Response)
+		vItems1 := flattenFileGetListOfFilesV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetListOfFiles response",
+				"Failure when setting GetListOfFilesV1 response",
 				err))
 			return diags
 		}
@@ -143,14 +143,14 @@ func dataSourceFileNamespaceFilesRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenFileGetListOfFilesItems(items *[]catalystcentersdkgo.ResponseFileGetListOfFilesResponse) []map[string]interface{} {
+func flattenFileGetListOfFilesV1Items(items *[]catalystcentersdkgo.ResponseFileGetListOfFilesV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["attribute_info"] = flattenFileGetListOfFilesItemsAttributeInfo(item.AttributeInfo)
+		respItem["attribute_info"] = flattenFileGetListOfFilesV1ItemsAttributeInfo(item.AttributeInfo)
 		respItem["download_path"] = item.DownloadPath
 		respItem["encrypted"] = boolPtrToString(item.Encrypted)
 		respItem["file_format"] = item.FileFormat
@@ -159,7 +159,7 @@ func flattenFileGetListOfFilesItems(items *[]catalystcentersdkgo.ResponseFileGet
 		respItem["md5_checksum"] = item.Md5Checksum
 		respItem["name"] = item.Name
 		respItem["name_space"] = item.NameSpace
-		respItem["sftp_server_list"] = flattenFileGetListOfFilesItemsSftpServerList(item.SftpServerList)
+		respItem["sftp_server_list"] = flattenFileGetListOfFilesV1ItemsSftpServerList(item.SftpServerList)
 		respItem["sha1_checksum"] = item.Sha1Checksum
 		respItem["task_id"] = item.TaskID
 		respItems = append(respItems, respItem)
@@ -167,7 +167,7 @@ func flattenFileGetListOfFilesItems(items *[]catalystcentersdkgo.ResponseFileGet
 	return respItems
 }
 
-func flattenFileGetListOfFilesItemsAttributeInfo(item *catalystcentersdkgo.ResponseFileGetListOfFilesResponseAttributeInfo) interface{} {
+func flattenFileGetListOfFilesV1ItemsAttributeInfo(item *catalystcentersdkgo.ResponseFileGetListOfFilesV1ResponseAttributeInfo) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -177,7 +177,7 @@ func flattenFileGetListOfFilesItemsAttributeInfo(item *catalystcentersdkgo.Respo
 
 }
 
-func flattenFileGetListOfFilesItemsSftpServerList(items *[]catalystcentersdkgo.ResponseFileGetListOfFilesResponseSftpServerList) []interface{} {
+func flattenFileGetListOfFilesV1ItemsSftpServerList(items *[]catalystcentersdkgo.ResponseFileGetListOfFilesV1ResponseSftpServerList) []interface{} {
 	if items == nil {
 		return nil
 	}

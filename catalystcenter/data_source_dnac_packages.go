@@ -15,7 +15,7 @@ func dataSourceDnacPackages() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Platform.
 
-- Provides information such as name, version of packages installed on the Catalyst Center.
+- Provides information such as name, version of packages installed on the DNA center.
 `,
 
 		ReadContext: dataSourceDnacPackagesRead,
@@ -54,26 +54,26 @@ func dataSourceDnacPackagesRead(ctx context.Context, d *schema.ResourceData, m i
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: CiscoDnaCenterPackagesSummary")
+		log.Printf("[DEBUG] Selected method: CiscoDnaCenterPackagesSummaryV1")
 
-		response1, restyResp1, err := client.Platform.CiscoDnaCenterPackagesSummary()
+		response1, restyResp1, err := client.Platform.CiscoDnaCenterPackagesSummaryV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 CiscoDnaCenterPackagesSummary", err,
-				"Failure at CiscoDnaCenterPackagesSummary, unexpected response", ""))
+				"Failure when executing 2 CiscoDnaCenterPackagesSummaryV1", err,
+				"Failure at CiscoDnaCenterPackagesSummaryV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenPlatformCiscoDnaCenterPackagesSummaryItems(response1.Response)
+		vItems1 := flattenPlatformCiscoDnaCenterPackagesSummaryV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting CiscoDnaCenterPackagesSummary response",
+				"Failure when setting CiscoDnaCenterPackagesSummaryV1 response",
 				err))
 			return diags
 		}
@@ -85,7 +85,7 @@ func dataSourceDnacPackagesRead(ctx context.Context, d *schema.ResourceData, m i
 	return diags
 }
 
-func flattenPlatformCiscoDnaCenterPackagesSummaryItems(items *[]catalystcentersdkgo.ResponsePlatformCiscoDnaCenterPackagesSummaryResponse) []map[string]interface{} {
+func flattenPlatformCiscoDnaCenterPackagesSummaryV1Items(items *[]catalystcentersdkgo.ResponsePlatformCiscoDnaCenterPackagesSummaryV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -526,26 +526,26 @@ func dataSourceAppPolicyDefaultRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetApplicationPolicyDefault")
+		log.Printf("[DEBUG] Selected method: GetApplicationPolicyDefaultV1")
 
-		response1, restyResp1, err := client.ApplicationPolicy.GetApplicationPolicyDefault()
+		response1, restyResp1, err := client.ApplicationPolicy.GetApplicationPolicyDefaultV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetApplicationPolicyDefault", err,
-				"Failure at GetApplicationPolicyDefault, unexpected response", ""))
+				"Failure when executing 2 GetApplicationPolicyDefaultV1", err,
+				"Failure at GetApplicationPolicyDefaultV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenApplicationPolicyGetApplicationPolicyDefaultItems(response1.Response)
+		vItems1 := flattenApplicationPolicyGetApplicationPolicyDefaultV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetApplicationPolicyDefault response",
+				"Failure when setting GetApplicationPolicyDefaultV1 response",
 				err))
 			return diags
 		}
@@ -557,7 +557,7 @@ func dataSourceAppPolicyDefaultRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenApplicationPolicyGetApplicationPolicyDefaultItems(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyDefaultResponse) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationPolicyDefaultV1Items(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyDefaultV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -580,10 +580,10 @@ func flattenApplicationPolicyGetApplicationPolicyDefaultItems(items *[]catalystc
 		respItem["provisioning_state"] = item.ProvisioningState
 		respItem["qualifier"] = item.Qualifier
 		respItem["resource_version"] = item.ResourceVersion
-		respItem["target_id_list"] = flattenApplicationPolicyGetApplicationPolicyDefaultItemsTargetIDList(item.TargetIDList)
+		respItem["target_id_list"] = flattenApplicationPolicyGetApplicationPolicyDefaultV1ItemsTargetIDList(item.TargetIDList)
 		respItem["type"] = item.Type
-		respItem["cfs_change_info"] = flattenApplicationPolicyGetApplicationPolicyDefaultItemsCfsChangeInfo(item.CfsChangeInfo)
-		respItem["custom_provisions"] = flattenApplicationPolicyGetApplicationPolicyDefaultItemsCustomProvisions(item.CustomProvisions)
+		respItem["cfs_change_info"] = flattenApplicationPolicyGetApplicationPolicyDefaultV1ItemsCfsChangeInfo(item.CfsChangeInfo)
+		respItem["custom_provisions"] = flattenApplicationPolicyGetApplicationPolicyDefaultV1ItemsCustomProvisions(item.CustomProvisions)
 		respItem["delete_policy_status"] = item.DeletePolicyStatus
 		respItem["internal"] = boolPtrToString(item.Internal)
 		respItem["is_deleted"] = boolPtrToString(item.IsDeleted)
@@ -593,16 +593,16 @@ func flattenApplicationPolicyGetApplicationPolicyDefaultItems(items *[]catalystc
 		respItem["policy_status"] = item.PolicyStatus
 		respItem["priority"] = item.Priority
 		respItem["pushed"] = boolPtrToString(item.Pushed)
-		respItem["contract_list"] = flattenApplicationPolicyGetApplicationPolicyDefaultItemsContractList(item.ContractList)
-		respItem["exclusive_contract"] = flattenApplicationPolicyGetApplicationPolicyDefaultItemsExclusiveContract(item.ExclusiveContract)
-		respItem["identity_source"] = flattenApplicationPolicyGetApplicationPolicyDefaultItemsIDentitySource(item.IDentitySource)
-		respItem["producer"] = flattenApplicationPolicyGetApplicationPolicyDefaultItemsProducer(item.Producer)
+		respItem["contract_list"] = flattenApplicationPolicyGetApplicationPolicyDefaultV1ItemsContractList(item.ContractList)
+		respItem["exclusive_contract"] = flattenApplicationPolicyGetApplicationPolicyDefaultV1ItemsExclusiveContract(item.ExclusiveContract)
+		respItem["identity_source"] = flattenApplicationPolicyGetApplicationPolicyDefaultV1ItemsIDentitySource(item.IDentitySource)
+		respItem["producer"] = flattenApplicationPolicyGetApplicationPolicyDefaultV1ItemsProducer(item.Producer)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplicationPolicyDefaultItemsTargetIDList(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyDefaultResponseTargetIDList) []interface{} {
+func flattenApplicationPolicyGetApplicationPolicyDefaultV1ItemsTargetIDList(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyDefaultV1ResponseTargetIDList) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -614,7 +614,7 @@ func flattenApplicationPolicyGetApplicationPolicyDefaultItemsTargetIDList(items 
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplicationPolicyDefaultItemsCfsChangeInfo(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyDefaultResponseCfsChangeInfo) []interface{} {
+func flattenApplicationPolicyGetApplicationPolicyDefaultV1ItemsCfsChangeInfo(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyDefaultV1ResponseCfsChangeInfo) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -626,7 +626,7 @@ func flattenApplicationPolicyGetApplicationPolicyDefaultItemsCfsChangeInfo(items
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplicationPolicyDefaultItemsCustomProvisions(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyDefaultResponseCustomProvisions) []interface{} {
+func flattenApplicationPolicyGetApplicationPolicyDefaultV1ItemsCustomProvisions(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyDefaultV1ResponseCustomProvisions) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -638,7 +638,7 @@ func flattenApplicationPolicyGetApplicationPolicyDefaultItemsCustomProvisions(it
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplicationPolicyDefaultItemsContractList(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyDefaultResponseContractList) []interface{} {
+func flattenApplicationPolicyGetApplicationPolicyDefaultV1ItemsContractList(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyDefaultV1ResponseContractList) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -650,7 +650,7 @@ func flattenApplicationPolicyGetApplicationPolicyDefaultItemsContractList(items 
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplicationPolicyDefaultItemsExclusiveContract(item *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyDefaultResponseExclusiveContract) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationPolicyDefaultV1ItemsExclusiveContract(item *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyDefaultV1ResponseExclusiveContract) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -661,7 +661,7 @@ func flattenApplicationPolicyGetApplicationPolicyDefaultItemsExclusiveContract(i
 	respItem["instance_created_on"] = item.InstanceCreatedOn
 	respItem["instance_updated_on"] = item.InstanceUpdatedOn
 	respItem["instance_version"] = item.InstanceVersion
-	respItem["clause"] = flattenApplicationPolicyGetApplicationPolicyDefaultItemsExclusiveContractClause(item.Clause)
+	respItem["clause"] = flattenApplicationPolicyGetApplicationPolicyDefaultV1ItemsExclusiveContractClause(item.Clause)
 
 	return []map[string]interface{}{
 		respItem,
@@ -669,7 +669,7 @@ func flattenApplicationPolicyGetApplicationPolicyDefaultItemsExclusiveContract(i
 
 }
 
-func flattenApplicationPolicyGetApplicationPolicyDefaultItemsExclusiveContractClause(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyDefaultResponseExclusiveContractClause) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationPolicyDefaultV1ItemsExclusiveContractClause(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyDefaultV1ResponseExclusiveContractClause) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -690,7 +690,7 @@ func flattenApplicationPolicyGetApplicationPolicyDefaultItemsExclusiveContractCl
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplicationPolicyDefaultItemsIDentitySource(item *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyDefaultResponseIDentitySource) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationPolicyDefaultV1ItemsIDentitySource(item *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyDefaultV1ResponseIDentitySource) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -710,7 +710,7 @@ func flattenApplicationPolicyGetApplicationPolicyDefaultItemsIDentitySource(item
 
 }
 
-func flattenApplicationPolicyGetApplicationPolicyDefaultItemsProducer(item *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyDefaultResponseProducer) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationPolicyDefaultV1ItemsProducer(item *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyDefaultV1ResponseProducer) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -721,7 +721,7 @@ func flattenApplicationPolicyGetApplicationPolicyDefaultItemsProducer(item *cata
 	respItem["instance_created_on"] = item.InstanceCreatedOn
 	respItem["instance_updated_on"] = item.InstanceUpdatedOn
 	respItem["instance_version"] = item.InstanceVersion
-	respItem["scalable_group"] = flattenApplicationPolicyGetApplicationPolicyDefaultItemsProducerScalableGroup(item.ScalableGroup)
+	respItem["scalable_group"] = flattenApplicationPolicyGetApplicationPolicyDefaultV1ItemsProducerScalableGroup(item.ScalableGroup)
 
 	return []map[string]interface{}{
 		respItem,
@@ -729,7 +729,7 @@ func flattenApplicationPolicyGetApplicationPolicyDefaultItemsProducer(item *cata
 
 }
 
-func flattenApplicationPolicyGetApplicationPolicyDefaultItemsProducerScalableGroup(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyDefaultResponseProducerScalableGroup) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationPolicyDefaultV1ItemsProducerScalableGroup(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyDefaultV1ResponseProducerScalableGroup) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

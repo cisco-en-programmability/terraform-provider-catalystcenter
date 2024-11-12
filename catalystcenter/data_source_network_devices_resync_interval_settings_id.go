@@ -54,27 +54,27 @@ func dataSourceNetworkDevicesResyncIntervalSettingsIDRead(ctx context.Context, d
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetResyncIntervalForTheNetworkDevice")
+		log.Printf("[DEBUG] Selected method: GetResyncIntervalForTheNetworkDeviceV1")
 		vvID := vID.(string)
 
-		response1, restyResp1, err := client.Devices.GetResyncIntervalForTheNetworkDevice(vvID)
+		response1, restyResp1, err := client.Devices.GetResyncIntervalForTheNetworkDeviceV1(vvID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetResyncIntervalForTheNetworkDevice", err,
-				"Failure at GetResyncIntervalForTheNetworkDevice, unexpected response", ""))
+				"Failure when executing 2 GetResyncIntervalForTheNetworkDeviceV1", err,
+				"Failure at GetResyncIntervalForTheNetworkDeviceV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesGetResyncIntervalForTheNetworkDeviceItem(response1.Response)
+		vItem1 := flattenDevicesGetResyncIntervalForTheNetworkDeviceV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetResyncIntervalForTheNetworkDevice response",
+				"Failure when setting GetResyncIntervalForTheNetworkDeviceV1 response",
 				err))
 			return diags
 		}
@@ -86,7 +86,7 @@ func dataSourceNetworkDevicesResyncIntervalSettingsIDRead(ctx context.Context, d
 	return diags
 }
 
-func flattenDevicesGetResyncIntervalForTheNetworkDeviceItem(item *catalystcentersdkgo.ResponseDevicesGetResyncIntervalForTheNetworkDeviceResponse) []map[string]interface{} {
+func flattenDevicesGetResyncIntervalForTheNetworkDeviceV1Item(item *catalystcentersdkgo.ResponseDevicesGetResyncIntervalForTheNetworkDeviceV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

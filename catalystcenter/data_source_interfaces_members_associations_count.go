@@ -79,7 +79,7 @@ func dataSourceInterfacesMembersAssociationsCountRead(ctx context.Context, d *sc
 	return diags
 }
 
-func flattenTagRetrieveTheCountOfInterfacesThatAreAssociatedWithAtLeastOneTagItem(item *catalystcentersdkgo.ResponseTagRetrieveTheCountOfInterfacesThatAreAssociatedWithAtLeastOneTagResponse) []map[string]interface{} {
+func flattenTagRetrieveTheCountOfInterfacesThatAreAssociatedWithAtLeastOneTagItem(item *catalystcentersdkgo.ResponseTagRetrieveTheCountOfInterfacesThatAreAssociatedWithAtLeastOneTagV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

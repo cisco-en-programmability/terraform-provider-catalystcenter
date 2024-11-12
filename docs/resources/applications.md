@@ -23,8 +23,8 @@ It manages create, read, update and delete operations on Application Policy.
 resource "catalystcenter_applications" "example" {
   provider = catalystcenter
 
+
   parameters {
-    payload {
 
     application_set {
 
@@ -54,13 +54,12 @@ resource "catalystcenter_applications" "example" {
     }
     network_identity {
 
-        display_name = "string"
-        id           = "string"
-        lower_port   = "string"
-        ports        = "string"
-        protocol     = "string"
-        upper_port   = "string"
-      }
+      display_name = "string"
+      id           = "string"
+      lower_port   = "string"
+      ports        = "string"
+      protocol     = "string"
+      upper_port   = "string"
     }
   }
 }
@@ -75,7 +74,7 @@ output "catalystcenter_applications_example" {
 
 ### Optional
 
-- `parameters` (Block List) Array of RequestApplicationPolicyCreateApplication (see [below for nested schema](#nestedblock--parameters))
+- `parameters` (Block List) Array of RequestApplicationPolicyCreateApplicationV1 (see [below for nested schema](#nestedblock--parameters))
 
 ### Read-Only
 
@@ -88,7 +87,7 @@ output "catalystcenter_applications_example" {
 
 Optional:
 
-- `payload` (Block List) Array of RequestApplicationPolicyCreateApplication (see [below for nested schema](#nestedblock--parameters--payload))
+- `payload` (Block List) Array of RequestApplicationPolicyCreateApplicationV1 (see [below for nested schema](#nestedblock--parameters--payload))
 
 <a id="nestedblock--parameters--payload"></a>
 ### Nested Schema for `parameters.payload`

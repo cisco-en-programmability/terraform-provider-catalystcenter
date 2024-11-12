@@ -181,9 +181,9 @@ func dataSourceDiscoveryJobByIDRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetListOfDiscoveriesByDiscoveryID")
+		log.Printf("[DEBUG] Selected method: GetListOfDiscoveriesByDiscoveryIDV1")
 		vvID := vID.(string)
-		queryParams1 := catalystcentersdkgo.GetListOfDiscoveriesByDiscoveryIDQueryParams{}
+		queryParams1 := catalystcentersdkgo.GetListOfDiscoveriesByDiscoveryIDV1QueryParams{}
 
 		if okOffset {
 			queryParams1.Offset = vOffset.(int)
@@ -195,24 +195,24 @@ func dataSourceDiscoveryJobByIDRead(ctx context.Context, d *schema.ResourceData,
 			queryParams1.IPAddress = vIPAddress.(string)
 		}
 
-		response1, restyResp1, err := client.Discovery.GetListOfDiscoveriesByDiscoveryID(vvID, &queryParams1)
+		response1, restyResp1, err := client.Discovery.GetListOfDiscoveriesByDiscoveryIDV1(vvID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetListOfDiscoveriesByDiscoveryID", err,
-				"Failure at GetListOfDiscoveriesByDiscoveryID, unexpected response", ""))
+				"Failure when executing 2 GetListOfDiscoveriesByDiscoveryIDV1", err,
+				"Failure at GetListOfDiscoveriesByDiscoveryIDV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDiscoveryGetListOfDiscoveriesByDiscoveryIDItems(response1.Response)
+		vItems1 := flattenDiscoveryGetListOfDiscoveriesByDiscoveryIDV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetListOfDiscoveriesByDiscoveryID response",
+				"Failure when setting GetListOfDiscoveriesByDiscoveryIDV1 response",
 				err))
 			return diags
 		}
@@ -224,14 +224,14 @@ func dataSourceDiscoveryJobByIDRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenDiscoveryGetListOfDiscoveriesByDiscoveryIDItems(items *[]catalystcentersdkgo.ResponseDiscoveryGetListOfDiscoveriesByDiscoveryIDResponse) []map[string]interface{} {
+func flattenDiscoveryGetListOfDiscoveriesByDiscoveryIDV1Items(items *[]catalystcentersdkgo.ResponseDiscoveryGetListOfDiscoveriesByDiscoveryIDV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["attribute_info"] = flattenDiscoveryGetListOfDiscoveriesByDiscoveryIDItemsAttributeInfo(item.AttributeInfo)
+		respItem["attribute_info"] = flattenDiscoveryGetListOfDiscoveriesByDiscoveryIDV1ItemsAttributeInfo(item.AttributeInfo)
 		respItem["clistatus"] = item.Clistatus
 		respItem["discovery_status"] = item.DiscoveryStatus
 		respItem["end_time"] = item.EndTime
@@ -252,7 +252,7 @@ func flattenDiscoveryGetListOfDiscoveriesByDiscoveryIDItems(items *[]catalystcen
 	return respItems
 }
 
-func flattenDiscoveryGetListOfDiscoveriesByDiscoveryIDItemsAttributeInfo(item *catalystcentersdkgo.ResponseDiscoveryGetListOfDiscoveriesByDiscoveryIDResponseAttributeInfo) interface{} {
+func flattenDiscoveryGetListOfDiscoveriesByDiscoveryIDV1ItemsAttributeInfo(item *catalystcentersdkgo.ResponseDiscoveryGetListOfDiscoveriesByDiscoveryIDV1ResponseAttributeInfo) interface{} {
 	if item == nil {
 		return nil
 	}

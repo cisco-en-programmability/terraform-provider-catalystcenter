@@ -67,7 +67,7 @@ func resourceNetworkDevicesNetworkProfilesForSites() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 
 						"id": &schema.Schema{
-							Description: `id path parameter. The 'id' of the network profile, retrievable from 'GET /intent/api/v1/networkProfilesForSites'
+							Description: `id path parameter. The *id* of the network profile, retrievable from *GET /intent/api/v1/networkProfilesForSites*
 `,
 							Type:     schema.TypeString,
 							Required: true,
@@ -115,7 +115,7 @@ func resourceNetworkDevicesNetworkProfilesForSitesRead(ctx context.Context, d *s
 			return diags
 		}
 		// Review flatten function used
-		vItem1 := flattenSiteDesignRetrieveANetworkProfileForSitesByIDItem(response1.Response)
+		vItem1 := flattenSiteDesignRetrieveANetworkProfileForSitesByIDV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrievesTheListOfNetworkProfilesForSites search response",

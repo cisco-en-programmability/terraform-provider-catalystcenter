@@ -51,7 +51,7 @@ output "catalystcenter_network_device_custom_prompt_example" {
 
 Optional:
 
-- `password_prompt` (String, Sensitive) Password Prompt
+- `password_prompt` (String, Sensitive) Password for Custom Prompt
 - `username_prompt` (String) Username for Custom Prompt
 
 

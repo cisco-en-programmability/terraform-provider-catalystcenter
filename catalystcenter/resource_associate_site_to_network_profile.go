@@ -92,14 +92,16 @@ func resourceAssociateSiteToNetworkProfileCreate(ctx context.Context, d *schema.
 	vvNetworkProfileID := vNetworkProfileID.(string)
 	vvSiteID := vSiteID.(string)
 
-	response1, restyResp1, err := client.SiteDesign.Associate(vvNetworkProfileID, vvSiteID)
+	// has_unknown_response: None
+
+	response1, restyResp1, err := client.SiteDesign.AssociateV1(vvNetworkProfileID, vvSiteID)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing Associate", err))
+			"Failure when executing AssociateV1", err))
 		return diags
 	}
 
@@ -107,7 +109,7 @@ func resourceAssociateSiteToNetworkProfileCreate(ctx context.Context, d *schema.
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing Associate", err))
+			"Failure when executing AssociateV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -141,22 +143,20 @@ func resourceAssociateSiteToNetworkProfileCreate(ctx context.Context, d *schema.
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing Associate", err1))
+				"Failure when executing AssociateV1", err1))
 			return diags
 		}
 	}
-
-	vItem1 := flattenSiteDesignAssociateItem(response1.Response)
+	vItem1 := flattenSiteDesignAssociateV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting Associate response",
+			"Failure when setting AssociateV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceAssociateSiteToNetworkProfileRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -171,7 +171,7 @@ func resourceAssociateSiteToNetworkProfileDelete(ctx context.Context, d *schema.
 	return diags
 }
 
-func flattenSiteDesignAssociateItem(item *catalystcentersdkgo.ResponseSiteDesignAssociateResponse) []map[string]interface{} {
+func flattenSiteDesignAssociateV1Item(item *catalystcentersdkgo.ResponseSiteDesignAssociateV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

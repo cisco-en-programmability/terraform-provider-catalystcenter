@@ -71,14 +71,16 @@ func resourceNetworkDevicesResyncIntervalSettingsOverrideCreate(ctx context.Cont
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	response1, restyResp1, err := client.Devices.OverrideResyncInterval()
+	// has_unknown_response: None
+
+	response1, restyResp1, err := client.Devices.OverrideResyncIntervalV1()
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing OverrideResyncInterval", err))
+			"Failure when executing OverrideResyncIntervalV1", err))
 		return diags
 	}
 
@@ -86,7 +88,7 @@ func resourceNetworkDevicesResyncIntervalSettingsOverrideCreate(ctx context.Cont
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing OverrideResyncInterval", err))
+			"Failure when executing OverrideResyncIntervalV1", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -120,22 +122,20 @@ func resourceNetworkDevicesResyncIntervalSettingsOverrideCreate(ctx context.Cont
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing OverrideResyncInterval", err1))
+				"Failure when executing OverrideResyncIntervalV1", err1))
 			return diags
 		}
 	}
-
-	vItem1 := flattenDevicesOverrideResyncIntervalItem(response1.Response)
+	vItem1 := flattenDevicesOverrideResyncIntervalV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting OverrideResyncInterval response",
+			"Failure when setting OverrideResyncIntervalV1 response",
 			err))
 		return diags
 	}
 
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceNetworkDevicesResyncIntervalSettingsOverrideRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//client := m.(*catalystcentersdkgo.Client)
@@ -150,7 +150,7 @@ func resourceNetworkDevicesResyncIntervalSettingsOverrideDelete(ctx context.Cont
 	return diags
 }
 
-func flattenDevicesOverrideResyncIntervalItem(item *catalystcentersdkgo.ResponseDevicesOverrideResyncIntervalResponse) []map[string]interface{} {
+func flattenDevicesOverrideResyncIntervalV1Item(item *catalystcentersdkgo.ResponseDevicesOverrideResyncIntervalV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

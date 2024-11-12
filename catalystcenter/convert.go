@@ -3,7 +3,6 @@ package catalystcenter
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"strconv"
 )
 
@@ -92,22 +91,6 @@ func getResourceItem(item interface{}) *map[string]interface{} {
 	return &vvItem
 }
 
-func sliceInterfaceToSliceString(v []interface{}) []string {
-	newValue := []string{}
-	for _, v2 := range v {
-		value, ok := v2.([]interface{})
-		if !ok {
-			log.Print("sliceInterfaceToSliceString: Nil")
-			return nil
-		}
-
-		for _, i := range value {
-			newValue = append(newValue, interfaceToString(i))
-		}
-	}
-	return newValue
-}
-
 func interfaceToSliceString(v interface{}) []string {
 	value, ok := v.([]interface{})
 	if !ok {
@@ -136,11 +119,7 @@ func interfaceToSliceInt(v interface{}) *[]int {
 }
 
 func interfaceToString(v interface{}) string {
-	if v == nil {
-		return ""
-	} else {
-		return fmt.Sprint(v)
-	}
+	return fmt.Sprint(v)
 }
 
 func responseInterfaceToSliceString(v interface{}) []string {

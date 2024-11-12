@@ -101,18 +101,18 @@ func dataSourceNetworkDeviceCountRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceInterfaceCount")
+		log.Printf("[DEBUG] Selected method: GetDeviceInterfaceCountV1")
 		vvDeviceID := vDeviceID.(string)
 
-		response1, restyResp1, err := client.Devices.GetDeviceInterfaceCount(vvDeviceID)
+		response1, restyResp1, err := client.Devices.GetDeviceInterfaceCountV1(vvDeviceID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceInterfaceCount", err,
-				"Failure at GetDeviceInterfaceCount, unexpected response", ""))
+				"Failure when executing 2 GetDeviceInterfaceCountV1", err,
+				"Failure at GetDeviceInterfaceCountV1, unexpected response", ""))
 			return diags
 		}
 
@@ -120,8 +120,8 @@ func dataSourceNetworkDeviceCountRead(ctx context.Context, d *schema.ResourceDat
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetDeviceCount2")
-		queryParams2 := catalystcentersdkgo.GetDeviceCount2QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetDeviceCountKnowYourNetworkV1")
+		queryParams2 := catalystcentersdkgo.GetDeviceCountKnowYourNetworkV1QueryParams{}
 
 		if okHostname {
 			queryParams2.Hostname = interfaceToSliceString(vHostname)
@@ -136,24 +136,24 @@ func dataSourceNetworkDeviceCountRead(ctx context.Context, d *schema.ResourceDat
 			queryParams2.LocationName = interfaceToSliceString(vLocationName)
 		}
 
-		response2, restyResp2, err := client.Devices.GetDeviceCount2(&queryParams2)
+		response2, restyResp2, err := client.Devices.GetDeviceCountKnowYourNetworkV1(&queryParams2)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceCount2", err,
-				"Failure at GetDeviceCount2, unexpected response", ""))
+				"Failure when executing 2 GetDeviceCountKnowYourNetworkV1", err,
+				"Failure at GetDeviceCountKnowYourNetworkV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenDevicesGetDeviceCount2Item(response2)
+		vItem2 := flattenDevicesGetDeviceCountKnowYourNetworkV1Item(response2)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceCount2 response",
+				"Failure when setting GetDeviceCountKnowYourNetworkV1 response",
 				err))
 			return diags
 		}
@@ -165,7 +165,7 @@ func dataSourceNetworkDeviceCountRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenDevicesGetDeviceCount2Item(item *catalystcentersdkgo.ResponseDevicesGetDeviceCount2) []map[string]interface{} {
+func flattenDevicesGetDeviceCountKnowYourNetworkV1Item(item *catalystcentersdkgo.ResponseDevicesGetDeviceCountKnowYourNetworkV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

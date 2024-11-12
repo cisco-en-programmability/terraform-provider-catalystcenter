@@ -150,8 +150,8 @@ func dataSourceEventSubscriptionDetailsSyslogRead(ctx context.Context, d *schema
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSyslogSubscriptionDetails")
-		queryParams1 := catalystcentersdkgo.GetSyslogSubscriptionDetailsQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetSyslogSubscriptionDetailsV1")
+		queryParams1 := catalystcentersdkgo.GetSyslogSubscriptionDetailsV1QueryParams{}
 
 		if okName {
 			queryParams1.Name = vName.(string)
@@ -172,24 +172,24 @@ func dataSourceEventSubscriptionDetailsSyslogRead(ctx context.Context, d *schema
 			queryParams1.Order = vOrder.(string)
 		}
 
-		response1, restyResp1, err := client.EventManagement.GetSyslogSubscriptionDetails(&queryParams1)
+		response1, restyResp1, err := client.EventManagement.GetSyslogSubscriptionDetailsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSyslogSubscriptionDetails", err,
-				"Failure at GetSyslogSubscriptionDetails, unexpected response", ""))
+				"Failure when executing 2 GetSyslogSubscriptionDetailsV1", err,
+				"Failure at GetSyslogSubscriptionDetailsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenEventManagementGetSyslogSubscriptionDetailsItems(response1)
+		vItems1 := flattenEventManagementGetSyslogSubscriptionDetailsV1Items(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSyslogSubscriptionDetails response",
+				"Failure when setting GetSyslogSubscriptionDetailsV1 response",
 				err))
 			return diags
 		}
@@ -201,7 +201,7 @@ func dataSourceEventSubscriptionDetailsSyslogRead(ctx context.Context, d *schema
 	return diags
 }
 
-func flattenEventManagementGetSyslogSubscriptionDetailsItems(items *catalystcentersdkgo.ResponseEventManagementGetSyslogSubscriptionDetails) []map[string]interface{} {
+func flattenEventManagementGetSyslogSubscriptionDetailsV1Items(items *catalystcentersdkgo.ResponseEventManagementGetSyslogSubscriptionDetailsV1) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -212,13 +212,13 @@ func flattenEventManagementGetSyslogSubscriptionDetailsItems(items *catalystcent
 		respItem["name"] = item.Name
 		respItem["description"] = item.Description
 		respItem["connector_type"] = item.ConnectorType
-		respItem["syslog_config"] = flattenEventManagementGetSyslogSubscriptionDetailsItemsSyslogConfig(item.SyslogConfig)
+		respItem["syslog_config"] = flattenEventManagementGetSyslogSubscriptionDetailsV1ItemsSyslogConfig(item.SyslogConfig)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenEventManagementGetSyslogSubscriptionDetailsItemsSyslogConfig(item *catalystcentersdkgo.ResponseItemEventManagementGetSyslogSubscriptionDetailsSyslogConfig) []map[string]interface{} {
+func flattenEventManagementGetSyslogSubscriptionDetailsV1ItemsSyslogConfig(item *catalystcentersdkgo.ResponseItemEventManagementGetSyslogSubscriptionDetailsV1SyslogConfig) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

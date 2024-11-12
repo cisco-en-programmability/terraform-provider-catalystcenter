@@ -1,6 +1,6 @@
 
 resource "catalystcenter_business_sda_wireless_controller_create" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     device_name         = "string"

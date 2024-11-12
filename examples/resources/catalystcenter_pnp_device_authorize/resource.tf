@@ -1,6 +1,6 @@
 
 resource "catalystcenter_pnp_device_authorize" "example" {
-  provider = catalystcenter
+  provider = meraki
   parameters {
 
     device_id_list = ["string"]

@@ -124,31 +124,31 @@ func dataSourceSdaVirtualNetworkRead(ctx context.Context, d *schema.ResourceData
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetVnFromSdaFabric")
-		queryParams1 := catalystcentersdkgo.GetVnFromSdaFabricQueryParams{}
+		log.Printf("[DEBUG] Selected method: GetVnFromSdaFabricV1")
+		queryParams1 := catalystcentersdkgo.GetVnFromSdaFabricV1QueryParams{}
 
 		queryParams1.VirtualNetworkName = vVirtualNetworkName.(string)
 
 		queryParams1.SiteNameHierarchy = vSiteNameHierarchy.(string)
 
-		response1, restyResp1, err := client.Sda.GetVnFromSdaFabric(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetVnFromSdaFabricV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetVnFromSdaFabric", err,
-				"Failure at GetVnFromSdaFabric, unexpected response", ""))
+				"Failure when executing 2 GetVnFromSdaFabricV1", err,
+				"Failure at GetVnFromSdaFabricV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetVnFromSdaFabricItem(response1)
+		vItem1 := flattenSdaGetVnFromSdaFabricV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetVnFromSdaFabric response",
+				"Failure when setting GetVnFromSdaFabricV1 response",
 				err))
 			return diags
 		}
@@ -160,7 +160,7 @@ func dataSourceSdaVirtualNetworkRead(ctx context.Context, d *schema.ResourceData
 	return diags
 }
 
-func flattenSdaGetVnFromSdaFabricItem(item *catalystcentersdkgo.ResponseSdaGetVnFromSdaFabric) []map[string]interface{} {
+func flattenSdaGetVnFromSdaFabricV1Item(item *catalystcentersdkgo.ResponseSdaGetVnFromSdaFabricV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

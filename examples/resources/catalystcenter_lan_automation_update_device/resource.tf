@@ -1,6 +1,6 @@
 
 resource "catalystcenter_lan_automation_update_device" "example" {
-  provider = catalystcenter
+  provider = meraki
   feature  = "string"
   parameters {
 

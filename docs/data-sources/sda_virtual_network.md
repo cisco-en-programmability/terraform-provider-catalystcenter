@@ -4,14 +4,14 @@ page_title: "catalystcenter_sda_virtual_network Data Source - terraform-provider
 subcategory: ""
 description: |-
   It performs read operation on SDA.
-  Get virtual network (VN) from SDA Fabric
+  Get virtual network with scalable groups
 ---
 
 # catalystcenter_sda_virtual_network (Data Source)
 
 It performs read operation on SDA.
 
-- Get virtual network (VN) from SDA Fabric
+- Get virtual network with scalable groups
 
 ## Example Usage
 
@@ -32,7 +32,6 @@ output "catalystcenter_sda_virtual_network_example" {
 
 ### Required
 
-- `site_name_hierarchy` (String) siteNameHierarchy query parameter.
 - `virtual_network_name` (String) virtualNetworkName query parameter.
 
 ### Read-Only
@@ -47,11 +46,9 @@ Read-Only:
 
 - `description` (String)
 - `execution_id` (String)
-- `fabric_name` (String)
-- `is_default_vn` (String)
-- `is_infra_vn` (String)
-- `site_name_hierarchy` (String)
+- `is_guest_virtual_network` (String)
+- `scalable_group_names` (List of String)
 - `status` (String)
+- `v_manage_vpn_id` (String)
 - `virtual_network_context_id` (String)
-- `virtual_network_id` (String)
 - `virtual_network_name` (String)

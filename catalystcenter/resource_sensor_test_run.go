@@ -5,6 +5,8 @@ import (
 
 	"reflect"
 
+	"log"
+
 	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -56,18 +58,30 @@ func resourceSensorTestRun() *schema.Resource {
 func resourceSensorTestRunCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
-	request := expandRequestSensorTestRunRunNowSensorTest(ctx, "parameters.0", d)
-	response1, err := client.Sensors.RunNowSensorTest(request)
-	if err = d.Set("item", response1.String()); err != nil {
+
+	request1 := expandRequestSensorTestRunRunNowSensorTestV1(ctx, "parameters.0", d)
+
+	// has_unknown_response: True
+
+	response1, err := client.Sensors.RunNowSensorTestV1(request1)
+
+	if err != nil || response1 == nil {
+		d.SetId("")
+		return diags
+	}
+
+	log.Printf("[DEBUG] Retrieved response %s", response1.String())
+
+	//Analizar verificacion.
+
+	if err := d.Set("item", response1.String()); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting RunNowSensorTest response",
+			"Failure when setting RunNowSensorTestV1 response",
 			err))
 		return diags
 	}
 	d.SetId(getUnixTimeString())
 	return diags
-
-	//Analizar verificacion.
 
 }
 func resourceSensorTestRunRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
@@ -83,8 +97,8 @@ func resourceSensorTestRunDelete(ctx context.Context, d *schema.ResourceData, m 
 	return diags
 }
 
-func expandRequestSensorTestRunRunNowSensorTest(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsRunNowSensorTest {
-	request := catalystcentersdkgo.RequestSensorsRunNowSensorTest{}
+func expandRequestSensorTestRunRunNowSensorTestV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsRunNowSensorTestV1 {
+	request := catalystcentersdkgo.RequestSensorsRunNowSensorTestV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".template_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".template_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".template_name")))) {
 		request.TemplateName = interfaceToString(v)
 	}

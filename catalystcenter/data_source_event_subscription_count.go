@@ -53,29 +53,29 @@ func dataSourceEventSubscriptionCountRead(ctx context.Context, d *schema.Resourc
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: CountOfEventSubscriptions")
-		queryParams1 := catalystcentersdkgo.CountOfEventSubscriptionsQueryParams{}
+		log.Printf("[DEBUG] Selected method: CountOfEventSubscriptionsV1")
+		queryParams1 := catalystcentersdkgo.CountOfEventSubscriptionsV1QueryParams{}
 
 		queryParams1.EventIDs = vEventIDs.(string)
 
-		response1, restyResp1, err := client.EventManagement.CountOfEventSubscriptions(&queryParams1)
+		response1, restyResp1, err := client.EventManagement.CountOfEventSubscriptionsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 CountOfEventSubscriptions", err,
-				"Failure at CountOfEventSubscriptions, unexpected response", ""))
+				"Failure when executing 2 CountOfEventSubscriptionsV1", err,
+				"Failure at CountOfEventSubscriptionsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenEventManagementCountOfEventSubscriptionsItem(response1)
+		vItem1 := flattenEventManagementCountOfEventSubscriptionsV1Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting CountOfEventSubscriptions response",
+				"Failure when setting CountOfEventSubscriptionsV1 response",
 				err))
 			return diags
 		}
@@ -87,7 +87,7 @@ func dataSourceEventSubscriptionCountRead(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func flattenEventManagementCountOfEventSubscriptionsItem(item *catalystcentersdkgo.ResponseEventManagementCountOfEventSubscriptions) []map[string]interface{} {
+func flattenEventManagementCountOfEventSubscriptionsV1Item(item *catalystcentersdkgo.ResponseEventManagementCountOfEventSubscriptionsV1) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

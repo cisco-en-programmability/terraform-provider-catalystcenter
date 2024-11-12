@@ -52,7 +52,7 @@ output "catalystcenter_sda_fabric_site_example" {
 
 Optional:
 
-- `fabric_name` (String) Warning - Starting Catalyst Center 2.2.3.5 release, this field has been deprecated. SD-Access Fabric does not need it anymore.  It will be removed in future Catalyst Center releases.
+- `fabric_name` (String) Warning - Starting DNA Center 2.2.3.5 release, this field has been deprecated. SD-Access Fabric does not need it anymore.  It will be removed in future DNA Center releases.
 - `fabric_type` (String) Type of SD-Access Fabric. Allowed values are "FABRIC_SITE" or "FABRIC_ZONE".  Default value is "FABRIC_SITE".
 - `site_name_hierarchy` (String) Existing site name hierarchy available at global level. For Example "Global/Chicago/Building21/Floor1"
 

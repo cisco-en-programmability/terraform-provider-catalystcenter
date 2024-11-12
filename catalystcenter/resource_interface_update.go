@@ -159,32 +159,28 @@ func resourceInterfaceUpdateCreate(ctx context.Context, d *schema.ResourceData, 
 	vInterfaceUUID := resourceItem["interface_uuid"]
 
 	vvInterfaceUUID := vInterfaceUUID.(string)
-	request1 := expandRequestInterfaceUpdateUpdateInterfaceDetails(ctx, "parameters.0", d)
-	queryParams1 := catalystcentersdkgo.UpdateInterfaceDetailsQueryParams{}
+	request1 := expandRequestInterfaceUpdateUpdateInterfaceDetailsV1(ctx, "parameters.0", d)
+	queryParams1 := catalystcentersdkgo.UpdateInterfaceDetailsV1QueryParams{}
 
-	response1, restyResp1, err := client.Devices.UpdateInterfaceDetails(vvInterfaceUUID, request1, &queryParams1)
+	// has_unknown_response: None
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
+	response1, restyResp1, err := client.Devices.UpdateInterfaceDetailsV1(vvInterfaceUUID, request1, &queryParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing UpdateInterfaceDetails", err))
+			"Failure when executing UpdateInterfaceDetailsV1", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	//Analizar verificacion.
-
-	vItem1 := flattenDevicesUpdateInterfaceDetailsItem(response1.Response)
+	vItem1 := flattenDevicesUpdateInterfaceDetailsV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting UpdateInterfaceDetails response",
+			"Failure when setting UpdateInterfaceDetailsV1 response",
 			err))
 		return diags
 	}
@@ -206,8 +202,8 @@ func resourceInterfaceUpdateDelete(ctx context.Context, d *schema.ResourceData, 
 	return diags
 }
 
-func expandRequestInterfaceUpdateUpdateInterfaceDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateInterfaceDetails {
-	request := catalystcentersdkgo.RequestDevicesUpdateInterfaceDetails{}
+func expandRequestInterfaceUpdateUpdateInterfaceDetailsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateInterfaceDetailsV1 {
+	request := catalystcentersdkgo.RequestDevicesUpdateInterfaceDetailsV1{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".description")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".description")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".description")))) {
 		request.Description = interfaceToString(v)
 	}
@@ -223,26 +219,26 @@ func expandRequestInterfaceUpdateUpdateInterfaceDetails(ctx context.Context, key
 	return &request
 }
 
-func flattenDevicesUpdateInterfaceDetailsItem(item *catalystcentersdkgo.ResponseDevicesUpdateInterfaceDetailsResponse) []map[string]interface{} {
+func flattenDevicesUpdateInterfaceDetailsV1Item(item *catalystcentersdkgo.ResponseDevicesUpdateInterfaceDetailsV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["type"] = item.Type
-	respItem["properties"] = flattenDevicesUpdateInterfaceDetailsItemProperties(item.Properties)
+	respItem["properties"] = flattenDevicesUpdateInterfaceDetailsV1ItemProperties(item.Properties)
 	respItem["required"] = item.Required
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenDevicesUpdateInterfaceDetailsItemProperties(item *catalystcentersdkgo.ResponseDevicesUpdateInterfaceDetailsResponseProperties) []map[string]interface{} {
+func flattenDevicesUpdateInterfaceDetailsV1ItemProperties(item *catalystcentersdkgo.ResponseDevicesUpdateInterfaceDetailsV1ResponseProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["task_id"] = flattenDevicesUpdateInterfaceDetailsItemPropertiesTaskID(item.TaskID)
-	respItem["url"] = flattenDevicesUpdateInterfaceDetailsItemPropertiesURL(item.URL)
+	respItem["task_id"] = flattenDevicesUpdateInterfaceDetailsV1ItemPropertiesTaskID(item.TaskID)
+	respItem["url"] = flattenDevicesUpdateInterfaceDetailsV1ItemPropertiesURL(item.URL)
 
 	return []map[string]interface{}{
 		respItem,
@@ -250,7 +246,7 @@ func flattenDevicesUpdateInterfaceDetailsItemProperties(item *catalystcentersdkg
 
 }
 
-func flattenDevicesUpdateInterfaceDetailsItemPropertiesTaskID(item *catalystcentersdkgo.ResponseDevicesUpdateInterfaceDetailsResponsePropertiesTaskID) []map[string]interface{} {
+func flattenDevicesUpdateInterfaceDetailsV1ItemPropertiesTaskID(item *catalystcentersdkgo.ResponseDevicesUpdateInterfaceDetailsV1ResponsePropertiesTaskID) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -263,7 +259,7 @@ func flattenDevicesUpdateInterfaceDetailsItemPropertiesTaskID(item *catalystcent
 
 }
 
-func flattenDevicesUpdateInterfaceDetailsItemPropertiesURL(item *catalystcentersdkgo.ResponseDevicesUpdateInterfaceDetailsResponsePropertiesURL) []map[string]interface{} {
+func flattenDevicesUpdateInterfaceDetailsV1ItemPropertiesURL(item *catalystcentersdkgo.ResponseDevicesUpdateInterfaceDetailsV1ResponsePropertiesURL) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

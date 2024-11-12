@@ -47,26 +47,26 @@ func dataSourceSdaExtranetPoliciesCountRead(ctx context.Context, d *schema.Resou
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetExtranetPolicyCount")
+		log.Printf("[DEBUG] Selected method: GetExtranetPolicyCountV1")
 
-		response1, restyResp1, err := client.Sda.GetExtranetPolicyCount()
+		response1, restyResp1, err := client.Sda.GetExtranetPolicyCountV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetExtranetPolicyCount", err,
-				"Failure at GetExtranetPolicyCount, unexpected response", ""))
+				"Failure when executing 2 GetExtranetPolicyCountV1", err,
+				"Failure at GetExtranetPolicyCountV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetExtranetPolicyCountItem(response1.Response)
+		vItem1 := flattenSdaGetExtranetPolicyCountV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetExtranetPolicyCount response",
+				"Failure when setting GetExtranetPolicyCountV1 response",
 				err))
 			return diags
 		}
@@ -78,7 +78,7 @@ func dataSourceSdaExtranetPoliciesCountRead(ctx context.Context, d *schema.Resou
 	return diags
 }
 
-func flattenSdaGetExtranetPolicyCountItem(item *catalystcentersdkgo.ResponseSdaGetExtranetPolicyCountResponse) []map[string]interface{} {
+func flattenSdaGetExtranetPolicyCountV1Item(item *catalystcentersdkgo.ResponseSdaGetExtranetPolicyCountV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
