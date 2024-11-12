@@ -1174,7 +1174,7 @@ func searchApplicationPolicyGetApplications(m interface{}, queryParams catalystc
 			queryParams.Limit = float64(maxPageSize)
 			queryParams.Offset += float64(maxPageSize)
 			nResponse, _, err = client.ApplicationPolicy.GetApplications(&queryParams)
-			if nResponse == nil || nResponse == nil {
+			if nResponse == nil {
 				break
 			}
 		}
