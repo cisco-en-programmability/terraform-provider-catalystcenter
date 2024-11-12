@@ -154,7 +154,7 @@ func resourceImagesSiteWiseProductNamesCreate(ctx context.Context, d *schema.Res
 	item2, err := searchSoftwareImageManagementSwimRetrievesNetworkDeviceProductNamesAssignedToASoftwareImage(m, queryParamImport, vvImageID, vvProductNameOrdinal)
 	if err == nil && item2 != nil {
 		resourceMap := make(map[string]string)
-		resourceMap["product_name_ordinal"] = fmt.Sprintf("%f", item2.ProductNameOrdinal)
+		resourceMap["product_name_ordinal"] = fmt.Sprintf("%f", *item2.ProductNameOrdinal)
 		resourceMap["image_id"] = vvImageID
 		d.SetId(joinResourceID(resourceMap))
 		return resourceImagesSiteWiseProductNamesRead(ctx, d, m)
@@ -209,7 +209,7 @@ func resourceImagesSiteWiseProductNamesCreate(ctx context.Context, d *schema.Res
 	}
 
 	resourceMap := make(map[string]string)
-	resourceMap["product_name_ordinal"] = fmt.Sprintf("%f", item3.ProductNameOrdinal)
+	resourceMap["product_name_ordinal"] = fmt.Sprintf("%f", *item3.ProductNameOrdinal)
 	resourceMap["image_id"] = vvImageID
 	d.SetId(joinResourceID(resourceMap))
 	return resourceImagesSiteWiseProductNamesRead(ctx, d, m)

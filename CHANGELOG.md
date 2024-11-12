@@ -45,7 +45,7 @@ FEATURES:
 * **New Resource:** `resource_tags_interfaces_members_associations_query`
 * **New Resource:** `resource_tags_network_devices_members_associations_query`
 
-## 1.0.0-beta (September 11, 2024)
+## 1.0.0-beta (September 13, 2024)
 IMPROVEMENTS:
 * The provider has been updated with Catalyst Center API version `2.3.7.6`
 FEATURES:
