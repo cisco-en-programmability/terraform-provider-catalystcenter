@@ -48,7 +48,7 @@ output "catalystcenter_license_device_license_summary_example" {
 
 - `device_type` (String) device_type query parameter. Type of device. The valid values are Routers, Switches and Hubs, Wireless Controller
 - `device_uuid` (String) device_uuid query parameter. Id of device
-- `dna_level` (String) dna_level query parameter. Device Cisco DNA license level. The valid values are Advantage, Essentials
+- `dna_level` (String) dna_level query parameter. Device Cisco Catalyst license level. The valid values are Advantage, Essentials
 - `registration_status` (String) registration_status query parameter. Smart license registration status of device. The valid values are Unknown, NA, Unregistered, Registered, Registration_expired, Reservation_in_progress, Registered_slr, Registered_plr, Registered_satellite
 - `smart_account_id` (String) smart_account_id query parameter. Id of smart account
 - `sort_by` (String) sort_by query parameter. Sort result by field

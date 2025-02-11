@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -100,7 +100,7 @@ func resourceSdaMulticast() *schema.Resource {
 													Computed: true,
 												},
 												"ssm_wildcard_mask": &schema.Schema{
-													Description: `SSM Wildcard Mask 
+													Description: `SSM Wildcard Mask
 `,
 													Type:     schema.TypeString,
 													Computed: true,

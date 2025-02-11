@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -29,14 +29,22 @@ func dataSourceWirelessProfiles() *schema.Resource {
 				Optional: true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter.`,
-				Type:        schema.TypeFloat,
-				Optional:    true,
+				Description: `limit query parameter. The number of records to show for this page. Default is 500 if not specified. Maximum allowed limit is 500
+`,
+				Type:     schema.TypeFloat,
+				Optional: true,
 			},
 			"offset": &schema.Schema{
-				Description: `offset query parameter.`,
-				Type:        schema.TypeFloat,
-				Optional:    true,
+				Description: `offset query parameter. The first record to show for this page; the first record is numbered 1
+`,
+				Type:     schema.TypeFloat,
+				Optional: true,
+			},
+			"wireless_profile_name": &schema.Schema{
+				Description: `wirelessProfileName query parameter. Wireless Profile Name
+`,
+				Type:     schema.TypeString,
+				Optional: true,
 			},
 
 			"item": &schema.Schema{
@@ -45,8 +53,51 @@ func dataSourceWirelessProfiles() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 
+						"additional_interfaces": &schema.Schema{
+							Description: `Additional Interfaces
+`,
+							Type:     schema.TypeList,
+							Computed: true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+
+						"ap_zones": &schema.Schema{
+							Type:     schema.TypeList,
+							Computed: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+
+									"ap_zone_name": &schema.Schema{
+										Description: `AP Zone Name
+`,
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+
+									"rf_profile_name": &schema.Schema{
+										Description: `RF Profile Name
+`,
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+
+									"ssids": &schema.Schema{
+										Description: `ssids part of apZone
+`,
+										Type:     schema.TypeList,
+										Computed: true,
+										Elem: &schema.Schema{
+											Type: schema.TypeString,
+										},
+									},
+								},
+							},
+						},
+
 						"id": &schema.Schema{
-							Description: `Id
+							Description: `Wireless Profile Id
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -57,6 +108,13 @@ func dataSourceWirelessProfiles() *schema.Resource {
 							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+
+									"anchor_group_name": &schema.Schema{
+										Description: `Anchor Group Name
+`,
+										Type:     schema.TypeString,
+										Computed: true,
+									},
 
 									"dot11be_profile_id": &schema.Schema{
 										Description: `802.11be Profile ID
@@ -113,6 +171,13 @@ func dataSourceWirelessProfiles() *schema.Resource {
 
 									"ssid_name": &schema.Schema{
 										Description: `SSID Name
+`,
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+
+									"vlan_group_name": &schema.Schema{
+										Description: `VLAN Group Name
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -144,8 +209,51 @@ func dataSourceWirelessProfiles() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 
+						"additional_interfaces": &schema.Schema{
+							Description: `Additional Interfaces
+`,
+							Type:     schema.TypeList,
+							Computed: true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+
+						"ap_zones": &schema.Schema{
+							Type:     schema.TypeList,
+							Computed: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+
+									"ap_zone_name": &schema.Schema{
+										Description: `AP Zone Name
+`,
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+
+									"rf_profile_name": &schema.Schema{
+										Description: `RF Profile Name
+`,
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+
+									"ssids": &schema.Schema{
+										Description: `ssids part of apZone
+`,
+										Type:     schema.TypeList,
+										Computed: true,
+										Elem: &schema.Schema{
+											Type: schema.TypeString,
+										},
+									},
+								},
+							},
+						},
+
 						"id": &schema.Schema{
-							Description: `Id
+							Description: `Wireless Profile Id
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -156,6 +264,13 @@ func dataSourceWirelessProfiles() *schema.Resource {
 							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+
+									"anchor_group_name": &schema.Schema{
+										Description: `Anchor Group Name
+`,
+										Type:     schema.TypeString,
+										Computed: true,
+									},
 
 									"dot11be_profile_id": &schema.Schema{
 										Description: `802.11be Profile ID
@@ -212,6 +327,13 @@ func dataSourceWirelessProfiles() *schema.Resource {
 
 									"ssid_name": &schema.Schema{
 										Description: `SSID Name
+`,
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+
+									"vlan_group_name": &schema.Schema{
+										Description: `VLAN Group Name
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -246,9 +368,10 @@ func dataSourceWirelessProfilesRead(ctx context.Context, d *schema.ResourceData,
 	var diags diag.Diagnostics
 	vLimit, okLimit := d.GetOk("limit")
 	vOffset, okOffset := d.GetOk("offset")
+	vWirelessProfileName, okWirelessProfileName := d.GetOk("wireless_profile_name")
 	vID, okID := d.GetOk("id")
 
-	method1 := []bool{okLimit, okOffset}
+	method1 := []bool{okLimit, okOffset, okWirelessProfileName}
 	log.Printf("[DEBUG] Selecting method. Method 1 %v", method1)
 	method2 := []bool{okID}
 	log.Printf("[DEBUG] Selecting method. Method 2 %v", method2)
@@ -264,6 +387,11 @@ func dataSourceWirelessProfilesRead(ctx context.Context, d *schema.ResourceData,
 		if okOffset {
 			queryParams1.Offset = vOffset.(float64)
 		}
+		if okWirelessProfileName {
+			queryParams1.WirelessProfileName = vWirelessProfileName.(string)
+		}
+
+		// has_unknown_response: None
 
 		response1, restyResp1, err := client.Wireless.GetWirelessProfilesV1(&queryParams1)
 
@@ -294,6 +422,8 @@ func dataSourceWirelessProfilesRead(ctx context.Context, d *schema.ResourceData,
 	if selectedMethod == 2 {
 		log.Printf("[DEBUG] Selected method: GetWirelessProfileByIDV1")
 		vvID := vID.(string)
+
+		// has_unknown_response: None
 
 		response2, restyResp2, err := client.Wireless.GetWirelessProfileByIDV1(vvID)
 
@@ -334,6 +464,8 @@ func flattenWirelessGetWirelessProfilesV1Items(items *[]catalystcentersdkgo.Resp
 		respItem["wireless_profile_name"] = item.WirelessProfileName
 		respItem["ssid_details"] = flattenWirelessGetWirelessProfilesV1ItemsSSIDDetails(item.SSIDDetails)
 		respItem["id"] = item.ID
+		respItem["additional_interfaces"] = item.AdditionalInterfaces
+		respItem["ap_zones"] = flattenWirelessGetWirelessProfilesV1ItemsApZones(item.ApZones)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
@@ -353,6 +485,8 @@ func flattenWirelessGetWirelessProfilesV1ItemsSSIDDetails(items *[]catalystcente
 		respItem["interface_name"] = item.InterfaceName
 		respItem["policy_profile_name"] = item.PolicyProfileName
 		respItem["dot11be_profile_id"] = item.Dot11BeProfileID
+		respItem["anchor_group_name"] = item.AnchorGroupName
+		respItem["vlan_group_name"] = item.VLANGroupName
 		respItems = append(respItems, respItem)
 	}
 	return respItems
@@ -372,6 +506,21 @@ func flattenWirelessGetWirelessProfilesV1ItemsSSIDDetailsFlexConnect(item *catal
 
 }
 
+func flattenWirelessGetWirelessProfilesV1ItemsApZones(items *[]catalystcentersdkgo.ResponseWirelessGetWirelessProfilesV1ResponseApZones) []map[string]interface{} {
+	if items == nil {
+		return nil
+	}
+	var respItems []map[string]interface{}
+	for _, item := range *items {
+		respItem := make(map[string]interface{})
+		respItem["ap_zone_name"] = item.ApZoneName
+		respItem["rf_profile_name"] = item.RfProfileName
+		respItem["ssids"] = item.SSIDs
+		respItems = append(respItems, respItem)
+	}
+	return respItems
+}
+
 func flattenWirelessGetWirelessProfileByIDV1Item(item *catalystcentersdkgo.ResponseWirelessGetWirelessProfileByIDV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
@@ -380,6 +529,8 @@ func flattenWirelessGetWirelessProfileByIDV1Item(item *catalystcentersdkgo.Respo
 	respItem["wireless_profile_name"] = item.WirelessProfileName
 	respItem["ssid_details"] = flattenWirelessGetWirelessProfileByIDV1ItemSSIDDetails(item.SSIDDetails)
 	respItem["id"] = item.ID
+	respItem["additional_interfaces"] = item.AdditionalInterfaces
+	respItem["ap_zones"] = flattenWirelessGetWirelessProfileByIDV1ItemApZones(item.ApZones)
 	return []map[string]interface{}{
 		respItem,
 	}
@@ -399,6 +550,8 @@ func flattenWirelessGetWirelessProfileByIDV1ItemSSIDDetails(items *[]catalystcen
 		respItem["interface_name"] = item.InterfaceName
 		respItem["policy_profile_name"] = item.PolicyProfileName
 		respItem["dot11be_profile_id"] = item.Dot11BeProfileID
+		respItem["anchor_group_name"] = item.AnchorGroupName
+		respItem["vlan_group_name"] = item.VLANGroupName
 		respItems = append(respItems, respItem)
 	}
 	return respItems
@@ -416,4 +569,19 @@ func flattenWirelessGetWirelessProfileByIDV1ItemSSIDDetailsFlexConnect(item *cat
 		respItem,
 	}
 
+}
+
+func flattenWirelessGetWirelessProfileByIDV1ItemApZones(items *[]catalystcentersdkgo.ResponseWirelessGetWirelessProfileByIDV1ResponseApZones) []map[string]interface{} {
+	if items == nil {
+		return nil
+	}
+	var respItems []map[string]interface{}
+	for _, item := range *items {
+		respItem := make(map[string]interface{})
+		respItem["ap_zone_name"] = item.ApZoneName
+		respItem["rf_profile_name"] = item.RfProfileName
+		respItem["ssids"] = item.SSIDs
+		respItems = append(respItems, respItem)
+	}
+	return respItems
 }

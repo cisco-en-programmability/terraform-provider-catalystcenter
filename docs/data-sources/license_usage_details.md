@@ -4,14 +4,14 @@ page_title: "catalystcenter_license_usage_details Data Source - terraform-provid
 subcategory: ""
 description: |-
   It performs read operation on Licenses.
-  Get count of purchased and in use Cisco DNA and Network licenses.
+  Get count of purchased and in use Cisco Catalyst and Network licenses.
 ---
 
 # catalystcenter_license_usage_details (Data Source)
 
 It performs read operation on Licenses.
 
-- Get count of purchased and in use Cisco DNA and Network licenses.
+- Get count of purchased and in use Cisco Catalyst and Network licenses.
 
 ## Example Usage
 

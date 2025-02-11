@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -138,7 +138,7 @@ func dataSourceSystemHealth() *schema.Resource {
 						},
 
 						"host_name": &schema.Schema{
-							Description: `Cluster name 
+							Description: `Cluster name
 `,
 							Type:     schema.TypeString,
 							Computed: true,

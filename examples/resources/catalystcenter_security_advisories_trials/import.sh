@@ -1,0 +1,1 @@
+terraform import catalystcenter_security_advisories_trials.example "id:=string"

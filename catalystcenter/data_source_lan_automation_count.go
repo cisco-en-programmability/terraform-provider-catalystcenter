@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -48,6 +48,8 @@ func dataSourceLanAutomationCountRead(ctx context.Context, d *schema.ResourceDat
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: LanAutomationSessionCountV1")
+
+		// has_unknown_response: None
 
 		response1, restyResp1, err := client.LanAutomation.LanAutomationSessionCountV1()
 

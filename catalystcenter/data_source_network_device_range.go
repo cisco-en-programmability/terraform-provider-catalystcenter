@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -416,6 +416,8 @@ func dataSourceNetworkDeviceRangeRead(ctx context.Context, d *schema.ResourceDat
 		log.Printf("[DEBUG] Selected method: GetNetworkDeviceByPaginationRangeV1")
 		vvStartIndex := vStartIndex.(int)
 		vvRecordsToReturn := vRecordsToReturn.(int)
+
+		// has_unknown_response: None
 
 		response1, restyResp1, err := client.Devices.GetNetworkDeviceByPaginationRangeV1(vvStartIndex, vvRecordsToReturn)
 

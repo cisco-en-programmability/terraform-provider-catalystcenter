@@ -1,8 +1,8 @@
 
 data "catalystcenter_network_device_config_count" "example" {
-  provider = catalystcenter
+    provider = catalystcenter
 }
 
 output "catalystcenter_network_device_config_count_example" {
-  value = data.catalystcenter_network_device_config_count.example.item
+    value = data.catalystcenter_network_device_config_count.example.item
 }

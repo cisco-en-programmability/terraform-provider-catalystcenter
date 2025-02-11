@@ -1,8 +1,8 @@
 
 data "catalystcenter_snmp_properties" "example" {
-  provider = catalystcenter
+    provider = catalystcenter
 }
 
 output "catalystcenter_snmp_properties_example" {
-  value = data.catalystcenter_snmp_properties.example.items
+    value = data.catalystcenter_snmp_properties.example.items
 }

@@ -1,8 +1,8 @@
 
 data "catalystcenter_floors_settings_v2" "example" {
-  provider = catalystcenter
+    provider = catalystcenter
 }
 
 output "catalystcenter_floors_settings_v2_example" {
-  value = data.catalystcenter_floors_settings_v2.example.item
+    value = data.catalystcenter_floors_settings_v2.example.item
 }

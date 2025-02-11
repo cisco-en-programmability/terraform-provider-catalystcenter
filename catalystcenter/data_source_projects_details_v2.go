@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -161,7 +161,7 @@ func dataSourceProjectsDetailsV2Read(ctx context.Context, d *schema.ResourceData
 			queryParams1.Offset = vOffset.(int)
 		}
 		if okLimit {
-			queryParams1.Limit = vLimit.(int)
+			queryParams1.Limit = vLimit.(float64)
 		}
 		if okSortOrder {
 			queryParams1.SortOrder = vSortOrder.(string)
@@ -181,7 +181,7 @@ func dataSourceProjectsDetailsV2Read(ctx context.Context, d *schema.ResourceData
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenConfigurationTemplatesGetProjectsDetailsV2Item(&response1.Response)
+		vItem1 := flattenConfigurationTemplatesGetProjectsDetailsV2Item(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetProjectsDetailsV2 response",
@@ -196,25 +196,22 @@ func dataSourceProjectsDetailsV2Read(ctx context.Context, d *schema.ResourceData
 	return diags
 }
 
-func flattenConfigurationTemplatesGetProjectsDetailsV2Item(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetProjectsDetailsResponse) []map[string]interface{} {
-	if items == nil {
+func flattenConfigurationTemplatesGetProjectsDetailsV2Item(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetProjectsDetailsV2) []map[string]interface{} {
+	if item == nil {
 		return nil
 	}
-	var respItems []map[string]interface{}
-	for _, item := range *items {
-		respItem := make(map[string]interface{})
-		respItem["create_time"] = item.CreateTime
-		respItem["description"] = item.Description
-		respItem["id"] = item.ID
-		respItem["is_deletable"] = boolPtrToString(item.IsDeletable)
-		respItem["last_update_time"] = item.LastUpdateTime
-		respItem["name"] = item.Name
-		respItem["tags"] = flattenConfigurationTemplatesGetProjectsDetailsItemTags(item.Tags)
-		respItem["templates"] = flattenConfigurationTemplatesGetProjectsDetailsItemTemplates(item.Templates)
-		respItems = append(respItems, respItem)
+	respItem := make(map[string]interface{})
+	respItem["createTime"] = item.CreateTime
+	respItem["description"] = item.Description
+	respItem["id"] = item.ID
+	respItem["is_deletable"] = boolPtrToString(item.IsDeletable)
+	respItem["last_update_time"] = item.LastUpdateTime
+	respItem["name"] = item.Name
+	respItem["tags"] = flattenConfigurationTemplatesGetProjectsDetailsItemTags(item.Tags)
+	respItem["templates"] = flattenConfigurationTemplatesGetProjectsDetailsItemTemplates(item.Templates)
+	return []map[string]interface{}{
+		respItem,
 	}
-
-	return respItems
 }
 
 func flattenConfigurationTemplatesGetProjectsDetailsItemTags(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetProjectsDetailsV2Tags) []map[string]interface{} {

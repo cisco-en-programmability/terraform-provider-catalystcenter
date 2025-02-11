@@ -41,7 +41,7 @@ output "catalystcenter_sda_layer2_virtual_networks_example" {
 - `associated_layer3_virtual_network_name` (String) associatedLayer3VirtualNetworkName query parameter. Name of the associated layer 3 virtual network.
 - `fabric_id` (String) fabricId query parameter. ID of the fabric the layer 2 virtual network is assigned to.
 - `id` (String) id query parameter. ID of the layer 2 virtual network.
-- `limit` (Number) limit query parameter. Maximum number of records to return.
+- `limit` (Number) limit query parameter. Maximum number of records to return. The maximum number of objects supported in a single request is 500.
 - `offset` (Number) offset query parameter. Starting record for pagination.
 - `traffic_type` (String) trafficType query parameter. The traffic type of the layer 2 virtual network.
 - `vlan_id` (Number) vlanId query parameter. The vlan ID of the layer 2 virtual network.
@@ -60,6 +60,7 @@ Read-Only:
 - `fabric_id` (String)
 - `id` (String)
 - `is_fabric_enabled_wireless` (String)
+- `is_multiple_ip_to_mac_addresses` (String)
 - `traffic_type` (String)
 - `vlan_id` (Number)
 - `vlan_name` (String)

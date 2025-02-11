@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -39,7 +39,7 @@ func dataSourceSdaLayer2VirtualNetworks() *schema.Resource {
 				Optional: true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter. Maximum number of records to return.
+				Description: `limit query parameter. Maximum number of records to return. The maximum number of objects supported in a single request is 500.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -98,6 +98,14 @@ func dataSourceSdaLayer2VirtualNetworks() *schema.Resource {
 
 						"is_fabric_enabled_wireless": &schema.Schema{
 							Description: `Set to true to enable wireless.
+`,
+							// Type:        schema.TypeBool,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
+						"is_multiple_ip_to_mac_addresses": &schema.Schema{
+							Description: `Set to true to enable multiple IP-to-MAC Addresses (Wireless Bridged-Network Virtual Machine). This field will only be present on layer 2 virtual networks associated with a layer 3 virtual network.
 `,
 							// Type:        schema.TypeBool,
 							Type:     schema.TypeString,
@@ -174,6 +182,8 @@ func dataSourceSdaLayer2VirtualNetworksRead(ctx context.Context, d *schema.Resou
 			queryParams1.Limit = vLimit.(float64)
 		}
 
+		// has_unknown_response: None
+
 		response1, restyResp1, err := client.Sda.GetLayer2VirtualNetworksV1(&queryParams1)
 
 		if err != nil || response1 == nil {
@@ -216,6 +226,7 @@ func flattenSdaGetLayer2VirtualNetworksV1Items(items *[]catalystcentersdkgo.Resp
 		respItem["vlan_id"] = item.VLANID
 		respItem["traffic_type"] = item.TrafficType
 		respItem["is_fabric_enabled_wireless"] = boolPtrToString(item.IsFabricEnabledWireless)
+		respItem["is_multiple_ip_to_mac_addresses"] = boolPtrToString(item.IsMultipleIPToMacAddresses)
 		respItem["associated_layer3_virtual_network_name"] = item.AssociatedLayer3VirtualNetworkName
 		respItems = append(respItems, respItem)
 	}

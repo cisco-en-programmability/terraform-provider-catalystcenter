@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -2137,8 +2137,8 @@ func searchDeviceOnboardingPnpGetDeviceList2(m interface{}, queryParams catalyst
 				return foundItem, err
 			}
 		}
-		queryParams.Offset += len(*nResponse)
-		queryParams.Limit = len(*nResponse)
+		queryParams.Offset += float64(len(*nResponse))
+		queryParams.Limit = float64(len(*nResponse))
 	}
 	return foundItem, err
 }

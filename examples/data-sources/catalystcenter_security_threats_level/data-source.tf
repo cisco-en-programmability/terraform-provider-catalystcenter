@@ -1,8 +1,8 @@
 
 data "catalystcenter_security_threats_level" "example" {
-  provider = catalystcenter
+    provider = catalystcenter
 }
 
 output "catalystcenter_security_threats_level_example" {
-  value = data.catalystcenter_security_threats_level.example.items
+    value = data.catalystcenter_security_threats_level.example.items
 }

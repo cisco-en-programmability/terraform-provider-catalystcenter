@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -32,8 +32,14 @@ func dataSourceSdaAuthenticationProfiles() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"is_global_authentication_profile": &schema.Schema{
+				Description: `isGlobalAuthenticationProfile query parameter. Set to true to return only global authentication profiles, or set to false to hide them. isGlobalAuthenticationProfile must not be true when fabricId is provided.
+`,
+				Type:     schema.TypeBool,
+				Optional: true,
+			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter. Maximum number of records to return.
+				Description: `limit query parameter. Maximum number of records to return. The maximum number of objects supported in a single request is 500.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -73,7 +79,7 @@ func dataSourceSdaAuthenticationProfiles() *schema.Resource {
 						},
 
 						"fabric_id": &schema.Schema{
-							Description: `ID of the fabric this authentication profile is assigned to.
+							Description: `ID of the fabric this authentication profile is assigned to. (This property is not applicable to global authentication profiles and will not be present in such cases.)
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -101,6 +107,67 @@ func dataSourceSdaAuthenticationProfiles() *schema.Resource {
 							Computed: true,
 						},
 
+						"pre_auth_acl": &schema.Schema{
+							Type:     schema.TypeList,
+							Computed: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+
+									"access_contracts": &schema.Schema{
+										Type:     schema.TypeList,
+										Computed: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+
+												"action": &schema.Schema{
+													Description: `Contract behaviour.
+`,
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+
+												"port": &schema.Schema{
+													Description: `Port for the access contract.
+`,
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+
+												"protocol": &schema.Schema{
+													Description: `Protocol for the access contract.
+`,
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+											},
+										},
+									},
+
+									"description": &schema.Schema{
+										Description: `Description of this Pre-Authentication ACL.
+`,
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+
+									"enabled": &schema.Schema{
+										Description: `Enable/disable Pre-Authentication ACL.
+`,
+										// Type:        schema.TypeBool,
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+
+									"implicit_action": &schema.Schema{
+										Description: `Implicit behaviour unless overridden.
+`,
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+								},
+							},
+						},
+
 						"wake_on_lan": &schema.Schema{
 							Description: `Wake on LAN.
 `,
@@ -121,6 +188,7 @@ func dataSourceSdaAuthenticationProfilesRead(ctx context.Context, d *schema.Reso
 	var diags diag.Diagnostics
 	vFabricID, okFabricID := d.GetOk("fabric_id")
 	vAuthenticationProfileName, okAuthenticationProfileName := d.GetOk("authentication_profile_name")
+	vIsGlobalAuthenticationProfile, okIsGlobalAuthenticationProfile := d.GetOk("is_global_authentication_profile")
 	vOffset, okOffset := d.GetOk("offset")
 	vLimit, okLimit := d.GetOk("limit")
 
@@ -135,12 +203,17 @@ func dataSourceSdaAuthenticationProfilesRead(ctx context.Context, d *schema.Reso
 		if okAuthenticationProfileName {
 			queryParams1.AuthenticationProfileName = vAuthenticationProfileName.(string)
 		}
+		if okIsGlobalAuthenticationProfile {
+			queryParams1.IsGlobalAuthenticationProfile = vIsGlobalAuthenticationProfile.(bool)
+		}
 		if okOffset {
 			queryParams1.Offset = vOffset.(float64)
 		}
 		if okLimit {
 			queryParams1.Limit = vLimit.(float64)
 		}
+
+		// has_unknown_response: None
 
 		response1, restyResp1, err := client.Sda.GetAuthenticationProfilesV1(&queryParams1)
 
@@ -186,6 +259,38 @@ func flattenSdaGetAuthenticationProfilesV1Items(items *[]catalystcentersdkgo.Res
 		respItem["wake_on_lan"] = boolPtrToString(item.WakeOnLan)
 		respItem["number_of_hosts"] = item.NumberOfHosts
 		respItem["is_bpdu_guard_enabled"] = boolPtrToString(item.IsBpduGuardEnabled)
+		respItem["pre_auth_acl"] = flattenSdaGetAuthenticationProfilesV1ItemsPreAuthACL(item.PreAuthACL)
+		respItems = append(respItems, respItem)
+	}
+	return respItems
+}
+
+func flattenSdaGetAuthenticationProfilesV1ItemsPreAuthACL(item *catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesV1ResponsePreAuthACL) []map[string]interface{} {
+	if item == nil {
+		return nil
+	}
+	respItem := make(map[string]interface{})
+	respItem["enabled"] = boolPtrToString(item.Enabled)
+	respItem["implicit_action"] = item.ImplicitAction
+	respItem["description"] = item.Description
+	respItem["access_contracts"] = flattenSdaGetAuthenticationProfilesV1ItemsPreAuthACLAccessContracts(item.AccessContracts)
+
+	return []map[string]interface{}{
+		respItem,
+	}
+
+}
+
+func flattenSdaGetAuthenticationProfilesV1ItemsPreAuthACLAccessContracts(items *[]catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesV1ResponsePreAuthACLAccessContracts) []map[string]interface{} {
+	if items == nil {
+		return nil
+	}
+	var respItems []map[string]interface{}
+	for _, item := range *items {
+		respItem := make(map[string]interface{})
+		respItem["action"] = item.Action
+		respItem["protocol"] = item.Protocol
+		respItem["port"] = item.Port
 		respItems = append(respItems, respItem)
 	}
 	return respItems

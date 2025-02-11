@@ -4,7 +4,7 @@ page_title: "catalystcenter_swim_image_url Resource - terraform-provider-catalys
 subcategory: ""
 description: |-
   It performs create operation on Software Image Management (SWIM).
-  Fetches a software image from remote file system (using URL for HTTP/FTP) and uploads to DNA Center. Supported image
+  Fetches a software image from remote file system (using URL for HTTP/FTP) and uploads to Catalyst Center. Supported image
   files extensions are bin, img, tar, smu, pie, aes, iso, ova, tar_gz and qcow2
 ---
 
@@ -12,17 +12,17 @@ description: |-
 
 It performs create operation on Software Image Management (SWIM).
 
-- Fetches a software image from remote file system (using URL for HTTP/FTP) and uploads to DNA Center. Supported image
+- Fetches a software image from remote file system (using URL for HTTP/FTP) and uploads to Catalyst Center. Supported image
 files extensions are bin, img, tar, smu, pie, aes, iso, ova, tar_gz and qcow2
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
-Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
+Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
 
 ## Example Usage
 
 ```terraform
 resource "catalystcenter_swim_image_url" "example" {
-  provider        = meraki
+  provider        = catalystcenter
   schedule_at     = "string"
   schedule_desc   = "string"
   schedule_origin = "string"

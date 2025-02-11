@@ -14,13 +14,13 @@ It performs create operation on Site Design.
 - Assign a network profile for sites to a list of sites. Also assigns the profile to child sites.
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
-Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
+Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
 
 ## Example Usage
 
 ```terraform
 resource "catalystcenter_network_profiles_for_sites_site_assignments_bulk_create" "example" {
-  provider   = meraki
+  provider   = catalystcenter
   profile_id = "string"
   parameters {
 
@@ -51,11 +51,16 @@ output "catalystcenter_network_profiles_for_sites_site_assignments_bulk_create_e
 
 Required:
 
+- `items` (Block List, Min: 1) (see [below for nested schema](#nestedblock--parameters--items))
 - `profile_id` (String) profileId path parameter. The *id* of the network profile, retrievable from *GET /intent/api/v1/networkProfilesForSites*
 
-Optional:
+<a id="nestedblock--parameters--items"></a>
+### Nested Schema for `parameters.items`
 
-- `type` (String)
+Read-Only:
+
+- `id` (String) The ID of this resource.
+
 
 
 <a id="nestedatt--item"></a>

@@ -1,9 +1,9 @@
 
 data "catalystcenter_security_advisories_devices" "example" {
-  provider    = catalystcenter
-  advisory_id = "string"
+    provider = catalystcenter
+    advisory_id = "string"
 }
 
 output "catalystcenter_security_advisories_devices_example" {
-  value = data.catalystcenter_security_advisories_devices.example.items
+    value = data.catalystcenter_security_advisories_devices.example.items
 }

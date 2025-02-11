@@ -70,19 +70,33 @@ Required:
 
 Optional:
 
+- `additional_interfaces` (List of String) These additional interfaces will be configured on the device as independent interfaces in addition to the interfaces mapped to SSIDs. Max Limit 4094
+- `ap_zones` (Block List) (see [below for nested schema](#nestedblock--parameters--ap_zones))
 - `ssid_details` (Block List) (see [below for nested schema](#nestedblock--parameters--ssid_details))
 - `wireless_profile_name` (String) Wireless Network Profile Name
+
+<a id="nestedblock--parameters--ap_zones"></a>
+### Nested Schema for `parameters.ap_zones`
+
+Optional:
+
+- `ap_zone_name` (String) AP Zone Name
+- `rf_profile_name` (String) RF Profile Name
+- `ssids` (List of String) ssids part of apZone
+
 
 <a id="nestedblock--parameters--ssid_details"></a>
 ### Nested Schema for `parameters.ssid_details`
 
 Optional:
 
+- `anchor_group_name` (String) Anchor Group Name
 - `dot11be_profile_id` (String) 802.11be Profile Id. Applicable to IOS controllers with version 17.15 and higher. 802.11be Profiles if passed, should be same across all SSIDs in network profile being configured
 - `enable_fabric` (String) True if fabric is enabled, else False. Flex and fabric cannot be enabled simultaneously and a profile can only contain either flex SSIDs or fabric SSIDs and not both at the same time
 - `flex_connect` (Block List) (see [below for nested schema](#nestedblock--parameters--ssid_details--flex_connect))
-- `interface_name` (String) Interface Name. Default Value: management
+- `interface_name` (String) Interface Name.
 - `ssid_name` (String) SSID Name
+- `vlan_group_name` (String) VLAN Group Name
 - `wlan_profile_name` (String) WLAN Profile Name
 
 <a id="nestedblock--parameters--ssid_details--flex_connect"></a>
@@ -101,21 +115,35 @@ Optional:
 
 Read-Only:
 
+- `additional_interfaces` (List of String)
+- `ap_zones` (List of Object) (see [below for nested schema](#nestedobjatt--item--ap_zones))
 - `id` (String)
 - `ssid_details` (List of Object) (see [below for nested schema](#nestedobjatt--item--ssid_details))
 - `wireless_profile_name` (String)
+
+<a id="nestedobjatt--item--ap_zones"></a>
+### Nested Schema for `item.ap_zones`
+
+Read-Only:
+
+- `ap_zone_name` (String)
+- `rf_profile_name` (String)
+- `ssids` (List of String)
+
 
 <a id="nestedobjatt--item--ssid_details"></a>
 ### Nested Schema for `item.ssid_details`
 
 Read-Only:
 
+- `anchor_group_name` (String)
 - `dot11be_profile_id` (String)
 - `enable_fabric` (String)
 - `flex_connect` (List of Object) (see [below for nested schema](#nestedobjatt--item--ssid_details--flex_connect))
 - `interface_name` (String)
 - `policy_profile_name` (String)
 - `ssid_name` (String)
+- `vlan_group_name` (String)
 - `wlan_profile_name` (String)
 
 <a id="nestedobjatt--item--ssid_details--flex_connect"></a>

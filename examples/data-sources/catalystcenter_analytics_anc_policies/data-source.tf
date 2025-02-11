@@ -1,8 +1,8 @@
 
 data "catalystcenter_analytics_anc_policies" "example" {
-  provider = catalystcenter
+    provider = catalystcenter
 }
 
 output "catalystcenter_analytics_anc_policies_example" {
-  value = data.catalystcenter_analytics_anc_policies.example.items
+    value = data.catalystcenter_analytics_anc_policies.example.items
 }

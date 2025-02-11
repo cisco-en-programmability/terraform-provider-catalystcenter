@@ -50,7 +50,7 @@ output "catalystcenter_global_credential_cli_example" {
 
 ### Required
 
-- `parameters` (Block List, Min: 1, Max: 1) Array of RequestDiscoveryCreateCLICredentials (see [below for nested schema](#nestedblock--parameters))
+- `parameters` (Block List, Min: 1, Max: 1) Array of RequestDiscoveryCreateCliCredentialsV1 (see [below for nested schema](#nestedblock--parameters))
 
 ### Read-Only
 
@@ -95,11 +95,3 @@ Read-Only:
 - `secure` (String)
 - `username` (String)
 - `write_community` (String)
-
-## Import
-
-Import is supported using the following syntax:
-
-```shell
-terraform import catalystcenter_global_credential.example "id:=string"
-```

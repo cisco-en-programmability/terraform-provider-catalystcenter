@@ -1,0 +1,1 @@
+terraform import catalystcenter_site_kpi_summaries_trend_analytics.example "id:=string"

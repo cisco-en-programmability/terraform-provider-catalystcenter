@@ -9,16 +9,23 @@ description: |-
   specified returns the latest available data.
   The elements are grouped and sorted by deviceUuid first, and are then sorted by the given sort field, or by the default
   value: name.
+  The supported sorting options are:
+  name, adminStatus, description, duplexConfig, duplexOper, interfaceIfIndex,interfaceType, macAddress,mediaType,
+  operStatus, portChannelId, portMode, portType,speed, vlanId
+  This data source can paginate up to 500,000 records, please narrow matching results with additional filters beyond that
+  value. The elements are grouped and sorted by deviceUuid first, and are then sorted by the given sort field, or by the
+  default value: name.
   The supported sorting options are: name, adminStatus, description, duplexConfig,
   duplexOper,interfaceIfIndex,interfaceType, macAddress,mediaType, operStatus,portChannelId, portMode, portType,speed,
-  vlanId. For detailed information about the usage of the API, please refer to the Open API specification document
+  vlanId,pdPowerAdminMaxInWatt,pdPowerBudgetInWatt,pdPowerConsumedInWatt,pdPowerRemainingInWatt,pdMaxPowerDrawn. For
+  detailed information about the usage of the API, please refer to the Open API specification document
   https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CECatCenter_Org-
-  interfaces-1.0.2-resolved.yaml
+  interfaces-2.0.0-resolved.yaml
   Returns the interface data for the given interface instance Uuid along with the statistics data. The latest interface
   data in the specified start and end time range will be returned. When there is no start and end time specified returns
   the latest available data for the given interface Id. For detailed information about the usage of the API, please refer
   to the Open API specification document https://github.com/cisco-en-programmability/catalyst-center-api-
-  specs/blob/main/Assurance/CECatCenter_Org-interfaces-1.0.2-resolved.yaml
+  specs/blob/main/Assurance/CECatCenter_Org-interfaces-2.0.0-resolved.yaml
 ---
 
 # catalystcenter_interfaces (Data Source)
@@ -28,20 +35,33 @@ It performs read operation on Devices.
 - Retrieves the list of the interfaces from all network devices based on the provided query parameters. The latest
 interfaces data in the specified start and end time range will be returned. When there is no start and end time
 specified returns the latest available data.
+
 The elements are grouped and sorted by deviceUuid first, and are then sorted by the given sort field, or by the default
 value: name.
 
+
+The supported sorting options are:
+name, adminStatus, description, duplexConfig, duplexOper, interfaceIfIndex,interfaceType, macAddress,mediaType,
+operStatus, portChannelId, portMode, portType,speed, vlanId
+
+
+
+This data source can paginate up to 500,000 records, please narrow matching results with additional filters beyond that
+value. The elements are grouped and sorted by deviceUuid first, and are then sorted by the given sort field, or by the
+default value: name.
+
  The supported sorting options are: name, adminStatus, description, duplexConfig,
 duplexOper,interfaceIfIndex,interfaceType, macAddress,mediaType, operStatus,portChannelId, portMode, portType,speed,
-vlanId. For detailed information about the usage of the API, please refer to the Open API specification document
+vlanId,pdPowerAdminMaxInWatt,pdPowerBudgetInWatt,pdPowerConsumedInWatt,pdPowerRemainingInWatt,pdMaxPowerDrawn. For
+detailed information about the usage of the API, please refer to the Open API specification document
 https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
-interfaces-1.0.2-resolved.yaml
+interfaces-2.0.0-resolved.yaml
 
 - Returns the interface data for the given interface instance Uuid along with the statistics data. The latest interface
 data in the specified start and end time range will be returned. When there is no start and end time specified returns
 the latest available data for the given interface Id. For detailed information about the usage of the API, please refer
 to the Open API specification document https://github.com/cisco-en-programmability/catalyst-center-api-
-specs/blob/main/Assurance/CE_Cat_Center_Org-interfaces-1.0.2-resolved.yaml
+specs/blob/main/Assurance/CE_Cat_Center_Org-interfaces-2.0.0-resolved.yaml
 
 ## Example Usage
 
@@ -89,19 +109,14 @@ output "catalystcenter_interfaces_example" {
 
 ### Optional
 
-- `attribute` (String) attribute query parameter. The following list of attributes can be provided in the attribute field
-[id,adminStatus, description,duplexConfig,duplexOper,interfaceIfIndex,interfaceType,ipv4Address,ipv6AddressList,isL3Interface,isWan,macAddress,mediaType,name,operStatus,peerStackMember,peerStackPort, portChannelId,portMode, portType,rxDiscards,rxError,rxRate,rxUtilization,speed,stackPortType,timestamp,txDiscards,txError,txRate,txUtilization,vlanId,networkDeviceId,networkDeviceIpAddress,networkDeviceMacAddress,siteName,siteHierarchy,siteHierarchyId]
-If length of attribute list is too long, please use 'views' param instead.
-Examples:
-attributes=name (single attribute requested)
-attributes=name,description,duplexOper (multiple attributes with comma separator)
+- `attribute` (String) attribute query parameter. The following list of attributes can be provided in the attribute field          [id,adminStatus, description,duplexConfig,duplexOper,interfaceIfIndex,interfaceType,ipv4Address,ipv6AddressList,isL3Interface,isWan,macAddress,mediaType,name,operStatus,peerStackMember,peerStackPort, portChannelId,portMode, portType,rxDiscards,rxError,rxRate,rxUtilization,speed,stackPortType,timestamp,txDiscards,txError,txRate,txUtilization,vlanId,networkDeviceId,networkDeviceIpAddress,networkDeviceMacAddress,siteName,siteHierarchy,siteHierarchyId,poeAdminStatus,poeOperStatus,chassisId,moduleId,pdClassSignal,pdClassSpare,pdDeviceType,pdDeviceModel,pdPowerAdminMaxInWatt,pdPowerBudgetInWatt,pdPowerConsumedInWatt,pdPowerRemainingInWatt,pdMaxPowerDrawn,pdConnectedDeviceList,poeOperPriority,fastPoEEnabled,perpetualPoEEnabled,policingPoEEnabled,upoePlusEnabled,fourPairEnabled,poeDataTimestamp,pdLocation,pdDeviceName,pdConnectedSwitch,connectedSwitchUuid,ieeeCompliant,connectedSwitchType]          If length of attribute list is too long, please use 'views' param instead.          Examples:          attributes=name (single attribute requested)          attributes=name&description&duplexOper (multiple attributes with comma separator)
 - `end_time` (Number) endTime query parameter. End time to which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
 - `id` (String) id path parameter. The interface Uuid
 - `interface_id` (String) interfaceId query parameter. The list of Interface Uuids. (Ex. *6bef213c-19ca-4170-8375-b694e251101c*)
 Examples:
 *interfaceId=6bef213c-19ca-4170-8375-b694e251101c* (single interface uuid )
 *interfaceId=6bef213c-19ca-4170-8375-b694e251101c&32219612-819e-4b5e-a96b-cf22aca13dd9&2541e9a7-b80d-4955-8aa2-79b233318ba0* (multiple Interface uuid with & separator)
-- `interface_name` (String) interfaceName query parameter. The list of Interface name (Ex. *GigabitEthernet1/0/1*) This field supports wildcard (***) character-based search.  Ex: **1/0/1** or *1/0/1** or **1/0/1*
+- `interface_name` (String) interfaceName query parameter. The list of Interface name (Ex. *GigabitEthernet1/0/1*) This field supports wildcard (***) character-based search. Ex: **1/0/1** or *1/0/1** or **1/0/1*
 Examples:
 *interfaceNames=GigabitEthernet1/0/1* (single interface name)
 *interfaceNames=GigabitEthernet1/0/1&GigabitEthernet2/0/1&GigabitEthernet3/0/1* (multiple interface names with & separator)
@@ -111,12 +126,12 @@ Examples:
 *networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c* (single networkDeviceId requested)
 *networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c&networkDeviceId=32219612-819e-4b5e-a96b-cf22aca13dd9&networkDeviceId=2541e9a7-b80d-4955-8aa2-79b233318ba0* (multiple networkDeviceIds with & separator)
 - `network_device_ip_address` (String) networkDeviceIpAddress query parameter. The list of Network Device management IP Address. (Ex. *121.1.1.10*)
-This field supports wildcard (***) character-based search.  Ex: **1.1** or *1.1** or **1.1*
+This field supports wildcard (***) character-based search. Ex: **1.1** or *1.1** or **1.1*
 Examples:
 *networkDeviceIpAddress=121.1.1.10*
 *networkDeviceIpAddress=121.1.1.10&networkDeviceIpAddress=172.20.1.10&networkDeviceIpAddress=10.10.20.10* (multiple networkDevice IP Address with & separator)
 - `network_device_mac_address` (String) networkDeviceMacAddress query parameter. The list of Network Device MAC Address. (Ex. *64:f6:9d:07:9a:00*)
-This field supports wildcard (***) character-based search.  Ex: **AB:AB:AB** or *AB:AB:AB** or **AB:AB:AB*
+This field supports wildcard (***) character-based search. Ex: **AB:AB:AB** or *AB:AB:AB** or **AB:AB:AB*
 Examples:
 *networkDeviceMacAddress=64:f6:9d:07:9a:00*
 *networkDeviceMacAddress=64:f6:9d:07:9a:00&networkDeviceMacAddress=70:56:9d:07:ac:77* (multiple networkDevice MAC addresses with & separator)
@@ -152,10 +167,16 @@ If *startTime* is not provided, API will default to current time.
 Read-Only:
 
 - `admin_status` (String)
+- `chassis_id` (Number)
+- `connected_switch_type` (String)
+- `connected_switch_uuid` (String)
 - `description` (String)
 - `duplex_config` (String)
 - `duplex_oper` (String)
+- `fast_po_e_enabled` (String)
+- `four_pair_enabled` (String)
 - `id` (String)
+- `ieee_compliant` (String)
 - `interface_if_index` (Number)
 - `interface_type` (String)
 - `ipv4_address` (String)
@@ -164,13 +185,33 @@ Read-Only:
 - `is_wan` (String)
 - `mac_addr` (String)
 - `media_type` (String)
+- `module_id` (Number)
 - `name` (String)
 - `network_device_id` (String)
 - `network_device_ip_address` (String)
 - `network_device_mac_address` (String)
 - `oper_status` (String)
+- `pd_class_signal` (String)
+- `pd_class_spare` (String)
+- `pd_connected_device_list` (List of String)
+- `pd_connected_switch` (String)
+- `pd_device_model` (String)
+- `pd_device_name` (String)
+- `pd_device_type` (String)
+- `pd_location` (String)
+- `pd_max_power_drawn` (String)
+- `pd_power_admin_max_in_watt` (String)
+- `pd_power_budget_in_watt` (String)
+- `pd_power_consumed_in_watt` (String)
+- `pd_power_remaining_in_watt` (String)
 - `peer_stack_member` (Number)
 - `peer_stack_port` (String)
+- `perpetual_po_e_enabled` (String)
+- `poe_admin_status` (String)
+- `poe_data_timestamp` (Number)
+- `poe_oper_priority` (String)
+- `poe_oper_status` (String)
+- `policing_po_e_enabled` (String)
 - `port_channel_id` (String)
 - `port_mode` (String)
 - `port_type` (String)
@@ -180,7 +221,6 @@ Read-Only:
 - `rx_utilization` (Number)
 - `site_hierarchy` (String)
 - `site_hierarchy_id` (String)
-- `site_name` (String)
 - `speed` (String)
 - `stack_port_type` (String)
 - `timestamp` (Number)
@@ -188,6 +228,7 @@ Read-Only:
 - `tx_error` (Number)
 - `tx_rate` (Number)
 - `tx_utilization` (Number)
+- `upoe_plus_enabled` (String)
 - `vlan_id` (String)
 
 
@@ -197,10 +238,16 @@ Read-Only:
 Read-Only:
 
 - `admin_status` (String)
+- `chassis_id` (Number)
+- `connected_switch_type` (String)
+- `connected_switch_uuid` (String)
 - `description` (String)
 - `duplex_config` (String)
 - `duplex_oper` (String)
+- `fast_po_e_enabled` (String)
+- `four_pair_enabled` (String)
 - `id` (String)
+- `ieee_compliant` (String)
 - `interface_if_index` (Number)
 - `interface_type` (String)
 - `ipv4_address` (String)
@@ -209,13 +256,33 @@ Read-Only:
 - `is_wan` (String)
 - `mac_addr` (String)
 - `media_type` (String)
+- `module_id` (Number)
 - `name` (String)
 - `network_device_id` (String)
 - `network_device_ip_address` (String)
 - `network_device_mac_address` (String)
 - `oper_status` (String)
+- `pd_class_signal` (String)
+- `pd_class_spare` (String)
+- `pd_connected_device_list` (List of String)
+- `pd_connected_switch` (String)
+- `pd_device_model` (String)
+- `pd_device_name` (String)
+- `pd_device_type` (String)
+- `pd_location` (String)
+- `pd_max_power_drawn` (String)
+- `pd_power_admin_max_in_watt` (String)
+- `pd_power_budget_in_watt` (String)
+- `pd_power_consumed_in_watt` (String)
+- `pd_power_remaining_in_watt` (String)
 - `peer_stack_member` (Number)
 - `peer_stack_port` (String)
+- `perpetual_po_e_enabled` (String)
+- `poe_admin_status` (String)
+- `poe_data_timestamp` (Number)
+- `poe_oper_priority` (String)
+- `poe_oper_status` (String)
+- `policing_po_e_enabled` (String)
 - `port_channel_id` (String)
 - `port_mode` (String)
 - `port_type` (String)
@@ -225,7 +292,6 @@ Read-Only:
 - `rx_utilization` (Number)
 - `site_hierarchy` (String)
 - `site_hierarchy_id` (String)
-- `site_name` (String)
 - `speed` (String)
 - `stack_port_type` (String)
 - `timestamp` (Number)
@@ -233,4 +299,5 @@ Read-Only:
 - `tx_error` (Number)
 - `tx_rate` (Number)
 - `tx_utilization` (Number)
+- `upoe_plus_enabled` (String)
 - `vlan_id` (String)

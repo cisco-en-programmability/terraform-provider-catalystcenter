@@ -5,7 +5,7 @@ subcategory: ""
 description: |-
   It performs read operation on Platform Configuration.
   Provides information such as API version, mandatory core packages for installation or upgrade, optional packages,
-  Cisco DNA Center name and version, supported direct updates, and tenant ID.
+  Cisco Catalyst Center name and version, supported direct updates, and tenant ID.
 ---
 
 # catalystcenter_platform_release_summary (Data Source)
@@ -13,7 +13,7 @@ description: |-
 It performs read operation on Platform Configuration.
 
 - Provides information such as API version, mandatory core packages for installation or upgrade, optional packages,
-Cisco DNA Center name and version, supported direct updates, and tenant ID.
+Cisco Catalyst Center name and version, supported direct updates, and tenant ID.
 
 ## Example Usage
 

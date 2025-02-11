@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -47,7 +47,7 @@ func dataSourceSdaProvisionDevice() *schema.Resource {
 						},
 
 						"site_name_hierarchy": &schema.Schema{
-							Description: `Site Name Hierarchy for device location(only building / floor level) 
+							Description: `Site Name Hierarchy for device location(only building / floor level)
 `,
 							Type:     schema.TypeString,
 							Computed: true,

@@ -16,13 +16,13 @@ It performs create operation on Network Settings.
 settings.
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
-Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
+Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
 
 ## Example Usage
 
 ```terraform
 resource "catalystcenter_network_create" "example" {
-  provider = meraki
+  provider = catalystcenter
   site_id  = "string"
   parameters {
 
@@ -179,7 +179,7 @@ Optional:
 
 Optional:
 
-- `configure_dnac_ip` (String) Configuration DNAC IP for SNMP Server (eg: true)
+- `configure_dnac_ip` (String) Configuration CatalystC IP for SNMP Server (eg: true)
 - `ip_addresses` (List of String) IP Address for SNMP Server (eg: 4.4.4.1)
 
 
@@ -188,7 +188,7 @@ Optional:
 
 Optional:
 
-- `configure_dnac_ip` (String) Configuration DNAC IP for syslog server (eg: true)
+- `configure_dnac_ip` (String) Configuration CatalystC IP for syslog server (eg: true)
 - `ip_addresses` (List of String) IP Address for syslog server (eg: 4.4.4.4)
 
 

@@ -14,13 +14,13 @@ It performs create operation on Sensors.
 - Intent API to create a SENSOR test template with a new SSID, existing SSID, or both new and existing SSID
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
-Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in DNACenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
+Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
 
 ## Example Usage
 
 ```terraform
 resource "catalystcenter_sensor_test_create" "example" {
-  provider = meraki
+  provider = catalystcenter
   parameters {
 
     ap_coverage {

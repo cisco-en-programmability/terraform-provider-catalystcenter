@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -20,11 +20,53 @@ func dataSourceWirelessAccesspointConfigurationSummary() *schema.Resource {
 
 		ReadContext: dataSourceWirelessAccesspointConfigurationSummaryRead,
 		Schema: map[string]*schema.Schema{
+			"ap_mode": &schema.Schema{
+				Description: `apMode query parameter. AP Mode. Allowed values are Local, Bridge, Monitor, FlexConnect, Sniffer, Rogue Detector, SE-Connect, Flex+Bridge, Sensor.
+`,
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"ap_model": &schema.Schema{
+				Description: `apModel query parameter. AP Model
+`,
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 			"key": &schema.Schema{
 				Description: `key query parameter. The ethernet MAC address of Access point
 `,
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
+			},
+			"limit": &schema.Schema{
+				Description: `limit query parameter. The number of records to show for this page. The default is 500 if not specified. The maximum allowed limit is 500.
+`,
+				Type:     schema.TypeFloat,
+				Optional: true,
+			},
+			"mesh_role": &schema.Schema{
+				Description: `meshRole query parameter. Mesh Role. Allowed values are RAP or MAP
+`,
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"offset": &schema.Schema{
+				Description: `offset query parameter. The first record to show for this page; the first record is numbered 1.
+`,
+				Type:     schema.TypeFloat,
+				Optional: true,
+			},
+			"provisioned": &schema.Schema{
+				Description: `provisioned query parameter. Indicate whether AP provisioned or not. Allowed values are True or False
+`,
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"wlc_ip_address": &schema.Schema{
+				Description: `wlcIpAddress query parameter. WLC IP Address
+`,
+				Type:     schema.TypeString,
+				Optional: true,
 			},
 
 			"item": &schema.Schema{
@@ -455,14 +497,46 @@ func dataSourceWirelessAccesspointConfigurationSummaryRead(ctx context.Context, 
 	client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
-	vKey := d.Get("key")
+	vKey, okKey := d.GetOk("key")
+	vWlcIPAddress, okWlcIPAddress := d.GetOk("wlc_ip_address")
+	vApMode, okApMode := d.GetOk("ap_mode")
+	vApModel, okApModel := d.GetOk("ap_model")
+	vMeshRole, okMeshRole := d.GetOk("mesh_role")
+	vProvisioned, okProvisioned := d.GetOk("provisioned")
+	vLimit, okLimit := d.GetOk("limit")
+	vOffset, okOffset := d.GetOk("offset")
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetAccessPointConfigurationV1")
 		queryParams1 := catalystcentersdkgo.GetAccessPointConfigurationV1QueryParams{}
 
-		queryParams1.Key = vKey.(string)
+		if okKey {
+			queryParams1.Key = vKey.(string)
+		}
+		if okWlcIPAddress {
+			queryParams1.WlcIPAddress = vWlcIPAddress.(string)
+		}
+		if okApMode {
+			queryParams1.ApMode = vApMode.(string)
+		}
+		if okApModel {
+			queryParams1.ApModel = vApModel.(string)
+		}
+		if okMeshRole {
+			queryParams1.MeshRole = vMeshRole.(string)
+		}
+		if okProvisioned {
+			queryParams1.Provisioned = vProvisioned.(string)
+		}
+		if okLimit {
+			queryParams1.Limit = vLimit.(float64)
+		}
+		if okOffset {
+			queryParams1.Offset = vOffset.(float64)
+		}
+
+		// has_unknown_response: None
 
 		response1, restyResp1, err := client.Wireless.GetAccessPointConfigurationV1(&queryParams1)
 

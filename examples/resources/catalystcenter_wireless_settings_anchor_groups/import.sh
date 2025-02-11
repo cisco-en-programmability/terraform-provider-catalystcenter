@@ -1,0 +1,1 @@
+terraform import catalystcenter_wireless_settings_anchor_groups.example "id:=string"

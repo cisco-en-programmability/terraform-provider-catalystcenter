@@ -57,6 +57,7 @@ Read-Only:
 
 - `artifact_id` (String)
 - `cisco_dna_event_link` (String)
+- `configs` (List of Object) (see [below for nested schema](#nestedobjatt--items--configs))
 - `deprecated` (String)
 - `deprecation_message` (String)
 - `description` (String)
@@ -74,6 +75,15 @@ Read-Only:
 - `tags` (List of String)
 - `tenant_id` (String)
 - `version` (String)
+
+<a id="nestedobjatt--items--configs"></a>
+### Nested Schema for `items.configs`
+
+Read-Only:
+
+- `is_acknowledgeable` (String)
+- `is_alert` (String)
+
 
 <a id="nestedobjatt--items--event_payload"></a>
 ### Nested Schema for `items.event_payload`

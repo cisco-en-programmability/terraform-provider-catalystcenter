@@ -4,18 +4,18 @@ page_title: "catalystcenter_platform_nodes_configuration_summary Data Source - t
 subcategory: ""
 description: |-
   It performs read operation on Platform Configuration.
-  Provides details about the current Cisco DNA Center node configuration, such as API version, node name, NTP server,
-  intracluster link, LACP mode, network static routes, DNS server, subnet mask, host IP, default gateway, and interface
-  information.
+  Provides details about the current Cisco Catalyst Center node configuration, such as API version, node name, NTP
+  server, intracluster link, LACP mode, network static routes, DNS server, subnet mask, host IP, default gateway, and
+  interface information.
 ---
 
 # catalystcenter_platform_nodes_configuration_summary (Data Source)
 
 It performs read operation on Platform Configuration.
 
-- Provides details about the current Cisco DNA Center node configuration, such as API version, node name, NTP server,
-intracluster link, LACP mode, network static routes, DNS server, subnet mask, host IP, default gateway, and interface
-information.
+- Provides details about the current Cisco Catalyst Center node configuration, such as API version, node name, NTP
+server, intracluster link, LACP mode, network static routes, DNS server, subnet mask, host IP, default gateway, and
+interface information.
 
 ## Example Usage
 

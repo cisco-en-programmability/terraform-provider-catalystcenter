@@ -1,9 +1,9 @@
 
 data "catalystcenter_security_advisories_per_device" "example" {
-  provider  = catalystcenter
-  device_id = "string"
+    provider = catalystcenter
+    device_id = "string"
 }
 
 output "catalystcenter_security_advisories_per_device_example" {
-  value = data.catalystcenter_security_advisories_per_device.example.item
+    value = data.catalystcenter_security_advisories_per_device.example.item
 }

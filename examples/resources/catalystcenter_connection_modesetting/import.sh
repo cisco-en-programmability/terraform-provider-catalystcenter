@@ -1,0 +1,1 @@
+terraform import catalystcenter_connection_modesetting.example "id:=string"

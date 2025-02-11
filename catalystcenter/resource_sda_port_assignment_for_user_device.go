@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -132,7 +132,7 @@ func resourceSdaPortAssignmentForUserDevice() *schema.Resource {
 							Computed: true,
 						},
 						"interface_names": &schema.Schema{
-							Description: `List of Interface Names on the Edge Node Device. E.g.["GigabitEthernet1/0/3","GigabitEthernet1/0/4"] 
+							Description: `List of Interface Names on the Edge Node Device. E.g.["GigabitEthernet1/0/3","GigabitEthernet1/0/4"]
 `,
 							Type:     schema.TypeList,
 							Optional: true,

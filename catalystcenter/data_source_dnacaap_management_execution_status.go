@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -34,7 +34,7 @@ func dataSourceDnacaapManagementExecutionStatus() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 
 						"bapi_error": &schema.Schema{
-							Description: `Business API error message
+							Description: `Returns the error response of the original API  as a string
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -58,6 +58,20 @@ func dataSourceDnacaapManagementExecutionStatus() *schema.Resource {
 							Description: `Name of the Business API
 `,
 							Type:     schema.TypeString,
+							Computed: true,
+						},
+
+						"bapi_sync_response": &schema.Schema{
+							Description: `Returns the actual response of the original API as a string
+`,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
+						"bapi_sync_response_json": &schema.Schema{
+							Description: `Returns the actual response of the original API  as a json
+`,
+							Type:     schema.TypeString, //TEST,
 							Computed: true,
 						},
 
@@ -127,6 +141,8 @@ func dataSourceDnacaapManagementExecutionStatusRead(ctx context.Context, d *sche
 		log.Printf("[DEBUG] Selected method: GetBusinessAPIExecutionDetailsV1")
 		vvExecutionID := vExecutionID.(string)
 
+		// has_unknown_response: None
+
 		response1, restyResp1, err := client.Task.GetBusinessAPIExecutionDetailsV1(vvExecutionID)
 
 		if err != nil || response1 == nil {
@@ -170,9 +186,21 @@ func flattenTaskGetBusinessAPIExecutionDetailsV1Item(item *catalystcentersdkgo.R
 	respItem["end_time_epoch"] = item.EndTimeEpoch
 	respItem["time_duration"] = item.TimeDuration
 	respItem["status"] = item.Status
+	respItem["bapi_sync_response"] = item.BapiSyncResponse
+	respItem["bapi_sync_response_json"] = flattenTaskGetBusinessAPIExecutionDetailsV1ItemBapiSyncResponseJSON(item.BapiSyncResponseJSON)
 	respItem["runtime_instance_id"] = item.RuntimeInstanceID
 	respItem["bapi_error"] = item.BapiError
 	return []map[string]interface{}{
 		respItem,
 	}
+}
+
+func flattenTaskGetBusinessAPIExecutionDetailsV1ItemBapiSyncResponseJSON(item *catalystcentersdkgo.ResponseTaskGetBusinessAPIExecutionDetailsV1BapiSyncResponseJSON) interface{} {
+	if item == nil {
+		return nil
+	}
+	respItem := *item
+
+	return responseInterfaceToString(respItem)
+
 }

@@ -12,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -107,7 +107,7 @@ func resourceSdaFabricDevicesLayer2HandoffsSdaTransitsCreate() *schema.Resource 
 										Computed: true,
 									},
 									"is_multicast_over_transit_enabled": &schema.Schema{
-										Description: `Set this true to configure native multicast over multiple sites that are connected to an sd-access transit. 
+										Description: `Set this true to configure native multicast over multiple sites that are connected to an sd-access transit.
 `,
 										// Type:        schema.TypeBool,
 										Type:         schema.TypeString,

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,9 +15,9 @@ func dataSourceWirelessControllersWirelessMobilityGroups() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Wireless.
 
-- Retrieve all configured mobility groups if no Network Device Id is provided as a query parameter. If a Network Device
-Id is given and a mobility group is configured for it, return the configured details; otherwise, return the default
-values from the device.
+- Retrieve configured mobility groups if no Network Device Id is provided as a query parameter. If a Network Device Id
+is given and a mobility group is configured for it, return the configured details; otherwise, return the default values
+from the device.
 `,
 
 		ReadContext: dataSourceWirelessControllersWirelessMobilityGroupsRead,
@@ -79,7 +79,7 @@ values from the device.
 								Schema: map[string]*schema.Schema{
 
 									"data_link_encryption": &schema.Schema{
-										Description: `A secure link in which data is encrypted using CAPWAP DTLS protocol can be established between two controllers. 
+										Description: `A secure link in which data is encrypted using CAPWAP DTLS protocol can be established between two controllers.
 `,
 										// Type:        schema.TypeBool,
 										Type:     schema.TypeString,
@@ -166,31 +166,33 @@ func dataSourceWirelessControllersWirelessMobilityGroupsRead(ctx context.Context
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAllMobilityGroupsV1")
-		queryParams1 := catalystcentersdkgo.GetAllMobilityGroupsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetMobilityGroupsV1")
+		queryParams1 := catalystcentersdkgo.GetMobilityGroupsV1QueryParams{}
 
 		if okNetworkDeviceID {
 			queryParams1.NetworkDeviceID = vNetworkDeviceID.(string)
 		}
 
-		response1, restyResp1, err := client.Wireless.GetAllMobilityGroupsV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Wireless.GetMobilityGroupsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAllMobilityGroupsV1", err,
-				"Failure at GetAllMobilityGroupsV1, unexpected response", ""))
+				"Failure when executing 2 GetMobilityGroupsV1", err,
+				"Failure at GetMobilityGroupsV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenWirelessGetAllMobilityGroupsV1Items(response1.Response)
+		vItems1 := flattenWirelessGetMobilityGroupsV1Items(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAllMobilityGroupsV1 response",
+				"Failure when setting GetMobilityGroupsV1 response",
 				err))
 			return diags
 		}
@@ -202,7 +204,7 @@ func dataSourceWirelessControllersWirelessMobilityGroupsRead(ctx context.Context
 	return diags
 }
 
-func flattenWirelessGetAllMobilityGroupsV1Items(items *[]catalystcentersdkgo.ResponseWirelessGetAllMobilityGroupsV1Response) []map[string]interface{} {
+func flattenWirelessGetMobilityGroupsV1Items(items *[]catalystcentersdkgo.ResponseWirelessGetMobilityGroupsV1Response) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -215,13 +217,13 @@ func flattenWirelessGetAllMobilityGroupsV1Items(items *[]catalystcentersdkgo.Res
 		respItem["network_device_id"] = item.NetworkDeviceID
 		respItem["dtls_high_cipher"] = boolPtrToString(item.DtlsHighCipher)
 		respItem["data_link_encryption"] = boolPtrToString(item.DataLinkEncryption)
-		respItem["mobility_peers"] = flattenWirelessGetAllMobilityGroupsV1ItemsMobilityPeers(item.MobilityPeers)
+		respItem["mobility_peers"] = flattenWirelessGetMobilityGroupsV1ItemsMobilityPeers(item.MobilityPeers)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenWirelessGetAllMobilityGroupsV1ItemsMobilityPeers(items *[]catalystcentersdkgo.ResponseWirelessGetAllMobilityGroupsV1ResponseMobilityPeers) []map[string]interface{} {
+func flattenWirelessGetMobilityGroupsV1ItemsMobilityPeers(items *[]catalystcentersdkgo.ResponseWirelessGetMobilityGroupsV1ResponseMobilityPeers) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
