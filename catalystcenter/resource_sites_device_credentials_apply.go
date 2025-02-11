@@ -11,7 +11,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -44,7 +44,7 @@ credential.
 					Schema: map[string]*schema.Schema{
 
 						"task_id": &schema.Schema{
-							Description: `Task Id in uuid format. e.g. : 3200a44a-9186-4caf-8c32-419cd1f3d3f5 
+							Description: `Task Id in uuid format. e.g. : 3200a44a-9186-4caf-8c32-419cd1f3d3f5
 `,
 							Type:     schema.TypeString,
 							Computed: true,

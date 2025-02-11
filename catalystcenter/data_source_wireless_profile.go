@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -108,8 +108,22 @@ func dataSourceWirelessProfile() *schema.Resource {
 													Computed: true,
 												},
 
+												"policy_profile_name": &schema.Schema{
+													Description: `Policy Profile Name
+`,
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+
 												"type": &schema.Schema{
 													Description: `SSID Type(enum: Enterprise/Guest)
+`,
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+
+												"wlan_profile_name": &schema.Schema{
+													Description: `WLAN Profile Name
 `,
 													Type:     schema.TypeString,
 													Computed: true,
@@ -141,6 +155,8 @@ func dataSourceWirelessProfileRead(ctx context.Context, d *schema.ResourceData, 
 		if okProfileName {
 			queryParams1.ProfileName = vProfileName.(string)
 		}
+
+		// has_unknown_response: None
 
 		response1, restyResp1, err := client.Wireless.GetWirelessProfileV1(&queryParams1)
 
@@ -211,6 +227,8 @@ func flattenWirelessGetWirelessProfileV1ItemsProfileDetailsSSIDDetails(items *[]
 		respItem["enable_fabric"] = boolPtrToString(item.EnableFabric)
 		respItem["flex_connect"] = flattenWirelessGetWirelessProfileV1ItemsProfileDetailsSSIDDetailsFlexConnect(item.FlexConnect)
 		respItem["interface_name"] = item.InterfaceName
+		respItem["wlan_profile_name"] = item.WLANProfileName
+		respItem["policy_profile_name"] = item.PolicyProfileName
 		respItems = append(respItems, respItem)
 	}
 	return respItems

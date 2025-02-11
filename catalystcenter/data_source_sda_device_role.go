@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -41,7 +41,7 @@ func dataSourceSdaDeviceRole() *schema.Resource {
 						},
 
 						"roles": &schema.Schema{
-							Description: `Assigned device roles. Possible roles are [Edge Node, Control Plane, Border Node, Extended Node, Wireless Controller, Transit Control Plane]    
+							Description: `Assigned device roles. Possible roles are [Edge Node, Control Plane, Border Node, Extended Node, Wireless Controller, Transit Control Plane]
 `,
 							Type:     schema.TypeList,
 							Computed: true,

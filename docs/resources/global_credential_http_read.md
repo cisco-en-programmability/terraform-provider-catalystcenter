@@ -51,7 +51,7 @@ output "catalystcenter_global_credential_http_read_example" {
 
 ### Required
 
-- `parameters` (Block List, Min: 1, Max: 1) Array of RequestDiscoveryCreateHTTPReadCredentials (see [below for nested schema](#nestedblock--parameters))
+- `parameters` (Block List, Min: 1, Max: 1) Array of RequestDiscoveryCreateHTTPReadCredentialsV1 (see [below for nested schema](#nestedblock--parameters))
 
 ### Read-Only
 
@@ -94,11 +94,3 @@ Read-Only:
 - `port` (Number)
 - `secure` (String)
 - `username` (String)
-
-## Import
-
-Import is supported using the following syntax:
-
-```shell
-terraform import catalystcenter_global_credential_http_read.example "id:=string"
-```

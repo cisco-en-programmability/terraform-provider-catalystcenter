@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -243,6 +243,8 @@ func dataSourceGlobalCredentialRead(ctx context.Context, d *schema.ResourceData,
 			queryParams1.Order = vOrder.(string)
 		}
 
+		// has_unknown_response: None
+
 		response1, restyResp1, err := client.Discovery.GetGlobalCredentialsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
@@ -272,6 +274,8 @@ func dataSourceGlobalCredentialRead(ctx context.Context, d *schema.ResourceData,
 	if selectedMethod == 2 {
 		log.Printf("[DEBUG] Selected method: GetCredentialSubTypeByCredentialIDV1")
 		vvID := vID.(string)
+
+		// has_unknown_response: None
 
 		response2, restyResp2, err := client.Discovery.GetCredentialSubTypeByCredentialIDV1(vvID)
 

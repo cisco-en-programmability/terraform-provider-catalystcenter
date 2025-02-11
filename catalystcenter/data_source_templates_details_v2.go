@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -1386,7 +1386,7 @@ func dataSourceTemplatesDetailsV2Read(ctx context.Context, d *schema.ResourceDat
 			queryParams1.Offset = vOffset.(int)
 		}
 		if okLimit {
-			queryParams1.Limit = vLimit.(int)
+			queryParams1.Limit = vLimit.(float64)
 		}
 
 		response1, restyResp1, err := client.ConfigurationTemplates.GetTemplatesDetailsV2(&queryParams1)

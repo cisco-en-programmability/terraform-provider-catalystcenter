@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -46,45 +46,6 @@ func dataSourceLicenseUsageDetails() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 
 						"purchased_dna_license": &schema.Schema{
-							Type:     schema.TypeList,
-							Computed: true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-
-									"license_count_by_type": &schema.Schema{
-										Type:     schema.TypeList,
-										Computed: true,
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-
-												"license_count": &schema.Schema{
-													Description: `Number of licenses
-`,
-													Type:     schema.TypeInt,
-													Computed: true,
-												},
-
-												"license_type": &schema.Schema{
-													Description: `Type of license
-`,
-													Type:     schema.TypeString,
-													Computed: true,
-												},
-											},
-										},
-									},
-
-									"total_license_count": &schema.Schema{
-										Description: `Total number of licenses
-`,
-										Type:     schema.TypeInt,
-										Computed: true,
-									},
-								},
-							},
-						},
-
-						"purchased_ise_license": &schema.Schema{
 							Type:     schema.TypeList,
 							Computed: true,
 							Elem: &schema.Resource{
@@ -201,45 +162,6 @@ func dataSourceLicenseUsageDetails() *schema.Resource {
 							},
 						},
 
-						"used_ise_license": &schema.Schema{
-							Type:     schema.TypeList,
-							Computed: true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-
-									"license_count_by_type": &schema.Schema{
-										Type:     schema.TypeList,
-										Computed: true,
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-
-												"license_count": &schema.Schema{
-													Description: `Number of licenses
-`,
-													Type:     schema.TypeInt,
-													Computed: true,
-												},
-
-												"license_type": &schema.Schema{
-													Description: `Type of license
-`,
-													Type:     schema.TypeString,
-													Computed: true,
-												},
-											},
-										},
-									},
-
-									"total_license_count": &schema.Schema{
-										Description: `Total number of licenses
-`,
-										Type:     schema.TypeInt,
-										Computed: true,
-									},
-								},
-							},
-						},
-
 						"used_network_license": &schema.Schema{
 							Type:     schema.TypeList,
 							Computed: true,
@@ -302,6 +224,8 @@ func dataSourceLicenseUsageDetailsRead(ctx context.Context, d *schema.ResourceDa
 
 		queryParams1.DeviceType = vDeviceType.(string)
 
+		// has_unknown_response: None
+
 		response1, restyResp1, err := client.Licenses.LicenseUsageDetailsV1(vvSmartAccountID, vvVirtualAccountName, &queryParams1)
 
 		if err != nil || response1 == nil {
@@ -340,8 +264,6 @@ func flattenLicensesLicenseUsageDetailsV1Item(item *catalystcentersdkgo.Response
 	respItem["purchased_network_license"] = flattenLicensesLicenseUsageDetailsV1ItemPurchasedNetworkLicense(item.PurchasedNetworkLicense)
 	respItem["used_dna_license"] = flattenLicensesLicenseUsageDetailsV1ItemUsedDnaLicense(item.UsedDnaLicense)
 	respItem["used_network_license"] = flattenLicensesLicenseUsageDetailsV1ItemUsedNetworkLicense(item.UsedNetworkLicense)
-	respItem["purchased_ise_license"] = flattenLicensesLicenseUsageDetailsV1ItemPurchasedIseLicense(item.PurchasedIseLicense)
-	respItem["used_ise_license"] = flattenLicensesLicenseUsageDetailsV1ItemUsedIseLicense(item.UsedIseLicense)
 	return []map[string]interface{}{
 		respItem,
 	}
@@ -446,62 +368,6 @@ func flattenLicensesLicenseUsageDetailsV1ItemUsedNetworkLicense(item *catalystce
 }
 
 func flattenLicensesLicenseUsageDetailsV1ItemUsedNetworkLicenseLicenseCountByType(items *[]catalystcentersdkgo.ResponseLicensesLicenseUsageDetailsV1UsedNetworkLicenseLicenseCountByType) []map[string]interface{} {
-	if items == nil {
-		return nil
-	}
-	var respItems []map[string]interface{}
-	for _, item := range *items {
-		respItem := make(map[string]interface{})
-		respItem["license_type"] = item.LicenseType
-		respItem["license_count"] = item.LicenseCount
-		respItems = append(respItems, respItem)
-	}
-	return respItems
-}
-
-func flattenLicensesLicenseUsageDetailsV1ItemPurchasedIseLicense(item *catalystcentersdkgo.ResponseLicensesLicenseUsageDetailsV1PurchasedIseLicense) []map[string]interface{} {
-	if item == nil {
-		return nil
-	}
-	respItem := make(map[string]interface{})
-	respItem["total_license_count"] = item.TotalLicenseCount
-	respItem["license_count_by_type"] = flattenLicensesLicenseUsageDetailsV1ItemPurchasedIseLicenseLicenseCountByType(item.LicenseCountByType)
-
-	return []map[string]interface{}{
-		respItem,
-	}
-
-}
-
-func flattenLicensesLicenseUsageDetailsV1ItemPurchasedIseLicenseLicenseCountByType(items *[]catalystcentersdkgo.ResponseLicensesLicenseUsageDetailsV1PurchasedIseLicenseLicenseCountByType) []map[string]interface{} {
-	if items == nil {
-		return nil
-	}
-	var respItems []map[string]interface{}
-	for _, item := range *items {
-		respItem := make(map[string]interface{})
-		respItem["license_type"] = item.LicenseType
-		respItem["license_count"] = item.LicenseCount
-		respItems = append(respItems, respItem)
-	}
-	return respItems
-}
-
-func flattenLicensesLicenseUsageDetailsV1ItemUsedIseLicense(item *catalystcentersdkgo.ResponseLicensesLicenseUsageDetailsV1UsedIseLicense) []map[string]interface{} {
-	if item == nil {
-		return nil
-	}
-	respItem := make(map[string]interface{})
-	respItem["total_license_count"] = item.TotalLicenseCount
-	respItem["license_count_by_type"] = flattenLicensesLicenseUsageDetailsV1ItemUsedIseLicenseLicenseCountByType(item.LicenseCountByType)
-
-	return []map[string]interface{}{
-		respItem,
-	}
-
-}
-
-func flattenLicensesLicenseUsageDetailsV1ItemUsedIseLicenseLicenseCountByType(items *[]catalystcentersdkgo.ResponseLicensesLicenseUsageDetailsV1UsedIseLicenseLicenseCountByType) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -47,7 +47,7 @@ func dataSourceTopologyLayer2() *schema.Resource {
 								Schema: map[string]*schema.Schema{
 
 									"additional_info": &schema.Schema{
-										Description: `Additional information about the link 
+										Description: `Additional information about the link
 `,
 										Type:     schema.TypeString, //TEST,
 										Computed: true,

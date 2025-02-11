@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -169,6 +169,8 @@ func dataSourceProductNamesRead(ctx context.Context, d *schema.ResourceData, m i
 			queryParams1.Limit = vLimit.(float64)
 		}
 
+		// has_unknown_response: None
+
 		response1, restyResp1, err := client.SoftwareImageManagementSwim.RetrievesTheListOfNetworkDeviceProductNamesV1(&queryParams1)
 
 		if err != nil || response1 == nil {
@@ -198,6 +200,8 @@ func dataSourceProductNamesRead(ctx context.Context, d *schema.ResourceData, m i
 	if selectedMethod == 2 {
 		log.Printf("[DEBUG] Selected method: RetrieveNetworkDeviceProductNameV1")
 		vvProductNameOrdinal := vProductNameOrdinal.(float64)
+
+		// has_unknown_response: None
 
 		response2, restyResp2, err := client.SoftwareImageManagementSwim.RetrieveNetworkDeviceProductNameV1(vvProductNameOrdinal)
 

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -51,7 +51,7 @@ func dataSourceReserveIPSubpool() *schema.Resource {
 				Optional: true,
 			},
 			"site_id": &schema.Schema{
-				Description: `siteId query parameter. site id of site from which to retrieve associated reserve pools. Either siteId (per site queries) or ignoreInheritedGroups must be used. They can also be used together. 
+				Description: `siteId query parameter. site id of site from which to retrieve associated reserve pools. Either siteId (per site queries) or ignoreInheritedGroups must be used. They can also be used together.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -294,7 +294,7 @@ func dataSourceReserveIPSubpoolRead(ctx context.Context, d *schema.ResourceData,
 			queryParams1.Limit = vLimit.(float64)
 		}
 		if okIgnoreInheritedGroups {
-			queryParams1.IgnoreInheritedGroups = vIgnoreInheritedGroups.(string)
+			queryParams1.IgnoreInheritedGroups = vIgnoreInheritedGroups.(bool)
 		}
 		if okPoolUsage {
 			queryParams1.PoolUsage = vPoolUsage.(string)

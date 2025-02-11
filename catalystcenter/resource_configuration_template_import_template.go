@@ -12,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -2153,8 +2153,8 @@ func expandRequestConfigurationTemplateImportTemplateImportsTheTemplatesProvided
 	return &request
 }
 
-func expandRequestConfigurationTemplateImportTemplateImportsTheTemplatesProvidedV1ItemRollbackTemplateParamsRangeArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemConfigurationTemplatesImportsTheTemplatesProvidedRollbackTemplateParamsRange {
-	request := []catalystcentersdkgo.RequestItemConfigurationTemplatesImportsTheTemplatesProvidedRollbackTemplateParamsRange{}
+func expandRequestConfigurationTemplateImportTemplateImportsTheTemplatesProvidedV1ItemRollbackTemplateParamsRangeArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemConfigurationTemplatesImportsTheTemplatesProvidedV1RollbackTemplateParamsRange {
+	request := []catalystcentersdkgo.RequestItemConfigurationTemplatesImportsTheTemplatesProvidedV1RollbackTemplateParamsRange{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -2173,8 +2173,8 @@ func expandRequestConfigurationTemplateImportTemplateImportsTheTemplatesProvided
 	return &request
 }
 
-func expandRequestConfigurationTemplateImportTemplateImportsTheTemplatesProvidedV1ItemRollbackTemplateParamsRange(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemConfigurationTemplatesImportsTheTemplatesProvidedRollbackTemplateParamsRange {
-	request := catalystcentersdkgo.RequestItemConfigurationTemplatesImportsTheTemplatesProvidedRollbackTemplateParamsRange{}
+func expandRequestConfigurationTemplateImportTemplateImportsTheTemplatesProvidedV1ItemRollbackTemplateParamsRange(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemConfigurationTemplatesImportsTheTemplatesProvidedV1RollbackTemplateParamsRange {
+	request := catalystcentersdkgo.RequestItemConfigurationTemplatesImportsTheTemplatesProvidedV1RollbackTemplateParamsRange{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -2187,8 +2187,8 @@ func expandRequestConfigurationTemplateImportTemplateImportsTheTemplatesProvided
 	return &request
 }
 
-func expandRequestConfigurationTemplateImportTemplateImportsTheTemplatesProvidedV1ItemRollbackTemplateParamsSelection(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemConfigurationTemplatesImportsTheTemplatesProvidedRollbackTemplateParamsSelection {
-	request := catalystcentersdkgo.RequestItemConfigurationTemplatesImportsTheTemplatesProvidedRollbackTemplateParamsSelection{}
+func expandRequestConfigurationTemplateImportTemplateImportsTheTemplatesProvidedV1ItemRollbackTemplateParamsSelection(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemConfigurationTemplatesImportsTheTemplatesProvidedV1RollbackTemplateParamsSelection {
+	request := catalystcentersdkgo.RequestItemConfigurationTemplatesImportsTheTemplatesProvidedV1RollbackTemplateParamsSelection{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".default_selected_values")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".default_selected_values")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".default_selected_values")))) {
 		request.DefaultSelectedValues = interfaceToSliceString(v)
 	}
@@ -2204,8 +2204,8 @@ func expandRequestConfigurationTemplateImportTemplateImportsTheTemplatesProvided
 	return &request
 }
 
-func expandRequestConfigurationTemplateImportTemplateImportsTheTemplatesProvidedV1ItemRollbackTemplateParamsSelectionSelectionValues(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemConfigurationTemplatesImportsTheTemplatesProvidedRollbackTemplateParamsSelectionSelectionValues {
-	var request catalystcentersdkgo.RequestItemConfigurationTemplatesImportsTheTemplatesProvidedRollbackTemplateParamsSelectionSelectionValues
+func expandRequestConfigurationTemplateImportTemplateImportsTheTemplatesProvidedV1ItemRollbackTemplateParamsSelectionSelectionValues(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemConfigurationTemplatesImportsTheTemplatesProvidedV1RollbackTemplateParamsSelectionSelectionValues {
+	var request catalystcentersdkgo.RequestItemConfigurationTemplatesImportsTheTemplatesProvidedV1RollbackTemplateParamsSelectionSelectionValues
 	request = d.Get(fixKeyAccess(key))
 	return &request
 }

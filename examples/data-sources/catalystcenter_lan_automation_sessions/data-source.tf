@@ -1,8 +1,8 @@
 
 data "catalystcenter_lan_automation_sessions" "example" {
-  provider = catalystcenter
+    provider = catalystcenter
 }
 
 output "catalystcenter_lan_automation_sessions_example" {
-  value = data.catalystcenter_lan_automation_sessions.example.item
+    value = data.catalystcenter_lan_automation_sessions.example.item
 }

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -21,7 +21,7 @@ func dataSourceSiteMembership() *schema.Resource {
 		ReadContext: dataSourceSiteMembershipRead,
 		Schema: map[string]*schema.Schema{
 			"device_family": &schema.Schema{
-				Description: `deviceFamily query parameter. Device family name 
+				Description: `deviceFamily query parameter. Device family name
 `,
 				Type:     schema.TypeString,
 				Optional: true,

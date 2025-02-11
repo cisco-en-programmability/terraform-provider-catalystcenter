@@ -4,14 +4,14 @@ page_title: "catalystcenter_wireless_settings_dot11be_profiles Data Source - ter
 subcategory: ""
 description: |-
   It performs read operation on Wireless.
-  This data source allows the user to get all 802.11be Profile(s) configured under Wireless SettingsThis data source allows the user to get 802.11be Profile by ID
+  This data source allows the user to get 802.11be Profile(s) configured under Wireless SettingsThis data source allows the user to get 802.11be Profile by ID
 ---
 
 # catalystcenter_wireless_settings_dot11be_profiles (Data Source)
 
 It performs read operation on Wireless.
 
-- This data source allows the user to get all 802.11be Profile(s) configured under Wireless Settings
+- This data source allows the user to get 802.11be Profile(s) configured under Wireless Settings
 
 - This data source allows the user to get 802.11be Profile by ID
 
@@ -19,9 +19,15 @@ It performs read operation on Wireless.
 
 ```terraform
 data "catalystcenter_wireless_settings_dot11be_profiles" "example" {
-  provider = catalystcenter
-  limit    = 1
-  offset   = 1
+  provider             = catalystcenter
+  is_mu_mimo_down_link = "false"
+  is_mu_mimo_up_link   = "false"
+  is_of_dma_down_link  = "false"
+  is_of_dma_multi_ru   = "false"
+  is_of_dma_up_link    = "false"
+  limit                = 1
+  offset               = 1
+  profile_name         = "string"
 }
 
 output "catalystcenter_wireless_settings_dot11be_profiles_example" {
@@ -44,8 +50,14 @@ output "catalystcenter_wireless_settings_dot11be_profiles_example" {
 ### Optional
 
 - `id` (String) id path parameter. 802.11be Profile ID
-- `limit` (Number) limit query parameter.
-- `offset` (Number) offset query parameter.
+- `is_mu_mimo_down_link` (Boolean) isMuMimoDownLink query parameter. MU-MIMO Downlink
+- `is_mu_mimo_up_link` (Boolean) isMuMimoUpLink query parameter. MU-MIMO Uplink
+- `is_of_dma_down_link` (Boolean) isOfDmaDownLink query parameter. OFDMA Downlink
+- `is_of_dma_multi_ru` (Boolean) isOfDmaMultiRu query parameter. OFDMA Multi-RU
+- `is_of_dma_up_link` (Boolean) isOfDmaUpLink query parameter. OFDMA Uplink
+- `limit` (Number) limit query parameter. The number of records to show for this page. Default is 500 if not specified. Maximum allowed limit is 500.
+- `offset` (Number) offset query parameter. The first record to show for this page, the first record is numbered 1
+- `profile_name` (String) profileName query parameter. Profile Name
 
 ### Read-Only
 

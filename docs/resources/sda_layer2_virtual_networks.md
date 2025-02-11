@@ -31,6 +31,7 @@ resource "catalystcenter_sda_layer2_virtual_networks" "example" {
     fabric_id                              = "string"
     id                                     = "string"
     is_fabric_enabled_wireless             = "false"
+    is_multiple_ip_to_mac_addresses        = "false"
     traffic_type                           = "string"
     vlan_id                                = 1
     vlan_name                              = "string"

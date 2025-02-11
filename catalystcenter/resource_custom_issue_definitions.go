@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -365,7 +365,7 @@ func resourceCustomIssueDefinitionsUpdate(ctx context.Context, d *schema.Resourc
 		log.Printf("[DEBUG] ID used for update operation %s", vvID)
 		request1 := expandRequestCustomIssueDefinitionsUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedIDV1(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-		response1, restyResp1, err := client.Issues.UpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedID(vvID, request1, nil)
+		response1, restyResp1, err := client.Issues.UpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedID(vvID, request1)
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] resty response for update operation => %v", restyResp1.String())

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -23,6 +23,10 @@ profiles, hence specifying the profile Id in the query parameter is important an
 detailed information about the usage of the API, please refer to the Open API specification document
 https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 AssuranceUserDefinedIssueAPIs-1.0.0-resolved.yaml
+
+- Get the custom issue definition for the given custom issue definition Id. For detailed information about the usage of
+the API, please refer to the Open API specification document https://github.com/cisco-en-programmability/catalyst-
+center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-AssuranceUserDefinedIssueAPIs-1.0.0-resolved.yaml
 `,
 
 		ReadContext: dataSourceCustomIssueDefinitionsRead,
@@ -34,7 +38,7 @@ AssuranceUserDefinedIssueAPIs-1.0.0-resolved.yaml
 				Optional: true,
 			},
 			"id": &schema.Schema{
-				Description: `id query parameter. The custom issue definition identifier and unique identifier across the profile.Examples: id=6bef213c-19ca-4170-8375-b694e251101c (single entity uuid requested) id=6bef213c-19ca-4170-8375-b694e251101c&id=19ca-4170-8375-b694e251101c-6bef213c (multiple Id request in the query param)
+				Description: `id path parameter. Get the custom issue definition for the given custom issue definition Id.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -98,6 +102,141 @@ AssuranceUserDefinedIssueAPIs-1.0.0-resolved.yaml
 `,
 				Type:     schema.TypeString,
 				Optional: true,
+			},
+			"xca_lle_rid": &schema.Schema{
+				Description: `X-CALLER-ID header parameter. Caller ID can be used to trace the caller for queries executed on database. The caller id is like a optional attribute which can be added to API invocation like ui, python, postman, test-automation etc
+`,
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+
+			"item": &schema.Schema{
+				Type:     schema.TypeList,
+				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+
+						"created_time": &schema.Schema{
+							Description: `Created Time`,
+							Type:        schema.TypeInt,
+							Computed:    true,
+						},
+
+						"description": &schema.Schema{
+							Description: `Description`,
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+
+						"id": &schema.Schema{
+							Description: `Id`,
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+
+						"is_deletable": &schema.Schema{
+							Description: `Is Deletable`,
+							// Type:        schema.TypeBool,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
+						"is_enabled": &schema.Schema{
+							Description: `Is Enabled`,
+							// Type:        schema.TypeBool,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
+						"is_notification_enabled": &schema.Schema{
+							Description: `Is Notification Enabled`,
+							// Type:        schema.TypeBool,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
+						"last_updated_time": &schema.Schema{
+							Description: `Last Updated Time`,
+							Type:        schema.TypeInt,
+							Computed:    true,
+						},
+
+						"name": &schema.Schema{
+							Description: `Name`,
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+
+						"priority": &schema.Schema{
+							Description: `Priority`,
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+
+						"profile_id": &schema.Schema{
+							Description: `Profile Id`,
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+
+						"rules": &schema.Schema{
+							Type:     schema.TypeList,
+							Computed: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+
+									"duration_in_minutes": &schema.Schema{
+										Description: `Duration In Minutes`,
+										Type:        schema.TypeInt,
+										Computed:    true,
+									},
+
+									"facility": &schema.Schema{
+										Description: `Facility`,
+										Type:        schema.TypeString,
+										Computed:    true,
+									},
+
+									"mnemonic": &schema.Schema{
+										Description: `Mnemonic`,
+										Type:        schema.TypeString,
+										Computed:    true,
+									},
+
+									"occurrences": &schema.Schema{
+										Description: `Occurrences`,
+										Type:        schema.TypeInt,
+										Computed:    true,
+									},
+
+									"pattern": &schema.Schema{
+										Description: `Pattern`,
+										Type:        schema.TypeString,
+										Computed:    true,
+									},
+
+									"severity": &schema.Schema{
+										Description: `Severity`,
+										Type:        schema.TypeInt,
+										Computed:    true,
+									},
+
+									"type": &schema.Schema{
+										Description: `Type`,
+										Type:        schema.TypeString,
+										Computed:    true,
+									},
+								},
+							},
+						},
+
+						"trigger_id": &schema.Schema{
+							Description: `Trigger Id`,
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+					},
+				},
 			},
 
 			"items": &schema.Schema{
@@ -248,8 +387,14 @@ func dataSourceCustomIssueDefinitionsRead(ctx context.Context, d *schema.Resourc
 	vOffset, okOffset := d.GetOk("offset")
 	vSortBy, okSortBy := d.GetOk("sort_by")
 	vOrder, okOrder := d.GetOk("order")
+	vXCaLLERID, okXCaLLERID := d.GetOk("xca_lle_rid")
 
-	selectedMethod := 1
+	method1 := []bool{okID, okProfileID, okName, okPriority, okIsEnabled, okSeverity, okFacility, okMnemonic, okLimit, okOffset, okSortBy, okOrder}
+	log.Printf("[DEBUG] Selecting method. Method 1 %v", method1)
+	method2 := []bool{okID, okXCaLLERID}
+	log.Printf("[DEBUG] Selecting method. Method 2 %v", method2)
+
+	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1")
 		queryParams1 := catalystcentersdkgo.GetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1QueryParams{}
@@ -291,6 +436,8 @@ func dataSourceCustomIssueDefinitionsRead(ctx context.Context, d *schema.Resourc
 			queryParams1.Order = vOrder.(string)
 		}
 
+		// has_unknown_response: None
+
 		response1, restyResp1, err := client.Issues.GetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1(&queryParams1)
 
 		if err != nil || response1 == nil {
@@ -309,6 +456,44 @@ func dataSourceCustomIssueDefinitionsRead(ctx context.Context, d *schema.Resourc
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1 response",
+				err))
+			return diags
+		}
+
+		d.SetId(getUnixTimeString())
+		return diags
+
+	}
+	if selectedMethod == 2 {
+		log.Printf("[DEBUG] Selected method: GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1")
+		vvID := vID.(string)
+
+		headerParams2 := catalystcentersdkgo.GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1HeaderParams{}
+
+		if okXCaLLERID {
+			headerParams2.XCaLLERID = vXCaLLERID.(string)
+		}
+
+		// has_unknown_response: None
+
+		response2, restyResp2, err := client.Issues.GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1(vvID, &headerParams2)
+
+		if err != nil || response2 == nil {
+			if restyResp2 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1", err,
+				"Failure at GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
+
+		vItem2 := flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1Item(response2.Response)
+		if err := d.Set("item", vItem2); err != nil {
+			diags = append(diags, diagError(
+				"Failure when setting GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1 response",
 				err))
 			return diags
 		}
@@ -345,6 +530,47 @@ func flattenIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1Items(i
 }
 
 func flattenIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1ItemsRules(items *[]catalystcentersdkgo.ResponseIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1ResponseRules) []map[string]interface{} {
+	if items == nil {
+		return nil
+	}
+	var respItems []map[string]interface{}
+	for _, item := range *items {
+		respItem := make(map[string]interface{})
+		respItem["type"] = item.Type
+		respItem["severity"] = item.Severity
+		respItem["facility"] = item.Facility
+		respItem["mnemonic"] = item.Mnemonic
+		respItem["pattern"] = item.Pattern
+		respItem["occurrences"] = item.Occurrences
+		respItem["duration_in_minutes"] = item.DurationInMinutes
+		respItems = append(respItems, respItem)
+	}
+	return respItems
+}
+
+func flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1Item(item *catalystcentersdkgo.ResponseIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1Response) []map[string]interface{} {
+	if item == nil {
+		return nil
+	}
+	respItem := make(map[string]interface{})
+	respItem["id"] = item.ID
+	respItem["name"] = item.Name
+	respItem["description"] = item.Description
+	respItem["profile_id"] = item.ProfileID
+	respItem["trigger_id"] = item.TriggerID
+	respItem["rules"] = flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1ItemRules(item.Rules)
+	respItem["is_enabled"] = boolPtrToString(item.IsEnabled)
+	respItem["priority"] = item.Priority
+	respItem["is_deletable"] = boolPtrToString(item.IsDeletable)
+	respItem["is_notification_enabled"] = boolPtrToString(item.IsNotificationEnabled)
+	respItem["created_time"] = item.CreatedTime
+	respItem["last_updated_time"] = item.LastUpdatedTime
+	return []map[string]interface{}{
+		respItem,
+	}
+}
+
+func flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1ItemRules(items *[]catalystcentersdkgo.ResponseIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1ResponseRules) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

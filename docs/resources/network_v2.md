@@ -181,7 +181,7 @@ Optional:
 
 Optional:
 
-- `configure_dnac_ip` (String) Configuration DNAC IP for SNMP Server (eg: true)
+- `configure_dnac_ip` (String) Configuration CatalystC IP for SNMP Server (eg: true)
 - `ip_addresses` (List of String) IP Address for SNMP Server (eg: 4.4.4.1)
 
 
@@ -190,7 +190,7 @@ Optional:
 
 Optional:
 
-- `configure_dnac_ip` (String) Configuration DNAC IP for syslog server (eg: true)
+- `configure_dnac_ip` (String) Configuration CatalystC IP for syslog server (eg: true)
 - `ip_addresses` (List of String) IP Address for syslog server (eg: 4.4.4.4)
 
 

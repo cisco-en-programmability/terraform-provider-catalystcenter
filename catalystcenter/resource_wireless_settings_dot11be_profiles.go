@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -198,7 +198,7 @@ func resourceWirelessSettingsDot11BeProfilesCreate(ctx context.Context, d *schem
 			return resourceWirelessSettingsDot11BeProfilesRead(ctx, d, m)
 		}
 	} else {
-		queryParamImport := catalystcentersdkgo.GetAll80211BeProfilesV1QueryParams{}
+		queryParamImport := catalystcentersdkgo.Get80211BeProfilesV1QueryParams{}
 
 		response2, err := searchWirelessGetAll80211BeProfiles(m, queryParamImport, vvName)
 		if response2 != nil && err == nil {
@@ -247,7 +247,7 @@ func resourceWirelessSettingsDot11BeProfilesCreate(ctx context.Context, d *schem
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetAll80211BeProfilesV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.Get80211BeProfilesV1QueryParams{}
 	item3, err := searchWirelessGetAll80211BeProfiles(m, queryParamValidate, vvName)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
@@ -476,14 +476,14 @@ func expandRequestWirelessSettingsDot11BeProfilesUpdate80211BeProfileV1(ctx cont
 	return &request
 }
 
-func searchWirelessGetAll80211BeProfiles(m interface{}, queryParams catalystcentersdkgo.GetAll80211BeProfilesV1QueryParams, vID string) (*catalystcentersdkgo.ResponseWirelessGetAll80211BeProfilesV1Response, error) {
+func searchWirelessGetAll80211BeProfiles(m interface{}, queryParams catalystcentersdkgo.Get80211BeProfilesV1QueryParams, vID string) (*catalystcentersdkgo.ResponseWirelessGet80211BeProfilesV1Response, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseWirelessGetAll80211BeProfilesV1Response
+	var foundItem *catalystcentersdkgo.ResponseWirelessGet80211BeProfilesV1Response
 	// var ite *catalystcentersdkgo.ResponseWirelessGetAll80211BeProfiles
 
 	queryParams.Offset = 1
-	nResponse, _, err := client.Wireless.GetAll80211BeProfiles(nil)
+	nResponse, _, err := client.Wireless.Get80211BeProfiles(nil)
 	maxPageSize := len(*nResponse.Response)
 	for len(*nResponse.Response) > 0 {
 		time.Sleep(15 * time.Second)
@@ -495,7 +495,7 @@ func searchWirelessGetAll80211BeProfiles(m interface{}, queryParams catalystcent
 		}
 		queryParams.Limit = float64(maxPageSize)
 		queryParams.Offset += float64(maxPageSize)
-		nResponse, _, err = client.Wireless.GetAll80211BeProfiles(&queryParams)
+		nResponse, _, err = client.Wireless.Get80211BeProfiles(&queryParams)
 		if nResponse == nil || nResponse.Response == nil {
 			break
 		}

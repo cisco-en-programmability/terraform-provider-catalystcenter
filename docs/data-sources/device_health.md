@@ -4,7 +4,7 @@ page_title: "catalystcenter_device_health Data Source - terraform-provider-catal
 subcategory: ""
 description: |-
   It performs read operation on Devices.
-  Intent API for accessing DNA Assurance Device object for generating reports, creating dashboards or creating
+  Intent API for accessing Catalyst Assurance Device object for generating reports, creating dashboards or creating
   additional value added services.
 ---
 
@@ -12,7 +12,7 @@ description: |-
 
 It performs read operation on Devices.
 
-- Intent API for accessing DNA Assurance Device object for generating reports, creating dashboards or creating
+- Intent API for accessing Catalyst Assurance Device object for generating reports, creating dashboards or creating
 additional value added services.
 
 ## Example Usage
@@ -41,10 +41,10 @@ output "catalystcenter_device_health_example" {
 
 - `device_role` (String) deviceRole query parameter. CORE, ACCESS, DISTRIBUTION, ROUTER, WLC, or AP (case insensitive)
 - `end_time` (Number) endTime query parameter. UTC epoch time in milliseconds
-- `health` (String) health query parameter. DNAC health catagory: POOR, FAIR, or GOOD (case insensitive)
+- `health` (String) health query parameter. CatalystC health catagory: POOR, FAIR, or GOOD (case insensitive)
 - `limit` (Number) limit query parameter. Max number of device entries in the response (default to 50. Max at 500)
 - `offset` (Number) offset query parameter. The offset of the first device in the returned data (Mutiple of 'limit' + 1)
-- `site_id` (String) siteId query parameter. DNAC site UUID
+- `site_id` (String) siteId query parameter. CatalystC site UUID
 - `start_time` (Number) startTime query parameter. UTC epoch time in milliseconds
 
 ### Read-Only

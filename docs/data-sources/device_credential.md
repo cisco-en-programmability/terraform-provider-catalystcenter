@@ -4,7 +4,7 @@ page_title: "catalystcenter_device_credential Data Source - terraform-provider-c
 subcategory: ""
 description: |-
   It performs read operation on Network Settings.
-  API to get device credential details. This data source has been deprecated and will not be available in a Cisco DNA
+  API to get device credential details. This data source has been deprecated and will not be available in a Cisco Catalyst
   Center release after August 1st 2024 23:59:59 GMT. Please refer new Intent API : Get All Global Credentials V2
 ---
 
@@ -12,7 +12,7 @@ description: |-
 
 It performs read operation on Network Settings.
 
-- API to get device credential details. This data source has been deprecated and will not be available in a Cisco DNA
+- API to get device credential details. This data source has been deprecated and will not be available in a Cisco Catalyst
 Center release after August 1st 2024 23:59:59 GMT. Please refer new Intent API : Get All Global Credentials V2
 
 ## Example Usage

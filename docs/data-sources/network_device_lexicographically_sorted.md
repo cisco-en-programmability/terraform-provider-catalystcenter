@@ -64,7 +64,7 @@ output "catalystcenter_network_device_lexicographically_sorted_example" {
 - `error_code` (String) errorCode query parameter.
 - `family` (String) family query parameter.
 - `hostname` (String) hostname query parameter.
-- `limit` (Number) limit query parameter.
+- `limit` (Number) limit query parameter. The number of records to show for this page. Min: 1, Max: 500
 - `mac_address` (String) macAddress query parameter.
 - `management_ip_address` (String) managementIpAddress query parameter.
 - `offset` (Number) offset query parameter.
@@ -84,11 +84,12 @@ output "catalystcenter_network_device_lexicographically_sorted_example" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `item` (List of Object) (see [below for nested schema](#nestedatt--item))
+- `items` (List of Object) (see [below for nested schema](#nestedatt--items))
 
-<a id="nestedatt--item"></a>
-### Nested Schema for `item`
+<a id="nestedatt--items"></a>
+### Nested Schema for `items`
 
 Read-Only:
 
-- `object` (String)
+- `response` (List of String)
+- `version` (String)

@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -344,7 +344,7 @@ func resourceWirelessEnterpriseSSID() *schema.Resource {
 							Computed:     true,
 						},
 						"enable_basic_service_set_max_idle": &schema.Schema{
-							Description: `Enable Basic Service Set Max Idle 
+							Description: `Enable Basic Service Set Max Idle
 `,
 							// Type:        schema.TypeBool,
 							Type:         schema.TypeString,
@@ -353,7 +353,7 @@ func resourceWirelessEnterpriseSSID() *schema.Resource {
 							Computed:     true,
 						},
 						"enable_broadcast_ssi_d": &schema.Schema{
-							Description: `Enable Broadcase SSID 
+							Description: `Enable Broadcase SSID
 `,
 							// Type:        schema.TypeBool,
 							Type:         schema.TypeString,
@@ -522,7 +522,7 @@ func resourceWirelessEnterpriseSSID() *schema.Resource {
 							Computed: true,
 						},
 						"radio_policy": &schema.Schema{
-							Description: `Radio Policy Enum 
+							Description: `Radio Policy Enum
 `,
 							Type:     schema.TypeString,
 							Optional: true,

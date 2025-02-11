@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -99,6 +99,14 @@ func dataSourceComplianceDeviceDetails() *schema.Resource {
 							Computed: true,
 						},
 
+						"remediation_supported": &schema.Schema{
+							Description: `Indicates whether remediation is supported for this compliance type or not
+`,
+							// Type:        schema.TypeBool,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
 						"state": &schema.Schema{
 							Description: `State of latest compliance check for the complianceType. Will be one of SUCCESS, FAILED, or IN_PROGRESS.
 `,
@@ -150,6 +158,8 @@ func dataSourceComplianceDeviceDetailsRead(ctx context.Context, d *schema.Resour
 			queryParams1.Limit = vLimit.(float64)
 		}
 
+		// has_unknown_response: None
+
 		response1, restyResp1, err := client.Compliance.GetComplianceDetailV1(&queryParams1)
 
 		if err != nil || response1 == nil {
@@ -194,6 +204,7 @@ func flattenComplianceGetComplianceDetailV1Items(items *[]catalystcentersdkgo.Re
 		respItem["category"] = item.Category
 		respItem["last_update_time"] = item.LastUpdateTime
 		respItem["state"] = item.State
+		respItem["remediation_supported"] = boolPtrToString(item.RemediationSupported)
 		respItems = append(respItems, respItem)
 	}
 	return respItems

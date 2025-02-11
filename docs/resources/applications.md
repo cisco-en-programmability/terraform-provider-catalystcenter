@@ -23,7 +23,6 @@ It manages create, read, update and delete operations on Application Policy.
 resource "catalystcenter_applications" "example" {
   provider = catalystcenter
 
-
   parameters {
 
     application_set {

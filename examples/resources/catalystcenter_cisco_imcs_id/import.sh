@@ -1,0 +1,1 @@
+terraform import catalystcenter_cisco_imcs_id.example "id:=string"

@@ -11,7 +11,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -61,7 +61,7 @@ func resourceDeviceConfigurationsExport() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"device_id": &schema.Schema{
-							Description: `UUIDs of the devices for which configurations need to be exported. 
+							Description: `UUIDs of the devices for which configurations need to be exported.
 `,
 							Type:     schema.TypeString,
 							Optional: true,

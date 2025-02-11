@@ -1,8 +1,8 @@
 
 data "catalystcenter_lan_automation_count" "example" {
-  provider = catalystcenter
+    provider = catalystcenter
 }
 
 output "catalystcenter_lan_automation_count_example" {
-  value = data.catalystcenter_lan_automation_count.example.item
+    value = data.catalystcenter_lan_automation_count.example.item
 }

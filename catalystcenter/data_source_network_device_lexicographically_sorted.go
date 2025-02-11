@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -54,9 +54,10 @@ device management IP addresses that match fully or partially the provided attrib
 				Optional:    true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter.`,
-				Type:        schema.TypeInt,
-				Optional:    true,
+				Description: `limit query parameter. The number of records to show for this page. Min: 1, Max: 500
+`,
+				Type:     schema.TypeInt,
+				Optional: true,
 			},
 			"mac_address": &schema.Schema{
 				Description: `macAddress query parameter.`,
@@ -134,16 +135,23 @@ device management IP addresses that match fully or partially the provided attrib
 				Optional:    true,
 			},
 
-			"item": &schema.Schema{
+			"items": &schema.Schema{
 				Type:     schema.TypeList,
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 
-						"object": &schema.Schema{
-							Description: `object`,
-							Type:        schema.TypeString,
-							Computed:    true,
+						"response": &schema.Schema{
+							Type:     schema.TypeList,
+							Computed: true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+
+						"version": &schema.Schema{
+							Type:     schema.TypeString,
+							Computed: true,
 						},
 					},
 				},
@@ -251,9 +259,14 @@ func dataSourceNetworkDeviceLexicographicallySortedRead(ctx context.Context, d *
 			queryParams1.Limit = vLimit.(int)
 		}
 
-		response1, err := client.Devices.GetDeviceValuesThatMatchFullyOrPartiallyAnAttributeV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Devices.GetDeviceValuesThatMatchFullyOrPartiallyAnAttributeV1(&queryParams1)
 
 		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
 			diags = append(diags, diagErrorWithAlt(
 				"Failure when executing 2 GetDeviceValuesThatMatchFullyOrPartiallyAnAttributeV1", err,
 				"Failure at GetDeviceValuesThatMatchFullyOrPartiallyAnAttributeV1, unexpected response", ""))
@@ -262,8 +275,8 @@ func dataSourceNetworkDeviceLexicographicallySortedRead(ctx context.Context, d *
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := response1.String()
-		if err := d.Set("item", vItem1); err != nil {
+		vItems1 := flattenDevicesGetDeviceValuesThatMatchFullyOrPartiallyAnAttributeV1Items(response1)
+		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetDeviceValuesThatMatchFullyOrPartiallyAnAttributeV1 response",
 				err))
@@ -275,4 +288,16 @@ func dataSourceNetworkDeviceLexicographicallySortedRead(ctx context.Context, d *
 
 	}
 	return diags
+}
+
+func flattenDevicesGetDeviceValuesThatMatchFullyOrPartiallyAnAttributeV1Items(items *catalystcentersdkgo.ResponseDevicesGetDeviceValuesThatMatchFullyOrPartiallyAnAttributeV1) []map[string]interface{} {
+	if items == nil {
+		return nil
+	}
+	respItem := make(map[string]interface{})
+	respItem["response"] = items.Response
+	respItem["version"] = items.Version
+	return []map[string]interface{}{
+		respItem,
+	}
 }

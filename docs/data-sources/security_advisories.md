@@ -21,7 +21,7 @@ data "catalystcenter_security_advisories" "example" {
 }
 
 output "catalystcenter_security_advisories_example" {
-  value = data.catalystcenter_security_advisories.example.item
+  value = data.catalystcenter_security_advisories.example.items
 }
 ```
 

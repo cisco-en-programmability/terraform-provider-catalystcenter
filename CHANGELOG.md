@@ -1,3 +1,270 @@
+## 1.1.0-beta (September 13, 2024)
+IMPROVEMENTS:
+* The provider has been updated with Catalyst Center API version `2.3.7.9`
+FEATURES:
+* **New Data Source:**  `data_source_aaa_services`
+* **New Data Source:**  `data_source_aaa_services_count`
+* **New Data Source:**  `data_source_aaa_services_id`
+* **New Data Source:**  `data_source_application_visibility_network_devices`
+* **New Data Source:**  `data_source_application_visibility_network_devices_count`
+* **New Data Source:**  `data_source_assurance_tasks`
+* **New Data Source:**  `data_source_assurance_tasks_count`
+* **New Data Source:**  `data_source_assurance_tasks_id`
+* **New Data Source:**  `data_source_cisco_imcs`
+* **New Data Source:**  `data_source_cisco_imcs_id`
+* **New Data Source:**  `data_source_connection_modesetting`
+* **New Data Source:**  `data_source_dhcp_services`
+* **New Data Source:**  `data_source_dhcp_services_count`
+* **New Data Source:**  `data_source_dhcp_services_id`
+* **New Data Source:**  `data_source_diagnostic_tasks_id`
+* **New Data Source:**  `data_source_diagnostic_tasks_id_detail`
+* **New Data Source:**  `data_source_dns_services`
+* **New Data Source:**  `data_source_dns_services_count`
+* **New Data Source:**  `data_source_dns_services_id`
+* **New Data Source:**  `data_source_event_webhook`
+* **New Data Source:**  `data_source_fabric_site_health_summaries`
+* **New Data Source:**  `data_source_fabric_site_health_summaries_count`
+* **New Data Source:**  `data_source_fabric_site_health_summaries_id`
+* **New Data Source:**  `data_source_fabric_site_health_summaries_id_trend_analytics`
+* **New Data Source:**  `data_source_fabric_summary`
+* **New Data Source:**  `data_source_fabrics_fabric_id_switch_wireless_setting`
+* **New Data Source:**  `data_source_fabrics_fabric_id_wireless_multicast`
+* **New Data Source:**  `data_source_field_notices_results_network_devices`
+* **New Data Source:**  `data_source_field_notices_results_network_devices_count`
+* **New Data Source:**  `data_source_field_notices_results_network_devices_network_device_id`
+* **New Data Source:**  `data_source_field_notices_results_network_devices_network_device_id_notices`
+* **New Data Source:**  `data_source_field_notices_results_network_devices_network_device_id_notices_count`
+* **New Data Source:**  `data_source_field_notices_results_network_devices_network_device_id_notices_id`
+* **New Data Source:**  `data_source_field_notices_results_notices`
+* **New Data Source:**  `data_source_field_notices_results_notices_count`
+* **New Data Source:**  `data_source_field_notices_results_notices_id`
+* **New Data Source:**  `data_source_field_notices_results_notices_id_network_devices`
+* **New Data Source:**  `data_source_field_notices_results_notices_id_network_devices_count`
+* **New Data Source:**  `data_source_field_notices_results_notices_id_network_devices_network_device_id`
+* **New Data Source:**  `data_source_field_notices_results_trend`
+* **New Data Source:**  `data_source_field_notices_results_trend_count`
+* **New Data Source:**  `data_source_field_notices_trials`
+* **New Data Source:**  `data_source_floors_floor_id_access_point_positions`
+* **New Data Source:**  `data_source_floors_floor_id_access_point_positions_count`
+* **New Data Source:**  `data_source_floors_floor_id_planned_access_point_positions`
+* **New Data Source:**  `data_source_floors_floor_id_planned_access_point_positions_count`
+* **New Data Source:**  `data_source_icap_capture_files`
+* **New Data Source:**  `data_source_icap_capture_files_count`
+* **New Data Source:**  `data_source_icap_capture_files_id`
+* **New Data Source:**  `data_source_icap_capture_files_id_download`
+* **New Data Source:**  `data_source_icap_settings`
+* **New Data Source:**  `data_source_icap_settings_configuration_models_preview_activity_id_network_device_status_details`
+* **New Data Source:**  `data_source_icap_settings_configuration_models_preview_activity_id_network_devices_network_device_id_config`
+* **New Data Source:**  `data_source_icap_settings_count`
+* **New Data Source:**  `data_source_icap_settings_device_deployments`
+* **New Data Source:**  `data_source_icap_settings_device_deployments_count`
+* **New Data Source:**  `data_source_icap_spectrum_interference_device_reports`
+* **New Data Source:**  `data_source_icap_spectrum_sensor_reports`
+* **New Data Source:**  `data_source_ipam_global_ip_address_pools`
+* **New Data Source:**  `data_source_ipam_global_ip_address_pools_count`
+* **New Data Source:**  `data_source_ipam_global_ip_address_pools_global_ip_address_pool_id_subpools`
+* **New Data Source:**  `data_source_ipam_global_ip_address_pools_global_ip_address_pool_id_subpools_count`
+* **New Data Source:**  `data_source_ipam_global_ip_address_pools_id`
+* **New Data Source:**  `data_source_ipam_site_ip_address_pools`
+* **New Data Source:**  `data_source_ipam_site_ip_address_pools_count`
+* **New Data Source:**  `data_source_ipam_site_ip_address_pools_id`
+* **New Data Source:**  `data_source_license_last_operation_status`
+* **New Data Source:**  `data_source_license_status`
+* **New Data Source:**  `data_source_network_applications`
+* **New Data Source:**  `data_source_network_applications_count`
+* **New Data Source:**  `data_source_network_bugs_results_bugs`
+* **New Data Source:**  `data_source_network_bugs_results_bugs_count`
+* **New Data Source:**  `data_source_network_bugs_results_bugs_id`
+* **New Data Source:**  `data_source_network_bugs_results_bugs_id_network_devices`
+* **New Data Source:**  `data_source_network_bugs_results_bugs_id_network_devices_count`
+* **New Data Source:**  `data_source_network_bugs_results_bugs_id_network_devices_network_device_id`
+* **New Data Source:**  `data_source_network_bugs_results_network_devices`
+* **New Data Source:**  `data_source_network_bugs_results_network_devices_count`
+* **New Data Source:**  `data_source_network_bugs_results_network_devices_network_device_id`
+* **New Data Source:**  `data_source_network_bugs_results_network_devices_network_device_id_bugs`
+* **New Data Source:**  `data_source_network_bugs_results_network_devices_network_device_id_bugs_count`
+* **New Data Source:**  `data_source_network_bugs_results_network_devices_network_device_id_bugs_id`
+* **New Data Source:**  `data_source_network_bugs_results_trend`
+* **New Data Source:**  `data_source_network_bugs_results_trend_count`
+* **New Data Source:**  `data_source_network_bugs_trials`
+* **New Data Source:**  `data_source_network_device_config_`
+* **New Data Source:**  `data_source_network_device_config_files`
+* **New Data Source:**  `data_source_network_device_config_files_count`
+* **New Data Source:**  `data_source_network_device_config_files_id`
+* **New Data Source:**  `data_source_network_device_maintenance_schedules`
+* **New Data Source:**  `data_source_network_device_maintenance_schedules_count`
+* **New Data Source:**  `data_source_network_device_maintenance_schedules_id`
+* **New Data Source:**  `data_source_network_device_replacements`
+* **New Data Source:**  `data_source_network_device_replacements_id`
+* **New Data Source:**  `data_source_network_devices_id`
+* **New Data Source:**  `data_source_network_devices_intent`
+* **New Data Source:**  `data_source_network_devices_intent_count`
+* **New Data Source:**  `data_source_network_profiles_for_sites_profile_id_templates`
+* **New Data Source:**  `data_source_network_profiles_for_sites_profile_id_templates_count`
+* **New Data Source:**  `data_source_projects`
+* **New Data Source:**  `data_source_projects_count`
+* **New Data Source:**  `data_source_projects_project_id`
+* **New Data Source:**  `data_source_qos_policy_setting`
+* **New Data Source:**  `data_source_sda_pending_fabric_events`
+* **New Data Source:**  `data_source_security_advisories_results_advisories`
+* **New Data Source:**  `data_source_security_advisories_results_advisories_count`
+* **New Data Source:**  `data_source_security_advisories_results_advisories_id`
+* **New Data Source:**  `data_source_security_advisories_results_advisories_id_network_devices`
+* **New Data Source:**  `data_source_security_advisories_results_advisories_id_network_devices_count`
+* **New Data Source:**  `data_source_security_advisories_results_advisories_id_network_devices_network_device_id`
+* **New Data Source:**  `data_source_security_advisories_results_network_devices`
+* **New Data Source:**  `data_source_security_advisories_results_network_devices_count`
+* **New Data Source:**  `data_source_security_advisories_results_network_devices_network_device_id`
+* **New Data Source:**  `data_source_security_advisories_results_network_devices_network_device_id_advisories`
+* **New Data Source:**  `data_source_security_advisories_results_network_devices_network_device_id_advisories_count`
+* **New Data Source:**  `data_source_security_advisories_results_network_devices_network_device_id_advisories_id`
+* **New Data Source:**  `data_source_security_advisories_results_trend`
+* **New Data Source:**  `data_source_security_advisories_results_trend_count`
+* **New Data Source:**  `data_source_security_advisories_trials`
+* **New Data Source:**  `data_source_site_health_summaries_id_trend_analytics`
+* **New Data Source:**  `data_source_site_health_summaries_trend_analytics`
+* **New Data Source:**  `data_source_site_kpi_summaries`
+* **New Data Source:**  `data_source_site_kpi_summaries_count`
+* **New Data Source:**  `data_source_site_kpi_summaries_id`
+* **New Data Source:**  `data_source_site_kpi_summaries_summary_analytics`
+* **New Data Source:**  `data_source_site_kpi_summaries_top_n_analytics`
+* **New Data Source:**  `data_source_site_kpi_summaries_trend_analytics`
+* **New Data Source:**  `data_source_site_wise_images_summary`
+* **New Data Source:**  `data_source_templates_template_id_network_profiles_for_sites_count`
+* **New Data Source:**  `data_source_templates_template_id_versions`
+* **New Data Source:**  `data_source_templates_template_id_versions_count`
+* **New Data Source:**  `data_source_templates_template_id_versions_version_id`
+* **New Data Source:**  `data_source_transit_network_health_summaries`
+* **New Data Source:**  `data_source_transit_network_health_summaries_count`
+* **New Data Source:**  `data_source_transit_network_health_summaries_id`
+* **New Data Source:**  `data_source_transit_network_health_summaries_id_trend_analytics`
+* **New Data Source:**  `data_source_virtual_network_health_summaries`
+* **New Data Source:**  `data_source_virtual_network_health_summaries_count`
+* **New Data Source:**  `data_source_virtual_network_health_summaries_id`
+* **New Data Source:**  `data_source_virtual_network_health_summaries_id_trend_analytics`
+* **New Data Source:**  `data_source_wireless_accesspoint_configuration_count`
+* **New Data Source:**  `data_source_wireless_controllers_anchor_capable_devices`
+* **New Data Source:**  `data_source_wireless_controllers_mesh_ap_neighbours`
+* **New Data Source:**  `data_source_wireless_controllers_mesh_ap_neighbours_count`
+* **New Data Source:**  `data_source_wireless_controllers_network_device_id_ap_authorization_lists`
+* **New Data Source:**  `data_source_wireless_profiles_id_policy_tags_count`
+* **New Data Source:**  `data_source_wireless_profiles_id_policy_tags_policy_tag_id`
+* **New Data Source:**  `data_source_wireless_profiles_id_site_tags`
+* **New Data Source:**  `data_source_wireless_profiles_id_site_tags_count`
+* **New Data Source:**  `data_source_wireless_profiles_id_site_tags_site_tag_id`
+* **New Data Source:**  `data_source_wireless_settings_anchor_groups`
+* **New Data Source:**  `data_source_wireless_settings_anchor_groups_count`
+* **New Data Source:**  `data_source_wireless_settings_anchor_groups_id`
+* **New Data Source:**  `data_source_wireless_settings_ap_authorization_lists`
+* **New Data Source:**  `data_source_wireless_settings_ap_authorization_lists_count`
+* **New Data Source:**  `data_source_wireless_settings_ap_authorization_lists_id`
+* **New Data Source:**  `data_source_wireless_settings_ap_profiles`
+* **New Data Source:**  `data_source_wireless_settings_ap_profiles_count`
+* **New Data Source:**  `data_source_wireless_settings_ap_profiles_id`
+* **New Data Source:**  `data_source_wireless_settings_power_profiles`
+* **New Data Source:**  `data_source_wireless_settings_power_profiles_count`
+* **New Data Source:**  `data_source_wireless_settings_power_profiles_id`
+* **New Data Source:**  `data_source_wireless_settings_ssids_override_at_sites`
+* **New Resource:**  `resource_aaa_services_id_trend_analytics`
+* **New Resource:**  `resource_aaa_services_query`
+* **New Resource:**  `resource_aaa_services_query_count`
+* **New Resource:**  `resource_aaa_services_summary_analytics`
+* **New Resource:**  `resource_aaa_services_top_n_analytics`
+* **New Resource:**  `resource_aaa_services_trend_analytics`
+* **New Resource:**  `resource_application_visibility_network_devices_disable_app_telemetry`
+* **New Resource:**  `resource_application_visibility_network_devices_disable_cbar`
+* **New Resource:**  `resource_application_visibility_network_devices_enable_app_telemetry`
+* **New Resource:**  `resource_application_visibility_network_devices_enable_cbar`
+* **New Resource:**  `resource_areas`
+* **New Resource:**  `resource_buildings`
+* **New Resource:**  `resource_cisco_imcs`
+* **New Resource:**  `resource_cisco_imcs_id`
+* **New Resource:**  `resource_connection_modesetting`
+* **New Resource:**  `resource_dhcp_services_id_trend_analytics`
+* **New Resource:**  `resource_dhcp_services_query`
+* **New Resource:**  `resource_dhcp_services_query_count`
+* **New Resource:**  `resource_dhcp_services_summary_analytics`
+* **New Resource:**  `resource_dhcp_services_top_n_analytics`
+* **New Resource:**  `resource_dhcp_services_trend_analytics`
+* **New Resource:**  `resource_dns_services_id_trend_analytics`
+* **New Resource:**  `resource_dns_services_query`
+* **New Resource:**  `resource_dns_services_query_count`
+* **New Resource:**  `resource_dns_services_summary_analytics`
+* **New Resource:**  `resource_dns_services_top_n_analytics`
+* **New Resource:**  `resource_dns_services_trend_analytics`
+* **New Resource:**  `resource_fabrics_fabric_id_switch_wireless_setting`
+* **New Resource:**  `resource_fabrics_fabric_id_switch_wireless_setting_reload`
+* **New Resource:**  `resource_fabrics_fabric_id_wireless_multicast`
+* **New Resource:**  `resource_field_notices_trials`
+* **New Resource:**  `resource_field_notices_trigger_scan`
+* **New Resource:**  `resource_floors`
+* **New Resource:**  `resource_floors_floor_id_access_point_positions_bulk_change`
+* **New Resource:**  `resource_floors_floor_id_planned_access_point_positions_assign_access_point_positions`
+* **New Resource:**  `resource_floors_floor_id_planned_access_point_positions_bulk`
+* **New Resource:**  `resource_floors_floor_id_planned_access_point_positions_bulk_change`
+* **New Resource:**  `resource_floors_floor_id_planned_access_point_positions_id`
+* **New Resource:**  `resource_icap_clients_id_stats`
+* **New Resource:**  `resource_icap_radios_id_stats`
+* **New Resource:**  `resource_icap_settings_configuration_models`
+* **New Resource:**  `resource_icap_settings_configuration_models_preview_activity_id`
+* **New Resource:**  `resource_icap_settings_deploy`
+* **New Resource:**  `resource_images_cco_sync`
+* **New Resource:**  `resource_images_id`
+* **New Resource:**  `resource_images_id_sites_site_id_tag_golden`
+* **New Resource:**  `resource_images_id_sites_site_id_untag_golden`
+* **New Resource:**  `resource_intent_network_devices_query`
+* **New Resource:**  `resource_intent_network_devices_query_count`
+* **New Resource:**  `resource_interfaces_id_trend_analytics`
+* **New Resource:**  `resource_ipam_global_ip_address_pools`
+* **New Resource:**  `resource_ipam_global_ip_address_pools_id`
+* **New Resource:**  `resource_ipam_site_ip_address_pools`
+* **New Resource:**  `resource_ipam_site_ip_address_pools_id`
+* **New Resource:**  `resource_license_deregister`
+* **New Resource:**  `resource_license_register`
+* **New Resource:**  `resource_license_renew`
+* **New Resource:**  `resource_network_applications_trend_analytics`
+* **New Resource:**  `resource_network_bugs_trials_create`
+* **New Resource:**  `resource_network_bugs_trigger_scan`
+* **New Resource:**  `resource_network_device_config_files_id_download_masked`
+* **New Resource:**  `resource_network_device_config_files_id_download_unmasked`
+* **New Resource:**  `resource_network_device_maintenance_schedules`
+* **New Resource:**  `resource_network_device_maintenance_schedules_id`
+* **New Resource:**  `resource_network_device_user_defined_field`
+* **New Resource:**  `resource_network_devices_delete_with_cleanup`
+* **New Resource:**  `resource_network_devices_delete_without_cleanup`
+* **New Resource:**  `resource_network_devices_top_n_analytics`
+* **New Resource:**  `resource_projects`
+* **New Resource:**  `resource_projects_project_id`
+* **New Resource:**  `resource_qos_policy_setting`
+* **New Resource:**  `resource_sda_pending_fabric_events_apply`
+* **New Resource:**  `resource_security_advisories_trials`
+* **New Resource:**  `resource_security_advisories_trigger_scan`
+* **New Resource:**  `resource_site`
+* **New Resource:**  `resource_site_kpi_summaries_query`
+* **New Resource:**  `resource_site_kpi_summaries_query_count`
+* **New Resource:**  `resource_site_kpi_summaries_summary_analytics`
+* **New Resource:**  `resource_site_kpi_summaries_top_n_analytics`
+* **New Resource:**  `resource_site_kpi_summaries_trend_analytics`
+* **New Resource:**  `resource_sites_site_id_wireless_settings_ssids_id_update`
+* **New Resource:**  `resource_system_issue_definitions_count`
+* **New Resource:**  `resource_tags_interfaces_members_associations_bulk`
+* **New Resource:**  `resource_tags_network_devices_members_associations_bulk`
+* **New Resource:**  `resource_templates_template_id_network_profiles_for_sites`
+* **New Resource:**  `resource_templates_template_id_network_profiles_for_sites_bulk_delete`
+* **New Resource:**  `resource_templates_template_id_network_profiles_for_sites_profile_id_delete`
+* **New Resource:**  `resource_templates_template_id_versions_commit`
+* **New Resource:**  `resource_wireless_profiles_id_policy_tags_policy_tag_id`
+* **New Resource:**  `resource_wireless_profiles_id_site_tags_site_tag_id`
+* **New Resource:**  `resource_wireless_settings_anchor_groups`
+* **New Resource:**  `resource_wireless_settings_anchor_groups_id`
+* **New Resource:**  `resource_wireless_settings_ap_authorization_lists`
+* **New Resource:**  `resource_wireless_settings_ap_authorization_lists_id`
+* **New Resource:**  `resource_wireless_settings_ap_profiles`
+* **New Resource:**  `resource_wireless_settings_ap_profiles_id`
+* **New Resource:**  `resource_wireless_settings_network_device_id_assign_anchor_managed_ap_locations`
+* **New Resource:**  `resource_wireless_settings_power_profiles`
+* **New Resource:**  `resource_wireless_settings_power_profiles_id`
+
 ## 1.0.1-beta (November 12, 2024)
 FEATURES:
 * General Version Selection Behavior added. More info detailed in README.md.

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -381,10 +381,10 @@ func dataSourceTaskRead(ctx context.Context, d *schema.ResourceData, m interface
 			queryParams1.ParentID = vParentID.(string)
 		}
 		if okOffset {
-			queryParams1.Offset = vOffset.(int)
+			queryParams1.Offset = vOffset.(float64)
 		}
 		if okLimit {
-			queryParams1.Limit = vLimit.(int)
+			queryParams1.Limit = vLimit.(float64)
 		}
 		if okSortBy {
 			queryParams1.SortBy = vSortBy.(string)

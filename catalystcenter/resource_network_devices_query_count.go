@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -211,14 +211,14 @@ func resourceNetworkDevicesQueryCountCreate(ctx context.Context, d *schema.Resou
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Devices.GetsTheTotalNumberNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1(request1)
+	response1, restyResp1, err := client.Devices.GetsTheTotalNumberNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctions(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing GetsTheTotalNumberNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1", err))
+			"Failure when executing GetsTheTotalNumberNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctions", err))
 		return diags
 	}
 
@@ -227,7 +227,7 @@ func resourceNetworkDevicesQueryCountCreate(ctx context.Context, d *schema.Resou
 	vItem1 := flattenDevicesGetsTheTotalNumberNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1Item(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting GetsTheTotalNumberNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1 response",
+			"Failure when setting GetsTheTotalNumberNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctions response",
 			err))
 		return diags
 	}
@@ -309,7 +309,7 @@ func expandRequestNetworkDevicesQueryCountGetsTheTotalNumberNetworkDevicesBasedO
 	return &request
 }
 
-func expandRequestNetworkDevicesQueryCountGetsTheTotalNumberNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1AggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetsTheTotalNumberNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1AggregateAttributes {
+func expandRequestNetworkDevicesQueryCountGetsTheTotalNumberNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1AggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) []catalystcentersdkgo.RequestDevicesGetsTheTotalNumberNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1AggregateAttributes {
 	request := []catalystcentersdkgo.RequestDevicesGetsTheTotalNumberNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1AggregateAttributes{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
@@ -326,7 +326,7 @@ func expandRequestNetworkDevicesQueryCountGetsTheTotalNumberNetworkDevicesBasedO
 			request = append(request, *i)
 		}
 	}
-	return &request
+	return request
 }
 
 func expandRequestNetworkDevicesQueryCountGetsTheTotalNumberNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1AggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheTotalNumberNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1AggregateAttributes {

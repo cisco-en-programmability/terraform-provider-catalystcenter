@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,9 +15,9 @@ func dataSourcePlatformNodesConfigurationSummary() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Platform Configuration.
 
-- Provides details about the current Cisco DNA Center node configuration, such as API version, node name, NTP server,
-intracluster link, LACP mode, network static routes, DNS server, subnet mask, host IP, default gateway, and interface
-information.
+- Provides details about the current Cisco Catalyst Center node configuration, such as API version, node name, NTP
+server, intracluster link, LACP mode, network static routes, DNS server, subnet mask, host IP, default gateway, and
+interface information.
 `,
 
 		ReadContext: dataSourcePlatformNodesConfigurationSummaryRead,
@@ -285,26 +285,28 @@ func dataSourcePlatformNodesConfigurationSummaryRead(ctx context.Context, d *sch
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: CiscoDnaCenterNodesConfigurationSummaryV1")
+		log.Printf("[DEBUG] Selected method: CiscoCatalystCenterNodesConfigurationSummaryV1")
 
-		response1, restyResp1, err := client.Platform.CiscoDnaCenterNodesConfigurationSummaryV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Platform.CiscoCatalystCenterNodesConfigurationSummaryV1()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 CiscoDnaCenterNodesConfigurationSummaryV1", err,
-				"Failure at CiscoDnaCenterNodesConfigurationSummaryV1, unexpected response", ""))
+				"Failure when executing 2 CiscoCatalystCenterNodesConfigurationSummaryV1", err,
+				"Failure at CiscoCatalystCenterNodesConfigurationSummaryV1, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1Item(response1.Response)
+		vItem1 := flattenPlatformConfigurationCiscoCatalystCenterNodesConfigurationSummaryV1Item(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting CiscoDnaCenterNodesConfigurationSummaryV1 response",
+				"Failure when setting CiscoCatalystCenterNodesConfigurationSummaryV1 response",
 				err))
 			return diags
 		}
@@ -316,28 +318,28 @@ func dataSourcePlatformNodesConfigurationSummaryRead(ctx context.Context, d *sch
 	return diags
 }
 
-func flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1Item(item *catalystcentersdkgo.ResponsePlatformCiscoDnaCenterNodesConfigurationSummaryV1Response) []map[string]interface{} {
+func flattenPlatformConfigurationCiscoCatalystCenterNodesConfigurationSummaryV1Item(item *catalystcentersdkgo.ResponsePlatformCiscoCatalystCenterNodesConfigurationSummaryV1Response) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["nodes"] = flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodes(item.Nodes)
+	respItem["nodes"] = flattenPlatformConfigurationCiscoCatalystCenterNodesConfigurationSummaryV1ItemNodes(item.Nodes)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodes(items *[]catalystcentersdkgo.ResponsePlatformCiscoDnaCenterNodesConfigurationSummaryV1ResponseNodes) []map[string]interface{} {
+func flattenPlatformConfigurationCiscoCatalystCenterNodesConfigurationSummaryV1ItemNodes(items *[]catalystcentersdkgo.ResponsePlatformCiscoCatalystCenterNodesConfigurationSummaryV1ResponseNodes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["ntp"] = flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesNtp(item.Ntp)
-		respItem["network"] = flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesNetwork(item.Network)
-		respItem["proxy"] = flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesProxy(item.Proxy)
-		respItem["platform"] = flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesPlatform(item.Platform)
+		respItem["ntp"] = flattenPlatformConfigurationCiscoCatalystCenterNodesConfigurationSummaryV1ItemNodesNtp(item.Ntp)
+		respItem["network"] = flattenPlatformConfigurationCiscoCatalystCenterNodesConfigurationSummaryV1ItemNodesNetwork(item.Network)
+		respItem["proxy"] = flattenPlatformConfigurationCiscoCatalystCenterNodesConfigurationSummaryV1ItemNodesProxy(item.Proxy)
+		respItem["platform"] = flattenPlatformConfigurationCiscoCatalystCenterNodesConfigurationSummaryV1ItemNodesPlatform(item.Platform)
 		respItem["id"] = item.ID
 		respItem["name"] = item.Name
 		respItems = append(respItems, respItem)
@@ -345,7 +347,7 @@ func flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodes(items *[]
 	return respItems
 }
 
-func flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesNtp(item *catalystcentersdkgo.ResponsePlatformCiscoDnaCenterNodesConfigurationSummaryV1ResponseNodesNtp) []map[string]interface{} {
+func flattenPlatformConfigurationCiscoCatalystCenterNodesConfigurationSummaryV1ItemNodesNtp(item *catalystcentersdkgo.ResponsePlatformCiscoCatalystCenterNodesConfigurationSummaryV1ResponseNodesNtp) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -358,7 +360,7 @@ func flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesNtp(item *
 
 }
 
-func flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesNetwork(items *[]catalystcentersdkgo.ResponsePlatformCiscoDnaCenterNodesConfigurationSummaryV1ResponseNodesNetwork) []map[string]interface{} {
+func flattenPlatformConfigurationCiscoCatalystCenterNodesConfigurationSummaryV1ItemNodesNetwork(items *[]catalystcentersdkgo.ResponsePlatformCiscoCatalystCenterNodesConfigurationSummaryV1ResponseNodesNetwork) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -367,9 +369,9 @@ func flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesNetwork(it
 		respItem := make(map[string]interface{})
 		respItem["intra_cluster_link"] = boolPtrToString(item.IntraClusterLink)
 		respItem["lacp_mode"] = boolPtrToString(item.LacpMode)
-		respItem["inet"] = flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesNetworkInet(item.Inet)
+		respItem["inet"] = flattenPlatformConfigurationCiscoCatalystCenterNodesConfigurationSummaryV1ItemNodesNetworkInet(item.Inet)
 		respItem["interface"] = item.Interface
-		respItem["inet6"] = flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesNetworkInet6(item.Inet6)
+		respItem["inet6"] = flattenPlatformConfigurationCiscoCatalystCenterNodesConfigurationSummaryV1ItemNodesNetworkInet6(item.Inet6)
 		respItem["lacp_supported"] = boolPtrToString(item.LacpSupported)
 		respItem["slave"] = item.SLAve
 		respItems = append(respItems, respItem)
@@ -377,14 +379,14 @@ func flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesNetwork(it
 	return respItems
 }
 
-func flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesNetworkInet(item *catalystcentersdkgo.ResponsePlatformCiscoDnaCenterNodesConfigurationSummaryV1ResponseNodesNetworkInet) []map[string]interface{} {
+func flattenPlatformConfigurationCiscoCatalystCenterNodesConfigurationSummaryV1ItemNodesNetworkInet(item *catalystcentersdkgo.ResponsePlatformCiscoCatalystCenterNodesConfigurationSummaryV1ResponseNodesNetworkInet) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["routes"] = flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesNetworkInetRoutes(item.Routes)
+	respItem["routes"] = flattenPlatformConfigurationCiscoCatalystCenterNodesConfigurationSummaryV1ItemNodesNetworkInetRoutes(item.Routes)
 	respItem["gateway"] = item.Gateway
-	respItem["dns_servers"] = flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesNetworkInetDNSServers(item.DNSServers)
+	respItem["dns_servers"] = flattenPlatformConfigurationCiscoCatalystCenterNodesConfigurationSummaryV1ItemNodesNetworkInetDNSServers(item.DNSServers)
 	respItem["netmask"] = item.Netmask
 	respItem["host_ip"] = item.HostIP
 
@@ -394,7 +396,7 @@ func flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesNetworkIne
 
 }
 
-func flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesNetworkInetRoutes(items *[]catalystcentersdkgo.ResponsePlatformCiscoDnaCenterNodesConfigurationSummaryV1ResponseNodesNetworkInetRoutes) []interface{} {
+func flattenPlatformConfigurationCiscoCatalystCenterNodesConfigurationSummaryV1ItemNodesNetworkInetRoutes(items *[]catalystcentersdkgo.ResponsePlatformCiscoCatalystCenterNodesConfigurationSummaryV1ResponseNodesNetworkInetRoutes) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -406,7 +408,7 @@ func flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesNetworkIne
 	return respItems
 }
 
-func flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesNetworkInetDNSServers(items *[]catalystcentersdkgo.ResponsePlatformCiscoDnaCenterNodesConfigurationSummaryV1ResponseNodesNetworkInetDNSServers) []interface{} {
+func flattenPlatformConfigurationCiscoCatalystCenterNodesConfigurationSummaryV1ItemNodesNetworkInetDNSServers(items *[]catalystcentersdkgo.ResponsePlatformCiscoCatalystCenterNodesConfigurationSummaryV1ResponseNodesNetworkInetDNSServers) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -418,7 +420,7 @@ func flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesNetworkIne
 	return respItems
 }
 
-func flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesNetworkInet6(item *catalystcentersdkgo.ResponsePlatformCiscoDnaCenterNodesConfigurationSummaryV1ResponseNodesNetworkInet6) []map[string]interface{} {
+func flattenPlatformConfigurationCiscoCatalystCenterNodesConfigurationSummaryV1ItemNodesNetworkInet6(item *catalystcentersdkgo.ResponsePlatformCiscoCatalystCenterNodesConfigurationSummaryV1ResponseNodesNetworkInet6) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -432,7 +434,7 @@ func flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesNetworkIne
 
 }
 
-func flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesProxy(item *catalystcentersdkgo.ResponsePlatformCiscoDnaCenterNodesConfigurationSummaryV1ResponseNodesProxy) []map[string]interface{} {
+func flattenPlatformConfigurationCiscoCatalystCenterNodesConfigurationSummaryV1ItemNodesProxy(item *catalystcentersdkgo.ResponsePlatformCiscoCatalystCenterNodesConfigurationSummaryV1ResponseNodesProxy) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -449,7 +451,7 @@ func flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesProxy(item
 
 }
 
-func flattenPlatformCiscoDnaCenterNodesConfigurationSummaryV1ItemNodesPlatform(item *catalystcentersdkgo.ResponsePlatformCiscoDnaCenterNodesConfigurationSummaryV1ResponseNodesPlatform) []map[string]interface{} {
+func flattenPlatformConfigurationCiscoCatalystCenterNodesConfigurationSummaryV1ItemNodesPlatform(item *catalystcentersdkgo.ResponsePlatformCiscoCatalystCenterNodesConfigurationSummaryV1ResponseNodesPlatform) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

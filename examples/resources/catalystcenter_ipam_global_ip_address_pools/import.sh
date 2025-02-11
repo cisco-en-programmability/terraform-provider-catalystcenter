@@ -1,0 +1,1 @@
+terraform import catalystcenter_ipam_global_ip_address_pools.example "id:=string"

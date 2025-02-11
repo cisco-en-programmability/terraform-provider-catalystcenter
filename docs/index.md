@@ -8,14 +8,9 @@ description: |-
 
 # catalystcenter Provider
 
-The Cisco Catalyst Center provider is used to interact with Cisco Catalyst Center APIs (2.3.7.6). The provider needs to be configured with the proper credentials before it can be used.
-
-Use the navigation to the left to read about the available resources.
 
 
 ## Example Usage
-
-The Catalyst Center SDK client could be generated with the following parameters:
 
 ```terraform
 # Configure provider with your Cisco Catalyst Center SDK credentials
@@ -47,8 +42,8 @@ provider "catalystcenter" {
 
 ### Optional
 
-- **base_url** (String) Cisco Catalyst Center base URL, FQDN or IP. If not set, it uses the CATALYST_BASE_URL environment variable.
-- **debug** (String) Flag for Cisco Catalyst Center to enable debugging. If not set, it uses the CATALYST_DEBUG environment variable; defaults to `false`.
-- **password** (String, Sensitive) Cisco Catalyst Center password to authenticate. If not set, it uses the CATALYST_PASSWORD environment variable.
-- **ssl_verify** (String, Sensitive) Flag to enable or disable SSL certificate verification. If not set, it uses the CATALYST_SSL_VERIFY environment variable; defaults to `true`.
-- **username** (String, Sensitive) Cisco Catalyst Center username to authenticate. If not set, it uses the CATALYST_USERNAME environment variable.
+- `base_url` (String) Cisco Catalyst Center base URL, FQDN or IP. If not set, it uses the CATALYST_BASE_URL environment variable.
+- `debug` (String) Flag for Cisco Catalyst Center to enable debugging. If not set, it uses the CATALYST_DEBUG environment variable; defaults to `false`.
+- `password` (String, Sensitive) Cisco Catalyst Center password to authenticate. If not set, it uses the CATALYST_PASSWORD environment variable.
+- `ssl_verify` (String, Sensitive) Flag to enable or disable SSL certificate verification. If not set, it uses the CATALYST_SSL_VERIFY environment variable; defaults to `true`.
+- `username` (String, Sensitive) Cisco Catalyst Center username to authenticate. If not set, it uses the CATALYST_USERNAME environment variable.

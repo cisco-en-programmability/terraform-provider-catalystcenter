@@ -43,5 +43,5 @@ resource "catalystcenter_analytics_profiling_rules_bulk" "example" {
 }
 
 output "catalystcenter_analytics_profiling_rules_bulk_example" {
-  value = catalystcenter_analytics_profiling_rules_bulk.example
+    value = catalystcenter_analytics_profiling_rules_bulk.example
 }

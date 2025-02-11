@@ -1,18 +1,18 @@
 
 resource "catalystcenter_event_syslog_config" "example" {
-  provider = catalystcenter
+    provider = catalystcenter
 
-  parameters {
+    parameters {
 
-    config_id   = "string"
-    description = "string"
-    host        = "string"
-    name        = "string"
-    port        = 1
-    protocol    = "string"
-  }
+      config_id = "string"
+      description = "string"
+      host = "string"
+      name = "string"
+      port = 1
+      protocol = "string"
+    }
 }
 
 output "catalystcenter_event_syslog_config_example" {
-  value = catalystcenter_event_syslog_config.example
+    value = catalystcenter_event_syslog_config.example
 }

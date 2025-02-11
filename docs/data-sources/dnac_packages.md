@@ -4,14 +4,14 @@ page_title: "catalystcenter_dnac_packages Data Source - terraform-provider-catal
 subcategory: ""
 description: |-
   It performs read operation on Platform.
-  Provides information such as name, version of packages installed on the DNA center.
+  Provides information such as name, version of packages installed on the Catalyst center.
 ---
 
 # catalystcenter_dnac_packages (Data Source)
 
 It performs read operation on Platform.
 
-- Provides information such as name, version of packages installed on the DNA center.
+- Provides information such as name, version of packages installed on the Catalyst center.
 
 ## Example Usage
 

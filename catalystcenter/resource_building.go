@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -395,7 +395,7 @@ func resourceBuildingRead(ctx context.Context, d *schema.ResourceData, m interfa
 			return diags
 		}
 		parameters := d.Get("parameters").([]interface{})
-		vItem1 := flattenSitesGetSiteParams(response1.Response, parameters)
+		vItem1 := flattenSitesGetSiteV1Items(response1.Response)
 		log.Printf("[DEBUG] response flatten sent => %v", responseInterfaceToString(vItem1))
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(

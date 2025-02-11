@@ -17,11 +17,12 @@ It performs read operation on SDA.
 
 ```terraform
 data "catalystcenter_sda_authentication_profiles" "example" {
-  provider                    = catalystcenter
-  authentication_profile_name = "string"
-  fabric_id                   = "string"
-  limit                       = 1
-  offset                      = 1
+  provider                         = catalystcenter
+  authentication_profile_name      = "string"
+  fabric_id                        = "string"
+  is_global_authentication_profile = "false"
+  limit                            = 1
+  offset                           = 1
 }
 
 output "catalystcenter_sda_authentication_profiles_example" {
@@ -36,7 +37,8 @@ output "catalystcenter_sda_authentication_profiles_example" {
 
 - `authentication_profile_name` (String) authenticationProfileName query parameter. Return only the authentication profiles with this specified name. Note that 'No Authentication' is not a valid option for this parameter.
 - `fabric_id` (String) fabricId query parameter. ID of the fabric the authentication profile is assigned to.
-- `limit` (Number) limit query parameter. Maximum number of records to return.
+- `is_global_authentication_profile` (Boolean) isGlobalAuthenticationProfile query parameter. Set to true to return only global authentication profiles, or set to false to hide them. isGlobalAuthenticationProfile must not be true when fabricId is provided.
+- `limit` (Number) limit query parameter. Maximum number of records to return. The maximum number of objects supported in a single request is 500.
 - `offset` (Number) offset query parameter. Starting record for pagination.
 
 ### Read-Only
@@ -56,4 +58,24 @@ Read-Only:
 - `id` (String)
 - `is_bpdu_guard_enabled` (String)
 - `number_of_hosts` (String)
+- `pre_auth_acl` (List of Object) (see [below for nested schema](#nestedobjatt--items--pre_auth_acl))
 - `wake_on_lan` (String)
+
+<a id="nestedobjatt--items--pre_auth_acl"></a>
+### Nested Schema for `items.pre_auth_acl`
+
+Read-Only:
+
+- `access_contracts` (List of Object) (see [below for nested schema](#nestedobjatt--items--pre_auth_acl--access_contracts))
+- `description` (String)
+- `enabled` (String)
+- `implicit_action` (String)
+
+<a id="nestedobjatt--items--pre_auth_acl--access_contracts"></a>
+### Nested Schema for `items.pre_auth_acl.access_contracts`
+
+Read-Only:
+
+- `action` (String)
+- `port` (String)
+- `protocol` (String)

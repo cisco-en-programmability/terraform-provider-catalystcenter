@@ -142,6 +142,35 @@ func responseInterfaceToString(v interface{}) string {
 	return fmt.Sprint(string(b))
 }
 
+func responseInterfaceToSliceFloat64(v interface{}) *[]float64 {
+	value, ok := v.([]interface{})
+	if !ok {
+		return nil
+	}
+	newValue := []float64{}
+	for _, i := range value {
+		newValue = append(newValue, responseInterfaceToFloat64(i))
+	}
+	return &newValue
+}
+
+func responseInterfaceToFloat64(v interface{}) float64 {
+	switch v := v.(type) {
+	case float64:
+		return v
+	case int:
+		return float64(v)
+	case string:
+		f, err := strconv.ParseFloat(v, 64)
+		if err != nil {
+			return 0 // Valor por defecto en caso de error
+		}
+		return f
+	default:
+		return 0 // Valor por defecto en caso de tipo desconocido
+	}
+}
+
 func stringToFloat64Ptr(v string) *float64 {
 	if s, err := strconv.ParseFloat(v, 64); err == nil {
 		return &s

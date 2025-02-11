@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -53,7 +53,7 @@ func dataSourceAuthenticationPolicyServers() *schema.Resource {
 						},
 
 						"authentication_port": &schema.Schema{
-							Description: `Authentication port of RADIUS server (Default: 1812) 
+							Description: `Authentication port of RADIUS server (Default: 1812)
 `,
 							Type:     schema.TypeInt,
 							Computed: true,

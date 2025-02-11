@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -79,6 +79,29 @@ func dataSourceEventArtifact() *schema.Resource {
 							Description: `Cisco D N A Event Link`,
 							Type:        schema.TypeString,
 							Computed:    true,
+						},
+
+						"configs": &schema.Schema{
+							Type:     schema.TypeList,
+							Computed: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+
+									"is_acknowledgeable": &schema.Schema{
+										Description: `Is A C Knowledgeable`,
+										// Type:        schema.TypeBool,
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+
+									"is_alert": &schema.Schema{
+										Description: `Is Alert`,
+										// Type:        schema.TypeBool,
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+								},
+							},
 						},
 
 						"deprecated": &schema.Schema{
@@ -307,6 +330,8 @@ func dataSourceEventArtifactRead(ctx context.Context, d *schema.ResourceData, m 
 			queryParams1.Search = vSearch.(string)
 		}
 
+		// has_unknown_response: None
+
 		response1, restyResp1, err := client.EventManagement.GetEventArtifactsV1(&queryParams1)
 
 		if err != nil || response1 == nil {
@@ -361,6 +386,7 @@ func flattenEventManagementGetEventArtifactsV1Items(items *catalystcentersdkgo.R
 		respItem["event_templates"] = flattenEventManagementGetEventArtifactsV1ItemsEventTemplates(item.EventTemplates)
 		respItem["is_tenant_aware"] = boolPtrToString(item.IsTenantAware)
 		respItem["supported_connector_types"] = item.SupportedConnectorTypes
+		respItem["configs"] = flattenEventManagementGetEventArtifactsV1ItemsConfigs(item.Configs)
 		respItem["tenant_id"] = item.TenantID
 		respItems = append(respItems, respItem)
 	}
@@ -421,4 +447,18 @@ func flattenEventManagementGetEventArtifactsV1ItemsEventTemplates(items *[]catal
 		respItems = append(respItems, responseInterfaceToString(respItem))
 	}
 	return respItems
+}
+
+func flattenEventManagementGetEventArtifactsV1ItemsConfigs(item *catalystcentersdkgo.ResponseItemEventManagementGetEventArtifactsV1Configs) []map[string]interface{} {
+	if item == nil {
+		return nil
+	}
+	respItem := make(map[string]interface{})
+	respItem["is_alert"] = boolPtrToString(item.IsAlert)
+	respItem["is_acknowledgeable"] = boolPtrToString(item.IsACKnowledgeable)
+
+	return []map[string]interface{}{
+		respItem,
+	}
+
 }

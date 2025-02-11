@@ -4,16 +4,16 @@ page_title: "catalystcenter_user Resource - terraform-provider-catalystcenter"
 subcategory: ""
 description: |-
   It manages create, read and update operations on User and Roles.
-  Add a new user for Cisco DNA Center System.Update a user for Cisco DNA Center System.
+  Add a new user for Cisco Catalyst Center System.Update a user for Cisco Catalyst Center System.
 ---
 
 # catalystcenter_user (Resource)
 
 It manages create, read and update operations on User and Roles.
 
-- Add a new user for Cisco DNA Center System.
+- Add a new user for Cisco Catalyst Center System.
 
-- Update a user for Cisco DNA Center System.
+- Update a user for Cisco Catalyst Center System.
 
 ## Example Usage
 

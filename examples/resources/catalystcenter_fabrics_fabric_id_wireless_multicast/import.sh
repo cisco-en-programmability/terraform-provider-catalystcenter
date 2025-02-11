@@ -1,0 +1,1 @@
+terraform import catalystcenter_fabrics_fabric_id_wireless_multicast.example "fabric_id:=string"

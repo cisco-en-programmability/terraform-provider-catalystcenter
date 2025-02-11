@@ -1,26 +1,13 @@
 package catalystcenter
 
 import (
-	"strings"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"strings"
 )
 
 func diffSuppressSgt() schema.SchemaDiffSuppressFunc {
 	return func(k, old, new string, d *schema.ResourceData) bool {
 		return compareSGT(old, new)
-	}
-}
-
-func diffArray() schema.SchemaDiffSuppressFunc {
-	return func(k, old, new string, d *schema.ResourceData) bool {
-		return compareArray(k, new, old, d)
-	}
-}
-
-func diffSupressOptional() schema.SchemaDiffSuppressFunc {
-	return func(k, old, new string, d *schema.ResourceData) bool {
-		return compareOptional(new, old)
 	}
 }
 

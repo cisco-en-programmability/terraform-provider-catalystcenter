@@ -1,13 +1,13 @@
 
 resource "catalystcenter_flexible_report_schedule" "example" {
-  provider = catalystcenter
-  parameters {
+    provider = catalystcenter
+    parameters {
 
-    report_id = "string"
-    schedule  = "------"
-  }
+      report_id = "string"
+      schedule = ------
+    }
 }
 
 output "catalystcenter_flexible_report_schedule_example" {
-  value = catalystcenter_flexible_report_schedule.example
+    value = catalystcenter_flexible_report_schedule.example
 }

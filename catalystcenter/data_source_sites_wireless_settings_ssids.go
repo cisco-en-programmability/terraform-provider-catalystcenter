@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -409,7 +409,7 @@ func dataSourceSitesWirelessSettingsSSIDs() *schema.Resource {
 						},
 
 						"is_posturing_enabled": &schema.Schema{
-							Description: `Applicable only for Enterprise SSIDs. When set to True, Posturing will enabled. Required to be set to True if ACL needs to be mapped for Enterprise SSID. 
+							Description: `Applicable only for Enterprise SSIDs. When set to True, Posturing will enabled. Required to be set to True if ACL needs to be mapped for Enterprise SSID.
 `,
 							// Type:        schema.TypeBool,
 							Type:     schema.TypeString,
@@ -995,7 +995,7 @@ func dataSourceSitesWirelessSettingsSSIDs() *schema.Resource {
 						},
 
 						"is_posturing_enabled": &schema.Schema{
-							Description: `Applicable only for Enterprise SSIDs. When set to True, Posturing will enabled. Required to be set to True if ACL needs to be mapped for Enterprise SSID. 
+							Description: `Applicable only for Enterprise SSIDs. When set to True, Posturing will enabled. Required to be set to True if ACL needs to be mapped for Enterprise SSID.
 `,
 							// Type:        schema.TypeBool,
 							Type:     schema.TypeString,

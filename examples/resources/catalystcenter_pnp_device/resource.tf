@@ -1,370 +1,52 @@
 
 resource "catalystcenter_pnp_device" "example" {
-  provider = catalystcenter
-  item {
+    provider = catalystcenter
 
+    parameters {
 
-    day_zero_config {
+      device_info {
 
+        description = "string"
+        device_sudi_serial_nos = ["string"]
+        hostname = "string"
+        mac_address = "string"
+        pid = "string"
+        serial_number = "string"
+        site_id = "string"
+        stack = "false"
+        stack_info {
 
+          is_full_ring = "false"
+          stack_member_list {
+
+            hardware_version = "string"
+            license_level = "string"
+            license_type = "string"
+            mac_address = "string"
+            pid = "string"
+            priority = 1.0
+            role = "string"
+            serial_number = "string"
+            software_version = "string"
+            stack_number = 1.0
+            state = "string"
+            sudi_serial_number = "string"
+          }
+          stack_ring_protocol = "string"
+          supports_stack_workflows = "false"
+          total_member_count = 1.0
+          valid_license_levels = ["string"]
+        }
+        sudi_required = "false"
+        user_mic_numbers = ["string"]
+        user_sudi_serial_nos = ["string"]
+        workflow_id = "string"
+        workflow_name = "string"
+      }
+      id = "string"
     }
-
-    device_info {
-
-      aaa_credentials {
-
-
-
-      }
-
-
-
-
-
-
-
-
-
-
-
-
-      file_system_list {
-
-
-
-
-
-
-
-      }
-
-
-      http_headers {
-
-
-
-      }
-
-
-      ip_interfaces {
-
-
-
-
-
-
-      }
-
-
-
-      location {
-
-
-
-
-
-
-      }
-
-
-
-      neighbor_links {
-
-
-
-
-
-
-
-
-
-
-      }
-
-
-      pnp_profile_list {
-
-
-
-        primary_endpoint {
-
-
-
-
-
-
-
-        }
-
-        secondary_endpoint {
-
-
-
-
-
-
-
-        }
-      }
-
-      pre_workflow_cli_ouputs {
-
-
-
-      }
-
-
-
-
-
-
-
-
-
-      stack_info {
-
-
-        stack_member_list {
-
-
-
-
-
-
-
-
-
-
-
-
-
-        }
-
-
-
-
-      }
-
-
-
-
-
-
-
-
-    }
-    run_summary_list {
-
-
-
-      history_task_info {
-
-        addn_details {
-
-
-
-        }
-
-
-
-        work_item_list {
-
-
-
-
-
-
-
-        }
-      }
-
-    }
-    system_reset_workflow {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      tasks {
-
-
-
-
-
-
-
-
-
-        work_item_list {
-
-
-
-
-
-
-
-        }
-      }
-
-
-
-
-    }
-    system_workflow {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      tasks {
-
-
-
-
-
-
-
-
-
-        work_item_list {
-
-
-
-
-
-
-
-        }
-      }
-
-
-
-
-    }
-
-
-    workflow {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      tasks {
-
-
-
-
-
-
-
-
-
-        work_item_list {
-
-
-
-
-
-
-
-        }
-      }
-
-
-
-
-    }
-    workflow_parameters {
-
-      config_list {
-
-
-        config_parameters {
-
-
-
-        }
-      }
-
-
-
-    }
-  }
-  parameters {
-
-    device_info {
-
-      description            = "string"
-      device_sudi_serial_nos = ["string"]
-      hostname               = "string"
-      mac_address            = "string"
-      pid                    = "string"
-      serial_number          = "string"
-      site_id                = "string"
-      stack                  = "false"
-      stack_info {
-
-        is_full_ring = "false"
-        stack_member_list {
-
-          hardware_version   = "string"
-          license_level      = "string"
-          license_type       = "string"
-          mac_address        = "string"
-          pid                = "string"
-          priority           = 1.0
-          role               = "string"
-          serial_number      = "string"
-          software_version   = "string"
-          stack_number       = 1.0
-          state              = "string"
-          sudi_serial_number = "string"
-        }
-        stack_ring_protocol      = "string"
-        supports_stack_workflows = "false"
-        total_member_count       = 1.0
-        valid_license_levels     = ["string"]
-      }
-      sudi_required        = "false"
-      user_mic_numbers     = ["string"]
-      user_sudi_serial_nos = ["string"]
-      workflow_id          = "string"
-      workflow_name        = "string"
-    }
-    id = "string"
-  }
 }
 
 output "catalystcenter_pnp_device_example" {
-  value = catalystcenter_pnp_device.example
+    value = catalystcenter_pnp_device.example
 }

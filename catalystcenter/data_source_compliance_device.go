@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -30,6 +30,18 @@ func dataSourceComplianceDevice() *schema.Resource {
 				Description: `deviceUuid query parameter. Comma separated 'Device Ids'
 `,
 				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"limit": &schema.Schema{
+				Description: `limit query parameter. The number of records to be retrieved defaults to 500 if not specified, with a maximum allowed limit of 500.
+`,
+				Type:     schema.TypeFloat,
+				Optional: true,
+			},
+			"offset": &schema.Schema{
+				Description: `offset query parameter. offset/starting row	number
+`,
+				Type:     schema.TypeFloat,
 				Optional: true,
 			},
 
@@ -86,6 +98,8 @@ func dataSourceComplianceDeviceRead(ctx context.Context, d *schema.ResourceData,
 	var diags diag.Diagnostics
 	vComplianceStatus, okComplianceStatus := d.GetOk("compliance_status")
 	vDeviceUUID, okDeviceUUID := d.GetOk("device_uuid")
+	vOffset, okOffset := d.GetOk("offset")
+	vLimit, okLimit := d.GetOk("limit")
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
@@ -98,6 +112,14 @@ func dataSourceComplianceDeviceRead(ctx context.Context, d *schema.ResourceData,
 		if okDeviceUUID {
 			queryParams1.DeviceUUID = vDeviceUUID.(string)
 		}
+		if okOffset {
+			queryParams1.Offset = vOffset.(float64)
+		}
+		if okLimit {
+			queryParams1.Limit = vLimit.(float64)
+		}
+
+		// has_unknown_response: None
 
 		response1, restyResp1, err := client.Compliance.GetComplianceStatusV1(&queryParams1)
 
