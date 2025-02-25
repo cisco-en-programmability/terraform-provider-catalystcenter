@@ -36,55 +36,17 @@ Request body.
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 
-						"properties": &schema.Schema{
-							Type:     schema.TypeList,
+						"task_id": &schema.Schema{
+							Description: `Task id
+`,
+							Type:     schema.TypeString,
 							Computed: true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-
-									"task_id": &schema.Schema{
-										Type:     schema.TypeList,
-										Computed: true,
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-
-												"type": &schema.Schema{
-													Description: `Type`,
-													Type:        schema.TypeString,
-													Computed:    true,
-												},
-											},
-										},
-									},
-									"url": &schema.Schema{
-										Type:     schema.TypeList,
-										Computed: true,
-										Elem: &schema.Resource{
-											Schema: map[string]*schema.Schema{
-
-												"type": &schema.Schema{
-													Description: `Type`,
-													Type:        schema.TypeString,
-													Computed:    true,
-												},
-											},
-										},
-									},
-								},
-							},
 						},
-						"required": &schema.Schema{
-							Description: `Required`,
-							Type:        schema.TypeList,
-							Computed:    true,
-							Elem: &schema.Schema{
-								Type: schema.TypeString,
-							},
-						},
-						"type": &schema.Schema{
-							Description: `Type`,
-							Type:        schema.TypeString,
-							Computed:    true,
+						"url": &schema.Schema{
+							Description: `Task url
+`,
+							Type:     schema.TypeString,
+							Computed: true,
 						},
 					},
 				},
@@ -224,50 +186,10 @@ func flattenDevicesUpdateInterfaceDetailsV1Item(item *catalystcentersdkgo.Respon
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["type"] = item.Type
-	respItem["properties"] = flattenDevicesUpdateInterfaceDetailsV1ItemProperties(item.Properties)
-	respItem["required"] = item.Required
-	return []map[string]interface{}{
-		respItem,
-	}
-}
-
-func flattenDevicesUpdateInterfaceDetailsV1ItemProperties(item *catalystcentersdkgo.ResponseDevicesUpdateInterfaceDetailsV1ResponseProperties) []map[string]interface{} {
-	if item == nil {
-		return nil
-	}
-	respItem := make(map[string]interface{})
-	respItem["task_id"] = flattenDevicesUpdateInterfaceDetailsV1ItemPropertiesTaskID(item.TaskID)
-	respItem["url"] = flattenDevicesUpdateInterfaceDetailsV1ItemPropertiesURL(item.URL)
+	respItem["task_id"] = item.TaskID
+	respItem["url"] = item.URL
 
 	return []map[string]interface{}{
 		respItem,
 	}
-
-}
-
-func flattenDevicesUpdateInterfaceDetailsV1ItemPropertiesTaskID(item *catalystcentersdkgo.ResponseDevicesUpdateInterfaceDetailsV1ResponsePropertiesTaskID) []map[string]interface{} {
-	if item == nil {
-		return nil
-	}
-	respItem := make(map[string]interface{})
-	respItem["type"] = item.Type
-
-	return []map[string]interface{}{
-		respItem,
-	}
-
-}
-
-func flattenDevicesUpdateInterfaceDetailsV1ItemPropertiesURL(item *catalystcentersdkgo.ResponseDevicesUpdateInterfaceDetailsV1ResponsePropertiesURL) []map[string]interface{} {
-	if item == nil {
-		return nil
-	}
-	respItem := make(map[string]interface{})
-	respItem["type"] = item.Type
-
-	return []map[string]interface{}{
-		respItem,
-	}
-
 }

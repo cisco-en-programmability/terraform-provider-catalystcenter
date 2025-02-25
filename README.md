@@ -22,7 +22,7 @@ The following table shows the supported versions.
 | Cisco Catalyst Center version | Terraform "catalystcenter" provider version |
 |--------------------------|----------------------------------------|
 | 2.3.7.6                  | 1.0.0-beta                             |
-| 2.3.7.9                  | 1.1.0-beta                             |
+| 2.3.7.9                  | 1.1.1-beta                             |
 
 If your SDK, Terraform provider is older please consider updating it first.
 
@@ -63,7 +63,7 @@ terraform {
   required_providers {
     catalystcenter = {
       source = "cisco-en-programmability/catalystcenter"
-      version = "1.1.0-beta"
+      version = "1.1.1-beta"
     }
   }
 }
@@ -181,7 +181,7 @@ resource "resource" "default" {
 # Explicitly using version 2
 resource "resource_v2" "default" {
   # This resource will refer to `resource_v2`
-}   
+}
 ```
 ### Case 2: Only resource\_v1 exists
 If only resource\_v1 is available in your environment, there is no need to specify the version, as the provider will automatically use that version:
@@ -190,7 +190,7 @@ If only resource\_v1 is available in your environment, there is no need to speci
 resource "resource" "default" {
 
 # This resource will refer to `resource_v1` since it's the only version available
-}          
+}
 ```
 ### Case 3: Only resource\_v2 exists
 If only resource\_v2 is available in your environment, the provider will automatically refer to that version, since resource\_v1 is not available:
@@ -199,7 +199,7 @@ If only resource\_v2 is available in your environment, the provider will automat
 resource "resource" "default" {
 
 # This resource will refer to `resource_v2` since `resource_v1` is not available
-}          
+}
 ```
 ## Example Usage with DataSources
 The same version selection logic applies to datasources. Below is how version management works for datasources:
@@ -216,21 +216,21 @@ data "datasource" "default" {
 data "datasource_v2" "default" {
 
 # This datasource will refer to `datasource_v2`
-}   
+}
 ```
 ### Case 2: Only datasource\_v1 exists
 ```hcl
 data "datasource" "default" {
 
 # This datasource will refer to `datasource_v1` since it's the only version available
-}      
+}
 ```
 ### Case 3: Only datasource\_v2 exists
 ```hcl
 data "datasource" "default" {
 
 # This datasource will refer to `datasource_v2` since `datasource_v1` is not available
-}          
+}
 ```
 
 # Contributing
