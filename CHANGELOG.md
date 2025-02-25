@@ -1,3 +1,7 @@
+## 1.1.1-beta (September 13, 2024)
+IMPROVEMENTS:
+* Modifying the return values of the Resource interface_update functions.
+
 ## 1.1.0-beta (September 13, 2024)
 IMPROVEMENTS:
 * The provider has been updated with Catalyst Center API version `2.3.7.9`
