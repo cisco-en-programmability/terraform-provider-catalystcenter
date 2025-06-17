@@ -19,10 +19,10 @@ description: |-
 It performs read operation on SDA.
 
 - Get Fabric site health summary for a specific fabric site by providing the unique fabric site id in the url path.
-This data source provides the latest health data until the given endTime. If data is not ready for the provided
-endTime, the request will fail with error code 400 Bad Request, and the error message will indicate the recommended
+This data source provides the latest health data until the given **endTime**. If data is not ready for the provided
+endTime, the request will fail with error code **400 Bad Request**, and the error message will indicate the recommended
 endTime to use to retrieve a complete data set. This behavior may occur if the provided endTime=currentTime, since we
-are not a real time system. When endTime is not provided, the API returns the latest data.
+are not a real time system. When **endTime** is not provided, the API returns the latest data.
 For detailed information about the usage of the API, please refer to the Open API specification document
 https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 fabricSiteHealthSummaries-1.0.1-resolved.yaml
@@ -55,10 +55,10 @@ output "catalystcenter_fabric_site_health_summaries_id_example" {
 
 ### Optional
 
-- `attribute` (String) attribute query parameter. The list of FabricSite health attributes. Please refer to fabricSiteAttributes section in the Open API specification document mentioned in the description.
+- `attribute` (String) attribute query parameter. The list of FabricSite health attributes. Please refer to ******fabricSiteAttributes****** section in the Open API specification document mentioned in the description.
 - `end_time` (Number) endTime query parameter. End time to which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
 - `start_time` (Number) startTime query parameter. Start time from which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
-- `view` (String) view query parameter. The specific summary view being requested. A maximum of 3 views can be queried at a time per request.  Please refer to fabricSiteViews section in the Open API specification document mentioned in the description.
+- `view` (String) view query parameter. The specific summary view being requested. A maximum of 3 views can be queried at a time per request.  Please refer to ******fabricSiteViews****** section in the Open API specification document mentioned in the description.
 
 ### Read-Only
 
@@ -83,7 +83,7 @@ Read-Only:
 - `bgp_bgp_site_total_health_device_count` (Number)
 - `bgp_evpn_fair_health_device_count` (Number)
 - `bgp_evpn_good_health_device_count` (Number)
-- `bgp_evpn_good_health_percentage` (String)
+- `bgp_evpn_good_health_percentage` (Number)
 - `bgp_evpn_total_health_device_count` (Number)
 - `bgp_evpnpoor_health_device_count` (Number)
 - `bgp_peer_infra_vn_fair_health_device_count` (Number)
@@ -134,7 +134,7 @@ Read-Only:
 - `network_protocol` (String)
 - `peer_score_fair_health_device_count` (Number)
 - `peer_score_good_health_device_count` (Number)
-- `peer_score_good_health_percentage` (String)
+- `peer_score_good_health_percentage` (Number)
 - `peer_score_poor_health_device_count` (Number)
 - `peer_score_total_health_device_count` (Number)
 - `poor_health_device_count` (Number)
@@ -149,3 +149,4 @@ Read-Only:
 - `pubsub_infra_vn_poor_health_device_count` (Number)
 - `pubsub_infra_vn_total_health_device_count` (Number)
 - `total_device_count` (Number)
+- `total_health_device_count` (Number)

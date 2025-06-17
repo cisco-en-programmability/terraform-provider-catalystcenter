@@ -13,7 +13,7 @@ description: |-
 It performs read operation on Health and Performance.
 
 - Retrieves the workflows that have been successfully submitted and are currently available. This is sorted by
-*submitTime*
+**submitTime**
 
 - Retrieves workflow details for a workflow id
 
@@ -50,9 +50,9 @@ output "catalystcenter_diagnostic_validation_workflows_example" {
 
 - `end_time` (Number) endTime query parameter. Workflows started before the given time (as milliseconds since UNIX epoch).
 - `id` (String) id path parameter. Workflow id
-- `limit` (Number) limit query parameter. The number of records to show for this page.
+- `limit` (Number) limit query parameter. Specifies the maximum number of workflows to return per page. Must be an integer between 1 and 500, inclusive.
 - `offset` (Number) offset query parameter. The first record to show for this page; the first record is numbered 1.
-- `run_status` (String) runStatus query parameter. Execution status of the workflow. If the workflow is successfully submitted, runStatus is *PENDING*. If the workflow execution has started, runStatus is *IN_PROGRESS*. If the workflow executed is completed with all validations executed, runStatus is *COMPLETED*. If the workflow execution fails while running validations, runStatus is *FAILED*.
+- `run_status` (String) runStatus query parameter. Execution status of the workflow. If the workflow is successfully submitted, runStatus is **PENDING**. If the workflow execution has started, runStatus is **IN_PROGRESS**. If the workflow executed is completed with all validations executed, runStatus is **COMPLETED**. If the workflow execution fails while running validations, runStatus is **FAILED**.
 - `start_time` (Number) startTime query parameter. Workflows started after the given time (as milliseconds since UNIX epoch).
 
 ### Read-Only

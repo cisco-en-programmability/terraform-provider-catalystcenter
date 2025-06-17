@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -21,7 +21,7 @@ func dataSourceIPamGlobalIPAddressPoolsGlobalIPAddressPoolIDSubpoolsCount() *sch
 		ReadContext: dataSourceIPamGlobalIPAddressPoolsGlobalIPAddressPoolIDSubpoolsCountRead,
 		Schema: map[string]*schema.Schema{
 			"global_ip_address_pool_id": &schema.Schema{
-				Description: `globalIpAddressPoolId path parameter. The id of the global IP address pool for which to count subpools.
+				Description: `globalIpAddressPoolId path parameter. The **id** of the global IP address pool for which to count subpools.
 `,
 				Type:     schema.TypeString,
 				Required: true,
@@ -54,29 +54,41 @@ func dataSourceIPamGlobalIPAddressPoolsGlobalIPAddressPoolIDSubpoolsCountRead(ct
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: CountsSubpoolsOfAGlobalIPAddressPoolV1")
+		log.Printf("[DEBUG] Selected method: CountsSubpoolsOfAGlobalIPAddressPool")
 		vvGlobalIPAddressPoolID := vGlobalIPAddressPoolID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.NetworkSettings.CountsSubpoolsOfAGlobalIPAddressPoolV1(vvGlobalIPAddressPoolID)
+		response1, restyResp1, err := client.NetworkSettings.CountsSubpoolsOfAGlobalIPAddressPool(vvGlobalIPAddressPoolID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 CountsSubpoolsOfAGlobalIPAddressPoolV1", err,
-				"Failure at CountsSubpoolsOfAGlobalIPAddressPoolV1, unexpected response", ""))
+				"Failure when executing 2 CountsSubpoolsOfAGlobalIPAddressPool", err,
+				"Failure at CountsSubpoolsOfAGlobalIPAddressPool, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenNetworkSettingsCountsSubpoolsOfAGlobalIPAddressPoolV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 CountsSubpoolsOfAGlobalIPAddressPool", err,
+				"Failure at CountsSubpoolsOfAGlobalIPAddressPool, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenNetworkSettingsCountsSubpoolsOfAGlobalIPAddressPoolItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting CountsSubpoolsOfAGlobalIPAddressPoolV1 response",
+				"Failure when setting CountsSubpoolsOfAGlobalIPAddressPool response",
 				err))
 			return diags
 		}
@@ -88,7 +100,7 @@ func dataSourceIPamGlobalIPAddressPoolsGlobalIPAddressPoolIDSubpoolsCountRead(ct
 	return diags
 }
 
-func flattenNetworkSettingsCountsSubpoolsOfAGlobalIPAddressPoolV1Item(item *catalystcentersdkgo.ResponseNetworkSettingsCountsSubpoolsOfAGlobalIPAddressPoolV1Response) []map[string]interface{} {
+func flattenNetworkSettingsCountsSubpoolsOfAGlobalIPAddressPoolItem(item *catalystcentersdkgo.ResponseNetworkSettingsCountsSubpoolsOfAGlobalIPAddressPoolResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

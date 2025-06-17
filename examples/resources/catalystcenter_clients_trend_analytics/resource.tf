@@ -1,32 +1,32 @@
 
 resource "catalystcenter_clients_trend_analytics" "example" {
-  provider    = meraki
+  provider    = catalystcenter
   xca_lle_rid = "string"
-  parameters {
+  parameters = [{
 
-    aggregate_attributes {
+    aggregate_attributes = [{
 
       function = "string"
       name     = "string"
-    }
+    }]
     attributes = ["string"]
     end_time   = 1
-    filters {
+    filters = [{
 
       key      = "string"
       operator = "string"
       value    = 1
-    }
+    }]
     group_by = ["string"]
-    page {
+    page = [{
 
       cursor          = "string"
       limit           = 1
       time_sort_order = "string"
-    }
+    }]
     start_time     = 1
     trend_interval = "string"
-  }
+  }]
 }
 
 output "catalystcenter_clients_trend_analytics_example" {

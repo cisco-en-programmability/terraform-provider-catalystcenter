@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -11,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -25,7 +26,7 @@ func resourceAssignToSiteApply() *schema.Resource {
 - Assign unprovisioned network devices to a site. Along with that it can also be used to assign unprovisioned network
 devices to a different site. If device controllability is enabled, it will be triggered once device assigned to site
 successfully. Device Controllability can be enabled/disabled using
-*/dna/intent/api/v1/networkDevices/deviceControllability/settings*.
+**/dna/intent/api/v1/networkDevices/deviceControllability/settings**.
 `,
 
 		CreateContext: resourceAssignToSiteApplyCreate,
@@ -66,7 +67,7 @@ successfully. Device Controllability can be enabled/disabled using
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"device_ids": &schema.Schema{
-							Description: `Unassigned network devices.
+							Description: `Unassigned network devices, ranging from a minimum of 1 to a maximum of 100.
 `,
 							Type:     schema.TypeList,
 							Optional: true,
@@ -95,7 +96,7 @@ func resourceAssignToSiteApplyCreate(ctx context.Context, d *schema.ResourceData
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestAssignToSiteApplyAssignNetworkDevicesToASiteV1(ctx, "parameters.0", d)
+	request1 := expandRequestAssignToSiteApplyAssignNetworkDevicesToASite(ctx, "parameters.0", d)
 
 	response1, restyResp1, err := client.SiteDesign.AssignNetworkDevicesToASite(request1)
 
@@ -116,7 +117,7 @@ func resourceAssignToSiteApplyCreate(ctx context.Context, d *schema.ResourceData
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing AssignNetworkDevicesToASiteV1", err))
+			"Failure when executing AssignNetworkDevicesToASite", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -143,22 +144,22 @@ func resourceAssignToSiteApplyCreate(ctx context.Context, d *schema.ResourceData
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing AssignNetworkDevicesToASiteV1", err1))
+				"Failure when executing AssignNetworkDevicesToASite", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenSiteDesignAssignNetworkDevicesToASiteV1Item(response1.Response)
+	vItem1 := flattenSiteDesignAssignNetworkDevicesToASiteItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting AssignNetworkDevicesToASiteV1 response",
+			"Failure when setting AssignNetworkDevicesToASite response",
 			err))
 		return diags
 	}
@@ -179,8 +180,8 @@ func resourceAssignToSiteApplyDelete(ctx context.Context, d *schema.ResourceData
 	return diags
 }
 
-func expandRequestAssignToSiteApplyAssignNetworkDevicesToASiteV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSiteDesignAssignNetworkDevicesToASiteV1 {
-	request := catalystcentersdkgo.RequestSiteDesignAssignNetworkDevicesToASiteV1{}
+func expandRequestAssignToSiteApplyAssignNetworkDevicesToASite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSiteDesignAssignNetworkDevicesToASite {
+	request := catalystcentersdkgo.RequestSiteDesignAssignNetworkDevicesToASite{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_ids")))) {
 		request.DeviceIDs = interfaceToSliceString(v)
 	}
@@ -190,7 +191,7 @@ func expandRequestAssignToSiteApplyAssignNetworkDevicesToASiteV1(ctx context.Con
 	return &request
 }
 
-func flattenSiteDesignAssignNetworkDevicesToASiteV1Item(item *catalystcentersdkgo.ResponseSiteDesignAssignNetworkDevicesToASiteV1Response) []map[string]interface{} {
+func flattenSiteDesignAssignNetworkDevicesToASiteItem(item *catalystcentersdkgo.ResponseSiteDesignAssignNetworkDevicesToASiteResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

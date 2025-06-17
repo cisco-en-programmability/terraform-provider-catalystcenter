@@ -40,7 +40,7 @@ specs/blob/main/Assurance/CE_Cat_Center_Org-AssuranceUserDefinedIssueAPIs-1.0.0-
 ```terraform
 resource "catalystcenter_custom_issue_definitions" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     description             = "string"

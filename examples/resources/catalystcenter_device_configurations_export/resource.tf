@@ -1,11 +1,11 @@
 
 resource "catalystcenter_device_configurations_export" "example" {
-  provider = meraki
-  parameters {
+  provider = catalystcenter
+  parameters = [{
 
-    device_id = "string"
+    device_id = ["string"]
     password  = "******"
-  }
+  }]
 }
 
 output "catalystcenter_device_configurations_export_example" {

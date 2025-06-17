@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 	"reflect"
+	"time"
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -263,14 +264,14 @@ func resourceCustomIssueDefinitionsCreate(ctx context.Context, d *schema.Resourc
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestCustomIssueDefinitionsCreatesANewUserDefinedIssueDefinitionsV1(ctx, "parameters.0", d)
+	request1 := expandRequestCustomIssueDefinitionsCreatesANewUserDefinedIssueDefinitions(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vID := resourceItem["id"]
 	vvID := interfaceToString(vID)
 	vName := resourceItem["name"]
 	vvName := interfaceToString(vName)
-	queryParamImport := catalystcentersdkgo.GetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersQueryParams{}
 	queryParamImport.Name = vvName
 	item2, err := searchIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFilters(m, queryParamImport, vvID)
 	if err == nil && item2 != nil {
@@ -298,7 +299,7 @@ func resourceCustomIssueDefinitionsCreate(ctx context.Context, d *schema.Resourc
 		vvName = resp1.Response.Name
 	}
 	// TODO REVIEW
-	queryParamValidate := catalystcentersdkgo.GetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersQueryParams{}
 	queryParamValidate.Name = vvName
 	item3, err := searchIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFilters(m, queryParamValidate, vvID)
 	if err != nil || item3 == nil {
@@ -329,7 +330,7 @@ func resourceCustomIssueDefinitionsRead(ctx context.Context, d *schema.ResourceD
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetAllTheCustomIssueDefinitionsBasedOnTheGivenFilters")
-		queryParams1 := catalystcentersdkgo.GetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersQueryParams{}
 		queryParams1.ID = vID
 		queryParams1.Name = vName
 		item1, err := searchIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFilters(m, queryParams1, vID)
@@ -338,10 +339,10 @@ func resourceCustomIssueDefinitionsRead(ctx context.Context, d *schema.ResourceD
 			return diags
 		}
 		// Review flatten function used
-		items := []catalystcentersdkgo.ResponseIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1Response{
+		items := []catalystcentersdkgo.ResponseIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersResponse{
 			*item1,
 		}
-		vItem1 := flattenIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1Items(&items)
+		vItem1 := flattenIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersItems(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetAllTheCustomIssueDefinitionsBasedOnTheGivenFilters search response",
@@ -363,7 +364,7 @@ func resourceCustomIssueDefinitionsUpdate(ctx context.Context, d *schema.Resourc
 	vvID := resourceMap["id"]
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvID)
-		request1 := expandRequestCustomIssueDefinitionsUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedIDV1(ctx, "parameters.0", d)
+		request1 := expandRequestCustomIssueDefinitionsUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedID(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.Issues.UpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedID(vvID, request1)
 		if err != nil || response1 == nil {
@@ -419,8 +420,9 @@ func resourceCustomIssueDefinitionsDelete(ctx context.Context, d *schema.Resourc
 
 	return diags
 }
-func expandRequestCustomIssueDefinitionsCreatesANewUserDefinedIssueDefinitionsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesCreatesANewUserDefinedIssueDefinitionsV1 {
-	request := catalystcentersdkgo.RequestIssuesCreatesANewUserDefinedIssueDefinitionsV1{}
+
+func expandRequestCustomIssueDefinitionsCreatesANewUserDefinedIssueDefinitions(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesCreatesANewUserDefinedIssueDefinitions {
+	request := catalystcentersdkgo.RequestIssuesCreatesANewUserDefinedIssueDefinitions{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -428,7 +430,7 @@ func expandRequestCustomIssueDefinitionsCreatesANewUserDefinedIssueDefinitionsV1
 		request.Description = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rules")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rules")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rules")))) {
-		request.Rules = expandRequestCustomIssueDefinitionsCreatesANewUserDefinedIssueDefinitionsV1RulesArray(ctx, key+".rules", d)
+		request.Rules = expandRequestCustomIssueDefinitionsCreatesANewUserDefinedIssueDefinitionsRulesArray(ctx, key+".rules", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_enabled")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_enabled")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_enabled")))) {
 		request.IsEnabled = interfaceToBoolPtr(v)
@@ -445,8 +447,8 @@ func expandRequestCustomIssueDefinitionsCreatesANewUserDefinedIssueDefinitionsV1
 	return &request
 }
 
-func expandRequestCustomIssueDefinitionsCreatesANewUserDefinedIssueDefinitionsV1RulesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestIssuesCreatesANewUserDefinedIssueDefinitionsV1Rules {
-	request := []catalystcentersdkgo.RequestIssuesCreatesANewUserDefinedIssueDefinitionsV1Rules{}
+func expandRequestCustomIssueDefinitionsCreatesANewUserDefinedIssueDefinitionsRulesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestIssuesCreatesANewUserDefinedIssueDefinitionsRules {
+	request := []catalystcentersdkgo.RequestIssuesCreatesANewUserDefinedIssueDefinitionsRules{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -457,7 +459,7 @@ func expandRequestCustomIssueDefinitionsCreatesANewUserDefinedIssueDefinitionsV1
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestCustomIssueDefinitionsCreatesANewUserDefinedIssueDefinitionsV1Rules(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestCustomIssueDefinitionsCreatesANewUserDefinedIssueDefinitionsRules(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -468,8 +470,8 @@ func expandRequestCustomIssueDefinitionsCreatesANewUserDefinedIssueDefinitionsV1
 	return &request
 }
 
-func expandRequestCustomIssueDefinitionsCreatesANewUserDefinedIssueDefinitionsV1Rules(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesCreatesANewUserDefinedIssueDefinitionsV1Rules {
-	request := catalystcentersdkgo.RequestIssuesCreatesANewUserDefinedIssueDefinitionsV1Rules{}
+func expandRequestCustomIssueDefinitionsCreatesANewUserDefinedIssueDefinitionsRules(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesCreatesANewUserDefinedIssueDefinitionsRules {
+	request := catalystcentersdkgo.RequestIssuesCreatesANewUserDefinedIssueDefinitionsRules{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".severity")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".severity")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".severity")))) {
 		request.Severity = interfaceToIntPtr(v)
 	}
@@ -494,8 +496,8 @@ func expandRequestCustomIssueDefinitionsCreatesANewUserDefinedIssueDefinitionsV1
 	return &request
 }
 
-func expandRequestCustomIssueDefinitionsUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedIDV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedIDV1 {
-	request := catalystcentersdkgo.RequestIssuesUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedIDV1{}
+func expandRequestCustomIssueDefinitionsUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedID(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedID {
+	request := catalystcentersdkgo.RequestIssuesUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedID{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -503,7 +505,7 @@ func expandRequestCustomIssueDefinitionsUpdatesAnExistingCustomIssueDefinitionBa
 		request.Description = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rules")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rules")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rules")))) {
-		request.Rules = expandRequestCustomIssueDefinitionsUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedIDV1RulesArray(ctx, key+".rules", d)
+		request.Rules = expandRequestCustomIssueDefinitionsUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedIDRulesArray(ctx, key+".rules", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_enabled")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_enabled")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_enabled")))) {
 		request.IsEnabled = interfaceToBoolPtr(v)
@@ -520,8 +522,8 @@ func expandRequestCustomIssueDefinitionsUpdatesAnExistingCustomIssueDefinitionBa
 	return &request
 }
 
-func expandRequestCustomIssueDefinitionsUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedIDV1RulesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestIssuesUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedIDV1Rules {
-	request := []catalystcentersdkgo.RequestIssuesUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedIDV1Rules{}
+func expandRequestCustomIssueDefinitionsUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedIDRulesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestIssuesUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedIDRules {
+	request := []catalystcentersdkgo.RequestIssuesUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedIDRules{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -532,7 +534,7 @@ func expandRequestCustomIssueDefinitionsUpdatesAnExistingCustomIssueDefinitionBa
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestCustomIssueDefinitionsUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedIDV1Rules(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestCustomIssueDefinitionsUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedIDRules(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -543,8 +545,8 @@ func expandRequestCustomIssueDefinitionsUpdatesAnExistingCustomIssueDefinitionBa
 	return &request
 }
 
-func expandRequestCustomIssueDefinitionsUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedIDV1Rules(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedIDV1Rules {
-	request := catalystcentersdkgo.RequestIssuesUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedIDV1Rules{}
+func expandRequestCustomIssueDefinitionsUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedIDRules(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedIDRules {
+	request := catalystcentersdkgo.RequestIssuesUpdatesAnExistingCustomIssueDefinitionBasedOnTheProvidedIDRules{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".severity")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".severity")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".severity")))) {
 		request.Severity = interfaceToIntPtr(v)
 	}
@@ -569,25 +571,44 @@ func expandRequestCustomIssueDefinitionsUpdatesAnExistingCustomIssueDefinitionBa
 	return &request
 }
 
-func searchIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFilters(m interface{}, queryParams catalystcentersdkgo.GetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1QueryParams, vID string) (*catalystcentersdkgo.ResponseIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1Response, error) {
+func searchIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFilters(m interface{}, queryParams catalystcentersdkgo.GetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersQueryParams, vID string) (*catalystcentersdkgo.ResponseIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1Response
-	var ite *catalystcentersdkgo.ResponseIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1
-
-	ite, _, err = client.Issues.GetAllTheCustomIssueDefinitionsBasedOnTheGivenFilters(&queryParams)
-	if err != nil || ite == nil {
-		return foundItem, err
-	}
-	itemsCopy := *ite.Response
-	if itemsCopy == nil {
-		return foundItem, err
-	}
-	for _, item := range itemsCopy {
-		if item.Name == queryParams.Name {
-			foundItem = &item
+	var foundItem *catalystcentersdkgo.ResponseIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersResponse
+	var ite *catalystcentersdkgo.ResponseIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFilters
+	if vID != "" {
+		queryParams.Offset = 1
+		nResponse, _, err := client.Issues.GetAllTheCustomIssueDefinitionsBasedOnTheGivenFilters(nil)
+		maxPageSize := len(*nResponse.Response)
+		for len(*nResponse.Response) > 0 {
+			time.Sleep(15 * time.Second)
+			for _, item := range *nResponse.Response {
+				if vID == item.ID {
+					foundItem = &item
+					return foundItem, err
+				}
+			}
+			queryParams.Limit = float64(maxPageSize)
+			queryParams.Offset += float64(maxPageSize)
+			nResponse, _, err = client.Issues.GetAllTheCustomIssueDefinitionsBasedOnTheGivenFilters(&queryParams)
+		}
+		return nil, err
+	} else if queryParams.Name != "" {
+		ite, _, err = client.Issues.GetAllTheCustomIssueDefinitionsBasedOnTheGivenFilters(&queryParams)
+		if err != nil || ite == nil {
 			return foundItem, err
 		}
+		itemsCopy := *ite.Response
+		if itemsCopy == nil {
+			return foundItem, err
+		}
+		for _, item := range itemsCopy {
+			if item.Name == queryParams.Name {
+				foundItem = &item
+				return foundItem, err
+			}
+		}
+		return foundItem, err
 	}
 	return foundItem, err
 }

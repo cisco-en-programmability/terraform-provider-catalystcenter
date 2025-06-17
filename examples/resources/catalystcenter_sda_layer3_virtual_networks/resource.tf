@@ -1,7 +1,7 @@
 
 resource "catalystcenter_sda_layer3_virtual_networks" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     anchored_site_id     = "string"

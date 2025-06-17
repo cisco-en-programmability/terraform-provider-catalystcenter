@@ -14,6 +14,8 @@ It performs create operation on Devices.
 
 - Clear mac-address on an individual port. In request body, operation needs to be specified as 'ClearMacAddress'. In the
 future more possible operations will be added to this API
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -25,11 +27,11 @@ resource "catalystcenter_interface_operation_create" "example" {
   provider        = catalystcenter
   deployment_mode = "string"
   interface_uuid  = "string"
-  parameters {
+  parameters = [{
 
     operation = "string"
-    payload   = "------"
-  }
+    payload   = "string"
+  }]
 }
 
 output "catalystcenter_interface_operation_create_example" {

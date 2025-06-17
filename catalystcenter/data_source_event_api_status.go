@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -65,27 +65,41 @@ func dataSourceEventAPIStatusRead(ctx context.Context, d *schema.ResourceData, m
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetStatusAPIForEventsV1")
+		log.Printf("[DEBUG] Selected method: GetStatusAPIForEvents")
 		vvExecutionID := vExecutionID.(string)
 
-		response1, restyResp1, err := client.EventManagement.GetStatusAPIForEventsV1(vvExecutionID)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.EventManagement.GetStatusAPIForEvents(vvExecutionID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetStatusAPIForEventsV1", err,
-				"Failure at GetStatusAPIForEventsV1, unexpected response", ""))
+				"Failure when executing 2 GetStatusAPIForEvents", err,
+				"Failure at GetStatusAPIForEvents, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenEventManagementGetStatusAPIForEventsV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetStatusAPIForEvents", err,
+				"Failure at GetStatusAPIForEvents, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenEventManagementGetStatusAPIForEventsItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetStatusAPIForEventsV1 response",
+				"Failure when setting GetStatusAPIForEvents response",
 				err))
 			return diags
 		}
@@ -97,12 +111,12 @@ func dataSourceEventAPIStatusRead(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func flattenEventManagementGetStatusAPIForEventsV1Item(item *catalystcentersdkgo.ResponseEventManagementGetStatusAPIForEventsV1) []map[string]interface{} {
+func flattenEventManagementGetStatusAPIForEventsItem(item *catalystcentersdkgo.ResponseEventManagementGetStatusAPIForEvents) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["error_message"] = flattenEventManagementGetStatusAPIForEventsV1ItemErrorMessage(item.ErrorMessage)
+	respItem["error_message"] = flattenEventManagementGetStatusAPIForEventsItemErrorMessage(item.ErrorMessage)
 	respItem["api_status"] = item.APIStatus
 	respItem["status_message"] = item.StatusMessage
 	return []map[string]interface{}{
@@ -110,7 +124,7 @@ func flattenEventManagementGetStatusAPIForEventsV1Item(item *catalystcentersdkgo
 	}
 }
 
-func flattenEventManagementGetStatusAPIForEventsV1ItemErrorMessage(item *catalystcentersdkgo.ResponseEventManagementGetStatusAPIForEventsV1ErrorMessage) interface{} {
+func flattenEventManagementGetStatusAPIForEventsItemErrorMessage(item *catalystcentersdkgo.ResponseEventManagementGetStatusAPIForEventsErrorMessage) interface{} {
 	if item == nil {
 		return nil
 	}

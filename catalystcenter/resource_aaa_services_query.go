@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -291,13 +291,13 @@ func resourceAAAServicesQueryCreate(ctx context.Context, d *schema.ResourceData,
 
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
-	request1 := expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1(ctx, "parameters.0", d)
+	request1 := expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFilters(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.RetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1HeaderParams{}
+	headerParams1 := catalystcentersdkgo.RetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersHeaderParams{}
 
 	headerParams1.XCaLLERID = vXCaLLERID.(string)
 
-	response1, restyResp1, err := client.Devices.RetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1(request1, &headerParams1)
+	response1, restyResp1, err := client.Devices.RetrievesTheListOfAAAServicesForGivenSetOfComplexFilters(request1, &headerParams1)
 
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
@@ -315,7 +315,7 @@ func resourceAAAServicesQueryCreate(ctx context.Context, d *schema.ResourceData,
 
 	//Analizar verificacion.
 
-	vItems1 := flattenDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1Items(response1.Response)
+	vItems1 := flattenDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersItems(response1.Response)
 	if err := d.Set("items", vItems1); err != nil {
 		diags = append(diags, diagError(
 			"Failure when setting RetrievesTheListOfAAAServicesForGivenSetOfComplexFilters response",
@@ -340,8 +340,8 @@ func resourceAAAServicesQueryDelete(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1 {
-	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1{}
+func expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFilters {
+	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -349,16 +349,16 @@ func expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComp
 		request.EndTime = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1FiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersFiltersArray(ctx, key+".filters", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".page")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".page")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".page")))) {
-		request.Page = expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1Page(ctx, key+".page.0", d)
+		request.Page = expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersPage(ctx, key+".page.0", d)
 	}
 	return &request
 }
 
-func expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1Filters {
-	request := []catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1Filters{}
+func expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersFilters {
+	request := []catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -369,7 +369,7 @@ func expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComp
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -377,8 +377,8 @@ func expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComp
 	return &request
 }
 
-func expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1Filters {
-	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1Filters{}
+func expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersFilters {
+	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -391,8 +391,8 @@ func expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComp
 	return &request
 }
 
-func expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1Page(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1Page {
-	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1Page{}
+func expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersPage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersPage {
+	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersPage{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".limit")))) {
 		request.Limit = interfaceToIntPtr(v)
 	}
@@ -400,13 +400,13 @@ func expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComp
 		request.Offset = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".sort_by")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".sort_by")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".sort_by")))) {
-		request.SortBy = expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1PageSortByArray(ctx, key+".sort_by", d)
+		request.SortBy = expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersPageSortByArray(ctx, key+".sort_by", d)
 	}
 	return &request
 }
 
-func expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1PageSortByArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1PageSortBy {
-	request := []catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1PageSortBy{}
+func expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersPageSortByArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersPageSortBy {
+	request := []catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersPageSortBy{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -417,7 +417,7 @@ func expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComp
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1PageSortBy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersPageSortBy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -425,8 +425,8 @@ func expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComp
 	return &request
 }
 
-func expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1PageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1PageSortBy {
-	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1PageSortBy{}
+func expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersPageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersPageSortBy {
+	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersPageSortBy{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -436,7 +436,7 @@ func expandRequestAAAServicesQueryRetrievesTheListOfAAAServicesForGivenSetOfComp
 	return &request
 }
 
-func flattenDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1Items(items *[]catalystcentersdkgo.ResponseDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersV1Response) []map[string]interface{} {
+func flattenDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersItems(items *[]catalystcentersdkgo.ResponseDevicesRetrievesTheListOfAAAServicesForGivenSetOfComplexFiltersResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

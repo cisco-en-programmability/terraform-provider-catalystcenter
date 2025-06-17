@@ -13,7 +13,7 @@ description: |-
 It performs read operation on Software Image Management (SWIM).
 
 - Returns aggregate counts of network device product names, golden and non-golden tagged products, imported images,
-golden images tagged, and advisor for a specific site provide, the default value of siteId is set to global.
+golden images tagged, and advisor for a specific site provide, the default value of **siteId** is set to global.
 
 ## Example Usage
 
@@ -33,7 +33,7 @@ output "catalystcenter_site_wise_images_summary_example" {
 
 ### Optional
 
-- `site_id` (String) siteId query parameter. Site identifier to get the aggreagte counts products under the site. The default value is global site id. See [https://developer.cisco.com/docs/dna-center](#!get-site) for siteId
+- `site_id` (String) siteId query parameter. Site identifier to get the aggreagte counts products under the site. The default value is global site id. See [https://developer.cisco.com/docs/dna-center](#!get-site) for **siteId**
 
 ### Read-Only
 

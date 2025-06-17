@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -105,16 +105,16 @@ func resourceNetworkDeviceUserDefinedFieldCreate(ctx context.Context, d *schema.
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestNetworkDeviceUserDefinedFieldCreateUserDefinedFieldV1(ctx, "parameters.0", d)
+	request1 := expandRequestNetworkDeviceUserDefinedFieldCreateUserDefinedField(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vID := resourceItem["id"]
 	vName := resourceItem["name"]
 	vvID := interfaceToString(vID)
 	vvName := interfaceToString(vName)
-	queryParamImport := catalystcentersdkgo.GetAllUserDefinedFieldsV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetAllUserDefinedFieldsQueryParams{}
 	queryParamImport.Name = vvName
-	item2, err := searchDevicesGetAllUserDefinedFieldsV1(m, queryParamImport, vvID)
+	item2, err := searchDevicesGetAllUserDefinedFields(m, queryParamImport, vvID)
 	if err != nil || item2 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["id"] = item2.ID
@@ -161,9 +161,9 @@ func resourceNetworkDeviceUserDefinedFieldCreate(ctx context.Context, d *schema.
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetAllUserDefinedFieldsV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetAllUserDefinedFieldsQueryParams{}
 	queryParamValidate.Name = vvName
-	item3, err := searchDevicesGetAllUserDefinedFieldsV1(m, queryParamValidate, vvID)
+	item3, err := searchDevicesGetAllUserDefinedFields(m, queryParamValidate, vvID)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
 			"Failure when executing CreateUserDefinedField", err,
@@ -191,7 +191,7 @@ func resourceNetworkDeviceUserDefinedFieldRead(ctx context.Context, d *schema.Re
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetAllUserDefinedFields")
-		queryParams1 := catalystcentersdkgo.GetAllUserDefinedFieldsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetAllUserDefinedFieldsQueryParams{}
 
 		response1, restyResp1, err := client.Devices.GetAllUserDefinedFields(&queryParams1)
 
@@ -205,13 +205,13 @@ func resourceNetworkDeviceUserDefinedFieldRead(ctx context.Context, d *schema.Re
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		item1, err := searchDevicesGetAllUserDefinedFieldsV1(m, queryParams1, vvID)
+		item1, err := searchDevicesGetAllUserDefinedFields(m, queryParams1, vvID)
 		if err != nil || item1 == nil {
 			d.SetId("")
 			return diags
 		}
 		// Review flatten function used
-		vItem1 := flattenDevicesGetAllUserDefinedFieldsByIDV1Item(item1)
+		vItem1 := flattenDevicesGetAllUserDefinedFieldsByIDItem(item1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetAllUserDefinedFields search response",
@@ -232,7 +232,7 @@ func resourceNetworkDeviceUserDefinedFieldUpdate(ctx context.Context, d *schema.
 	vvID := interfaceToString(vID)
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvID)
-		request1 := expandRequestNetworkDeviceUserDefinedFieldUpdateUserDefinedFieldV1(ctx, "parameters.0", d)
+		request1 := expandRequestNetworkDeviceUserDefinedFieldUpdateUserDefinedField(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.Devices.UpdateUserDefinedField(vvID, request1)
 		if err != nil || response1 == nil {
@@ -342,8 +342,9 @@ func resourceNetworkDeviceUserDefinedFieldDelete(ctx context.Context, d *schema.
 
 	return diags
 }
-func expandRequestNetworkDeviceUserDefinedFieldCreateUserDefinedFieldV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesCreateUserDefinedFieldV1 {
-	request := catalystcentersdkgo.RequestDevicesCreateUserDefinedFieldV1{}
+
+func expandRequestNetworkDeviceUserDefinedFieldCreateUserDefinedField(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesCreateUserDefinedField {
+	request := catalystcentersdkgo.RequestDevicesCreateUserDefinedField{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -356,8 +357,8 @@ func expandRequestNetworkDeviceUserDefinedFieldCreateUserDefinedFieldV1(ctx cont
 	return &request
 }
 
-func expandRequestNetworkDeviceUserDefinedFieldUpdateUserDefinedFieldV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateUserDefinedFieldV1 {
-	request := catalystcentersdkgo.RequestDevicesUpdateUserDefinedFieldV1{}
+func expandRequestNetworkDeviceUserDefinedFieldUpdateUserDefinedField(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateUserDefinedField {
+	request := catalystcentersdkgo.RequestDevicesUpdateUserDefinedField{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -370,11 +371,11 @@ func expandRequestNetworkDeviceUserDefinedFieldUpdateUserDefinedFieldV1(ctx cont
 	return &request
 }
 
-func searchDevicesGetAllUserDefinedFieldsV1(m interface{}, queryParams catalystcentersdkgo.GetAllUserDefinedFieldsV1QueryParams, vID string) (*catalystcentersdkgo.ResponseDevicesGetAllUserDefinedFieldsV1Response, error) {
+func searchDevicesGetAllUserDefinedFields(m interface{}, queryParams catalystcentersdkgo.GetAllUserDefinedFieldsQueryParams, vID string) (*catalystcentersdkgo.ResponseDevicesGetAllUserDefinedFieldsResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseDevicesGetAllUserDefinedFieldsV1Response
-	var ite *catalystcentersdkgo.ResponseDevicesGetAllUserDefinedFieldsV1
+	var foundItem *catalystcentersdkgo.ResponseDevicesGetAllUserDefinedFieldsResponse
+	var ite *catalystcentersdkgo.ResponseDevicesGetAllUserDefinedFields
 	ite, _, err = client.Devices.GetAllUserDefinedFields(&queryParams)
 	if err != nil || ite == nil {
 		return foundItem, err
@@ -385,7 +386,7 @@ func searchDevicesGetAllUserDefinedFieldsV1(m interface{}, queryParams catalystc
 	for _, item := range *itemsCopy.Response {
 		// Call get by _ method and set value to foundItem and return
 		if item.Name == queryParams.Name {
-			var getItem *catalystcentersdkgo.ResponseDevicesGetAllUserDefinedFieldsV1Response
+			var getItem *catalystcentersdkgo.ResponseDevicesGetAllUserDefinedFieldsResponse
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err
@@ -394,7 +395,7 @@ func searchDevicesGetAllUserDefinedFieldsV1(m interface{}, queryParams catalystc
 	return foundItem, err
 }
 
-func flattenDevicesGetAllUserDefinedFieldsByIDV1Item(item *catalystcentersdkgo.ResponseDevicesGetAllUserDefinedFieldsV1Response) []map[string]interface{} {
+func flattenDevicesGetAllUserDefinedFieldsByIDItem(item *catalystcentersdkgo.ResponseDevicesGetAllUserDefinedFieldsResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

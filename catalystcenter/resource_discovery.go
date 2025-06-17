@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -18,7 +18,7 @@ func resourceDiscovery() *schema.Resource {
 	return &schema.Resource{
 		Description: `It manages create, read, update and delete operations on Discovery.
 
-- Stops all the discoveries and removes them
+- Stops all the discoveries and removes them.
 
 - Stops or starts an existing discovery
 
@@ -643,7 +643,7 @@ ERROR: Different types for param enablePasswordList schema.TypeList schema.TypeS
 `,
 							Type:     schema.TypeString,
 							Optional: true,
-							Default:  "",
+							Computed: true,
 						},
 						"ip_address_list": &schema.Schema{
 							Description: `IP Address of devices to be discovered. Ex: '172.30.0.1' for SINGLE, CDP and LLDP; '72.30.0.1-172.30.0.4' for RANGE; '72.30.0.1-172.30.0.4,172.31.0.1-172.31.0.4' for MULTI RANGE; '172.30.0.1/20' for CIDR
@@ -684,7 +684,7 @@ ERROR: Different types for param ipFilterList schema.TypeList schema.TypeString`
 `,
 							Type:     schema.TypeString,
 							Optional: true,
-							Default:  "",
+							Computed: true,
 						},
 						"netconf_port": &schema.Schema{
 							Description: `Netconf Port. It will need valid SSH credentials to work
@@ -871,7 +871,7 @@ func resourceDiscoveryCreate(ctx context.Context, d *schema.ResourceData, m inte
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestDiscoveryStartDiscoveryV1(ctx, "parameters.0", d)
+	request1 := expandRequestDiscoveryStartDiscovery(ctx, "parameters.0", d)
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
@@ -980,7 +980,7 @@ func resourceDiscoveryRead(ctx context.Context, d *schema.ResourceData, m interf
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDiscoveryGetDiscoveryByIDV1Item(response1.Response)
+		vItem1 := flattenDiscoveryGetDiscoveryByIDItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetDiscoveryByID response",
@@ -1018,7 +1018,7 @@ func resourceDiscoveryRead(ctx context.Context, d *schema.ResourceData, m interf
 			d.SetId("")
 			return diags
 		}
-		vItem1 := flattenDiscoveryGetDiscoveryByIDV1Item(response2.Response)
+		vItem1 := flattenDiscoveryGetDiscoveryByIDItem(response2.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetDiscoveryByID response",
@@ -1063,7 +1063,7 @@ func resourceDiscoveryUpdate(ctx context.Context, d *schema.ResourceData, m inte
 	}
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] Name used for update operation %s", vvName)
-		request1 := expandRequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDV1(ctx, "parameters.0", d)
+		request1 := expandRequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedID(ctx, "parameters.0", d)
 		if request1 != nil {
 			log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		}
@@ -1198,8 +1198,9 @@ func resourceDiscoveryDelete(ctx context.Context, d *schema.ResourceData, m inte
 
 	return diags
 }
-func expandRequestDiscoveryStartDiscoveryV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryStartDiscoveryV1 {
-	request := catalystcentersdkgo.RequestDiscoveryStartDiscoveryV1{}
+
+func expandRequestDiscoveryStartDiscovery(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryStartDiscovery {
+	request := catalystcentersdkgo.RequestDiscoveryStartDiscovery{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".cdp_level")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".cdp_level")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".cdp_level")))) {
 		request.CdpLevel = interfaceToIntPtr(v)
 	}
@@ -1213,10 +1214,10 @@ func expandRequestDiscoveryStartDiscoveryV1(ctx context.Context, key string, d *
 		request.GlobalCredentialIDList = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".http_read_credential")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".http_read_credential")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".http_read_credential")))) {
-		request.HTTPReadCredential = expandRequestDiscoveryStartDiscoveryV1HTTPReadCredential(ctx, key+".http_read_credential.0", d)
+		request.HTTPReadCredential = expandRequestDiscoveryStartDiscoveryHTTPReadCredential(ctx, key+".http_read_credential.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".http_write_credential")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".http_write_credential")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".http_write_credential")))) {
-		request.HTTPWriteCredential = expandRequestDiscoveryStartDiscoveryV1HTTPWriteCredential(ctx, key+".http_write_credential.0", d)
+		request.HTTPWriteCredential = expandRequestDiscoveryStartDiscoveryHTTPWriteCredential(ctx, key+".http_write_credential.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ip_address_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ip_address_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ip_address_list")))) {
 		request.IPAddressList = interfaceToString(v)
@@ -1290,8 +1291,8 @@ func expandRequestDiscoveryStartDiscoveryV1(ctx context.Context, key string, d *
 	return &request
 }
 
-func expandRequestDiscoveryStartDiscoveryV1HTTPReadCredential(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryStartDiscoveryV1HTTPReadCredential {
-	request := catalystcentersdkgo.RequestDiscoveryStartDiscoveryV1HTTPReadCredential{}
+func expandRequestDiscoveryStartDiscoveryHTTPReadCredential(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryStartDiscoveryHTTPReadCredential {
+	request := catalystcentersdkgo.RequestDiscoveryStartDiscoveryHTTPReadCredential{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".password")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".password")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".password")))) {
 		request.Password = interfaceToString(v)
 	}
@@ -1310,8 +1311,8 @@ func expandRequestDiscoveryStartDiscoveryV1HTTPReadCredential(ctx context.Contex
 	return &request
 }
 
-func expandRequestDiscoveryStartDiscoveryV1HTTPWriteCredential(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryStartDiscoveryV1HTTPWriteCredential {
-	request := catalystcentersdkgo.RequestDiscoveryStartDiscoveryV1HTTPWriteCredential{}
+func expandRequestDiscoveryStartDiscoveryHTTPWriteCredential(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryStartDiscoveryHTTPWriteCredential {
+	request := catalystcentersdkgo.RequestDiscoveryStartDiscoveryHTTPWriteCredential{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".password")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".password")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".password")))) {
 		request.Password = interfaceToString(v)
 	}
@@ -1330,10 +1331,10 @@ func expandRequestDiscoveryStartDiscoveryV1HTTPWriteCredential(ctx context.Conte
 	return &request
 }
 
-func expandRequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDV1 {
-	request := catalystcentersdkgo.RequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDV1{}
+func expandRequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedID(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedID {
+	request := catalystcentersdkgo.RequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedID{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".attribute_info")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".attribute_info")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".attribute_info")))) {
-		request.AttributeInfo = expandRequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDV1AttributeInfo(ctx, key+".attribute_info.0", d)
+		request.AttributeInfo = expandRequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDAttributeInfo(ctx, key+".attribute_info.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".cdp_level")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".cdp_level")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".cdp_level")))) {
 		request.CdpLevel = interfaceToIntPtr(v)
@@ -1357,10 +1358,10 @@ func expandRequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDV1(ctx context
 		request.GlobalCredentialIDList = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".http_read_credential")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".http_read_credential")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".http_read_credential")))) {
-		request.HTTPReadCredential = expandRequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDV1HTTPReadCredential(ctx, key+".http_read_credential.0", d)
+		request.HTTPReadCredential = expandRequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDHTTPReadCredential(ctx, key+".http_read_credential.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".http_write_credential")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".http_write_credential")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".http_write_credential")))) {
-		request.HTTPWriteCredential = expandRequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDV1HTTPWriteCredential(ctx, key+".http_write_credential.0", d)
+		request.HTTPWriteCredential = expandRequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDHTTPWriteCredential(ctx, key+".http_write_credential.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
@@ -1446,8 +1447,8 @@ func expandRequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDV1(ctx context
 	return &request
 }
 
-func expandRequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDV1AttributeInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDV1AttributeInfo {
-	var request catalystcentersdkgo.RequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDV1AttributeInfo
+func expandRequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDAttributeInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDAttributeInfo {
+	var request catalystcentersdkgo.RequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDAttributeInfo
 	request = d.Get(fixKeyAccess(key))
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -1455,8 +1456,8 @@ func expandRequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDV1AttributeInf
 	return &request
 }
 
-func expandRequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDV1HTTPReadCredential(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDV1HTTPReadCredential {
-	request := catalystcentersdkgo.RequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDV1HTTPReadCredential{}
+func expandRequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDHTTPReadCredential(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDHTTPReadCredential {
+	request := catalystcentersdkgo.RequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDHTTPReadCredential{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".comments")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".comments")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".comments")))) {
 		request.Comments = interfaceToString(v)
 	}
@@ -1493,8 +1494,8 @@ func expandRequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDV1HTTPReadCred
 	return &request
 }
 
-func expandRequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDV1HTTPWriteCredential(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDV1HTTPWriteCredential {
-	request := catalystcentersdkgo.RequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDV1HTTPWriteCredential{}
+func expandRequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDHTTPWriteCredential(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDHTTPWriteCredential {
+	request := catalystcentersdkgo.RequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDHTTPWriteCredential{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".comments")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".comments")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".comments")))) {
 		request.Comments = interfaceToString(v)
 	}
@@ -1531,10 +1532,10 @@ func expandRequestDiscoveryUpdatesAnExistingDiscoveryBySpecifiedIDV1HTTPWriteCre
 	return &request
 }
 
-func searchDiscovery(m interface{}, vName string) (*catalystcentersdkgo.ResponseDiscoveryGetDiscoveriesByRangeV1Response, error) {
+func searchDiscovery(m interface{}, vName string) (*catalystcentersdkgo.ResponseDiscoveryGetDiscoveriesByRangeResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseDiscoveryGetDiscoveriesByRangeV1Response
+	var foundItem *catalystcentersdkgo.ResponseDiscoveryGetDiscoveriesByRangeResponse
 	if vName == "" {
 		return foundItem, err
 	}

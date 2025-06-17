@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -302,27 +302,27 @@ func resourcePnpServerProfileUpdateCreate(ctx context.Context, d *schema.Resourc
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestPnpServerProfileUpdateUpdatePnpServerProfileV1(ctx, "parameters.0", d)
+	request1 := expandRequestPnpServerProfileUpdateUpdatePnpServerProfile(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.DeviceOnboardingPnp.UpdatePnpServerProfileV1(request1)
+	response1, restyResp1, err := client.DeviceOnboardingPnp.UpdatePnpServerProfile(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing UpdatePnpServerProfileV1", err))
+			"Failure when executing UpdatePnpServerProfile", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItem1 := flattenDeviceOnboardingPnpUpdatePnpServerProfileV1Item(response1)
+	vItem1 := flattenDeviceOnboardingPnpUpdatePnpServerProfileItem(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting UpdatePnpServerProfileV1 response",
+			"Failure when setting UpdatePnpServerProfile response",
 			err))
 		return diags
 	}
@@ -344,8 +344,8 @@ func resourcePnpServerProfileUpdateDelete(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func expandRequestPnpServerProfileUpdateUpdatePnpServerProfileV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpServerProfileV1 {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpServerProfileV1{}
+func expandRequestPnpServerProfileUpdateUpdatePnpServerProfile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpServerProfile {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpServerProfile{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".smart_account_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".smart_account_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".smart_account_id")))) {
 		request.SmartAccountID = interfaceToString(v)
 	}
@@ -353,7 +353,7 @@ func expandRequestPnpServerProfileUpdateUpdatePnpServerProfileV1(ctx context.Con
 		request.VirtualAccountID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".profile")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".profile")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".profile")))) {
-		request.Profile = expandRequestPnpServerProfileUpdateUpdatePnpServerProfileV1Profile(ctx, key+".profile.0", d)
+		request.Profile = expandRequestPnpServerProfileUpdateUpdatePnpServerProfileProfile(ctx, key+".profile.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".cco_user")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".cco_user")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".cco_user")))) {
 		request.CcoUser = interfaceToString(v)
@@ -361,8 +361,8 @@ func expandRequestPnpServerProfileUpdateUpdatePnpServerProfileV1(ctx context.Con
 	return &request
 }
 
-func expandRequestPnpServerProfileUpdateUpdatePnpServerProfileV1Profile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpServerProfileV1Profile {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpServerProfileV1Profile{}
+func expandRequestPnpServerProfileUpdateUpdatePnpServerProfileProfile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpServerProfileProfile {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUpdatePnpServerProfileProfile{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".proxy")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".proxy")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".proxy")))) {
 		request.Proxy = interfaceToBoolPtr(v)
 	}
@@ -393,7 +393,7 @@ func expandRequestPnpServerProfileUpdateUpdatePnpServerProfileV1Profile(ctx cont
 	return &request
 }
 
-func flattenDeviceOnboardingPnpUpdatePnpServerProfileV1Item(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpUpdatePnpServerProfileV1) []map[string]interface{} {
+func flattenDeviceOnboardingPnpUpdatePnpServerProfileItem(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpUpdatePnpServerProfile) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -401,9 +401,9 @@ func flattenDeviceOnboardingPnpUpdatePnpServerProfileV1Item(item *catalystcenter
 	respItem["virtual_account_id"] = item.VirtualAccountID
 	respItem["auto_sync_period"] = item.AutoSyncPeriod
 	respItem["sync_result_str"] = item.SyncResultStr
-	respItem["profile"] = flattenDeviceOnboardingPnpUpdatePnpServerProfileV1ItemProfile(item.Profile)
+	respItem["profile"] = flattenDeviceOnboardingPnpUpdatePnpServerProfileItemProfile(item.Profile)
 	respItem["cco_user"] = item.CcoUser
-	respItem["sync_result"] = flattenDeviceOnboardingPnpUpdatePnpServerProfileV1ItemSyncResult(item.SyncResult)
+	respItem["sync_result"] = flattenDeviceOnboardingPnpUpdatePnpServerProfileItemSyncResult(item.SyncResult)
 	respItem["token"] = item.Token
 	respItem["sync_start_time"] = item.SyncStartTime
 	respItem["last_sync"] = item.LastSync
@@ -416,7 +416,7 @@ func flattenDeviceOnboardingPnpUpdatePnpServerProfileV1Item(item *catalystcenter
 	}
 }
 
-func flattenDeviceOnboardingPnpUpdatePnpServerProfileV1ItemProfile(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpUpdatePnpServerProfileV1Profile) []map[string]interface{} {
+func flattenDeviceOnboardingPnpUpdatePnpServerProfileItemProfile(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpUpdatePnpServerProfileProfile) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -436,12 +436,12 @@ func flattenDeviceOnboardingPnpUpdatePnpServerProfileV1ItemProfile(item *catalys
 
 }
 
-func flattenDeviceOnboardingPnpUpdatePnpServerProfileV1ItemSyncResult(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpUpdatePnpServerProfileV1SyncResult) []map[string]interface{} {
+func flattenDeviceOnboardingPnpUpdatePnpServerProfileItemSyncResult(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpUpdatePnpServerProfileSyncResult) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["sync_list"] = flattenDeviceOnboardingPnpUpdatePnpServerProfileV1ItemSyncResultSyncList(item.SyncList)
+	respItem["sync_list"] = flattenDeviceOnboardingPnpUpdatePnpServerProfileItemSyncResultSyncList(item.SyncList)
 	respItem["sync_msg"] = item.SyncMsg
 
 	return []map[string]interface{}{
@@ -450,7 +450,7 @@ func flattenDeviceOnboardingPnpUpdatePnpServerProfileV1ItemSyncResult(item *cata
 
 }
 
-func flattenDeviceOnboardingPnpUpdatePnpServerProfileV1ItemSyncResultSyncList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpUpdatePnpServerProfileV1SyncResultSyncList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpUpdatePnpServerProfileItemSyncResultSyncList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpUpdatePnpServerProfileSyncResultSyncList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

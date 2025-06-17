@@ -54,10 +54,14 @@ output "catalystcenter_sites_wireless_settings_ssids_example" {
 
 ### Optional
 
-- `id` (String) id path parameter. SSID ID.
-- `limit` (Number) limit query parameter.
-- `offset` (Number) offset query parameter.
+- `auth_type` (String) authType query parameter. Auth Type
+- `id` (String) id path parameter. SSID ID
+- `l3auth_type` (String) l3authType query parameter. L3 Auth Type
+- `limit` (Number) limit query parameter. The number of records to show for this page. Default is 500 if not specified. Maximum allowed limit is 500.
+- `offset` (Number) offset query parameter. The first record to show for this page; the first record is numbered 1.
 - `site_id` (String) siteId path parameter. Site UUID
+- `ssid` (String) ssid query parameter. SSID Name
+- `wlan_type` (String) wlanType query parameter. Wlan Type
 
 ### Read-Only
 
@@ -93,6 +97,8 @@ Read-Only:
 - `ingress_qos` (String)
 - `inherited_site_id` (String)
 - `inherited_site_name` (String)
+- `inherited_site_name_hierarchy` (String)
+- `inherited_site_uui_d` (String)
 - `is_ap_beacon_protection_enabled` (String)
 - `is_auth_key8021x` (String)
 - `is_auth_key8021x_plus_ft` (String)
@@ -116,6 +122,7 @@ Read-Only:
 - `is_hex` (String)
 - `is_mac_filtering_enabled` (String)
 - `is_posturing_enabled` (String)
+- `is_radius_profiling_enabled` (String)
 - `is_random_mac_filter_enabled` (String)
 - `is_sensor_pnp` (String)
 - `l3_auth_type` (String)
@@ -182,6 +189,7 @@ Read-Only:
 - `ingress_qos` (String)
 - `inherited_site_id` (String)
 - `inherited_site_name` (String)
+- `inherited_site_name_hierarchy` (String)
 - `is_ap_beacon_protection_enabled` (String)
 - `is_auth_key8021x` (String)
 - `is_auth_key8021x_plus_ft` (String)
@@ -205,6 +213,7 @@ Read-Only:
 - `is_hex` (String)
 - `is_mac_filtering_enabled` (String)
 - `is_posturing_enabled` (String)
+- `is_radius_profiling_enabled` (String)
 - `is_random_mac_filter_enabled` (String)
 - `is_sensor_pnp` (String)
 - `l3_auth_type` (String)

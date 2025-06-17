@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -9,14 +10,14 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 // resourceAction
-func resourceNetworkDeviceUserDefinedFieldRemove() *schema.Resource {
+func resourceNetworkDeviceUserDefinedFieldRemoveUser() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs delete operation on Devices.
 
@@ -91,20 +92,20 @@ func resourceNetworkDeviceUserDefinedFieldDeleteCreate(ctx context.Context, d *s
 	vName := resourceItem["name"]
 
 	vvDeviceID := vDeviceID.(string)
-	queryParams1 := catalystcentersdkgo.RemoveUserDefinedFieldFromDeviceV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.RemoveUserDefinedFieldFromDeviceQueryParams{}
 
 	queryParams1.Name = vName.(string)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Devices.RemoveUserDefinedFieldFromDeviceV1(vvDeviceID, &queryParams1)
+	response1, restyResp1, err := client.Devices.RemoveUserDefinedFieldFromDevice(vvDeviceID, &queryParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing RemoveUserDefinedFieldFromDeviceV1", err))
+			"Failure when executing RemoveUserDefinedFieldFromDevice", err))
 		return diags
 	}
 
@@ -112,7 +113,7 @@ func resourceNetworkDeviceUserDefinedFieldDeleteCreate(ctx context.Context, d *s
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing RemoveUserDefinedFieldFromDeviceV1", err))
+			"Failure when executing RemoveUserDefinedFieldFromDevice", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -139,21 +140,21 @@ func resourceNetworkDeviceUserDefinedFieldDeleteCreate(ctx context.Context, d *s
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing RemoveUserDefinedFieldFromDeviceV1", err1))
+				"Failure when executing RemoveUserDefinedFieldFromDevice", err1))
 			return diags
 		}
 	}
-	vItem1 := flattenDevicesRemoveUserDefinedFieldFromDeviceV1Item(response1.Response)
+	vItem1 := flattenDevicesRemoveUserDefinedFieldFromDeviceItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting RemoveUserDefinedFieldFromDeviceV1 response",
+			"Failure when setting RemoveUserDefinedFieldFromDevice response",
 			err))
 		return diags
 	}
@@ -174,7 +175,7 @@ func resourceNetworkDeviceUserDefinedFieldDeleteDelete(ctx context.Context, d *s
 	return diags
 }
 
-func flattenDevicesRemoveUserDefinedFieldFromDeviceV1Item(item *catalystcentersdkgo.ResponseDevicesRemoveUserDefinedFieldFromDeviceV1Response) []map[string]interface{} {
+func flattenDevicesRemoveUserDefinedFieldFromDeviceItem(item *catalystcentersdkgo.ResponseDevicesRemoveUserDefinedFieldFromDeviceResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

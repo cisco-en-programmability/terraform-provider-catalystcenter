@@ -15,6 +15,7 @@ It performs create operation on Compliance.
 - Triggers a bugs scan for the supported network devices. The supported devices are switches and routers. If a device is
 not supported, the NetworkBugsDevice scanStatus will be Failed with appropriate comments.
 
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.

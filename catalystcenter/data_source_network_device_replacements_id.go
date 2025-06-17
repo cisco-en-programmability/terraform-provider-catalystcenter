@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,9 +15,9 @@ func dataSourceNetworkDeviceReplacementsID() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Device Replacement.
 
-- Fetches the status of the device replacement workflow for a given device replacement id. Invoke the API
-/dna/intent/api/v1/networkDeviceReplacements to GET the list of all device replacements and use the id field data
-as input to this API.
+- Fetches the status of the device replacement workflow for a given device replacement **id**. Invoke the API
+**/dna/intent/api/v1/networkDeviceReplacements** to **GET** the list of all device replacements and use the **id** field
+data as input to this API.
 `,
 
 		ReadContext: dataSourceNetworkDeviceReplacementsIDRead,
@@ -221,29 +221,41 @@ func dataSourceNetworkDeviceReplacementsIDRead(ctx context.Context, d *schema.Re
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDeviceV1")
+		log.Printf("[DEBUG] Selected method: RetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDevice")
 		vvID := vID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.DeviceReplacement.RetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDeviceV1(vvID)
+		response1, restyResp1, err := client.DeviceReplacement.RetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDevice(vvID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDeviceV1", err,
-				"Failure at RetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDeviceV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDevice", err,
+				"Failure at RetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDevice, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDeviceReplacementRetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDeviceV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDevice", err,
+				"Failure at RetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDevice, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenDeviceReplacementRetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDeviceItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDeviceV1 response",
+				"Failure when setting RetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDevice response",
 				err))
 			return diags
 		}
@@ -255,7 +267,7 @@ func dataSourceNetworkDeviceReplacementsIDRead(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func flattenDeviceReplacementRetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDeviceV1Item(item *catalystcentersdkgo.ResponseDeviceReplacementRetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDeviceV1Response) []map[string]interface{} {
+func flattenDeviceReplacementRetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDeviceItem(item *catalystcentersdkgo.ResponseDeviceReplacementRetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDeviceResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -272,13 +284,13 @@ func flattenDeviceReplacementRetrieveTheStatusOfDeviceReplacementWorkflowThatRep
 	respItem["replacement_device_serial_number"] = item.ReplacementDeviceSerialNumber
 	respItem["replacement_status"] = item.ReplacementStatus
 	respItem["replacement_time"] = item.ReplacementTime
-	respItem["workflow"] = flattenDeviceReplacementRetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDeviceV1ItemWorkflow(item.Workflow)
+	respItem["workflow"] = flattenDeviceReplacementRetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDeviceItemWorkflow(item.Workflow)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenDeviceReplacementRetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDeviceV1ItemWorkflow(item *catalystcentersdkgo.ResponseDeviceReplacementRetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDeviceV1ResponseWorkflow) []map[string]interface{} {
+func flattenDeviceReplacementRetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDeviceItemWorkflow(item *catalystcentersdkgo.ResponseDeviceReplacementRetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDeviceResponseWorkflow) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -288,7 +300,7 @@ func flattenDeviceReplacementRetrieveTheStatusOfDeviceReplacementWorkflowThatRep
 	respItem["workflow_status"] = item.WorkflowStatus
 	respItem["start_time"] = item.StartTime
 	respItem["end_time"] = item.EndTime
-	respItem["steps"] = flattenDeviceReplacementRetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDeviceV1ItemWorkflowSteps(item.Steps)
+	respItem["steps"] = flattenDeviceReplacementRetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDeviceItemWorkflowSteps(item.Steps)
 
 	return []map[string]interface{}{
 		respItem,
@@ -296,7 +308,7 @@ func flattenDeviceReplacementRetrieveTheStatusOfDeviceReplacementWorkflowThatRep
 
 }
 
-func flattenDeviceReplacementRetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDeviceV1ItemWorkflowSteps(items *[]catalystcentersdkgo.ResponseDeviceReplacementRetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDeviceV1ResponseWorkflowSteps) []map[string]interface{} {
+func flattenDeviceReplacementRetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDeviceItemWorkflowSteps(items *[]catalystcentersdkgo.ResponseDeviceReplacementRetrieveTheStatusOfDeviceReplacementWorkflowThatReplacesAFaultyDeviceWithAReplacementDeviceResponseWorkflowSteps) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

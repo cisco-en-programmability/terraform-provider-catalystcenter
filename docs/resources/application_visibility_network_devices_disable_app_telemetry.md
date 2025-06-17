@@ -19,7 +19,8 @@ It performs create operation on Application Policy.
 payload should include the list of network devices where it has to be disabled.
 This operation pushes configuration to the network devices, and is only permitted if the provisioning settings do not
 mandate a config preview for application telemetry disablement. In cases where such settings are active, attempting to
-use this endpoint will result in *422 Unprocessable Content* error.
+use this endpoint will result in **422 Unprocessable Content** error.
+
 
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
@@ -30,10 +31,10 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_application_visibility_network_devices_disable_app_telemetry" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
     network_device_ids = ["string"]
-  }
+  }]
 }
 
 output "catalystcenter_application_visibility_network_devices_disable_app_telemetry_example" {

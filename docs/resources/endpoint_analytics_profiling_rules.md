@@ -3,13 +3,13 @@
 page_title: "catalystcenter_endpoint_analytics_profiling_rules Resource - terraform-provider-catalystcenter"
 subcategory: ""
 description: |-
-  It manages create, read, update and delete operations on AIEndpointAnalytics.
+  It manages create, read, update and delete operations on AiEndpointAnalytics.
   Creates profiling rule from the request body.Updates the profiling rule for the given 'ruleId'.Deletes the profiling rule for the given 'ruleId'.
 ---
 
 # catalystcenter_endpoint_analytics_profiling_rules (Resource)
 
-It manages create, read, update and delete operations on AIEndpointAnalytics.
+It manages create, read, update and delete operations on AiEndpointAnalytics.
 
 - Creates profiling rule from the request body.
 
@@ -22,7 +22,7 @@ It manages create, read, update and delete operations on AIEndpointAnalytics.
 ```terraform
 resource "catalystcenter_endpoint_analytics_profiling_rules" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     cluster_id = "string"

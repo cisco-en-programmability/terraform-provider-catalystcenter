@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -46,27 +46,41 @@ func dataSourcePnpVirtualAccountsRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetVirtualAccountListV1")
+		log.Printf("[DEBUG] Selected method: GetVirtualAccountList")
 		vvDomain := vDomain.(string)
 
-		response1, restyResp1, err := client.DeviceOnboardingPnp.GetVirtualAccountListV1(vvDomain)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.DeviceOnboardingPnp.GetVirtualAccountList(vvDomain)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetVirtualAccountListV1", err,
-				"Failure at GetVirtualAccountListV1, unexpected response", ""))
+				"Failure when executing 2 GetVirtualAccountList", err,
+				"Failure at GetVirtualAccountList, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDeviceOnboardingPnpGetVirtualAccountListV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetVirtualAccountList", err,
+				"Failure at GetVirtualAccountList, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDeviceOnboardingPnpGetVirtualAccountListItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetVirtualAccountListV1 response",
+				"Failure when setting GetVirtualAccountList response",
 				err))
 			return diags
 		}
@@ -78,7 +92,7 @@ func dataSourcePnpVirtualAccountsRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenDeviceOnboardingPnpGetVirtualAccountListV1Items(items *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetVirtualAccountListV1) []interface{} {
+func flattenDeviceOnboardingPnpGetVirtualAccountListItems(items *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetVirtualAccountList) []interface{} {
 	if items == nil {
 		return nil
 	}

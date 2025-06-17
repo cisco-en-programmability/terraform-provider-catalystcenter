@@ -13,8 +13,8 @@ description: |-
 
 It manages read and update operations on Network Settings.
 
-- Updates device credential settings for a site; *null* values indicate that the setting will be inherited from the
-parent site; empty objects (*{}*) indicate that the credential is unset, and that no credential of that type will be
+- Updates device credential settings for a site; **null** values indicate that the setting will be inherited from the
+parent site; empty objects (**{}**) indicate that the credential is unset, and that no credential of that type will be
 used for the site.
 
 ## Example Usage
@@ -22,7 +22,7 @@ used for the site.
 ```terraform
 resource "catalystcenter_sites_device_credentials" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     cli_credentials_id {
@@ -76,7 +76,7 @@ output "catalystcenter_sites_device_credentials_example" {
 
 Required:
 
-- `id` (String) id path parameter. Site Id, retrievable from the *id* attribute in */dna/intent/api/v1/sites*
+- `id` (String) id path parameter. Site Id, retrievable from the **id** attribute in **/dna/intent/api/v1/sites**
 
 Optional:
 
@@ -92,7 +92,7 @@ Optional:
 
 Optional:
 
-- `credentials_id` (String) The *id* of the credentials.
+- `credentials_id` (String) The **id** of the credentials.
 
 
 <a id="nestedblock--parameters--http_read_credentials_id"></a>
@@ -100,7 +100,7 @@ Optional:
 
 Optional:
 
-- `credentials_id` (String) The *id* of the credentials.
+- `credentials_id` (String) The **id** of the credentials.
 
 
 <a id="nestedblock--parameters--http_write_credentials_id"></a>
@@ -108,7 +108,7 @@ Optional:
 
 Optional:
 
-- `credentials_id` (String) The *id* of the credentials.
+- `credentials_id` (String) The **id** of the credentials.
 
 
 <a id="nestedblock--parameters--snmpv2c_read_credentials_id"></a>
@@ -116,7 +116,7 @@ Optional:
 
 Optional:
 
-- `credentials_id` (String) The *id* of the credentials.
+- `credentials_id` (String) The **id** of the credentials.
 
 
 <a id="nestedblock--parameters--snmpv2c_write_credentials_id"></a>
@@ -124,7 +124,7 @@ Optional:
 
 Optional:
 
-- `credentials_id` (String) The *id* of the credentials.
+- `credentials_id` (String) The **id** of the credentials.
 
 
 <a id="nestedblock--parameters--snmpv3_credentials_id"></a>
@@ -132,7 +132,7 @@ Optional:
 
 Optional:
 
-- `credentials_id` (String) The *id* of the credentials.
+- `credentials_id` (String) The **id** of the credentials.
 
 
 

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -86,8 +86,8 @@ func dataSourceTagsInterfacesMembersAssociationsRead(ctx context.Context, d *sch
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveTagsAssociatedWithTheInterfacesV1")
-		queryParams1 := catalystcentersdkgo.RetrieveTagsAssociatedWithTheInterfacesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: RetrieveTagsAssociatedWithTheInterfaces")
+		queryParams1 := catalystcentersdkgo.RetrieveTagsAssociatedWithTheInterfacesQueryParams{}
 
 		if okOffset {
 			queryParams1.Offset = vOffset.(float64)
@@ -96,24 +96,38 @@ func dataSourceTagsInterfacesMembersAssociationsRead(ctx context.Context, d *sch
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.Tag.RetrieveTagsAssociatedWithTheInterfacesV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Tag.RetrieveTagsAssociatedWithTheInterfaces(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveTagsAssociatedWithTheInterfacesV1", err,
-				"Failure at RetrieveTagsAssociatedWithTheInterfacesV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveTagsAssociatedWithTheInterfaces", err,
+				"Failure at RetrieveTagsAssociatedWithTheInterfaces, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenTagRetrieveTagsAssociatedWithTheInterfacesV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveTagsAssociatedWithTheInterfaces", err,
+				"Failure at RetrieveTagsAssociatedWithTheInterfaces, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenTagRetrieveTagsAssociatedWithTheInterfacesItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveTagsAssociatedWithTheInterfacesV1 response",
+				"Failure when setting RetrieveTagsAssociatedWithTheInterfaces response",
 				err))
 			return diags
 		}
@@ -125,7 +139,7 @@ func dataSourceTagsInterfacesMembersAssociationsRead(ctx context.Context, d *sch
 	return diags
 }
 
-func flattenTagRetrieveTagsAssociatedWithTheInterfacesV1Items(items *[]catalystcentersdkgo.ResponseTagRetrieveTagsAssociatedWithTheInterfacesV1Response) []map[string]interface{} {
+func flattenTagRetrieveTagsAssociatedWithTheInterfacesItems(items *[]catalystcentersdkgo.ResponseTagRetrieveTagsAssociatedWithTheInterfacesResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -133,13 +147,13 @@ func flattenTagRetrieveTagsAssociatedWithTheInterfacesV1Items(items *[]catalystc
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["id"] = item.ID
-		respItem["tags"] = flattenTagRetrieveTagsAssociatedWithTheInterfacesV1ItemsTags(item.Tags)
+		respItem["tags"] = flattenTagRetrieveTagsAssociatedWithTheInterfacesItemsTags(item.Tags)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenTagRetrieveTagsAssociatedWithTheInterfacesV1ItemsTags(items *[]catalystcentersdkgo.ResponseTagRetrieveTagsAssociatedWithTheInterfacesV1ResponseTags) []map[string]interface{} {
+func flattenTagRetrieveTagsAssociatedWithTheInterfacesItemsTags(items *[]catalystcentersdkgo.ResponseTagRetrieveTagsAssociatedWithTheInterfacesResponseTags) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

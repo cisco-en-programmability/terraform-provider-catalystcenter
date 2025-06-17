@@ -5,7 +5,11 @@ subcategory: ""
 description: |-
   It performs create operation on Devices.
   Returns the list of network devices, determined by the filters. It is possible to filter the network devices based on
-  various parameters, such as device type, device role, software version, etc.
+  various parameters, such as device type, device role, software version, etc. The API returns a paginated response based
+  on 'limit' and 'offset' parameters, allowing up to 500 records per page. 'limit' specifies the number of records, and
+  'offset' sets the starting point using 1-based indexing. Use '/dna/intent/api/v1/networkDevices/query/count' API to get
+  the total record count. For data sets over 500 records, make multiple calls, adjusting 'limit' and 'offset' to retrieve
+  all records incrementally.
 ---
 
 # catalystcenter_intent_network_devices_query (Resource)
@@ -13,42 +17,46 @@ description: |-
 It performs create operation on Devices.
 
 - Returns the list of network devices, determined by the filters. It is possible to filter the network devices based on
-various parameters, such as device type, device role, software version, etc.
+various parameters, such as device type, device role, software version, etc. The API returns a paginated response based
+on 'limit' and 'offset' parameters, allowing up to 500 records per page. 'limit' specifies the number of records, and
+'offset' sets the starting point using 1-based indexing. Use '/dna/intent/api/v1/networkDevices/query/count' API to get
+the total record count. For data sets over 500 records, make multiple calls, adjusting 'limit' and 'offset' to retrieve
+all records incrementally.
+
 
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
-
 
 ## Example Usage
 
 ```terraform
 resource "catalystcenter_intent_network_devices_query" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
-    filter {
+    filter = [{
 
-      filters {
+      filters = [{
 
         key      = "string"
         operator = "string"
-        value    = "------"
-      }
+        value    = "string"
+      }]
       logical_operator = "string"
-    }
-    page {
+    }]
+    page = [{
 
       limit  = 1
       offset = 1
-      sort_by {
+      sort_by = [{
 
         name  = "string"
         order = "string"
-      }
-    }
+      }]
+    }]
     views = ["string"]
-  }
+  }]
 }
 
 output "catalystcenter_intent_network_devices_query_example" {
@@ -96,7 +104,7 @@ Optional:
 
 - `key` (String) The key to filter by
 - `operator` (String) The operator to use for filtering the values
-- `value` (String) Value to filter by. For in operator, the value should be a list of values.
+- `value` (String) Value to filter by. For **in** operator, the value should be a list of values.
 
 
 

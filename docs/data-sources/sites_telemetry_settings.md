@@ -12,7 +12,7 @@ description: |-
 
 It performs read operation on Network Settings.
 
-- Retrieves telemetry settings for the given site. *null* values indicate that the setting will be inherited from the
+- Retrieves telemetry settings for the given site. **null** values indicate that the setting will be inherited from the
 parent site.
 
 ## Example Usage
@@ -34,11 +34,11 @@ output "catalystcenter_sites_telemetry_settings_example" {
 
 ### Required
 
-- `id` (String) id path parameter. Site Id, retrievable from the *id* attribute in */dna/intent/api/v1/sites*
+- `id` (String) id path parameter. Site Id, retrievable from the **id** attribute in **/dna/intent/api/v1/sites**
 
 ### Optional
 
-- `inherited` (Boolean) _inherited query parameter. Include settings explicitly set for this site and settings inherited from sites higher in the site hierarchy; when *false*, *null* values indicate that the site inherits that setting from the parent site or a site higher in the site hierarchy.
+- `inherited` (Boolean) _inherited query parameter. Include settings explicitly set for this site and settings inherited from sites higher in the site hierarchy; when **false**, **null** values indicate that the site inherits that setting from the parent site or a site higher in the site hierarchy.
 
 ### Read-Only
 
@@ -103,7 +103,7 @@ Read-Only:
 
 Read-Only:
 
-- `enable_wired_data_collectio` (String)
+- `enable_wired_data_collection` (String)
 - `inherited_site_id` (String)
 - `inherited_site_name` (String)
 

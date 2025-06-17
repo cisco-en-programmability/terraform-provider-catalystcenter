@@ -3,7 +3,7 @@
 page_title: "catalystcenter_endpoint_analytics_profiling_rules Data Source - terraform-provider-catalystcenter"
 subcategory: ""
 description: |-
-  It performs read operation on AIEndpointAnalytics.
+  It performs read operation on AiEndpointAnalytics.
   This data source fetches the list of profiling rules. It can be used to show profiling rules in client applications,
   or export those from an environment. 'POST /profiling-rules/bulk' API can be used to import such exported rules into
   another environment. If this API is used to export rules to be imported into another Cisco Catalyst Center system, then
@@ -15,7 +15,7 @@ description: |-
 
 # catalystcenter_endpoint_analytics_profiling_rules (Data Source)
 
-It performs read operation on AIEndpointAnalytics.
+It performs read operation on AiEndpointAnalytics.
 
 - This data source fetches the list of profiling rules. It can be used to show profiling rules in client applications,
 or export those from an environment. 'POST /profiling-rules/bulk' API can be used to import such exported rules into

@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -239,7 +239,7 @@ func resourceSdaVirtualNetworkIPPoolCreate(ctx context.Context, d *schema.Resour
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestSdaVirtualNetworkIPPoolAddIPPoolInSdaVirtualNetworkV1(ctx, "parameters.0", d)
+	request1 := expandRequestSdaVirtualNetworkIPPoolAddIPPoolInSdaVirtualNetwork(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vSiteNameHierarchy := resourceItem["site_name_hierarchy"]
@@ -248,11 +248,11 @@ func resourceSdaVirtualNetworkIPPoolCreate(ctx context.Context, d *schema.Resour
 	vvVirtualNetworkName := interfaceToString(vVirtualNetworkName)
 	vIPPoolName := resourceItem["ip_pool_name"]
 	vvIPPoolName := interfaceToString(vIPPoolName)
-	queryParamImport := catalystcentersdkgo.GetIPPoolFromSdaVirtualNetworkV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetIPPoolFromSdaVirtualNetworkQueryParams{}
 	queryParamImport.SiteNameHierarchy = vvSiteNameHierarchy
 	queryParamImport.VirtualNetworkName = vvVirtualNetworkName
 	queryParamImport.IPPoolName = vvIPPoolName
-	item2, _, err := client.Sda.GetIPPoolFromSdaVirtualNetworkV1(&queryParamImport)
+	item2, _, err := client.Sda.GetIPPoolFromSdaVirtualNetwork(&queryParamImport)
 	if err != nil || item2 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["site_name_hierarchy"] = vvSiteNameHierarchy
@@ -261,15 +261,15 @@ func resourceSdaVirtualNetworkIPPoolCreate(ctx context.Context, d *schema.Resour
 		d.SetId(joinResourceID(resourceMap))
 		return resourceSdaVirtualNetworkIPPoolRead(ctx, d, m)
 	}
-	resp1, restyResp1, err := client.Sda.AddIPPoolInSdaVirtualNetworkV1(request1)
+	resp1, restyResp1, err := client.Sda.AddIPPoolInSdaVirtualNetwork(request1)
 	if err != nil || resp1 == nil {
 		if restyResp1 != nil {
 			diags = append(diags, diagErrorWithResponse(
-				"Failure when executing AddIPPoolInSdaVirtualNetworkV1", err, restyResp1.String()))
+				"Failure when executing AddIPPoolInSdaVirtualNetwork", err, restyResp1.String()))
 			return diags
 		}
 		diags = append(diags, diagError(
-			"Failure when executing AddIPPoolInSdaVirtualNetworkV1", err))
+			"Failure when executing AddIPPoolInSdaVirtualNetwork", err))
 		return diags
 	}
 	executionId := resp1.ExecutionID
@@ -302,19 +302,19 @@ func resourceSdaVirtualNetworkIPPoolCreate(ctx context.Context, d *schema.Resour
 		if response2.Status == "FAILURE" {
 			log.Printf("[DEBUG] Error %s", response2.BapiError)
 			diags = append(diags, diagError(
-				"Failure when executing AddIPPoolInSdaVirtualNetworkV1", err))
+				"Failure when executing AddIPPoolInSdaVirtualNetwork", err))
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetIPPoolFromSdaVirtualNetworkV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetIPPoolFromSdaVirtualNetworkQueryParams{}
 	queryParamValidate.SiteNameHierarchy = vvSiteNameHierarchy
 	queryParamValidate.VirtualNetworkName = vvVirtualNetworkName
 	queryParamValidate.IPPoolName = vvIPPoolName
-	item3, _, err := client.Sda.GetIPPoolFromSdaVirtualNetworkV1(&queryParamValidate)
+	item3, _, err := client.Sda.GetIPPoolFromSdaVirtualNetwork(&queryParamValidate)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing AddIPPoolInSdaVirtualNetworkV1", err,
-			"Failure at AddIPPoolInSdaVirtualNetworkV1, unexpected response", ""))
+			"Failure when executing AddIPPoolInSdaVirtualNetwork", err,
+			"Failure at AddIPPoolInSdaVirtualNetwork, unexpected response", ""))
 		return diags
 	}
 
@@ -343,8 +343,8 @@ func resourceSdaVirtualNetworkIPPoolRead(ctx context.Context, d *schema.Resource
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetIPPoolFromSdaVirtualNetworkV1")
-		queryParams1 := catalystcentersdkgo.GetIPPoolFromSdaVirtualNetworkV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetIPPoolFromSdaVirtualNetwork")
+		queryParams1 := catalystcentersdkgo.GetIPPoolFromSdaVirtualNetworkQueryParams{}
 
 		queryParams1.SiteNameHierarchy = vSiteNameHierarchy
 
@@ -354,7 +354,7 @@ func resourceSdaVirtualNetworkIPPoolRead(ctx context.Context, d *schema.Resource
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sda.GetIPPoolFromSdaVirtualNetworkV1(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetIPPoolFromSdaVirtualNetwork(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
@@ -366,10 +366,10 @@ func resourceSdaVirtualNetworkIPPoolRead(ctx context.Context, d *schema.Resource
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetIPPoolFromSdaVirtualNetworkV1Item(response1)
+		vItem1 := flattenSdaGetIPPoolFromSdaVirtualNetworkItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetIPPoolFromSdaVirtualNetworkV1 response",
+				"Failure when setting GetIPPoolFromSdaVirtualNetwork response",
 				err))
 			return diags
 		}
@@ -393,7 +393,7 @@ func resourceSdaVirtualNetworkIPPoolDelete(ctx context.Context, d *schema.Resour
 	resourceID := d.Id()
 	resourceMap := separateResourceID(resourceID)
 
-	queryParamDelete := catalystcentersdkgo.DeleteIPPoolFromSdaVirtualNetworkV1QueryParams{}
+	queryParamDelete := catalystcentersdkgo.DeleteIPPoolFromSdaVirtualNetworkQueryParams{}
 
 	vvSiteNameHierarchy := resourceMap["site_name_hierarchy"]
 
@@ -406,18 +406,18 @@ func resourceSdaVirtualNetworkIPPoolDelete(ctx context.Context, d *schema.Resour
 
 	queryParamDelete.IPPoolName = vvIPPoolName
 
-	response1, restyResp1, err := client.Sda.DeleteIPPoolFromSdaVirtualNetworkV1(&queryParamDelete)
+	response1, restyResp1, err := client.Sda.DeleteIPPoolFromSdaVirtualNetwork(&queryParamDelete)
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] resty response for delete operation => %v", restyResp1.String())
 			diags = append(diags, diagErrorWithAltAndResponse(
-				"Failure when executing DeleteIPPoolFromSdaVirtualNetworkV1", err, restyResp1.String(),
-				"Failure at DeleteIPPoolFromSdaVirtualNetworkV1, unexpected response", ""))
+				"Failure when executing DeleteIPPoolFromSdaVirtualNetwork", err, restyResp1.String(),
+				"Failure at DeleteIPPoolFromSdaVirtualNetwork, unexpected response", ""))
 			return diags
 		}
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing DeleteIPPoolFromSdaVirtualNetworkV1", err,
-			"Failure at DeleteIPPoolFromSdaVirtualNetworkV1, unexpected response", ""))
+			"Failure when executing DeleteIPPoolFromSdaVirtualNetwork", err,
+			"Failure at DeleteIPPoolFromSdaVirtualNetwork, unexpected response", ""))
 		return diags
 	}
 
@@ -451,7 +451,7 @@ func resourceSdaVirtualNetworkIPPoolDelete(ctx context.Context, d *schema.Resour
 		if response2.Status == "FAILURE" {
 			log.Printf("[DEBUG] Error %s", response2.BapiError)
 			diags = append(diags, diagError(
-				"Failure when executing DeleteIPPoolFromSdaVirtualNetworkV1", err))
+				"Failure when executing DeleteIPPoolFromSdaVirtualNetwork", err))
 			return diags
 		}
 	}
@@ -462,8 +462,9 @@ func resourceSdaVirtualNetworkIPPoolDelete(ctx context.Context, d *schema.Resour
 
 	return diags
 }
-func expandRequestSdaVirtualNetworkIPPoolAddIPPoolInSdaVirtualNetworkV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddIPPoolInSdaVirtualNetworkV1 {
-	request := catalystcentersdkgo.RequestSdaAddIPPoolInSdaVirtualNetworkV1{}
+
+func expandRequestSdaVirtualNetworkIPPoolAddIPPoolInSdaVirtualNetwork(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddIPPoolInSdaVirtualNetwork {
+	request := catalystcentersdkgo.RequestSdaAddIPPoolInSdaVirtualNetwork{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".site_name_hierarchy")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".site_name_hierarchy")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".site_name_hierarchy")))) {
 		request.SiteNameHierarchy = interfaceToString(v)
 	}

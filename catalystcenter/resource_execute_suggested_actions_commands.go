@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -18,11 +18,8 @@ func resourceExecuteSuggestedActionsCommands() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs create operation on Issues.
 
-- This data source action triggers the execution of the suggested actions for an issue, given the Issue Id. It will
-return an execution Id. At the completion of the execution, the output of the commands associated with the suggested
-actions will be provided
-Invoking this API would provide the execution id. Execute the 'Get Business API Execution Details' API with this
-execution id, to receive the suggested actions commands output.
+- This data source action fetches the issue details and suggested actions for an issue, given the Issue Id, executes the
+commands associated with the suggested actions to remediate the issue
 `,
 
 		CreateContext: resourceExecuteSuggestedActionsCommandsCreate,
@@ -30,6 +27,10 @@ execution id, to receive the suggested actions commands output.
 		DeleteContext: resourceExecuteSuggestedActionsCommandsDelete,
 		Schema: map[string]*schema.Schema{
 			"last_updated": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"item": &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -120,27 +121,27 @@ func resourceExecuteSuggestedActionsCommandsCreate(ctx context.Context, d *schem
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestExecuteSuggestedActionsCommandsExecuteSuggestedActionsCommandsV1(ctx, "parameters.0", d)
+	request1 := expandRequestExecuteSuggestedActionsCommandsExecuteSuggestedActionsCommands(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Issues.ExecuteSuggestedActionsCommandsV1(request1)
+	response1, restyResp1, err := client.Issues.ExecuteSuggestedActionsCommands(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ExecuteSuggestedActionsCommandsV1", err))
+			"Failure when executing ExecuteSuggestedActionsCommands", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItems1 := flattenIssuesExecuteSuggestedActionsCommandsV1Items(response1)
+	vItems1 := flattenIssuesExecuteSuggestedActionsCommandsItems(response1)
 	if err := d.Set("items", vItems1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ExecuteSuggestedActionsCommandsV1 response",
+			"Failure when setting ExecuteSuggestedActionsCommands response",
 			err))
 		return diags
 	}
@@ -162,8 +163,8 @@ func resourceExecuteSuggestedActionsCommandsDelete(ctx context.Context, d *schem
 	return diags
 }
 
-func expandRequestExecuteSuggestedActionsCommandsExecuteSuggestedActionsCommandsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesExecuteSuggestedActionsCommandsV1 {
-	request := catalystcentersdkgo.RequestIssuesExecuteSuggestedActionsCommandsV1{}
+func expandRequestExecuteSuggestedActionsCommandsExecuteSuggestedActionsCommands(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesExecuteSuggestedActionsCommands {
+	request := catalystcentersdkgo.RequestIssuesExecuteSuggestedActionsCommands{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".entity_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".entity_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".entity_type")))) {
 		request.EntityType = interfaceToString(v)
 	}
@@ -173,7 +174,7 @@ func expandRequestExecuteSuggestedActionsCommandsExecuteSuggestedActionsCommands
 	return &request
 }
 
-func flattenIssuesExecuteSuggestedActionsCommandsV1Items(items *catalystcentersdkgo.ResponseIssuesExecuteSuggestedActionsCommandsV1) []map[string]interface{} {
+func flattenIssuesExecuteSuggestedActionsCommandsItems(items *catalystcentersdkgo.ResponseIssuesExecuteSuggestedActionsCommands) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -186,13 +187,13 @@ func flattenIssuesExecuteSuggestedActionsCommandsV1Items(items *catalystcentersd
 		respItem["hostname"] = item.Hostname
 		respItem["steps_description"] = item.StepsDescription
 		respItem["command"] = item.Command
-		respItem["command_output"] = flattenIssuesExecuteSuggestedActionsCommandsV1ItemsCommandOutput(item.CommandOutput)
+		respItem["command_output"] = flattenIssuesExecuteSuggestedActionsCommandsItemsCommandOutput(item.CommandOutput)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenIssuesExecuteSuggestedActionsCommandsV1ItemsCommandOutput(item *catalystcentersdkgo.ResponseItemIssuesExecuteSuggestedActionsCommandsV1CommandOutput) interface{} {
+func flattenIssuesExecuteSuggestedActionsCommandsItemsCommandOutput(item *catalystcentersdkgo.ResponseItemIssuesExecuteSuggestedActionsCommandsCommandOutput) interface{} {
 	if item == nil {
 		return nil
 	}

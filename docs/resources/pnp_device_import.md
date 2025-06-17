@@ -12,6 +12,8 @@ description: |-
 It performs create operation on Device Onboarding (PnP).
 
 - Add devices to PnP in bulk
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -21,10 +23,10 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_pnp_device_import" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
     id = "string"
-    device_info {
+    device_info = [{
 
       description            = "string"
       device_sudi_serial_nos = ["string"]
@@ -34,10 +36,10 @@ resource "catalystcenter_pnp_device_import" "example" {
       serial_number          = "string"
       site_id                = "string"
       stack                  = "false"
-      stack_info {
+      stack_info = [{
 
         is_full_ring = "false"
-        stack_member_list {
+        stack_member_list = [{
 
           hardware_version   = "string"
           license_level      = "string"
@@ -51,19 +53,19 @@ resource "catalystcenter_pnp_device_import" "example" {
           stack_number       = 1.0
           state              = "string"
           sudi_serial_number = "string"
-        }
+        }]
         stack_ring_protocol      = "string"
         supports_stack_workflows = "false"
         total_member_count       = 1.0
         valid_license_levels     = ["string"]
-      }
+      }]
       sudi_required        = "false"
       user_mic_numbers     = ["string"]
       user_sudi_serial_nos = ["string"]
       workflow_id          = "string"
       workflow_name        = "string"
-    }
-  }
+    }]
+  }]
 }
 
 output "catalystcenter_pnp_device_import_example" {
@@ -89,7 +91,7 @@ output "catalystcenter_pnp_device_import_example" {
 
 Optional:
 
-- `payload` (Block List) Array of RequestDeviceOnboardingPnpImportDevicesInBulkV1 (see [below for nested schema](#nestedblock--parameters--payload))
+- `payload` (Block List) Array of RequestDeviceOnboardingPnpImportDevicesInBulk (see [below for nested schema](#nestedblock--parameters--payload))
 
 <a id="nestedblock--parameters--payload"></a>
 ### Nested Schema for `parameters.payload`

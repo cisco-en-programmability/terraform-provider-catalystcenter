@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -43,7 +43,7 @@ func resourceAnalyticsCmdbEndpoints() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"payload": &schema.Schema{
-							Description: `Array of RequestAIEndpointAnalyticsProcessCMDBEndpointsV1`,
+							Description: `Array of RequestAiEndpointAnalyticsProcessCMDBEndpoints`,
 							Type:        schema.TypeList,
 							Optional:    true,
 							ForceNew:    true,
@@ -145,11 +145,11 @@ func resourceAnalyticsCmdbEndpointsCreate(ctx context.Context, d *schema.Resourc
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestAnalyticsCmdbEndpointsProcessCmdbEndpointsV1(ctx, "parameters.0", d)
+	request1 := expandRequestAnalyticsCmdbEndpointsProcessCmdbEndpoints(ctx, "parameters.0", d)
 
 	// has_unknown_response: True
 
-	response1, err := client.AIEndpointAnalytics.ProcessCmdbEndpointsV1(request1)
+	response1, err := client.AiEndpointAnalytics.ProcessCmdbEndpoints(request1)
 
 	if err != nil || response1 == nil {
 		d.SetId("")
@@ -162,7 +162,7 @@ func resourceAnalyticsCmdbEndpointsCreate(ctx context.Context, d *schema.Resourc
 
 	if err := d.Set("item", response1.String()); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ProcessCmdbEndpointsV1 response",
+			"Failure when setting ProcessCmdbEndpoints response",
 			err))
 		return diags
 	}
@@ -183,16 +183,16 @@ func resourceAnalyticsCmdbEndpointsDelete(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func expandRequestAnalyticsCmdbEndpointsProcessCmdbEndpointsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAIEndpointAnalyticsProcessCmdbEndpointsV1 {
-	request := catalystcentersdkgo.RequestAIEndpointAnalyticsProcessCmdbEndpointsV1{}
-	if v := expandRequestAnalyticsCmdbEndpointsProcessCmdbEndpointsV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestAnalyticsCmdbEndpointsProcessCmdbEndpoints(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAiEndpointAnalyticsProcessCmdbEndpoints {
+	request := catalystcentersdkgo.RequestAiEndpointAnalyticsProcessCmdbEndpoints{}
+	if v := expandRequestAnalyticsCmdbEndpointsProcessCmdbEndpointsItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	return &request
 }
 
-func expandRequestAnalyticsCmdbEndpointsProcessCmdbEndpointsV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemAIEndpointAnalyticsProcessCmdbEndpointsV1 {
-	request := []catalystcentersdkgo.RequestItemAIEndpointAnalyticsProcessCmdbEndpointsV1{}
+func expandRequestAnalyticsCmdbEndpointsProcessCmdbEndpointsItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemAiEndpointAnalyticsProcessCmdbEndpoints {
+	request := []catalystcentersdkgo.RequestItemAiEndpointAnalyticsProcessCmdbEndpoints{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -203,7 +203,7 @@ func expandRequestAnalyticsCmdbEndpointsProcessCmdbEndpointsV1ItemArray(ctx cont
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAnalyticsCmdbEndpointsProcessCmdbEndpointsV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAnalyticsCmdbEndpointsProcessCmdbEndpointsItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -211,8 +211,8 @@ func expandRequestAnalyticsCmdbEndpointsProcessCmdbEndpointsV1ItemArray(ctx cont
 	return &request
 }
 
-func expandRequestAnalyticsCmdbEndpointsProcessCmdbEndpointsV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemAIEndpointAnalyticsProcessCmdbEndpointsV1 {
-	request := catalystcentersdkgo.RequestItemAIEndpointAnalyticsProcessCmdbEndpointsV1{}
+func expandRequestAnalyticsCmdbEndpointsProcessCmdbEndpointsItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemAiEndpointAnalyticsProcessCmdbEndpoints {
+	request := catalystcentersdkgo.RequestItemAiEndpointAnalyticsProcessCmdbEndpoints{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".mac_address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".mac_address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".mac_address")))) {
 		request.MacAddress = interfaceToString(v)
 	}

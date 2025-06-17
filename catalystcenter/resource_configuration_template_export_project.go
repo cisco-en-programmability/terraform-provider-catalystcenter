@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -11,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -59,7 +60,7 @@ func resourceConfigurationTemplateExportProject() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"payload": &schema.Schema{
-							Description: `Array of RequestConfigurationTemplatesExportsTheProjectsForAGivenCriteriaV1`,
+							Description: `Array of RequestConfigurationTemplatesExportsTheProjectsForAGivenCriteria`,
 							Type:        schema.TypeList,
 							Optional:    true,
 							ForceNew:    true,
@@ -79,18 +80,18 @@ func resourceConfigurationTemplateExportProjectCreate(ctx context.Context, d *sc
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestConfigurationTemplateExportProjectExportsTheProjectsForAGivenCriteriaV1(ctx, "parameters.0", d)
+	request1 := expandRequestConfigurationTemplateExportProjectExportsTheProjectsForAGivenCriteria(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.ConfigurationTemplates.ExportsTheProjectsForAGivenCriteriaV1(request1)
+	response1, restyResp1, err := client.ConfigurationTemplates.ExportsTheProjectsForAGivenCriteria(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ExportsTheProjectsForAGivenCriteriaV1", err))
+			"Failure when executing ExportsTheProjectsForAGivenCriteria", err))
 		return diags
 	}
 
@@ -125,7 +126,7 @@ func resourceConfigurationTemplateExportProjectCreate(ctx context.Context, d *sc
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
@@ -140,10 +141,10 @@ func resourceConfigurationTemplateExportProjectCreate(ctx context.Context, d *sc
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenConfigurationTemplatesExportsTheProjectsForAGivenCriteriaV1Item(response1.Response)
+	vItem1 := flattenConfigurationTemplatesExportsTheProjectsForAGivenCriteriaItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ExportsTheProjectsForAGivenCriteriaV1 response",
+			"Failure when setting ExportsTheProjectsForAGivenCriteria response",
 			err))
 		return diags
 	}
@@ -165,16 +166,16 @@ func resourceConfigurationTemplateExportProjectDelete(ctx context.Context, d *sc
 	return diags
 }
 
-func expandRequestConfigurationTemplateExportProjectExportsTheProjectsForAGivenCriteriaV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesExportsTheProjectsForAGivenCriteriaV1 {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesExportsTheProjectsForAGivenCriteriaV1{}
-	if v := expandRequestConfigurationTemplateExportProjectExportsTheProjectsForAGivenCriteriaV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestConfigurationTemplateExportProjectExportsTheProjectsForAGivenCriteria(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesExportsTheProjectsForAGivenCriteria {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesExportsTheProjectsForAGivenCriteria{}
+	if v := expandRequestConfigurationTemplateExportProjectExportsTheProjectsForAGivenCriteriaItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	return &request
 }
 
-func expandRequestConfigurationTemplateExportProjectExportsTheProjectsForAGivenCriteriaV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemConfigurationTemplatesExportsTheProjectsForAGivenCriteriaV1 {
-	request := []catalystcentersdkgo.RequestItemConfigurationTemplatesExportsTheProjectsForAGivenCriteriaV1{}
+func expandRequestConfigurationTemplateExportProjectExportsTheProjectsForAGivenCriteriaItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemConfigurationTemplatesExportsTheProjectsForAGivenCriteria {
+	request := []catalystcentersdkgo.RequestItemConfigurationTemplatesExportsTheProjectsForAGivenCriteria{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -185,7 +186,7 @@ func expandRequestConfigurationTemplateExportProjectExportsTheProjectsForAGivenC
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateExportProjectExportsTheProjectsForAGivenCriteriaV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateExportProjectExportsTheProjectsForAGivenCriteriaItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -193,13 +194,13 @@ func expandRequestConfigurationTemplateExportProjectExportsTheProjectsForAGivenC
 	return &request
 }
 
-func expandRequestConfigurationTemplateExportProjectExportsTheProjectsForAGivenCriteriaV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemConfigurationTemplatesExportsTheProjectsForAGivenCriteriaV1 {
-	var request catalystcentersdkgo.RequestItemConfigurationTemplatesExportsTheProjectsForAGivenCriteriaV1
+func expandRequestConfigurationTemplateExportProjectExportsTheProjectsForAGivenCriteriaItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemConfigurationTemplatesExportsTheProjectsForAGivenCriteria {
+	var request catalystcentersdkgo.RequestItemConfigurationTemplatesExportsTheProjectsForAGivenCriteria
 	request = d.Get(fixKeyAccess(key))
 	return &request
 }
 
-func flattenConfigurationTemplatesExportsTheProjectsForAGivenCriteriaV1Item(item *catalystcentersdkgo.ResponseConfigurationTemplatesExportsTheProjectsForAGivenCriteriaV1Response) []map[string]interface{} {
+func flattenConfigurationTemplatesExportsTheProjectsForAGivenCriteriaItem(item *catalystcentersdkgo.ResponseConfigurationTemplatesExportsTheProjectsForAGivenCriteriaResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

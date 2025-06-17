@@ -20,7 +20,7 @@ It manages create, read and delete operations on Health and Performance.
 ```terraform
 resource "catalystcenter_diagnostic_validation_workflows" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     description        = "string"

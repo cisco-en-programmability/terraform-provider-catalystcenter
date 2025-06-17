@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -154,7 +154,7 @@ func dataSourceFloorsFloorIDAccessPointPositions() *schema.Resource {
 												},
 
 												"name": &schema.Schema{
-													Description: `Antenna type for this Access Point. Use /dna/intent/api/v1/maps/supported-access-points to find supported Antennas for a particualr Access Point model.
+													Description: `Antenna type for this Access Point. Use **/dna/intent/api/v1/maps/supported-access-points** to find supported Antennas for a particualr Access Point model.
 `,
 													Type:     schema.TypeString,
 													Computed: true,
@@ -250,6 +250,18 @@ func dataSourceFloorsFloorIDAccessPointPositionsRead(ctx context.Context, d *sch
 		// has_unknown_response: None
 
 		response1, restyResp1, err := client.SiteDesign.GetAccessPointsPositionsV2(vvFloorID, &queryParams1)
+
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetAccessPointsPositionsV2", err,
+				"Failure at GetAccessPointsPositionsV2, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {

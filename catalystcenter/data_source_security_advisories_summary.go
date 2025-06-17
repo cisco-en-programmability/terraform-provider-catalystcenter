@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -262,26 +262,40 @@ func dataSourceSecurityAdvisoriesSummaryRead(ctx context.Context, d *schema.Reso
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAdvisoriesSummaryV1")
+		log.Printf("[DEBUG] Selected method: GetAdvisoriesSummary")
 
-		response1, restyResp1, err := client.SecurityAdvisories.GetAdvisoriesSummaryV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.SecurityAdvisories.GetAdvisoriesSummary()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAdvisoriesSummaryV1", err,
-				"Failure at GetAdvisoriesSummaryV1, unexpected response", ""))
+				"Failure when executing 2 GetAdvisoriesSummary", err,
+				"Failure at GetAdvisoriesSummary, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSecurityAdvisoriesGetAdvisoriesSummaryV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetAdvisoriesSummary", err,
+				"Failure at GetAdvisoriesSummary, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSecurityAdvisoriesGetAdvisoriesSummaryItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAdvisoriesSummaryV1 response",
+				"Failure when setting GetAdvisoriesSummary response",
 				err))
 			return diags
 		}
@@ -293,39 +307,23 @@ func dataSourceSecurityAdvisoriesSummaryRead(ctx context.Context, d *schema.Reso
 	return diags
 }
 
-func flattenSecurityAdvisoriesGetAdvisoriesSummaryV1Item(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoriesSummaryV1Response) []map[string]interface{} {
+func flattenSecurityAdvisoriesGetAdvisoriesSummaryItem(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoriesSummaryResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["inf_orm_ati_ona_l"] = flattenSecurityAdvisoriesGetAdvisoriesSummaryV1ItemINFORMATIONAL(item.INFORMATIONAL)
-	respItem["low"] = flattenSecurityAdvisoriesGetAdvisoriesSummaryV1ItemLOW(item.LOW)
-	respItem["med_ium"] = flattenSecurityAdvisoriesGetAdvisoriesSummaryV1ItemMEDIUM(item.MEDIUM)
-	respItem["hig_h"] = flattenSecurityAdvisoriesGetAdvisoriesSummaryV1ItemHIGH(item.HIGH)
-	respItem["cri_tic_al"] = flattenSecurityAdvisoriesGetAdvisoriesSummaryV1ItemCRITICaL(item.CRITICaL)
-	respItem["na"] = flattenSecurityAdvisoriesGetAdvisoriesSummaryV1ItemNA(item.NA)
+	respItem["inf_orm_ati_ona_l"] = flattenSecurityAdvisoriesGetAdvisoriesSummaryItemINFORMATIONAL(item.INFORMATIONAL)
+	respItem["low"] = flattenSecurityAdvisoriesGetAdvisoriesSummaryItemLOW(item.LOW)
+	respItem["med_ium"] = flattenSecurityAdvisoriesGetAdvisoriesSummaryItemMEDIUM(item.MEDIUM)
+	respItem["hig_h"] = flattenSecurityAdvisoriesGetAdvisoriesSummaryItemHIGH(item.HIGH)
+	respItem["cri_tic_al"] = flattenSecurityAdvisoriesGetAdvisoriesSummaryItemCRITICaL(item.CRITICaL)
+	respItem["na"] = flattenSecurityAdvisoriesGetAdvisoriesSummaryItemNA(item.NA)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenSecurityAdvisoriesGetAdvisoriesSummaryV1ItemINFORMATIONAL(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoriesSummaryV1ResponseINFORMATIONAL) []map[string]interface{} {
-	if item == nil {
-		return nil
-	}
-	respItem := make(map[string]interface{})
-	respItem["con_fig"] = item.CONFIG
-	respItem["cus_tom_con_fig"] = item.CUSTOMCONFIG
-	respItem["ver_sio_n"] = item.VERSION
-	respItem["tot_al"] = item.TOTAL
-
-	return []map[string]interface{}{
-		respItem,
-	}
-
-}
-
-func flattenSecurityAdvisoriesGetAdvisoriesSummaryV1ItemLOW(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoriesSummaryV1ResponseLOW) []map[string]interface{} {
+func flattenSecurityAdvisoriesGetAdvisoriesSummaryItemINFORMATIONAL(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoriesSummaryResponseINFORMATIONAL) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -341,7 +339,7 @@ func flattenSecurityAdvisoriesGetAdvisoriesSummaryV1ItemLOW(item *catalystcenter
 
 }
 
-func flattenSecurityAdvisoriesGetAdvisoriesSummaryV1ItemMEDIUM(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoriesSummaryV1ResponseMEDIUM) []map[string]interface{} {
+func flattenSecurityAdvisoriesGetAdvisoriesSummaryItemLOW(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoriesSummaryResponseLOW) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -357,7 +355,7 @@ func flattenSecurityAdvisoriesGetAdvisoriesSummaryV1ItemMEDIUM(item *catalystcen
 
 }
 
-func flattenSecurityAdvisoriesGetAdvisoriesSummaryV1ItemHIGH(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoriesSummaryV1ResponseHIGH) []map[string]interface{} {
+func flattenSecurityAdvisoriesGetAdvisoriesSummaryItemMEDIUM(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoriesSummaryResponseMEDIUM) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -373,7 +371,7 @@ func flattenSecurityAdvisoriesGetAdvisoriesSummaryV1ItemHIGH(item *catalystcente
 
 }
 
-func flattenSecurityAdvisoriesGetAdvisoriesSummaryV1ItemCRITICaL(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoriesSummaryV1ResponseCRITICaL) []map[string]interface{} {
+func flattenSecurityAdvisoriesGetAdvisoriesSummaryItemHIGH(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoriesSummaryResponseHIGH) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -389,7 +387,23 @@ func flattenSecurityAdvisoriesGetAdvisoriesSummaryV1ItemCRITICaL(item *catalystc
 
 }
 
-func flattenSecurityAdvisoriesGetAdvisoriesSummaryV1ItemNA(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoriesSummaryV1ResponseNA) []map[string]interface{} {
+func flattenSecurityAdvisoriesGetAdvisoriesSummaryItemCRITICaL(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoriesSummaryResponseCRITICaL) []map[string]interface{} {
+	if item == nil {
+		return nil
+	}
+	respItem := make(map[string]interface{})
+	respItem["con_fig"] = item.CONFIG
+	respItem["cus_tom_con_fig"] = item.CUSTOMCONFIG
+	respItem["ver_sio_n"] = item.VERSION
+	respItem["tot_al"] = item.TOTAL
+
+	return []map[string]interface{}{
+		respItem,
+	}
+
+}
+
+func flattenSecurityAdvisoriesGetAdvisoriesSummaryItemNA(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoriesSummaryResponseNA) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

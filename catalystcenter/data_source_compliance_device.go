@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -103,8 +103,8 @@ func dataSourceComplianceDeviceRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetComplianceStatusV1")
-		queryParams1 := catalystcentersdkgo.GetComplianceStatusV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetComplianceStatus")
+		queryParams1 := catalystcentersdkgo.GetComplianceStatusQueryParams{}
 
 		if okComplianceStatus {
 			queryParams1.ComplianceStatus = vComplianceStatus.(string)
@@ -121,24 +121,36 @@ func dataSourceComplianceDeviceRead(ctx context.Context, d *schema.ResourceData,
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Compliance.GetComplianceStatusV1(&queryParams1)
+		response1, restyResp1, err := client.Compliance.GetComplianceStatus(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetComplianceStatusV1", err,
-				"Failure at GetComplianceStatusV1, unexpected response", ""))
+				"Failure when executing 2 GetComplianceStatus", err,
+				"Failure at GetComplianceStatus, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenComplianceGetComplianceStatusV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetComplianceStatus", err,
+				"Failure at GetComplianceStatus, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenComplianceGetComplianceStatusItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetComplianceStatusV1 response",
+				"Failure when setting GetComplianceStatus response",
 				err))
 			return diags
 		}
@@ -150,7 +162,7 @@ func dataSourceComplianceDeviceRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenComplianceGetComplianceStatusV1Items(items *[]catalystcentersdkgo.ResponseComplianceGetComplianceStatusV1Response) []map[string]interface{} {
+func flattenComplianceGetComplianceStatusItems(items *[]catalystcentersdkgo.ResponseComplianceGetComplianceStatusResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

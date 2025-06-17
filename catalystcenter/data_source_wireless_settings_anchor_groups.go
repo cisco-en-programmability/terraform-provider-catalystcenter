@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -20,6 +20,18 @@ func dataSourceWirelessSettingsAnchorGroups() *schema.Resource {
 
 		ReadContext: dataSourceWirelessSettingsAnchorGroupsRead,
 		Schema: map[string]*schema.Schema{
+			"limit": &schema.Schema{
+				Description: `limit query parameter. The number of records to show for this page. Default is 500 if not specified. Maximum allowed limit is 500.
+`,
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"offset": &schema.Schema{
+				Description: `offset query parameter. The first record to show for this page, the first record is numbered 1.
+`,
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 
 			"item": &schema.Schema{
 				Type:     schema.TypeList,
@@ -117,31 +129,53 @@ func dataSourceWirelessSettingsAnchorGroupsRead(ctx context.Context, d *schema.R
 	client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
+	vLimit, okLimit := d.GetOk("limit")
+	vOffset, okOffset := d.GetOk("offset")
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAnchorGroupsV1")
+		log.Printf("[DEBUG] Selected method: GetAnchorGroups")
+		queryParams1 := catalystcentersdkgo.GetAnchorGroupsQueryParams{}
+
+		if okLimit {
+			queryParams1.Limit = vLimit.(string)
+		}
+		if okOffset {
+			queryParams1.Offset = vOffset.(string)
+		}
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Wireless.GetAnchorGroupsV1()
+		response1, restyResp1, err := client.Wireless.GetAnchorGroups(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAnchorGroupsV1", err,
-				"Failure at GetAnchorGroupsV1, unexpected response", ""))
+				"Failure when executing 2 GetAnchorGroups", err,
+				"Failure at GetAnchorGroups, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessGetAnchorGroupsV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetAnchorGroups", err,
+				"Failure at GetAnchorGroups, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenWirelessGetAnchorGroupsItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAnchorGroupsV1 response",
+				"Failure when setting GetAnchorGroups response",
 				err))
 			return diags
 		}
@@ -153,20 +187,20 @@ func dataSourceWirelessSettingsAnchorGroupsRead(ctx context.Context, d *schema.R
 	return diags
 }
 
-func flattenWirelessGetAnchorGroupsV1Item(item *catalystcentersdkgo.ResponseWirelessGetAnchorGroupsV1) []map[string]interface{} {
+func flattenWirelessGetAnchorGroupsItem(item *catalystcentersdkgo.ResponseWirelessGetAnchorGroups) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["id"] = item.ID
 	respItem["anchor_group_name"] = item.AnchorGroupName
-	respItem["mobility_anchors"] = flattenWirelessGetAnchorGroupsV1ItemMobilityAnchors(item.MobilityAnchors)
+	respItem["mobility_anchors"] = flattenWirelessGetAnchorGroupsItemMobilityAnchors(item.MobilityAnchors)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenWirelessGetAnchorGroupsV1ItemMobilityAnchors(items *[]catalystcentersdkgo.ResponseWirelessGetAnchorGroupsV1MobilityAnchors) []map[string]interface{} {
+func flattenWirelessGetAnchorGroupsItemMobilityAnchors(items *[]catalystcentersdkgo.ResponseWirelessGetAnchorGroupsMobilityAnchors) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

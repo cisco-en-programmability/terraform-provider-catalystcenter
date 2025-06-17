@@ -12,6 +12,8 @@ description: |-
 It performs create operation on Device Onboarding (PnP).
 
 - Claims one of more devices with specified workflow
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -21,34 +23,34 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_pnp_device_claim" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
     authorization_needed = "false"
     config_file_url      = "string"
     config_id            = "string"
-    device_claim_list {
+    device_claim_list = [{
 
-      config_list {
+      config_list = [{
 
         config_id = "string"
-        config_parameters {
+        config_parameters = [{
 
           key   = "string"
           value = "string"
-        }
-      }
+        }]
+      }]
       device_id                  = "string"
       license_level              = "string"
       license_type               = "string"
       top_of_stack_serial_number = "string"
-    }
+    }]
     file_service_id    = "string"
     image_id           = "string"
     image_url          = "string"
     populate_inventory = "false"
     project_id         = "string"
     workflow_id        = "string"
-  }
+  }]
 }
 
 output "catalystcenter_pnp_device_claim_example" {

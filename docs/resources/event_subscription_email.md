@@ -20,7 +20,7 @@ It manages create, read and update operations on Event Management.
 ```terraform
 resource "catalystcenter_event_subscription_email" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     description = "string"
@@ -67,7 +67,7 @@ output "catalystcenter_event_subscription_email_example" {
 
 ### Optional
 
-- `parameters` (Block List) Array of RequestEventManagementCreateEmailEventSubscriptionV1 (see [below for nested schema](#nestedblock--parameters))
+- `parameters` (Block List) Array of RequestEventManagementCreateEmailEventSubscription (see [below for nested schema](#nestedblock--parameters))
 
 ### Read-Only
 

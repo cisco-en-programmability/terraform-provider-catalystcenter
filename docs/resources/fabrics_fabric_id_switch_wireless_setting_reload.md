@@ -23,6 +23,7 @@ Please note that using this API will cause a reload of the device(s). This data 
 devices that have wireless disabled but still have the 'wireless-controller' configuration present. The reload payload
 can have a maximum of two switches as only two switches can have a wireless role in a fabric site.
 
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -33,10 +34,10 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_fabrics_fabric_id_switch_wireless_setting_reload" "example" {
   provider  = catalystcenter
   fabric_id = "string"
-  parameters {
+  parameters = [{
 
     device_id = "string"
-  }
+  }]
 }
 
 output "catalystcenter_fabrics_fabric_id_switch_wireless_setting_reload_example" {

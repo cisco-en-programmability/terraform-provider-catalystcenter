@@ -14,6 +14,8 @@ It performs delete operation on Sites.
 
 - Cancels a previously initatied import, allowing the system to cleanup cached resources about that import data, and
 ensures the import cannot accidentally be performed / approved at a later time.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -24,9 +26,9 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_maps_import" "example" {
   provider            = catalystcenter
   import_context_uuid = "string"
-  parameters {
+  parameters = [{
 
-  }
+  }]
 }
 
 output "catalystcenter_maps_import_example" {
@@ -44,7 +46,6 @@ output "catalystcenter_maps_import_example" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `item` (List of String)
 - `last_updated` (String)
 
 <a id="nestedblock--parameters"></a>

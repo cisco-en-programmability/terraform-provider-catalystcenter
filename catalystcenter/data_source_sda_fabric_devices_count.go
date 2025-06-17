@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -68,8 +68,8 @@ func dataSourceSdaFabricDevicesCountRead(ctx context.Context, d *schema.Resource
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetFabricDevicesCountV1")
-		queryParams1 := catalystcentersdkgo.GetFabricDevicesCountV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetFabricDevicesCount")
+		queryParams1 := catalystcentersdkgo.GetFabricDevicesCountQueryParams{}
 
 		queryParams1.FabricID = vFabricID.(string)
 
@@ -80,24 +80,38 @@ func dataSourceSdaFabricDevicesCountRead(ctx context.Context, d *schema.Resource
 			queryParams1.DeviceRoles = vDeviceRoles.(string)
 		}
 
-		response1, restyResp1, err := client.Sda.GetFabricDevicesCountV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sda.GetFabricDevicesCount(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetFabricDevicesCountV1", err,
-				"Failure at GetFabricDevicesCountV1, unexpected response", ""))
+				"Failure when executing 2 GetFabricDevicesCount", err,
+				"Failure at GetFabricDevicesCount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetFabricDevicesCountV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetFabricDevicesCount", err,
+				"Failure at GetFabricDevicesCount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSdaGetFabricDevicesCountItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetFabricDevicesCountV1 response",
+				"Failure when setting GetFabricDevicesCount response",
 				err))
 			return diags
 		}
@@ -109,7 +123,7 @@ func dataSourceSdaFabricDevicesCountRead(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func flattenSdaGetFabricDevicesCountV1Item(item *catalystcentersdkgo.ResponseSdaGetFabricDevicesCountV1Response) []map[string]interface{} {
+func flattenSdaGetFabricDevicesCountItem(item *catalystcentersdkgo.ResponseSdaGetFabricDevicesCountResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

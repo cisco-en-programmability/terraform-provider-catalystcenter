@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -17,7 +17,7 @@ func dataSourceAnalyticsProfilingRules() *schema.Resource {
 
 - This data source fetches the list of profiling rules. It can be used to show profiling rules in client applications,
 or export those from an environment. 'POST /profiling-rules/bulk' API can be used to import such exported rules into
-another environment. If this API is used to export rules to be imported into another Cisco DNA Center system, then
+another environment. If this API is used to export rules to be imported into another Cisco Catalyst Center system, then
 ensure that 'includeDeleted' parameter is 'true', so that deleted rules get synchronized correctly. Use query parameters
 to filter the data, as required. If no filter is provided, then it will include only rules of type 'Custom Rule' in the
 response. By default, the response is limited to 500 records. Use 'limit' parameter to fetch higher number of records,
@@ -513,8 +513,8 @@ func dataSourceAnalyticsProfilingRulesRead(ctx context.Context, d *schema.Resour
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetListOfProfilingRulesV1")
-		queryParams1 := catalystcentersdkgo.GetListOfProfilingRulesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetListOfProfilingRules")
+		queryParams1 := catalystcentersdkgo.GetListOfProfilingRulesQueryParams{}
 
 		if okRuleType {
 			queryParams1.RuleType = vRuleType.(string)
@@ -535,24 +535,38 @@ func dataSourceAnalyticsProfilingRulesRead(ctx context.Context, d *schema.Resour
 			queryParams1.Order = vOrder.(string)
 		}
 
-		response1, restyResp1, err := client.AIEndpointAnalytics.GetListOfProfilingRulesV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.AiEndpointAnalytics.GetListOfProfilingRules(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetListOfProfilingRulesV1", err,
-				"Failure at GetListOfProfilingRulesV1, unexpected response", ""))
+				"Failure when executing 2 GetListOfProfilingRules", err,
+				"Failure at GetListOfProfilingRules, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenAIEndpointAnalyticsGetListOfProfilingRulesV1Items(response1.ProfilingRules)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetListOfProfilingRules", err,
+				"Failure at GetListOfProfilingRules, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenAiEndpointAnalyticsGetListOfProfilingRulesItems(response1.ProfilingRules)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetListOfProfilingRulesV1 response",
+				"Failure when setting GetListOfProfilingRules response",
 				err))
 			return diags
 		}
@@ -562,27 +576,41 @@ func dataSourceAnalyticsProfilingRulesRead(ctx context.Context, d *schema.Resour
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetDetailsOfASingleProfilingRuleV1")
+		log.Printf("[DEBUG] Selected method: GetDetailsOfASingleProfilingRule")
 		vvRuleID := vRuleID.(string)
 
-		response2, restyResp2, err := client.AIEndpointAnalytics.GetDetailsOfASingleProfilingRuleV1(vvRuleID)
+		// has_unknown_response: None
+
+		response2, restyResp2, err := client.AiEndpointAnalytics.GetDetailsOfASingleProfilingRule(vvRuleID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDetailsOfASingleProfilingRuleV1", err,
-				"Failure at GetDetailsOfASingleProfilingRuleV1, unexpected response", ""))
+				"Failure when executing 2 GetDetailsOfASingleProfilingRule", err,
+				"Failure at GetDetailsOfASingleProfilingRule, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenAIEndpointAnalyticsGetDetailsOfASingleProfilingRuleV1Item(response2)
+		if err != nil || response2 == nil {
+			if restyResp2 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetDetailsOfASingleProfilingRule", err,
+				"Failure at GetDetailsOfASingleProfilingRule, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
+
+		vItem2 := flattenAiEndpointAnalyticsGetDetailsOfASingleProfilingRuleItem(response2)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDetailsOfASingleProfilingRuleV1 response",
+				"Failure when setting GetDetailsOfASingleProfilingRule response",
 				err))
 			return diags
 		}
@@ -594,7 +622,7 @@ func dataSourceAnalyticsProfilingRulesRead(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func flattenAIEndpointAnalyticsGetListOfProfilingRulesV1Items(items *[]catalystcentersdkgo.ResponseAIEndpointAnalyticsGetListOfProfilingRulesV1ProfilingRules) []map[string]interface{} {
+func flattenAiEndpointAnalyticsGetListOfProfilingRulesItems(items *[]catalystcentersdkgo.ResponseAiEndpointAnalyticsGetListOfProfilingRulesProfilingRules) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -613,15 +641,15 @@ func flattenAIEndpointAnalyticsGetListOfProfilingRulesV1Items(items *[]catalystc
 		respItem["plugin_id"] = item.PluginID
 		respItem["cluster_id"] = item.ClusterID
 		respItem["rejected"] = boolPtrToString(item.Rejected)
-		respItem["result"] = flattenAIEndpointAnalyticsGetListOfProfilingRulesV1ItemsResult(item.Result)
-		respItem["condition_groups"] = flattenAIEndpointAnalyticsGetListOfProfilingRulesV1ItemsConditionGroups(item.ConditionGroups)
+		respItem["result"] = flattenAiEndpointAnalyticsGetListOfProfilingRulesItemsResult(item.Result)
+		respItem["condition_groups"] = flattenAiEndpointAnalyticsGetListOfProfilingRulesItemsConditionGroups(item.ConditionGroups)
 		respItem["used_attributes"] = item.UsedAttributes
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenAIEndpointAnalyticsGetListOfProfilingRulesV1ItemsResult(item *catalystcentersdkgo.ResponseAIEndpointAnalyticsGetListOfProfilingRulesV1ProfilingRulesResult) []map[string]interface{} {
+func flattenAiEndpointAnalyticsGetListOfProfilingRulesItemsResult(item *catalystcentersdkgo.ResponseAiEndpointAnalyticsGetListOfProfilingRulesProfilingRulesResult) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -637,13 +665,13 @@ func flattenAIEndpointAnalyticsGetListOfProfilingRulesV1ItemsResult(item *cataly
 
 }
 
-func flattenAIEndpointAnalyticsGetListOfProfilingRulesV1ItemsConditionGroups(item *catalystcentersdkgo.ResponseAIEndpointAnalyticsGetListOfProfilingRulesV1ProfilingRulesConditionGroups) []map[string]interface{} {
+func flattenAiEndpointAnalyticsGetListOfProfilingRulesItemsConditionGroups(item *catalystcentersdkgo.ResponseAiEndpointAnalyticsGetListOfProfilingRulesProfilingRulesConditionGroups) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["type"] = item.Type
-	respItem["condition"] = flattenAIEndpointAnalyticsGetListOfProfilingRulesV1ItemsConditionGroupsCondition(item.Condition)
+	respItem["condition"] = flattenAiEndpointAnalyticsGetListOfProfilingRulesItemsConditionGroupsCondition(item.Condition)
 	respItem["operator"] = item.Operator
 	respItem["condition_group"] = item.ConditionGroup
 
@@ -653,7 +681,7 @@ func flattenAIEndpointAnalyticsGetListOfProfilingRulesV1ItemsConditionGroups(ite
 
 }
 
-func flattenAIEndpointAnalyticsGetListOfProfilingRulesV1ItemsConditionGroupsCondition(item *catalystcentersdkgo.ResponseAIEndpointAnalyticsGetListOfProfilingRulesV1ProfilingRulesConditionGroupsCondition) []map[string]interface{} {
+func flattenAiEndpointAnalyticsGetListOfProfilingRulesItemsConditionGroupsCondition(item *catalystcentersdkgo.ResponseAiEndpointAnalyticsGetListOfProfilingRulesProfilingRulesConditionGroupsCondition) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -669,7 +697,19 @@ func flattenAIEndpointAnalyticsGetListOfProfilingRulesV1ItemsConditionGroupsCond
 
 }
 
-func flattenAIEndpointAnalyticsGetDetailsOfASingleProfilingRuleV1Item(item *catalystcentersdkgo.ResponseAIEndpointAnalyticsGetDetailsOfASingleProfilingRuleV1) []map[string]interface{} {
+func flattenAiEndpointAnalyticsGetListOfProfilingRulesItemsConditionGroupsConditionGroup(items *[]catalystcentersdkgo.ResponseAiEndpointAnalyticsGetListOfProfilingRulesProfilingRulesConditionGroupsCondition) []interface{} {
+	if items == nil {
+		return nil
+	}
+	var respItems []interface{}
+	for _, item := range *items {
+		respItem := item
+		respItems = append(respItems, responseInterfaceToString(respItem))
+	}
+	return respItems
+}
+
+func flattenAiEndpointAnalyticsGetDetailsOfASingleProfilingRuleItem(item *catalystcentersdkgo.ResponseAiEndpointAnalyticsGetDetailsOfASingleProfilingRule) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -686,15 +726,15 @@ func flattenAIEndpointAnalyticsGetDetailsOfASingleProfilingRuleV1Item(item *cata
 	respItem["plugin_id"] = item.PluginID
 	respItem["cluster_id"] = item.ClusterID
 	respItem["rejected"] = boolPtrToString(item.Rejected)
-	respItem["result"] = flattenAIEndpointAnalyticsGetDetailsOfASingleProfilingRuleV1ItemResult(item.Result)
-	respItem["condition_groups"] = flattenAIEndpointAnalyticsGetDetailsOfASingleProfilingRuleV1ItemConditionGroups(item.ConditionGroups)
+	respItem["result"] = flattenAiEndpointAnalyticsGetDetailsOfASingleProfilingRuleItemResult(item.Result)
+	respItem["condition_groups"] = flattenAiEndpointAnalyticsGetDetailsOfASingleProfilingRuleItemConditionGroups(item.ConditionGroups)
 	respItem["used_attributes"] = item.UsedAttributes
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenAIEndpointAnalyticsGetDetailsOfASingleProfilingRuleV1ItemResult(item *catalystcentersdkgo.ResponseAIEndpointAnalyticsGetDetailsOfASingleProfilingRuleV1Result) []map[string]interface{} {
+func flattenAiEndpointAnalyticsGetDetailsOfASingleProfilingRuleItemResult(item *catalystcentersdkgo.ResponseAiEndpointAnalyticsGetDetailsOfASingleProfilingRuleResult) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -710,13 +750,13 @@ func flattenAIEndpointAnalyticsGetDetailsOfASingleProfilingRuleV1ItemResult(item
 
 }
 
-func flattenAIEndpointAnalyticsGetDetailsOfASingleProfilingRuleV1ItemConditionGroups(item *catalystcentersdkgo.ResponseAIEndpointAnalyticsGetDetailsOfASingleProfilingRuleV1ConditionGroups) []map[string]interface{} {
+func flattenAiEndpointAnalyticsGetDetailsOfASingleProfilingRuleItemConditionGroups(item *catalystcentersdkgo.ResponseAiEndpointAnalyticsGetDetailsOfASingleProfilingRuleConditionGroups) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["type"] = item.Type
-	respItem["condition"] = flattenAIEndpointAnalyticsGetDetailsOfASingleProfilingRuleV1ItemConditionGroupsCondition(item.Condition)
+	respItem["condition"] = flattenAiEndpointAnalyticsGetDetailsOfASingleProfilingRuleItemConditionGroupsCondition(item.Condition)
 	respItem["operator"] = item.Operator
 	respItem["condition_group"] = item.ConditionGroup
 
@@ -726,7 +766,7 @@ func flattenAIEndpointAnalyticsGetDetailsOfASingleProfilingRuleV1ItemConditionGr
 
 }
 
-func flattenAIEndpointAnalyticsGetDetailsOfASingleProfilingRuleV1ItemConditionGroupsCondition(item *catalystcentersdkgo.ResponseAIEndpointAnalyticsGetDetailsOfASingleProfilingRuleV1ConditionGroupsCondition) []map[string]interface{} {
+func flattenAiEndpointAnalyticsGetDetailsOfASingleProfilingRuleItemConditionGroupsCondition(item *catalystcentersdkgo.ResponseAiEndpointAnalyticsGetDetailsOfASingleProfilingRuleConditionGroupsCondition) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

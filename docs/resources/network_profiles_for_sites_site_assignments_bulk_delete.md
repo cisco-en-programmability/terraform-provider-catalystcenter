@@ -14,6 +14,8 @@ It performs delete operation on Site Design.
 
 - Unassigns a given network profile for sites from multiple sites. The profile must be removed from the containing
 building first if this site is a floor.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -25,9 +27,9 @@ resource "catalystcenter_network_profiles_for_sites_site_assignments_bulk_delete
   provider   = catalystcenter
   profile_id = "string"
   site_id    = "string"
-  parameters {
+  parameters = [{
 
-  }
+  }]
 }
 
 output "catalystcenter_network_profiles_for_sites_site_assignments_bulk_delete_example" {
@@ -53,8 +55,8 @@ output "catalystcenter_network_profiles_for_sites_site_assignments_bulk_delete_e
 
 Required:
 
-- `profile_id` (String) profileId path parameter. The *id* of the network profile, retrievable from *GET /intent/api/v1/networkProfilesForSites*
-- `site_id` (String) siteId query parameter. The *id* of the site, retrievable from *GET /intent/api/v1/sites*
+- `profile_id` (String) profileId path parameter. The **id** of the network profile, retrievable from **GET /intent/api/v1/networkProfilesForSites**
+- `site_id` (String) siteId query parameter. The id or ids of the network profile, retrievable from /dna/intent/api/v1/sites.. A list of profile ids can be passed as a queryParameter in two ways:  1. a comma-separated string ( siteId=388a23e9-4739-4be7-a0aa-cc5a95d158dd,2726dc60-3a12-451e-947a-d972ebf58743), or... 2. as separate query parameters with the same name ( siteId=388a23e9-4739-4be7-a0aa-cc5a95d158dd&siteId=2726dc60-3a12-451e-947a-d972ebf58743
 
 
 <a id="nestedatt--item"></a>

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -45,7 +45,7 @@ func dataSourceNetworkDeviceImageUpdates() *schema.Resource {
 				Optional: true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter. The number of records to show for this page.
+				Description: `limit query parameter. The number of records to show for this page. The minimum and maximum values are 1 and 500, respectively
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -201,8 +201,8 @@ func dataSourceNetworkDeviceImageUpdatesRead(ctx context.Context, d *schema.Reso
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetNetworkDeviceImageUpdatesV1")
-		queryParams1 := catalystcentersdkgo.GetNetworkDeviceImageUpdatesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetNetworkDeviceImageUpdates")
+		queryParams1 := catalystcentersdkgo.GetNetworkDeviceImageUpdatesQueryParams{}
 
 		if okID {
 			queryParams1.ID = vID.(string)
@@ -244,24 +244,38 @@ func dataSourceNetworkDeviceImageUpdatesRead(ctx context.Context, d *schema.Reso
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.SoftwareImageManagementSwim.GetNetworkDeviceImageUpdatesV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.SoftwareImageManagementSwim.GetNetworkDeviceImageUpdates(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetNetworkDeviceImageUpdatesV1", err,
-				"Failure at GetNetworkDeviceImageUpdatesV1, unexpected response", ""))
+				"Failure when executing 2 GetNetworkDeviceImageUpdates", err,
+				"Failure at GetNetworkDeviceImageUpdates, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSoftwareImageManagementSwimGetNetworkDeviceImageUpdatesV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetNetworkDeviceImageUpdates", err,
+				"Failure at GetNetworkDeviceImageUpdates, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSoftwareImageManagementSwimGetNetworkDeviceImageUpdatesItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetNetworkDeviceImageUpdatesV1 response",
+				"Failure when setting GetNetworkDeviceImageUpdates response",
 				err))
 			return diags
 		}
@@ -273,7 +287,7 @@ func dataSourceNetworkDeviceImageUpdatesRead(ctx context.Context, d *schema.Reso
 	return diags
 }
 
-func flattenSoftwareImageManagementSwimGetNetworkDeviceImageUpdatesV1Items(items *[]catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetNetworkDeviceImageUpdatesV1Response) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimGetNetworkDeviceImageUpdatesItems(items *[]catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetNetworkDeviceImageUpdatesResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

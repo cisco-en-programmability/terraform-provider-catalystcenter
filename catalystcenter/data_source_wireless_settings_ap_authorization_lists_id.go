@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -119,29 +119,41 @@ func dataSourceWirelessSettingsApAuthorizationListsIDRead(ctx context.Context, d
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetApAuthorizationListByIDV1")
+		log.Printf("[DEBUG] Selected method: GetApAuthorizationListByID")
 		vvID := vID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Wireless.GetApAuthorizationListByIDV1(vvID)
+		response1, restyResp1, err := client.Wireless.GetApAuthorizationListByID(vvID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetApAuthorizationListByIDV1", err,
-				"Failure at GetApAuthorizationListByIDV1, unexpected response", ""))
+				"Failure when executing 2 GetApAuthorizationListByID", err,
+				"Failure at GetApAuthorizationListByID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessGetApAuthorizationListByIDV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetApAuthorizationListByID", err,
+				"Failure at GetApAuthorizationListByID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenWirelessGetApAuthorizationListByIDItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetApAuthorizationListByIDV1 response",
+				"Failure when setting GetApAuthorizationListByID response",
 				err))
 			return diags
 		}
@@ -153,21 +165,21 @@ func dataSourceWirelessSettingsApAuthorizationListsIDRead(ctx context.Context, d
 	return diags
 }
 
-func flattenWirelessGetApAuthorizationListByIDV1Item(item *catalystcentersdkgo.ResponseWirelessGetApAuthorizationListByIDV1Response) []map[string]interface{} {
+func flattenWirelessGetApAuthorizationListByIDItem(item *catalystcentersdkgo.ResponseWirelessGetApAuthorizationListByIDResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["id"] = item.ID
 	respItem["ap_authorization_list_name"] = item.ApAuthorizationListName
-	respItem["local_authorization"] = flattenWirelessGetApAuthorizationListByIDV1ItemLocalAuthorization(item.LocalAuthorization)
-	respItem["remote_authorization"] = flattenWirelessGetApAuthorizationListByIDV1ItemRemoteAuthorization(item.RemoteAuthorization)
+	respItem["local_authorization"] = flattenWirelessGetApAuthorizationListByIDItemLocalAuthorization(item.LocalAuthorization)
+	respItem["remote_authorization"] = flattenWirelessGetApAuthorizationListByIDItemRemoteAuthorization(item.RemoteAuthorization)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenWirelessGetApAuthorizationListByIDV1ItemLocalAuthorization(item *catalystcentersdkgo.ResponseWirelessGetApAuthorizationListByIDV1ResponseLocalAuthorization) []map[string]interface{} {
+func flattenWirelessGetApAuthorizationListByIDItemLocalAuthorization(item *catalystcentersdkgo.ResponseWirelessGetApAuthorizationListByIDResponseLocalAuthorization) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -181,7 +193,7 @@ func flattenWirelessGetApAuthorizationListByIDV1ItemLocalAuthorization(item *cat
 
 }
 
-func flattenWirelessGetApAuthorizationListByIDV1ItemRemoteAuthorization(item *catalystcentersdkgo.ResponseWirelessGetApAuthorizationListByIDV1ResponseRemoteAuthorization) []map[string]interface{} {
+func flattenWirelessGetApAuthorizationListByIDItemRemoteAuthorization(item *catalystcentersdkgo.ResponseWirelessGetApAuthorizationListByIDResponseRemoteAuthorization) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

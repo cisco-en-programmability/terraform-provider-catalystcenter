@@ -14,6 +14,8 @@ It performs update operation on Devices.
 
 - Add/Update Interface description, VLAN membership, Voice VLAN and change Interface admin status ('UP'/'DOWN') from
 Request body.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -25,13 +27,13 @@ resource "catalystcenter_interface_update" "example" {
   provider        = catalystcenter
   deployment_mode = "string"
   interface_uuid  = "string"
-  parameters {
+  parameters = [{
 
     admin_status  = "string"
     description   = "string"
     vlan_id       = 1
     voice_vlan_id = 1
-  }
+  }]
 }
 
 output "catalystcenter_interface_update_example" {
@@ -73,6 +75,29 @@ Optional:
 
 Read-Only:
 
-- `task_id` (String)
-- `url` (String)
+- `properties` (List of Object) (see [below for nested schema](#nestedobjatt--item--properties))
+- `required` (List of String)
+- `type` (String)
 
+<a id="nestedobjatt--item--properties"></a>
+### Nested Schema for `item.properties`
+
+Read-Only:
+
+- `task_id` (List of Object) (see [below for nested schema](#nestedobjatt--item--properties--task_id))
+- `url` (List of Object) (see [below for nested schema](#nestedobjatt--item--properties--url))
+
+<a id="nestedobjatt--item--properties--task_id"></a>
+### Nested Schema for `item.properties.task_id`
+
+Read-Only:
+
+- `type` (String)
+
+
+<a id="nestedobjatt--item--properties--url"></a>
+### Nested Schema for `item.properties.url`
+
+Read-Only:
+
+- `type` (String)

@@ -12,6 +12,8 @@ description: |-
 It performs create operation on Site Design.
 
 - Assigns unassigned devices to a site. This data source action does not move assigned devices to other sites.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -22,13 +24,13 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_assign_device_to_site" "example" {
   provider = catalystcenter
   site_id  = "string"
-  parameters {
+  parameters = [{
 
-    device {
+    device = [{
 
       ip = "string"
-    }
-  }
+    }]
+  }]
 }
 
 output "catalystcenter_assign_device_to_site_example" {

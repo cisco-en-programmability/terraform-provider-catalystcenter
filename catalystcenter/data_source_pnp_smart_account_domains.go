@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -39,26 +39,40 @@ func dataSourcePnpSmartAccountDomainsRead(ctx context.Context, d *schema.Resourc
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSmartAccountListV1")
+		log.Printf("[DEBUG] Selected method: GetSmartAccountList")
 
-		response1, restyResp1, err := client.DeviceOnboardingPnp.GetSmartAccountListV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.DeviceOnboardingPnp.GetSmartAccountList()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSmartAccountListV1", err,
-				"Failure at GetSmartAccountListV1, unexpected response", ""))
+				"Failure when executing 2 GetSmartAccountList", err,
+				"Failure at GetSmartAccountList, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDeviceOnboardingPnpGetSmartAccountListV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetSmartAccountList", err,
+				"Failure at GetSmartAccountList, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDeviceOnboardingPnpGetSmartAccountListItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSmartAccountListV1 response",
+				"Failure when setting GetSmartAccountList response",
 				err))
 			return diags
 		}
@@ -70,7 +84,7 @@ func dataSourcePnpSmartAccountDomainsRead(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func flattenDeviceOnboardingPnpGetSmartAccountListV1Items(items *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetSmartAccountListV1) []interface{} {
+func flattenDeviceOnboardingPnpGetSmartAccountListItems(items *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetSmartAccountList) []interface{} {
 	if items == nil {
 		return nil
 	}

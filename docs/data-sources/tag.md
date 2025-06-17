@@ -57,7 +57,7 @@ output "catalystcenter_tag_example" {
 - `field` (String) field query parameter. Available field names are :'name,id,parentId,type,additionalInfo.nameSpace,additionalInfo.attributes'
 - `id` (String) id path parameter. Tag ID
 - `level` (String) level query parameter.
-- `limit` (Number) limit query parameter.
+- `limit` (Number) limit query parameter. The number of tags to be retrieved. If not specified, the default is 500. The maximum allowed limit is 500.
 - `name` (String) name query parameter. Tag name is mandatory when filter operation is used.
 - `offset` (Number) offset query parameter.
 - `order` (String) order query parameter. Available values are asc and des

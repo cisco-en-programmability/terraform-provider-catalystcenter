@@ -15,7 +15,8 @@ It performs update operation on Tag.
 
 - Updates the tags associated with the devices. A tag is a user-defined or system-defined construct to group resources.
 When a device is tagged, it is called a member of the tag. A tag can be created by using this POST
-/dna/intent/api/v1/tag API.
+**/dna/intent/api/v1/tag** API.
+
 
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
@@ -26,14 +27,14 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_tags_network_devices_members_associations_bulk" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
     id = "string"
-    tags {
+    tags = [{
 
       id = "string"
-    }
-  }
+    }]
+  }]
 }
 
 output "catalystcenter_tags_network_devices_members_associations_bulk_example" {
@@ -59,7 +60,7 @@ output "catalystcenter_tags_network_devices_members_associations_bulk_example" {
 
 Optional:
 
-- `payload` (Block List) Array of RequestTagUpdateTagsAssociatedWithTheNetworkDevicesV1 (see [below for nested schema](#nestedblock--parameters--payload))
+- `payload` (Block List) Array of RequestTagUpdateTagsAssociatedWithTheNetworkDevices (see [below for nested schema](#nestedblock--parameters--payload))
 
 <a id="nestedblock--parameters--payload"></a>
 ### Nested Schema for `parameters.payload`

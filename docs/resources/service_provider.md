@@ -22,7 +22,7 @@ It manages create, read, update and delete operations on Network Settings.
 ```terraform
 resource "catalystcenter_service_provider" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     settings {

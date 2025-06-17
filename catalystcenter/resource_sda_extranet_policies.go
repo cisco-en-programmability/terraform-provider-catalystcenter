@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -158,14 +158,14 @@ func resourceSdaExtranetPoliciesCreate(ctx context.Context, d *schema.ResourceDa
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters.0.payload"))
-	request1 := expandRequestSdaExtranetPoliciesAddExtranetPolicyV1(ctx, "parameters.0", d)
+	request1 := expandRequestSdaExtranetPoliciesAddExtranetPolicy(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vID := resourceItem["id"]
 	vvID := interfaceToString(vID)
 	vExtranetPolicyName := resourceItem["extranet_policy_name"]
 	vvExtranetPolicyName := interfaceToString(vExtranetPolicyName)
-	queryParamImport := catalystcentersdkgo.GetExtranetPoliciesV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetExtranetPoliciesQueryParams{}
 	queryParamImport.ExtranetPolicyName = vvExtranetPolicyName
 	item2, err := searchSdaGetExtranetPolicies(m, queryParamImport, vvID)
 	if err == nil && item2 != nil {
@@ -214,7 +214,7 @@ func resourceSdaExtranetPoliciesCreate(ctx context.Context, d *schema.ResourceDa
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetExtranetPoliciesV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetExtranetPoliciesQueryParams{}
 	queryParamValidate.ExtranetPolicyName = vvExtranetPolicyName
 	item3, err := searchSdaGetExtranetPolicies(m, queryParamValidate, vvID)
 	if err != nil || item3 == nil {
@@ -242,7 +242,7 @@ func resourceSdaExtranetPoliciesRead(ctx context.Context, d *schema.ResourceData
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetExtranetPolicies")
-		queryParams1 := catalystcentersdkgo.GetExtranetPoliciesV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetExtranetPoliciesQueryParams{}
 		queryParams1.ExtranetPolicyName = vvName
 		item1, err := searchSdaGetExtranetPolicies(m, queryParams1, vvID)
 		if err != nil || item1 == nil {
@@ -250,11 +250,11 @@ func resourceSdaExtranetPoliciesRead(ctx context.Context, d *schema.ResourceData
 			return diags
 		}
 		// Review flatten function used
-		items := []catalystcentersdkgo.ResponseSdaGetExtranetPoliciesV1Response{
+		items := []catalystcentersdkgo.ResponseSdaGetExtranetPoliciesResponse{
 			*item1,
 		}
 
-		vItem1 := flattenSdaGetExtranetPoliciesV1Items(&items)
+		vItem1 := flattenSdaGetExtranetPoliciesItems(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetExtranetPolicies search response",
@@ -274,7 +274,7 @@ func resourceSdaExtranetPoliciesUpdate(ctx context.Context, d *schema.ResourceDa
 	resourceMap := separateResourceID(resourceID)
 	vID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestSdaExtranetPoliciesUpdateExtranetPolicyV1(ctx, "parameters.0", d)
+		request1 := expandRequestSdaExtranetPoliciesUpdateExtranetPolicy(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		if request1 != nil && len(*request1) > 0 {
 			req := *request1
@@ -389,9 +389,10 @@ func resourceSdaExtranetPoliciesDelete(ctx context.Context, d *schema.ResourceDa
 
 	return diags
 }
-func expandRequestSdaExtranetPoliciesAddExtranetPolicyV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddExtranetPolicyV1 {
-	request := catalystcentersdkgo.RequestSdaAddExtranetPolicyV1{}
-	if v := expandRequestSdaExtranetPoliciesAddExtranetPolicyV1ItemArray(ctx, key+".payload", d); v != nil {
+
+func expandRequestSdaExtranetPoliciesAddExtranetPolicy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddExtranetPolicy {
+	request := catalystcentersdkgo.RequestSdaAddExtranetPolicy{}
+	if v := expandRequestSdaExtranetPoliciesAddExtranetPolicyItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -400,8 +401,8 @@ func expandRequestSdaExtranetPoliciesAddExtranetPolicyV1(ctx context.Context, ke
 	return &request
 }
 
-func expandRequestSdaExtranetPoliciesAddExtranetPolicyV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddExtranetPolicyV1 {
-	request := []catalystcentersdkgo.RequestItemSdaAddExtranetPolicyV1{}
+func expandRequestSdaExtranetPoliciesAddExtranetPolicyItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddExtranetPolicy {
+	request := []catalystcentersdkgo.RequestItemSdaAddExtranetPolicy{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -412,7 +413,7 @@ func expandRequestSdaExtranetPoliciesAddExtranetPolicyV1ItemArray(ctx context.Co
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaExtranetPoliciesAddExtranetPolicyV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaExtranetPoliciesAddExtranetPolicyItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -423,8 +424,8 @@ func expandRequestSdaExtranetPoliciesAddExtranetPolicyV1ItemArray(ctx context.Co
 	return &request
 }
 
-func expandRequestSdaExtranetPoliciesAddExtranetPolicyV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddExtranetPolicyV1 {
-	request := catalystcentersdkgo.RequestItemSdaAddExtranetPolicyV1{}
+func expandRequestSdaExtranetPoliciesAddExtranetPolicyItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddExtranetPolicy {
+	request := catalystcentersdkgo.RequestItemSdaAddExtranetPolicy{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".extranet_policy_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".extranet_policy_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".extranet_policy_name")))) {
 		request.ExtranetPolicyName = interfaceToString(v)
 	}
@@ -443,9 +444,9 @@ func expandRequestSdaExtranetPoliciesAddExtranetPolicyV1Item(ctx context.Context
 	return &request
 }
 
-func expandRequestSdaExtranetPoliciesUpdateExtranetPolicyV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateExtranetPolicyV1 {
-	request := catalystcentersdkgo.RequestSdaUpdateExtranetPolicyV1{}
-	if v := expandRequestSdaExtranetPoliciesUpdateExtranetPolicyV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaExtranetPoliciesUpdateExtranetPolicy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateExtranetPolicy {
+	request := catalystcentersdkgo.RequestSdaUpdateExtranetPolicy{}
+	if v := expandRequestSdaExtranetPoliciesUpdateExtranetPolicyItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -454,8 +455,8 @@ func expandRequestSdaExtranetPoliciesUpdateExtranetPolicyV1(ctx context.Context,
 	return &request
 }
 
-func expandRequestSdaExtranetPoliciesUpdateExtranetPolicyV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateExtranetPolicyV1 {
-	request := []catalystcentersdkgo.RequestItemSdaUpdateExtranetPolicyV1{}
+func expandRequestSdaExtranetPoliciesUpdateExtranetPolicyItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateExtranetPolicy {
+	request := []catalystcentersdkgo.RequestItemSdaUpdateExtranetPolicy{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -466,7 +467,7 @@ func expandRequestSdaExtranetPoliciesUpdateExtranetPolicyV1ItemArray(ctx context
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaExtranetPoliciesUpdateExtranetPolicyV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaExtranetPoliciesUpdateExtranetPolicyItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -477,8 +478,8 @@ func expandRequestSdaExtranetPoliciesUpdateExtranetPolicyV1ItemArray(ctx context
 	return &request
 }
 
-func expandRequestSdaExtranetPoliciesUpdateExtranetPolicyV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateExtranetPolicyV1 {
-	request := catalystcentersdkgo.RequestItemSdaUpdateExtranetPolicyV1{}
+func expandRequestSdaExtranetPoliciesUpdateExtranetPolicyItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateExtranetPolicy {
+	request := catalystcentersdkgo.RequestItemSdaUpdateExtranetPolicy{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -500,10 +501,10 @@ func expandRequestSdaExtranetPoliciesUpdateExtranetPolicyV1Item(ctx context.Cont
 	return &request
 }
 
-func searchSdaGetExtranetPolicies(m interface{}, queryParams catalystcentersdkgo.GetExtranetPoliciesV1QueryParams, vID string) (*catalystcentersdkgo.ResponseSdaGetExtranetPoliciesV1Response, error) {
+func searchSdaGetExtranetPolicies(m interface{}, queryParams catalystcentersdkgo.GetExtranetPoliciesQueryParams, vID string) (*catalystcentersdkgo.ResponseSdaGetExtranetPoliciesResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseSdaGetExtranetPoliciesV1Response
+	var foundItem *catalystcentersdkgo.ResponseSdaGetExtranetPoliciesResponse
 
 	ite, _, err := client.Sda.GetExtranetPolicies(&queryParams)
 	if err != nil || ite == nil {

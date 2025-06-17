@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -74,8 +74,8 @@ func dataSourceSecurityAdvisoriesResultsNetworkDevicesCountRead(ctx context.Cont
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetCountOfSecurityAdvisoryNetworkDevicesV1")
-		queryParams1 := catalystcentersdkgo.GetCountOfSecurityAdvisoryNetworkDevicesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetCountOfSecurityAdvisoryNetworkDevices")
+		queryParams1 := catalystcentersdkgo.GetCountOfSecurityAdvisoryNetworkDevicesQueryParams{}
 
 		if okNetworkDeviceID {
 			queryParams1.NetworkDeviceID = vNetworkDeviceID.(string)
@@ -92,24 +92,36 @@ func dataSourceSecurityAdvisoriesResultsNetworkDevicesCountRead(ctx context.Cont
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Compliance.GetCountOfSecurityAdvisoryNetworkDevicesV1(&queryParams1)
+		response1, restyResp1, err := client.Compliance.GetCountOfSecurityAdvisoryNetworkDevices(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetCountOfSecurityAdvisoryNetworkDevicesV1", err,
-				"Failure at GetCountOfSecurityAdvisoryNetworkDevicesV1, unexpected response", ""))
+				"Failure when executing 2 GetCountOfSecurityAdvisoryNetworkDevices", err,
+				"Failure at GetCountOfSecurityAdvisoryNetworkDevices, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenComplianceGetCountOfSecurityAdvisoryNetworkDevicesV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetCountOfSecurityAdvisoryNetworkDevices", err,
+				"Failure at GetCountOfSecurityAdvisoryNetworkDevices, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenComplianceGetCountOfSecurityAdvisoryNetworkDevicesItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetCountOfSecurityAdvisoryNetworkDevicesV1 response",
+				"Failure when setting GetCountOfSecurityAdvisoryNetworkDevices response",
 				err))
 			return diags
 		}
@@ -121,7 +133,7 @@ func dataSourceSecurityAdvisoriesResultsNetworkDevicesCountRead(ctx context.Cont
 	return diags
 }
 
-func flattenComplianceGetCountOfSecurityAdvisoryNetworkDevicesV1Item(item *catalystcentersdkgo.ResponseComplianceGetCountOfSecurityAdvisoryNetworkDevicesV1Response) []map[string]interface{} {
+func flattenComplianceGetCountOfSecurityAdvisoryNetworkDevicesItem(item *catalystcentersdkgo.ResponseComplianceGetCountOfSecurityAdvisoryNetworkDevicesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

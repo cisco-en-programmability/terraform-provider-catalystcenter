@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -16,15 +16,15 @@ func dataSourceSiteHealthSummariesSummaryAnalytics() *schema.Resource {
 		Description: `It performs read operation on Sites.
 
 - Get an aggregated summary of all site health or use the query params to get an aggregated summary of health for a
-subset of sites. This data source provides the latest health data from a given *endTime* If data is not ready for the
+subset of sites. This data source provides the latest health data from a given **endTime** If data is not ready for the
 provided endTime, the request will fail, and the error message will indicate the recommended endTime to use to retrieve
 a complete data set. This behavior may occur if the provided endTime=currentTime, since we are not a real time system.
-When *endTime* is not provided, the API returns the latest data. This data source also provides issue data. The
-*startTime* query param can be used to specify the beginning point of time range to retrieve the active issue counts in.
-When this param is not provided, the default *startTime* will be 24 hours before endTime. Aggregated response data will
-NOT have unique identifier data populated. List of unique identifier data: [*id*, *siteHierarchy*, *siteHierarchyId*,
-*siteType*, *latitude*, *longitude*]. For detailed information about the usage of the API, please refer to the Open API
-specification document https://github.com/cisco-en-programmability/catalyst-center-api-
+When **endTime** is not provided, the API returns the latest data. This data source also provides issue data. The
+**startTime** query param can be used to specify the beginning point of time range to retrieve the active issue counts
+in. When this param is not provided, the default **startTime** will be 24 hours before endTime. Aggregated response data
+will NOT have unique identifier data populated. List of unique identifier data: [**id**, **siteHierarchy**,
+**siteHierarchyId**, **siteType**, **latitude**, **longitude**]. For detailed information about the usage of the API,
+please refer to the Open API specification document https://github.com/cisco-en-programmability/catalyst-center-api-
 specs/blob/main/Assurance/CE_Cat_Center_Org-siteHealthSummaries-1.0.3-resolved.yaml
 `,
 
@@ -54,38 +54,38 @@ attribute=siteHierarchy&attribute=clientCount (multiple attributes requested)
 				Optional: true,
 			},
 			"site_hierarchy": &schema.Schema{
-				Description: `siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. *Global/AreaName/BuildingName/FloorName*)
-This field supports wildcard asterisk (***) character search support. E.g. **/San*, */San, /San**
+				Description: `siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. **Global/AreaName/BuildingName/FloorName**)
+This field supports wildcard asterisk (*****) character search support. E.g. ***/San*, */San, /San***
 Examples:
-*?siteHierarchy=Global/AreaName/BuildingName/FloorName* (single siteHierarchy requested)
-*?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2* (multiple siteHierarchies requested)
+**?siteHierarchy=Global/AreaName/BuildingName/FloorName** (single siteHierarchy requested)
+**?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2** (multiple siteHierarchies requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_hierarchy_id": &schema.Schema{
-				Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. *globalUuid/areaUuid/buildingUuid/floorUuid*)
-This field supports wildcard asterisk (***) character search support. E.g. **uuid*, *uuid, uuid**
+				Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. **globalUuid/areaUuid/buildingUuid/floorUuid**)
+This field supports wildcard asterisk (*****) character search support. E.g. ***uuid*, *uuid, uuid***
 Examples:
-*?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid *(single siteHierarchyId requested)
-*?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2* (multiple siteHierarchyIds requested)
+**?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid **(single siteHierarchyId requested)
+**?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2** (multiple siteHierarchyIds requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_type": &schema.Schema{
 				Description: `siteType query parameter. The type of the site. A site can be an area, building, or floor.
-Default when not provided will be *[floor,building,area]*
+Default when not provided will be **[floor,building,area]**
 Examples:
-*?siteType=area* (single siteType requested)
-*?siteType=area&siteType=building&siteType=floor* (multiple siteTypes requested)
+**?siteType=area** (single siteType requested)
+**?siteType=area&siteType=building&siteType=floor** (multiple siteTypes requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"start_time": &schema.Schema{
 				Description: `startTime query parameter. Start time from which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
-If *startTime* is not provided, API will default to current time.
+If **startTime** is not provided, API will default to current time.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -429,10 +429,10 @@ func dataSourceSiteHealthSummariesSummaryAnalyticsRead(ctx context.Context, d *s
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: ReadAnAggregatedSummaryOfSiteHealthDataV1")
+		log.Printf("[DEBUG] Selected method: ReadAnAggregatedSummaryOfSiteHealthData")
 
-		headerParams1 := catalystcentersdkgo.ReadAnAggregatedSummaryOfSiteHealthDataV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.ReadAnAggregatedSummaryOfSiteHealthDataV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.ReadAnAggregatedSummaryOfSiteHealthDataHeaderParams{}
+		queryParams1 := catalystcentersdkgo.ReadAnAggregatedSummaryOfSiteHealthDataQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -460,24 +460,38 @@ func dataSourceSiteHealthSummariesSummaryAnalyticsRead(ctx context.Context, d *s
 		}
 		headerParams1.XCaLLERID = vXCaLLERID.(string)
 
-		response1, restyResp1, err := client.Sites.ReadAnAggregatedSummaryOfSiteHealthDataV1(&headerParams1, &queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sites.ReadAnAggregatedSummaryOfSiteHealthData(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 ReadAnAggregatedSummaryOfSiteHealthDataV1", err,
-				"Failure at ReadAnAggregatedSummaryOfSiteHealthDataV1, unexpected response", ""))
+				"Failure when executing 2 ReadAnAggregatedSummaryOfSiteHealthData", err,
+				"Failure at ReadAnAggregatedSummaryOfSiteHealthData, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSitesReadAnAggregatedSummaryOfSiteHealthDataV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 ReadAnAggregatedSummaryOfSiteHealthData", err,
+				"Failure at ReadAnAggregatedSummaryOfSiteHealthData, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSitesReadAnAggregatedSummaryOfSiteHealthDataItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting ReadAnAggregatedSummaryOfSiteHealthDataV1 response",
+				"Failure when setting ReadAnAggregatedSummaryOfSiteHealthData response",
 				err))
 			return diags
 		}
@@ -489,7 +503,7 @@ func dataSourceSiteHealthSummariesSummaryAnalyticsRead(ctx context.Context, d *s
 	return diags
 }
 
-func flattenSitesReadAnAggregatedSummaryOfSiteHealthDataV1Item(item *catalystcentersdkgo.ResponseSitesReadAnAggregatedSummaryOfSiteHealthDataV1Response) []map[string]interface{} {
+func flattenSitesReadAnAggregatedSummaryOfSiteHealthDataItem(item *catalystcentersdkgo.ResponseSitesReadAnAggregatedSummaryOfSiteHealthDataResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

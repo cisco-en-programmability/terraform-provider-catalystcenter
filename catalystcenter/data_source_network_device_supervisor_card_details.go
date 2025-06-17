@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -75,29 +75,41 @@ func dataSourceNetworkDeviceSupervisorCardDetailsRead(ctx context.Context, d *sc
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSupervisorCardDetailV1")
+		log.Printf("[DEBUG] Selected method: GetSupervisorCardDetail")
 		vvDeviceUUID := vDeviceUUID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Devices.GetSupervisorCardDetailV1(vvDeviceUUID)
+		response1, restyResp1, err := client.Devices.GetSupervisorCardDetail(vvDeviceUUID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSupervisorCardDetailV1", err,
-				"Failure at GetSupervisorCardDetailV1, unexpected response", ""))
+				"Failure when executing 2 GetSupervisorCardDetail", err,
+				"Failure at GetSupervisorCardDetail, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetSupervisorCardDetailV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetSupervisorCardDetail", err,
+				"Failure at GetSupervisorCardDetail, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDevicesGetSupervisorCardDetailItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSupervisorCardDetailV1 response",
+				"Failure when setting GetSupervisorCardDetail response",
 				err))
 			return diags
 		}
@@ -109,7 +121,7 @@ func dataSourceNetworkDeviceSupervisorCardDetailsRead(ctx context.Context, d *sc
 	return diags
 }
 
-func flattenDevicesGetSupervisorCardDetailV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetSupervisorCardDetailV1Response) []map[string]interface{} {
+func flattenDevicesGetSupervisorCardDetailItems(items *[]catalystcentersdkgo.ResponseDevicesGetSupervisorCardDetailResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -22,7 +22,7 @@ It manages create, read, update and delete operations on Configuration Templates
 ```terraform
 resource "catalystcenter_configuration_template_project" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     create_time      = 1

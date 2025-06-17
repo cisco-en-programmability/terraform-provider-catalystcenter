@@ -22,6 +22,17 @@ accepted in the UI for this to succeed. Please refer to the user guide at
 ```terraform
 resource "catalystcenter_field_notices_trials" "example" {
   provider = catalystcenter
+  item {
+
+
+
+
+
+
+
+
+
+  }
 }
 
 output "catalystcenter_field_notices_trials_example" {

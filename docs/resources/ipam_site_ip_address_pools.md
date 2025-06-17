@@ -5,8 +5,8 @@ subcategory: ""
 description: |-
   It manages create and read operations on Network Settings.
   Reserves (creates) an IP address subpool, which reserves address space from a global pool (or global pools) for a
-  particular site (and it's child sites). A subpool must be either an IPv4 or dual-stack pool, with ipV4AddressSpace and
-  optionally ipV6AddressSpace properties specified.
+  particular site (and it's child sites). A subpool must be either an IPv4 or dual-stack pool, with ipV4AddressSpace
+  and optionally ipV6AddressSpace properties specified.
 ---
 
 # catalystcenter_ipam_site_ip_address_pools (Resource)
@@ -14,15 +14,15 @@ description: |-
 It manages create and read operations on Network Settings.
 
 - Reserves (creates) an IP address subpool, which reserves address space from a global pool (or global pools) for a
-particular site (and it's child sites). A subpool must be either an IPv4 or dual-stack pool, with *ipV4AddressSpace* and
-optionally *ipV6AddressSpace* properties specified.
+particular site (and it's child sites). A subpool must be either an IPv4 or dual-stack pool, with **ipV4AddressSpace**
+and optionally **ipV6AddressSpace** properties specified.
 
 ## Example Usage
 
 ```terraform
 resource "catalystcenter_ipam_site_ip_address_pools" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     ip_v4_address_space {
@@ -87,7 +87,7 @@ Optional:
 - `ip_v6_address_space` (Block List) (see [below for nested schema](#nestedblock--parameters--ip_v6_address_space))
 - `name` (String) The name for this reserve IP pool. Only letters, numbers, '-' (hyphen), '_' (underscore), '.' (period), and '/' (forward slash) are allowed.
 - `pool_type` (String) Once created, a subpool type cannot be changed.  LAN: Assigns IP addresses to LAN interfaces of applicable VNFs and underlay LAN automation.  Management: Assigns IP addresses to management interfaces. A management network is a dedicated network connected to VNFs for VNF management.  Service: Assigns IP addresses to service interfaces. Service networks are used for communication within VNFs.  WAN: Assigns IP addresses to NFVIS for UCS-E provisioning.  Generic: used for all other network types.
-- `site_id` (String) The *id* of the site that this subpool belongs to. This must be the *id* of a non-Global site.
+- `site_id` (String) The **id** of the site that this subpool belongs to. This must be the **id** of a non-Global site.
 - `site_name` (String) The name of the site that this subpool belongs to.
 
 <a id="nestedblock--parameters--ip_v4_address_space"></a>

@@ -12,6 +12,8 @@ description: |-
 It performs create operation on Wireless.
 
 - This data source action is used to provision/deploy wireless mobility into Cisco wireless controllers.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -21,14 +23,14 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_wireless_controllers_wireless_mobility_groups_mobility_provision" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
     data_link_encryption = "false"
     dtls_high_cipher     = "false"
     mac_address          = "string"
     management_ip        = "string"
     mobility_group_name  = "string"
-    mobility_peers {
+    mobility_peers = [{
 
       device_series          = "string"
       hash_key               = "string"
@@ -38,9 +40,9 @@ resource "catalystcenter_wireless_controllers_wireless_mobility_groups_mobility_
       peer_ip                = "string"
       peer_network_device_id = "string"
       private_ip_address     = "string"
-    }
+    }]
     network_device_id = "string"
-  }
+  }]
 }
 
 output "catalystcenter_wireless_controllers_wireless_mobility_groups_mobility_provision_example" {
@@ -70,7 +72,7 @@ Optional:
 - `dtls_high_cipher` (String) DTLS High Cipher.
 - `mac_address` (String) Device mobility MAC Address. Allowed formats are: 0a0b.0c01.0211, 0a0b0c010211, 0a:0b:0c:01:02:11
 - `management_ip` (String) Self device wireless Management IP.
-- `mobility_group_name` (String) Self device Group Name. Must be alphanumeric without {!,<,space,?/'} <br/> and maximum of 31 characters.
+- `mobility_group_name` (String) Self device Group Name. Must be alphanumeric without {!,<,space,?/'}  and maximum of 31 characters.
 - `mobility_peers` (Block List) (see [below for nested schema](#nestedblock--parameters--mobility_peers))
 - `network_device_id` (String) Obtain the network device ID value by using the API call GET: /dna/intent/api/v1/network-device/ip-address/${ipAddress}.
 

@@ -36,7 +36,7 @@ output "catalystcenter_sda_provision_devices_example" {
 ### Optional
 
 - `id` (String) id query parameter. ID of the provisioned device.
-- `limit` (Number) limit query parameter. Maximum number of devices to return.
+- `limit` (Number) limit query parameter. Maximum number of devices to return. The maximum number of objects supported in a single request is 500.
 - `network_device_id` (String) networkDeviceId query parameter. ID of the network device.
 - `offset` (Number) offset query parameter. Starting record for pagination.
 - `site_id` (String) siteId query parameter. ID of the site hierarchy.

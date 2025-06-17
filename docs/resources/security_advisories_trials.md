@@ -22,7 +22,6 @@ accepted in the UI for this to succeed. Please refer to the user guide at
 ```terraform
 resource "catalystcenter_security_advisories_trials" "example" {
   provider = catalystcenter
-
 }
 
 output "catalystcenter_security_advisories_trials_example" {

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,7 +15,7 @@ func dataSourceAssuranceEventsChildEvents() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Devices.
 
-- Wireless client event could have child events and this API can be used to fetch the same using parent event *id* as
+- Wireless client event could have child events and this API can be used to fetch the same using parent event **id** as
 the input. For detailed information about the usage of the API, please refer to the Open API specification document
 https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 AssuranceEvents-1.0.0-resolved.yaml
@@ -123,31 +123,45 @@ func dataSourceAssuranceEventsChildEventsRead(ctx context.Context, d *schema.Res
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetListOfChildEventsForTheGivenWirelessClientEventV1")
+		log.Printf("[DEBUG] Selected method: GetListOfChildEventsForTheGivenWirelessClientEvent")
 		vvID := vID.(string)
 
-		headerParams1 := catalystcentersdkgo.GetListOfChildEventsForTheGivenWirelessClientEventV1HeaderParams{}
+		headerParams1 := catalystcentersdkgo.GetListOfChildEventsForTheGivenWirelessClientEventHeaderParams{}
 
 		headerParams1.XCaLLERID = vXCaLLERID.(string)
 
-		response1, restyResp1, err := client.Devices.GetListOfChildEventsForTheGivenWirelessClientEventV1(vvID, &headerParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Devices.GetListOfChildEventsForTheGivenWirelessClientEvent(vvID, &headerParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetListOfChildEventsForTheGivenWirelessClientEventV1", err,
-				"Failure at GetListOfChildEventsForTheGivenWirelessClientEventV1, unexpected response", ""))
+				"Failure when executing 2 GetListOfChildEventsForTheGivenWirelessClientEvent", err,
+				"Failure at GetListOfChildEventsForTheGivenWirelessClientEvent, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetListOfChildEventsForTheGivenWirelessClientEventV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetListOfChildEventsForTheGivenWirelessClientEvent", err,
+				"Failure at GetListOfChildEventsForTheGivenWirelessClientEvent, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDevicesGetListOfChildEventsForTheGivenWirelessClientEventItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetListOfChildEventsForTheGivenWirelessClientEventV1 response",
+				"Failure when setting GetListOfChildEventsForTheGivenWirelessClientEvent response",
 				err))
 			return diags
 		}
@@ -159,7 +173,7 @@ func dataSourceAssuranceEventsChildEventsRead(ctx context.Context, d *schema.Res
 	return diags
 }
 
-func flattenDevicesGetListOfChildEventsForTheGivenWirelessClientEventV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetListOfChildEventsForTheGivenWirelessClientEventV1Response) []map[string]interface{} {
+func flattenDevicesGetListOfChildEventsForTheGivenWirelessClientEventItems(items *[]catalystcentersdkgo.ResponseDevicesGetListOfChildEventsForTheGivenWirelessClientEventResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

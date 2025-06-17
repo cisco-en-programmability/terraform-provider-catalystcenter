@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -60,27 +60,41 @@ func dataSourceNetworkDeviceMerakiOrganizationRead(ctx context.Context, d *schem
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetOrganizationListForMerakiV1")
+		log.Printf("[DEBUG] Selected method: GetOrganizationListForMeraki")
 		vvID := vID.(string)
 
-		response1, restyResp1, err := client.Devices.GetOrganizationListForMerakiV1(vvID)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Devices.GetOrganizationListForMeraki(vvID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetOrganizationListForMerakiV1", err,
-				"Failure at GetOrganizationListForMerakiV1, unexpected response", ""))
+				"Failure when executing 2 GetOrganizationListForMeraki", err,
+				"Failure at GetOrganizationListForMeraki, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetOrganizationListForMerakiV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetOrganizationListForMeraki", err,
+				"Failure at GetOrganizationListForMeraki, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDevicesGetOrganizationListForMerakiItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetOrganizationListForMerakiV1 response",
+				"Failure when setting GetOrganizationListForMeraki response",
 				err))
 			return diags
 		}
@@ -92,7 +106,7 @@ func dataSourceNetworkDeviceMerakiOrganizationRead(ctx context.Context, d *schem
 	return diags
 }
 
-func flattenDevicesGetOrganizationListForMerakiV1Items(items *catalystcentersdkgo.ResponseDevicesGetOrganizationListForMerakiV1) []map[string]interface{} {
+func flattenDevicesGetOrganizationListForMerakiItems(items *catalystcentersdkgo.ResponseDevicesGetOrganizationListForMeraki) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

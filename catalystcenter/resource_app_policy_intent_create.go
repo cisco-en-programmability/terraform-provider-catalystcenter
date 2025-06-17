@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -12,7 +13,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -601,18 +602,18 @@ func resourceAppPolicyIntentCreateCreate(ctx context.Context, d *schema.Resource
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1(ctx, "parameters.0", d)
+	request1 := expandRequestAppPolicyIntentCreateApplicationPolicyIntent(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.ApplicationPolicy.ApplicationPolicyIntentV1(request1)
+	response1, restyResp1, err := client.ApplicationPolicy.ApplicationPolicyIntent(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ApplicationPolicyIntentV1", err))
+			"Failure when executing ApplicationPolicyIntent", err))
 		return diags
 	}
 
@@ -620,7 +621,7 @@ func resourceAppPolicyIntentCreateCreate(ctx context.Context, d *schema.Resource
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing ApplicationPolicyIntentV1", err))
+			"Failure when executing ApplicationPolicyIntent", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -647,22 +648,22 @@ func resourceAppPolicyIntentCreateCreate(ctx context.Context, d *schema.Resource
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing ApplicationPolicyIntentV1", err1))
+				"Failure when executing ApplicationPolicyIntent", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenApplicationPolicyApplicationPolicyIntentV1Item(response1.Response)
+	vItem1 := flattenApplicationPolicyApplicationPolicyIntentItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ApplicationPolicyIntentV1 response",
+			"Failure when setting ApplicationPolicyIntent response",
 			err))
 		return diags
 	}
@@ -682,13 +683,13 @@ func resourceAppPolicyIntentCreateDelete(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1 {
-	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntent(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntent {
+	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntent{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".create_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".create_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".create_list")))) {
-		request.CreateList = expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListArray(ctx, key+".create_list", d)
+		request.CreateList = expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListArray(ctx, key+".create_list", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".update_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".update_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".update_list")))) {
-		request.UpdateList = expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListArray(ctx, key+".update_list", d)
+		request.UpdateList = expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListArray(ctx, key+".update_list", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".delete_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".delete_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".delete_list")))) {
 		request.DeleteList = interfaceToSliceString(v)
@@ -696,8 +697,8 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1(ctx context.Con
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateList {
-	request := []catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateList{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateList {
+	request := []catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateList{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -708,7 +709,7 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListArray(
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -716,8 +717,8 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListArray(
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateList {
-	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateList{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateList {
+	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateList{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -731,36 +732,36 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateList(ctx c
 		request.Priority = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".advanced_policy_scope")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".advanced_policy_scope")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".advanced_policy_scope")))) {
-		request.AdvancedPolicyScope = expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListAdvancedPolicyScope(ctx, key+".advanced_policy_scope.0", d)
+		request.AdvancedPolicyScope = expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListAdvancedPolicyScope(ctx, key+".advanced_policy_scope.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".exclusive_contract")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".exclusive_contract")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".exclusive_contract")))) {
-		request.ExclusiveContract = expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListExclusiveContract(ctx, key+".exclusive_contract.0", d)
+		request.ExclusiveContract = expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListExclusiveContract(ctx, key+".exclusive_contract.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".contract")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".contract")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".contract")))) {
-		request.Contract = expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListContract(ctx, key+".contract.0", d)
+		request.Contract = expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListContract(ctx, key+".contract.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".producer")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".producer")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".producer")))) {
-		request.Producer = expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListProducer(ctx, key+".producer.0", d)
+		request.Producer = expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListProducer(ctx, key+".producer.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".consumer")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".consumer")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".consumer")))) {
-		request.Consumer = expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListConsumer(ctx, key+".consumer.0", d)
+		request.Consumer = expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListConsumer(ctx, key+".consumer.0", d)
 	}
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListAdvancedPolicyScope(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListAdvancedPolicyScope {
-	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListAdvancedPolicyScope{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListAdvancedPolicyScope(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListAdvancedPolicyScope {
+	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListAdvancedPolicyScope{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".advanced_policy_scope_element")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".advanced_policy_scope_element")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".advanced_policy_scope_element")))) {
-		request.AdvancedPolicyScopeElement = expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListAdvancedPolicyScopeAdvancedPolicyScopeElementArray(ctx, key+".advanced_policy_scope_element", d)
+		request.AdvancedPolicyScopeElement = expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListAdvancedPolicyScopeAdvancedPolicyScopeElementArray(ctx, key+".advanced_policy_scope_element", d)
 	}
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListAdvancedPolicyScopeAdvancedPolicyScopeElementArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListAdvancedPolicyScopeAdvancedPolicyScopeElement {
-	request := []catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListAdvancedPolicyScopeAdvancedPolicyScopeElement{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListAdvancedPolicyScopeAdvancedPolicyScopeElementArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListAdvancedPolicyScopeAdvancedPolicyScopeElement {
+	request := []catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListAdvancedPolicyScopeAdvancedPolicyScopeElement{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -771,7 +772,7 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListAdvanc
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListAdvancedPolicyScopeAdvancedPolicyScopeElement(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListAdvancedPolicyScopeAdvancedPolicyScopeElement(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -779,8 +780,8 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListAdvanc
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListAdvancedPolicyScopeAdvancedPolicyScopeElement(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListAdvancedPolicyScopeAdvancedPolicyScopeElement {
-	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListAdvancedPolicyScopeAdvancedPolicyScopeElement{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListAdvancedPolicyScopeAdvancedPolicyScopeElement(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListAdvancedPolicyScopeAdvancedPolicyScopeElement {
+	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListAdvancedPolicyScopeAdvancedPolicyScopeElement{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".group_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".group_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".group_id")))) {
 		request.GroupID = interfaceToSliceString(v)
 	}
@@ -790,16 +791,16 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListAdvanc
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListExclusiveContract(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListExclusiveContract {
-	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListExclusiveContract{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListExclusiveContract(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListExclusiveContract {
+	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListExclusiveContract{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".clause")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".clause")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".clause")))) {
-		request.Clause = expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListExclusiveContractClauseArray(ctx, key+".clause", d)
+		request.Clause = expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListExclusiveContractClauseArray(ctx, key+".clause", d)
 	}
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListExclusiveContractClauseArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListExclusiveContractClause {
-	request := []catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListExclusiveContractClause{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListExclusiveContractClauseArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListExclusiveContractClause {
+	request := []catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListExclusiveContractClause{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -810,7 +811,7 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListExclus
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListExclusiveContractClause(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListExclusiveContractClause(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -818,8 +819,8 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListExclus
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListExclusiveContractClause(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListExclusiveContractClause {
-	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListExclusiveContractClause{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListExclusiveContractClause(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListExclusiveContractClause {
+	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListExclusiveContractClause{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".type")))) {
 		request.Type = interfaceToString(v)
 	}
@@ -835,24 +836,24 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListExclus
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListContract(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListContract {
-	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListContract{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListContract(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListContract {
+	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListContract{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id_ref")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id_ref")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id_ref")))) {
 		request.IDRef = interfaceToString(v)
 	}
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListProducer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListProducer {
-	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListProducer{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListProducer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListProducer {
+	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListProducer{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".scalable_group")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".scalable_group")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".scalable_group")))) {
-		request.ScalableGroup = expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListProducerScalableGroupArray(ctx, key+".scalable_group", d)
+		request.ScalableGroup = expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListProducerScalableGroupArray(ctx, key+".scalable_group", d)
 	}
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListProducerScalableGroupArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListProducerScalableGroup {
-	request := []catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListProducerScalableGroup{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListProducerScalableGroupArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListProducerScalableGroup {
+	request := []catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListProducerScalableGroup{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -863,7 +864,7 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListProduc
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListProducerScalableGroup(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListProducerScalableGroup(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -871,24 +872,24 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListProduc
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListProducerScalableGroup(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListProducerScalableGroup {
-	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListProducerScalableGroup{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListProducerScalableGroup(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListProducerScalableGroup {
+	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListProducerScalableGroup{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id_ref")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id_ref")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id_ref")))) {
 		request.IDRef = interfaceToString(v)
 	}
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListConsumer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListConsumer {
-	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListConsumer{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListConsumer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListConsumer {
+	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListConsumer{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".scalable_group")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".scalable_group")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".scalable_group")))) {
-		request.ScalableGroup = expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListConsumerScalableGroupArray(ctx, key+".scalable_group", d)
+		request.ScalableGroup = expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListConsumerScalableGroupArray(ctx, key+".scalable_group", d)
 	}
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListConsumerScalableGroupArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListConsumerScalableGroup {
-	request := []catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListConsumerScalableGroup{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListConsumerScalableGroupArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListConsumerScalableGroup {
+	request := []catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListConsumerScalableGroup{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -899,7 +900,7 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListConsum
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListConsumerScalableGroup(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListConsumerScalableGroup(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -907,16 +908,16 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListConsum
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1CreateListConsumerScalableGroup(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListConsumerScalableGroup {
-	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1CreateListConsumerScalableGroup{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentCreateListConsumerScalableGroup(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListConsumerScalableGroup {
+	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentCreateListConsumerScalableGroup{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id_ref")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id_ref")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id_ref")))) {
 		request.IDRef = interfaceToString(v)
 	}
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateList {
-	request := []catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateList{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateList {
+	request := []catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateList{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -927,7 +928,7 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListArray(
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -935,8 +936,8 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListArray(
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateList {
-	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateList{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateList {
+	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateList{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -953,25 +954,25 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateList(ctx c
 		request.Priority = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".advanced_policy_scope")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".advanced_policy_scope")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".advanced_policy_scope")))) {
-		request.AdvancedPolicyScope = expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListAdvancedPolicyScope(ctx, key+".advanced_policy_scope.0", d)
+		request.AdvancedPolicyScope = expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListAdvancedPolicyScope(ctx, key+".advanced_policy_scope.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".exclusive_contract")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".exclusive_contract")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".exclusive_contract")))) {
-		request.ExclusiveContract = expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListExclusiveContract(ctx, key+".exclusive_contract.0", d)
+		request.ExclusiveContract = expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListExclusiveContract(ctx, key+".exclusive_contract.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".contract")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".contract")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".contract")))) {
-		request.Contract = expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListContract(ctx, key+".contract.0", d)
+		request.Contract = expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListContract(ctx, key+".contract.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".producer")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".producer")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".producer")))) {
-		request.Producer = expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListProducer(ctx, key+".producer.0", d)
+		request.Producer = expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListProducer(ctx, key+".producer.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".consumer")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".consumer")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".consumer")))) {
-		request.Consumer = expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListConsumer(ctx, key+".consumer.0", d)
+		request.Consumer = expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListConsumer(ctx, key+".consumer.0", d)
 	}
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListAdvancedPolicyScope(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListAdvancedPolicyScope {
-	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListAdvancedPolicyScope{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListAdvancedPolicyScope(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListAdvancedPolicyScope {
+	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListAdvancedPolicyScope{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -979,13 +980,13 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListAdvanc
 		request.Name = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".advanced_policy_scope_element")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".advanced_policy_scope_element")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".advanced_policy_scope_element")))) {
-		request.AdvancedPolicyScopeElement = expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListAdvancedPolicyScopeAdvancedPolicyScopeElementArray(ctx, key+".advanced_policy_scope_element", d)
+		request.AdvancedPolicyScopeElement = expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListAdvancedPolicyScopeAdvancedPolicyScopeElementArray(ctx, key+".advanced_policy_scope_element", d)
 	}
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListAdvancedPolicyScopeAdvancedPolicyScopeElementArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListAdvancedPolicyScopeAdvancedPolicyScopeElement {
-	request := []catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListAdvancedPolicyScopeAdvancedPolicyScopeElement{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListAdvancedPolicyScopeAdvancedPolicyScopeElementArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListAdvancedPolicyScopeAdvancedPolicyScopeElement {
+	request := []catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListAdvancedPolicyScopeAdvancedPolicyScopeElement{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -996,7 +997,7 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListAdvanc
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListAdvancedPolicyScopeAdvancedPolicyScopeElement(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListAdvancedPolicyScopeAdvancedPolicyScopeElement(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1004,8 +1005,8 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListAdvanc
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListAdvancedPolicyScopeAdvancedPolicyScopeElement(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListAdvancedPolicyScopeAdvancedPolicyScopeElement {
-	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListAdvancedPolicyScopeAdvancedPolicyScopeElement{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListAdvancedPolicyScopeAdvancedPolicyScopeElement(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListAdvancedPolicyScopeAdvancedPolicyScopeElement {
+	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListAdvancedPolicyScopeAdvancedPolicyScopeElement{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -1018,19 +1019,19 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListAdvanc
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListExclusiveContract(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListExclusiveContract {
-	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListExclusiveContract{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListExclusiveContract(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListExclusiveContract {
+	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListExclusiveContract{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".clause")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".clause")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".clause")))) {
-		request.Clause = expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListExclusiveContractClauseArray(ctx, key+".clause", d)
+		request.Clause = expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListExclusiveContractClauseArray(ctx, key+".clause", d)
 	}
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListExclusiveContractClauseArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListExclusiveContractClause {
-	request := []catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListExclusiveContractClause{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListExclusiveContractClauseArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListExclusiveContractClause {
+	request := []catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListExclusiveContractClause{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1041,7 +1042,7 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListExclus
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListExclusiveContractClause(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListExclusiveContractClause(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1049,8 +1050,8 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListExclus
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListExclusiveContractClause(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListExclusiveContractClause {
-	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListExclusiveContractClause{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListExclusiveContractClause(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListExclusiveContractClause {
+	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListExclusiveContractClause{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -1069,27 +1070,27 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListExclus
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListContract(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListContract {
-	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListContract{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListContract(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListContract {
+	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListContract{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id_ref")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id_ref")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id_ref")))) {
 		request.IDRef = interfaceToString(v)
 	}
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListProducer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListProducer {
-	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListProducer{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListProducer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListProducer {
+	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListProducer{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".scalable_group")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".scalable_group")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".scalable_group")))) {
-		request.ScalableGroup = expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListProducerScalableGroupArray(ctx, key+".scalable_group", d)
+		request.ScalableGroup = expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListProducerScalableGroupArray(ctx, key+".scalable_group", d)
 	}
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListProducerScalableGroupArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListProducerScalableGroup {
-	request := []catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListProducerScalableGroup{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListProducerScalableGroupArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListProducerScalableGroup {
+	request := []catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListProducerScalableGroup{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1100,7 +1101,7 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListProduc
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListProducerScalableGroup(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListProducerScalableGroup(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1108,27 +1109,27 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListProduc
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListProducerScalableGroup(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListProducerScalableGroup {
-	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListProducerScalableGroup{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListProducerScalableGroup(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListProducerScalableGroup {
+	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListProducerScalableGroup{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id_ref")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id_ref")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id_ref")))) {
 		request.IDRef = interfaceToString(v)
 	}
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListConsumer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListConsumer {
-	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListConsumer{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListConsumer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListConsumer {
+	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListConsumer{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".scalable_group")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".scalable_group")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".scalable_group")))) {
-		request.ScalableGroup = expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListConsumerScalableGroupArray(ctx, key+".scalable_group", d)
+		request.ScalableGroup = expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListConsumerScalableGroupArray(ctx, key+".scalable_group", d)
 	}
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListConsumerScalableGroupArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListConsumerScalableGroup {
-	request := []catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListConsumerScalableGroup{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListConsumerScalableGroupArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListConsumerScalableGroup {
+	request := []catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListConsumerScalableGroup{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1139,7 +1140,7 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListConsum
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListConsumerScalableGroup(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListConsumerScalableGroup(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1147,15 +1148,15 @@ func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListConsum
 	return &request
 }
 
-func expandRequestAppPolicyIntentCreateApplicationPolicyIntentV1UpdateListConsumerScalableGroup(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListConsumerScalableGroup {
-	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentV1UpdateListConsumerScalableGroup{}
+func expandRequestAppPolicyIntentCreateApplicationPolicyIntentUpdateListConsumerScalableGroup(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListConsumerScalableGroup {
+	request := catalystcentersdkgo.RequestApplicationPolicyApplicationPolicyIntentUpdateListConsumerScalableGroup{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id_ref")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id_ref")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id_ref")))) {
 		request.IDRef = interfaceToString(v)
 	}
 	return &request
 }
 
-func flattenApplicationPolicyApplicationPolicyIntentV1Item(item *catalystcentersdkgo.ResponseApplicationPolicyApplicationPolicyIntentV1Response) []map[string]interface{} {
+func flattenApplicationPolicyApplicationPolicyIntentItem(item *catalystcentersdkgo.ResponseApplicationPolicyApplicationPolicyIntentResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

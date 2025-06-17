@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -47,28 +47,40 @@ func dataSourceWirelessSettingsPowerProfilesCountRead(ctx context.Context, d *sc
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetPowerProfilesCountV1")
+		log.Printf("[DEBUG] Selected method: GetPowerProfilesCount")
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Wireless.GetPowerProfilesCountV1()
+		response1, restyResp1, err := client.Wireless.GetPowerProfilesCount()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetPowerProfilesCountV1", err,
-				"Failure at GetPowerProfilesCountV1, unexpected response", ""))
+				"Failure when executing 2 GetPowerProfilesCount", err,
+				"Failure at GetPowerProfilesCount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessGetPowerProfilesCountV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetPowerProfilesCount", err,
+				"Failure at GetPowerProfilesCount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenWirelessGetPowerProfilesCountItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetPowerProfilesCountV1 response",
+				"Failure when setting GetPowerProfilesCount response",
 				err))
 			return diags
 		}
@@ -80,7 +92,7 @@ func dataSourceWirelessSettingsPowerProfilesCountRead(ctx context.Context, d *sc
 	return diags
 }
 
-func flattenWirelessGetPowerProfilesCountV1Item(item *catalystcentersdkgo.ResponseWirelessGetPowerProfilesCountV1Response) []map[string]interface{} {
+func flattenWirelessGetPowerProfilesCountItem(item *catalystcentersdkgo.ResponseWirelessGetPowerProfilesCountResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

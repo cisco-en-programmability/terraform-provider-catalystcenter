@@ -4,7 +4,7 @@ page_title: "catalystcenter_wireless_settings_rf_profiles Resource - terraform-p
 subcategory: ""
 description: |-
   It manages create, read, update and delete operations on Wireless.
-  This resource allows the user to create a custom RF ProfileThis resource allows the user to delete a custom RF ProfileThis resource allows the user to update a custom RF Profile
+  This resource allows the user to create a custom RF ProfileThis resource allows the user to delete a custom RF ProfileThis resource allows the user to update a custom RF Profile.
 ---
 
 # catalystcenter_wireless_settings_rf_profiles (Resource)
@@ -15,13 +15,107 @@ It manages create, read, update and delete operations on Wireless.
 
 - This resource allows the user to delete a custom RF Profile
 
-- This resource allows the user to update a custom RF Profile
+- This resource allows the user to update a custom RF Profile.
 
 ## Example Usage
 
 ```terraform
 resource "catalystcenter_wireless_settings_rf_profiles" "example" {
   provider = catalystcenter
+ 
+        dot11be_parameters {
+
+
+
+
+
+
+        }
+
+
+      }
+
+
+
+
+
+
+      spatial_reuse_properties {
+
+
+
+
+
+
+      }
+    }
+    radio_type_a_properties {
+
+
+      coverage_hole_detection_properties {
+
+
+
+
+
+      }
+
+
+      fra_properties_a {
+
+
+
+
+      }
+
+
+
+
+
+
+
+
+
+      spatial_reuse_properties {
+
+
+
+
+
+
+      }
+
+    }
+    radio_type_b_properties {
+
+      coverage_hole_detection_properties {
+
+
+
+
+
+      }
+
+
+
+
+
+
+
+
+
+
+      spatial_reuse_properties {
+
+
+
+
+
+
+      }
+    }
+
+  }
   parameters {
 
     default_rf_profile      = "false"
@@ -43,7 +137,7 @@ resource "catalystcenter_wireless_settings_rf_profiles" "example" {
       data_rates                    = "string"
       discovery_frames6_g_hz        = "string"
       enable_standard_power_service = "false"
-      fra_properties {
+      fra_properties_c {
 
         client_reset_count           = 1
         client_utilization_threshold = 1
@@ -75,7 +169,7 @@ resource "catalystcenter_wireless_settings_rf_profiles" "example" {
         twt_broadcast_support = "false"
       }
       parent_profile        = "string"
-      power_threshold_v1    = 1
+      power_threshold       = 1
       preamble_puncture     = "false"
       psc_enforcing_enabled = "false"
       radio_channels        = "string"
@@ -101,7 +195,7 @@ resource "catalystcenter_wireless_settings_rf_profiles" "example" {
       }
       custom_rx_sop_threshold = 1
       data_rates              = "string"
-      fra_properties {
+      fra_properties_a {
 
         client_aware  = "false"
         client_reset  = 1
@@ -112,7 +206,7 @@ resource "catalystcenter_wireless_settings_rf_profiles" "example" {
       max_radio_clients    = 1
       min_power_level      = 1
       parent_profile       = "string"
-      power_threshold_v1   = 1
+      power_threshold      = 1
       preamble_puncture    = "false"
       radio_channels       = "string"
       rx_sop_threshold     = "string"
@@ -142,7 +236,7 @@ resource "catalystcenter_wireless_settings_rf_profiles" "example" {
       max_radio_clients       = 1
       min_power_level         = 1
       parent_profile          = "string"
-      power_threshold_v1      = 1
+      power_threshold         = 1
       radio_channels          = "string"
       rx_sop_threshold        = "string"
       spatial_reuse_properties {
@@ -205,7 +299,7 @@ Optional:
 - `data_rates` (String) Data rates of 6 GHz radio band passed in comma separated format without any spaces. Permissible values: 6, 9, 12, 18, 24, 36, 48, 54
 - `discovery_frames6_g_hz` (String) Discovery Frames of 6 GHz radio band
 - `enable_standard_power_service` (String) True if Standard Power Service is enabled, else False
-- `fra_properties` (Block List) (see [below for nested schema](#nestedblock--parameters--radio_type6_g_hz_properties--fra_properties))
+- `fra_properties_c` (Block List) (see [below for nested schema](#nestedblock--parameters--radio_type6_g_hz_properties--fra_properties_c))
 - `mandatory_data_rates` (String) Mandatory data rates of 6 GHz radio band passed in comma separated format without any spaces and must be a subset of selected dataRates with maximum of 2 values. Permissible values: 6, 9, 12, 18, 24, 36, 48, 54
 - `max_dbs_width` (Number) Maximum DBS Width (Permissible Values:20,40,80,160,320)
 - `max_power_level` (Number) Maximum power level of 6 GHz radio band
@@ -232,8 +326,8 @@ Optional:
 - `chd_voice_rssi_threshold` (Number) Coverage Hole Detection Voice Rssi Threshold
 
 
-<a id="nestedblock--parameters--radio_type6_g_hz_properties--fra_properties"></a>
-### Nested Schema for `parameters.radio_type6_g_hz_properties.fra_properties`
+<a id="nestedblock--parameters--radio_type6_g_hz_properties--fra_properties_c"></a>
+### Nested Schema for `parameters.radio_type6_g_hz_properties.fra_properties_c`
 
 Optional:
 
@@ -297,7 +391,7 @@ Optional:
 - `coverage_hole_detection_properties` (Block List) (see [below for nested schema](#nestedblock--parameters--radio_type_a_properties--coverage_hole_detection_properties))
 - `custom_rx_sop_threshold` (Number) RX-SOP threshold custom configuration of 5 GHz radio band
 - `data_rates` (String) Data rates of 5 GHz radio band passed in comma separated format without any spaces. Permissible values: 6, 9, 12, 18, 24, 36, 48, 54
-- `fra_properties` (Block List) (see [below for nested schema](#nestedblock--parameters--radio_type_a_properties--fra_properties))
+- `fra_properties_a` (Block List) (see [below for nested schema](#nestedblock--parameters--radio_type_a_properties--fra_properties_a))
 - `mandatory_data_rates` (String) Mandatory data rates of 5 GHz radio band passed in comma separated format without any spaces and must be a subset of selected dataRates with maximum of 2 values. Permissible values: 6, 9, 12, 18, 24, 36, 48, 54
 - `max_power_level` (Number) Maximum power level of 5 GHz radio band
 - `max_radio_clients` (Number) Client Limit of 5 GHz radio band
@@ -321,8 +415,8 @@ Optional:
 - `chd_voice_rssi_threshold` (Number) Coverage Hole Detection Voice Rssi Threshold
 
 
-<a id="nestedblock--parameters--radio_type_a_properties--fra_properties"></a>
-### Nested Schema for `parameters.radio_type_a_properties.fra_properties`
+<a id="nestedblock--parameters--radio_type_a_properties--fra_properties_a"></a>
+### Nested Schema for `parameters.radio_type_a_properties.fra_properties_a`
 
 Optional:
 
@@ -414,7 +508,7 @@ Read-Only:
 - `data_rates` (String)
 - `discovery_frames6_g_hz` (String)
 - `enable_standard_power_service` (String)
-- `fra_properties` (List of Object) (see [below for nested schema](#nestedobjatt--item--radio_type6_g_hz_properties--fra_properties))
+- `fra_properties_c` (List of Object) (see [below for nested schema](#nestedobjatt--item--radio_type6_g_hz_properties--fra_properties_c))
 - `mandatory_data_rates` (String)
 - `max_dbs_width` (Number)
 - `max_power_level` (Number)
@@ -441,8 +535,8 @@ Read-Only:
 - `chd_voice_rssi_threshold` (Number)
 
 
-<a id="nestedobjatt--item--radio_type6_g_hz_properties--fra_properties"></a>
-### Nested Schema for `item.radio_type6_g_hz_properties.fra_properties`
+<a id="nestedobjatt--item--radio_type6_g_hz_properties--fra_properties_c"></a>
+### Nested Schema for `item.radio_type6_g_hz_properties.fra_properties_c`
 
 Read-Only:
 
@@ -506,7 +600,7 @@ Read-Only:
 - `coverage_hole_detection_properties` (List of Object) (see [below for nested schema](#nestedobjatt--item--radio_type_a_properties--coverage_hole_detection_properties))
 - `custom_rx_sop_threshold` (Number)
 - `data_rates` (String)
-- `fra_properties` (List of Object) (see [below for nested schema](#nestedobjatt--item--radio_type_a_properties--fra_properties))
+- `fra_properties_a` (List of Object) (see [below for nested schema](#nestedobjatt--item--radio_type_a_properties--fra_properties_a))
 - `mandatory_data_rates` (String)
 - `max_power_level` (Number)
 - `max_radio_clients` (Number)
@@ -530,8 +624,8 @@ Read-Only:
 - `chd_voice_rssi_threshold` (Number)
 
 
-<a id="nestedobjatt--item--radio_type_a_properties--fra_properties"></a>
-### Nested Schema for `item.radio_type_a_properties.fra_properties`
+<a id="nestedobjatt--item--radio_type_a_properties--fra_properties_a"></a>
+### Nested Schema for `item.radio_type_a_properties.fra_properties_a`
 
 Read-Only:
 

@@ -46,8 +46,10 @@ output "catalystcenter_wireless_settings_interfaces_example" {
 ### Optional
 
 - `id` (String) id path parameter. Interface ID
-- `limit` (Number) limit query parameter.
-- `offset` (Number) offset query parameter.
+- `interface_name` (String) interfaceName query parameter. Interface Name
+- `limit` (Number) limit query parameter. The number of records to show for this page. Default is 500 if not specified. Maximum allowed limit is 500.
+- `offset` (Number) offset query parameter. The first record to show for this page. The first record is numbered 1.
+- `vlan_id` (Number) vlanId query parameter. Vlan Id
 
 ### Read-Only
 

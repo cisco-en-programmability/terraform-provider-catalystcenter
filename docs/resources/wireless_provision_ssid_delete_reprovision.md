@@ -12,6 +12,8 @@ description: |-
 It performs delete operation on Wireless.
 
 - Removes SSID or WLAN from the network profile, reprovision the device(s) and deletes the SSID or WLAN from Catalyst Center
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -23,9 +25,9 @@ resource "catalystcenter_wireless_provision_ssid_delete_reprovision" "example" {
   provider            = catalystcenter
   managed_aplocations = "string"
   ssid_name           = "string"
-  parameters {
+  parameters = [{
 
-  }
+  }]
 }
 
 output "catalystcenter_wireless_provision_ssid_delete_reprovision_example" {

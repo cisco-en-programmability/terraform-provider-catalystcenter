@@ -1,12 +1,12 @@
 
 resource "catalystcenter_network_device_user_defined_field_update" "example" {
-  provider  = meraki
+  provider  = catalystcenter
   device_id = "string"
-  parameters {
+  parameters = [{
 
     name  = "string"
     value = "string"
-  }
+  }]
 }
 
 output "catalystcenter_network_device_user_defined_field_update_example" {

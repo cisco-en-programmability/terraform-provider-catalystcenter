@@ -12,6 +12,8 @@ description: |-
 It performs update operation on Event Management.
 
 - Update SNMP Destination
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -21,7 +23,7 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_event_snmp_config_update" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
     auth_password     = "string"
     community         = "string"
@@ -36,7 +38,7 @@ resource "catalystcenter_event_snmp_config_update" "example" {
     snmp_privacy_type = "string"
     snmp_version      = "string"
     user_name         = "string"
-  }
+  }]
 }
 
 output "catalystcenter_event_snmp_config_update_example" {

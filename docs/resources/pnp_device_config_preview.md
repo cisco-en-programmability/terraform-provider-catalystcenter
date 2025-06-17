@@ -12,6 +12,8 @@ description: |-
 It performs create operation on Device Onboarding (PnP).
 
 - Triggers a preview for site-based Day 0 Configuration
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -21,12 +23,12 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_pnp_device_config_preview" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
     device_id = "string"
     site_id   = "string"
     type      = "string"
-  }
+  }]
 }
 
 output "catalystcenter_pnp_device_config_preview_example" {

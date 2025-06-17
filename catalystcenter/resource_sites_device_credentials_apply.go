@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -11,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -93,18 +94,18 @@ func resourceSitesDeviceCredentialsApplyCreate(ctx context.Context, d *schema.Re
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestSitesDeviceCredentialsApplySyncNetworkDevicesCredentialV1(ctx, "parameters.0", d)
+	request1 := expandRequestSitesDeviceCredentialsApplySyncNetworkDevicesCredential(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.NetworkSettings.SyncNetworkDevicesCredentialV1(request1)
+	response1, restyResp1, err := client.NetworkSettings.SyncNetworkDevicesCredential(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing SyncNetworkDevicesCredentialV1", err))
+			"Failure when executing SyncNetworkDevicesCredential", err))
 		return diags
 	}
 
@@ -112,7 +113,7 @@ func resourceSitesDeviceCredentialsApplyCreate(ctx context.Context, d *schema.Re
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing SyncNetworkDevicesCredentialV1", err))
+			"Failure when executing SyncNetworkDevicesCredential", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -139,14 +140,14 @@ func resourceSitesDeviceCredentialsApplyCreate(ctx context.Context, d *schema.Re
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing SyncNetworkDevicesCredentialV1", err1))
+				"Failure when executing SyncNetworkDevicesCredential", err1))
 			return diags
 		}
 	}
@@ -154,10 +155,10 @@ func resourceSitesDeviceCredentialsApplyCreate(ctx context.Context, d *schema.Re
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenNetworkSettingsSyncNetworkDevicesCredentialV1Item(response1.Response)
+	vItem1 := flattenNetworkSettingsSyncNetworkDevicesCredentialItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting SyncNetworkDevicesCredentialV1 response",
+			"Failure when setting SyncNetworkDevicesCredential response",
 			err))
 		return diags
 	}
@@ -178,8 +179,8 @@ func resourceSitesDeviceCredentialsApplyDelete(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func expandRequestSitesDeviceCredentialsApplySyncNetworkDevicesCredentialV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSyncNetworkDevicesCredentialV1 {
-	request := catalystcentersdkgo.RequestNetworkSettingsSyncNetworkDevicesCredentialV1{}
+func expandRequestSitesDeviceCredentialsApplySyncNetworkDevicesCredential(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSyncNetworkDevicesCredential {
+	request := catalystcentersdkgo.RequestNetworkSettingsSyncNetworkDevicesCredential{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_credential_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_credential_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_credential_id")))) {
 		request.DeviceCredentialID = interfaceToString(v)
 	}
@@ -189,7 +190,7 @@ func expandRequestSitesDeviceCredentialsApplySyncNetworkDevicesCredentialV1(ctx 
 	return &request
 }
 
-func flattenNetworkSettingsSyncNetworkDevicesCredentialV1Item(item *catalystcentersdkgo.ResponseNetworkSettingsSyncNetworkDevicesCredentialV1Response) []map[string]interface{} {
+func flattenNetworkSettingsSyncNetworkDevicesCredentialItem(item *catalystcentersdkgo.ResponseNetworkSettingsSyncNetworkDevicesCredentialResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

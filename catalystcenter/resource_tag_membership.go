@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -167,7 +167,7 @@ func resourceTagMembershipRead(ctx context.Context, d *schema.ResourceData, m in
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method 1: GetTagMembersByID")
-		queryParams1 := catalystcentersdkgo.GetTagMembersByIDV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetTagMembersByIDQueryParams{}
 		queryParams1.MemberType = vMemberType
 		response1, restyResp1, _ := client.Tag.GetTagMembersByID(vID, &queryParams1)
 
@@ -187,7 +187,7 @@ func resourceTagMembershipRead(ctx context.Context, d *schema.ResourceData, m in
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenTagGetTagMembersByIDV1Items(response1.Response)
+		vItems1 := flattenTagGetTagMembersByIDItems(response1.Response)
 		if err := d.Set("item", vItems1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetTagMembersByID response",
@@ -313,8 +313,8 @@ func resourceTagMembershipDelete(ctx context.Context, d *schema.ResourceData, m 
 	return diags
 }
 
-func expandRequestTagMemberCreateAddMembersToTheTag(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagAddMembersToTheTagV1 {
-	request := catalystcentersdkgo.RequestTagAddMembersToTheTagV1{}
+func expandRequestTagMemberCreateAddMembersToTheTag(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagAddMembersToTheTag {
+	request := catalystcentersdkgo.RequestTagAddMembersToTheTag{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".member_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".member_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".member_type")))) {
 		if v2, ok := d.GetOkExists(fixKeyAccess(key + ".member_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".member_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".member_id")))) {
 			x := make(map[string][]string)
@@ -329,8 +329,8 @@ func expandRequestTagMemberCreateAddMembersToTheTag(ctx context.Context, key str
 	return &request
 }
 
-func expandRequestTagMembershipUpdateTagMembership(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagUpdateTagMembershipV1 {
-	request := catalystcentersdkgo.RequestTagUpdateTagMembershipV1{}
+func expandRequestTagMembershipUpdateTagMembership(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagUpdateTagMembership {
+	request := catalystcentersdkgo.RequestTagUpdateTagMembership{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tag_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tag_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tag_id")))) {
 		if v2, ok := d.GetOkExists(fixKeyAccess(key + ".member_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".member_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".member_id")))) {
 			x := make(map[string][]string)
@@ -348,11 +348,11 @@ func expandRequestTagMembershipUpdateTagMembership(ctx context.Context, key stri
 	return &request
 }
 
-func searchResourceTagMembership(m interface{}, queryParams catalystcentersdkgo.GetApplicationSetsV1QueryParams) (*catalystcentersdkgo.ResponseApplicationPolicyGetApplicationSetsV1Response, error) {
+func searchResourceTagMembership(m interface{}, queryParams catalystcentersdkgo.GetApplicationSetsQueryParams) (*catalystcentersdkgo.ResponseApplicationPolicyGetApplicationSetsResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationSetsV1Response
-	var ite *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationSetsV1
+	var foundItem *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationSetsResponse
+	var ite *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationSets
 	ite, _, err = client.ApplicationPolicy.GetApplicationSets(&queryParams)
 
 	if ite == nil {
@@ -368,7 +368,7 @@ func searchResourceTagMembership(m interface{}, queryParams catalystcentersdkgo.
 	for _, item := range itemsCopy {
 		// Call get by _ method and set value to foundItem and return
 		if item.Name == queryParams.Name {
-			var getItem *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationSetsV1Response
+			var getItem *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationSetsResponse
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

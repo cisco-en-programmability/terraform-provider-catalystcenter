@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -11,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -23,7 +24,9 @@ func resourceNetworkDevicesDeleteWithoutCleanup() *schema.Resource {
 		Description: `It performs create operation on Devices.
 
 - This data source action endpoint facilitates the deletion of a network device without performing configuration cleanup
-on the device.
+on the device. To delete a device via API, you must have permission to provision the network device. Although the API
+operation does not change the device configuration, removing a device without cleaning up its configuration could lead
+to a network behaviour that is not consistent with the configurations that are known to the system.
 `,
 
 		CreateContext: resourceNetworkDevicesDeleteWithoutCleanupCreate,
@@ -41,13 +44,13 @@ on the device.
 					Schema: map[string]*schema.Schema{
 
 						"task_id": &schema.Schema{
-							Description: `Unique identifier for the task
+							Description: `Unique identifier for the task.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
 						},
 						"url": &schema.Schema{
-							Description: `URL for the task
+							Description: `URL for the task.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -82,29 +85,30 @@ func resourceNetworkDevicesDeleteWithoutCleanupCreate(ctx context.Context, d *sc
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestNetworkDevicesDeleteWithoutCleanupDeleteANetworkDeviceWithoutConfigurationCleanupV1(ctx, "parameters.0", d)
+	request1 := expandRequestNetworkDevicesDeleteWithoutCleanupDeleteANetworkDeviceWithoutConfigurationCleanup(ctx, "parameters.0", d)
 
-	// has_unknown_response: None
-
-	response1, restyResp1, err := client.Devices.DeleteANetworkDeviceWithoutConfigurationCleanupV1(request1)
+	response1, restyResp1, err := client.Devices.DeleteANetworkDeviceWithoutConfigurationCleanup(request1)
 
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
 
-	vItem1 := flattenDevicesDeleteANetworkDeviceWithoutConfigurationCleanupV1Item(response1.Response)
-	if err := d.Set("item", vItem1); err != nil {
-		diags = append(diags, diagError(
-			"Failure when setting DeleteANetworkDeviceWithoutConfigurationCleanupV1 response",
-			err))
+	if err != nil || response1 == nil {
+		if restyResp1 != nil {
+			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+		}
+		d.SetId("")
 		return diags
 	}
 
+	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing DeleteANetworkDeviceWithoutConfigurationCleanupV1", err))
+			"Failure when executing DeleteANetworkDeviceWithoutConfigurationCleanup", err))
 		return diags
 	}
+
 	taskId := response1.Response.TaskID
 	log.Printf("[DEBUG] TASKID => %s", taskId)
 	if taskId != "" {
@@ -129,52 +133,51 @@ func resourceNetworkDevicesDeleteWithoutCleanupCreate(ctx context.Context, d *sc
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing DeleteANetworkDeviceWithoutConfigurationCleanupV1", err1))
+				"Failure when executing DeleteANetworkDeviceWithoutConfigurationCleanup", err1))
 			return diags
 		}
 	}
 
-	if err != nil || response1 == nil {
-		if restyResp1 != nil {
-			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
-		}
-		d.SetId("")
+	vItem1 := flattenDevicesDeleteANetworkDeviceWithoutConfigurationCleanupItem(response1.Response)
+	if err := d.Set("item", vItem1); err != nil {
+		diags = append(diags, diagError(
+			"Failure when setting DeleteANetworkDeviceWithoutConfigurationCleanup response",
+			err))
 		return diags
 	}
 
-	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 	d.SetId(getUnixTimeString())
 	return diags
 }
 func resourceNetworkDevicesDeleteWithoutCleanupRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 	return diags
 }
 
 func resourceNetworkDevicesDeleteWithoutCleanupDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 	return diags
 }
 
-func expandRequestNetworkDevicesDeleteWithoutCleanupDeleteANetworkDeviceWithoutConfigurationCleanupV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesDeleteANetworkDeviceWithoutConfigurationCleanupV1 {
-	request := catalystcentersdkgo.RequestDevicesDeleteANetworkDeviceWithoutConfigurationCleanupV1{}
+func expandRequestNetworkDevicesDeleteWithoutCleanupDeleteANetworkDeviceWithoutConfigurationCleanup(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesDeleteANetworkDeviceWithoutConfigurationCleanup {
+	request := catalystcentersdkgo.RequestDevicesDeleteANetworkDeviceWithoutConfigurationCleanup{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
 	return &request
 }
 
-func flattenDevicesDeleteANetworkDeviceWithoutConfigurationCleanupV1Item(item *catalystcentersdkgo.ResponseDevicesDeleteANetworkDeviceWithoutConfigurationCleanupV1Response) []map[string]interface{} {
+func flattenDevicesDeleteANetworkDeviceWithoutConfigurationCleanupItem(item *catalystcentersdkgo.ResponseDevicesDeleteANetworkDeviceWithoutConfigurationCleanupResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

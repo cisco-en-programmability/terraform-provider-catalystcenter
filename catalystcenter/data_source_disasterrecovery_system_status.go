@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -418,26 +418,40 @@ func dataSourceDisasterrecoverySystemStatusRead(ctx context.Context, d *schema.R
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: DisasterRecoveryStatusV1")
+		log.Printf("[DEBUG] Selected method: DisasterRecoveryStatus")
 
-		response1, restyResp1, err := client.DisasterRecovery.DisasterRecoveryStatusV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.DisasterRecovery.DisasterRecoveryStatus()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 DisasterRecoveryStatusV1", err,
-				"Failure at DisasterRecoveryStatusV1, unexpected response", ""))
+				"Failure when executing 2 DisasterRecoveryStatus", err,
+				"Failure at DisasterRecoveryStatus, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDisasterRecoveryDisasterRecoveryStatusV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 DisasterRecoveryStatus", err,
+				"Failure at DisasterRecoveryStatus, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenDisasterRecoveryDisasterRecoveryStatusItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting DisasterRecoveryStatusV1 response",
+				"Failure when setting DisasterRecoveryStatus response",
 				err))
 			return diags
 		}
@@ -449,24 +463,24 @@ func dataSourceDisasterrecoverySystemStatusRead(ctx context.Context, d *schema.R
 	return diags
 }
 
-func flattenDisasterRecoveryDisasterRecoveryStatusV1Item(item *catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusV1) []map[string]interface{} {
+func flattenDisasterRecoveryDisasterRecoveryStatusItem(item *catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatus) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["ipconfig"] = flattenDisasterRecoveryDisasterRecoveryStatusV1ItemIPconfig(item.IPconfig)
+	respItem["ipconfig"] = flattenDisasterRecoveryDisasterRecoveryStatusItemIPconfig(item.IPconfig)
 	respItem["site"] = item.Site
-	respItem["main"] = flattenDisasterRecoveryDisasterRecoveryStatusV1ItemMain(item.Main)
-	respItem["recovery"] = flattenDisasterRecoveryDisasterRecoveryStatusV1ItemRecovery(item.Recovery)
-	respItem["witness"] = flattenDisasterRecoveryDisasterRecoveryStatusV1ItemWitness(item.Witness)
+	respItem["main"] = flattenDisasterRecoveryDisasterRecoveryStatusItemMain(item.Main)
+	respItem["recovery"] = flattenDisasterRecoveryDisasterRecoveryStatusItemRecovery(item.Recovery)
+	respItem["witness"] = flattenDisasterRecoveryDisasterRecoveryStatusItemWitness(item.Witness)
 	respItem["state"] = item.State
-	respItem["ipsec_tunnel"] = flattenDisasterRecoveryDisasterRecoveryStatusV1ItemIPsecTunnel(item.IPsecTunnel)
+	respItem["ipsec_tunnel"] = flattenDisasterRecoveryDisasterRecoveryStatusItemIPsecTunnel(item.IPsecTunnel)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemIPconfig(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusV1IPconfig) []map[string]interface{} {
+func flattenDisasterRecoveryDisasterRecoveryStatusItemIPconfig(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusIPconfig) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -481,14 +495,14 @@ func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemIPconfig(items *[]cataly
 	return respItems
 }
 
-func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemMain(item *catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusV1Main) []map[string]interface{} {
+func flattenDisasterRecoveryDisasterRecoveryStatusItemMain(item *catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusMain) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["ipconfig"] = flattenDisasterRecoveryDisasterRecoveryStatusV1ItemMainIPconfig(item.IPconfig)
+	respItem["ipconfig"] = flattenDisasterRecoveryDisasterRecoveryStatusItemMainIPconfig(item.IPconfig)
 	respItem["state"] = item.State
-	respItem["nodes"] = flattenDisasterRecoveryDisasterRecoveryStatusV1ItemMainNodes(item.Nodes)
+	respItem["nodes"] = flattenDisasterRecoveryDisasterRecoveryStatusItemMainNodes(item.Nodes)
 
 	return []map[string]interface{}{
 		respItem,
@@ -496,7 +510,7 @@ func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemMain(item *catalystcente
 
 }
 
-func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemMainIPconfig(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusV1MainIPconfig) []map[string]interface{} {
+func flattenDisasterRecoveryDisasterRecoveryStatusItemMainIPconfig(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusMainIPconfig) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -511,7 +525,7 @@ func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemMainIPconfig(items *[]ca
 	return respItems
 }
 
-func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemMainNodes(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusV1MainNodes) []map[string]interface{} {
+func flattenDisasterRecoveryDisasterRecoveryStatusItemMainNodes(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusMainNodes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -520,13 +534,13 @@ func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemMainNodes(items *[]catal
 		respItem := make(map[string]interface{})
 		respItem["hostname"] = item.Hostname
 		respItem["state"] = item.State
-		respItem["ipaddresses"] = flattenDisasterRecoveryDisasterRecoveryStatusV1ItemMainNodesIPaddresses(item.IPaddresses)
+		respItem["ipaddresses"] = flattenDisasterRecoveryDisasterRecoveryStatusItemMainNodesIPaddresses(item.IPaddresses)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemMainNodesIPaddresses(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusV1MainNodesIPaddresses) []map[string]interface{} {
+func flattenDisasterRecoveryDisasterRecoveryStatusItemMainNodesIPaddresses(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusMainNodesIPaddresses) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -541,14 +555,14 @@ func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemMainNodesIPaddresses(ite
 	return respItems
 }
 
-func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemRecovery(item *catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusV1Recovery) []map[string]interface{} {
+func flattenDisasterRecoveryDisasterRecoveryStatusItemRecovery(item *catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusRecovery) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["ipconfig"] = flattenDisasterRecoveryDisasterRecoveryStatusV1ItemRecoveryIPconfig(item.IPconfig)
+	respItem["ipconfig"] = flattenDisasterRecoveryDisasterRecoveryStatusItemRecoveryIPconfig(item.IPconfig)
 	respItem["state"] = item.State
-	respItem["nodes"] = flattenDisasterRecoveryDisasterRecoveryStatusV1ItemRecoveryNodes(item.Nodes)
+	respItem["nodes"] = flattenDisasterRecoveryDisasterRecoveryStatusItemRecoveryNodes(item.Nodes)
 
 	return []map[string]interface{}{
 		respItem,
@@ -556,7 +570,7 @@ func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemRecovery(item *catalystc
 
 }
 
-func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemRecoveryIPconfig(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusV1RecoveryIPconfig) []map[string]interface{} {
+func flattenDisasterRecoveryDisasterRecoveryStatusItemRecoveryIPconfig(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusRecoveryIPconfig) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -571,7 +585,7 @@ func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemRecoveryIPconfig(items *
 	return respItems
 }
 
-func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemRecoveryNodes(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusV1RecoveryNodes) []map[string]interface{} {
+func flattenDisasterRecoveryDisasterRecoveryStatusItemRecoveryNodes(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusRecoveryNodes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -580,13 +594,13 @@ func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemRecoveryNodes(items *[]c
 		respItem := make(map[string]interface{})
 		respItem["hostname"] = item.Hostname
 		respItem["state"] = item.State
-		respItem["ipconfig"] = flattenDisasterRecoveryDisasterRecoveryStatusV1ItemRecoveryNodesIPconfig(item.IPconfig)
+		respItem["ipconfig"] = flattenDisasterRecoveryDisasterRecoveryStatusItemRecoveryNodesIPconfig(item.IPconfig)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemRecoveryNodesIPconfig(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusV1RecoveryNodesIPconfig) []map[string]interface{} {
+func flattenDisasterRecoveryDisasterRecoveryStatusItemRecoveryNodesIPconfig(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusRecoveryNodesIPconfig) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -601,14 +615,14 @@ func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemRecoveryNodesIPconfig(it
 	return respItems
 }
 
-func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemWitness(item *catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusV1Witness) []map[string]interface{} {
+func flattenDisasterRecoveryDisasterRecoveryStatusItemWitness(item *catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusWitness) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["ipconfig"] = flattenDisasterRecoveryDisasterRecoveryStatusV1ItemWitnessIPconfig(item.IPconfig)
+	respItem["ipconfig"] = flattenDisasterRecoveryDisasterRecoveryStatusItemWitnessIPconfig(item.IPconfig)
 	respItem["state"] = item.State
-	respItem["nodes"] = flattenDisasterRecoveryDisasterRecoveryStatusV1ItemWitnessNodes(item.Nodes)
+	respItem["nodes"] = flattenDisasterRecoveryDisasterRecoveryStatusItemWitnessNodes(item.Nodes)
 
 	return []map[string]interface{}{
 		respItem,
@@ -616,7 +630,7 @@ func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemWitness(item *catalystce
 
 }
 
-func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemWitnessIPconfig(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusV1WitnessIPconfig) []map[string]interface{} {
+func flattenDisasterRecoveryDisasterRecoveryStatusItemWitnessIPconfig(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusWitnessIPconfig) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -631,7 +645,7 @@ func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemWitnessIPconfig(items *[
 	return respItems
 }
 
-func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemWitnessNodes(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusV1WitnessNodes) []map[string]interface{} {
+func flattenDisasterRecoveryDisasterRecoveryStatusItemWitnessNodes(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusWitnessNodes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -640,13 +654,13 @@ func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemWitnessNodes(items *[]ca
 		respItem := make(map[string]interface{})
 		respItem["hostname"] = item.Hostname
 		respItem["state"] = item.State
-		respItem["ipconfig"] = flattenDisasterRecoveryDisasterRecoveryStatusV1ItemWitnessNodesIPconfig(item.IPconfig)
+		respItem["ipconfig"] = flattenDisasterRecoveryDisasterRecoveryStatusItemWitnessNodesIPconfig(item.IPconfig)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemWitnessNodesIPconfig(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusV1WitnessNodesIPconfig) []map[string]interface{} {
+func flattenDisasterRecoveryDisasterRecoveryStatusItemWitnessNodesIPconfig(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusWitnessNodesIPconfig) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -661,7 +675,7 @@ func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemWitnessNodesIPconfig(ite
 	return respItems
 }
 
-func flattenDisasterRecoveryDisasterRecoveryStatusV1ItemIPsecTunnel(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusV1IPsecTunnel) []map[string]interface{} {
+func flattenDisasterRecoveryDisasterRecoveryStatusItemIPsecTunnel(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryStatusIPsecTunnel) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

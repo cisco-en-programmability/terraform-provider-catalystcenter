@@ -18,6 +18,8 @@ It performs create operation on Sites.
 import will fully replace existing Maps data for the site(s) defined in the archive. The Map Archive Import Status API
 /maps/import/${contextUuid}/status should always be checked to validate the pre-import validation output prior to
 performing the import.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -28,9 +30,9 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_maps_import_perform" "example" {
   provider            = catalystcenter
   import_context_uuid = "string"
-  parameters {
+  parameters = [{
 
-  }
+  }]
 }
 
 output "catalystcenter_maps_import_perform_example" {
@@ -48,7 +50,7 @@ output "catalystcenter_maps_import_perform_example" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `item` (List of String)
+- `item` (String)
 - `last_updated` (String)
 
 <a id="nestedblock--parameters"></a>

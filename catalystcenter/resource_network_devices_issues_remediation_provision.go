@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -9,7 +10,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -89,14 +90,14 @@ func resourceNetworkDevicesIssuesRemediationProvisionCreate(ctx context.Context,
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Compliance.ComplianceRemediationV1(vvID)
+	response1, restyResp1, err := client.Compliance.ComplianceRemediation(vvID)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ComplianceRemediationV1", err))
+			"Failure when executing ComplianceRemediation", err))
 		return diags
 	}
 
@@ -104,7 +105,7 @@ func resourceNetworkDevicesIssuesRemediationProvisionCreate(ctx context.Context,
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing ComplianceRemediationV1", err))
+			"Failure when executing ComplianceRemediation", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -131,21 +132,21 @@ func resourceNetworkDevicesIssuesRemediationProvisionCreate(ctx context.Context,
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing ComplianceRemediationV1", err1))
+				"Failure when executing ComplianceRemediation", err1))
 			return diags
 		}
 	}
-	vItem1 := flattenComplianceComplianceRemediationV1Item(response1.Response)
+	vItem1 := flattenComplianceComplianceRemediationItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ComplianceRemediationV1 response",
+			"Failure when setting ComplianceRemediation response",
 			err))
 		return diags
 	}
@@ -167,7 +168,7 @@ func resourceNetworkDevicesIssuesRemediationProvisionDelete(ctx context.Context,
 	return diags
 }
 
-func flattenComplianceComplianceRemediationV1Item(item *catalystcentersdkgo.ResponseComplianceComplianceRemediationV1Response) []map[string]interface{} {
+func flattenComplianceComplianceRemediationItem(item *catalystcentersdkgo.ResponseComplianceComplianceRemediationResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -9,7 +10,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -91,7 +92,7 @@ func resourceSdaFabricDevicesLayer2HandoffsSdaTransitsDeleteCreate(ctx context.C
 
 	vNetworkDeviceID := resourceItem["network_device_id"]
 
-	queryParams1 := catalystcentersdkgo.DeleteFabricDeviceLayer3HandoffsWithSdaTransitV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.DeleteFabricDeviceLayer3HandoffsWithSdaTransitQueryParams{}
 
 	queryParams1.FabricID = vFabricID.(string)
 
@@ -99,14 +100,14 @@ func resourceSdaFabricDevicesLayer2HandoffsSdaTransitsDeleteCreate(ctx context.C
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Sda.DeleteFabricDeviceLayer3HandoffsWithSdaTransitV1(&queryParams1)
+	response1, restyResp1, err := client.Sda.DeleteFabricDeviceLayer3HandoffsWithSdaTransit(&queryParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing DeleteFabricDeviceLayer3HandoffsWithSdaTransitV1", err))
+			"Failure when executing DeleteFabricDeviceLayer3HandoffsWithSdaTransit", err))
 		return diags
 	}
 
@@ -114,7 +115,7 @@ func resourceSdaFabricDevicesLayer2HandoffsSdaTransitsDeleteCreate(ctx context.C
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing DeleteFabricDeviceLayer3HandoffsWithSdaTransitV1", err))
+			"Failure when executing DeleteFabricDeviceLayer3HandoffsWithSdaTransit", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -141,21 +142,21 @@ func resourceSdaFabricDevicesLayer2HandoffsSdaTransitsDeleteCreate(ctx context.C
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing DeleteFabricDeviceLayer3HandoffsWithSdaTransitV1", err1))
+				"Failure when executing DeleteFabricDeviceLayer3HandoffsWithSdaTransit", err1))
 			return diags
 		}
 	}
-	vItem1 := flattenSdaDeleteFabricDeviceLayer3HandoffsWithSdaTransitV1Item(response1.Response)
+	vItem1 := flattenSdaDeleteFabricDeviceLayer3HandoffsWithSdaTransitItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting DeleteFabricDeviceLayer3HandoffsWithSdaTransitV1 response",
+			"Failure when setting DeleteFabricDeviceLayer3HandoffsWithSdaTransit response",
 			err))
 		return diags
 	}
@@ -176,7 +177,7 @@ func resourceSdaFabricDevicesLayer2HandoffsSdaTransitsDeleteDelete(ctx context.C
 	return diags
 }
 
-func flattenSdaDeleteFabricDeviceLayer3HandoffsWithSdaTransitV1Item(item *catalystcentersdkgo.ResponseSdaDeleteFabricDeviceLayer3HandoffsWithSdaTransitV1Response) []map[string]interface{} {
+func flattenSdaDeleteFabricDeviceLayer3HandoffsWithSdaTransitItem(item *catalystcentersdkgo.ResponseSdaDeleteFabricDeviceLayer3HandoffsWithSdaTransitResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

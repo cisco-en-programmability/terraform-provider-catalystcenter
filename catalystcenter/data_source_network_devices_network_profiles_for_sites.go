@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -23,13 +23,13 @@ func dataSourceNetworkDevicesNetworkProfilesForSites() *schema.Resource {
 		ReadContext: dataSourceNetworkDevicesNetworkProfilesForSitesRead,
 		Schema: map[string]*schema.Schema{
 			"id": &schema.Schema{
-				Description: `id path parameter. The *id* of the network profile, retrievable from *GET /intent/api/v1/networkProfilesForSites*
+				Description: `id path parameter. The **id** of the network profile, retrievable from **GET /intent/api/v1/networkProfilesForSites**
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter. The number of records to show for this page.
+				Description: `limit query parameter. The number of records to show for this page;The minimum is 1, and the maximum is 500.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -138,8 +138,8 @@ func dataSourceNetworkDevicesNetworkProfilesForSitesRead(ctx context.Context, d 
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesTheListOfNetworkProfilesForSitesV1")
-		queryParams1 := catalystcentersdkgo.RetrievesTheListOfNetworkProfilesForSitesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: RetrievesTheListOfNetworkProfilesForSites")
+		queryParams1 := catalystcentersdkgo.RetrievesTheListOfNetworkProfilesForSitesQueryParams{}
 
 		if okOffset {
 			queryParams1.Offset = vOffset.(float64)
@@ -157,24 +157,38 @@ func dataSourceNetworkDevicesNetworkProfilesForSitesRead(ctx context.Context, d 
 			queryParams1.Type = vType.(string)
 		}
 
-		response1, restyResp1, err := client.SiteDesign.RetrievesTheListOfNetworkProfilesForSitesV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.SiteDesign.RetrievesTheListOfNetworkProfilesForSites(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesTheListOfNetworkProfilesForSitesV1", err,
-				"Failure at RetrievesTheListOfNetworkProfilesForSitesV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesTheListOfNetworkProfilesForSites", err,
+				"Failure at RetrievesTheListOfNetworkProfilesForSites, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSiteDesignRetrievesTheListOfNetworkProfilesForSitesV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesTheListOfNetworkProfilesForSites", err,
+				"Failure at RetrievesTheListOfNetworkProfilesForSites, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSiteDesignRetrievesTheListOfNetworkProfilesForSitesItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesTheListOfNetworkProfilesForSitesV1 response",
+				"Failure when setting RetrievesTheListOfNetworkProfilesForSites response",
 				err))
 			return diags
 		}
@@ -184,27 +198,41 @@ func dataSourceNetworkDevicesNetworkProfilesForSitesRead(ctx context.Context, d 
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: RetrieveANetworkProfileForSitesByIDV1")
+		log.Printf("[DEBUG] Selected method: RetrieveANetworkProfileForSitesByID")
 		vvID := vID.(string)
 
-		response2, restyResp2, err := client.SiteDesign.RetrieveANetworkProfileForSitesByIDV1(vvID)
+		// has_unknown_response: None
+
+		response2, restyResp2, err := client.SiteDesign.RetrieveANetworkProfileForSitesByID(vvID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveANetworkProfileForSitesByIDV1", err,
-				"Failure at RetrieveANetworkProfileForSitesByIDV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveANetworkProfileForSitesByID", err,
+				"Failure at RetrieveANetworkProfileForSitesByID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenSiteDesignRetrieveANetworkProfileForSitesByIDV1Item(response2.Response)
+		if err != nil || response2 == nil {
+			if restyResp2 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveANetworkProfileForSitesByID", err,
+				"Failure at RetrieveANetworkProfileForSitesByID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
+
+		vItem2 := flattenSiteDesignRetrieveANetworkProfileForSitesByIDItem(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveANetworkProfileForSitesByIDV1 response",
+				"Failure when setting RetrieveANetworkProfileForSitesByID response",
 				err))
 			return diags
 		}
@@ -216,7 +244,7 @@ func dataSourceNetworkDevicesNetworkProfilesForSitesRead(ctx context.Context, d 
 	return diags
 }
 
-func flattenSiteDesignRetrievesTheListOfNetworkProfilesForSitesV1Items(items *[]catalystcentersdkgo.ResponseSiteDesignRetrievesTheListOfNetworkProfilesForSitesV1Response) []map[string]interface{} {
+func flattenSiteDesignRetrievesTheListOfNetworkProfilesForSitesItems(items *[]catalystcentersdkgo.ResponseSiteDesignRetrievesTheListOfNetworkProfilesForSitesResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -231,7 +259,7 @@ func flattenSiteDesignRetrievesTheListOfNetworkProfilesForSitesV1Items(items *[]
 	return respItems
 }
 
-func flattenSiteDesignRetrieveANetworkProfileForSitesByIDV1Item(item *catalystcentersdkgo.ResponseSiteDesignRetrieveANetworkProfileForSitesByIDV1Response) []map[string]interface{} {
+func flattenSiteDesignRetrieveANetworkProfileForSitesByIDItem(item *catalystcentersdkgo.ResponseSiteDesignRetrieveANetworkProfileForSitesByIDResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

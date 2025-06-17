@@ -15,7 +15,8 @@ It performs create operation on Software Image Management (SWIM).
 
 - Initiating the synchronization of the software images from Cisco.com. The latest and suggested images will be
 retrieved, along with the corresponding product name and PIDs for imported and retrieved images from Cisco.com. Once the
-task is completed, the API /intent/api/v1/images?imported=false will display all the images fetched from Cisco.com.
+task is completed, the API **/intent/api/v1/images?imported=false** will display all the images fetched from Cisco.com.
+
 
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.

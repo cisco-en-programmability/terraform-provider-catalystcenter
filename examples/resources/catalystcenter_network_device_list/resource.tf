@@ -1,7 +1,7 @@
 
 resource "catalystcenter_network_device_list" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     cli_transport           = "string"

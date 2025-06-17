@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -390,34 +390,48 @@ func dataSourceDiscoveryDeviceRangeRead(ctx context.Context, d *schema.ResourceD
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDiscoveredDevicesByRangeV1")
+		log.Printf("[DEBUG] Selected method: GetDiscoveredDevicesByRange")
 		vvID := vID.(string)
 		vvStartIndex := vStartIndex.(int)
 		vvRecordsToReturn := vRecordsToReturn.(int)
-		queryParams1 := catalystcentersdkgo.GetDiscoveredDevicesByRangeV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetDiscoveredDevicesByRangeQueryParams{}
 
 		if okTaskID {
 			queryParams1.TaskID = vTaskID.(string)
 		}
 
-		response1, restyResp1, err := client.Discovery.GetDiscoveredDevicesByRangeV1(vvID, vvStartIndex, vvRecordsToReturn, &queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Discovery.GetDiscoveredDevicesByRange(vvID, vvStartIndex, vvRecordsToReturn, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDiscoveredDevicesByRangeV1", err,
-				"Failure at GetDiscoveredDevicesByRangeV1, unexpected response", ""))
+				"Failure when executing 2 GetDiscoveredDevicesByRange", err,
+				"Failure at GetDiscoveredDevicesByRange, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDiscoveryGetDiscoveredDevicesByRangeV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetDiscoveredDevicesByRange", err,
+				"Failure at GetDiscoveredDevicesByRange, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDiscoveryGetDiscoveredDevicesByRangeItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDiscoveredDevicesByRangeV1 response",
+				"Failure when setting GetDiscoveredDevicesByRange response",
 				err))
 			return diags
 		}
@@ -429,7 +443,7 @@ func dataSourceDiscoveryDeviceRangeRead(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func flattenDiscoveryGetDiscoveredDevicesByRangeV1Items(items *[]catalystcentersdkgo.ResponseDiscoveryGetDiscoveredDevicesByRangeV1Response) []map[string]interface{} {
+func flattenDiscoveryGetDiscoveredDevicesByRangeItems(items *[]catalystcentersdkgo.ResponseDiscoveryGetDiscoveredDevicesByRangeResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

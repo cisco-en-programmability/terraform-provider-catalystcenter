@@ -33,7 +33,7 @@ output "catalystcenter_templates_template_id_versions_count_example" {
 
 ### Required
 
-- `template_id` (String) templateId path parameter. The id of the template to get versions of, retrieveable from GET /dna/intent/api/v1/templates
+- `template_id` (String) templateId path parameter. The id of the template to get versions of, retrieveable from **GET /dna/intent/api/v1/templates**
 
 ### Optional
 

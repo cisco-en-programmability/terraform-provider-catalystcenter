@@ -31,7 +31,7 @@ output "catalystcenter_ipam_global_ip_address_pools_global_ip_address_pool_id_su
 
 ### Required
 
-- `global_ip_address_pool_id` (String) globalIpAddressPoolId path parameter. The id of the global IP address pool for which to count subpools.
+- `global_ip_address_pool_id` (String) globalIpAddressPoolId path parameter. The **id** of the global IP address pool for which to count subpools.
 
 ### Read-Only
 

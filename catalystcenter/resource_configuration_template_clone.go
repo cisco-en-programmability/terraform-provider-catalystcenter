@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -9,7 +10,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -99,18 +100,18 @@ func resourceConfigurationTemplateCloneCreate(ctx context.Context, d *schema.Res
 	vvName := vName.(string)
 	vvTemplateID := vTemplateID.(string)
 	vvProjectID := vProjectID.(string)
-	queryParams1 := catalystcentersdkgo.CreatesACloneOfTheGivenTemplateV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.CreatesACloneOfTheGivenTemplateQueryParams{}
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.ConfigurationTemplates.CreatesACloneOfTheGivenTemplateV1(vvName, vvTemplateID, vvProjectID, &queryParams1)
+	response1, restyResp1, err := client.ConfigurationTemplates.CreatesACloneOfTheGivenTemplate(vvName, vvTemplateID, vvProjectID, &queryParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing CreatesACloneOfTheGivenTemplateV1", err))
+			"Failure when executing CreatesACloneOfTheGivenTemplate", err))
 		return diags
 	}
 
@@ -145,7 +146,7 @@ func resourceConfigurationTemplateCloneCreate(ctx context.Context, d *schema.Res
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
@@ -156,10 +157,10 @@ func resourceConfigurationTemplateCloneCreate(ctx context.Context, d *schema.Res
 			return diags
 		}
 	}
-	vItem1 := flattenConfigurationTemplatesCreatesACloneOfTheGivenTemplateV1Item(response1.Response)
+	vItem1 := flattenConfigurationTemplatesCreatesACloneOfTheGivenTemplateItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting CreatesACloneOfTheGivenTemplateV1 response",
+			"Failure when setting CreatesACloneOfTheGivenTemplate response",
 			err))
 		return diags
 	}
@@ -180,7 +181,7 @@ func resourceConfigurationTemplateCloneDelete(ctx context.Context, d *schema.Res
 	return diags
 }
 
-func flattenConfigurationTemplatesCreatesACloneOfTheGivenTemplateV1Item(item *catalystcentersdkgo.ResponseConfigurationTemplatesCreatesACloneOfTheGivenTemplateV1Response) []map[string]interface{} {
+func flattenConfigurationTemplatesCreatesACloneOfTheGivenTemplateItem(item *catalystcentersdkgo.ResponseConfigurationTemplatesCreatesACloneOfTheGivenTemplateResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

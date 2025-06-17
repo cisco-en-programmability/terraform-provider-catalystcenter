@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -50,14 +50,16 @@ Device Replacement status, Product Family.
 				Optional: true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter.`,
-				Type:        schema.TypeInt,
-				Optional:    true,
+				Description: `limit query parameter. The number of records to show for this page.
+`,
+				Type:     schema.TypeFloat,
+				Optional: true,
 			},
 			"offset": &schema.Schema{
-				Description: `offset query parameter.`,
-				Type:        schema.TypeInt,
-				Optional:    true,
+				Description: `offset query parameter. The first record to show for this page; the first record is numbered 1.
+`,
+				Type:     schema.TypeFloat,
+				Optional: true,
 			},
 			"replacement_device_platform": &schema.Schema{
 				Description: `replacementDevicePlatform query parameter. Replacement Device Platform
@@ -235,8 +237,8 @@ func dataSourceDeviceReplacementRead(ctx context.Context, d *schema.ResourceData
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: ReturnListOfReplacementDevicesWithReplacementDetailsV1")
-		queryParams1 := catalystcentersdkgo.ReturnListOfReplacementDevicesWithReplacementDetailsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: ReturnListOfReplacementDevicesWithReplacementDetails")
+		queryParams1 := catalystcentersdkgo.ReturnListOfReplacementDevicesWithReplacementDetailsQueryParams{}
 
 		if okFaultyDeviceName {
 			queryParams1.FaultyDeviceName = vFaultyDeviceName.(string)
@@ -272,24 +274,38 @@ func dataSourceDeviceReplacementRead(ctx context.Context, d *schema.ResourceData
 			queryParams1.Limit = vLimit.(int)
 		}
 
-		response1, restyResp1, err := client.DeviceReplacement.ReturnListOfReplacementDevicesWithReplacementDetailsV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.DeviceReplacement.ReturnListOfReplacementDevicesWithReplacementDetails(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 ReturnListOfReplacementDevicesWithReplacementDetailsV1", err,
-				"Failure at ReturnListOfReplacementDevicesWithReplacementDetailsV1, unexpected response", ""))
+				"Failure when executing 2 ReturnListOfReplacementDevicesWithReplacementDetails", err,
+				"Failure at ReturnListOfReplacementDevicesWithReplacementDetails, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetailsV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 ReturnListOfReplacementDevicesWithReplacementDetails", err,
+				"Failure at ReturnListOfReplacementDevicesWithReplacementDetails, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetailsItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting ReturnListOfReplacementDevicesWithReplacementDetailsV1 response",
+				"Failure when setting ReturnListOfReplacementDevicesWithReplacementDetails response",
 				err))
 			return diags
 		}
@@ -301,7 +317,7 @@ func dataSourceDeviceReplacementRead(ctx context.Context, d *schema.ResourceData
 	return diags
 }
 
-func flattenDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetailsV1Items(items *[]catalystcentersdkgo.ResponseDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetailsV1Response) []map[string]interface{} {
+func flattenDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetailsItems(items *[]catalystcentersdkgo.ResponseDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetailsResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

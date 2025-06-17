@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -165,8 +165,8 @@ func dataSourceEventRead(ctx context.Context, d *schema.ResourceData, m interfac
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetEventsV1")
-		queryParams1 := catalystcentersdkgo.GetEventsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetEvents")
+		queryParams1 := catalystcentersdkgo.GetEventsQueryParams{}
 
 		if okEventID {
 			queryParams1.EventID = vEventID.(string)
@@ -186,24 +186,38 @@ func dataSourceEventRead(ctx context.Context, d *schema.ResourceData, m interfac
 			queryParams1.Order = vOrder.(string)
 		}
 
-		response1, restyResp1, err := client.EventManagement.GetEventsV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.EventManagement.GetEvents(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetEventsV1", err,
-				"Failure at GetEventsV1, unexpected response", ""))
+				"Failure when executing 2 GetEvents", err,
+				"Failure at GetEvents, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenEventManagementGetEventsV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetEvents", err,
+				"Failure at GetEvents, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenEventManagementGetEventsItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetEventsV1 response",
+				"Failure when setting GetEvents response",
 				err))
 			return diags
 		}
@@ -215,7 +229,7 @@ func dataSourceEventRead(ctx context.Context, d *schema.ResourceData, m interfac
 	return diags
 }
 
-func flattenEventManagementGetEventsV1Items(items *catalystcentersdkgo.ResponseEventManagementGetEventsV1) []map[string]interface{} {
+func flattenEventManagementGetEventsItems(items *catalystcentersdkgo.ResponseEventManagementGetEvents) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -233,14 +247,14 @@ func flattenEventManagementGetEventsV1Items(items *catalystcentersdkgo.ResponseE
 		respItem["type"] = item.Type
 		respItem["tags"] = item.Tags
 		respItem["severity"] = item.Severity
-		respItem["details"] = flattenEventManagementGetEventsV1ItemsDetails(item.Details)
+		respItem["details"] = flattenEventManagementGetEventsItemsDetails(item.Details)
 		respItem["subscription_types"] = item.SubscriptionTypes
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenEventManagementGetEventsV1ItemsDetails(item *catalystcentersdkgo.ResponseItemEventManagementGetEventsV1Details) interface{} {
+func flattenEventManagementGetEventsItemsDetails(item *catalystcentersdkgo.ResponseItemEventManagementGetEventsDetails) interface{} {
 	if item == nil {
 		return nil
 	}

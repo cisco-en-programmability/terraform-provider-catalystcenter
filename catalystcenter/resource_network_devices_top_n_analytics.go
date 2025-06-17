@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -274,7 +274,7 @@ func resourceNetworkDevicesTopNAnalyticsCreate(ctx context.Context, d *schema.Re
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1(ctx, "parameters.0", d)
+	request1 := expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevices(ctx, "parameters.0", d)
 
 	response1, restyResp1, err := client.Devices.GetsTheTopNAnalyticsDataRelatedToNetworkDevices(request1)
 
@@ -294,7 +294,7 @@ func resourceNetworkDevicesTopNAnalyticsCreate(ctx context.Context, d *schema.Re
 
 	//Analizar verificacion.
 
-	vItems1 := flattenDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1Items(response1.Response)
+	vItems1 := flattenDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesItems(response1.Response)
 	if err := d.Set("items", vItems1); err != nil {
 		diags = append(diags, diagError(
 			"Failure when setting GetsTheTopNAnalyticsDataRelatedToNetworkDevices response",
@@ -319,8 +319,8 @@ func resourceNetworkDevicesTopNAnalyticsDelete(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1 {
-	request := catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1{}
+func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevices(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevices {
+	request := catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevices{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -334,22 +334,22 @@ func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNe
 		request.GroupBy = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".attributes")))) {
-		request.Attributes = expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1AttributesArray(ctx, key+".attributes", d)
+		request.Attributes = expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesAttributesArray(ctx, key+".attributes", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1FiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesFiltersArray(ctx, key+".filters", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".aggregate_attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".aggregate_attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".aggregate_attributes")))) {
-		request.AggregateAttributes = expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1AggregateAttributesArray(ctx, key+".aggregate_attributes", d)
+		request.AggregateAttributes = expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesAggregateAttributesArray(ctx, key+".aggregate_attributes", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".page")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".page")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".page")))) {
-		request.Page = expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1Page(ctx, key+".page.0", d)
+		request.Page = expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesPage(ctx, key+".page.0", d)
 	}
 	return &request
 }
 
-func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1AttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1Attributes {
-	request := []catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1Attributes{}
+func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesAttributes {
+	request := []catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesAttributes{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -360,7 +360,7 @@ func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNe
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1Attributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -368,14 +368,14 @@ func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNe
 	return &request
 }
 
-func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1Attributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1Attributes {
-	var request catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1Attributes
+func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesAttributes {
+	var request catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesAttributes
 	request = d.Get(fixKeyAccess(key))
 	return &request
 }
 
-func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1Filters {
-	request := []catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1Filters{}
+func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesFilters {
+	request := []catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -386,7 +386,7 @@ func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNe
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -394,8 +394,8 @@ func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNe
 	return &request
 }
 
-func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1Filters {
-	request := catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1Filters{}
+func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesFilters {
+	request := catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -408,8 +408,8 @@ func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNe
 	return &request
 }
 
-func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1AggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1AggregateAttributes {
-	request := []catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1AggregateAttributes{}
+func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesAggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesAggregateAttributes {
+	request := []catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesAggregateAttributes{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -420,7 +420,7 @@ func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNe
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1AggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesAggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -428,8 +428,8 @@ func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNe
 	return &request
 }
 
-func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1AggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1AggregateAttributes {
-	request := catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1AggregateAttributes{}
+func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesAggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesAggregateAttributes {
+	request := catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesAggregateAttributes{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -439,8 +439,8 @@ func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNe
 	return &request
 }
 
-func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1Page(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1Page {
-	request := catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1Page{}
+func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesPage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesPage {
+	request := catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesPage{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".limit")))) {
 		request.Limit = interfaceToIntPtr(v)
 	}
@@ -448,13 +448,13 @@ func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNe
 		request.Offset = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".sort_by")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".sort_by")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".sort_by")))) {
-		request.SortBy = expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1PageSortByArray(ctx, key+".sort_by", d)
+		request.SortBy = expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesPageSortByArray(ctx, key+".sort_by", d)
 	}
 	return &request
 }
 
-func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1PageSortByArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1PageSortBy {
-	request := []catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1PageSortBy{}
+func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesPageSortByArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesPageSortBy {
+	request := []catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesPageSortBy{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -465,7 +465,7 @@ func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNe
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1PageSortBy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesPageSortBy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -473,8 +473,8 @@ func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNe
 	return &request
 }
 
-func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1PageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1PageSortBy {
-	request := catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1PageSortBy{}
+func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNetworkDevicesPageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesPageSortBy {
+	request := catalystcentersdkgo.RequestDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesPageSortBy{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -487,7 +487,7 @@ func expandRequestNetworkDevicesTopNAnalyticsGetsTheTopNAnalyticsDataRelatedToNe
 	return &request
 }
 
-func flattenDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1Response) []map[string]interface{} {
+func flattenDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesItems(items *[]catalystcentersdkgo.ResponseDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -495,14 +495,14 @@ func flattenDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1Items(items 
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["id"] = item.ID
-		respItem["attributes"] = flattenDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1ItemsAttributes(item.Attributes)
-		respItem["aggregate_attributes"] = flattenDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1ItemsAggregateAttributes(item.AggregateAttributes)
+		respItem["attributes"] = flattenDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesItemsAttributes(item.Attributes)
+		respItem["aggregate_attributes"] = flattenDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesItemsAggregateAttributes(item.AggregateAttributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1ItemsAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1ResponseAttributes) []map[string]interface{} {
+func flattenDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesItemsAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesResponseAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -516,7 +516,7 @@ func flattenDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1ItemsAttribu
 	return respItems
 }
 
-func flattenDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1ItemsAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesV1ResponseAggregateAttributes) []map[string]interface{} {
+func flattenDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesItemsAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetsTheTopNAnalyticsDataRelatedToNetworkDevicesResponseAggregateAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

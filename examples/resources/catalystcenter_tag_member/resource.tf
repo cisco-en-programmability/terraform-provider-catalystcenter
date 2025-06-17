@@ -1,7 +1,7 @@
 
 resource "catalystcenter_tag_member" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     id          = "string"

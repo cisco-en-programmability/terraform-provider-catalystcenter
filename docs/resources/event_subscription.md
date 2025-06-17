@@ -4,7 +4,9 @@ page_title: "catalystcenter_event_subscription Resource - terraform-provider-cat
 subcategory: ""
 description: |-
   It manages create, read, update and delete operations on Event Management.
-  Delete EventSubscriptionsUpdate SubscriptionEndpoint to list of registered events(Deprecated)Subscribe SubscriptionEndpoint to list of registered events (Deprecated)
+  Delete EventSubscriptionsUpdate SubscriptionEndpoint to list of registered events. Deprecated since Guardian release. Alternative: PUT
+  /intent/api/v1/event/subscription/restSubscribe SubscriptionEndpoint to list of registered events. Deprecated since Guardian release. Alternative: POST
+  /intent/api/v1/event/subscription/rest
 ---
 
 # catalystcenter_event_subscription (Resource)
@@ -13,16 +15,18 @@ It manages create, read, update and delete operations on Event Management.
 
 - Delete EventSubscriptions
 
-- Update SubscriptionEndpoint to list of registered events(Deprecated)
+- Update SubscriptionEndpoint to list of registered events. Deprecated since Guardian release. Alternative: PUT
+/intent/api/v1/event/subscription/rest
 
-- Subscribe SubscriptionEndpoint to list of registered events (Deprecated)
+- Subscribe SubscriptionEndpoint to list of registered events. Deprecated since Guardian release. Alternative: POST
+/intent/api/v1/event/subscription/rest
 
 ## Example Usage
 
 ```terraform
 resource "catalystcenter_event_subscription" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     description = "string"
@@ -64,7 +68,7 @@ output "catalystcenter_event_subscription_example" {
 
 ### Optional
 
-- `parameters` (Block List) Array of RequestEventManagementCreateEventSubscriptionsV1 (see [below for nested schema](#nestedblock--parameters))
+- `parameters` (Block List) Array of RequestEventManagementCreateEventSubscriptions (see [below for nested schema](#nestedblock--parameters))
 
 ### Read-Only
 

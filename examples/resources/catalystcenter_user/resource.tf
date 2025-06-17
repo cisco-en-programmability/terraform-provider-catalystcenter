@@ -1,7 +1,7 @@
 
 resource "catalystcenter_user" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     email      = "string"

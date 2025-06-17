@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -70,12 +70,6 @@ func dataSourceIntegrationSettingsItsmInstances() *schema.Resource {
 										Computed:    true,
 									},
 
-									"created_date": &schema.Schema{
-										Description: `Created Date`,
-										Type:        schema.TypeInt,
-										Computed:    true,
-									},
-
 									"description": &schema.Schema{
 										Description: `Description`,
 										Type:        schema.TypeString,
@@ -125,12 +119,6 @@ func dataSourceIntegrationSettingsItsmInstances() *schema.Resource {
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
-									},
-
-									"tenant_id": &schema.Schema{
-										Description: `Tenant Id`,
-										Type:        schema.TypeString,
-										Computed:    true,
 									},
 
 									"unique_key": &schema.Schema{
@@ -188,12 +176,44 @@ func dataSourceIntegrationSettingsItsmInstancesRead(ctx context.Context, d *sche
 	client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
+	vPageSize, okPageSize := d.GetOk("page_size")
+	vPage, okPage := d.GetOk("page")
+	vSortBy, okSortBy := d.GetOk("sort_by")
+	vOrder, okOrder := d.GetOk("order")
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetAllItsmIntegrationSettings")
+		queryParams1 := catalystcentersdkgo.GetAllItsmIntegrationSettingsQueryParams{}
 
-		response1, restyResp1, err := client.ItsmIntegration.GetAllItsmIntegrationSettings()
+		if okPageSize {
+			queryParams1.PageSize = vPageSize.(float64)
+		}
+		if okPage {
+			queryParams1.Page = vPage.(float64)
+		}
+		if okSortBy {
+			queryParams1.SortBy = vSortBy.(string)
+		}
+		if okOrder {
+			queryParams1.Order = vOrder.(string)
+		}
+
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.ItsmIntegration.GetAllItsmIntegrationSettings(&queryParams1)
+
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetAllItsmIntegrationSettings", err,
+				"Failure at GetAllItsmIntegrationSettings, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
@@ -222,7 +242,7 @@ func dataSourceIntegrationSettingsItsmInstancesRead(ctx context.Context, d *sche
 	return diags
 }
 
-func flattenItsmIntegrationGetAllItsmIntegrationSettingsItem(item *catalystcentersdkgo.ResponseItsmIntegrationGetAllItsmIntegrationSettingsV1) []map[string]interface{} {
+func flattenItsmIntegrationGetAllItsmIntegrationSettingsItem(item *catalystcentersdkgo.ResponseItsmIntegrationGetAllItsmIntegrationSettings) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -230,14 +250,14 @@ func flattenItsmIntegrationGetAllItsmIntegrationSettingsItem(item *catalystcente
 	respItem["page"] = item.Page
 	respItem["page_size"] = item.PageSize
 	respItem["total_pages"] = item.TotalPages
-	respItem["data"] = flattenItsmIntegrationGetAllItsmIntegrationSettingsItemData(&item.Data)
+	respItem["data"] = flattenItsmIntegrationGetAllItsmIntegrationSettingsItemData(item.Data)
 	respItem["total_records"] = item.TotalRecords
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenItsmIntegrationGetAllItsmIntegrationSettingsItemData(items *[]catalystcentersdkgo.ResponseItemItsmIntegrationGetAllItsmIntegrationSettingsV1) []map[string]interface{} {
+func flattenItsmIntegrationGetAllItsmIntegrationSettingsItemData(items *[]catalystcentersdkgo.ResponseItsmIntegrationGetAllItsmIntegrationSettingsData) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -256,12 +276,13 @@ func flattenItsmIntegrationGetAllItsmIntegrationSettingsItemData(items *[]cataly
 		respItem["software_version_log"] = flattenItsmIntegrationGetAllItsmIntegrationSettingsItemDataSoftwareVersionLog(item.SoftwareVersionLog)
 		respItem["unique_key"] = item.UniqueKey
 		respItem["updated_by"] = item.UpdatedBy
+		respItem["updated_date"] = item.UpdatedDate
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenItsmIntegrationGetAllItsmIntegrationSettingsItemDataSoftwareVersionLog(items *[]catalystcentersdkgo.ResponseItemItsmIntegrationGetAllItsmIntegrationSettingsV1SoftwareVersionLog) []interface{} {
+func flattenItsmIntegrationGetAllItsmIntegrationSettingsItemDataSoftwareVersionLog(items *[]catalystcentersdkgo.ResponseItsmIntegrationGetAllItsmIntegrationSettingsDataSoftwareVersionLog) []interface{} {
 	if items == nil {
 		return nil
 	}

@@ -1,7 +1,7 @@
 
 resource "catalystcenter_security_threats_details" "example" {
-  provider = meraki
-  parameters {
+  provider = catalystcenter
+  parameters = [{
 
     end_time      = 1
     is_new_threat = "false"
@@ -11,7 +11,7 @@ resource "catalystcenter_security_threats_details" "example" {
     start_time    = 1
     threat_level  = ["string"]
     threat_type   = ["string"]
-  }
+  }]
 }
 
 output "catalystcenter_security_threats_details_example" {

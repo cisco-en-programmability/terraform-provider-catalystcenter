@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -11,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -92,18 +93,18 @@ func resourceGlobalCredentialUpdateCreate(ctx context.Context, d *schema.Resourc
 	vGlobalCredentialID := resourceItem["global_credential_id"]
 
 	vvGlobalCredentialID := vGlobalCredentialID.(string)
-	request1 := expandRequestGlobalCredentialUpdateUpdateGlobalCredentialsV1(ctx, "parameters.0", d)
+	request1 := expandRequestGlobalCredentialUpdateUpdateGlobalCredentials(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Discovery.UpdateGlobalCredentialsV1(vvGlobalCredentialID, request1)
+	response1, restyResp1, err := client.Discovery.UpdateGlobalCredentials(vvGlobalCredentialID, request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing UpdateGlobalCredentialsV1", err))
+			"Failure when executing UpdateGlobalCredentials", err))
 		return diags
 	}
 
@@ -111,7 +112,7 @@ func resourceGlobalCredentialUpdateCreate(ctx context.Context, d *schema.Resourc
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing UpdateGlobalCredentialsV1", err))
+			"Failure when executing UpdateGlobalCredentials", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -138,14 +139,14 @@ func resourceGlobalCredentialUpdateCreate(ctx context.Context, d *schema.Resourc
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing UpdateGlobalCredentialsV1", err1))
+				"Failure when executing UpdateGlobalCredentials", err1))
 			return diags
 		}
 	}
@@ -153,10 +154,10 @@ func resourceGlobalCredentialUpdateCreate(ctx context.Context, d *schema.Resourc
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenDiscoveryUpdateGlobalCredentialsV1Item(response1.Response)
+	vItem1 := flattenDiscoveryUpdateGlobalCredentialsItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting UpdateGlobalCredentialsV1 response",
+			"Failure when setting UpdateGlobalCredentials response",
 			err))
 		return diags
 	}
@@ -177,15 +178,15 @@ func resourceGlobalCredentialUpdateDelete(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func expandRequestGlobalCredentialUpdateUpdateGlobalCredentialsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdateGlobalCredentialsV1 {
-	request := catalystcentersdkgo.RequestDiscoveryUpdateGlobalCredentialsV1{}
+func expandRequestGlobalCredentialUpdateUpdateGlobalCredentials(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdateGlobalCredentials {
+	request := catalystcentersdkgo.RequestDiscoveryUpdateGlobalCredentials{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".site_uuids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".site_uuids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".site_uuids")))) {
 		request.SiteUUIDs = interfaceToSliceString(v)
 	}
 	return &request
 }
 
-func flattenDiscoveryUpdateGlobalCredentialsV1Item(item *catalystcentersdkgo.ResponseDiscoveryUpdateGlobalCredentialsV1Response) []map[string]interface{} {
+func flattenDiscoveryUpdateGlobalCredentialsItem(item *catalystcentersdkgo.ResponseDiscoveryUpdateGlobalCredentialsResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -7,10 +7,10 @@ description: |-
   Retrieves the trend analytics of applications experience data for the specified time range. The data will be grouped
   based on the given trend time interval. This data source action facilitates obtaining consolidated insights into the
   performance and status of the network applications over the specified start and end time. If startTime and endTime are
-  not provided, the API defaults to the last 24 hours. siteId and trendInterval are mandatory. siteId must be a site
-  UUID of a building. For detailed information about the usage of the API, please refer to the Open API specification
-  document https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CECatCenter_Org-
-  NetworkApplications-1.0.0-resolved.yaml
+  not provided, the API defaults to the last 24 hours. siteId and trendInterval are mandatory. siteId must be
+  a site UUID of a building. For detailed information about the usage of the API, please refer to the Open API
+  specification document https://github.com/cisco-en-programmability/catalyst-center-api-
+  specs/blob/main/Assurance/CECatCenter_Org-NetworkApplications-1.0.0-resolved.yaml
 ---
 
 # catalystcenter_network_applications_trend_analytics (Resource)
@@ -20,10 +20,11 @@ It performs create operation on Applications.
 - Retrieves the trend analytics of applications experience data for the specified time range. The data will be grouped
 based on the given trend time interval. This data source action facilitates obtaining consolidated insights into the
 performance and status of the network applications over the specified start and end time. If startTime and endTime are
-not provided, the API defaults to the last 24 hours. *siteId* and *trendInterval* are mandatory. *siteId* must be a site
-UUID of a building. For detailed information about the usage of the API, please refer to the Open API specification
-document https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
-NetworkApplications-1.0.0-resolved.yaml
+not provided, the API defaults to the last 24 hours. **siteId** and **trendInterval** are mandatory. **siteId** must be
+a site UUID of a building. For detailed information about the usage of the API, please refer to the Open API
+specification document https://github.com/cisco-en-programmability/catalyst-center-api-
+specs/blob/main/Assurance/CE_Cat_Center_Org-NetworkApplications-1.0.0-resolved.yaml
+
 
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
@@ -35,32 +36,32 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_network_applications_trend_analytics" "example" {
   provider    = catalystcenter
   xca_lle_rid = "string"
-  parameters {
+  parameters = [{
 
-    aggregate_attributes {
+    aggregate_attributes = [{
 
       function = "string"
       name     = "string"
-    }
+    }]
     attributes = ["string"]
     end_time   = 1
-    filters {
+    filters = [{
 
       key      = "string"
       operator = "string"
       value    = 1
-    }
+    }]
     group_by = ["string"]
-    page {
+    page = [{
 
       cursor          = "string"
       limit           = 1
       time_sort_order = "string"
-    }
+    }]
     site_ids       = ["string"]
     start_time     = 1
     trend_interval = "string"
-  }
+  }]
 }
 
 output "catalystcenter_network_applications_trend_analytics_example" {

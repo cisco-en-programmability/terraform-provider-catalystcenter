@@ -1,8 +1,7 @@
 
 resource "catalystcenter_applications" "example" {
   provider = catalystcenter
-
-
+ 
   parameters {
 
     application_set {

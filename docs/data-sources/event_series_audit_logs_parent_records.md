@@ -61,7 +61,7 @@ output "catalystcenter_event_series_audit_logs_parent_records_example" {
 - `event_id` (String) eventId query parameter. Audit Log notification's event ID.
 - `instance_id` (String) instanceId query parameter. InstanceID of the Audit Log.
 - `is_system_events` (Boolean) isSystemEvents query parameter. Parameter to filter system generated audit-logs.
-- `limit` (Number) limit query parameter. Number of Audit Log records to be returned per page.
+- `limit` (Number) limit query parameter. Number of Audit Log records to be returned per page. Default is 25 if not specified. Maximum allowed limit is 25
 - `name` (String) name query parameter. Audit Log notification event name.
 - `offset` (Number) offset query parameter. Position of a particular Audit Log record in the data.
 - `order` (String) order query parameter. Order of the sorted Audit Log records. Default value is desc by timestamp. Supported values: asc, desc.

@@ -12,6 +12,8 @@ description: |-
 It performs update operation on Sensors.
 
 - Intent API to deploy, schedule, or edit and existing SENSOR test template
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -21,26 +23,26 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_sensor_test_template_edit" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
     id                 = "string"
     action_in_progress = "string"
-    ap_coverage {
+    ap_coverage = [{
 
       bands                 = "string"
       number_of_aps_to_test = 1
       rssi_threshold        = 1
-    }
+    }]
     connection      = "string"
     encryption_mode = "string"
-    frequency {
+    frequency = [{
 
       unit  = "string"
       value = 1
-    }
+    }]
     last_modified_time = 1
     location           = "string"
-    location_info_list {
+    location_info_list = [{
 
       all_sensors            = "false"
       custom_management_vlan = "false"
@@ -49,12 +51,12 @@ resource "catalystcenter_sensor_test_template_edit" "example" {
       mac_address_list       = ["string"]
       management_vlan        = "string"
       site_hierarchy         = "string"
-    }
+    }]
     model_version            = 1
     name                     = "string"
     num_associated_sensor    = 1
     num_neighbor_apthreshold = 1
-    profiles {
+    profiles = [{
 
       auth_protocol           = "string"
       auth_type               = "string"
@@ -67,28 +69,28 @@ resource "catalystcenter_sensor_test_template_edit" "example" {
       eap_method              = "string"
       ext_web_auth            = "false"
       ext_web_auth_access_url = "string"
-      ext_web_auth_html_tag {
+      ext_web_auth_html_tag = [{
 
         label = "string"
         tag   = "string"
         value = "string"
-      }
+      }]
       ext_web_auth_portal     = "string"
       ext_web_auth_virtual_ip = "string"
-      location_vlan_list {
+      location_vlan_list = [{
 
         location_id = "string"
         vlans       = ["string"]
-      }
+      }]
       password      = "******"
       password_type = "******"
       profile_name  = "string"
       psk           = "string"
       qos_policy    = "string"
       scep          = "false"
-      tests {
+      tests = [{
 
-        config {
+        config = [{
 
           direction        = "string"
           domains          = ["string"]
@@ -120,18 +122,18 @@ resource "catalystcenter_sensor_test_template_edit" "example" {
           url              = "string"
           user_name        = "string"
           user_name_prompt = "string"
-        }
+        }]
         name = "string"
-      }
+      }]
       username   = "string"
       vlan       = "string"
       white_list = "false"
-    }
+    }]
     radio_as_sensor_removed = "false"
     rssi_threshold          = 1
     run_now                 = "string"
     schedule_in_days        = 1
-    sensors {
+    sensors = [{
 
       all_sensor_addition       = "false"
       assigned                  = "false"
@@ -152,14 +154,14 @@ resource "catalystcenter_sensor_test_template_edit" "example" {
       switch_serial_number      = "string"
       switch_uuid               = "string"
       target_a_ps               = ["string"]
-      test_mac_addresses        = "------"
+      test_mac_addresses        = "string"
       wired_application_message = "string"
       wired_application_status  = "string"
       xor_sensor                = "false"
-    }
+    }]
     show_wlc_upgrade_banner = "false"
     site_hierarchy          = "string"
-    ssids {
+    ssids = [{
 
       auth_protocol           = "string"
       auth_type               = "string"
@@ -172,12 +174,12 @@ resource "catalystcenter_sensor_test_template_edit" "example" {
       eap_method              = "string"
       ext_web_auth            = "false"
       ext_web_auth_access_url = "string"
-      ext_web_auth_html_tag {
+      ext_web_auth_html_tag = [{
 
         label = "string"
         tag   = "string"
         value = "string"
-      }
+      }]
       ext_web_auth_portal          = "string"
       ext_web_auth_virtual_ip      = "string"
       id                           = 1
@@ -199,9 +201,9 @@ resource "catalystcenter_sensor_test_template_edit" "example" {
       scep                         = "false"
       ssid                         = "string"
       status                       = "string"
-      tests {
+      tests = [{
 
-        config {
+        config = [{
 
           direction        = "string"
           domains          = ["string"]
@@ -233,27 +235,27 @@ resource "catalystcenter_sensor_test_template_edit" "example" {
           url              = "string"
           user_name        = "string"
           user_name_prompt = "string"
-        }
+        }]
         name = "string"
-      }
-      third_party {
+      }]
+      third_party = [{
 
         selected = "false"
-      }
+      }]
       username   = "string"
       valid_from = 1
       valid_to   = 1
       white_list = "false"
       wlan_id    = 1
       wlc        = "string"
-    }
+    }]
     start_time         = 1
     status             = "string"
     template_name      = "string"
     test_schedule_mode = "string"
     version            = 1
     wlans              = ["string"]
-  }
+  }]
 }
 
 output "catalystcenter_sensor_test_template_edit_example" {

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,8 +15,8 @@ func dataSourceSitesImageDistributionSettings() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Network Settings.
 
-- Retrieve image distribution settings for a site; *null* values indicate that the setting will be inherited from the
-parent site; empty objects (*{}*) indicate that the setting is unset at a site.
+- Retrieve image distribution settings for a site; **null** values indicate that the setting will be inherited from the
+parent site; empty objects (**{}**) indicate that the setting is unset at a site.
 `,
 
 		ReadContext: dataSourceSitesImageDistributionSettingsRead,
@@ -28,7 +28,7 @@ parent site; empty objects (*{}*) indicate that the setting is unset at a site.
 				Required: true,
 			},
 			"inherited": &schema.Schema{
-				Description: `_inherited query parameter. Include settings explicitly set for this site and settings inherited from sites higher in the site hierarchy; when *false*, *null* values indicate that the site inherits that setting from the parent site or a site higher in the site hierarchy.
+				Description: `_inherited query parameter. Include settings explicitly set for this site and settings inherited from sites higher in the site hierarchy; when **false**, **null** values indicate that the site inherits that setting from the parent site or a site higher in the site hierarchy.
 `,
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -88,32 +88,46 @@ func dataSourceSitesImageDistributionSettingsRead(ctx context.Context, d *schema
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveImageDistributionSettingsForASiteV1")
+		log.Printf("[DEBUG] Selected method: RetrieveImageDistributionSettingsForASite")
 		vvID := vID.(string)
-		queryParams1 := catalystcentersdkgo.RetrieveImageDistributionSettingsForASiteV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrieveImageDistributionSettingsForASiteQueryParams{}
 
 		if okInherited {
 			queryParams1.Inherited = vInherited.(bool)
 		}
 
-		response1, restyResp1, err := client.NetworkSettings.RetrieveImageDistributionSettingsForASiteV1(vvID, &queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.NetworkSettings.RetrieveImageDistributionSettingsForASite(vvID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveImageDistributionSettingsForASiteV1", err,
-				"Failure at RetrieveImageDistributionSettingsForASiteV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveImageDistributionSettingsForASite", err,
+				"Failure at RetrieveImageDistributionSettingsForASite, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenNetworkSettingsRetrieveImageDistributionSettingsForASiteV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveImageDistributionSettingsForASite", err,
+				"Failure at RetrieveImageDistributionSettingsForASite, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenNetworkSettingsRetrieveImageDistributionSettingsForASiteItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveImageDistributionSettingsForASiteV1 response",
+				"Failure when setting RetrieveImageDistributionSettingsForASite response",
 				err))
 			return diags
 		}
@@ -125,18 +139,18 @@ func dataSourceSitesImageDistributionSettingsRead(ctx context.Context, d *schema
 	return diags
 }
 
-func flattenNetworkSettingsRetrieveImageDistributionSettingsForASiteV1Item(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveImageDistributionSettingsForASiteV1Response) []map[string]interface{} {
+func flattenNetworkSettingsRetrieveImageDistributionSettingsForASiteItem(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveImageDistributionSettingsForASiteResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["image_distribution"] = flattenNetworkSettingsRetrieveImageDistributionSettingsForASiteV1ItemImageDistribution(item.ImageDistribution)
+	respItem["image_distribution"] = flattenNetworkSettingsRetrieveImageDistributionSettingsForASiteItemImageDistribution(item.ImageDistribution)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenNetworkSettingsRetrieveImageDistributionSettingsForASiteV1ItemImageDistribution(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveImageDistributionSettingsForASiteV1ResponseImageDistribution) []map[string]interface{} {
+func flattenNetworkSettingsRetrieveImageDistributionSettingsForASiteItemImageDistribution(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveImageDistributionSettingsForASiteResponseImageDistribution) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

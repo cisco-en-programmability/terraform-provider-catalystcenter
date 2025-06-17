@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -104,30 +104,42 @@ func dataSourceIcapSettingsConfigurationModelsPreviewActivityIDNetworkDevicesNet
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesTheDevicesClisOfTheICapintentV1")
+		log.Printf("[DEBUG] Selected method: RetrievesTheDevicesClisOfTheICapintent")
 		vvPreviewActivityID := vPreviewActivityID.(string)
 		vvNetworkDeviceID := vNetworkDeviceID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sensors.RetrievesTheDevicesClisOfTheICapintentV1(vvPreviewActivityID, vvNetworkDeviceID)
+		response1, restyResp1, err := client.Sensors.RetrievesTheDevicesClisOfTheICapintent(vvPreviewActivityID, vvNetworkDeviceID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesTheDevicesClisOfTheICapintentV1", err,
-				"Failure at RetrievesTheDevicesClisOfTheICapintentV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesTheDevicesClisOfTheICapintent", err,
+				"Failure at RetrievesTheDevicesClisOfTheICapintent, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSensorsRetrievesTheDevicesClisOfTheICapintentV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesTheDevicesClisOfTheICapintent", err,
+				"Failure at RetrievesTheDevicesClisOfTheICapintent, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSensorsRetrievesTheDevicesClisOfTheICapintentItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesTheDevicesClisOfTheICapintentV1 response",
+				"Failure when setting RetrievesTheDevicesClisOfTheICapintent response",
 				err))
 			return diags
 		}
@@ -139,20 +151,20 @@ func dataSourceIcapSettingsConfigurationModelsPreviewActivityIDNetworkDevicesNet
 	return diags
 }
 
-func flattenSensorsRetrievesTheDevicesClisOfTheICapintentV1Item(item *catalystcentersdkgo.ResponseSensorsRetrievesTheDevicesClisOfTheICapintentV1Response) []map[string]interface{} {
+func flattenSensorsRetrievesTheDevicesClisOfTheICapintentItem(item *catalystcentersdkgo.ResponseSensorsRetrievesTheDevicesClisOfTheICapintentResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["network_device_id"] = item.NetworkDeviceID
-	respItem["preview_items"] = flattenSensorsRetrievesTheDevicesClisOfTheICapintentV1ItemPreviewItems(item.PreviewItems)
+	respItem["preview_items"] = flattenSensorsRetrievesTheDevicesClisOfTheICapintentItemPreviewItems(item.PreviewItems)
 	respItem["status"] = item.Status
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenSensorsRetrievesTheDevicesClisOfTheICapintentV1ItemPreviewItems(items *[]catalystcentersdkgo.ResponseSensorsRetrievesTheDevicesClisOfTheICapintentV1ResponsePreviewItems) []map[string]interface{} {
+func flattenSensorsRetrievesTheDevicesClisOfTheICapintentItemPreviewItems(items *[]catalystcentersdkgo.ResponseSensorsRetrievesTheDevicesClisOfTheICapintentResponsePreviewItems) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

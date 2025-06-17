@@ -61,6 +61,7 @@ Read-Only:
 
 - `additional_interfaces` (List of String)
 - `ap_zones` (List of Object) (see [below for nested schema](#nestedobjatt--item--ap_zones))
+- `feature_templates` (List of Object) (see [below for nested schema](#nestedobjatt--item--feature_templates))
 - `id` (String)
 - `ssid_details` (List of Object) (see [below for nested schema](#nestedobjatt--item--ssid_details))
 - `wireless_profile_name` (String)
@@ -72,6 +73,15 @@ Read-Only:
 
 - `ap_zone_name` (String)
 - `rf_profile_name` (String)
+- `ssids` (List of String)
+
+
+<a id="nestedobjatt--item--feature_templates"></a>
+### Nested Schema for `item.feature_templates`
+
+Read-Only:
+
+- `id` (String)
 - `ssids` (List of String)
 
 
@@ -108,6 +118,7 @@ Read-Only:
 
 - `additional_interfaces` (List of String)
 - `ap_zones` (List of Object) (see [below for nested schema](#nestedobjatt--items--ap_zones))
+- `feature_templates` (List of Object) (see [below for nested schema](#nestedobjatt--items--feature_templates))
 - `id` (String)
 - `ssid_details` (List of Object) (see [below for nested schema](#nestedobjatt--items--ssid_details))
 - `wireless_profile_name` (String)
@@ -119,6 +130,15 @@ Read-Only:
 
 - `ap_zone_name` (String)
 - `rf_profile_name` (String)
+- `ssids` (List of String)
+
+
+<a id="nestedobjatt--items--feature_templates"></a>
+### Nested Schema for `items.feature_templates`
+
+Read-Only:
+
+- `id` (String)
 - `ssids` (List of String)
 
 

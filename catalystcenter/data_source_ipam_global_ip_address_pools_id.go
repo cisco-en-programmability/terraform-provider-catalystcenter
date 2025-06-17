@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -22,7 +22,7 @@ their address space reserved by site-specific subpools.
 		ReadContext: dataSourceIPamGlobalIPAddressPoolsIDRead,
 		Schema: map[string]*schema.Schema{
 			"id": &schema.Schema{
-				Description: `id path parameter. The id of the global IP address pool to retrieve.
+				Description: `id path parameter. The **id** of the global IP address pool to retrieve.
 `,
 				Type:     schema.TypeString,
 				Required: true,
@@ -147,29 +147,41 @@ func dataSourceIPamGlobalIPAddressPoolsIDRead(ctx context.Context, d *schema.Res
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesAGlobalIPAddressPoolV1")
+		log.Printf("[DEBUG] Selected method: RetrievesAGlobalIPAddressPool")
 		vvID := vID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.NetworkSettings.RetrievesAGlobalIPAddressPoolV1(vvID)
+		response1, restyResp1, err := client.NetworkSettings.RetrievesAGlobalIPAddressPool(vvID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesAGlobalIPAddressPoolV1", err,
-				"Failure at RetrievesAGlobalIPAddressPoolV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesAGlobalIPAddressPool", err,
+				"Failure at RetrievesAGlobalIPAddressPool, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenNetworkSettingsRetrievesAGlobalIPAddressPoolV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesAGlobalIPAddressPool", err,
+				"Failure at RetrievesAGlobalIPAddressPool, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenNetworkSettingsRetrievesAGlobalIPAddressPoolItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesAGlobalIPAddressPoolV1 response",
+				"Failure when setting RetrievesAGlobalIPAddressPool response",
 				err))
 			return diags
 		}
@@ -181,12 +193,12 @@ func dataSourceIPamGlobalIPAddressPoolsIDRead(ctx context.Context, d *schema.Res
 	return diags
 }
 
-func flattenNetworkSettingsRetrievesAGlobalIPAddressPoolV1Item(item *catalystcentersdkgo.ResponseNetworkSettingsRetrievesAGlobalIPAddressPoolV1Response) []map[string]interface{} {
+func flattenNetworkSettingsRetrievesAGlobalIPAddressPoolItem(item *catalystcentersdkgo.ResponseNetworkSettingsRetrievesAGlobalIPAddressPoolResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["address_space"] = flattenNetworkSettingsRetrievesAGlobalIPAddressPoolV1ItemAddressSpace(item.AddressSpace)
+	respItem["address_space"] = flattenNetworkSettingsRetrievesAGlobalIPAddressPoolItemAddressSpace(item.AddressSpace)
 	respItem["id"] = item.ID
 	respItem["name"] = item.Name
 	respItem["pool_type"] = item.PoolType
@@ -195,7 +207,7 @@ func flattenNetworkSettingsRetrievesAGlobalIPAddressPoolV1Item(item *catalystcen
 	}
 }
 
-func flattenNetworkSettingsRetrievesAGlobalIPAddressPoolV1ItemAddressSpace(item *catalystcentersdkgo.ResponseNetworkSettingsRetrievesAGlobalIPAddressPoolV1ResponseAddressSpace) []map[string]interface{} {
+func flattenNetworkSettingsRetrievesAGlobalIPAddressPoolItemAddressSpace(item *catalystcentersdkgo.ResponseNetworkSettingsRetrievesAGlobalIPAddressPoolResponseAddressSpace) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

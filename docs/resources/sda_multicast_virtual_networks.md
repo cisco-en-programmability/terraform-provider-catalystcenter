@@ -22,7 +22,7 @@ It manages create, read, update and delete operations on SDA.
 ```terraform
 resource "catalystcenter_sda_multicast_virtual_networks" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     fabric_id       = "string"
@@ -67,7 +67,7 @@ output "catalystcenter_sda_multicast_virtual_networks_example" {
 
 Optional:
 
-- `payload` (Block List) Array of RequestApplicationPolicyCreateApplication (see [below for nested schema](#nestedblock--parameters--payload))
+- `payload` (Block List) Array of RequestSdaAddMulticastVirtualNetworks (see [below for nested schema](#nestedblock--parameters--payload))
 
 <a id="nestedblock--parameters--payload"></a>
 ### Nested Schema for `parameters.payload`

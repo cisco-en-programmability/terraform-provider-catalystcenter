@@ -1,7 +1,7 @@
 
 resource "catalystcenter_sites_dhcp_settings" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     dhcp {

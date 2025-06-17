@@ -4,23 +4,23 @@ page_title: "catalystcenter_sites_banner_settings Resource - terraform-provider-
 subcategory: ""
 description: |-
   It manages read and update operations on Network Settings.
-  Set banner settings for a site; null values indicate that the setting will be inherited from the parent site; empty
-  objects ({}) indicate that the settings is unset.
+  Set banner settings for a site; null values indicate that the setting will be inherited from the parent site;
+  empty objects ({}) indicate that the settings is unset.
 ---
 
 # catalystcenter_sites_banner_settings (Resource)
 
 It manages read and update operations on Network Settings.
 
-- Set banner settings for a site; *null* values indicate that the setting will be inherited from the parent site; empty
-objects (*{}*) indicate that the settings is unset.
+- Set banner settings for a site; **null** values indicate that the setting will be inherited from the parent site;
+empty objects (**{}**) indicate that the settings is unset.
 
 ## Example Usage
 
 ```terraform
 resource "catalystcenter_sites_banner_settings" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     banner {

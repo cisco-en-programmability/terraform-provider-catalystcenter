@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -61,8 +61,8 @@ func dataSourceNetworkDeviceMaintenanceSchedulesCountRead(ctx context.Context, d
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveTheTotalNumberOfScheduledMaintenanceWindowsV1")
-		queryParams1 := catalystcentersdkgo.RetrieveTheTotalNumberOfScheduledMaintenanceWindowsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: RetrieveTheTotalNumberOfScheduledMaintenanceWindows")
+		queryParams1 := catalystcentersdkgo.RetrieveTheTotalNumberOfScheduledMaintenanceWindowsQueryParams{}
 
 		if okNetworkDeviceIDs {
 			queryParams1.NetworkDeviceIDs = vNetworkDeviceIDs.(string)
@@ -73,24 +73,36 @@ func dataSourceNetworkDeviceMaintenanceSchedulesCountRead(ctx context.Context, d
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Devices.RetrieveTheTotalNumberOfScheduledMaintenanceWindowsV1(&queryParams1)
+		response1, restyResp1, err := client.Devices.RetrieveTheTotalNumberOfScheduledMaintenanceWindows(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveTheTotalNumberOfScheduledMaintenanceWindowsV1", err,
-				"Failure at RetrieveTheTotalNumberOfScheduledMaintenanceWindowsV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveTheTotalNumberOfScheduledMaintenanceWindows", err,
+				"Failure at RetrieveTheTotalNumberOfScheduledMaintenanceWindows, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesRetrieveTheTotalNumberOfScheduledMaintenanceWindowsV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveTheTotalNumberOfScheduledMaintenanceWindows", err,
+				"Failure at RetrieveTheTotalNumberOfScheduledMaintenanceWindows, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenDevicesRetrieveTheTotalNumberOfScheduledMaintenanceWindowsItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveTheTotalNumberOfScheduledMaintenanceWindowsV1 response",
+				"Failure when setting RetrieveTheTotalNumberOfScheduledMaintenanceWindows response",
 				err))
 			return diags
 		}
@@ -102,7 +114,7 @@ func dataSourceNetworkDeviceMaintenanceSchedulesCountRead(ctx context.Context, d
 	return diags
 }
 
-func flattenDevicesRetrieveTheTotalNumberOfScheduledMaintenanceWindowsV1Item(item *catalystcentersdkgo.ResponseDevicesRetrieveTheTotalNumberOfScheduledMaintenanceWindowsV1Response) []map[string]interface{} {
+func flattenDevicesRetrieveTheTotalNumberOfScheduledMaintenanceWindowsItem(item *catalystcentersdkgo.ResponseDevicesRetrieveTheTotalNumberOfScheduledMaintenanceWindowsResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

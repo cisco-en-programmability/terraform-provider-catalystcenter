@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -60,7 +60,7 @@ func resourceSdaAuthenticationProfiles() *schema.Resource {
 							Computed: true,
 						},
 						"fabric_id": &schema.Schema{
-							Description: `ID of the fabric this authentication profile is assigned to.
+							Description: `ID of the fabric this authentication profile is assigned to. (This property is not applicable to global authentication profiles and will not be present in such cases.)
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -78,11 +78,73 @@ func resourceSdaAuthenticationProfiles() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
+						"is_voice_vlan_enabled": &schema.Schema{
+							Description: `Enable/disable Voice Vlan.
+`,
+							// Type:        schema.TypeBool,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
 						"number_of_hosts": &schema.Schema{
 							Description: `Number of Hosts.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
+						},
+						"pre_auth_acl": &schema.Schema{
+							Type:     schema.TypeList,
+							Computed: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+
+									"access_contracts": &schema.Schema{
+										Type:     schema.TypeList,
+										Computed: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+
+												"action": &schema.Schema{
+													Description: `Contract behaviour.
+`,
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+												"port": &schema.Schema{
+													Description: `Port for the access contract.
+`,
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+												"protocol": &schema.Schema{
+													Description: `Protocol for the access contract.
+`,
+													Type:     schema.TypeString,
+													Computed: true,
+												},
+											},
+										},
+									},
+									"description": &schema.Schema{
+										Description: `Description of this Pre-Authentication ACL.
+`,
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"enabled": &schema.Schema{
+										Description: `Enable/disable Pre-Authentication ACL.
+`,
+										// Type:        schema.TypeBool,
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+									"implicit_action": &schema.Schema{
+										Description: `Implicit behaviour unless overridden.
+`,
+										Type:     schema.TypeString,
+										Computed: true,
+									},
+								},
+							},
 						},
 						"wake_on_lan": &schema.Schema{
 							Description: `Wake on LAN.
@@ -131,7 +193,7 @@ func resourceSdaAuthenticationProfiles() *schema.Resource {
 										Computed: true,
 									},
 									"fabric_id": &schema.Schema{
-										Description: `ID of the fabric this authentication profile is assigned to (updating this field is not allowed).
+										Description: `ID of the fabric this authentication profile is assigned to (updating this field is not allowed). To update a global authentication profile, either remove this property or set its value to null.
 `,
 										Type:     schema.TypeString,
 										Optional: true,
@@ -153,12 +215,85 @@ func resourceSdaAuthenticationProfiles() *schema.Resource {
 										Optional:     true,
 										Computed:     true,
 									},
+									"is_voice_vlan_enabled": &schema.Schema{
+										Description: `Enable/disable Voice Vlan.
+`,
+										// Type:        schema.TypeBool,
+										Type:         schema.TypeString,
+										ValidateFunc: validateStringHasValueFunc([]string{"", "true", "false"}),
+										Optional:     true,
+										Computed:     true,
+									},
 									"number_of_hosts": &schema.Schema{
 										Description: `Number of Hosts.
 `,
 										Type:     schema.TypeString,
 										Optional: true,
 										Computed: true,
+									},
+									"pre_auth_acl": &schema.Schema{
+										Type:     schema.TypeList,
+										Optional: true,
+										Computed: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+
+												"access_contracts": &schema.Schema{
+													Type:     schema.TypeList,
+													Optional: true,
+													Computed: true,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+
+															"action": &schema.Schema{
+																Description: `Contract behaviour.
+`,
+																Type:     schema.TypeString,
+																Optional: true,
+																Computed: true,
+															},
+															"port": &schema.Schema{
+																Description: `Port for the access contract. The port can only be used once in the Access Contract list.
+`,
+																Type:     schema.TypeString,
+																Optional: true,
+																Computed: true,
+															},
+															"protocol": &schema.Schema{
+																Description: `Protocol for the access contract. "TCP" and "TCP_UDP" are only allowed when the contract port is "domain".
+`,
+																Type:     schema.TypeString,
+																Optional: true,
+																Computed: true,
+															},
+														},
+													},
+												},
+												"description": &schema.Schema{
+													Description: `Description of this Pre-Authentication ACL.
+`,
+													Type:     schema.TypeString,
+													Optional: true,
+													Computed: true,
+												},
+												"enabled": &schema.Schema{
+													Description: `Enable/disable Pre-Authentication ACL.
+`,
+													// Type:        schema.TypeBool,
+													Type:         schema.TypeString,
+													ValidateFunc: validateStringHasValueFunc([]string{"", "true", "false"}),
+													Optional:     true,
+													Computed:     true,
+												},
+												"implicit_action": &schema.Schema{
+													Description: `Implicit behaviour unless overridden (defaults to "DENY").
+`,
+													Type:     schema.TypeString,
+													Optional: true,
+													Computed: true,
+												},
+											},
+										},
 									},
 									"wake_on_lan": &schema.Schema{
 										Description: `Wake on LAN.
@@ -202,7 +337,7 @@ func resourceSdaAuthenticationProfilesRead(ctx context.Context, d *schema.Resour
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetAuthenticationProfiles")
-		queryParams1 := catalystcentersdkgo.GetAuthenticationProfilesV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetAuthenticationProfilesQueryParams{}
 
 		queryParams1.AuthenticationProfileName = vvName
 
@@ -213,10 +348,10 @@ func resourceSdaAuthenticationProfilesRead(ctx context.Context, d *schema.Resour
 		}
 		// Review flatten function used
 
-		items := []catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesV1Response{
+		items := []catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesResponse{
 			*item1,
 		}
-		vItem1 := flattenSdaGetAuthenticationProfilesV1Items(&items)
+		vItem1 := flattenSdaGetAuthenticationProfilesItems(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetAuthenticationProfiles search response",
@@ -301,9 +436,10 @@ func resourceSdaAuthenticationProfilesDelete(ctx context.Context, d *schema.Reso
 		"Failure at SdaAuthenticationProfilesDelete, unexpected response", ""))
 	return diags
 }
-func expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateAuthenticationProfileV1 {
-	request := catalystcentersdkgo.RequestSdaUpdateAuthenticationProfileV1{}
-	if v := expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileV1ItemArray(ctx, key+".payload", d); v != nil {
+
+func expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateAuthenticationProfile {
+	request := catalystcentersdkgo.RequestSdaUpdateAuthenticationProfile{}
+	if v := expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -312,8 +448,8 @@ func expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfile(ctx conte
 	return &request
 }
 
-func expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateAuthenticationProfileV1 {
-	request := []catalystcentersdkgo.RequestItemSdaUpdateAuthenticationProfileV1{}
+func expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateAuthenticationProfile {
+	request := []catalystcentersdkgo.RequestItemSdaUpdateAuthenticationProfile{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -324,7 +460,7 @@ func expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileV1ItemArra
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -335,8 +471,8 @@ func expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileV1ItemArra
 	return &request
 }
 
-func expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateAuthenticationProfileV1 {
-	request := catalystcentersdkgo.RequestItemSdaUpdateAuthenticationProfileV1{}
+func expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateAuthenticationProfile {
+	request := catalystcentersdkgo.RequestItemSdaUpdateAuthenticationProfile{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -361,17 +497,83 @@ func expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileV1Item(ctx
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_bpdu_guard_enabled")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_bpdu_guard_enabled")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_bpdu_guard_enabled")))) {
 		request.IsBpduGuardEnabled = interfaceToBoolPtr(v)
 	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_voice_vlan_enabled")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_voice_vlan_enabled")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_voice_vlan_enabled")))) {
+		request.IsVoiceVLANEnabled = interfaceToBoolPtr(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".pre_auth_acl")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".pre_auth_acl")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".pre_auth_acl")))) {
+		request.PreAuthACL = expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileItemPreAuthACL(ctx, key+".pre_auth_acl.0", d)
+	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
 	}
 	return &request
 }
 
-func searchSdaGetAuthenticationProfiles(m interface{}, queryParams catalystcentersdkgo.GetAuthenticationProfilesV1QueryParams, vID string) (*catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesV1Response, error) {
+func expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileItemPreAuthACL(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateAuthenticationProfilePreAuthACL {
+	request := catalystcentersdkgo.RequestItemSdaUpdateAuthenticationProfilePreAuthACL{}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".enabled")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".enabled")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".enabled")))) {
+		request.Enabled = interfaceToBoolPtr(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".implicit_action")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".implicit_action")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".implicit_action")))) {
+		request.ImplicitAction = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".description")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".description")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".description")))) {
+		request.Description = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".access_contracts")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".access_contracts")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".access_contracts")))) {
+		request.AccessContracts = expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileItemPreAuthACLAccessContractsArray(ctx, key+".access_contracts", d)
+	}
+	if isEmptyValue(reflect.ValueOf(request)) {
+		return nil
+	}
+	return &request
+}
+
+func expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileItemPreAuthACLAccessContractsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateAuthenticationProfilePreAuthACLAccessContracts {
+	request := []catalystcentersdkgo.RequestItemSdaUpdateAuthenticationProfilePreAuthACLAccessContracts{}
+	key = fixKeyAccess(key)
+	o := d.Get(key)
+	if o == nil {
+		return nil
+	}
+	objs := o.([]interface{})
+	if len(objs) == 0 {
+		return nil
+	}
+	for item_no := range objs {
+		i := expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileItemPreAuthACLAccessContracts(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		if i != nil {
+			request = append(request, *i)
+		}
+	}
+	if isEmptyValue(reflect.ValueOf(request)) {
+		return nil
+	}
+	return &request
+}
+
+func expandRequestSdaAuthenticationProfilesUpdateAuthenticationProfileItemPreAuthACLAccessContracts(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateAuthenticationProfilePreAuthACLAccessContracts {
+	request := catalystcentersdkgo.RequestItemSdaUpdateAuthenticationProfilePreAuthACLAccessContracts{}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".action")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".action")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".action")))) {
+		request.Action = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".protocol")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".protocol")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".protocol")))) {
+		request.Protocol = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".port")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".port")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".port")))) {
+		request.Port = interfaceToString(v)
+	}
+	if isEmptyValue(reflect.ValueOf(request)) {
+		return nil
+	}
+	return &request
+}
+
+func searchSdaGetAuthenticationProfiles(m interface{}, queryParams catalystcentersdkgo.GetAuthenticationProfilesQueryParams, vID string) (*catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesV1Response
-	var ite *catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesV1
+	var foundItem *catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesResponse
+	var ite *catalystcentersdkgo.ResponseSdaGetAuthenticationProfiles
 	if vID != "" {
 		queryParams.Offset = 1
 		nResponse, _, err := client.Sda.GetAuthenticationProfiles(nil)

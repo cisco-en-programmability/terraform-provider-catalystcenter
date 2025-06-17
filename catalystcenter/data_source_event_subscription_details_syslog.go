@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -150,8 +150,8 @@ func dataSourceEventSubscriptionDetailsSyslogRead(ctx context.Context, d *schema
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSyslogSubscriptionDetailsV1")
-		queryParams1 := catalystcentersdkgo.GetSyslogSubscriptionDetailsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetSyslogSubscriptionDetails")
+		queryParams1 := catalystcentersdkgo.GetSyslogSubscriptionDetailsQueryParams{}
 
 		if okName {
 			queryParams1.Name = vName.(string)
@@ -172,24 +172,38 @@ func dataSourceEventSubscriptionDetailsSyslogRead(ctx context.Context, d *schema
 			queryParams1.Order = vOrder.(string)
 		}
 
-		response1, restyResp1, err := client.EventManagement.GetSyslogSubscriptionDetailsV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.EventManagement.GetSyslogSubscriptionDetails(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSyslogSubscriptionDetailsV1", err,
-				"Failure at GetSyslogSubscriptionDetailsV1, unexpected response", ""))
+				"Failure when executing 2 GetSyslogSubscriptionDetails", err,
+				"Failure at GetSyslogSubscriptionDetails, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenEventManagementGetSyslogSubscriptionDetailsV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetSyslogSubscriptionDetails", err,
+				"Failure at GetSyslogSubscriptionDetails, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenEventManagementGetSyslogSubscriptionDetailsItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSyslogSubscriptionDetailsV1 response",
+				"Failure when setting GetSyslogSubscriptionDetails response",
 				err))
 			return diags
 		}
@@ -201,7 +215,7 @@ func dataSourceEventSubscriptionDetailsSyslogRead(ctx context.Context, d *schema
 	return diags
 }
 
-func flattenEventManagementGetSyslogSubscriptionDetailsV1Items(items *catalystcentersdkgo.ResponseEventManagementGetSyslogSubscriptionDetailsV1) []map[string]interface{} {
+func flattenEventManagementGetSyslogSubscriptionDetailsItems(items *catalystcentersdkgo.ResponseEventManagementGetSyslogSubscriptionDetails) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -212,13 +226,13 @@ func flattenEventManagementGetSyslogSubscriptionDetailsV1Items(items *catalystce
 		respItem["name"] = item.Name
 		respItem["description"] = item.Description
 		respItem["connector_type"] = item.ConnectorType
-		respItem["syslog_config"] = flattenEventManagementGetSyslogSubscriptionDetailsV1ItemsSyslogConfig(item.SyslogConfig)
+		respItem["syslog_config"] = flattenEventManagementGetSyslogSubscriptionDetailsItemsSyslogConfig(item.SyslogConfig)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenEventManagementGetSyslogSubscriptionDetailsV1ItemsSyslogConfig(item *catalystcentersdkgo.ResponseItemEventManagementGetSyslogSubscriptionDetailsV1SyslogConfig) []map[string]interface{} {
+func flattenEventManagementGetSyslogSubscriptionDetailsItemsSyslogConfig(item *catalystcentersdkgo.ResponseItemEventManagementGetSyslogSubscriptionDetailsSyslogConfig) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

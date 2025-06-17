@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -109,11 +109,11 @@ func dataSourceThreatSummaryRead(ctx context.Context, d *schema.ResourceData, m 
 
 	var diags diag.Diagnostics
 
-	request1 := expandRequestThreatSummaryThreatSummaryV1(ctx, "", d)
+	request1 := expandRequestThreatSummaryThreatSummary(ctx, "", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Devices.ThreatSummaryV1(request1)
+	response1, restyResp1, err := client.Devices.ThreatSummary(request1)
 
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
@@ -124,17 +124,29 @@ func dataSourceThreatSummaryRead(ctx context.Context, d *schema.ResourceData, m 
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing 2 ThreatSummaryV1", err,
-			"Failure at ThreatSummaryV1, unexpected response", ""))
+			"Failure when executing 2 ThreatSummary", err,
+			"Failure at ThreatSummary, unexpected response", ""))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItems1 := flattenDevicesThreatSummaryV1Items(response1.Response)
+	if err != nil || response1 == nil {
+		if restyResp1 != nil {
+			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+		}
+		diags = append(diags, diagErrorWithAlt(
+			"Failure when executing 2 ThreatSummary", err,
+			"Failure at ThreatSummary, unexpected response", ""))
+		return diags
+	}
+
+	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+	vItems1 := flattenDevicesThreatSummaryItems(response1.Response)
 	if err := d.Set("items", vItems1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ThreatSummaryV1 response",
+			"Failure when setting ThreatSummary response",
 			err))
 		return diags
 	}
@@ -145,8 +157,8 @@ func dataSourceThreatSummaryRead(ctx context.Context, d *schema.ResourceData, m 
 	return diags
 }
 
-func expandRequestThreatSummaryThreatSummaryV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesThreatSummaryV1 {
-	request := catalystcentersdkgo.RequestDevicesThreatSummaryV1{}
+func expandRequestThreatSummaryThreatSummary(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesThreatSummary {
+	request := catalystcentersdkgo.RequestDevicesThreatSummary{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -163,4 +175,33 @@ func expandRequestThreatSummaryThreatSummaryV1(ctx context.Context, key string, 
 		request.ThreatType = interfaceToSliceString(v)
 	}
 	return &request
+}
+
+func flattenDevicesThreatSummaryItems(items *[]catalystcentersdkgo.ResponseDevicesThreatSummaryResponse) []map[string]interface{} {
+	if items == nil {
+		return nil
+	}
+	var respItems []map[string]interface{}
+	for _, item := range *items {
+		respItem := make(map[string]interface{})
+		respItem["timestamp"] = item.Timestamp
+		respItem["threat_data"] = flattenDevicesThreatSummaryItemsThreatData(item.ThreatData)
+		respItems = append(respItems, respItem)
+	}
+	return respItems
+}
+
+func flattenDevicesThreatSummaryItemsThreatData(items *[]catalystcentersdkgo.ResponseDevicesThreatSummaryResponseThreatData) []map[string]interface{} {
+	if items == nil {
+		return nil
+	}
+	var respItems []map[string]interface{}
+	for _, item := range *items {
+		respItem := make(map[string]interface{})
+		respItem["threat_type"] = item.ThreatType
+		respItem["threat_level"] = item.ThreatLevel
+		respItem["threat_count"] = item.ThreatCount
+		respItems = append(respItems, respItem)
+	}
+	return respItems
 }

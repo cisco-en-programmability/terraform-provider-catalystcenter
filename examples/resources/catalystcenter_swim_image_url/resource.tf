@@ -1,17 +1,17 @@
 
 resource "catalystcenter_swim_image_url" "example" {
-  provider        = meraki
+  provider        = catalystcenter
   schedule_at     = "string"
   schedule_desc   = "string"
   schedule_origin = "string"
-  parameters {
+  parameters = [{
 
     application_type = "string"
     image_family     = "string"
     source_url       = "string"
     third_party      = "false"
     vendor           = "string"
-  }
+  }]
 }
 
 output "catalystcenter_swim_image_url_example" {

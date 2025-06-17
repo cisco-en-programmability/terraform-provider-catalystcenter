@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"reflect"
 	"time"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	"log"
+
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -22,8 +23,8 @@ func resourceSitesWirelessSettingsSSIDs() *schema.Resource {
 
 - This resource allows the user to update an SSID (Service Set Identifier) at the given site
 
-- This resource allows the user to delete an SSID (Service Set Identifier) at the global level, if the SSID is not
-mapped to any Wireless Profile
+- This resource allows the user to delete an SSID (Service Set Identifier) at the global level , if the SSID is not
+mapped to any Wireless Profile, Or remove override from given site Id .
 `,
 
 		CreateContext: resourceSitesWirelessSettingsSSIDsCreate,
@@ -68,7 +69,7 @@ mapped to any Wireless Profile
 							Computed: true,
 						},
 						"auth_server": &schema.Schema{
-							Description: `Authentication Server, Mandatory for Guest SSIDs with wlanType=Guest and l3AuthType=web_auth
+							Description: `For Guest SSIDs ('wlanType' is 'Guest' and 'l3AuthType' is 'web_auth'), the Authentication Server('authServer') is mandatory. Otherwise, it defaults to 'auth_external'.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -89,7 +90,7 @@ mapped to any Wireless Profile
 							Computed: true,
 						},
 						"basic_service_set_client_idle_timeout": &schema.Schema{
-							Description: `This refers to the duration of inactivity, measured in seconds, before a client connected to the Basic Service Set is considered idle and timed out
+							Description: `This refers to the duration of inactivity, measured in seconds, before a client connected to the Basic Service Set is considered idle and timed out. Default is Basic ServiceSet ClientIdle Timeout if exists else 300. If it needs to be disabled , pass 0 as its value else valid range is [15 to 100000].
 `,
 							Type:     schema.TypeInt,
 							Computed: true,
@@ -198,6 +199,18 @@ mapped to any Wireless Profile
 						},
 						"inherited_site_name": &schema.Schema{
 							Description: `Site Name from where the SSID is inherited
+`,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"inherited_site_name_hierarchy": &schema.Schema{
+							Description: `Inherited Site Name Hierarchy
+`,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"inherited_site_uui_d": &schema.Schema{
+							Description: `Inherited Site UUID
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -363,6 +376,13 @@ mapped to any Wireless Profile
 							Type:     schema.TypeString,
 							Computed: true,
 						},
+						"is_radius_profiling_enabled": &schema.Schema{
+							Description: `'true' if Radius profiling needs to be enabled, defaults to 'false' if not specified. At least one AAA/PSN server is required to enable Radius Profiling.
+`,
+							// Type:        schema.TypeBool,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
 						"is_random_mac_filter_enabled": &schema.Schema{
 							Description: `Deny clients using randomized MAC addresses when set to true
 `,
@@ -378,7 +398,7 @@ mapped to any Wireless Profile
 							Computed: true,
 						},
 						"l3_auth_type": &schema.Schema{
-							Description: `L3 Authentication Type
+							Description: `L3 Authentication Type. When 'wlanType' is 'Enterprise', ‘l3AuthType' is optional and defaults to 'open' if not specified. If 'wlanType' is 'Guest' then 'l3AuthType' is mandatory.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -585,7 +605,7 @@ mapped to any Wireless Profile
 							Computed: true,
 						},
 						"auth_server": &schema.Schema{
-							Description: `Authentication Server, Mandatory for Guest SSIDs with wlanType=Guest and l3AuthType=web_auth
+							Description: `For Guest SSIDs ('wlanType' is 'Guest' and 'l3AuthType' is 'web_auth'), the Authentication Server('authServer') is mandatory. Otherwise, it defaults to 'auth_external'.
 `,
 							Type:     schema.TypeString,
 							Optional: true,
@@ -602,14 +622,14 @@ mapped to any Wireless Profile
 							},
 						},
 						"auth_type": &schema.Schema{
-							Description: `L2 Authentication Type (If authType is not open , then atleast one RSN Cipher Suite and corresponding valid AKM must be enabled)
+							Description: `L2 Authentication Type (If authType is not open , then atleast one RSN Cipher Suite and corresponding valid AKM must be enabled). Default is L2 Authentication Type if exists else None.
 `,
 							Type:     schema.TypeString,
 							Optional: true,
 							Computed: true,
 						},
 						"basic_service_set_client_idle_timeout": &schema.Schema{
-							Description: `This refers to the duration of inactivity, measured in seconds, before a client connected to the Basic Service Set is considered idle and timed out
+							Description: `This refers to the duration of inactivity, measured in seconds, before a client connected to the Basic Service Set is considered idle and timed out. Default is Basic ServiceSet ClientIdle Timeout if exists else 300. If it needs to be disabled , pass 0 as its value else valid range is [15 to 100000].
 `,
 							Type:     schema.TypeInt,
 							Optional: true,
@@ -625,7 +645,7 @@ mapped to any Wireless Profile
 							Computed:     true,
 						},
 						"cckm_tsf_tolerance": &schema.Schema{
-							Description: `Cckm TImestamp Tolerance(in milliseconds)
+							Description: `he default value is the Cckm Timestamp Tolerance (in milliseconds, if specified); otherwise, it is 0.
 `,
 							Type:     schema.TypeInt,
 							Optional: true,
@@ -641,14 +661,14 @@ mapped to any Wireless Profile
 							Computed:     true,
 						},
 						"client_exclusion_timeout": &schema.Schema{
-							Description: `This refers to the length of time, in seconds, a client is excluded or blocked from accessing the network after a specified number of unsuccessful attempts
+							Description: `This refers to the length of time, in seconds, a client is excluded or blocked from accessing the network after a specified number of unsuccessful attempts. Default is Client Exclusion Timeout if exists else 180.
 `,
 							Type:     schema.TypeInt,
 							Optional: true,
 							Computed: true,
 						},
 						"client_rate_limit": &schema.Schema{
-							Description: `This pertains to the maximum data transfer rate, specified in bits per second, that a client is permitted to achieve
+							Description: `This pertains to the maximum data transfer rate, specified in bits per second, that a client is permitted to achieve. It should be in mutliples of 500 . Default is Client Rate Limit if exists else 0.
 `,
 							Type:     schema.TypeInt,
 							Optional: true,
@@ -719,7 +739,7 @@ mapped to any Wireless Profile
 							Computed:     true,
 						},
 						"id": &schema.Schema{
-							Description: `id path parameter. SSID ID. Inputs containing special characters should be encoded
+							Description: `id path parameter. SSID ID
 `,
 							Type:     schema.TypeString,
 							Required: true,
@@ -929,6 +949,15 @@ mapped to any Wireless Profile
 							Optional:     true,
 							Computed:     true,
 						},
+						"is_radius_profiling_enabled": &schema.Schema{
+							Description: `'true' if Radius profiling needs to be enabled, defaults to 'false' if not specified. At least one AAA/PSN server is required to enable Radius Profiling.
+`,
+							// Type:        schema.TypeBool,
+							Type:         schema.TypeString,
+							ValidateFunc: validateStringHasValueFunc([]string{"", "true", "false"}),
+							Optional:     true,
+							Computed:     true,
+						},
 						"is_random_mac_filter_enabled": &schema.Schema{
 							Description: `Deny clients using randomized MAC addresses when set to true
 `,
@@ -939,14 +968,14 @@ mapped to any Wireless Profile
 							Computed:     true,
 						},
 						"l3_auth_type": &schema.Schema{
-							Description: `L3 Authentication Type
+							Description: `L3 Authentication Type. When 'wlanType' is 'Enterprise', ‘l3AuthType' is optional and defaults to 'open' if not specified. If 'wlanType' is 'Guest' then 'l3AuthType' is mandatory.
 `,
 							Type:     schema.TypeString,
 							Optional: true,
 							Computed: true,
 						},
 						"management_frame_protection_clientprotection": &schema.Schema{
-							Description: `Management Frame Protection Client
+							Description: `Default is Management Frame Protection Client if exists else Optional.
 `,
 							Type:     schema.TypeString,
 							Optional: true,
@@ -967,7 +996,7 @@ mapped to any Wireless Profile
 										Computed: true,
 									},
 									"passphrase_type": &schema.Schema{
-										Description: `Passphrase Type
+										Description: `Passphrase Type(default: ASCII)
 `,
 										Type:     schema.TypeString,
 										Optional: true,
@@ -1016,8 +1045,15 @@ mapped to any Wireless Profile
 							Optional: true,
 							Computed: true,
 						},
+						"policy_profile_name": &schema.Schema{
+							Description: `Policy Profile Name. If 'policyProfileName' is not provided, the value of 'profileName' will be assigned to it. If 'profileName' is also not provided, an autogenerated name will be used. Autogenerated name is generated by appending ‘ssid’ field’s value with ‘_profile’ (Example : If ‘ssid’ = ‘ExampleSsid’, then autogenerated name will be ‘ExampleSsid_profile’).
+`,
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
+						},
 						"profile_name": &schema.Schema{
-							Description: `WLAN Profile Name, if not passed autogenerated profile name will be assigned. The same wlanProfileName will also be used for policyProfileName
+							Description: `WLAN Profile Name, if not passed autogenerated profile name will be assigned.
 `,
 							Type:     schema.TypeString,
 							Optional: true,
@@ -1067,7 +1103,7 @@ mapped to any Wireless Profile
 							Computed:     true,
 						},
 						"session_time_out": &schema.Schema{
-							Description: `This denotes the allotted time span, expressed in seconds, before a session is automatically terminated due to inactivity
+							Description: `This denotes the allotted time span, expressed in seconds, before a session is automatically terminated due to inactivity. Default sessionTimeOut is 1800.
 `,
 							Type:     schema.TypeInt,
 							Optional: true,
@@ -1098,7 +1134,7 @@ mapped to any Wireless Profile
 							Computed:     true,
 						},
 						"sleeping_client_timeout": &schema.Schema{
-							Description: `This refers to the amount of time, measured in minutes, before a sleeping (inactive) client is timed out of the network
+							Description: `This refers to the amount of time, measured in minutes, before a sleeping (inactive) client is timed out of the network. Default is Sleeping Client Timeout if exists else 720.
 `,
 							Type:     schema.TypeInt,
 							Optional: true,
@@ -1128,7 +1164,7 @@ mapped to any Wireless Profile
 							Computed:     true,
 						},
 						"wlan_band_select_enable": &schema.Schema{
-							Description: `Band select is allowed only when band options selected contains at least 2.4 GHz and 5 GHz band
+							Description: `Band select is allowed only when band options selected contains at least 2.4 GHz and 5 GHz band else false.
 `,
 							// Type:        schema.TypeBool,
 							Type:         schema.TypeString,
@@ -1156,7 +1192,7 @@ func resourceSitesWirelessSettingsSSIDsCreate(ctx context.Context, d *schema.Res
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestSitesWirelessSettingsSSIDsCreateSSIDV1(ctx, "parameters.0", d)
+	request1 := expandRequestSitesWirelessSettingsSSIDsCreateSSID(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vSiteID, okSiteID := resourceItem["site_id"]
@@ -1175,7 +1211,7 @@ func resourceSitesWirelessSettingsSSIDsCreate(ctx context.Context, d *schema.Res
 			return resourceSitesWirelessSettingsSSIDsRead(ctx, d, m)
 		}
 	} else {
-		queryParamImport := catalystcentersdkgo.GetSSIDBySiteV1QueryParams{}
+		queryParamImport := catalystcentersdkgo.GetSSIDBySiteQueryParams{}
 
 		response2, err := searchWirelessGetSSIDBySite(m, queryParamImport, vvSiteID, vvName)
 		if response2 != nil && err == nil {
@@ -1225,7 +1261,7 @@ func resourceSitesWirelessSettingsSSIDsCreate(ctx context.Context, d *schema.Res
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetSSIDBySiteV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetSSIDBySiteQueryParams{}
 	item3, err := searchWirelessGetSSIDBySite(m, queryParamValidate, vvSiteID, vvName)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
@@ -1269,7 +1305,7 @@ func resourceSitesWirelessSettingsSSIDsRead(ctx context.Context, d *schema.Resou
 		}
 
 		// Review flatten function used
-		vItem1 := flattenWirelessGetSSIDByIDV1Item(response1.Response)
+		vItem1 := flattenWirelessGetSSIDByIDItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetSSIDBySite search response",
@@ -1292,7 +1328,7 @@ func resourceSitesWirelessSettingsSSIDsUpdate(ctx context.Context, d *schema.Res
 	vvSiteID := resourceMap["site_id"]
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvID)
-		request1 := expandRequestSitesWirelessSettingsSSIDsUpdateSSIDV1(ctx, "parameters.0", d)
+		request1 := expandRequestSitesWirelessSettingsSSIDsUpdateSSID(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.Wireless.UpdateSSID(vvSiteID, vvID, request1)
 		if err != nil || response1 == nil {
@@ -1355,7 +1391,7 @@ func resourceSitesWirelessSettingsSSIDsDelete(ctx context.Context, d *schema.Res
 	vvID := resourceMap["id"]
 	vvSiteID := resourceMap["site_id"]
 
-	response1, restyResp1, err := client.Wireless.DeleteSSID(vvSiteID, vvID)
+	response1, restyResp1, err := client.Wireless.DeleteSSID(vvSiteID, vvID, nil)
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] resty response for delete operation => %v", restyResp1.String())
@@ -1405,8 +1441,9 @@ func resourceSitesWirelessSettingsSSIDsDelete(ctx context.Context, d *schema.Res
 
 	return diags
 }
-func expandRequestSitesWirelessSettingsSSIDsCreateSSIDV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateSSIDV1 {
-	request := catalystcentersdkgo.RequestWirelessCreateSSIDV1{}
+
+func expandRequestSitesWirelessSettingsSSIDsCreateSSID(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateSSID {
+	request := catalystcentersdkgo.RequestWirelessCreateSSID{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ssid")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ssid")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ssid")))) {
 		request.SSID = interfaceToString(v)
 	}
@@ -1474,7 +1511,7 @@ func expandRequestSitesWirelessSettingsSSIDsCreateSSIDV1(ctx context.Context, ke
 		request.ProtectedManagementFrame = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".multi_psk_settings")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".multi_psk_settings")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".multi_psk_settings")))) {
-		request.MultipSKSettings = expandRequestSitesWirelessSettingsSSIDsCreateSSIDV1MultipSKSettingsArray(ctx, key+".multi_psk_settings", d)
+		request.MultipSKSettings = expandRequestSitesWirelessSettingsSSIDsCreateSSIDMultipSKSettingsArray(ctx, key+".multi_psk_settings", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".client_rate_limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".client_rate_limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".client_rate_limit")))) {
 		request.ClientRateLimit = interfaceToIntPtr(v)
@@ -1605,14 +1642,20 @@ func expandRequestSitesWirelessSettingsSSIDsCreateSSIDV1(ctx context.Context, ke
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".fast_transition_over_the_distributed_system_enable")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".fast_transition_over_the_distributed_system_enable")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".fast_transition_over_the_distributed_system_enable")))) {
 		request.FastTransitionOverTheDistributedSystemEnable = interfaceToBoolPtr(v)
 	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_radius_profiling_enabled")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_radius_profiling_enabled")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_radius_profiling_enabled")))) {
+		request.IsRadiusProfilingEnabled = interfaceToBoolPtr(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".policy_profile_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".policy_profile_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".policy_profile_name")))) {
+		request.PolicyProfileName = interfaceToString(v)
+	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
 	}
 	return &request
 }
 
-func expandRequestSitesWirelessSettingsSSIDsCreateSSIDV1MultipSKSettingsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessCreateSSIDV1MultipSKSettings {
-	request := []catalystcentersdkgo.RequestWirelessCreateSSIDV1MultipSKSettings{}
+func expandRequestSitesWirelessSettingsSSIDsCreateSSIDMultipSKSettingsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessCreateSSIDMultipSKSettings {
+	request := []catalystcentersdkgo.RequestWirelessCreateSSIDMultipSKSettings{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1623,7 +1666,7 @@ func expandRequestSitesWirelessSettingsSSIDsCreateSSIDV1MultipSKSettingsArray(ct
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSitesWirelessSettingsSSIDsCreateSSIDV1MultipSKSettings(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSitesWirelessSettingsSSIDsCreateSSIDMultipSKSettings(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1634,8 +1677,8 @@ func expandRequestSitesWirelessSettingsSSIDsCreateSSIDV1MultipSKSettingsArray(ct
 	return &request
 }
 
-func expandRequestSitesWirelessSettingsSSIDsCreateSSIDV1MultipSKSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateSSIDV1MultipSKSettings {
-	request := catalystcentersdkgo.RequestWirelessCreateSSIDV1MultipSKSettings{}
+func expandRequestSitesWirelessSettingsSSIDsCreateSSIDMultipSKSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateSSIDMultipSKSettings {
+	request := catalystcentersdkgo.RequestWirelessCreateSSIDMultipSKSettings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".priority")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".priority")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".priority")))) {
 		request.Priority = interfaceToIntPtr(v)
 	}
@@ -1651,8 +1694,8 @@ func expandRequestSitesWirelessSettingsSSIDsCreateSSIDV1MultipSKSettings(ctx con
 	return &request
 }
 
-func expandRequestSitesWirelessSettingsSSIDsUpdateSSIDV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateSSIDV1 {
-	request := catalystcentersdkgo.RequestWirelessUpdateSSIDV1{}
+func expandRequestSitesWirelessSettingsSSIDsUpdateSSID(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateSSID {
+	request := catalystcentersdkgo.RequestWirelessUpdateSSID{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ssid")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ssid")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ssid")))) {
 		request.SSID = interfaceToString(v)
 	}
@@ -1720,7 +1763,7 @@ func expandRequestSitesWirelessSettingsSSIDsUpdateSSIDV1(ctx context.Context, ke
 		request.ProtectedManagementFrame = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".multi_psk_settings")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".multi_psk_settings")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".multi_psk_settings")))) {
-		request.MultipSKSettings = expandRequestSitesWirelessSettingsSSIDsUpdateSSIDV1MultipSKSettingsArray(ctx, key+".multi_psk_settings", d)
+		request.MultipSKSettings = expandRequestSitesWirelessSettingsSSIDsUpdateSSIDMultipSKSettingsArray(ctx, key+".multi_psk_settings", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".client_rate_limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".client_rate_limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".client_rate_limit")))) {
 		request.ClientRateLimit = interfaceToIntPtr(v)
@@ -1851,14 +1894,20 @@ func expandRequestSitesWirelessSettingsSSIDsUpdateSSIDV1(ctx context.Context, ke
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".fast_transition_over_the_distributed_system_enable")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".fast_transition_over_the_distributed_system_enable")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".fast_transition_over_the_distributed_system_enable")))) {
 		request.FastTransitionOverTheDistributedSystemEnable = interfaceToBoolPtr(v)
 	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_radius_profiling_enabled")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_radius_profiling_enabled")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_radius_profiling_enabled")))) {
+		request.IsRadiusProfilingEnabled = interfaceToBoolPtr(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".policy_profile_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".policy_profile_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".policy_profile_name")))) {
+		request.PolicyProfileName = interfaceToString(v)
+	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
 	}
 	return &request
 }
 
-func expandRequestSitesWirelessSettingsSSIDsUpdateSSIDV1MultipSKSettingsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessUpdateSSIDV1MultipSKSettings {
-	request := []catalystcentersdkgo.RequestWirelessUpdateSSIDV1MultipSKSettings{}
+func expandRequestSitesWirelessSettingsSSIDsUpdateSSIDMultipSKSettingsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessUpdateSSIDMultipSKSettings {
+	request := []catalystcentersdkgo.RequestWirelessUpdateSSIDMultipSKSettings{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1869,7 +1918,7 @@ func expandRequestSitesWirelessSettingsSSIDsUpdateSSIDV1MultipSKSettingsArray(ct
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSitesWirelessSettingsSSIDsUpdateSSIDV1MultipSKSettings(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSitesWirelessSettingsSSIDsUpdateSSIDMultipSKSettings(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1880,8 +1929,8 @@ func expandRequestSitesWirelessSettingsSSIDsUpdateSSIDV1MultipSKSettingsArray(ct
 	return &request
 }
 
-func expandRequestSitesWirelessSettingsSSIDsUpdateSSIDV1MultipSKSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateSSIDV1MultipSKSettings {
-	request := catalystcentersdkgo.RequestWirelessUpdateSSIDV1MultipSKSettings{}
+func expandRequestSitesWirelessSettingsSSIDsUpdateSSIDMultipSKSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateSSIDMultipSKSettings {
+	request := catalystcentersdkgo.RequestWirelessUpdateSSIDMultipSKSettings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".priority")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".priority")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".priority")))) {
 		request.Priority = interfaceToIntPtr(v)
 	}
@@ -1897,10 +1946,10 @@ func expandRequestSitesWirelessSettingsSSIDsUpdateSSIDV1MultipSKSettings(ctx con
 	return &request
 }
 
-func searchWirelessGetSSIDBySite(m interface{}, queryParams catalystcentersdkgo.GetSSIDBySiteV1QueryParams, vSiteID string, vID string) (*catalystcentersdkgo.ResponseWirelessGetSSIDBySiteV1Response, error) {
+func searchWirelessGetSSIDBySite(m interface{}, queryParams catalystcentersdkgo.GetSSIDBySiteQueryParams, vSiteID string, vID string) (*catalystcentersdkgo.ResponseWirelessGetSSIDBySiteResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseWirelessGetSSIDBySiteV1Response
+	var foundItem *catalystcentersdkgo.ResponseWirelessGetSSIDBySiteResponse
 	if vID != "" {
 		queryParams.Offset = 1
 		nResponse, _, err := client.Wireless.GetSSIDBySite(vSiteID, nil)

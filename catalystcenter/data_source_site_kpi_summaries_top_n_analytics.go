@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -83,10 +83,10 @@ func dataSourceSiteKpiSummariesTopNAnalyticsRead(ctx context.Context, d *schema.
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1")
+		log.Printf("[DEBUG] Selected method: GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskID")
 
-		headerParams1 := catalystcentersdkgo.GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDHeaderParams{}
+		queryParams1 := catalystcentersdkgo.GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDQueryParams{}
 
 		queryParams1.TaskID = vTaskID.(string)
 
@@ -94,24 +94,36 @@ func dataSourceSiteKpiSummariesTopNAnalyticsRead(ctx context.Context, d *schema.
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sites.GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Sites.GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskID(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1", err,
-				"Failure at GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1, unexpected response", ""))
+				"Failure when executing 2 GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskID", err,
+				"Failure at GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskID", err,
+				"Failure at GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1 response",
+				"Failure when setting GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskID response",
 				err))
 			return diags
 		}
@@ -123,7 +135,7 @@ func dataSourceSiteKpiSummariesTopNAnalyticsRead(ctx context.Context, d *schema.
 	return diags
 }
 
-func flattenSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1Items(items *[]catalystcentersdkgo.ResponseSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1Response) []map[string]interface{} {
+func flattenSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDItems(items *[]catalystcentersdkgo.ResponseSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -131,13 +143,13 @@ func flattenSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1Items(i
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["id"] = item.ID
-		respItem["attributes"] = flattenSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1ItemsAttributes(item.Attributes)
+		respItem["attributes"] = flattenSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDItemsAttributes(item.Attributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1ItemsAttributes(items *[]catalystcentersdkgo.ResponseSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1ResponseAttributes) []map[string]interface{} {
+func flattenSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDItemsAttributes(items *[]catalystcentersdkgo.ResponseSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDResponseAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

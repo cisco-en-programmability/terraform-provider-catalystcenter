@@ -1,8 +1,8 @@
 
 resource "catalystcenter_license_deregister" "example" {
-    provider = meraki
+  provider = catalystcenter
 }
 
 output "catalystcenter_license_deregister_example" {
-    value = catalystcenter_license_deregister.example
+  value = catalystcenter_license_deregister.example
 }

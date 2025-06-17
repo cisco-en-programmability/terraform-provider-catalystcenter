@@ -1,18 +1,18 @@
 
 resource "catalystcenter_clients_query_count" "example" {
-  provider    = meraki
+  provider    = catalystcenter
   xca_lle_rid = "string"
-  parameters {
+  parameters = [{
 
     end_time = 1
-    filters {
+    filters = [{
 
       key      = "string"
       operator = "string"
       value    = 1
-    }
+    }]
     start_time = 1
-  }
+  }]
 }
 
 output "catalystcenter_clients_query_count_example" {

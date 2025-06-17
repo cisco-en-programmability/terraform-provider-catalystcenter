@@ -18,6 +18,8 @@ It performs create operation on Devices.
 Documentation' section to understand which fields are supported. For detailed information about the usage of the API,
 please refer to the Open API specification document https://github.com/cisco-en-programmability/catalyst-center-api-
 specs/blob/main/Assurance/CE_Cat_Center_Org-AssuranceEvents-1.0.0-resolved.yaml
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -28,18 +30,18 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_assurance_events_query_count" "example" {
   provider    = catalystcenter
   xca_lle_rid = "string"
-  parameters {
+  parameters = [{
 
     device_family = ["string"]
     end_time      = 1
-    filters {
+    filters = [{
 
       key      = "string"
       operator = "string"
       value    = "string"
-    }
+    }]
     start_time = 1
-  }
+  }]
 }
 
 output "catalystcenter_assurance_events_query_count_example" {

@@ -1,14 +1,14 @@
 
 resource "catalystcenter_assign_device_to_site" "example" {
-  provider = meraki
+  provider = catalystcenter
   site_id  = "string"
-  parameters {
+  parameters = [{
 
-    device {
+    device = [{
 
       ip = "string"
-    }
-  }
+    }]
+  }]
 }
 
 output "catalystcenter_assign_device_to_site_example" {

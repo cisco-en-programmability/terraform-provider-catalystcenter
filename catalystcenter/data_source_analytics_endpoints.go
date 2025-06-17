@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -443,8 +443,8 @@ func dataSourceAnalyticsEndpointsRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: QueryTheEndpointsV1")
-		queryParams1 := catalystcentersdkgo.QueryTheEndpointsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: QueryTheEndpoints")
+		queryParams1 := catalystcentersdkgo.QueryTheEndpointsQueryParams{}
 
 		if okProfilingStatus {
 			queryParams1.ProfilingStatus = vProfilingStatus.(string)
@@ -525,15 +525,29 @@ func dataSourceAnalyticsEndpointsRead(ctx context.Context, d *schema.ResourceDat
 			queryParams1.Include = vInclude.(string)
 		}
 
-		response1, restyResp1, err := client.AIEndpointAnalytics.QueryTheEndpointsV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.AiEndpointAnalytics.QueryTheEndpoints(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 QueryTheEndpointsV1", err,
-				"Failure at QueryTheEndpointsV1, unexpected response", ""))
+				"Failure when executing 2 QueryTheEndpoints", err,
+				"Failure at QueryTheEndpoints, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 QueryTheEndpoints", err,
+				"Failure at QueryTheEndpoints, unexpected response", ""))
 			return diags
 		}
 
@@ -541,32 +555,46 @@ func dataSourceAnalyticsEndpointsRead(ctx context.Context, d *schema.ResourceDat
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetEndpointDetailsV1")
+		log.Printf("[DEBUG] Selected method: GetEndpointDetails")
 		vvEpID := vEpID.(string)
-		queryParams2 := catalystcentersdkgo.GetEndpointDetailsV1QueryParams{}
+		queryParams2 := catalystcentersdkgo.GetEndpointDetailsQueryParams{}
 
 		if okInclude {
 			queryParams2.Include = vInclude.(string)
 		}
 
-		response2, restyResp2, err := client.AIEndpointAnalytics.GetEndpointDetailsV1(vvEpID, &queryParams2)
+		// has_unknown_response: None
+
+		response2, restyResp2, err := client.AiEndpointAnalytics.GetEndpointDetails(vvEpID, &queryParams2)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetEndpointDetailsV1", err,
-				"Failure at GetEndpointDetailsV1, unexpected response", ""))
+				"Failure when executing 2 GetEndpointDetails", err,
+				"Failure at GetEndpointDetails, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenAIEndpointAnalyticsGetEndpointDetailsV1Item(response2)
+		if err != nil || response2 == nil {
+			if restyResp2 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetEndpointDetails", err,
+				"Failure at GetEndpointDetails, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
+
+		vItem2 := flattenAiEndpointAnalyticsGetEndpointDetailsItem(response2)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetEndpointDetailsV1 response",
+				"Failure when setting GetEndpointDetails response",
 				err))
 			return diags
 		}
@@ -578,7 +606,7 @@ func dataSourceAnalyticsEndpointsRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenAIEndpointAnalyticsGetEndpointDetailsV1Item(item *catalystcentersdkgo.ResponseAIEndpointAnalyticsGetEndpointDetailsV1) []map[string]interface{} {
+func flattenAiEndpointAnalyticsGetEndpointDetailsItem(item *catalystcentersdkgo.ResponseAiEndpointAnalyticsGetEndpointDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -593,16 +621,16 @@ func flattenAIEndpointAnalyticsGetEndpointDetailsV1Item(item *catalystcentersdkg
 	respItem["last_probe_collection_timestamp"] = item.LastProbeCollectionTimestamp
 	respItem["random_mac"] = boolPtrToString(item.RandomMac)
 	respItem["registered"] = boolPtrToString(item.Registered)
-	respItem["attributes"] = flattenAIEndpointAnalyticsGetEndpointDetailsV1ItemAttributes(item.Attributes)
-	respItem["trust_data"] = flattenAIEndpointAnalyticsGetEndpointDetailsV1ItemTrustData(item.TrustData)
+	respItem["attributes"] = flattenAiEndpointAnalyticsGetEndpointDetailsItemAttributes(item.Attributes)
+	respItem["trust_data"] = flattenAiEndpointAnalyticsGetEndpointDetailsItemTrustData(item.TrustData)
 	respItem["anc_policy"] = item.AncPolicy
-	respItem["granular_anc_policy"] = flattenAIEndpointAnalyticsGetEndpointDetailsV1ItemGranularAncPolicy(item.GranularAncPolicy)
+	respItem["granular_anc_policy"] = flattenAiEndpointAnalyticsGetEndpointDetailsItemGranularAncPolicy(item.GranularAncPolicy)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenAIEndpointAnalyticsGetEndpointDetailsV1ItemAttributes(item *catalystcentersdkgo.ResponseAIEndpointAnalyticsGetEndpointDetailsV1Attributes) interface{} {
+func flattenAiEndpointAnalyticsGetEndpointDetailsItemAttributes(item *catalystcentersdkgo.ResponseAiEndpointAnalyticsGetEndpointDetailsAttributes) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -612,7 +640,7 @@ func flattenAIEndpointAnalyticsGetEndpointDetailsV1ItemAttributes(item *catalyst
 
 }
 
-func flattenAIEndpointAnalyticsGetEndpointDetailsV1ItemTrustData(item *catalystcentersdkgo.ResponseAIEndpointAnalyticsGetEndpointDetailsV1TrustData) []map[string]interface{} {
+func flattenAiEndpointAnalyticsGetEndpointDetailsItemTrustData(item *catalystcentersdkgo.ResponseAiEndpointAnalyticsGetEndpointDetailsTrustData) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -634,7 +662,7 @@ func flattenAIEndpointAnalyticsGetEndpointDetailsV1ItemTrustData(item *catalystc
 
 }
 
-func flattenAIEndpointAnalyticsGetEndpointDetailsV1ItemGranularAncPolicy(items *[]catalystcentersdkgo.ResponseAIEndpointAnalyticsGetEndpointDetailsV1GranularAncPolicy) []map[string]interface{} {
+func flattenAiEndpointAnalyticsGetEndpointDetailsItemGranularAncPolicy(items *[]catalystcentersdkgo.ResponseAiEndpointAnalyticsGetEndpointDetailsGranularAncPolicy) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

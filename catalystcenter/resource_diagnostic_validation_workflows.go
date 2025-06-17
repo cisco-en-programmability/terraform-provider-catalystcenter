@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -66,7 +66,7 @@ func resourceDiagnosticValidationWorkflows() *schema.Resource {
 							Computed: true,
 						},
 						"run_status": &schema.Schema{
-							Description: `Execution status of the workflow. If the workflow is successfully submitted, runStatus will return *PENDING*. If the workflow execution has started, runStatus will return *IN_PROGRESS*. If the workflow executed is completed with all validations executed, runStatus will return *COMPLETED*. If the workflow execution fails while running validations, runStatus will return *FAILED*.
+							Description: `Execution status of the workflow. If the workflow is successfully submitted, runStatus will return **PENDING**. If the workflow execution has started, runStatus will return **IN_PROGRESS**. If the workflow executed is completed with all validations executed, runStatus will return **COMPLETED**. If the workflow execution fails while running validations, runStatus will return **FAILED**.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -144,7 +144,7 @@ func resourceDiagnosticValidationWorkflows() *schema.Resource {
 										Computed: true,
 									},
 									"validation_status": &schema.Schema{
-										Description: `Overall result of the validation set execution. If any of the contained validation execution status is *CRITICAL*, this is marked as *CRITICAL*. Else, if any of the contained validation execution status is *WARNING*, this is marked as *WARNING*. Else, this is marked as *INFORMATION*. This is empty when the workflow is in progress.
+										Description: `Overall result of the validation set execution. If any of the contained validation execution status is **CRITICAL**, this is marked as **CRITICAL**. Else, if any of the contained validation execution status is **WARNING**, this is marked as **WARNING**. Else, this is marked as **INFORMATION**. This is empty when the workflow is in progress.
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -159,7 +159,7 @@ func resourceDiagnosticValidationWorkflows() *schema.Resource {
 							},
 						},
 						"validation_status": &schema.Schema{
-							Description: `Overall result of the execution of all the validations. If any of the contained validation execution status is *CRITICAL*, this is marked as *CRITICAL*. Else, if any of the contained validation execution status is *WARNING*, this is marked as *WARNING*. Else, this is marked as *INFORMATION*.
+							Description: `Overall result of the execution of all the validations. If any of the contained validation execution status is **CRITICAL**, this is marked as **CRITICAL**. Else, if any of the contained validation execution status is **WARNING**, this is marked as **WARNING**. Else, this is marked as **INFORMATION**.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -217,7 +217,7 @@ func resourceDiagnosticValidationWorkflowsCreate(ctx context.Context, d *schema.
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestDiagnosticValidationWorkflowsSubmitsTheWorkflowForExecutingValidationsV1(ctx, "parameters.0", d)
+	request1 := expandRequestDiagnosticValidationWorkflowsSubmitsTheWorkflowForExecutingValidations(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vID, okID := resourceItem["id"]
@@ -234,7 +234,7 @@ func resourceDiagnosticValidationWorkflowsCreate(ctx context.Context, d *schema.
 			return resourceDiagnosticValidationWorkflowsRead(ctx, d, m)
 		}
 	} else {
-		queryParamImport := catalystcentersdkgo.RetrievesTheListOfValidationWorkflowsV1QueryParams{}
+		queryParamImport := catalystcentersdkgo.RetrievesTheListOfValidationWorkflowsQueryParams{}
 
 		response2, err := searchHealthAndPerformanceRetrievesTheListOfValidationWorkflows(m, queryParamImport, vvName)
 		if response2 != nil && err == nil {
@@ -289,7 +289,7 @@ func resourceDiagnosticValidationWorkflowsRead(ctx context.Context, d *schema.Re
 		d.SetId("")
 		return diags
 	}
-	vItem1 := flattenHealthAndPerformanceRetrievesValidationWorkflowDetailsV1Item(response1.Response)
+	vItem1 := flattenHealthAndPerformanceRetrievesValidationWorkflowDetailsItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
 			"Failure when setting RetrievesTheListOfValidationWorkflows search response",
@@ -338,8 +338,9 @@ func resourceDiagnosticValidationWorkflowsDelete(ctx context.Context, d *schema.
 
 	return diags
 }
-func expandRequestDiagnosticValidationWorkflowsSubmitsTheWorkflowForExecutingValidationsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestHealthAndPerformanceSubmitsTheWorkflowForExecutingValidationsV1 {
-	request := catalystcentersdkgo.RequestHealthAndPerformanceSubmitsTheWorkflowForExecutingValidationsV1{}
+
+func expandRequestDiagnosticValidationWorkflowsSubmitsTheWorkflowForExecutingValidations(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestHealthAndPerformanceSubmitsTheWorkflowForExecutingValidations {
+	request := catalystcentersdkgo.RequestHealthAndPerformanceSubmitsTheWorkflowForExecutingValidations{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -355,10 +356,10 @@ func expandRequestDiagnosticValidationWorkflowsSubmitsTheWorkflowForExecutingVal
 	return &request
 }
 
-func searchHealthAndPerformanceRetrievesTheListOfValidationWorkflows(m interface{}, queryParams catalystcentersdkgo.RetrievesTheListOfValidationWorkflowsV1QueryParams, vName string) (*catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesTheListOfValidationWorkflowsV1Response, error) {
+func searchHealthAndPerformanceRetrievesTheListOfValidationWorkflows(m interface{}, queryParams catalystcentersdkgo.RetrievesTheListOfValidationWorkflowsQueryParams, vName string) (*catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesTheListOfValidationWorkflowsResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesTheListOfValidationWorkflowsV1Response
+	var foundItem *catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesTheListOfValidationWorkflowsResponse
 	// var ite *catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesTheListOfValidationWorkflows
 	if vName != "" {
 		queryParams.Offset = 1

@@ -12,6 +12,8 @@ description: |-
 It performs create operation on Wireless.
 
 - Access Point Provision and ReProvision
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -21,7 +23,7 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_wireless_provision_access_point" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
     custom_ap_group_name   = "string"
     custom_flex_group_name = ["string"]
@@ -29,7 +31,7 @@ resource "catalystcenter_wireless_provision_access_point" "example" {
     rf_profile             = "string"
     site_name_hierarchy    = "string"
     type                   = "string"
-  }
+  }]
 }
 
 output "catalystcenter_wireless_provision_access_point_example" {
@@ -55,7 +57,7 @@ output "catalystcenter_wireless_provision_access_point_example" {
 
 Optional:
 
-- `payload` (Block List) Array of RequestWirelessAPProvisionConnectivityV1 (see [below for nested schema](#nestedblock--parameters--payload))
+- `payload` (Block List) Array of RequestWirelessAPProvisionConnectivity (see [below for nested schema](#nestedblock--parameters--payload))
 
 <a id="nestedblock--parameters--payload"></a>
 ### Nested Schema for `parameters.payload`

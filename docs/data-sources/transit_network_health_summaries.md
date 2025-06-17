@@ -19,10 +19,10 @@ description: |-
 It performs read operation on SDA.
 
 - Get a paginated list of Transit Networks with health summary.
-This data source provides the latest health data until the given endTime. If data is not ready for the provided
-endTime, the request will fail with error code 400 Bad Request, and the error message will indicate the recommended
+This data source provides the latest health data until the given **endTime**. If data is not ready for the provided
+endTime, the request will fail with error code **400 Bad Request**, and the error message will indicate the recommended
 endTime to use to retrieve a complete data set. This behavior may occur if the provided endTime=currentTime, since we
-are not a real time system. When endTime is not provided, the API returns the latest data.
+are not a real time system. When **endTime** is not provided, the API returns the latest data.
 For detailed information about the usage of the API, please refer to the Open API specification document
 https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 transitNetworkHealthSummaries-1.0.1-resolved.yaml
@@ -99,13 +99,16 @@ Read-Only:
 - `lisp_transit_poor_health_device_count` (Number)
 - `lisp_transit_total_device_count` (Number)
 - `name` (String)
+- `network_protocol` (String)
 - `poor_health_device_count` (Number)
 - `pubsub_transit_fair_health_device_count` (Number)
 - `pubsub_transit_good_health_device_count` (Number)
 - `pubsub_transit_health_percentage` (Number)
 - `pubsub_transit_poor_health_device_count` (Number)
 - `pubsub_transit_total_device_count` (Number)
-- `total_device_count` (Number)
+- `site_hierarchy` (String)
+- `site_hierarchy_id` (String)
+- `total_health_device_count` (Number)
 - `transit_control_plane_fair_health_device_count` (Number)
 - `transit_control_plane_good_health_device_count` (Number)
 - `transit_control_plane_health_percentage` (Number)
@@ -116,4 +119,4 @@ Read-Only:
 - `transit_services_health_percentage` (Number)
 - `transit_services_poor_health_device_count` (Number)
 - `transit_services_total_device_count` (Number)
-- `transit_type` (String)
+- `transit_type` (List of String)

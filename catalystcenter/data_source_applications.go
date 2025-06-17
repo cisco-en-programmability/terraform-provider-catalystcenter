@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -244,8 +244,8 @@ func dataSourceApplicationsRead(ctx context.Context, d *schema.ResourceData, m i
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetApplicationsV1")
-		queryParams1 := catalystcentersdkgo.GetApplicationsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetApplications")
+		queryParams1 := catalystcentersdkgo.GetApplicationsQueryParams{}
 
 		if okOffset {
 			queryParams1.Offset = vOffset.(float64)
@@ -257,24 +257,38 @@ func dataSourceApplicationsRead(ctx context.Context, d *schema.ResourceData, m i
 			queryParams1.Name = vName.(string)
 		}
 
-		response1, restyResp1, err := client.ApplicationPolicy.GetApplicationsV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.ApplicationPolicy.GetApplications(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetApplicationsV1", err,
-				"Failure at GetApplicationsV1, unexpected response", ""))
+				"Failure when executing 2 GetApplications", err,
+				"Failure at GetApplications, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenApplicationPolicyGetApplicationsV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetApplications", err,
+				"Failure at GetApplications, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenApplicationPolicyGetApplicationsItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetApplicationsV1 response",
+				"Failure when setting GetApplications response",
 				err))
 			return diags
 		}
@@ -286,7 +300,7 @@ func dataSourceApplicationsRead(ctx context.Context, d *schema.ResourceData, m i
 	return diags
 }
 
-func flattenApplicationPolicyGetApplicationsV1Items(items *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationsV1) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationsItems(items *catalystcentersdkgo.ResponseApplicationPolicyGetApplications) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -295,15 +309,15 @@ func flattenApplicationPolicyGetApplicationsV1Items(items *catalystcentersdkgo.R
 		respItem := make(map[string]interface{})
 		respItem["id"] = item.ID
 		respItem["name"] = item.Name
-		respItem["network_applications"] = flattenApplicationPolicyGetApplicationsV1ItemsNetworkApplications(item.NetworkApplications)
-		respItem["network_identity"] = flattenApplicationPolicyGetApplicationsV1ItemsNetworkIDentity(item.NetworkIDentity)
-		respItem["application_set"] = flattenApplicationPolicyGetApplicationsV1ItemsApplicationSet(item.ApplicationSet)
+		respItem["network_applications"] = flattenApplicationPolicyGetApplicationsItemsNetworkApplications(item.NetworkApplications)
+		respItem["network_identity"] = flattenApplicationPolicyGetApplicationsItemsNetworkIDentity(item.NetworkIDentity)
+		respItem["application_set"] = flattenApplicationPolicyGetApplicationsItemsApplicationSet(item.ApplicationSet)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplicationsV1ItemsNetworkApplications(items *[]catalystcentersdkgo.ResponseItemApplicationPolicyGetApplicationsV1NetworkApplications) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationsItemsNetworkApplications(items *[]catalystcentersdkgo.ResponseItemApplicationPolicyGetApplicationsNetworkApplications) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -332,7 +346,7 @@ func flattenApplicationPolicyGetApplicationsV1ItemsNetworkApplications(items *[]
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplicationsV1ItemsNetworkIDentity(items *[]catalystcentersdkgo.ResponseItemApplicationPolicyGetApplicationsV1NetworkIDentity) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationsItemsNetworkIDentity(items *[]catalystcentersdkgo.ResponseItemApplicationPolicyGetApplicationsNetworkIDentity) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -350,7 +364,7 @@ func flattenApplicationPolicyGetApplicationsV1ItemsNetworkIDentity(items *[]cata
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplicationsV1ItemsApplicationSet(item *catalystcentersdkgo.ResponseItemApplicationPolicyGetApplicationsV1ApplicationSet) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationsItemsApplicationSet(item *catalystcentersdkgo.ResponseItemApplicationPolicyGetApplicationsApplicationSet) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -12,7 +13,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -64,7 +65,7 @@ func resourceSdaAnycastGatewaysUpdate() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"payload": &schema.Schema{
-							Description: `Array of RequestSdaUpdateAnycastGatewaysV1`,
+							Description: `Array of RequestSdaUpdateAnycastGateways`,
 							Type:        schema.TypeList,
 							Optional:    true,
 							ForceNew:    true,
@@ -107,7 +108,7 @@ func resourceSdaAnycastGatewaysUpdate() *schema.Resource {
 										Computed:     true,
 									},
 									"is_group_based_policy_enforcement_enabled": &schema.Schema{
-										Description: `Enable/disable Group-Based Policy Enforcement (applicable only to INFRA_VN; defaults to false).
+										Description: `Enable/disable Group-Based Policy Enforcement (defaults to false when using INFRA_VN; defaults to true for other VNs; can only be modified when using INFRA_VN).
 `,
 										// Type:        schema.TypeBool,
 										Type:         schema.TypeString,
@@ -156,8 +157,28 @@ func resourceSdaAnycastGatewaysUpdate() *schema.Resource {
 										ForceNew:     true,
 										Computed:     true,
 									},
+									"is_resource_guard_enabled": &schema.Schema{
+										Description: `Enable/disable Resource Guard (not applicable to INFRA_VN).
+`,
+										// Type:        schema.TypeBool,
+										Type:         schema.TypeString,
+										ValidateFunc: validateStringHasValueFunc([]string{"", "true", "false"}),
+										Optional:     true,
+										ForceNew:     true,
+										Computed:     true,
+									},
 									"is_supplicant_based_extended_node_onboarding": &schema.Schema{
 										Description: `Enable/disable Supplicant-Based Extended Node Onboarding (applicable only to INFRA_VN requests; must not be null when poolType is EXTENDED_NODE).
+`,
+										// Type:        schema.TypeBool,
+										Type:         schema.TypeString,
+										ValidateFunc: validateStringHasValueFunc([]string{"", "true", "false"}),
+										Optional:     true,
+										ForceNew:     true,
+										Computed:     true,
+									},
+									"is_wireless_flooding_enabled": &schema.Schema{
+										Description: `Enable/disable wireless flooding (not applicable to INFRA_VN; can only be true when isWirelessPool is true).
 `,
 										// Type:        schema.TypeBool,
 										Type:         schema.TypeString,
@@ -175,6 +196,22 @@ func resourceSdaAnycastGatewaysUpdate() *schema.Resource {
 										Optional:     true,
 										ForceNew:     true,
 										Computed:     true,
+									},
+									"layer2_flooding_address": &schema.Schema{
+										Description: `The flooding address to use for layer 2 flooding. The IP address must be in the 239.0.0.0/8 range. This property is applicable only when the flooding address source is set to "CUSTOM".
+`,
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+										Computed: true,
+									},
+									"layer2_flooding_address_assignment": &schema.Schema{
+										Description: `The source of the flooding address for layer 2 flooding. Layer 2 flooding must be enabled to configure this property. "SHARED" means that the anycast gateway will inherit the flooding address from the fabric. "CUSTOM" allows the anycast gateway to use a different flooding address (not applicable to INFRA_VN; defaults to "SHARED").
+`,
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+										Computed: true,
 									},
 									"pool_type": &schema.Schema{
 										Description: `The pool type of the anycast gateway (required for & applicable only to INFRA_VN; updating this field is not allowed).
@@ -246,18 +283,18 @@ func resourceSdaAnycastGatewaysUpdateCreate(ctx context.Context, d *schema.Resou
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysV1(ctx, "parameters.0", d)
+	request1 := expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGateways(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Sda.UpdateAnycastGatewaysV1(request1)
+	response1, restyResp1, err := client.Sda.UpdateAnycastGateways(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing UpdateAnycastGatewaysV1", err))
+			"Failure when executing UpdateAnycastGateways", err))
 		return diags
 	}
 
@@ -265,7 +302,7 @@ func resourceSdaAnycastGatewaysUpdateCreate(ctx context.Context, d *schema.Resou
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing UpdateAnycastGatewaysV1", err))
+			"Failure when executing UpdateAnycastGateways", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -292,14 +329,14 @@ func resourceSdaAnycastGatewaysUpdateCreate(ctx context.Context, d *schema.Resou
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing UpdateAnycastGatewaysV1", err1))
+				"Failure when executing UpdateAnycastGateways", err1))
 			return diags
 		}
 	}
@@ -307,10 +344,10 @@ func resourceSdaAnycastGatewaysUpdateCreate(ctx context.Context, d *schema.Resou
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenSdaUpdateAnycastGatewaysV1Item(response1.Response)
+	vItem1 := flattenSdaUpdateAnycastGatewaysItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting UpdateAnycastGatewaysV1 response",
+			"Failure when setting UpdateAnycastGateways response",
 			err))
 		return diags
 	}
@@ -331,16 +368,16 @@ func resourceSdaAnycastGatewaysUpdateDelete(ctx context.Context, d *schema.Resou
 	return diags
 }
 
-func expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateAnycastGatewaysV1 {
-	request := catalystcentersdkgo.RequestSdaUpdateAnycastGatewaysV1{}
-	if v := expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGateways(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateAnycastGateways {
+	request := catalystcentersdkgo.RequestSdaUpdateAnycastGateways{}
+	if v := expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	return &request
 }
 
-func expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateAnycastGatewaysV1 {
-	request := []catalystcentersdkgo.RequestItemSdaUpdateAnycastGatewaysV1{}
+func expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateAnycastGateways {
+	request := []catalystcentersdkgo.RequestItemSdaUpdateAnycastGateways{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -351,7 +388,7 @@ func expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysV1ItemArray(ctx c
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -359,8 +396,8 @@ func expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysV1ItemArray(ctx c
 	return &request
 }
 
-func expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateAnycastGatewaysV1 {
-	request := catalystcentersdkgo.RequestItemSdaUpdateAnycastGatewaysV1{}
+func expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateAnycastGateways {
+	request := catalystcentersdkgo.RequestItemSdaUpdateAnycastGateways{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -397,8 +434,20 @@ func expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysV1Item(ctx contex
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_layer2_flooding_enabled")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_layer2_flooding_enabled")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_layer2_flooding_enabled")))) {
 		request.IsLayer2FloodingEnabled = interfaceToBoolPtr(v)
 	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".layer2_flooding_address_assignment")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".layer2_flooding_address_assignment")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".layer2_flooding_address_assignment")))) {
+		request.Layer2FloodingAddressAssignment = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".layer2_flooding_address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".layer2_flooding_address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".layer2_flooding_address")))) {
+		request.Layer2FloodingAddress = interfaceToString(v)
+	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_wireless_pool")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_wireless_pool")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_wireless_pool")))) {
 		request.IsWirelessPool = interfaceToBoolPtr(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_wireless_flooding_enabled")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_wireless_flooding_enabled")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_wireless_flooding_enabled")))) {
+		request.IsWirelessFloodingEnabled = interfaceToBoolPtr(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_resource_guard_enabled")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_resource_guard_enabled")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_resource_guard_enabled")))) {
+		request.IsResourceGuardEnabled = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_ip_directed_broadcast")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_ip_directed_broadcast")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_ip_directed_broadcast")))) {
 		request.IsIPDirectedBroadcast = interfaceToBoolPtr(v)
@@ -418,7 +467,7 @@ func expandRequestSdaAnycastGatewaysUpdateUpdateAnycastGatewaysV1Item(ctx contex
 	return &request
 }
 
-func flattenSdaUpdateAnycastGatewaysV1Item(item *catalystcentersdkgo.ResponseSdaUpdateAnycastGatewaysV1Response) []map[string]interface{} {
+func flattenSdaUpdateAnycastGatewaysItem(item *catalystcentersdkgo.ResponseSdaUpdateAnycastGatewaysResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

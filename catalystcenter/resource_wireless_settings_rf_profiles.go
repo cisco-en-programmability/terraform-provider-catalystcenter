@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -22,7 +22,7 @@ func resourceWirelessSettingsRfProfiles() *schema.Resource {
 
 - This resource allows the user to delete a custom RF Profile
 
-- This resource allows the user to update a custom RF Profile
+- This resource allows the user to update a custom RF Profile.
 `,
 
 		CreateContext: resourceWirelessSettingsRfProfilesCreate,
@@ -155,7 +155,7 @@ func resourceWirelessSettingsRfProfiles() *schema.Resource {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
-									"fra_properties": &schema.Schema{
+									"fra_properties_c": &schema.Schema{
 										Type:     schema.TypeList,
 										Computed: true,
 										Elem: &schema.Resource{
@@ -455,7 +455,7 @@ func resourceWirelessSettingsRfProfiles() *schema.Resource {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
-									"fra_properties": &schema.Schema{
+									"fra_properties_a": &schema.Schema{
 										Type:     schema.TypeList,
 										Computed: true,
 										Elem: &schema.Resource{
@@ -872,7 +872,7 @@ func resourceWirelessSettingsRfProfiles() *schema.Resource {
 										Optional:     true,
 										Computed:     true,
 									},
-									"fra_properties": &schema.Schema{
+									"fra_properties_c": &schema.Schema{
 										Type:     schema.TypeList,
 										Optional: true,
 										Computed: true,
@@ -1231,7 +1231,7 @@ func resourceWirelessSettingsRfProfiles() *schema.Resource {
 										Optional: true,
 										Computed: true,
 									},
-									"fra_properties": &schema.Schema{
+									"fra_properties_a": &schema.Schema{
 										Type:     schema.TypeList,
 										Optional: true,
 										Computed: true,
@@ -1577,7 +1577,7 @@ func resourceWirelessSettingsRfProfilesCreate(ctx context.Context, d *schema.Res
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestWirelessSettingsRfProfilesCreateRfProfileV1(ctx, "parameters.0", d)
+	request1 := expandRequestWirelessSettingsRfProfilesCreateRfProfile(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vID, okID := resourceItem["id"]
@@ -1593,7 +1593,7 @@ func resourceWirelessSettingsRfProfilesCreate(ctx context.Context, d *schema.Res
 			return resourceWirelessSettingsRfProfilesRead(ctx, d, m)
 		}
 	} else {
-		queryParamImport := catalystcentersdkgo.GetRfProfilesV1QueryParams{}
+		queryParamImport := catalystcentersdkgo.GetRfProfilesQueryParams{}
 
 		response2, err := searchWirelessGetRfProfiles(m, queryParamImport, vvName)
 		if response2 != nil && err == nil {
@@ -1642,7 +1642,7 @@ func resourceWirelessSettingsRfProfilesCreate(ctx context.Context, d *schema.Res
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetRfProfilesV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetRfProfilesQueryParams{}
 	item3, err := searchWirelessGetRfProfiles(m, queryParamValidate, vvName)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
@@ -1684,7 +1684,7 @@ func resourceWirelessSettingsRfProfilesRead(ctx context.Context, d *schema.Resou
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 		// Review flatten function used
-		vItem1 := flattenWirelessGetRfProfileByIDV1Item(response1.Response)
+		vItem1 := flattenWirelessGetRfProfileByIDItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetRfProfiles search response",
@@ -1708,7 +1708,7 @@ func resourceWirelessSettingsRfProfilesUpdate(ctx context.Context, d *schema.Res
 
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvID)
-		request1 := expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1(ctx, "parameters.0", d)
+		request1 := expandRequestWirelessSettingsRfProfilesUpdateRfProfile(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.Wireless.UpdateRfProfile(vvID, request1)
 		if err != nil || response1 == nil {
@@ -1818,8 +1818,9 @@ func resourceWirelessSettingsRfProfilesDelete(ctx context.Context, d *schema.Res
 
 	return diags
 }
-func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileV1 {
-	request := catalystcentersdkgo.RequestWirelessCreateRfProfileV1{}
+
+func expandRequestWirelessSettingsRfProfilesCreateRfProfile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfile {
+	request := catalystcentersdkgo.RequestWirelessCreateRfProfile{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rf_profile_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rf_profile_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rf_profile_name")))) {
 		request.RfProfileName = interfaceToString(v)
 	}
@@ -1836,13 +1837,13 @@ func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1(ctx context.Contex
 		request.EnableRadioType6GHz = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".radio_type_a_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".radio_type_a_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".radio_type_a_properties")))) {
-		request.RadioTypeAProperties = expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioTypeAProperties(ctx, key+".radio_type_a_properties.0", d)
+		request.RadioTypeAProperties = expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioTypeAProperties(ctx, key+".radio_type_a_properties.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".radio_type_b_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".radio_type_b_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".radio_type_b_properties")))) {
-		request.RadioTypeBProperties = expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioTypeBProperties(ctx, key+".radio_type_b_properties.0", d)
+		request.RadioTypeBProperties = expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioTypeBProperties(ctx, key+".radio_type_b_properties.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".radio_type6_g_hz_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".radio_type6_g_hz_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".radio_type6_g_hz_properties")))) {
-		request.RadioType6GHzProperties = expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioType6GHzProperties(ctx, key+".radio_type6_g_hz_properties.0", d)
+		request.RadioType6GHzProperties = expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioType6GHzProperties(ctx, key+".radio_type6_g_hz_properties.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -1850,8 +1851,8 @@ func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1(ctx context.Contex
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioTypeAProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioTypeAProperties {
-	request := catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioTypeAProperties{}
+func expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioTypeAProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileRadioTypeAProperties {
+	request := catalystcentersdkgo.RequestWirelessCreateRfProfileRadioTypeAProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".parent_profile")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".parent_profile")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".parent_profile")))) {
 		request.ParentProfile = interfaceToString(v)
 	}
@@ -1891,14 +1892,14 @@ func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioTypeAPropertie
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".max_radio_clients")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".max_radio_clients")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".max_radio_clients")))) {
 		request.MaxRadioClients = interfaceToIntPtr(v)
 	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".fra_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".fra_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".fra_properties")))) {
-		request.FraProperties = expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioTypeAPropertiesFraProperties(ctx, key+".fra_properties.0", d)
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".fra_properties_a")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".fra_properties_a")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".fra_properties_a")))) {
+		request.FraPropertiesA = expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioTypeAPropertiesFraPropertiesA(ctx, key+".fra_properties_a.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".coverage_hole_detection_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".coverage_hole_detection_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".coverage_hole_detection_properties")))) {
-		request.CoverageHoleDetectionProperties = expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioTypeAPropertiesCoverageHoleDetectionProperties(ctx, key+".coverage_hole_detection_properties.0", d)
+		request.CoverageHoleDetectionProperties = expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioTypeAPropertiesCoverageHoleDetectionProperties(ctx, key+".coverage_hole_detection_properties.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".spatial_reuse_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".spatial_reuse_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".spatial_reuse_properties")))) {
-		request.SpatialReuseProperties = expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioTypeAPropertiesSpatialReuseProperties(ctx, key+".spatial_reuse_properties.0", d)
+		request.SpatialReuseProperties = expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioTypeAPropertiesSpatialReuseProperties(ctx, key+".spatial_reuse_properties.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -1906,8 +1907,8 @@ func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioTypeAPropertie
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioTypeAPropertiesFraProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioTypeAPropertiesFraProperties {
-	request := catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioTypeAPropertiesFraProperties{}
+func expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioTypeAPropertiesFraPropertiesA(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileRadioTypeAPropertiesFraPropertiesA {
+	request := catalystcentersdkgo.RequestWirelessCreateRfProfileRadioTypeAPropertiesFraPropertiesA{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".client_aware")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".client_aware")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".client_aware")))) {
 		request.ClientAware = interfaceToBoolPtr(v)
 	}
@@ -1923,8 +1924,8 @@ func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioTypeAPropertie
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioTypeAPropertiesCoverageHoleDetectionProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioTypeAPropertiesCoverageHoleDetectionProperties {
-	request := catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioTypeAPropertiesCoverageHoleDetectionProperties{}
+func expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioTypeAPropertiesCoverageHoleDetectionProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileRadioTypeAPropertiesCoverageHoleDetectionProperties {
+	request := catalystcentersdkgo.RequestWirelessCreateRfProfileRadioTypeAPropertiesCoverageHoleDetectionProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".chd_client_level")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".chd_client_level")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".chd_client_level")))) {
 		request.ChdClientLevel = interfaceToIntPtr(v)
 	}
@@ -1943,8 +1944,8 @@ func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioTypeAPropertie
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioTypeAPropertiesSpatialReuseProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioTypeAPropertiesSpatialReuseProperties {
-	request := catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioTypeAPropertiesSpatialReuseProperties{}
+func expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioTypeAPropertiesSpatialReuseProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileRadioTypeAPropertiesSpatialReuseProperties {
+	request := catalystcentersdkgo.RequestWirelessCreateRfProfileRadioTypeAPropertiesSpatialReuseProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".dot11ax_non_srg_obss_packet_detect")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".dot11ax_non_srg_obss_packet_detect")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".dot11ax_non_srg_obss_packet_detect")))) {
 		request.Dot11AxNonSrgObssPacketDetect = interfaceToBoolPtr(v)
 	}
@@ -1966,8 +1967,8 @@ func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioTypeAPropertie
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioTypeBProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioTypeBProperties {
-	request := catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioTypeBProperties{}
+func expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioTypeBProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileRadioTypeBProperties {
+	request := catalystcentersdkgo.RequestWirelessCreateRfProfileRadioTypeBProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".parent_profile")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".parent_profile")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".parent_profile")))) {
 		request.ParentProfile = interfaceToString(v)
 	}
@@ -1999,10 +2000,10 @@ func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioTypeBPropertie
 		request.MaxRadioClients = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".coverage_hole_detection_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".coverage_hole_detection_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".coverage_hole_detection_properties")))) {
-		request.CoverageHoleDetectionProperties = expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioTypeBPropertiesCoverageHoleDetectionProperties(ctx, key+".coverage_hole_detection_properties.0", d)
+		request.CoverageHoleDetectionProperties = expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioTypeBPropertiesCoverageHoleDetectionProperties(ctx, key+".coverage_hole_detection_properties.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".spatial_reuse_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".spatial_reuse_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".spatial_reuse_properties")))) {
-		request.SpatialReuseProperties = expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioTypeBPropertiesSpatialReuseProperties(ctx, key+".spatial_reuse_properties.0", d)
+		request.SpatialReuseProperties = expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioTypeBPropertiesSpatialReuseProperties(ctx, key+".spatial_reuse_properties.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -2010,8 +2011,8 @@ func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioTypeBPropertie
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioTypeBPropertiesCoverageHoleDetectionProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioTypeBPropertiesCoverageHoleDetectionProperties {
-	request := catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioTypeBPropertiesCoverageHoleDetectionProperties{}
+func expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioTypeBPropertiesCoverageHoleDetectionProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileRadioTypeBPropertiesCoverageHoleDetectionProperties {
+	request := catalystcentersdkgo.RequestWirelessCreateRfProfileRadioTypeBPropertiesCoverageHoleDetectionProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".chd_client_level")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".chd_client_level")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".chd_client_level")))) {
 		request.ChdClientLevel = interfaceToIntPtr(v)
 	}
@@ -2030,8 +2031,8 @@ func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioTypeBPropertie
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioTypeBPropertiesSpatialReuseProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioTypeBPropertiesSpatialReuseProperties {
-	request := catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioTypeBPropertiesSpatialReuseProperties{}
+func expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioTypeBPropertiesSpatialReuseProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileRadioTypeBPropertiesSpatialReuseProperties {
+	request := catalystcentersdkgo.RequestWirelessCreateRfProfileRadioTypeBPropertiesSpatialReuseProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".dot11ax_non_srg_obss_packet_detect")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".dot11ax_non_srg_obss_packet_detect")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".dot11ax_non_srg_obss_packet_detect")))) {
 		request.Dot11AxNonSrgObssPacketDetect = interfaceToBoolPtr(v)
 	}
@@ -2053,8 +2054,8 @@ func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioTypeBPropertie
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioType6GHzProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioType6GHzProperties {
-	request := catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioType6GHzProperties{}
+func expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioType6GHzProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileRadioType6GHzProperties {
+	request := catalystcentersdkgo.RequestWirelessCreateRfProfileRadioType6GHzProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".parent_profile")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".parent_profile")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".parent_profile")))) {
 		request.ParentProfile = interfaceToString(v)
 	}
@@ -2083,7 +2084,7 @@ func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioType6GHzProper
 		request.EnableStandardPowerService = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".multi_bssid_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".multi_bssid_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".multi_bssid_properties")))) {
-		request.MultiBssidProperties = expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioType6GHzPropertiesMultiBssidProperties(ctx, key+".multi_bssid_properties.0", d)
+		request.MultiBssidProperties = expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioType6GHzPropertiesMultiBssidProperties(ctx, key+".multi_bssid_properties.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".preamble_puncture")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".preamble_puncture")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".preamble_puncture")))) {
 		request.PreamblePuncture = interfaceToBoolPtr(v)
@@ -2109,14 +2110,14 @@ func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioType6GHzProper
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".broadcast_probe_response_interval")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".broadcast_probe_response_interval")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".broadcast_probe_response_interval")))) {
 		request.BroadcastProbeResponseInterval = interfaceToIntPtr(v)
 	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".fra_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".fra_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".fra_properties")))) {
-		request.FraProperties = expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioType6GHzPropertiesFraProperties(ctx, key+".fra_properties.0", d)
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".fra_properties_c")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".fra_properties_c")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".fra_properties_c")))) {
+		request.FraPropertiesC = expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioType6GHzPropertiesFraPropertiesC(ctx, key+".fra_properties_c.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".coverage_hole_detection_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".coverage_hole_detection_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".coverage_hole_detection_properties")))) {
-		request.CoverageHoleDetectionProperties = expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioType6GHzPropertiesCoverageHoleDetectionProperties(ctx, key+".coverage_hole_detection_properties.0", d)
+		request.CoverageHoleDetectionProperties = expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioType6GHzPropertiesCoverageHoleDetectionProperties(ctx, key+".coverage_hole_detection_properties.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".spatial_reuse_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".spatial_reuse_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".spatial_reuse_properties")))) {
-		request.SpatialReuseProperties = expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioType6GHzPropertiesSpatialReuseProperties(ctx, key+".spatial_reuse_properties.0", d)
+		request.SpatialReuseProperties = expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioType6GHzPropertiesSpatialReuseProperties(ctx, key+".spatial_reuse_properties.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -2124,13 +2125,13 @@ func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioType6GHzProper
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioType6GHzPropertiesMultiBssidProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioType6GHzPropertiesMultiBssidProperties {
-	request := catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioType6GHzPropertiesMultiBssidProperties{}
+func expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioType6GHzPropertiesMultiBssidProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileRadioType6GHzPropertiesMultiBssidProperties {
+	request := catalystcentersdkgo.RequestWirelessCreateRfProfileRadioType6GHzPropertiesMultiBssidProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".dot11ax_parameters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".dot11ax_parameters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".dot11ax_parameters")))) {
-		request.Dot11AxParameters = expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters(ctx, key+".dot11ax_parameters.0", d)
+		request.Dot11AxParameters = expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters(ctx, key+".dot11ax_parameters.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".dot11be_parameters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".dot11be_parameters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".dot11be_parameters")))) {
-		request.Dot11BeParameters = expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters(ctx, key+".dot11be_parameters.0", d)
+		request.Dot11BeParameters = expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters(ctx, key+".dot11be_parameters.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".target_wake_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".target_wake_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".target_wake_time")))) {
 		request.TargetWakeTime = interfaceToBoolPtr(v)
@@ -2144,8 +2145,8 @@ func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioType6GHzProper
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters {
-	request := catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters{}
+func expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileRadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters {
+	request := catalystcentersdkgo.RequestWirelessCreateRfProfileRadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ofdma_down_link")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ofdma_down_link")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ofdma_down_link")))) {
 		request.OfdmaDownLink = interfaceToBoolPtr(v)
 	}
@@ -2164,8 +2165,8 @@ func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioType6GHzProper
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters {
-	request := catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters{}
+func expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileRadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters {
+	request := catalystcentersdkgo.RequestWirelessCreateRfProfileRadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ofdma_down_link")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ofdma_down_link")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ofdma_down_link")))) {
 		request.OfdmaDownLink = interfaceToBoolPtr(v)
 	}
@@ -2187,8 +2188,8 @@ func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioType6GHzProper
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioType6GHzPropertiesFraProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioType6GHzPropertiesFraProperties {
-	request := catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioType6GHzPropertiesFraProperties{}
+func expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioType6GHzPropertiesFraPropertiesC(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileRadioType6GHzPropertiesFraPropertiesC {
+	request := catalystcentersdkgo.RequestWirelessCreateRfProfileRadioType6GHzPropertiesFraPropertiesC{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".client_reset_count")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".client_reset_count")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".client_reset_count")))) {
 		request.ClientResetCount = interfaceToIntPtr(v)
 	}
@@ -2201,8 +2202,8 @@ func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioType6GHzProper
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioType6GHzPropertiesCoverageHoleDetectionProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioType6GHzPropertiesCoverageHoleDetectionProperties {
-	request := catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioType6GHzPropertiesCoverageHoleDetectionProperties{}
+func expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioType6GHzPropertiesCoverageHoleDetectionProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileRadioType6GHzPropertiesCoverageHoleDetectionProperties {
+	request := catalystcentersdkgo.RequestWirelessCreateRfProfileRadioType6GHzPropertiesCoverageHoleDetectionProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".chd_client_level")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".chd_client_level")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".chd_client_level")))) {
 		request.ChdClientLevel = interfaceToIntPtr(v)
 	}
@@ -2221,8 +2222,8 @@ func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioType6GHzProper
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioType6GHzPropertiesSpatialReuseProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioType6GHzPropertiesSpatialReuseProperties {
-	request := catalystcentersdkgo.RequestWirelessCreateRfProfileV1RadioType6GHzPropertiesSpatialReuseProperties{}
+func expandRequestWirelessSettingsRfProfilesCreateRfProfileRadioType6GHzPropertiesSpatialReuseProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateRfProfileRadioType6GHzPropertiesSpatialReuseProperties {
+	request := catalystcentersdkgo.RequestWirelessCreateRfProfileRadioType6GHzPropertiesSpatialReuseProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".dot11ax_non_srg_obss_packet_detect")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".dot11ax_non_srg_obss_packet_detect")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".dot11ax_non_srg_obss_packet_detect")))) {
 		request.Dot11AxNonSrgObssPacketDetect = interfaceToBoolPtr(v)
 	}
@@ -2244,8 +2245,8 @@ func expandRequestWirelessSettingsRfProfilesCreateRfProfileV1RadioType6GHzProper
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileV1 {
-	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileV1{}
+func expandRequestWirelessSettingsRfProfilesUpdateRfProfile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfile {
+	request := catalystcentersdkgo.RequestWirelessUpdateRfProfile{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rf_profile_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rf_profile_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rf_profile_name")))) {
 		request.RfProfileName = interfaceToString(v)
 	}
@@ -2262,13 +2263,13 @@ func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1(ctx context.Contex
 		request.EnableRadioType6GHz = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".radio_type_a_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".radio_type_a_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".radio_type_a_properties")))) {
-		request.RadioTypeAProperties = expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioTypeAProperties(ctx, key+".radio_type_a_properties.0", d)
+		request.RadioTypeAProperties = expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioTypeAProperties(ctx, key+".radio_type_a_properties.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".radio_type_b_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".radio_type_b_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".radio_type_b_properties")))) {
-		request.RadioTypeBProperties = expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioTypeBProperties(ctx, key+".radio_type_b_properties.0", d)
+		request.RadioTypeBProperties = expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioTypeBProperties(ctx, key+".radio_type_b_properties.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".radio_type6_g_hz_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".radio_type6_g_hz_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".radio_type6_g_hz_properties")))) {
-		request.RadioType6GHzProperties = expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioType6GHzProperties(ctx, key+".radio_type6_g_hz_properties.0", d)
+		request.RadioType6GHzProperties = expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioType6GHzProperties(ctx, key+".radio_type6_g_hz_properties.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -2276,8 +2277,8 @@ func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1(ctx context.Contex
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioTypeAProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioTypeAProperties {
-	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioTypeAProperties{}
+func expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioTypeAProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioTypeAProperties {
+	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioTypeAProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".parent_profile")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".parent_profile")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".parent_profile")))) {
 		request.ParentProfile = interfaceToString(v)
 	}
@@ -2317,14 +2318,14 @@ func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioTypeAPropertie
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".max_radio_clients")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".max_radio_clients")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".max_radio_clients")))) {
 		request.MaxRadioClients = interfaceToIntPtr(v)
 	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".fra_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".fra_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".fra_properties")))) {
-		request.FraProperties = expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioTypeAPropertiesFraProperties(ctx, key+".fra_properties.0", d)
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".fra_properties_a")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".fra_properties_a")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".fra_properties_a")))) {
+		request.FraPropertiesA = expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioTypeAPropertiesFraPropertiesA(ctx, key+".fra_properties_a.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".coverage_hole_detection_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".coverage_hole_detection_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".coverage_hole_detection_properties")))) {
-		request.CoverageHoleDetectionProperties = expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioTypeAPropertiesCoverageHoleDetectionProperties(ctx, key+".coverage_hole_detection_properties.0", d)
+		request.CoverageHoleDetectionProperties = expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioTypeAPropertiesCoverageHoleDetectionProperties(ctx, key+".coverage_hole_detection_properties.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".spatial_reuse_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".spatial_reuse_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".spatial_reuse_properties")))) {
-		request.SpatialReuseProperties = expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioTypeAPropertiesSpatialReuseProperties(ctx, key+".spatial_reuse_properties.0", d)
+		request.SpatialReuseProperties = expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioTypeAPropertiesSpatialReuseProperties(ctx, key+".spatial_reuse_properties.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -2332,8 +2333,8 @@ func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioTypeAPropertie
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioTypeAPropertiesFraProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioTypeAPropertiesFraProperties {
-	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioTypeAPropertiesFraProperties{}
+func expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioTypeAPropertiesFraPropertiesA(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioTypeAPropertiesFraPropertiesA {
+	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioTypeAPropertiesFraPropertiesA{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".client_aware")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".client_aware")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".client_aware")))) {
 		request.ClientAware = interfaceToBoolPtr(v)
 	}
@@ -2349,8 +2350,8 @@ func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioTypeAPropertie
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioTypeAPropertiesCoverageHoleDetectionProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioTypeAPropertiesCoverageHoleDetectionProperties {
-	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioTypeAPropertiesCoverageHoleDetectionProperties{}
+func expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioTypeAPropertiesCoverageHoleDetectionProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioTypeAPropertiesCoverageHoleDetectionProperties {
+	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioTypeAPropertiesCoverageHoleDetectionProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".chd_client_level")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".chd_client_level")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".chd_client_level")))) {
 		request.ChdClientLevel = interfaceToIntPtr(v)
 	}
@@ -2369,8 +2370,8 @@ func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioTypeAPropertie
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioTypeAPropertiesSpatialReuseProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioTypeAPropertiesSpatialReuseProperties {
-	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioTypeAPropertiesSpatialReuseProperties{}
+func expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioTypeAPropertiesSpatialReuseProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioTypeAPropertiesSpatialReuseProperties {
+	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioTypeAPropertiesSpatialReuseProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".dot11ax_non_srg_obss_packet_detect")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".dot11ax_non_srg_obss_packet_detect")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".dot11ax_non_srg_obss_packet_detect")))) {
 		request.Dot11AxNonSrgObssPacketDetect = interfaceToBoolPtr(v)
 	}
@@ -2392,8 +2393,8 @@ func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioTypeAPropertie
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioTypeBProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioTypeBProperties {
-	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioTypeBProperties{}
+func expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioTypeBProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioTypeBProperties {
+	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioTypeBProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".parent_profile")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".parent_profile")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".parent_profile")))) {
 		request.ParentProfile = interfaceToString(v)
 	}
@@ -2425,10 +2426,10 @@ func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioTypeBPropertie
 		request.MaxRadioClients = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".coverage_hole_detection_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".coverage_hole_detection_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".coverage_hole_detection_properties")))) {
-		request.CoverageHoleDetectionProperties = expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioTypeBPropertiesCoverageHoleDetectionProperties(ctx, key+".coverage_hole_detection_properties.0", d)
+		request.CoverageHoleDetectionProperties = expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioTypeBPropertiesCoverageHoleDetectionProperties(ctx, key+".coverage_hole_detection_properties.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".spatial_reuse_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".spatial_reuse_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".spatial_reuse_properties")))) {
-		request.SpatialReuseProperties = expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioTypeBPropertiesSpatialReuseProperties(ctx, key+".spatial_reuse_properties.0", d)
+		request.SpatialReuseProperties = expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioTypeBPropertiesSpatialReuseProperties(ctx, key+".spatial_reuse_properties.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -2436,8 +2437,8 @@ func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioTypeBPropertie
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioTypeBPropertiesCoverageHoleDetectionProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioTypeBPropertiesCoverageHoleDetectionProperties {
-	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioTypeBPropertiesCoverageHoleDetectionProperties{}
+func expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioTypeBPropertiesCoverageHoleDetectionProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioTypeBPropertiesCoverageHoleDetectionProperties {
+	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioTypeBPropertiesCoverageHoleDetectionProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".chd_client_level")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".chd_client_level")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".chd_client_level")))) {
 		request.ChdClientLevel = interfaceToIntPtr(v)
 	}
@@ -2456,8 +2457,8 @@ func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioTypeBPropertie
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioTypeBPropertiesSpatialReuseProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioTypeBPropertiesSpatialReuseProperties {
-	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioTypeBPropertiesSpatialReuseProperties{}
+func expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioTypeBPropertiesSpatialReuseProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioTypeBPropertiesSpatialReuseProperties {
+	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioTypeBPropertiesSpatialReuseProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".dot11ax_non_srg_obss_packet_detect")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".dot11ax_non_srg_obss_packet_detect")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".dot11ax_non_srg_obss_packet_detect")))) {
 		request.Dot11AxNonSrgObssPacketDetect = interfaceToBoolPtr(v)
 	}
@@ -2479,8 +2480,8 @@ func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioTypeBPropertie
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioType6GHzProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioType6GHzProperties {
-	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioType6GHzProperties{}
+func expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioType6GHzProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioType6GHzProperties {
+	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioType6GHzProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".parent_profile")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".parent_profile")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".parent_profile")))) {
 		request.ParentProfile = interfaceToString(v)
 	}
@@ -2509,7 +2510,7 @@ func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioType6GHzProper
 		request.EnableStandardPowerService = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".multi_bssid_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".multi_bssid_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".multi_bssid_properties")))) {
-		request.MultiBssidProperties = expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioType6GHzPropertiesMultiBssidProperties(ctx, key+".multi_bssid_properties.0", d)
+		request.MultiBssidProperties = expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioType6GHzPropertiesMultiBssidProperties(ctx, key+".multi_bssid_properties.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".preamble_puncture")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".preamble_puncture")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".preamble_puncture")))) {
 		request.PreamblePuncture = interfaceToBoolPtr(v)
@@ -2535,14 +2536,14 @@ func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioType6GHzProper
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".broadcast_probe_response_interval")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".broadcast_probe_response_interval")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".broadcast_probe_response_interval")))) {
 		request.BroadcastProbeResponseInterval = interfaceToIntPtr(v)
 	}
-	if v, ok := d.GetOkExists(fixKeyAccess(key + ".fra_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".fra_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".fra_properties")))) {
-		request.FraProperties = expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioType6GHzPropertiesFraProperties(ctx, key+".fra_properties.0", d)
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".fra_properties_c")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".fra_properties_c")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".fra_properties_c")))) {
+		request.FraPropertiesC = expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioType6GHzPropertiesFraPropertiesC(ctx, key+".fra_properties_c.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".coverage_hole_detection_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".coverage_hole_detection_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".coverage_hole_detection_properties")))) {
-		request.CoverageHoleDetectionProperties = expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioType6GHzPropertiesCoverageHoleDetectionProperties(ctx, key+".coverage_hole_detection_properties.0", d)
+		request.CoverageHoleDetectionProperties = expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioType6GHzPropertiesCoverageHoleDetectionProperties(ctx, key+".coverage_hole_detection_properties.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".spatial_reuse_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".spatial_reuse_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".spatial_reuse_properties")))) {
-		request.SpatialReuseProperties = expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioType6GHzPropertiesSpatialReuseProperties(ctx, key+".spatial_reuse_properties.0", d)
+		request.SpatialReuseProperties = expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioType6GHzPropertiesSpatialReuseProperties(ctx, key+".spatial_reuse_properties.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -2550,13 +2551,13 @@ func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioType6GHzProper
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioType6GHzPropertiesMultiBssidProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioType6GHzPropertiesMultiBssidProperties {
-	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioType6GHzPropertiesMultiBssidProperties{}
+func expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioType6GHzPropertiesMultiBssidProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioType6GHzPropertiesMultiBssidProperties {
+	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioType6GHzPropertiesMultiBssidProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".dot11ax_parameters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".dot11ax_parameters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".dot11ax_parameters")))) {
-		request.Dot11AxParameters = expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters(ctx, key+".dot11ax_parameters.0", d)
+		request.Dot11AxParameters = expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters(ctx, key+".dot11ax_parameters.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".dot11be_parameters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".dot11be_parameters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".dot11be_parameters")))) {
-		request.Dot11BeParameters = expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters(ctx, key+".dot11be_parameters.0", d)
+		request.Dot11BeParameters = expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters(ctx, key+".dot11be_parameters.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".target_wake_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".target_wake_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".target_wake_time")))) {
 		request.TargetWakeTime = interfaceToBoolPtr(v)
@@ -2570,8 +2571,8 @@ func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioType6GHzProper
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters {
-	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters{}
+func expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters {
+	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ofdma_down_link")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ofdma_down_link")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ofdma_down_link")))) {
 		request.OfdmaDownLink = interfaceToBoolPtr(v)
 	}
@@ -2590,8 +2591,8 @@ func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioType6GHzProper
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters {
-	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters{}
+func expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters {
+	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ofdma_down_link")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ofdma_down_link")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ofdma_down_link")))) {
 		request.OfdmaDownLink = interfaceToBoolPtr(v)
 	}
@@ -2613,8 +2614,8 @@ func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioType6GHzProper
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioType6GHzPropertiesFraProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioType6GHzPropertiesFraProperties {
-	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioType6GHzPropertiesFraProperties{}
+func expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioType6GHzPropertiesFraPropertiesC(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioType6GHzPropertiesFraPropertiesC {
+	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioType6GHzPropertiesFraPropertiesC{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".client_reset_count")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".client_reset_count")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".client_reset_count")))) {
 		request.ClientResetCount = interfaceToIntPtr(v)
 	}
@@ -2627,8 +2628,8 @@ func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioType6GHzProper
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioType6GHzPropertiesCoverageHoleDetectionProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioType6GHzPropertiesCoverageHoleDetectionProperties {
-	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioType6GHzPropertiesCoverageHoleDetectionProperties{}
+func expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioType6GHzPropertiesCoverageHoleDetectionProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioType6GHzPropertiesCoverageHoleDetectionProperties {
+	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioType6GHzPropertiesCoverageHoleDetectionProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".chd_client_level")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".chd_client_level")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".chd_client_level")))) {
 		request.ChdClientLevel = interfaceToIntPtr(v)
 	}
@@ -2647,8 +2648,8 @@ func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioType6GHzProper
 	return &request
 }
 
-func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioType6GHzPropertiesSpatialReuseProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioType6GHzPropertiesSpatialReuseProperties {
-	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileV1RadioType6GHzPropertiesSpatialReuseProperties{}
+func expandRequestWirelessSettingsRfProfilesUpdateRfProfileRadioType6GHzPropertiesSpatialReuseProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioType6GHzPropertiesSpatialReuseProperties {
+	request := catalystcentersdkgo.RequestWirelessUpdateRfProfileRadioType6GHzPropertiesSpatialReuseProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".dot11ax_non_srg_obss_packet_detect")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".dot11ax_non_srg_obss_packet_detect")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".dot11ax_non_srg_obss_packet_detect")))) {
 		request.Dot11AxNonSrgObssPacketDetect = interfaceToBoolPtr(v)
 	}
@@ -2670,10 +2671,10 @@ func expandRequestWirelessSettingsRfProfilesUpdateRfProfileV1RadioType6GHzProper
 	return &request
 }
 
-func searchWirelessGetRfProfiles(m interface{}, queryParams catalystcentersdkgo.GetRfProfilesV1QueryParams, vID string) (*catalystcentersdkgo.ResponseWirelessGetRfProfilesV1Response, error) {
+func searchWirelessGetRfProfiles(m interface{}, queryParams catalystcentersdkgo.GetRfProfilesQueryParams, vID string) (*catalystcentersdkgo.ResponseWirelessGetRfProfilesResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseWirelessGetRfProfilesV1Response
+	var foundItem *catalystcentersdkgo.ResponseWirelessGetRfProfilesResponse
 
 	queryParams.Offset = 1
 	nResponse, _, err := client.Wireless.GetRfProfiles(nil)

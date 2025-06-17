@@ -55,6 +55,7 @@ Read-Only:
 - `name_hierarchy` (String)
 - `parent_id` (String)
 - `rf_model` (String)
+- `site_hierarchy_id` (String)
 - `type` (String)
 - `units_of_measure` (String)
 - `width` (Number)

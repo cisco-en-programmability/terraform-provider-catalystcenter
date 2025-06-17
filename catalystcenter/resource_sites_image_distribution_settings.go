@@ -3,11 +3,12 @@ package catalystcenter
 import (
 	"context"
 	"errors"
-	"log"
 	"reflect"
 	"time"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	"log"
+
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -17,8 +18,8 @@ func resourceSitesImageDistributionSettings() *schema.Resource {
 	return &schema.Resource{
 		Description: `It manages read and update operations on Network Settings.
 
-- Set image distribution settings for a site; *null* values indicate that the setting will be inherited from the parent
-site; empty objects (*{}*) indicate that the settings is unset.
+- Set image distribution settings for a site; **null** values indicate that the setting will be inherited from the
+parent site; empty objects (**{}**) indicate that the settings is unset.
 `,
 
 		CreateContext: resourceSitesImageDistributionSettingsCreate,
@@ -138,7 +139,7 @@ func resourceSitesImageDistributionSettingsRead(ctx context.Context, d *schema.R
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: RetrieveImageDistributionSettingsForASite")
 		vvID := vID
-		queryParams1 := catalystcentersdkgo.RetrieveImageDistributionSettingsForASiteV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrieveImageDistributionSettingsForASiteQueryParams{}
 
 		response1, restyResp1, err := client.NetworkSettings.RetrieveImageDistributionSettingsForASite(vvID, &queryParams1)
 
@@ -152,7 +153,7 @@ func resourceSitesImageDistributionSettingsRead(ctx context.Context, d *schema.R
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenNetworkSettingsRetrieveImageDistributionSettingsForASiteV1Item(response1.Response)
+		vItem1 := flattenNetworkSettingsRetrieveImageDistributionSettingsForASiteItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrieveImageDistributionSettingsForASite response",
@@ -175,7 +176,7 @@ func resourceSitesImageDistributionSettingsUpdate(ctx context.Context, d *schema
 
 	vvID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestSitesImageDistributionSettingsSetImageDistributionSettingsForASiteV1(ctx, "parameters.0", d)
+		request1 := expandRequestSitesImageDistributionSettingsSetImageDistributionSettingsForASite(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.NetworkSettings.SetImageDistributionSettingsForASite(vvID, request1)
 		if err != nil || response1 == nil {
@@ -234,17 +235,18 @@ func resourceSitesImageDistributionSettingsDelete(ctx context.Context, d *schema
 		"Failure at SitesImageDistributionSettingsDelete, unexpected response", ""))
 	return diags
 }
-func expandRequestSitesImageDistributionSettingsSetImageDistributionSettingsForASiteV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetImageDistributionSettingsForASiteV1 {
-	request := catalystcentersdkgo.RequestNetworkSettingsSetImageDistributionSettingsForASiteV1{}
-	request.ImageDistribution = expandRequestSitesImageDistributionSettingsSetImageDistributionSettingsForASiteV1ImageDistribution(ctx, key, d)
+
+func expandRequestSitesImageDistributionSettingsSetImageDistributionSettingsForASite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetImageDistributionSettingsForASite {
+	request := catalystcentersdkgo.RequestNetworkSettingsSetImageDistributionSettingsForASite{}
+	request.ImageDistribution = expandRequestSitesImageDistributionSettingsSetImageDistributionSettingsForASiteImageDistribution(ctx, key, d)
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
 	}
 	return &request
 }
 
-func expandRequestSitesImageDistributionSettingsSetImageDistributionSettingsForASiteV1ImageDistribution(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetImageDistributionSettingsForASiteV1ImageDistribution {
-	request := catalystcentersdkgo.RequestNetworkSettingsSetImageDistributionSettingsForASiteV1ImageDistribution{}
+func expandRequestSitesImageDistributionSettingsSetImageDistributionSettingsForASiteImageDistribution(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetImageDistributionSettingsForASiteImageDistribution {
+	request := catalystcentersdkgo.RequestNetworkSettingsSetImageDistributionSettingsForASiteImageDistribution{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".servers")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".servers")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".servers")))) {
 		request.Servers = interfaceToSliceString(v)
 	}

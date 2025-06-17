@@ -12,8 +12,8 @@ description: |-
 
 It performs read operation on Wireless.
 
-- This endpoint retrieves the total count of Policy Tags associated with a specific Wireless Profile.This data
-source requires the id of the Wireless Profile to be provided as a path parameter.
+- This endpoint retrieves the total count of **Policy Tags** associated with a specific **Wireless Profile**.This data
+source requires the **id** of the **Wireless Profile** to be provided as a path parameter.
 
 ## Example Usage
 

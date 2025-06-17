@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -11,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -22,7 +23,7 @@ func resourceWirelessControllersWirelessMobilityGroupsMobilityReset() *schema.Re
 	return &schema.Resource{
 		Description: `It performs create operation on Wireless.
 
-- This data source action is used to reset wireless mobility which in turn sets mobility group name as 'default'
+- This data source action is used to reset wireless mobility which in turn sets mobility group name as 'default'.
 `,
 
 		CreateContext: resourceWirelessControllersWirelessMobilityGroupsMobilityResetCreate,
@@ -63,7 +64,7 @@ func resourceWirelessControllersWirelessMobilityGroupsMobilityReset() *schema.Re
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"network_device_id": &schema.Schema{
-							Description: `Network device Id of Cisco wireless controller.Obtain the network device ID value by using the API call GET - /dna/intent/api/v1/network-device/ip-address/${ipAddress}.
+							Description: `Network device Id of Cisco wireless controller. Obtain the network device ID value by using the API call GET - /dna/intent/api/v1/network-device/ip-address/${ipAddress}.
 `,
 							Type:     schema.TypeString,
 							Optional: true,
@@ -81,18 +82,18 @@ func resourceWirelessControllersWirelessMobilityGroupsMobilityResetCreate(ctx co
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestWirelessControllersWirelessMobilityGroupsMobilityResetMobilityResetV1(ctx, "parameters.0", d)
+	request1 := expandRequestWirelessControllersWirelessMobilityGroupsMobilityResetMobilityReset(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Wireless.MobilityResetV1(request1)
+	response1, restyResp1, err := client.Wireless.MobilityReset(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing MobilityResetV1", err))
+			"Failure when executing MobilityReset", err))
 		return diags
 	}
 
@@ -100,7 +101,7 @@ func resourceWirelessControllersWirelessMobilityGroupsMobilityResetCreate(ctx co
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing MobilityResetV1", err))
+			"Failure when executing MobilityReset", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -127,14 +128,14 @@ func resourceWirelessControllersWirelessMobilityGroupsMobilityResetCreate(ctx co
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing MobilityResetV1", err1))
+				"Failure when executing MobilityReset", err1))
 			return diags
 		}
 	}
@@ -142,10 +143,10 @@ func resourceWirelessControllersWirelessMobilityGroupsMobilityResetCreate(ctx co
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenWirelessMobilityResetV1Item(response1.Response)
+	vItem1 := flattenWirelessMobilityResetItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting MobilityResetV1 response",
+			"Failure when setting MobilityReset response",
 			err))
 		return diags
 	}
@@ -166,15 +167,15 @@ func resourceWirelessControllersWirelessMobilityGroupsMobilityResetDelete(ctx co
 	return diags
 }
 
-func expandRequestWirelessControllersWirelessMobilityGroupsMobilityResetMobilityResetV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessMobilityResetV1 {
-	request := catalystcentersdkgo.RequestWirelessMobilityResetV1{}
+func expandRequestWirelessControllersWirelessMobilityGroupsMobilityResetMobilityReset(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessMobilityReset {
+	request := catalystcentersdkgo.RequestWirelessMobilityReset{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".network_device_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".network_device_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".network_device_id")))) {
 		request.NetworkDeviceID = interfaceToString(v)
 	}
 	return &request
 }
 
-func flattenWirelessMobilityResetV1Item(item *catalystcentersdkgo.ResponseWirelessMobilityResetV1Response) []map[string]interface{} {
+func flattenWirelessMobilityResetItem(item *catalystcentersdkgo.ResponseWirelessMobilityResetResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

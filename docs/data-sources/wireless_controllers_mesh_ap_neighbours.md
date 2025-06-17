@@ -51,6 +51,7 @@ Read-Only:
 - `ethernet_mac_address` (String)
 - `id` (String)
 - `mesh_role` (String)
+- `neighbour_ap_name` (String)
 - `neighbour_mac_address` (String)
 - `neighbour_type` (String)
 - `wlc_ip_address` (String)

@@ -13,15 +13,16 @@ description: |-
 
 It manages create and read operations on Devices.
 
-- API to create maintenance schedule for network devices. The state of network device can be queried using API *GET
-/dna/intent/api/v1/networkDevices*. The *managementState* attribute of the network device will be updated to
-*UNDER_MAINTENANCE* when the maintenance window starts.
+- API to create maintenance schedule for network devices. The state of network device can be queried using API **GET
+/dna/intent/api/v1/networkDevices**. The **managementState** attribute of the network device will be updated to
+**UNDER_MAINTENANCE** when the maintenance window starts.
 
 ## Example Usage
 
 ```terraform
 resource "catalystcenter_network_device_maintenance_schedules" "example" {
   provider = catalystcenter
+ 
   parameters {
 
     description = "string"

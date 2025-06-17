@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -53,8 +53,8 @@ func dataSourceSecurityAdvisoriesResultsTrendCountRead(ctx context.Context, d *s
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetCountOfSecurityAdvisoriesResultsTrendOverTimeV1")
-		queryParams1 := catalystcentersdkgo.GetCountOfSecurityAdvisoriesResultsTrendOverTimeV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetCountOfSecurityAdvisoriesResultsTrendOverTime")
+		queryParams1 := catalystcentersdkgo.GetCountOfSecurityAdvisoriesResultsTrendOverTimeQueryParams{}
 
 		if okScanTime {
 			queryParams1.ScanTime = vScanTime.(float64)
@@ -62,24 +62,36 @@ func dataSourceSecurityAdvisoriesResultsTrendCountRead(ctx context.Context, d *s
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Compliance.GetCountOfSecurityAdvisoriesResultsTrendOverTimeV1(&queryParams1)
+		response1, restyResp1, err := client.Compliance.GetCountOfSecurityAdvisoriesResultsTrendOverTime(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetCountOfSecurityAdvisoriesResultsTrendOverTimeV1", err,
-				"Failure at GetCountOfSecurityAdvisoriesResultsTrendOverTimeV1, unexpected response", ""))
+				"Failure when executing 2 GetCountOfSecurityAdvisoriesResultsTrendOverTime", err,
+				"Failure at GetCountOfSecurityAdvisoriesResultsTrendOverTime, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenComplianceGetCountOfSecurityAdvisoriesResultsTrendOverTimeV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetCountOfSecurityAdvisoriesResultsTrendOverTime", err,
+				"Failure at GetCountOfSecurityAdvisoriesResultsTrendOverTime, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenComplianceGetCountOfSecurityAdvisoriesResultsTrendOverTimeItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetCountOfSecurityAdvisoriesResultsTrendOverTimeV1 response",
+				"Failure when setting GetCountOfSecurityAdvisoriesResultsTrendOverTime response",
 				err))
 			return diags
 		}
@@ -91,7 +103,7 @@ func dataSourceSecurityAdvisoriesResultsTrendCountRead(ctx context.Context, d *s
 	return diags
 }
 
-func flattenComplianceGetCountOfSecurityAdvisoriesResultsTrendOverTimeV1Item(item *catalystcentersdkgo.ResponseComplianceGetCountOfSecurityAdvisoriesResultsTrendOverTimeV1Response) []map[string]interface{} {
+func flattenComplianceGetCountOfSecurityAdvisoriesResultsTrendOverTimeItem(item *catalystcentersdkgo.ResponseComplianceGetCountOfSecurityAdvisoriesResultsTrendOverTimeResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -33,7 +33,7 @@ func dataSourceAuthenticationPolicyServers() *schema.Resource {
 				Optional: true,
 			},
 			"state": &schema.Schema{
-				Description: `state query parameter. Valid values are: ACTIVE, INACTIVE, RBAC_SUCCESS, RBAC_FAILURE, DELETED, FAILED, INPROGRESS
+				Description: `state query parameter. Valid values are: ACTIVE, DELETED, FAILED, INACTIVE, INPROGRESS, RBAC-FAILURE, RBAC-SUCCESS
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -46,14 +46,14 @@ func dataSourceAuthenticationPolicyServers() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 
 						"accounting_port": &schema.Schema{
-							Description: `Accounting port of RADIUS server (Default: 1813)
+							Description: `Accounting port of RADIUS server (readonly). The range is from 1 to 65535. Default is 1813. E.g. 1813
 `,
 							Type:     schema.TypeInt,
 							Computed: true,
 						},
 
 						"authentication_port": &schema.Schema{
-							Description: `Authentication port of RADIUS server (Default: 1812)
+							Description: `Authentication port of RADIUS server (readonly). The range is from 1 to 65535. Default is 1812. E.g. 1812
 `,
 							Type:     schema.TypeInt,
 							Computed: true,
@@ -66,7 +66,7 @@ func dataSourceAuthenticationPolicyServers() *schema.Resource {
 								Schema: map[string]*schema.Schema{
 
 									"description": &schema.Schema{
-										Description: `Description about the ISE server
+										Description: `Description about the Cisco ISE server
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -103,14 +103,14 @@ func dataSourceAuthenticationPolicyServers() *schema.Resource {
 									},
 
 									"failure_reason": &schema.Schema{
-										Description: `Reason for integration failure between DNAC and the ISE server
+										Description: `Reason for integration failure between CATALYST and the ISE server
 `,
 										Type:     schema.TypeString,
 										Computed: true,
 									},
 
 									"fqdn": &schema.Schema{
-										Description: `Fully-qualified domain name of the ISE server (Example: xi-62.my.com)
+										Description: `Fully-qualified domain name of the Cisco ISE server (readonly). E.g. xi-62.my.com
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -124,14 +124,14 @@ func dataSourceAuthenticationPolicyServers() *schema.Resource {
 									},
 
 									"ip_address": &schema.Schema{
-										Description: `IP Address of the ISE server
+										Description: `IP Address of the Cisco ISE Server (readonly)
 `,
 										Type:     schema.TypeString,
 										Computed: true,
 									},
 
 									"password": &schema.Schema{
-										Description: `For security reasons the value will always be empty
+										Description: `Password of the Cisco ISE server. For security reasons the value will always be empty
 `,
 										Type:      schema.TypeString,
 										Sensitive: true,
@@ -139,28 +139,28 @@ func dataSourceAuthenticationPolicyServers() *schema.Resource {
 									},
 
 									"role": &schema.Schema{
-										Description: `Role of the ISE server
+										Description: `Role of the Cisco ISE server
 `,
 										Type:     schema.TypeString,
 										Computed: true,
 									},
 
 									"sshkey": &schema.Schema{
-										Description: `For security reasons the value will always be empty
+										Description: `SSH key of the Cisco ISE server. For security reasons the value will always be empty
 `,
 										Type:     schema.TypeString,
 										Computed: true,
 									},
 
 									"subscriber_name": &schema.Schema{
-										Description: `Subscriber name of the ISE server (Example: pxgrid_client_1662589467)
+										Description: `Subscriber name of the Cisco ISE server (readonly). E.g. pxgrid_client_1662589467
 `,
 										Type:     schema.TypeString,
 										Computed: true,
 									},
 
 									"trust_state": &schema.Schema{
-										Description: `Trust State between DNAC and the ISE server
+										Description: `Trust State between CATALYST and the ISE server
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -174,7 +174,7 @@ func dataSourceAuthenticationPolicyServers() *schema.Resource {
 									},
 
 									"user_name": &schema.Schema{
-										Description: `User name of the ISE server
+										Description: `User name of the Cisco ISE server
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -191,7 +191,7 @@ func dataSourceAuthenticationPolicyServers() *schema.Resource {
 						},
 
 						"encryption_scheme": &schema.Schema{
-							Description: `Type of encryption scheme for additional security
+							Description: `Type of encryption scheme for additional security (readonly)
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -205,14 +205,14 @@ func dataSourceAuthenticationPolicyServers() *schema.Resource {
 						},
 
 						"ip_address": &schema.Schema{
-							Description: `IP address of authentication and policy server
+							Description: `IP address of authentication and policy server (readonly)
 `,
 							Type:     schema.TypeString,
 							Computed: true,
 						},
 
 						"is_ise_enabled": &schema.Schema{
-							Description: `If server type is ISE, value will be true otherwise false
+							Description: `Value true for Cisco ISE Server (readonly). Default value is false
 `,
 							// Type:        schema.TypeBool,
 							Type:     schema.TypeString,
@@ -220,7 +220,7 @@ func dataSourceAuthenticationPolicyServers() *schema.Resource {
 						},
 
 						"ise_enabled": &schema.Schema{
-							Description: `If server type is ISE, value will be true otherwise false
+							Description: `Value true for Cisco ISE Server (readonly). Default value is false
 `,
 							// Type:        schema.TypeBool,
 							Type:     schema.TypeString,
@@ -228,7 +228,7 @@ func dataSourceAuthenticationPolicyServers() *schema.Resource {
 						},
 
 						"message_key": &schema.Schema{
-							Description: `Message key used to encrypt shared secret
+							Description: `Encryption key used to encrypt shared secret (readonly)
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -243,21 +243,21 @@ func dataSourceAuthenticationPolicyServers() *schema.Resource {
 						},
 
 						"port": &schema.Schema{
-							Description: `Port of TACACS server (Default: 49)
+							Description: `Port of TACACS server (readonly). The range is from 1 to 65535. Default is 49.
 `,
 							Type:     schema.TypeInt,
 							Computed: true,
 						},
 
 						"protocol": &schema.Schema{
-							Description: `Type of protocol for authentication and policy server
+							Description: `Type of protocol for authentication and policy server. If already saved with RADIUS, can update to RADIUS_TACACS. If already saved with TACACS, can update to RADIUS_TACACS
 `,
 							Type:     schema.TypeString,
 							Computed: true,
 						},
 
 						"pxgrid_enabled": &schema.Schema{
-							Description: `If pxgrid enabled, value will be true otherwise false
+							Description: `Value true for enable, false for disable. Default value is true
 `,
 							// Type:        schema.TypeBool,
 							Type:     schema.TypeString,
@@ -272,21 +272,21 @@ func dataSourceAuthenticationPolicyServers() *schema.Resource {
 						},
 
 						"retries": &schema.Schema{
-							Description: `Number of communication retries between devices and authentication and policy server (Default: 3)
+							Description: `Number of communication retries between devices and authentication and policy server. The range is from 1 to 3. Default is 3
 `,
 							Type:     schema.TypeInt,
 							Computed: true,
 						},
 
 						"role": &schema.Schema{
-							Description: `Role of authentication and policy server (Example: primary, secondary)
+							Description: `Role of authentication and policy server (readonly). E.g. primary, secondary
 `,
 							Type:     schema.TypeString,
 							Computed: true,
 						},
 
 						"shared_secret": &schema.Schema{
-							Description: `Shared secret between devices and authentication and policy server
+							Description: `Shared secret between devices and authentication and policy server (readonly)
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -300,14 +300,15 @@ func dataSourceAuthenticationPolicyServers() *schema.Resource {
 						},
 
 						"timeout_seconds": &schema.Schema{
-							Description: `Number of seconds before timing out between devices and authentication and policy server (Default: 4 seconds)
+							Description: `Number of seconds before timing out between devices and authentication and policy server. The range is from 2 to 20
 `,
 							Type:     schema.TypeInt,
 							Computed: true,
 						},
 
 						"use_dnac_cert_for_pxgrid": &schema.Schema{
-							Description: `Use DNAC Certificate For Pxgrid`,
+							Description: `Value true to use CATALYST certificate for Pxgrid. Default value is false
+`,
 							// Type:        schema.TypeBool,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -329,8 +330,8 @@ func dataSourceAuthenticationPolicyServersRead(ctx context.Context, d *schema.Re
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAuthenticationAndPolicyServersV1")
-		queryParams1 := catalystcentersdkgo.GetAuthenticationAndPolicyServersV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetAuthenticationAndPolicyServers")
+		queryParams1 := catalystcentersdkgo.GetAuthenticationAndPolicyServersQueryParams{}
 
 		if okIsIseEnabled {
 			queryParams1.IsIseEnabled = vIsIseEnabled.(bool)
@@ -342,24 +343,38 @@ func dataSourceAuthenticationPolicyServersRead(ctx context.Context, d *schema.Re
 			queryParams1.Role = vRole.(string)
 		}
 
-		response1, restyResp1, err := client.SystemSettings.GetAuthenticationAndPolicyServersV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.SystemSettings.GetAuthenticationAndPolicyServers(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAuthenticationAndPolicyServersV1", err,
-				"Failure at GetAuthenticationAndPolicyServersV1, unexpected response", ""))
+				"Failure when executing 2 GetAuthenticationAndPolicyServers", err,
+				"Failure at GetAuthenticationAndPolicyServers, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSystemSettingsGetAuthenticationAndPolicyServersV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetAuthenticationAndPolicyServers", err,
+				"Failure at GetAuthenticationAndPolicyServers, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSystemSettingsGetAuthenticationAndPolicyServersItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAuthenticationAndPolicyServersV1 response",
+				"Failure when setting GetAuthenticationAndPolicyServers response",
 				err))
 			return diags
 		}
@@ -371,7 +386,7 @@ func dataSourceAuthenticationPolicyServersRead(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func flattenSystemSettingsGetAuthenticationAndPolicyServersV1Items(items *[]catalystcentersdkgo.ResponseSystemSettingsGetAuthenticationAndPolicyServersV1Response) []map[string]interface{} {
+func flattenSystemSettingsGetAuthenticationAndPolicyServersItems(items *[]catalystcentersdkgo.ResponseSystemSettingsGetAuthenticationAndPolicyServersResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -390,7 +405,7 @@ func flattenSystemSettingsGetAuthenticationAndPolicyServersV1Items(items *[]cata
 		respItem["is_ise_enabled"] = boolPtrToString(item.IsIseEnabled)
 		respItem["instance_uuid"] = item.InstanceUUID
 		respItem["state"] = item.State
-		respItem["cisco_ise_dtos"] = flattenSystemSettingsGetAuthenticationAndPolicyServersV1ItemsCiscoIseDtos(item.CiscoIseDtos)
+		respItem["cisco_ise_dtos"] = flattenSystemSettingsGetAuthenticationAndPolicyServersItemsCiscoIseDtos(item.CiscoIseDtos)
 		respItem["encryption_scheme"] = item.EncryptionScheme
 		respItem["message_key"] = item.MessageKey
 		respItem["encryption_key"] = item.EncryptionKey
@@ -404,7 +419,7 @@ func flattenSystemSettingsGetAuthenticationAndPolicyServersV1Items(items *[]cata
 	return respItems
 }
 
-func flattenSystemSettingsGetAuthenticationAndPolicyServersV1ItemsCiscoIseDtos(items *[]catalystcentersdkgo.ResponseSystemSettingsGetAuthenticationAndPolicyServersV1ResponseCiscoIseDtos) []map[string]interface{} {
+func flattenSystemSettingsGetAuthenticationAndPolicyServersItemsCiscoIseDtos(items *[]catalystcentersdkgo.ResponseSystemSettingsGetAuthenticationAndPolicyServersResponseCiscoIseDtos) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -423,19 +438,19 @@ func flattenSystemSettingsGetAuthenticationAndPolicyServersV1ItemsCiscoIseDtos(i
 		respItem["type"] = item.Type
 		respItem["failure_reason"] = item.FailureReason
 		respItem["role"] = item.Role
-		respItem["external_cisco_ise_ip_addr_dtos"] = flattenSystemSettingsGetAuthenticationAndPolicyServersV1ItemsCiscoIseDtosExternalCiscoIseIPAddrDtos(item.ExternalCiscoIseIPAddrDtos)
+		respItem["external_cisco_ise_ip_addr_dtos"] = flattenSystemSettingsGetAuthenticationAndPolicyServersItemsCiscoIseDtosExternalCiscoIseIPAddrDtos(item.ExternalCiscoIseIPAddrDtos)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSystemSettingsGetAuthenticationAndPolicyServersV1ItemsCiscoIseDtosExternalCiscoIseIPAddrDtos(item *catalystcentersdkgo.ResponseSystemSettingsGetAuthenticationAndPolicyServersV1ResponseCiscoIseDtosExternalCiscoIseIPAddrDtos) []map[string]interface{} {
+func flattenSystemSettingsGetAuthenticationAndPolicyServersItemsCiscoIseDtosExternalCiscoIseIPAddrDtos(item *catalystcentersdkgo.ResponseSystemSettingsGetAuthenticationAndPolicyServersResponseCiscoIseDtosExternalCiscoIseIPAddrDtos) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["type"] = item.Type
-	respItem["external_cisco_ise_ip_addresses"] = flattenSystemSettingsGetAuthenticationAndPolicyServersV1ItemsCiscoIseDtosExternalCiscoIseIPAddrDtosExternalCiscoIseIPAddresses(item.ExternalCiscoIseIPAddresses)
+	respItem["external_cisco_ise_ip_addresses"] = flattenSystemSettingsGetAuthenticationAndPolicyServersItemsCiscoIseDtosExternalCiscoIseIPAddrDtosExternalCiscoIseIPAddresses(item.ExternalCiscoIseIPAddresses)
 
 	return []map[string]interface{}{
 		respItem,
@@ -443,7 +458,7 @@ func flattenSystemSettingsGetAuthenticationAndPolicyServersV1ItemsCiscoIseDtosEx
 
 }
 
-func flattenSystemSettingsGetAuthenticationAndPolicyServersV1ItemsCiscoIseDtosExternalCiscoIseIPAddrDtosExternalCiscoIseIPAddresses(items *[]catalystcentersdkgo.ResponseSystemSettingsGetAuthenticationAndPolicyServersV1ResponseCiscoIseDtosExternalCiscoIseIPAddrDtosExternalCiscoIseIPAddresses) []map[string]interface{} {
+func flattenSystemSettingsGetAuthenticationAndPolicyServersItemsCiscoIseDtosExternalCiscoIseIPAddrDtosExternalCiscoIseIPAddresses(items *[]catalystcentersdkgo.ResponseSystemSettingsGetAuthenticationAndPolicyServersResponseCiscoIseDtosExternalCiscoIseIPAddrDtosExternalCiscoIseIPAddresses) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

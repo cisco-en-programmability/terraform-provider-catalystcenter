@@ -1,14 +1,14 @@
 
 resource "catalystcenter_fabrics_fabric_id_wireless_multicast" "example" {
-    provider = catalystcenter
+  provider = catalystcenter
+ 
+  parameters {
 
-    parameters {
-
-      fabric_id = "string"
-      multicast_enabled = "false"
-    }
+    fabric_id         = "string"
+    multicast_enabled = "false"
+  }
 }
 
 output "catalystcenter_fabrics_fabric_id_wireless_multicast_example" {
-    value = catalystcenter_fabrics_fabric_id_wireless_multicast.example
+  value = catalystcenter_fabrics_fabric_id_wireless_multicast.example
 }

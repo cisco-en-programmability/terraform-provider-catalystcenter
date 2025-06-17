@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -86,8 +86,8 @@ func dataSourceTagsNetworkDevicesMembersAssociationsRead(ctx context.Context, d 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveTagsAssociatedWithNetworkDevicesV1")
-		queryParams1 := catalystcentersdkgo.RetrieveTagsAssociatedWithNetworkDevicesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: RetrieveTagsAssociatedWithNetworkDevices")
+		queryParams1 := catalystcentersdkgo.RetrieveTagsAssociatedWithNetworkDevicesQueryParams{}
 
 		if okOffset {
 			queryParams1.Offset = vOffset.(float64)
@@ -96,24 +96,38 @@ func dataSourceTagsNetworkDevicesMembersAssociationsRead(ctx context.Context, d 
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.Tag.RetrieveTagsAssociatedWithNetworkDevicesV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Tag.RetrieveTagsAssociatedWithNetworkDevices(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveTagsAssociatedWithNetworkDevicesV1", err,
-				"Failure at RetrieveTagsAssociatedWithNetworkDevicesV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveTagsAssociatedWithNetworkDevices", err,
+				"Failure at RetrieveTagsAssociatedWithNetworkDevices, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenTagRetrieveTagsAssociatedWithNetworkDevicesV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveTagsAssociatedWithNetworkDevices", err,
+				"Failure at RetrieveTagsAssociatedWithNetworkDevices, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenTagRetrieveTagsAssociatedWithNetworkDevicesItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveTagsAssociatedWithNetworkDevicesV1 response",
+				"Failure when setting RetrieveTagsAssociatedWithNetworkDevices response",
 				err))
 			return diags
 		}
@@ -125,7 +139,7 @@ func dataSourceTagsNetworkDevicesMembersAssociationsRead(ctx context.Context, d 
 	return diags
 }
 
-func flattenTagRetrieveTagsAssociatedWithNetworkDevicesV1Items(items *[]catalystcentersdkgo.ResponseTagRetrieveTagsAssociatedWithNetworkDevicesV1Response) []map[string]interface{} {
+func flattenTagRetrieveTagsAssociatedWithNetworkDevicesItems(items *[]catalystcentersdkgo.ResponseTagRetrieveTagsAssociatedWithNetworkDevicesResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -133,13 +147,13 @@ func flattenTagRetrieveTagsAssociatedWithNetworkDevicesV1Items(items *[]catalyst
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["id"] = item.ID
-		respItem["tags"] = flattenTagRetrieveTagsAssociatedWithNetworkDevicesV1ItemsTags(item.Tags)
+		respItem["tags"] = flattenTagRetrieveTagsAssociatedWithNetworkDevicesItemsTags(item.Tags)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenTagRetrieveTagsAssociatedWithNetworkDevicesV1ItemsTags(items *[]catalystcentersdkgo.ResponseTagRetrieveTagsAssociatedWithNetworkDevicesV1ResponseTags) []map[string]interface{} {
+func flattenTagRetrieveTagsAssociatedWithNetworkDevicesItemsTags(items *[]catalystcentersdkgo.ResponseTagRetrieveTagsAssociatedWithNetworkDevicesResponseTags) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

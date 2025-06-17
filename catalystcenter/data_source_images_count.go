@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,25 +15,25 @@ func dataSourceImagesCount() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Software Image Management (SWIM).
 
-- Returns the count of software images for given *siteId*. The default value of siteId is global
+- Returns the count of software images for given **siteId**. The default value of siteId is global
 `,
 
 		ReadContext: dataSourceImagesCountRead,
 		Schema: map[string]*schema.Schema{
 			"golden": &schema.Schema{
-				Description: `golden query parameter. When set to *true*, it will retrieve the images marked tagged golden. When set to *false*, it will retrieve the images marked not tagged golden.
+				Description: `golden query parameter. When set to **true**, it will retrieve the images marked tagged golden. When set to **false**, it will retrieve the images marked not tagged golden.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"has_addon_images": &schema.Schema{
-				Description: `hasAddonImages query parameter. When set to *true*, it will retrieve the images which have add-on images. When set to *false*, it will retrieve the images which do not have add-on images.
+				Description: `hasAddonImages query parameter. When set to **true**, it will retrieve the images which have add-on images. When set to **false**, it will retrieve the images which do not have add-on images.
 `,
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
 			"imported": &schema.Schema{
-				Description: `imported query parameter. When the value is set to *true*, it will include physically imported images. Conversely, when the value is set to *false*, it will include image records from the cloud. The identifier for cloud images can be utilised to download images from Cisco.com to the disk.
+				Description: `imported query parameter. When the value is set to **true**, it will include physically imported images. Conversely, when the value is set to **false**, it will include image records from the cloud. The identifier for cloud images can be utilised to download images from Cisco.com to the disk.
 `,
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -45,7 +45,7 @@ func dataSourceImagesCount() *schema.Resource {
 				Optional: true,
 			},
 			"is_addon_images": &schema.Schema{
-				Description: `isAddonImages query parameter. When set to *true*, it will retrieve the images that an add-on image.  When set to *false*, it will retrieve the images that are not add-on images
+				Description: `isAddonImages query parameter. When set to **true**, it will retrieve the images that an add-on image.  When set to **false**, it will retrieve the images that are not add-on images
 `,
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -57,7 +57,7 @@ func dataSourceImagesCount() *schema.Resource {
 				Optional: true,
 			},
 			"product_name_ordinal": &schema.Schema{
-				Description: `productNameOrdinal query parameter. The product name ordinal is a unique value for each network device product. The productNameOrdinal can be obtained from the response of the API */dna/intent/api/v1/siteWiseProductNames*.
+				Description: `productNameOrdinal query parameter. The product name ordinal is a unique value for each network device product. The productNameOrdinal can be obtained from the response of the API **/dna/intent/api/v1/siteWiseProductNames**.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -69,7 +69,7 @@ func dataSourceImagesCount() *schema.Resource {
 				Optional: true,
 			},
 			"supervisor_product_name_ordinal": &schema.Schema{
-				Description: `supervisorProductNameOrdinal query parameter. The supervisor engine module ordinal is a unique value for each supervisor module. The *supervisorProductNameOrdinal* can be obtained from the response of API */dna/intent/api/v1/siteWiseProductNames*
+				Description: `supervisorProductNameOrdinal query parameter. The supervisor engine module ordinal is a unique value for each supervisor module. The **supervisorProductNameOrdinal** can be obtained from the response of API **/dna/intent/api/v1/siteWiseProductNames**
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -117,8 +117,8 @@ func dataSourceImagesCountRead(ctx context.Context, d *schema.ResourceData, m in
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: ReturnsCountOfSoftwareImagesV1")
-		queryParams1 := catalystcentersdkgo.ReturnsCountOfSoftwareImagesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: ReturnsCountOfSoftwareImages")
+		queryParams1 := catalystcentersdkgo.ReturnsCountOfSoftwareImagesQueryParams{}
 
 		if okSiteID {
 			queryParams1.SiteID = vSiteID.(string)
@@ -151,24 +151,38 @@ func dataSourceImagesCountRead(ctx context.Context, d *schema.ResourceData, m in
 			queryParams1.IsAddonImages = vIsAddonImages.(bool)
 		}
 
-		response1, restyResp1, err := client.SoftwareImageManagementSwim.ReturnsCountOfSoftwareImagesV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.SoftwareImageManagementSwim.ReturnsCountOfSoftwareImages(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 ReturnsCountOfSoftwareImagesV1", err,
-				"Failure at ReturnsCountOfSoftwareImagesV1, unexpected response", ""))
+				"Failure when executing 2 ReturnsCountOfSoftwareImages", err,
+				"Failure at ReturnsCountOfSoftwareImages, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSoftwareImageManagementSwimReturnsCountOfSoftwareImagesV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 ReturnsCountOfSoftwareImages", err,
+				"Failure at ReturnsCountOfSoftwareImages, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSoftwareImageManagementSwimReturnsCountOfSoftwareImagesItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting ReturnsCountOfSoftwareImagesV1 response",
+				"Failure when setting ReturnsCountOfSoftwareImages response",
 				err))
 			return diags
 		}
@@ -180,7 +194,7 @@ func dataSourceImagesCountRead(ctx context.Context, d *schema.ResourceData, m in
 	return diags
 }
 
-func flattenSoftwareImageManagementSwimReturnsCountOfSoftwareImagesV1Item(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimReturnsCountOfSoftwareImagesV1Response) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimReturnsCountOfSoftwareImagesItem(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimReturnsCountOfSoftwareImagesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

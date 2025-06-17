@@ -4,14 +4,14 @@ page_title: "catalystcenter_wireless_controllers_ssid_details_count Data Source 
 subcategory: ""
 description: |-
   It performs read operation on Wireless.
-  Retrieves the count of SSIDs associated with the specific Wireless Controller.
+  Retrieves the count of SSIDs associated with the specific wireless controller.
 ---
 
 # catalystcenter_wireless_controllers_ssid_details_count (Data Source)
 
 It performs read operation on Wireless.
 
-- Retrieves the count of SSIDs associated with the specific Wireless Controller.
+- Retrieves the count of SSIDs associated with the specific wireless controller.
 
 ## Example Usage
 

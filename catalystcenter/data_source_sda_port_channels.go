@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -33,7 +33,13 @@ func dataSourceSdaPortChannels() *schema.Resource {
 				Optional: true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter. Maximum number of records to return.
+				Description: `limit query parameter. Maximum number of records to return. The maximum number of objects supported in a single request is 500.
+`,
+				Type:     schema.TypeFloat,
+				Optional: true,
+			},
+			"native_vlan_id": &schema.Schema{
+				Description: `nativeVlanId query parameter. Native VLAN of the port channel, this option is only applicable to TRUNK connectedDeviceType.(VLAN must be between 1 and 4094. In cases value not set when connectedDeviceType is TRUNK, default value will be '1').
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -62,6 +68,13 @@ func dataSourceSdaPortChannels() *schema.Resource {
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+
+						"allowed_vlan_ranges": &schema.Schema{
+							Description: `Allowed VLAN of the port channel, this option is only applicable to TRUNK connectedDeviceType. (VLAN must be between 1 and 4094 (Ex 100,200,300-400) or 'all'. In cases value not set when connectedDeviceType is TRUNK, default value will be 'all').
+`,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
 
 						"connected_device_type": &schema.Schema{
 							Description: `Connected device type of the port channel.
@@ -101,6 +114,13 @@ func dataSourceSdaPortChannels() *schema.Resource {
 							},
 						},
 
+						"native_vlan_id": &schema.Schema{
+							Description: `Native VLAN of the port channel, this option is only applicable to TRUNK connectedDeviceType. (VLAN must be between 1 and 4094. In cases value not set when connectedDeviceType is TRUNK, default value will be 1).
+`,
+							Type:     schema.TypeInt,
+							Computed: true,
+						},
+
 						"network_device_id": &schema.Schema{
 							Description: `ID of the network device.
 `,
@@ -136,13 +156,14 @@ func dataSourceSdaPortChannelsRead(ctx context.Context, d *schema.ResourceData, 
 	vNetworkDeviceID, okNetworkDeviceID := d.GetOk("network_device_id")
 	vPortChannelName, okPortChannelName := d.GetOk("port_channel_name")
 	vConnectedDeviceType, okConnectedDeviceType := d.GetOk("connected_device_type")
+	vNativeVLANID, okNativeVLANID := d.GetOk("native_vlan_id")
 	vOffset, okOffset := d.GetOk("offset")
 	vLimit, okLimit := d.GetOk("limit")
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetPortChannelsV1")
-		queryParams1 := catalystcentersdkgo.GetPortChannelsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetPortChannelsConnectivity")
+		queryParams1 := catalystcentersdkgo.GetPortChannelsConnectivityQueryParams{}
 
 		if okFabricID {
 			queryParams1.FabricID = vFabricID.(string)
@@ -156,6 +177,9 @@ func dataSourceSdaPortChannelsRead(ctx context.Context, d *schema.ResourceData, 
 		if okConnectedDeviceType {
 			queryParams1.ConnectedDeviceType = vConnectedDeviceType.(string)
 		}
+		if okNativeVLANID {
+			queryParams1.NativeVLANID = vNativeVLANID.(float64)
+		}
 		if okOffset {
 			queryParams1.Offset = vOffset.(float64)
 		}
@@ -163,24 +187,38 @@ func dataSourceSdaPortChannelsRead(ctx context.Context, d *schema.ResourceData, 
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.Sda.GetPortChannelsV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sda.GetPortChannelsConnectivity(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetPortChannelsV1", err,
-				"Failure at GetPortChannelsV1, unexpected response", ""))
+				"Failure when executing 2 GetPortChannelsConnectivity", err,
+				"Failure at GetPortChannelsConnectivity, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaGetPortChannelsV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetPortChannelsConnectivity", err,
+				"Failure at GetPortChannelsConnectivity, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSdaGetPortChannelsConnectivityItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetPortChannelsV1 response",
+				"Failure when setting GetPortChannelsConnectivity response",
 				err))
 			return diags
 		}
@@ -192,7 +230,7 @@ func dataSourceSdaPortChannelsRead(ctx context.Context, d *schema.ResourceData, 
 	return diags
 }
 
-func flattenSdaGetPortChannelsV1Items(items *[]catalystcentersdkgo.ResponseSdaGetPortChannelsV1Response) []map[string]interface{} {
+func flattenSdaGetPortChannelsConnectivityItems(items *[]catalystcentersdkgo.ResponseSdaGetPortChannelsConnectivityResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -207,6 +245,8 @@ func flattenSdaGetPortChannelsV1Items(items *[]catalystcentersdkgo.ResponseSdaGe
 		respItem["connected_device_type"] = item.ConnectedDeviceType
 		respItem["protocol"] = item.Protocol
 		respItem["description"] = item.Description
+		respItem["native_vlan_id"] = item.NativeVLANID
+		respItem["allowed_vlan_ranges"] = item.AllowedVLANRanges
 		respItems = append(respItems, respItem)
 	}
 	return respItems

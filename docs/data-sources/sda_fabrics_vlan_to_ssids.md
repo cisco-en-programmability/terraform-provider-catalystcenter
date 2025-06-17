@@ -32,7 +32,7 @@ output "catalystcenter_sda_fabrics_vlan_to_ssids_example" {
 
 ### Optional
 
-- `limit` (Number) limit query parameter. Return only this many IP Pool to SSID Mapping
+- `limit` (Number) limit query parameter. Return only this many IP Pool to SSID Mapping. Default is 500 if not specified. Maximum allowed limit is 500.
 - `offset` (Number) offset query parameter. Number of records to skip for pagination
 
 ### Read-Only

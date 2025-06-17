@@ -4,14 +4,14 @@ page_title: "catalystcenter_wireless_settings_ap_profiles Data Source - terrafor
 subcategory: ""
 description: |-
   It performs read operation on Wireless.
-  This data source allows the user to get AP profiles that are captured in wireless settings design.
+  This data source allows the user to get AP Profiles that captured in wireless settings design.
 ---
 
 # catalystcenter_wireless_settings_ap_profiles (Data Source)
 
 It performs read operation on Wireless.
 
-- This data source allows the user to get AP profiles that are captured in wireless settings design.
+- This data source allows the user to get AP Profiles that captured in wireless settings design.
 
 ## Example Usage
 
@@ -34,8 +34,8 @@ output "catalystcenter_wireless_settings_ap_profiles_example" {
 ### Optional
 
 - `ap_profile_name` (String) apProfileName query parameter. Employ this query parameter to obtain the details of the apProfiles corresponding to the provided apProfileName.
-- `limit` (String) limit query parameter. The number of records to show for this page. The default is 500 if not specified. The maximum allowed limit is 500.
-- `offset` (String) offset query parameter. The first record to show for this page; the first record is numbered 1.
+- `limit` (String) limit query parameter. The number of records to show for this page. Default is 500 if not specified. Maximum allowed limit is 500.
+- `offset` (String) offset query parameter. The first record to show for this page, the first record is numbered 1.
 
 ### Read-Only
 
@@ -80,8 +80,8 @@ Read-Only:
 
 Read-Only:
 
-- `scheduler_date` (String)
-- `scheduler_day` (String)
+- `scheduler_date` (List of String)
+- `scheduler_day` (List of String)
 - `scheduler_end_time` (String)
 - `scheduler_start_time` (String)
 

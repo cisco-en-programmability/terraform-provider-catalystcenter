@@ -1,7 +1,7 @@
 
 resource "catalystcenter_sda_virtual_network_v2" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     is_guest_virtual_network = "false"

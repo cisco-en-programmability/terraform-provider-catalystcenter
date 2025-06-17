@@ -12,6 +12,8 @@ description: |-
 It performs create operation on Wireless.
 
 - User can configure multiple access points with required options using this intent API
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -21,15 +23,15 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_wireless_accespoint_configuration_v2" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
     admin_status = "false"
-    ap_list {
+    ap_list = [{
 
       ap_name     = "string"
       ap_name_new = "string"
       mac_address = "string"
-    }
+    }]
     ap_mode                        = 1
     clean_air_s_i24                = "false"
     clean_air_s_i5                 = "false"
@@ -50,11 +52,11 @@ resource "catalystcenter_wireless_accespoint_configuration_v2" "example" {
     led_status                     = "false"
     location                       = "string"
     primary_controller_name        = "string"
-    primary_ip_address {
+    primary_ip_address = [{
 
       address = "string"
-    }
-    radio_configurations {
+    }]
+    radio_configurations = [{
 
       admin_status                    = "false"
       antenna_cable_name              = "string"
@@ -76,18 +78,18 @@ resource "catalystcenter_wireless_accespoint_configuration_v2" "example" {
       radio_band                      = "string"
       radio_role_assignment           = "string"
       radio_type                      = 1
-    }
+    }]
     secondary_controller_name = "string"
-    secondary_ip_address {
+    secondary_ip_address = [{
 
       address = "string"
-    }
+    }]
     tertiary_controller_name = "string"
-    tertiary_ip_address {
+    tertiary_ip_address = [{
 
       address = "string"
-    }
-  }
+    }]
+  }]
 }
 
 output "catalystcenter_wireless_accespoint_configuration_v2_example" {
@@ -167,7 +169,7 @@ Optional:
 
 - `admin_status` (String) Configure the admin status on the specified radio for an access point. Set this parameter's value to "true" to enable it and "false" to disable it.
 - `antenna_cable_name` (String) Configure the antenna cable name on the specified radio for an access point. If cable loss needs to be configured, set this parameter's value to "other".
-- `antenna_gain` (Number) Configure the antenna gain on the specified radio for an access point by setting a decimal value (in dBi). To configure "antennaGain", set "antennaPatternName" value to "other".
+- `antenna_gain` (Number) Configure the antenna gain on the specified radio for an access point by setting a decimal value (in dBi). To configure "antennaGain", set "antennaPatternName" value to "other". The External Antenna Gain value will be applied in 0.5 dBi increments on the controller. Therefore, the value entered will be multiplied by 2 to configure the absolute gain value. AntennaGain should be in range of 0-20.
 - `antenna_pattern_name` (String) Specify the antenna name on the specified radio for an access point. The antenna name is used to calculate the gain on the radio slot.
 - `cable_loss` (Number) Configure the cable loss on the specified radio for an access point by setting a decimal value (in dBi).
 - `channel_assignment_mode` (Number) Configure the channel assignment mode on the specified radio for an access point: for global mode, set "1"; and for custom mode, set "2".
@@ -182,8 +184,8 @@ Optional:
 - `configure_radio_role_assignment` (String) To change the radio role on the specified radio for an access point, set this parameter's value to "true".
 - `power_assignment_mode` (Number) Configure the power assignment mode on the specified radio for an access point: for global mode, set "1"; and for custom mode, set "2".
 - `powerlevel` (Number) Configure the power level on the specified radio for an access point by setting a value between 1 and 8.
-- `radio_band` (String) Configure the band on the specified radio for an access point: for 2.4 GHz, set "RADIO24"; for 5 GHz, set "RADIO5". Any other string is invalid, including empty string
-- `radio_role_assignment` (String) Configure only one of the following roles on the specified radio for an access point as "AUTO", "SERVING", or "MONITOR". Any other string is invalid, including empty string
+- `radio_band` (String) Configure the band on the specified radio for an access point: for 2.4 GHz, set "RADIO24"; for 5 GHz, set "RADIO5"; for 6 GHz, set "RADIO6". Any other string is invalid, including empty string.
+- `radio_role_assignment` (String) Configure only one of the following roles on the specified radio for an access point as "AUTO", "SERVING", or "MONITOR". Any other string is invalid, including empty string.
 - `radio_type` (Number) Configure an access point's radio band: for 2.4 GHz, set "1"; for 5 GHz, set "2"; for XOR, set "3"; and for 6 GHz, set "6".
 
 

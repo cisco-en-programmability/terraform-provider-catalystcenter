@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -39,7 +39,13 @@ func dataSourceSdaPortAssignments() *schema.Resource {
 				Optional: true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter. Maximum number of records to return.
+				Description: `limit query parameter. Maximum number of records to return. The maximum number of objects supported in a single request is 500.
+`,
+				Type:     schema.TypeFloat,
+				Optional: true,
+			},
+			"native_vlan_id": &schema.Schema{
+				Description: `nativeVlanId query parameter. Native VLAN of the port assignment, this option is only applicable to TRUNKING_DEVICE connectedDeviceType.(VLAN must be between 1 and 4094. In cases value not set when connectedDeviceType is TRUNKING_DEVICE, default value will be '1').
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -68,6 +74,13 @@ func dataSourceSdaPortAssignments() *schema.Resource {
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+
+						"allowed_vlan_ranges": &schema.Schema{
+							Description: `Allowed VLAN of the port assignment, this option is only applicable to TRUNKING_DEVICE connectedDeviceType. (VLAN must be between 1 and 4094 (Ex 100,200,300-400) or 'all'. In cases value not set when connectedDeviceType is TRUNKING_DEVICE, default value will be 'all').
+`,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
 
 						"authenticate_template_name": &schema.Schema{
 							Description: `Authenticate template name of the port assignment.
@@ -118,6 +131,13 @@ func dataSourceSdaPortAssignments() *schema.Resource {
 							Computed: true,
 						},
 
+						"native_vlan_id": &schema.Schema{
+							Description: `Native VLAN of the port assignment, this option is only applicable to TRUNKING_DEVICE connectedDeviceType. (VLAN must be between 1 and 4094. In cases value not set when connectedDeviceType is TRUNKING_DEVICE, default value will be 1).
+`,
+							Type:     schema.TypeInt,
+							Computed: true,
+						},
+
 						"network_device_id": &schema.Schema{
 							Description: `Network device ID of the port assignment.
 `,
@@ -154,13 +174,14 @@ func dataSourceSdaPortAssignmentsRead(ctx context.Context, d *schema.ResourceDat
 	vInterfaceName, okInterfaceName := d.GetOk("interface_name")
 	vDataVLANName, okDataVLANName := d.GetOk("data_vlan_name")
 	vVoiceVLANName, okVoiceVLANName := d.GetOk("voice_vlan_name")
+	vNativeVLANID, okNativeVLANID := d.GetOk("native_vlan_id")
 	vOffset, okOffset := d.GetOk("offset")
 	vLimit, okLimit := d.GetOk("limit")
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetPortAssignmentsV1")
-		queryParams1 := catalystcentersdkgo.GetPortAssignmentsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetPortAssignments")
+		queryParams1 := catalystcentersdkgo.GetPortAssignmentsQueryParams{}
 
 		if okFabricID {
 			queryParams1.FabricID = vFabricID.(string)
@@ -177,6 +198,9 @@ func dataSourceSdaPortAssignmentsRead(ctx context.Context, d *schema.ResourceDat
 		if okVoiceVLANName {
 			queryParams1.VoiceVLANName = vVoiceVLANName.(string)
 		}
+		if okNativeVLANID {
+			queryParams1.NativeVLANID = vNativeVLANID.(float64)
+		}
 		if okOffset {
 			queryParams1.Offset = vOffset.(float64)
 		}
@@ -184,24 +208,38 @@ func dataSourceSdaPortAssignmentsRead(ctx context.Context, d *schema.ResourceDat
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.Sda.GetPortAssignmentsV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sda.GetPortAssignments(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetPortAssignmentsV1", err,
-				"Failure at GetPortAssignmentsV1, unexpected response", ""))
+				"Failure when executing 2 GetPortAssignments", err,
+				"Failure at GetPortAssignments, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaGetPortAssignmentsV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetPortAssignments", err,
+				"Failure at GetPortAssignments, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSdaGetPortAssignmentsItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetPortAssignmentsV1 response",
+				"Failure when setting GetPortAssignments response",
 				err))
 			return diags
 		}
@@ -213,7 +251,7 @@ func dataSourceSdaPortAssignmentsRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenSdaGetPortAssignmentsV1Items(items *[]catalystcentersdkgo.ResponseSdaGetPortAssignmentsV1Response) []map[string]interface{} {
+func flattenSdaGetPortAssignmentsItems(items *[]catalystcentersdkgo.ResponseSdaGetPortAssignmentsResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -230,6 +268,8 @@ func flattenSdaGetPortAssignmentsV1Items(items *[]catalystcentersdkgo.ResponseSd
 		respItem["authenticate_template_name"] = item.AuthenticateTemplateName
 		respItem["security_group_name"] = item.SecurityGroupName
 		respItem["interface_description"] = item.InterfaceDescription
+		respItem["native_vlan_id"] = item.NativeVLANID
+		respItem["allowed_vlan_ranges"] = item.AllowedVLANRanges
 		respItems = append(respItems, respItem)
 	}
 	return respItems

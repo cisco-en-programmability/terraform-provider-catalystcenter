@@ -1,10 +1,10 @@
 
 resource "catalystcenter_maps_export" "example" {
-  provider            = meraki
+  provider            = catalystcenter
   site_hierarchy_uuid = "string"
-  parameters {
+  parameters = [{
 
-  }
+  }]
 }
 
 output "catalystcenter_maps_export_example" {

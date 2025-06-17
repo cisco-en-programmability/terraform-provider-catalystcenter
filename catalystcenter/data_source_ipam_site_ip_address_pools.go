@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -21,7 +21,7 @@ func dataSourceIPamSiteIPAddressPools() *schema.Resource {
 		ReadContext: dataSourceIPamSiteIPAddressPoolsRead,
 		Schema: map[string]*schema.Schema{
 			"limit": &schema.Schema{
-				Description: `limit query parameter. The number of records to show for this page;The minimum is 1, and the maximum is 500.
+				Description: `limit query parameter. The number of records to show for this page; the minimum is 1, and the maximum is 500.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -39,7 +39,7 @@ func dataSourceIPamSiteIPAddressPools() *schema.Resource {
 				Optional: true,
 			},
 			"site_id": &schema.Schema{
-				Description: `siteId query parameter. The id of the site for which to retrieve IP address subpools. Only subpools whose siteId exactly matches will be fetched, parent or child site matches will not be included.
+				Description: `siteId query parameter. The **id** of the site for which to retrieve IP address subpools. Only subpools whose **siteId** exactly matches will be fetched, parent or child site matches will not be included.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -265,7 +265,7 @@ func dataSourceIPamSiteIPAddressPools() *schema.Resource {
 						},
 
 						"site_id": &schema.Schema{
-							Description: `The id of the site that this subpool belongs to. This must be the id of a non-Global site.
+							Description: `The **id** of the site that this subpool belongs to. This must be the **id** of a non-Global site.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -296,8 +296,8 @@ func dataSourceIPamSiteIPAddressPoolsRead(ctx context.Context, d *schema.Resourc
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesIPAddressSubpoolsV1")
-		queryParams1 := catalystcentersdkgo.RetrievesIPAddressSubpoolsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: RetrievesIPAddressSubpools")
+		queryParams1 := catalystcentersdkgo.RetrievesIPAddressSubpoolsQueryParams{}
 
 		if okOffset {
 			queryParams1.Offset = vOffset.(float64)
@@ -317,24 +317,36 @@ func dataSourceIPamSiteIPAddressPoolsRead(ctx context.Context, d *schema.Resourc
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.NetworkSettings.RetrievesIPAddressSubpoolsV1(&queryParams1)
+		response1, restyResp1, err := client.NetworkSettings.RetrievesIPAddressSubpools(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesIPAddressSubpoolsV1", err,
-				"Failure at RetrievesIPAddressSubpoolsV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesIPAddressSubpools", err,
+				"Failure at RetrievesIPAddressSubpools, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenNetworkSettingsRetrievesIPAddressSubpoolsV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesIPAddressSubpools", err,
+				"Failure at RetrievesIPAddressSubpools, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenNetworkSettingsRetrievesIPAddressSubpoolsItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesIPAddressSubpoolsV1 response",
+				"Failure when setting RetrievesIPAddressSubpools response",
 				err))
 			return diags
 		}
@@ -346,7 +358,7 @@ func dataSourceIPamSiteIPAddressPoolsRead(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func flattenNetworkSettingsRetrievesIPAddressSubpoolsV1Items(items *[]catalystcentersdkgo.ResponseNetworkSettingsRetrievesIPAddressSubpoolsV1Response) []map[string]interface{} {
+func flattenNetworkSettingsRetrievesIPAddressSubpoolsItems(items *[]catalystcentersdkgo.ResponseNetworkSettingsRetrievesIPAddressSubpoolsResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -354,8 +366,8 @@ func flattenNetworkSettingsRetrievesIPAddressSubpoolsV1Items(items *[]catalystce
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["id"] = item.ID
-		respItem["ip_v4_address_space"] = flattenNetworkSettingsRetrievesIPAddressSubpoolsV1ItemsIPV4AddressSpace(item.IPV4AddressSpace)
-		respItem["ip_v6_address_space"] = flattenNetworkSettingsRetrievesIPAddressSubpoolsV1ItemsIPV6AddressSpace(item.IPV6AddressSpace)
+		respItem["ip_v4_address_space"] = flattenNetworkSettingsRetrievesIPAddressSubpoolsItemsIPV4AddressSpace(item.IPV4AddressSpace)
+		respItem["ip_v6_address_space"] = flattenNetworkSettingsRetrievesIPAddressSubpoolsItemsIPV6AddressSpace(item.IPV6AddressSpace)
 		respItem["name"] = item.Name
 		respItem["pool_type"] = item.PoolType
 		respItem["site_id"] = item.SiteID
@@ -365,7 +377,7 @@ func flattenNetworkSettingsRetrievesIPAddressSubpoolsV1Items(items *[]catalystce
 	return respItems
 }
 
-func flattenNetworkSettingsRetrievesIPAddressSubpoolsV1ItemsIPV4AddressSpace(item *catalystcentersdkgo.ResponseNetworkSettingsRetrievesIPAddressSubpoolsV1ResponseIPV4AddressSpace) []map[string]interface{} {
+func flattenNetworkSettingsRetrievesIPAddressSubpoolsItemsIPV4AddressSpace(item *catalystcentersdkgo.ResponseNetworkSettingsRetrievesIPAddressSubpoolsResponseIPV4AddressSpace) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -388,7 +400,7 @@ func flattenNetworkSettingsRetrievesIPAddressSubpoolsV1ItemsIPV4AddressSpace(ite
 
 }
 
-func flattenNetworkSettingsRetrievesIPAddressSubpoolsV1ItemsIPV6AddressSpace(item *catalystcentersdkgo.ResponseNetworkSettingsRetrievesIPAddressSubpoolsV1ResponseIPV6AddressSpace) []map[string]interface{} {
+func flattenNetworkSettingsRetrievesIPAddressSubpoolsItemsIPV6AddressSpace(item *catalystcentersdkgo.ResponseNetworkSettingsRetrievesIPAddressSubpoolsResponseIPV6AddressSpace) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

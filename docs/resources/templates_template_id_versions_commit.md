@@ -13,6 +13,7 @@ It performs create operation on Configuration Templates.
 
 - Transitions the current draft of a template to a new committed version with a higher version number.
 
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -23,10 +24,10 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_templates_template_id_versions_commit" "example" {
   provider    = catalystcenter
   template_id = "string"
-  parameters {
+  parameters = [{
 
     commit_note = "string"
-  }
+  }]
 }
 
 output "catalystcenter_templates_template_id_versions_commit_example" {
@@ -52,7 +53,7 @@ output "catalystcenter_templates_template_id_versions_commit_example" {
 
 Required:
 
-- `template_id` (String) templateId path parameter. The id of the template to commit a new version for, retrieveable from GET /dna/intent/api/v1/templates
+- `template_id` (String) templateId path parameter. The id of the template to commit a new version for, retrieveable from **GET /dna/intent/api/v1/templates**
 
 Optional:
 

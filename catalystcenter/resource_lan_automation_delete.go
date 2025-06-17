@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -88,23 +88,23 @@ func resourceLanAutomationDeleteCreate(ctx context.Context, d *schema.ResourceDa
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.LanAutomation.LanAutomationStopV1(vvID)
+	response1, restyResp1, err := client.LanAutomation.LanAutomationStop(vvID)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing LanAutomationStopV1", err))
+			"Failure when executing LanAutomationStop", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItem1 := flattenLanAutomationLanAutomationStopV1Item(response1.Response)
+	vItem1 := flattenLanAutomationLanAutomationStopItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting LanAutomationStopV1 response",
+			"Failure when setting LanAutomationStop response",
 			err))
 		return diags
 	}
@@ -128,7 +128,7 @@ func resourceLanAutomationDeleteDelete(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func flattenLanAutomationLanAutomationStopV1Item(item *catalystcentersdkgo.ResponseLanAutomationLanAutomationStopV1Response) []map[string]interface{} {
+func flattenLanAutomationLanAutomationStopItem(item *catalystcentersdkgo.ResponseLanAutomationLanAutomationStopResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

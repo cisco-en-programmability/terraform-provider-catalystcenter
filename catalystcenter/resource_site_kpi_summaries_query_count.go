@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -122,9 +122,9 @@ func resourceSiteKpiSummariesQueryCountCreate(ctx context.Context, d *schema.Res
 
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
-	request1 := expandRequestSiteKpiSummariesQueryCountGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersV1(ctx, "parameters.0", d)
+	request1 := expandRequestSiteKpiSummariesQueryCountGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFilters(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.GetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersV1HeaderParams{}
+	headerParams1 := catalystcentersdkgo.GetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersHeaderParams{}
 
 	headerParams1.XCaLLERID = vXCaLLERID.(string)
 
@@ -146,7 +146,7 @@ func resourceSiteKpiSummariesQueryCountCreate(ctx context.Context, d *schema.Res
 
 	//Analizar verificacion.
 
-	vItem1 := flattenSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersV1Item(response1.Response)
+	vItem1 := flattenSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
 			"Failure when setting GetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFilters response",
@@ -171,8 +171,8 @@ func resourceSiteKpiSummariesQueryCountDelete(ctx context.Context, d *schema.Res
 	return diags
 }
 
-func expandRequestSiteKpiSummariesQueryCountGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersV1 {
-	request := catalystcentersdkgo.RequestSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersV1{}
+func expandRequestSiteKpiSummariesQueryCountGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFilters {
+	request := catalystcentersdkgo.RequestSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -180,13 +180,13 @@ func expandRequestSiteKpiSummariesQueryCountGetTheTotalNumberOfSiteAnalyticsReco
 		request.EndTime = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestSiteKpiSummariesQueryCountGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersV1FiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestSiteKpiSummariesQueryCountGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersFiltersArray(ctx, key+".filters", d)
 	}
 	return &request
 }
 
-func expandRequestSiteKpiSummariesQueryCountGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersV1Filters {
-	request := []catalystcentersdkgo.RequestSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersV1Filters{}
+func expandRequestSiteKpiSummariesQueryCountGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersFilters {
+	request := []catalystcentersdkgo.RequestSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -197,7 +197,7 @@ func expandRequestSiteKpiSummariesQueryCountGetTheTotalNumberOfSiteAnalyticsReco
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSiteKpiSummariesQueryCountGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSiteKpiSummariesQueryCountGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -205,8 +205,8 @@ func expandRequestSiteKpiSummariesQueryCountGetTheTotalNumberOfSiteAnalyticsReco
 	return &request
 }
 
-func expandRequestSiteKpiSummariesQueryCountGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersV1Filters {
-	request := catalystcentersdkgo.RequestSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersV1Filters{}
+func expandRequestSiteKpiSummariesQueryCountGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersFilters {
+	request := catalystcentersdkgo.RequestSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -219,7 +219,7 @@ func expandRequestSiteKpiSummariesQueryCountGetTheTotalNumberOfSiteAnalyticsReco
 	return &request
 }
 
-func flattenSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersV1Item(item *catalystcentersdkgo.ResponseSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersV1Response) []map[string]interface{} {
+func flattenSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersItem(item *catalystcentersdkgo.ResponseSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfFiltersResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -12,6 +12,8 @@ description: |-
 It performs update operation on SDA.
 
 - Updates anycast gateways based on user input.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -21,7 +23,7 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_sda_anycast_gateways_update" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
     fabric_id                                    = "string"
     id                                           = "string"
@@ -32,8 +34,12 @@ resource "catalystcenter_sda_anycast_gateways_update" "example" {
     is_ip_directed_broadcast                     = "false"
     is_layer2_flooding_enabled                   = "false"
     is_multiple_ip_to_mac_addresses              = "false"
+    is_resource_guard_enabled                    = "false"
     is_supplicant_based_extended_node_onboarding = "false"
+    is_wireless_flooding_enabled                 = "false"
     is_wireless_pool                             = "false"
+    layer2_flooding_address                      = "string"
+    layer2_flooding_address_assignment           = "string"
     pool_type                                    = "string"
     security_group_name                          = "string"
     tcp_mss_adjustment                           = 1
@@ -41,7 +47,7 @@ resource "catalystcenter_sda_anycast_gateways_update" "example" {
     virtual_network_name                         = "string"
     vlan_id                                      = 1
     vlan_name                                    = "string"
-  }
+  }]
 }
 
 output "catalystcenter_sda_anycast_gateways_update_example" {
@@ -67,7 +73,7 @@ output "catalystcenter_sda_anycast_gateways_update_example" {
 
 Optional:
 
-- `payload` (Block List) Array of RequestSdaUpdateAnycastGatewaysV1 (see [below for nested schema](#nestedblock--parameters--payload))
+- `payload` (Block List) Array of RequestSdaUpdateAnycastGateways (see [below for nested schema](#nestedblock--parameters--payload))
 
 <a id="nestedblock--parameters--payload"></a>
 ### Nested Schema for `parameters.payload`
@@ -78,13 +84,17 @@ Optional:
 - `id` (String) ID of the anycast gateway (updating this field is not allowed).
 - `ip_pool_name` (String) Name of the IP pool associated with the anycast gateway (updating this field is not allowed).
 - `is_critical_pool` (String) Enable/disable critical VLAN (not applicable to INFRA_VN; updating this field is not allowed).
-- `is_group_based_policy_enforcement_enabled` (String) Enable/disable Group-Based Policy Enforcement (applicable only to INFRA_VN; defaults to false).
+- `is_group_based_policy_enforcement_enabled` (String) Enable/disable Group-Based Policy Enforcement (defaults to false when using INFRA_VN; defaults to true for other VNs; can only be modified when using INFRA_VN).
 - `is_intra_subnet_routing_enabled` (String) Enable/disable Intra-Subnet Routing (not applicable to INFRA_VN; updating this field is not allowed).
 - `is_ip_directed_broadcast` (String) Enable/disable IP-directed broadcast (not applicable to INFRA_VN).
 - `is_layer2_flooding_enabled` (String) Enable/disable layer 2 flooding (not applicable to INFRA_VN).
 - `is_multiple_ip_to_mac_addresses` (String) Enable/disable multiple IP-to-MAC Addresses (Wireless Bridged-Network Virtual Machine; not applicable to INFRA_VN).
+- `is_resource_guard_enabled` (String) Enable/disable Resource Guard (not applicable to INFRA_VN).
 - `is_supplicant_based_extended_node_onboarding` (String) Enable/disable Supplicant-Based Extended Node Onboarding (applicable only to INFRA_VN requests; must not be null when poolType is EXTENDED_NODE).
+- `is_wireless_flooding_enabled` (String) Enable/disable wireless flooding (not applicable to INFRA_VN; can only be true when isWirelessPool is true).
 - `is_wireless_pool` (String) Enable/disable fabric-enabled wireless (not applicable to INFRA_VN).
+- `layer2_flooding_address` (String) The flooding address to use for layer 2 flooding. The IP address must be in the 239.0.0.0/8 range. This property is applicable only when the flooding address source is set to "CUSTOM".
+- `layer2_flooding_address_assignment` (String) The source of the flooding address for layer 2 flooding. Layer 2 flooding must be enabled to configure this property. "SHARED" means that the anycast gateway will inherit the flooding address from the fabric. "CUSTOM" allows the anycast gateway to use a different flooding address (not applicable to INFRA_VN; defaults to "SHARED").
 - `pool_type` (String) The pool type of the anycast gateway (required for & applicable only to INFRA_VN; updating this field is not allowed).
 - `security_group_name` (String) Name of the associated Security Group (not applicable to INFRA_VN).
 - `tcp_mss_adjustment` (Number) TCP maximum segment size adjustment.

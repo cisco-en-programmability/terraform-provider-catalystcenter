@@ -35,7 +35,7 @@ output "catalystcenter_authentication_policy_servers_example" {
 
 - `is_ise_enabled` (Boolean) isIseEnabled query parameter. Valid values are : true, false
 - `role` (String) role query parameter. Authentication and Policy Server Role (Example: primary, secondary)
-- `state` (String) state query parameter. Valid values are: ACTIVE, INACTIVE, RBAC_SUCCESS, RBAC_FAILURE, DELETED, FAILED, INPROGRESS
+- `state` (String) state query parameter. Valid values are: ACTIVE, DELETED, FAILED, INACTIVE, INPROGRESS, RBAC-FAILURE, RBAC-SUCCESS
 
 ### Read-Only
 

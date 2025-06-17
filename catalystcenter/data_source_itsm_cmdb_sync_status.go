@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -115,8 +115,8 @@ func dataSourceItsmCmdbSyncStatusRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetCmdbSyncStatusV1")
-		queryParams1 := catalystcentersdkgo.GetCmdbSyncStatusV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetCmdbSyncStatus")
+		queryParams1 := catalystcentersdkgo.GetCmdbSyncStatusQueryParams{}
 
 		if okStatus {
 			queryParams1.Status = vStatus.(string)
@@ -125,24 +125,38 @@ func dataSourceItsmCmdbSyncStatusRead(ctx context.Context, d *schema.ResourceDat
 			queryParams1.Date = vDate.(string)
 		}
 
-		response1, restyResp1, err := client.Itsm.GetCmdbSyncStatusV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Itsm.GetCmdbSyncStatus(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetCmdbSyncStatusV1", err,
-				"Failure at GetCmdbSyncStatusV1, unexpected response", ""))
+				"Failure when executing 2 GetCmdbSyncStatus", err,
+				"Failure at GetCmdbSyncStatus, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenItsmGetCmdbSyncStatusV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetCmdbSyncStatus", err,
+				"Failure at GetCmdbSyncStatus, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenItsmGetCmdbSyncStatusItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetCmdbSyncStatusV1 response",
+				"Failure when setting GetCmdbSyncStatus response",
 				err))
 			return diags
 		}
@@ -154,7 +168,7 @@ func dataSourceItsmCmdbSyncStatusRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenItsmGetCmdbSyncStatusV1Items(items *catalystcentersdkgo.ResponseItsmGetCmdbSyncStatusV1) []map[string]interface{} {
+func flattenItsmGetCmdbSyncStatusItems(items *catalystcentersdkgo.ResponseItsmGetCmdbSyncStatus) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -163,7 +177,7 @@ func flattenItsmGetCmdbSyncStatusV1Items(items *catalystcentersdkgo.ResponseItsm
 		respItem := make(map[string]interface{})
 		respItem["success_count"] = item.SuccessCount
 		respItem["failure_count"] = item.FailureCount
-		respItem["devices"] = flattenItsmGetCmdbSyncStatusV1ItemsDevices(item.Devices)
+		respItem["devices"] = flattenItsmGetCmdbSyncStatusItemsDevices(item.Devices)
 		respItem["unknown_error_count"] = item.UnknownErrorCount
 		respItem["message"] = item.Message
 		respItem["sync_time"] = item.SyncTime
@@ -172,7 +186,7 @@ func flattenItsmGetCmdbSyncStatusV1Items(items *catalystcentersdkgo.ResponseItsm
 	return respItems
 }
 
-func flattenItsmGetCmdbSyncStatusV1ItemsDevices(items *[]catalystcentersdkgo.ResponseItemItsmGetCmdbSyncStatusV1Devices) []map[string]interface{} {
+func flattenItsmGetCmdbSyncStatusItemsDevices(items *[]catalystcentersdkgo.ResponseItemItsmGetCmdbSyncStatusDevices) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -158,8 +158,24 @@ func resourceTag() *schema.Resource {
 													Type:     schema.TypeList,
 													Optional: true,
 													Computed: true,
-													Elem: &schema.Schema{
-														Type: schema.TypeString,
+													Elem: &schema.Resource{
+														Schema: map[string]*schema.Schema{
+															"name": &schema.Schema{
+																Type:     schema.TypeString,
+																Optional: true,
+																Computed: true,
+															},
+															"operation": &schema.Schema{
+																Type:     schema.TypeString,
+																Optional: true,
+																Computed: true,
+															},
+															"value": &schema.Schema{
+																Type:     schema.TypeString,
+																Optional: true,
+																Computed: true,
+															},
+														},
 													},
 												},
 												"name": &schema.Schema{
@@ -242,7 +258,7 @@ func resourceTagCreate(ctx context.Context, d *schema.ResourceData, m interface{
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestTagCreateTagV1(ctx, "parameters.0", d)
+	request1 := expandRequestTagCreateTag(ctx, "parameters.0", d)
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
@@ -264,7 +280,7 @@ func resourceTagCreate(ctx context.Context, d *schema.ResourceData, m interface{
 		}
 	}
 	if okName && vvName != "" {
-		queryParams1 := catalystcentersdkgo.GetTagV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetTagQueryParams{}
 
 		queryParams1.Name = vvName
 		response1, err := searchTagGetTag(m, queryParams1)
@@ -343,7 +359,7 @@ func resourceTagRead(ctx context.Context, d *schema.ResourceData, m interface{})
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method 1: GetTag")
-		queryParams1 := catalystcentersdkgo.GetTagV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetTagQueryParams{}
 
 		if okName {
 			queryParams1.Name = vName
@@ -380,7 +396,7 @@ func resourceTagRead(ctx context.Context, d *schema.ResourceData, m interface{})
 			return diags
 		}
 
-		vItem2 := flattenTagGetTagByIDV1Item(response2.Response)
+		vItem2 := flattenTagGetTagByIDItem(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetTagByID response",
@@ -418,7 +434,7 @@ func resourceTagRead(ctx context.Context, d *schema.ResourceData, m interface{})
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenTagGetTagByIDV1Item(response2.Response)
+		vItem2 := flattenTagGetTagByIDItem(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetTagByID response",
@@ -460,7 +476,7 @@ func resourceTagUpdate(ctx context.Context, d *schema.ResourceData, m interface{
 		}
 	}
 	if vName != "" {
-		queryParams1 := catalystcentersdkgo.GetTagV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetTagQueryParams{}
 
 		queryParams1.Name = vName
 		response1, err := searchTagGetTag(m, queryParams1)
@@ -478,7 +494,7 @@ func resourceTagUpdate(ctx context.Context, d *schema.ResourceData, m interface{
 	//Set value vvName = getResp
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] Id used for update operation %s", vvID)
-		request1 := expandRequestTagUpdateTagV1(ctx, "parameters.0", d)
+		request1 := expandRequestTagUpdateTag(ctx, "parameters.0", d)
 		if request1 != nil {
 			log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 			request1.ID = vvID
@@ -551,7 +567,7 @@ func resourceTagDelete(ctx context.Context, d *schema.ResourceData, m interface{
 			return diags
 		}
 	} else if vName != "" {
-		queryParams1 := catalystcentersdkgo.GetTagV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetTagQueryParams{}
 
 		queryParams1.Name = vName
 		getResp, err := searchTagGetTag(m, queryParams1)
@@ -611,8 +627,9 @@ func resourceTagDelete(ctx context.Context, d *schema.ResourceData, m interface{
 
 	return diags
 }
-func expandRequestTagCreateTagV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagCreateTagV1 {
-	request := catalystcentersdkgo.RequestTagCreateTagV1{}
+
+func expandRequestTagCreateTag(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagCreateTag {
+	request := catalystcentersdkgo.RequestTagCreateTag{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".system_tag")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".system_tag")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".system_tag")))) {
 		request.SystemTag = interfaceToBoolPtr(v)
 	}
@@ -620,7 +637,7 @@ func expandRequestTagCreateTagV1(ctx context.Context, key string, d *schema.Reso
 		request.Description = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".dynamic_rules")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".dynamic_rules")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".dynamic_rules")))) {
-		request.DynamicRules = expandRequestTagCreateTagV1DynamicRulesArray(ctx, key+".dynamic_rules", d)
+		request.DynamicRules = expandRequestTagCreateTagDynamicRulesArray(ctx, key+".dynamic_rules", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
@@ -637,8 +654,8 @@ func expandRequestTagCreateTagV1(ctx context.Context, key string, d *schema.Reso
 	return &request
 }
 
-func expandRequestTagCreateTagV1DynamicRulesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestTagCreateTagV1DynamicRules {
-	request := []catalystcentersdkgo.RequestTagCreateTagV1DynamicRules{}
+func expandRequestTagCreateTagDynamicRulesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestTagCreateTagDynamicRules {
+	request := []catalystcentersdkgo.RequestTagCreateTagDynamicRules{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -649,7 +666,7 @@ func expandRequestTagCreateTagV1DynamicRulesArray(ctx context.Context, key strin
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestTagCreateTagV1DynamicRules(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestTagCreateTagDynamicRules(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -660,13 +677,13 @@ func expandRequestTagCreateTagV1DynamicRulesArray(ctx context.Context, key strin
 	return &request
 }
 
-func expandRequestTagCreateTagV1DynamicRules(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagCreateTagV1DynamicRules {
-	request := catalystcentersdkgo.RequestTagCreateTagV1DynamicRules{}
+func expandRequestTagCreateTagDynamicRules(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagCreateTagDynamicRules {
+	request := catalystcentersdkgo.RequestTagCreateTagDynamicRules{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".member_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".member_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".member_type")))) {
 		request.MemberType = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rules")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rules")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rules")))) {
-		request.Rules = expandRequestTagCreateTagV1DynamicRulesRules(ctx, key+".rules.0", d)
+		request.Rules = expandRequestTagCreateTagDynamicRulesRules(ctx, key+".rules.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -674,13 +691,13 @@ func expandRequestTagCreateTagV1DynamicRules(ctx context.Context, key string, d 
 	return &request
 }
 
-func expandRequestTagCreateTagV1DynamicRulesRules(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagCreateTagV1DynamicRulesRules {
-	request := catalystcentersdkgo.RequestTagCreateTagV1DynamicRulesRules{}
+func expandRequestTagCreateTagDynamicRulesRules(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagCreateTagDynamicRulesRules {
+	request := catalystcentersdkgo.RequestTagCreateTagDynamicRulesRules{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".values")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".values")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".values")))) {
 		request.Values = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".items")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".items")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".items")))) {
-		request.Items = interfaceToString(v)
+		request.Items = expandRequestTagCreateTagDynamicRulesRulesItemsArray(ctx, key+".items", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".operation")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".operation")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".operation")))) {
 		request.Operation = interfaceToString(v)
@@ -697,8 +714,40 @@ func expandRequestTagCreateTagV1DynamicRulesRules(ctx context.Context, key strin
 	return &request
 }
 
-func expandRequestTagUpdateTagV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagUpdateTagV1 {
-	request := catalystcentersdkgo.RequestTagUpdateTagV1{}
+func expandRequestTagCreateTagDynamicRulesRulesItemsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestTagCreateTagDynamicRulesRulesItems {
+	request := []catalystcentersdkgo.RequestTagCreateTagDynamicRulesRulesItems{}
+	key = fixKeyAccess(key)
+	o := d.Get(key)
+	if o == nil {
+		return nil
+	}
+	objs := o.([]interface{})
+	if len(objs) == 0 {
+		return nil
+	}
+	for item_no := range objs {
+		i := expandRequestTagCreateTagDynamicRulesRulesItems(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		if i != nil {
+			request = append(request, *i)
+		}
+	}
+	if isEmptyValue(reflect.ValueOf(request)) {
+		return nil
+	}
+	return &request
+}
+
+func expandRequestTagCreateTagDynamicRulesRulesItems(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagCreateTagDynamicRulesRulesItems {
+	var request catalystcentersdkgo.RequestTagCreateTagDynamicRulesRulesItems
+	request = d.Get(fixKeyAccess(key))
+	if isEmptyValue(reflect.ValueOf(request)) {
+		return nil
+	}
+	return &request
+}
+
+func expandRequestTagUpdateTag(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagUpdateTag {
+	request := catalystcentersdkgo.RequestTagUpdateTag{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".system_tag")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".system_tag")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".system_tag")))) {
 		request.SystemTag = interfaceToBoolPtr(v)
 	}
@@ -706,7 +755,7 @@ func expandRequestTagUpdateTagV1(ctx context.Context, key string, d *schema.Reso
 		request.Description = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".dynamic_rules")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".dynamic_rules")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".dynamic_rules")))) {
-		request.DynamicRules = expandRequestTagUpdateTagV1DynamicRulesArray(ctx, key+".dynamic_rules", d)
+		request.DynamicRules = expandRequestTagUpdateTagDynamicRulesArray(ctx, key+".dynamic_rules", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
@@ -723,8 +772,8 @@ func expandRequestTagUpdateTagV1(ctx context.Context, key string, d *schema.Reso
 	return &request
 }
 
-func expandRequestTagUpdateTagV1DynamicRulesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestTagUpdateTagV1DynamicRules {
-	request := []catalystcentersdkgo.RequestTagUpdateTagV1DynamicRules{}
+func expandRequestTagUpdateTagDynamicRulesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestTagUpdateTagDynamicRules {
+	request := []catalystcentersdkgo.RequestTagUpdateTagDynamicRules{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -735,7 +784,7 @@ func expandRequestTagUpdateTagV1DynamicRulesArray(ctx context.Context, key strin
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestTagUpdateTagV1DynamicRules(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestTagUpdateTagDynamicRules(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -746,13 +795,13 @@ func expandRequestTagUpdateTagV1DynamicRulesArray(ctx context.Context, key strin
 	return &request
 }
 
-func expandRequestTagUpdateTagV1DynamicRules(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagUpdateTagV1DynamicRules {
-	request := catalystcentersdkgo.RequestTagUpdateTagV1DynamicRules{}
+func expandRequestTagUpdateTagDynamicRules(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagUpdateTagDynamicRules {
+	request := catalystcentersdkgo.RequestTagUpdateTagDynamicRules{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".member_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".member_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".member_type")))) {
 		request.MemberType = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rules")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rules")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rules")))) {
-		request.Rules = expandRequestTagUpdateTagV1DynamicRulesRules(ctx, key+".rules.0", d)
+		request.Rules = expandRequestTagUpdateTagDynamicRulesRules(ctx, key+".rules.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -760,13 +809,13 @@ func expandRequestTagUpdateTagV1DynamicRules(ctx context.Context, key string, d 
 	return &request
 }
 
-func expandRequestTagUpdateTagV1DynamicRulesRules(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagUpdateTagV1DynamicRulesRules {
-	request := catalystcentersdkgo.RequestTagUpdateTagV1DynamicRulesRules{}
+func expandRequestTagUpdateTagDynamicRulesRules(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagUpdateTagDynamicRulesRules {
+	request := catalystcentersdkgo.RequestTagUpdateTagDynamicRulesRules{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".values")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".values")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".values")))) {
 		request.Values = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".items")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".items")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".items")))) {
-		request.Items = interfaceToSliceString(v)
+		request.Items = expandRequestTagUpdateTagDynamicRulesRulesItemsArray(ctx, key+".items", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".operation")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".operation")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".operation")))) {
 		request.Operation = interfaceToString(v)
@@ -783,11 +832,43 @@ func expandRequestTagUpdateTagV1DynamicRulesRules(ctx context.Context, key strin
 	return &request
 }
 
-func searchTagGetTag(m interface{}, queryParams catalystcentersdkgo.GetTagV1QueryParams) (*catalystcentersdkgo.ResponseTagGetTagV1Response, error) {
+func expandRequestTagUpdateTagDynamicRulesRulesItemsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestTagUpdateTagDynamicRulesRulesItems {
+	request := []catalystcentersdkgo.RequestTagUpdateTagDynamicRulesRulesItems{}
+	key = fixKeyAccess(key)
+	o := d.Get(key)
+	if o == nil {
+		return nil
+	}
+	objs := o.([]interface{})
+	if len(objs) == 0 {
+		return nil
+	}
+	for item_no := range objs {
+		i := expandRequestTagUpdateTagDynamicRulesRulesItems(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		if i != nil {
+			request = append(request, *i)
+		}
+	}
+	if isEmptyValue(reflect.ValueOf(request)) {
+		return nil
+	}
+	return &request
+}
+
+func expandRequestTagUpdateTagDynamicRulesRulesItems(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagUpdateTagDynamicRulesRulesItems {
+	var request catalystcentersdkgo.RequestTagUpdateTagDynamicRulesRulesItems
+	request = d.Get(fixKeyAccess(key))
+	if isEmptyValue(reflect.ValueOf(request)) {
+		return nil
+	}
+	return &request
+}
+
+func searchTagGetTag(m interface{}, queryParams catalystcentersdkgo.GetTagQueryParams) (*catalystcentersdkgo.ResponseTagGetTagResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseTagGetTagV1Response
-	var ite *catalystcentersdkgo.ResponseTagGetTagV1
+	var foundItem *catalystcentersdkgo.ResponseTagGetTagResponse
+	var ite *catalystcentersdkgo.ResponseTagGetTag
 	ite, _, err = client.Tag.GetTag(&queryParams)
 	if err != nil {
 		return foundItem, err
@@ -800,7 +881,7 @@ func searchTagGetTag(m interface{}, queryParams catalystcentersdkgo.GetTagV1Quer
 	for _, item := range itemsCopy {
 		// Call get by _ method and set value to foundItem and return
 		if item.Name == queryParams.Name {
-			var getItem *catalystcentersdkgo.ResponseTagGetTagV1Response
+			var getItem *catalystcentersdkgo.ResponseTagGetTagResponse
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

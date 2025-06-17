@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -47,28 +47,40 @@ func dataSourceWirelessSettingsApProfilesCountRead(ctx context.Context, d *schem
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetApProfilesCountV1")
+		log.Printf("[DEBUG] Selected method: GetApProfilesCount")
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Wireless.GetApProfilesCountV1()
+		response1, restyResp1, err := client.Wireless.GetApProfilesCount()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetApProfilesCountV1", err,
-				"Failure at GetApProfilesCountV1, unexpected response", ""))
+				"Failure when executing 2 GetApProfilesCount", err,
+				"Failure at GetApProfilesCount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessGetApProfilesCountV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetApProfilesCount", err,
+				"Failure at GetApProfilesCount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenWirelessGetApProfilesCountItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetApProfilesCountV1 response",
+				"Failure when setting GetApProfilesCount response",
 				err))
 			return diags
 		}
@@ -80,7 +92,7 @@ func dataSourceWirelessSettingsApProfilesCountRead(ctx context.Context, d *schem
 	return diags
 }
 
-func flattenWirelessGetApProfilesCountV1Item(item *catalystcentersdkgo.ResponseWirelessGetApProfilesCountV1Response) []map[string]interface{} {
+func flattenWirelessGetApProfilesCountItem(item *catalystcentersdkgo.ResponseWirelessGetApProfilesCountResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

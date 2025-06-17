@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -12,7 +13,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -30,7 +31,7 @@ Please note that this operation can be performed even if the feature is already 
 push the updated configurations to the network device.
 This operation pushes configuration to the network devices, and is only permitted if the provisioning settings do not
 mandate a config preview for application telemetry enablement. In cases where such settings are active, attempting to
-use this endpoint will result in *422 Unprocessable Content* error.
+use this endpoint will result in **422 Unprocessable Content** error.
 `,
 
 		CreateContext: resourceApplicationVisibilityNetworkDevicesEnableAppTelemetryCreate,
@@ -119,7 +120,7 @@ func resourceApplicationVisibilityNetworkDevicesEnableAppTelemetryCreate(ctx con
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestApplicationVisibilityNetworkDevicesEnableAppTelemetryEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesV1(ctx, "parameters.0", d)
+	request1 := expandRequestApplicationVisibilityNetworkDevicesEnableAppTelemetryEnableApplicationTelemetryFeatureOnMultipleNetworkDevices(ctx, "parameters.0", d)
 
 	response1, restyResp1, err := client.ApplicationPolicy.EnableApplicationTelemetryFeatureOnMultipleNetworkDevices(request1)
 
@@ -166,7 +167,7 @@ func resourceApplicationVisibilityNetworkDevicesEnableAppTelemetryCreate(ctx con
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
@@ -178,7 +179,7 @@ func resourceApplicationVisibilityNetworkDevicesEnableAppTelemetryCreate(ctx con
 		}
 	}
 
-	vItem1 := flattenApplicationPolicyEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesV1Item(response1.Response)
+	vItem1 := flattenApplicationPolicyEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
 			"Failure when setting EnableApplicationTelemetryFeatureOnMultipleNetworkDevices response",
@@ -203,16 +204,16 @@ func resourceApplicationVisibilityNetworkDevicesEnableAppTelemetryDelete(ctx con
 	return diags
 }
 
-func expandRequestApplicationVisibilityNetworkDevicesEnableAppTelemetryEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesV1 {
-	request := catalystcentersdkgo.RequestApplicationPolicyEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesV1{}
+func expandRequestApplicationVisibilityNetworkDevicesEnableAppTelemetryEnableApplicationTelemetryFeatureOnMultipleNetworkDevices(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyEnableApplicationTelemetryFeatureOnMultipleNetworkDevices {
+	request := catalystcentersdkgo.RequestApplicationPolicyEnableApplicationTelemetryFeatureOnMultipleNetworkDevices{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".network_devices")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".network_devices")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".network_devices")))) {
-		request.NetworkDevices = expandRequestApplicationVisibilityNetworkDevicesEnableAppTelemetryEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesV1NetworkDevicesArray(ctx, key+".network_devices", d)
+		request.NetworkDevices = expandRequestApplicationVisibilityNetworkDevicesEnableAppTelemetryEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesNetworkDevicesArray(ctx, key+".network_devices", d)
 	}
 	return &request
 }
 
-func expandRequestApplicationVisibilityNetworkDevicesEnableAppTelemetryEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesV1NetworkDevicesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesV1NetworkDevices {
-	request := []catalystcentersdkgo.RequestApplicationPolicyEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesV1NetworkDevices{}
+func expandRequestApplicationVisibilityNetworkDevicesEnableAppTelemetryEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesNetworkDevicesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesNetworkDevices {
+	request := []catalystcentersdkgo.RequestApplicationPolicyEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesNetworkDevices{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -223,7 +224,7 @@ func expandRequestApplicationVisibilityNetworkDevicesEnableAppTelemetryEnableApp
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestApplicationVisibilityNetworkDevicesEnableAppTelemetryEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesV1NetworkDevices(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestApplicationVisibilityNetworkDevicesEnableAppTelemetryEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesNetworkDevices(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -231,8 +232,8 @@ func expandRequestApplicationVisibilityNetworkDevicesEnableAppTelemetryEnableApp
 	return &request
 }
 
-func expandRequestApplicationVisibilityNetworkDevicesEnableAppTelemetryEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesV1NetworkDevices(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesV1NetworkDevices {
-	request := catalystcentersdkgo.RequestApplicationPolicyEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesV1NetworkDevices{}
+func expandRequestApplicationVisibilityNetworkDevicesEnableAppTelemetryEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesNetworkDevices(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesNetworkDevices {
+	request := catalystcentersdkgo.RequestApplicationPolicyEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesNetworkDevices{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -245,7 +246,7 @@ func expandRequestApplicationVisibilityNetworkDevicesEnableAppTelemetryEnableApp
 	return &request
 }
 
-func flattenApplicationPolicyEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesV1Item(item *catalystcentersdkgo.ResponseApplicationPolicyEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesV1Response) []map[string]interface{} {
+func flattenApplicationPolicyEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesItem(item *catalystcentersdkgo.ResponseApplicationPolicyEnableApplicationTelemetryFeatureOnMultipleNetworkDevicesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

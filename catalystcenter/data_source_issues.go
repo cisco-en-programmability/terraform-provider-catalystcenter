@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -181,8 +181,8 @@ func dataSourceIssuesRead(ctx context.Context, d *schema.ResourceData, m interfa
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: IssuesV1")
-		queryParams1 := catalystcentersdkgo.IssuesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: Issues")
+		queryParams1 := catalystcentersdkgo.IssuesQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -209,24 +209,38 @@ func dataSourceIssuesRead(ctx context.Context, d *schema.ResourceData, m interfa
 			queryParams1.AiDriven = vAiDriven.(string)
 		}
 
-		response1, restyResp1, err := client.Issues.IssuesV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Issues.Issues(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 IssuesV1", err,
-				"Failure at IssuesV1, unexpected response", ""))
+				"Failure when executing 2 Issues", err,
+				"Failure at Issues, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenIssuesIssuesV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 Issues", err,
+				"Failure at Issues, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenIssuesIssuesItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting IssuesV1 response",
+				"Failure when setting Issues response",
 				err))
 			return diags
 		}
@@ -238,7 +252,7 @@ func dataSourceIssuesRead(ctx context.Context, d *schema.ResourceData, m interfa
 	return diags
 }
 
-func flattenIssuesIssuesV1Items(items *[]catalystcentersdkgo.ResponseIssuesIssuesV1Response) []map[string]interface{} {
+func flattenIssuesIssuesItems(items *[]catalystcentersdkgo.ResponseIssuesIssuesResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

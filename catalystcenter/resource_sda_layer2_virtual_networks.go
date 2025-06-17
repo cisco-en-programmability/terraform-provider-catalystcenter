@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -72,6 +72,39 @@ func resourceSdaLayer2VirtualNetworks() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
+						"is_multiple_ip_to_mac_addresses": &schema.Schema{
+							Description: `Set to true to enable multiple IP-to-MAC Addresses (Wireless Bridged-Network Virtual Machine). This field will only be present on layer 2 virtual networks associated with a layer 3 virtual network.
+`,
+							// Type:        schema.TypeBool,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"is_resource_guard_enabled": &schema.Schema{
+							Description: `Set to true to enable resource guard.
+`,
+							// Type:        schema.TypeBool,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"is_wireless_flooding_enabled": &schema.Schema{
+							Description: `Set to true to enable wireless flooding.
+`,
+							// Type:        schema.TypeBool,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"layer2_flooding_address": &schema.Schema{
+							Description: `The flooding address to use for layer 2 flooding.
+`,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"layer2_flooding_address_assignment": &schema.Schema{
+							Description: `The source of the flooding address for layer 2 flooding.
+`,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
 						"traffic_type": &schema.Schema{
 							Description: `The type of traffic that is served.
 `,
@@ -94,14 +127,14 @@ func resourceSdaLayer2VirtualNetworks() *schema.Resource {
 				},
 			},
 			"parameters": &schema.Schema{
-				Description: `Array of RequestSdaAddLayer2VirtualNetworksV1`,
+				Description: `Array of RequestSdaAddLayer2VirtualNetworks`,
 				Type:        schema.TypeList,
 				Optional:    true,
 				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"payload": &schema.Schema{
-							Description: `Array of RequestApplicationPolicyCreateApplication`,
+							Description: `Array of RequestSdaAddLayer2VirtualNetworks`,
 							Type:        schema.TypeList,
 							Optional:    true,
 							Computed:    true,
@@ -137,6 +170,47 @@ func resourceSdaLayer2VirtualNetworks() *schema.Resource {
 										Optional:     true,
 										Computed:     true,
 									},
+									"is_multiple_ip_to_mac_addresses": &schema.Schema{
+										Description: `Set to true to enable multiple IP-to-MAC addresses (Wireless Bridged-Network Virtual Machine). This field defaults to false when associated with a layer 3 virtual network and cannot be used when not associated with a layer 3 virtual network.
+`,
+										// Type:        schema.TypeBool,
+										Type:         schema.TypeString,
+										ValidateFunc: validateStringHasValueFunc([]string{"", "true", "false"}),
+										Optional:     true,
+										Computed:     true,
+									},
+									"is_resource_guard_enabled": &schema.Schema{
+										Description: `Set to true to enable Resource Guard.
+`,
+										// Type:        schema.TypeBool,
+										Type:         schema.TypeString,
+										ValidateFunc: validateStringHasValueFunc([]string{"", "true", "false"}),
+										Optional:     true,
+										Computed:     true,
+									},
+									"is_wireless_flooding_enabled": &schema.Schema{
+										Description: `Set to true to enable wireless flooding. If there is an associated layer 3 virtual network, wireless flooding will default to false and can only be true when fabric-enabled wireless is also true. If there is no associated layer 3 virtual network, wireless flooding will match fabric-enabled wireless.
+`,
+										// Type:        schema.TypeBool,
+										Type:         schema.TypeString,
+										ValidateFunc: validateStringHasValueFunc([]string{"", "true", "false"}),
+										Optional:     true,
+										Computed:     true,
+									},
+									"layer2_flooding_address": &schema.Schema{
+										Description: `The flooding address to use for layer 2 flooding. The IP address must be in the 239.0.0.0/8 range. This property is applicable only when the flooding address source is set to "CUSTOM".
+`,
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+									},
+									"layer2_flooding_address_assignment": &schema.Schema{
+										Description: `The source of the flooding address for layer 2 flooding. "SHARED" means that the layer 2 virtual network will inherit the flooding address from the fabric. "CUSTOM" allows the layer 2 virtual network to use a different flooding address (defaults to "SHARED").
+`,
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+									},
 									"traffic_type": &schema.Schema{
 										Description: `The type of traffic that is served.
 `,
@@ -161,8 +235,7 @@ func resourceSdaLayer2VirtualNetworks() *schema.Resource {
 								},
 							},
 						},
-					},
-				},
+					}},
 			},
 		},
 	}
@@ -174,7 +247,7 @@ func resourceSdaLayer2VirtualNetworksCreate(ctx context.Context, d *schema.Resou
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters.0.payload"))
-	request1 := expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksV1(ctx, "parameters.0", d)
+	request1 := expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworks(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vID := resourceItem["id"]
@@ -184,7 +257,7 @@ func resourceSdaLayer2VirtualNetworksCreate(ctx context.Context, d *schema.Resou
 	vName := resourceItem["associated_layer3_virtual_network_name"]
 	vvName := interfaceToString(vName)
 
-	queryParamImport := catalystcentersdkgo.GetLayer2VirtualNetworksV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetLayer2VirtualNetworksQueryParams{}
 	queryParamImport.FabricID = vvFabricID
 	queryParamImport.AssociatedLayer3VirtualNetworkName = vvName
 	item2, err := searchSdaGetLayer2VirtualNetworks(m, queryParamImport, vvID)
@@ -235,7 +308,7 @@ func resourceSdaLayer2VirtualNetworksCreate(ctx context.Context, d *schema.Resou
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetLayer2VirtualNetworksV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetLayer2VirtualNetworksQueryParams{}
 	queryParamValidate.ID = vvID
 	queryParamValidate.FabricID = vvFabricID
 	queryParamValidate.AssociatedLayer3VirtualNetworkName = vvName
@@ -269,7 +342,7 @@ func resourceSdaLayer2VirtualNetworksRead(ctx context.Context, d *schema.Resourc
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetLayer2VirtualNetworks")
-		queryParams1 := catalystcentersdkgo.GetLayer2VirtualNetworksV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetLayer2VirtualNetworksQueryParams{}
 		queryParams1.FabricID = vvFabicID
 		queryParams1.AssociatedLayer3VirtualNetworkName = vvName
 
@@ -279,10 +352,10 @@ func resourceSdaLayer2VirtualNetworksRead(ctx context.Context, d *schema.Resourc
 			return diags
 		}
 		// Review flatten function used
-		items := []catalystcentersdkgo.ResponseSdaGetLayer2VirtualNetworksV1Response{
+		items := []catalystcentersdkgo.ResponseSdaGetLayer2VirtualNetworksResponse{
 			*item1,
 		}
-		vItem1 := flattenSdaGetLayer2VirtualNetworksV1Items(&items)
+		vItem1 := flattenSdaGetLayer2VirtualNetworksItems(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetLayer2VirtualNetworks search response",
@@ -304,7 +377,7 @@ func resourceSdaLayer2VirtualNetworksUpdate(ctx context.Context, d *schema.Resou
 	vID := resourceMap["id"]
 
 	if d.HasChange("parameters") {
-		request1 := expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksV1(ctx, "parameters.0", d)
+		request1 := expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworks(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		if request1 != nil && len(*request1) > 0 {
 			req := *request1
@@ -421,9 +494,10 @@ func resourceSdaLayer2VirtualNetworksDelete(ctx context.Context, d *schema.Resou
 
 	return diags
 }
-func expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddLayer2VirtualNetworksV1 {
-	request := catalystcentersdkgo.RequestSdaAddLayer2VirtualNetworksV1{}
-	if v := expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksV1ItemArray(ctx, key+".payload", d); v != nil {
+
+func expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworks(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddLayer2VirtualNetworks {
+	request := catalystcentersdkgo.RequestSdaAddLayer2VirtualNetworks{}
+	if v := expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -432,8 +506,8 @@ func expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksV1(ctx context
 	return &request
 }
 
-func expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddLayer2VirtualNetworksV1 {
-	request := []catalystcentersdkgo.RequestItemSdaAddLayer2VirtualNetworksV1{}
+func expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddLayer2VirtualNetworks {
+	request := []catalystcentersdkgo.RequestItemSdaAddLayer2VirtualNetworks{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -444,7 +518,7 @@ func expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksV1ItemArray(ct
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -455,8 +529,8 @@ func expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksV1ItemArray(ct
 	return &request
 }
 
-func expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddLayer2VirtualNetworksV1 {
-	request := catalystcentersdkgo.RequestItemSdaAddLayer2VirtualNetworksV1{}
+func expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddLayer2VirtualNetworks {
+	request := catalystcentersdkgo.RequestItemSdaAddLayer2VirtualNetworks{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".fabric_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".fabric_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".fabric_id")))) {
 		request.FabricID = interfaceToString(v)
 	}
@@ -472,6 +546,21 @@ func expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksV1Item(ctx con
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_fabric_enabled_wireless")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_fabric_enabled_wireless")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_fabric_enabled_wireless")))) {
 		request.IsFabricEnabledWireless = interfaceToBoolPtr(v)
 	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_wireless_flooding_enabled")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_wireless_flooding_enabled")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_wireless_flooding_enabled")))) {
+		request.IsWirelessFloodingEnabled = interfaceToBoolPtr(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_resource_guard_enabled")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_resource_guard_enabled")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_resource_guard_enabled")))) {
+		request.IsResourceGuardEnabled = interfaceToBoolPtr(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".layer2_flooding_address_assignment")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".layer2_flooding_address_assignment")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".layer2_flooding_address_assignment")))) {
+		request.Layer2FloodingAddressAssignment = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".layer2_flooding_address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".layer2_flooding_address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".layer2_flooding_address")))) {
+		request.Layer2FloodingAddress = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_multiple_ip_to_mac_addresses")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_multiple_ip_to_mac_addresses")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_multiple_ip_to_mac_addresses")))) {
+		request.IsMultipleIPToMacAddresses = interfaceToBoolPtr(v)
+	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".associated_layer3_virtual_network_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".associated_layer3_virtual_network_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".associated_layer3_virtual_network_name")))) {
 		request.AssociatedLayer3VirtualNetworkName = interfaceToString(v)
 	}
@@ -481,9 +570,9 @@ func expandRequestSdaLayer2VirtualNetworksAddLayer2VirtualNetworksV1Item(ctx con
 	return &request
 }
 
-func expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateLayer2VirtualNetworksV1 {
-	request := catalystcentersdkgo.RequestSdaUpdateLayer2VirtualNetworksV1{}
-	if v := expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworks(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateLayer2VirtualNetworks {
+	request := catalystcentersdkgo.RequestSdaUpdateLayer2VirtualNetworks{}
+	if v := expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -492,8 +581,8 @@ func expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksV1(ctx cont
 	return &request
 }
 
-func expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateLayer2VirtualNetworksV1 {
-	request := []catalystcentersdkgo.RequestItemSdaUpdateLayer2VirtualNetworksV1{}
+func expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateLayer2VirtualNetworks {
+	request := []catalystcentersdkgo.RequestItemSdaUpdateLayer2VirtualNetworks{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -504,7 +593,7 @@ func expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksV1ItemArray
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -515,8 +604,8 @@ func expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksV1ItemArray
 	return &request
 }
 
-func expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateLayer2VirtualNetworksV1 {
-	request := catalystcentersdkgo.RequestItemSdaUpdateLayer2VirtualNetworksV1{}
+func expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateLayer2VirtualNetworks {
+	request := catalystcentersdkgo.RequestItemSdaUpdateLayer2VirtualNetworks{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -535,6 +624,21 @@ func expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksV1Item(ctx 
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_fabric_enabled_wireless")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_fabric_enabled_wireless")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_fabric_enabled_wireless")))) {
 		request.IsFabricEnabledWireless = interfaceToBoolPtr(v)
 	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_wireless_flooding_enabled")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_wireless_flooding_enabled")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_wireless_flooding_enabled")))) {
+		request.IsWirelessFloodingEnabled = interfaceToBoolPtr(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_resource_guard_enabled")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_resource_guard_enabled")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_resource_guard_enabled")))) {
+		request.IsResourceGuardEnabled = interfaceToBoolPtr(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".layer2_flooding_address_assignment")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".layer2_flooding_address_assignment")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".layer2_flooding_address_assignment")))) {
+		request.Layer2FloodingAddressAssignment = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".layer2_flooding_address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".layer2_flooding_address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".layer2_flooding_address")))) {
+		request.Layer2FloodingAddress = interfaceToString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_multiple_ip_to_mac_addresses")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_multiple_ip_to_mac_addresses")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_multiple_ip_to_mac_addresses")))) {
+		request.IsMultipleIPToMacAddresses = interfaceToBoolPtr(v)
+	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".associated_layer3_virtual_network_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".associated_layer3_virtual_network_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".associated_layer3_virtual_network_name")))) {
 		request.AssociatedLayer3VirtualNetworkName = interfaceToString(v)
 	}
@@ -544,11 +648,11 @@ func expandRequestSdaLayer2VirtualNetworksUpdateLayer2VirtualNetworksV1Item(ctx 
 	return &request
 }
 
-func searchSdaGetLayer2VirtualNetworks(m interface{}, queryParams catalystcentersdkgo.GetLayer2VirtualNetworksV1QueryParams, vID string) (*catalystcentersdkgo.ResponseSdaGetLayer2VirtualNetworksV1Response, error) {
+func searchSdaGetLayer2VirtualNetworks(m interface{}, queryParams catalystcentersdkgo.GetLayer2VirtualNetworksQueryParams, vID string) (*catalystcentersdkgo.ResponseSdaGetLayer2VirtualNetworksResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseSdaGetLayer2VirtualNetworksV1Response
-	var ite *catalystcentersdkgo.ResponseSdaGetLayer2VirtualNetworksV1
+	var foundItem *catalystcentersdkgo.ResponseSdaGetLayer2VirtualNetworksResponse
+	var ite *catalystcentersdkgo.ResponseSdaGetLayer2VirtualNetworks
 	if vID != "" {
 		queryParams.Offset = 1
 		nResponse, _, err := client.Sda.GetLayer2VirtualNetworks(nil)

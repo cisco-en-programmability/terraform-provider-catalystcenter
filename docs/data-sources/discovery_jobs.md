@@ -38,7 +38,7 @@ output "catalystcenter_discovery_jobs_example" {
 
 ### Optional
 
-- `limit` (Number) limit query parameter.
+- `limit` (Number) limit query parameter. The number of records to show for this page. Min: 1, Max: 500
 - `name` (String) name query parameter.
 - `offset` (Number) offset query parameter.
 

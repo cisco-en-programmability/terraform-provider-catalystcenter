@@ -4,14 +4,22 @@ page_title: "catalystcenter_device_interface Data Source - terraform-provider-ca
 subcategory: ""
 description: |-
   It performs read operation on Devices.
-  Returns all available interfaces. This endpoint can return a maximum of 500 interfacesReturns the interface for the given interface ID
+  Returns all available interfaces. This endpoint can return a maximum of 500 interfaces. The API returns a paginated
+  response based on 'limit' and 'offset' parameters, allowing up to 500 records per page. 'limit' specifies the number of
+  records, and 'offset' sets the starting point using 1-based indexing. Use '/dna/intent/api/v1/interface/count' to get
+  the total record count. For data sets over 500 records, make multiple calls, adjusting 'limit' and 'offset' to retrieve
+  all records incrementally.Returns the interface for the given interface ID
 ---
 
 # catalystcenter_device_interface (Data Source)
 
 It performs read operation on Devices.
 
-- Returns all available interfaces. This endpoint can return a maximum of 500 interfaces
+- Returns all available interfaces. This endpoint can return a maximum of 500 interfaces. The API returns a paginated
+response based on 'limit' and 'offset' parameters, allowing up to 500 records per page. 'limit' specifies the number of
+records, and 'offset' sets the starting point using 1-based indexing. Use '/dna/intent/api/v1/interface/count' to get
+the total record count. For data sets over 500 records, make multiple calls, adjusting 'limit' and 'offset' to retrieve
+all records incrementally.
 
 - Returns the interface for the given interface ID
 
@@ -48,7 +56,7 @@ output "catalystcenter_device_interface_example" {
 - `id` (String) id path parameter. Interface ID
 - `last_input_time` (String) lastInputTime query parameter. Last Input Time
 - `last_output_time` (String) lastOutputTime query parameter. Last Output Time
-- `limit` (Number) limit query parameter.
+- `limit` (Number) limit query parameter. The number of records to show for this page. Min: 1, Max: 500
 - `offset` (Number) offset query parameter.
 
 ### Read-Only

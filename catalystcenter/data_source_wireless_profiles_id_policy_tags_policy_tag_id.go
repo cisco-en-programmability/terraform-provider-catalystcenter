@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,8 +15,8 @@ func dataSourceWirelessProfilesIDPolicyTagsPolicyTagID() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Wireless.
 
-- This endpoint retrieves the details of a specific Policy Tag associated with a given Wireless Profile. This data
-source requires the id of the Wireless Profile and the policyTagId of the Policy Tag.
+- This endpoint retrieves the details of a specific **Policy Tag** associated with a given **Wireless Profile**. This
+data source requires the **id** of the **Wireless Profile** and the **policyTagId** of the **Policy Tag**.
 `,
 
 		ReadContext: dataSourceWirelessProfilesIDPolicyTagsPolicyTagIDRead,
@@ -85,30 +85,42 @@ func dataSourceWirelessProfilesIDPolicyTagsPolicyTagIDRead(ctx context.Context, 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveASpecificPolicyTagForAWirelessProfileV1")
+		log.Printf("[DEBUG] Selected method: RetrieveASpecificPolicyTagForAWirelessProfile")
 		vvID := vID.(string)
 		vvPolicyTagID := vPolicyTagID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Wireless.RetrieveASpecificPolicyTagForAWirelessProfileV1(vvID, vvPolicyTagID)
+		response1, restyResp1, err := client.Wireless.RetrieveASpecificPolicyTagForAWirelessProfile(vvID, vvPolicyTagID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveASpecificPolicyTagForAWirelessProfileV1", err,
-				"Failure at RetrieveASpecificPolicyTagForAWirelessProfileV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveASpecificPolicyTagForAWirelessProfile", err,
+				"Failure at RetrieveASpecificPolicyTagForAWirelessProfile, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessRetrieveASpecificPolicyTagForAWirelessProfileV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveASpecificPolicyTagForAWirelessProfile", err,
+				"Failure at RetrieveASpecificPolicyTagForAWirelessProfile, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenWirelessRetrieveASpecificPolicyTagForAWirelessProfileItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveASpecificPolicyTagForAWirelessProfileV1 response",
+				"Failure when setting RetrieveASpecificPolicyTagForAWirelessProfile response",
 				err))
 			return diags
 		}
@@ -120,7 +132,7 @@ func dataSourceWirelessProfilesIDPolicyTagsPolicyTagIDRead(ctx context.Context, 
 	return diags
 }
 
-func flattenWirelessRetrieveASpecificPolicyTagForAWirelessProfileV1Item(item *catalystcentersdkgo.ResponseWirelessRetrieveASpecificPolicyTagForAWirelessProfileV1Response) []map[string]interface{} {
+func flattenWirelessRetrieveASpecificPolicyTagForAWirelessProfileItem(item *catalystcentersdkgo.ResponseWirelessRetrieveASpecificPolicyTagForAWirelessProfileResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

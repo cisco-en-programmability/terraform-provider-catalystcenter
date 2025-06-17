@@ -1,7 +1,7 @@
 
 resource "catalystcenter_sda_virtual_network" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     site_name_hierarchy  = "string"

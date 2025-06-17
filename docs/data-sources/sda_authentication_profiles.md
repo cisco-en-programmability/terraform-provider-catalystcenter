@@ -57,6 +57,7 @@ Read-Only:
 - `fabric_id` (String)
 - `id` (String)
 - `is_bpdu_guard_enabled` (String)
+- `is_voice_vlan_enabled` (String)
 - `number_of_hosts` (String)
 - `pre_auth_acl` (List of Object) (see [below for nested schema](#nestedobjatt--items--pre_auth_acl))
 - `wake_on_lan` (String)

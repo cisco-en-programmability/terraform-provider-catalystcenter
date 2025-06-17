@@ -14,6 +14,8 @@ It performs create operation on Device Onboarding (PnP).
 
 - Synchronizes the device info from the given smart account & virtual account with the PnP database. The response
 payload returns a list of synced devices (Deprecated).
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -23,13 +25,13 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_pnp_virtual_account_devices_sync" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
     auto_sync_period = 1
     cco_user         = "string"
     expiry           = 1
     last_sync        = 1
-    profile {
+    profile = [{
 
       address_fqdn  = "string"
       address_ip_v4 = "string"
@@ -39,24 +41,24 @@ resource "catalystcenter_pnp_virtual_account_devices_sync" "example" {
       port          = 1
       profile_id    = "string"
       proxy         = "false"
-    }
+    }]
     smart_account_id = "string"
-    sync_result {
+    sync_result = [{
 
-      sync_list {
+      sync_list = [{
 
         device_sn_list = ["string"]
         sync_type      = "string"
-      }
+      }]
       sync_msg = "string"
-    }
+    }]
     sync_result_str    = "string"
     sync_start_time    = 1
     sync_status        = "string"
     tenant_id          = "string"
     token              = "string"
     virtual_account_id = "string"
-  }
+  }]
 }
 
 output "catalystcenter_pnp_virtual_account_devices_sync_example" {

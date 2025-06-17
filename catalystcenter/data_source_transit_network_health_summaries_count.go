@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -16,10 +16,10 @@ func dataSourceTransitNetworkHealthSummariesCount() *schema.Resource {
 		Description: `It performs read operation on SDA.
 
 - Get a count of transit networks. Use available query parameters to get the count of a subset of transit networks.
-This data source provides the latest health data until the given endTime. If data is not ready for the provided
-endTime, the request will fail with error code 400 Bad Request, and the error message will indicate the recommended
+This data source provides the latest health data until the given **endTime**. If data is not ready for the provided
+endTime, the request will fail with error code **400 Bad Request**, and the error message will indicate the recommended
 endTime to use to retrieve a complete data set. This behavior may occur if the provided endTime=currentTime, since we
-are not a real time system. When endTime is not provided, the API returns the latest data.
+are not a real time system. When **endTime** is not provided, the API returns the latest data.
 For detailed information about the usage of the API, please refer to the Open API specification document
 https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 transitNetworkHealthSummaries-1.0.1-resolved.yaml
@@ -52,27 +52,15 @@ transitNetworkHealthSummaries-1.0.1-resolved.yaml
 				Required: true,
 			},
 
-			"items": &schema.Schema{
+			"item": &schema.Schema{
 				Type:     schema.TypeList,
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 
-						"detail": &schema.Schema{
-							Description: `Detail`,
-							Type:        schema.TypeString,
-							Computed:    true,
-						},
-
-						"error_code": &schema.Schema{
-							Description: `Error Code`,
+						"count": &schema.Schema{
+							Description: `Count`,
 							Type:        schema.TypeInt,
-							Computed:    true,
-						},
-
-						"message": &schema.Schema{
-							Description: `Message`,
-							Type:        schema.TypeString,
 							Computed:    true,
 						},
 					},
@@ -93,10 +81,10 @@ func dataSourceTransitNetworkHealthSummariesCountRead(ctx context.Context, d *sc
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: ReadTransitNetworksCountV1")
+		log.Printf("[DEBUG] Selected method: ReadTransitNetworksCount")
 
-		headerParams1 := catalystcentersdkgo.ReadTransitNetworksCountV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.ReadTransitNetworksCountV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.ReadTransitNetworksCountHeaderParams{}
+		queryParams1 := catalystcentersdkgo.ReadTransitNetworksCountQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -111,24 +99,36 @@ func dataSourceTransitNetworkHealthSummariesCountRead(ctx context.Context, d *sc
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sda.ReadTransitNetworksCountV1(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Sda.ReadTransitNetworksCount(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 ReadTransitNetworksCountV1", err,
-				"Failure at ReadTransitNetworksCountV1, unexpected response", ""))
+				"Failure when executing 2 ReadTransitNetworksCount", err,
+				"Failure at ReadTransitNetworksCount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaReadTransitNetworksCountV1Items(response1.Response)
-		if err := d.Set("items", vItems1); err != nil {
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 ReadTransitNetworksCount", err,
+				"Failure at ReadTransitNetworksCount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSdaReadTransitNetworksCountItem(response1.Response)
+		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting ReadTransitNetworksCountV1 response",
+				"Failure when setting ReadTransitNetworksCount response",
 				err))
 			return diags
 		}
@@ -140,17 +140,13 @@ func dataSourceTransitNetworkHealthSummariesCountRead(ctx context.Context, d *sc
 	return diags
 }
 
-func flattenSdaReadTransitNetworksCountV1Items(items *[]catalystcentersdkgo.ResponseSdaReadTransitNetworksCountV1Response) []map[string]interface{} {
-	if items == nil {
+func flattenSdaReadTransitNetworksCountItem(item *catalystcentersdkgo.ResponseSdaReadTransitNetworksCountResponse) []map[string]interface{} {
+	if item == nil {
 		return nil
 	}
-	var respItems []map[string]interface{}
-	for _, item := range *items {
-		respItem := make(map[string]interface{})
-		respItem["error_code"] = item.ErrorCode
-		respItem["message"] = item.Message
-		respItem["detail"] = item.Detail
-		respItems = append(respItems, respItem)
+	respItem := make(map[string]interface{})
+	respItem["count"] = item.Count
+	return []map[string]interface{}{
+		respItem,
 	}
-	return respItems
 }

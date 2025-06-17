@@ -1,11 +1,11 @@
 
 resource "catalystcenter_business_sda_wireless_controller_create" "example" {
-  provider = meraki
-  parameters {
+  provider = catalystcenter
+  parameters = [{
 
     device_name         = "string"
     site_name_hierarchy = "string"
-  }
+  }]
 }
 
 output "catalystcenter_business_sda_wireless_controller_create_example" {

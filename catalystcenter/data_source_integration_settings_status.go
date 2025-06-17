@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -84,26 +84,40 @@ func dataSourceIntegrationSettingsStatusRead(ctx context.Context, d *schema.Reso
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetItsmIntegrationStatusV1")
+		log.Printf("[DEBUG] Selected method: GetItsmIntegrationStatus")
 
-		response1, restyResp1, err := client.ItsmIntegration.GetItsmIntegrationStatusV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.ItsmIntegration.GetItsmIntegrationStatus()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetItsmIntegrationStatusV1", err,
-				"Failure at GetItsmIntegrationStatusV1, unexpected response", ""))
+				"Failure when executing 2 GetItsmIntegrationStatus", err,
+				"Failure at GetItsmIntegrationStatus, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenItsmIntegrationGetItsmIntegrationStatusV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetItsmIntegrationStatus", err,
+				"Failure at GetItsmIntegrationStatus, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenItsmIntegrationGetItsmIntegrationStatusItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetItsmIntegrationStatusV1 response",
+				"Failure when setting GetItsmIntegrationStatus response",
 				err))
 			return diags
 		}
@@ -115,7 +129,7 @@ func dataSourceIntegrationSettingsStatusRead(ctx context.Context, d *schema.Reso
 	return diags
 }
 
-func flattenItsmIntegrationGetItsmIntegrationStatusV1Items(items *[]catalystcentersdkgo.ResponseItsmIntegrationGetItsmIntegrationStatusV1Response) []map[string]interface{} {
+func flattenItsmIntegrationGetItsmIntegrationStatusItems(items *[]catalystcentersdkgo.ResponseItsmIntegrationGetItsmIntegrationStatusResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -125,13 +139,13 @@ func flattenItsmIntegrationGetItsmIntegrationStatusV1Items(items *[]catalystcent
 		respItem["id"] = item.ID
 		respItem["name"] = item.Name
 		respItem["status"] = item.Status
-		respItem["configurations"] = flattenItsmIntegrationGetItsmIntegrationStatusV1ItemsConfigurations(item.Configurations)
+		respItem["configurations"] = flattenItsmIntegrationGetItsmIntegrationStatusItemsConfigurations(item.Configurations)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenItsmIntegrationGetItsmIntegrationStatusV1ItemsConfigurations(items *[]catalystcentersdkgo.ResponseItsmIntegrationGetItsmIntegrationStatusV1ResponseConfigurations) []map[string]interface{} {
+func flattenItsmIntegrationGetItsmIntegrationStatusItemsConfigurations(items *[]catalystcentersdkgo.ResponseItsmIntegrationGetItsmIntegrationStatusResponseConfigurations) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

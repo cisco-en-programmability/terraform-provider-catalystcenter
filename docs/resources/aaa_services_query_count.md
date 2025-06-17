@@ -22,24 +22,23 @@ programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
 
-
 ## Example Usage
 
 ```terraform
 resource "catalystcenter_aaa_services_query_count" "example" {
   provider    = catalystcenter
   xca_lle_rid = "string"
-  parameters {
+  parameters = [{
 
     end_time = 1
-    filters {
+    filters = [{
 
       key      = "string"
       operator = "string"
       value    = ["string"]
-    }
+    }]
     start_time = 1
-  }
+  }]
 }
 
 output "catalystcenter_aaa_services_query_count_example" {

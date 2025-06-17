@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -29,7 +29,7 @@ specs/blob/main/Assurance/CE_Cat_Center_Org-DNSServices-1.0.0-resolved.yaml
 				Optional: true,
 			},
 			"id": &schema.Schema{
-				Description: `id path parameter. Unique id of the DNS Service. It is the combination of DNS Server IP (serverIp) and Device UUID (deviceId) separated by underscore (_). Example: If serverIp is 10.76.81.33 and deviceId is 6bef213c-19ca-4170-8375-b694e251101c, then the id would be 10.76.81.33_6bef213c-19ca-4170-8375-b694e251101c
+				Description: `id path parameter. Unique id of the DNS Service. It is the combination of DNS Server IP (**serverIp**) and Device UUID (**deviceId**) separated by underscore (**_**). Example: If **serverIp** is **10.76.81.33** and **deviceId** is **6bef213c-19ca-4170-8375-b694e251101c**, then the **id** would be **10.76.81.33_6bef213c-19ca-4170-8375-b694e251101c**
 `,
 				Type:     schema.TypeString,
 				Required: true,
@@ -175,11 +175,11 @@ func dataSourceDNSServicesIDRead(ctx context.Context, d *schema.ResourceData, m 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheServiceV1")
+		log.Printf("[DEBUG] Selected method: RetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheService")
 		vvID := vID.(string)
 
-		headerParams1 := catalystcentersdkgo.RetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheServiceV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.RetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheServiceV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.RetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheServiceHeaderParams{}
+		queryParams1 := catalystcentersdkgo.RetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheServiceQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -191,24 +191,36 @@ func dataSourceDNSServicesIDRead(ctx context.Context, d *schema.ResourceData, m 
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Devices.RetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheServiceV1(vvID, &headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Devices.RetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheService(vvID, &headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheServiceV1", err,
-				"Failure at RetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheServiceV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheService", err,
+				"Failure at RetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheService, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesRetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheServiceV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheService", err,
+				"Failure at RetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheService, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenDevicesRetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheServiceItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheServiceV1 response",
+				"Failure when setting RetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheService response",
 				err))
 			return diags
 		}
@@ -220,7 +232,7 @@ func dataSourceDNSServicesIDRead(ctx context.Context, d *schema.ResourceData, m 
 	return diags
 }
 
-func flattenDevicesRetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheServiceV1Item(item *catalystcentersdkgo.ResponseDevicesRetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheServiceV1Response) []map[string]interface{} {
+func flattenDevicesRetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheServiceItem(item *catalystcentersdkgo.ResponseDevicesRetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheServiceResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -235,7 +247,7 @@ func flattenDevicesRetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheSer
 	respItem["device_site_hierarchy_id"] = item.DeviceSiteHierarchyID
 	respItem["transactions"] = item.Transactions
 	respItem["failed_transactions"] = item.FailedTransactions
-	respItem["failures"] = flattenDevicesRetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheServiceV1ItemFailures(item.Failures)
+	respItem["failures"] = flattenDevicesRetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheServiceItemFailures(item.Failures)
 	respItem["successful_transactions"] = item.SuccessfulTransactions
 	respItem["latency"] = item.Latency
 	respItem["ssid"] = item.SSID
@@ -244,7 +256,7 @@ func flattenDevicesRetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheSer
 	}
 }
 
-func flattenDevicesRetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheServiceV1ItemFailures(items *[]catalystcentersdkgo.ResponseDevicesRetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheServiceV1ResponseFailures) []map[string]interface{} {
+func flattenDevicesRetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheServiceItemFailures(items *[]catalystcentersdkgo.ResponseDevicesRetrievesTheDetailsOfASpecificDNSServiceMatchingTheIDOfTheServiceResponseFailures) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

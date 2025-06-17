@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -23,13 +23,13 @@ specs/blob/main/Assurance/CE_Cat_Center_Org-SiteKpiSummaries-1.0.0-resolved.yaml
 		ReadContext: dataSourceSiteKpiSummariesIDRead,
 		Schema: map[string]*schema.Schema{
 			"attribute": &schema.Schema{
-				Description: `attribute query parameter. List of attributes related to site analytics. If these are provided, then only those attributes will be part of response along with the default attributes. Examples: attribute=coverageAverage (single attribute requested) attribute=coverageFailureMetrics&attribute=coverageTotalCount (multiple attributes requested)
+				Description: `attribute query parameter. List of attributes related to site analytics. If these are provided, then only those attributes will be part of response along with the default attributes. Examples: **attribute=coverageAverage** (single attribute requested) **attribute=coverageFailureMetrics&attribute=coverageTotalCount** (multiple attributes requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"band": &schema.Schema{
-				Description: `band query parameter. WiFi frequency band that client or Access Point operates. Band value is represented in Giga Hertz GHz Examples: band=5 (single band requested) band=2.4&band=6 (multiple band requested)
+				Description: `band query parameter. WiFi frequency band that client or Access Point operates. Band value is represented in Giga Hertz GHz Examples: **band=5** (single band requested) **band=2.4&band=6** (multiple band requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -41,13 +41,13 @@ specs/blob/main/Assurance/CE_Cat_Center_Org-SiteKpiSummaries-1.0.0-resolved.yaml
 				Optional: true,
 			},
 			"failure_category": &schema.Schema{
-				Description: `failureCategory query parameter. Category of failure when a client fails to meet the threshold. Examples: failureCategory=AUTH (single failure category requested) failureCategory=AUTH&failureCategory=DHCP (multiple failure categories requested)
+				Description: `failureCategory query parameter. Category of failure when a client fails to meet the threshold. Examples: **failureCategory=AUTH** (single failure category requested) **failureCategory=AUTH&failureCategory=DHCP** (multiple failure categories requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"failure_reason": &schema.Schema{
-				Description: `failureReason query parameter. Reason for failure when a client fails to meet the threshold. Examples: failureReason=MOBILITY_FAILURE (single ssid requested) failureReason=REASON_IPLEARN_CONNECT_TIMEOUT&failureReason=ST_EAP_TIMEOUT   (multiple ssid requested)
+				Description: `failureReason query parameter. Reason for failure when a client fails to meet the threshold. Examples: **failureReason=MOBILITY_FAILURE** (single ssid requested) **failureReason=REASON_IPLEARN_CONNECT_TIMEOUT&failureReason=ST_EAP_TIMEOUT**   (multiple ssid requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -59,7 +59,7 @@ specs/blob/main/Assurance/CE_Cat_Center_Org-SiteKpiSummaries-1.0.0-resolved.yaml
 				Required: true,
 			},
 			"ssid": &schema.Schema{
-				Description: `ssid query parameter. SSID is the name of wireless network to which client connects to. It is also referred to as WLAN ID Wireless Local Area Network Identifier. Examples: ssid=Alpha (single ssid requested) ssid=Alpha&ssid=Guest (multiple ssid requested)
+				Description: `ssid query parameter. SSID is the name of wireless network to which client connects to. It is also referred to as WLAN ID Wireless Local Area Network Identifier. Examples: **ssid=Alpha** (single ssid requested) **ssid=Alpha&ssid=Guest** (multiple ssid requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -77,8 +77,8 @@ specs/blob/main/Assurance/CE_Cat_Center_Org-SiteKpiSummaries-1.0.0-resolved.yaml
 				Optional: true,
 			},
 			"view": &schema.Schema{
-				Description: `view query parameter.
-The name of the View. Each view represents a specific data set. Please refer to the
+				Description: `view query parameter. 
+The name of the View. Each view represents a specific data set. Please refer to the 
 SiteAnalyticsView
  Model for supported views. View is predefined set of attributes supported by the API. Only the attributes related to the given view will be part of the API response along with default attributes. If multiple views are provided, then response will contain attributes from all those views. If no views are specified, all attributes will be returned.
 View Name
@@ -95,11 +95,11 @@ roamingDuration
 roamingDurationAverage, roamingDurationSuccessPercentage, roamingDurationSuccessCount, roamingDurationTotalCount, roamingDurationFailureCount, roamingDurationClientCount, roamingDurationImpactedEntities, roamingDurationFailureImpactedEntities, roamingDurationFailureMetrics
 connectionSpeed
 connectionSpeedAverage, connectionSpeedSuccessPercentage, connectionSpeedSuccessCount, connectionSpeedTotalCount, connectionSpeedFailureCount, connectionSpeedClientCount, connectionSpeedImpactedEntities, connectionSpeedFailureImpactedEntities, connectionSpeedFailureMetrics
-Examples:
+Examples: 
 view=connectionSpeed
- (single view requested)
+ (single view requested) 
 view=roamingDuration&view=roamingAttempts
- (multiple views requested)
+ (multiple views requested)       
 
 `,
 				Type:     schema.TypeString,
@@ -940,11 +940,11 @@ func dataSourceSiteKpiSummariesIDRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSiteAnalyticsForOneSiteV1")
+		log.Printf("[DEBUG] Selected method: GetSiteAnalyticsForOneSite")
 		vvID := vID.(string)
 
-		headerParams1 := catalystcentersdkgo.GetSiteAnalyticsForOneSiteV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.GetSiteAnalyticsForOneSiteV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.GetSiteAnalyticsForOneSiteHeaderParams{}
+		queryParams1 := catalystcentersdkgo.GetSiteAnalyticsForOneSiteQueryParams{}
 
 		if okTaskID {
 			queryParams1.TaskID = vTaskID.(string)
@@ -977,24 +977,36 @@ func dataSourceSiteKpiSummariesIDRead(ctx context.Context, d *schema.ResourceDat
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sites.GetSiteAnalyticsForOneSiteV1(vvID, &headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Sites.GetSiteAnalyticsForOneSite(vvID, &headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSiteAnalyticsForOneSiteV1", err,
-				"Failure at GetSiteAnalyticsForOneSiteV1, unexpected response", ""))
+				"Failure when executing 2 GetSiteAnalyticsForOneSite", err,
+				"Failure at GetSiteAnalyticsForOneSite, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSitesGetSiteAnalyticsForOneSiteV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetSiteAnalyticsForOneSite", err,
+				"Failure at GetSiteAnalyticsForOneSite, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSitesGetSiteAnalyticsForOneSiteItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSiteAnalyticsForOneSiteV1 response",
+				"Failure when setting GetSiteAnalyticsForOneSite response",
 				err))
 			return diags
 		}
@@ -1006,7 +1018,7 @@ func dataSourceSiteKpiSummariesIDRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenSitesGetSiteAnalyticsForOneSiteV1Item(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteV1Response) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsForOneSiteItem(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1023,58 +1035,58 @@ func flattenSitesGetSiteAnalyticsForOneSiteV1Item(item *catalystcentersdkgo.Resp
 	respItem["coverage_total_count"] = item.CoverageTotalCount
 	respItem["coverage_failure_count"] = item.CoverageFailureCount
 	respItem["coverage_client_count"] = item.CoverageClientCount
-	respItem["coverage_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteV1ItemCoverageImpactedEntities(item.CoverageImpactedEntities)
-	respItem["coverage_failure_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteV1ItemCoverageFailureImpactedEntities(item.CoverageFailureImpactedEntities)
-	respItem["coverage_failure_metrics"] = flattenSitesGetSiteAnalyticsForOneSiteV1ItemCoverageFailureMetrics(item.CoverageFailureMetrics)
+	respItem["coverage_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteItemCoverageImpactedEntities(item.CoverageImpactedEntities)
+	respItem["coverage_failure_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteItemCoverageFailureImpactedEntities(item.CoverageFailureImpactedEntities)
+	respItem["coverage_failure_metrics"] = flattenSitesGetSiteAnalyticsForOneSiteItemCoverageFailureMetrics(item.CoverageFailureMetrics)
 	respItem["onboarding_attempts_success_percentage"] = item.OnboardingAttemptsSuccessPercentage
 	respItem["onboarding_attempts_success_count"] = item.OnboardingAttemptsSuccessCount
 	respItem["onboarding_attempts_total_count"] = item.OnboardingAttemptsTotalCount
 	respItem["onboarding_attempts_failure_count"] = item.OnboardingAttemptsFailureCount
 	respItem["onboarding_attempts_client_count"] = item.OnboardingAttemptsClientCount
-	respItem["onboarding_attempts_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteV1ItemOnboardingAttemptsImpactedEntities(item.OnboardingAttemptsImpactedEntities)
-	respItem["onboarding_attempts_failure_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteV1ItemOnboardingAttemptsFailureImpactedEntities(item.OnboardingAttemptsFailureImpactedEntities)
-	respItem["onboarding_attempts_failure_metrics"] = flattenSitesGetSiteAnalyticsForOneSiteV1ItemOnboardingAttemptsFailureMetrics(item.OnboardingAttemptsFailureMetrics)
+	respItem["onboarding_attempts_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteItemOnboardingAttemptsImpactedEntities(item.OnboardingAttemptsImpactedEntities)
+	respItem["onboarding_attempts_failure_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteItemOnboardingAttemptsFailureImpactedEntities(item.OnboardingAttemptsFailureImpactedEntities)
+	respItem["onboarding_attempts_failure_metrics"] = flattenSitesGetSiteAnalyticsForOneSiteItemOnboardingAttemptsFailureMetrics(item.OnboardingAttemptsFailureMetrics)
 	respItem["onboarding_duration_average"] = item.OnboardingDurationAverage
 	respItem["onboarding_duration_success_percentage"] = item.OnboardingDurationSuccessPercentage
 	respItem["onboarding_duration_success_count"] = item.OnboardingDurationSuccessCount
 	respItem["onboarding_duration_total_count"] = item.OnboardingDurationTotalCount
 	respItem["onboarding_duration_failure_count"] = item.OnboardingDurationFailureCount
 	respItem["onboarding_duration_client_count"] = item.OnboardingDurationClientCount
-	respItem["onboarding_duration_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteV1ItemOnboardingDurationImpactedEntities(item.OnboardingDurationImpactedEntities)
-	respItem["onboarding_duration_failure_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteV1ItemOnboardingDurationFailureImpactedEntities(item.OnboardingDurationFailureImpactedEntities)
-	respItem["onboarding_duration_failure_metrics"] = flattenSitesGetSiteAnalyticsForOneSiteV1ItemOnboardingDurationFailureMetrics(item.OnboardingDurationFailureMetrics)
+	respItem["onboarding_duration_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteItemOnboardingDurationImpactedEntities(item.OnboardingDurationImpactedEntities)
+	respItem["onboarding_duration_failure_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteItemOnboardingDurationFailureImpactedEntities(item.OnboardingDurationFailureImpactedEntities)
+	respItem["onboarding_duration_failure_metrics"] = flattenSitesGetSiteAnalyticsForOneSiteItemOnboardingDurationFailureMetrics(item.OnboardingDurationFailureMetrics)
 	respItem["roaming_attempts_success_percentage"] = item.RoamingAttemptsSuccessPercentage
 	respItem["roaming_attempts_success_count"] = item.RoamingAttemptsSuccessCount
 	respItem["roaming_attempts_total_count"] = item.RoamingAttemptsTotalCount
 	respItem["roaming_attempts_failure_count"] = item.RoamingAttemptsFailureCount
 	respItem["roaming_attempts_client_count"] = item.RoamingAttemptsClientCount
-	respItem["roaming_attempts_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteV1ItemRoamingAttemptsImpactedEntities(item.RoamingAttemptsImpactedEntities)
-	respItem["roaming_attempts_failure_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteV1ItemRoamingAttemptsFailureImpactedEntities(item.RoamingAttemptsFailureImpactedEntities)
-	respItem["roaming_attempts_failure_metrics"] = flattenSitesGetSiteAnalyticsForOneSiteV1ItemRoamingAttemptsFailureMetrics(item.RoamingAttemptsFailureMetrics)
+	respItem["roaming_attempts_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteItemRoamingAttemptsImpactedEntities(item.RoamingAttemptsImpactedEntities)
+	respItem["roaming_attempts_failure_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteItemRoamingAttemptsFailureImpactedEntities(item.RoamingAttemptsFailureImpactedEntities)
+	respItem["roaming_attempts_failure_metrics"] = flattenSitesGetSiteAnalyticsForOneSiteItemRoamingAttemptsFailureMetrics(item.RoamingAttemptsFailureMetrics)
 	respItem["roaming_duration_average"] = item.RoamingDurationAverage
 	respItem["roaming_duration_success_percentage"] = item.RoamingDurationSuccessPercentage
 	respItem["roaming_duration_success_count"] = item.RoamingDurationSuccessCount
 	respItem["roaming_duration_total_count"] = item.RoamingDurationTotalCount
 	respItem["roaming_duration_failure_count"] = item.RoamingDurationFailureCount
 	respItem["roaming_duration_client_count"] = item.RoamingDurationClientCount
-	respItem["roaming_duration_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteV1ItemRoamingDurationImpactedEntities(item.RoamingDurationImpactedEntities)
-	respItem["roaming_duration_failure_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteV1ItemRoamingDurationFailureImpactedEntities(item.RoamingDurationFailureImpactedEntities)
-	respItem["roaming_duration_failure_metrics"] = flattenSitesGetSiteAnalyticsForOneSiteV1ItemRoamingDurationFailureMetrics(item.RoamingDurationFailureMetrics)
+	respItem["roaming_duration_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteItemRoamingDurationImpactedEntities(item.RoamingDurationImpactedEntities)
+	respItem["roaming_duration_failure_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteItemRoamingDurationFailureImpactedEntities(item.RoamingDurationFailureImpactedEntities)
+	respItem["roaming_duration_failure_metrics"] = flattenSitesGetSiteAnalyticsForOneSiteItemRoamingDurationFailureMetrics(item.RoamingDurationFailureMetrics)
 	respItem["connection_speed_average"] = item.ConnectionSpeedAverage
 	respItem["connection_speed_success_percentage"] = item.ConnectionSpeedSuccessPercentage
 	respItem["connection_speed_success_count"] = item.ConnectionSpeedSuccessCount
 	respItem["connection_speed_total_count"] = item.ConnectionSpeedTotalCount
 	respItem["connection_speed_failure_count"] = item.ConnectionSpeedFailureCount
 	respItem["connection_speed_client_count"] = item.ConnectionSpeedClientCount
-	respItem["connection_speed_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteV1ItemConnectionSpeedImpactedEntities(item.ConnectionSpeedImpactedEntities)
-	respItem["connection_speed_failure_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteV1ItemConnectionSpeedFailureImpactedEntities(item.ConnectionSpeedFailureImpactedEntities)
-	respItem["connection_speed_failure_metrics"] = flattenSitesGetSiteAnalyticsForOneSiteV1ItemConnectionSpeedFailureMetrics(item.ConnectionSpeedFailureMetrics)
+	respItem["connection_speed_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteItemConnectionSpeedImpactedEntities(item.ConnectionSpeedImpactedEntities)
+	respItem["connection_speed_failure_impacted_entities"] = flattenSitesGetSiteAnalyticsForOneSiteItemConnectionSpeedFailureImpactedEntities(item.ConnectionSpeedFailureImpactedEntities)
+	respItem["connection_speed_failure_metrics"] = flattenSitesGetSiteAnalyticsForOneSiteItemConnectionSpeedFailureMetrics(item.ConnectionSpeedFailureMetrics)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenSitesGetSiteAnalyticsForOneSiteV1ItemCoverageImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteV1ResponseCoverageImpactedEntities) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsForOneSiteItemCoverageImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteResponseCoverageImpactedEntities) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1090,7 +1102,7 @@ func flattenSitesGetSiteAnalyticsForOneSiteV1ItemCoverageImpactedEntities(item *
 
 }
 
-func flattenSitesGetSiteAnalyticsForOneSiteV1ItemCoverageFailureImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteV1ResponseCoverageFailureImpactedEntities) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsForOneSiteItemCoverageFailureImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteResponseCoverageFailureImpactedEntities) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1106,7 +1118,7 @@ func flattenSitesGetSiteAnalyticsForOneSiteV1ItemCoverageFailureImpactedEntities
 
 }
 
-func flattenSitesGetSiteAnalyticsForOneSiteV1ItemCoverageFailureMetrics(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteV1ResponseCoverageFailureMetrics) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsForOneSiteItemCoverageFailureMetrics(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteResponseCoverageFailureMetrics) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1121,7 +1133,7 @@ func flattenSitesGetSiteAnalyticsForOneSiteV1ItemCoverageFailureMetrics(item *ca
 
 }
 
-func flattenSitesGetSiteAnalyticsForOneSiteV1ItemOnboardingAttemptsImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteV1ResponseOnboardingAttemptsImpactedEntities) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsForOneSiteItemOnboardingAttemptsImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteResponseOnboardingAttemptsImpactedEntities) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1137,7 +1149,7 @@ func flattenSitesGetSiteAnalyticsForOneSiteV1ItemOnboardingAttemptsImpactedEntit
 
 }
 
-func flattenSitesGetSiteAnalyticsForOneSiteV1ItemOnboardingAttemptsFailureImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteV1ResponseOnboardingAttemptsFailureImpactedEntities) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsForOneSiteItemOnboardingAttemptsFailureImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteResponseOnboardingAttemptsFailureImpactedEntities) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1153,7 +1165,7 @@ func flattenSitesGetSiteAnalyticsForOneSiteV1ItemOnboardingAttemptsFailureImpact
 
 }
 
-func flattenSitesGetSiteAnalyticsForOneSiteV1ItemOnboardingAttemptsFailureMetrics(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteV1ResponseOnboardingAttemptsFailureMetrics) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsForOneSiteItemOnboardingAttemptsFailureMetrics(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteResponseOnboardingAttemptsFailureMetrics) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1168,7 +1180,7 @@ func flattenSitesGetSiteAnalyticsForOneSiteV1ItemOnboardingAttemptsFailureMetric
 
 }
 
-func flattenSitesGetSiteAnalyticsForOneSiteV1ItemOnboardingDurationImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteV1ResponseOnboardingDurationImpactedEntities) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsForOneSiteItemOnboardingDurationImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteResponseOnboardingDurationImpactedEntities) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1184,7 +1196,7 @@ func flattenSitesGetSiteAnalyticsForOneSiteV1ItemOnboardingDurationImpactedEntit
 
 }
 
-func flattenSitesGetSiteAnalyticsForOneSiteV1ItemOnboardingDurationFailureImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteV1ResponseOnboardingDurationFailureImpactedEntities) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsForOneSiteItemOnboardingDurationFailureImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteResponseOnboardingDurationFailureImpactedEntities) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1200,7 +1212,7 @@ func flattenSitesGetSiteAnalyticsForOneSiteV1ItemOnboardingDurationFailureImpact
 
 }
 
-func flattenSitesGetSiteAnalyticsForOneSiteV1ItemOnboardingDurationFailureMetrics(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteV1ResponseOnboardingDurationFailureMetrics) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsForOneSiteItemOnboardingDurationFailureMetrics(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteResponseOnboardingDurationFailureMetrics) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1215,7 +1227,7 @@ func flattenSitesGetSiteAnalyticsForOneSiteV1ItemOnboardingDurationFailureMetric
 
 }
 
-func flattenSitesGetSiteAnalyticsForOneSiteV1ItemRoamingAttemptsImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteV1ResponseRoamingAttemptsImpactedEntities) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsForOneSiteItemRoamingAttemptsImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteResponseRoamingAttemptsImpactedEntities) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1231,7 +1243,7 @@ func flattenSitesGetSiteAnalyticsForOneSiteV1ItemRoamingAttemptsImpactedEntities
 
 }
 
-func flattenSitesGetSiteAnalyticsForOneSiteV1ItemRoamingAttemptsFailureImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteV1ResponseRoamingAttemptsFailureImpactedEntities) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsForOneSiteItemRoamingAttemptsFailureImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteResponseRoamingAttemptsFailureImpactedEntities) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1247,7 +1259,7 @@ func flattenSitesGetSiteAnalyticsForOneSiteV1ItemRoamingAttemptsFailureImpactedE
 
 }
 
-func flattenSitesGetSiteAnalyticsForOneSiteV1ItemRoamingAttemptsFailureMetrics(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteV1ResponseRoamingAttemptsFailureMetrics) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsForOneSiteItemRoamingAttemptsFailureMetrics(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteResponseRoamingAttemptsFailureMetrics) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1262,7 +1274,7 @@ func flattenSitesGetSiteAnalyticsForOneSiteV1ItemRoamingAttemptsFailureMetrics(i
 
 }
 
-func flattenSitesGetSiteAnalyticsForOneSiteV1ItemRoamingDurationImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteV1ResponseRoamingDurationImpactedEntities) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsForOneSiteItemRoamingDurationImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteResponseRoamingDurationImpactedEntities) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1278,7 +1290,7 @@ func flattenSitesGetSiteAnalyticsForOneSiteV1ItemRoamingDurationImpactedEntities
 
 }
 
-func flattenSitesGetSiteAnalyticsForOneSiteV1ItemRoamingDurationFailureImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteV1ResponseRoamingDurationFailureImpactedEntities) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsForOneSiteItemRoamingDurationFailureImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteResponseRoamingDurationFailureImpactedEntities) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1294,7 +1306,7 @@ func flattenSitesGetSiteAnalyticsForOneSiteV1ItemRoamingDurationFailureImpactedE
 
 }
 
-func flattenSitesGetSiteAnalyticsForOneSiteV1ItemRoamingDurationFailureMetrics(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteV1ResponseRoamingDurationFailureMetrics) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsForOneSiteItemRoamingDurationFailureMetrics(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteResponseRoamingDurationFailureMetrics) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1309,7 +1321,7 @@ func flattenSitesGetSiteAnalyticsForOneSiteV1ItemRoamingDurationFailureMetrics(i
 
 }
 
-func flattenSitesGetSiteAnalyticsForOneSiteV1ItemConnectionSpeedImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteV1ResponseConnectionSpeedImpactedEntities) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsForOneSiteItemConnectionSpeedImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteResponseConnectionSpeedImpactedEntities) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1325,7 +1337,7 @@ func flattenSitesGetSiteAnalyticsForOneSiteV1ItemConnectionSpeedImpactedEntities
 
 }
 
-func flattenSitesGetSiteAnalyticsForOneSiteV1ItemConnectionSpeedFailureImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteV1ResponseConnectionSpeedFailureImpactedEntities) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsForOneSiteItemConnectionSpeedFailureImpactedEntities(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteResponseConnectionSpeedFailureImpactedEntities) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1341,7 +1353,7 @@ func flattenSitesGetSiteAnalyticsForOneSiteV1ItemConnectionSpeedFailureImpactedE
 
 }
 
-func flattenSitesGetSiteAnalyticsForOneSiteV1ItemConnectionSpeedFailureMetrics(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteV1ResponseConnectionSpeedFailureMetrics) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsForOneSiteItemConnectionSpeedFailureMetrics(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForOneSiteResponseConnectionSpeedFailureMetrics) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -7,7 +7,7 @@ description: |-
   The Trend analytics data for the network Device in the specified time range. The data is grouped based on the trend
   time Interval, other input parameters like attribute and aggregate attributes. For detailed information about the usage
   of the API, please refer to the Open API specification document https://github.com/cisco-en-programmability/catalyst-
-  center-api-specs/blob/main/Assurance/CECatCenter_Org-AssuranceNetworkDevices-1.0.2-resolved.yaml
+  center-api-specs/blob/main/Assurance/CECatCenter_Org-AssuranceNetworkDevices-2.0.1-resolved.yaml
 ---
 
 # catalystcenter_network_devices_trend_analytics_id (Resource)
@@ -17,7 +17,9 @@ It performs create operation on Devices.
 - The Trend analytics data for the network Device in the specified time range. The data is grouped based on the trend
 time Interval, other input parameters like attribute and aggregate attributes. For detailed information about the usage
 of the API, please refer to the Open API specification document https://github.com/cisco-en-programmability/catalyst-
-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-AssuranceNetworkDevices-1.0.2-resolved.yaml
+center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-AssuranceNetworkDevices-2.0.1-resolved.yaml
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -28,33 +30,33 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_network_devices_trend_analytics_id" "example" {
   provider = catalystcenter
   id       = "string"
-  parameters {
+  parameters = [{
 
-    aggregate_attributes {
+    aggregate_attributes = [{
 
       function = "string"
       name     = "string"
-    }
+    }]
     attributes = ["string"]
     end_time   = 1
-    filters {
+    filters = [{
 
       filters          = ["string"]
       key              = "string"
       logical_operator = "string"
       operator         = "string"
-      value            = "------"
-    }
+      value            = "string"
+    }]
     group_by = ["string"]
-    page {
+    page = [{
 
       limit           = 1
       offset          = 1
       timestamp_order = "string"
-    }
+    }]
     start_time                = 1
     trend_interval_in_minutes = 1
-  }
+  }]
 }
 
 output "catalystcenter_network_devices_trend_analytics_id_example" {

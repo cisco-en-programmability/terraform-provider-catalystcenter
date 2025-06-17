@@ -1,32 +1,32 @@
 
 resource "catalystcenter_network_devices_interfaces_query_v2" "example" {
-  provider  = meraki
+  provider  = catalystcenter
   device_id = "string"
-  parameters {
+  parameters = [{
 
     end_time = 1
-    query {
+    query = [{
 
       fields = ["string"]
-      filters {
+      filters = [{
 
         key      = "string"
         operator = "string"
         value    = "string"
-      }
-      page {
+      }]
+      page = [{
 
         limit  = 1
         offset = 1
-        order_by {
+        order_by = [{
 
           name  = "string"
           order = "string"
-        }
-      }
-    }
+        }]
+      }]
+    }]
     start_time = 1
-  }
+  }]
 }
 
 output "catalystcenter_network_devices_interfaces_query_v2_example" {

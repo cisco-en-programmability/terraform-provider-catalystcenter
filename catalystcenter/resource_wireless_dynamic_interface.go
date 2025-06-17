@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -89,7 +89,7 @@ func resourceWirelessDynamicInterfaceCreate(ctx context.Context, d *schema.Resou
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestWirelessDynamicInterfaceCreateUpdateDynamicInterfaceV1(ctx, "parameters.0", d)
+	request1 := expandRequestWirelessDynamicInterfaceCreateUpdateDynamicInterface(ctx, "parameters.0", d)
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
@@ -97,7 +97,7 @@ func resourceWirelessDynamicInterfaceCreate(ctx context.Context, d *schema.Resou
 	vInterfaceName := resourceItem["interface_name"]
 	vvInterfaceName := interfaceToString(vInterfaceName)
 
-	queryParams1 := catalystcentersdkgo.GetDynamicInterfaceV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.GetDynamicInterfaceQueryParams{}
 
 	queryParams1.InterfaceName = vvInterfaceName
 
@@ -173,7 +173,7 @@ func resourceWirelessDynamicInterfaceRead(ctx context.Context, d *schema.Resourc
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method 1: GetDynamicInterface")
-		queryParams1 := catalystcentersdkgo.GetDynamicInterfaceV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetDynamicInterfaceQueryParams{}
 
 		if okInterfaceName {
 			queryParams1.InterfaceName = vInterfaceName
@@ -197,7 +197,7 @@ func resourceWirelessDynamicInterfaceRead(ctx context.Context, d *schema.Resourc
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessGetDynamicInterfaceV1Items(response1)
+		vItem1 := flattenWirelessGetDynamicInterfaceItems(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetDynamicInterface search response",
@@ -217,7 +217,7 @@ func resourceWirelessDynamicInterfaceUpdate(ctx context.Context, d *schema.Resou
 	resourceID := d.Id()
 	resourceMap := separateResourceID(resourceID)
 
-	request1 := expandRequestWirelessDynamicInterfaceCreateUpdateDynamicInterfaceV1(ctx, "parameters.0", d)
+	request1 := expandRequestWirelessDynamicInterfaceCreateUpdateDynamicInterface(ctx, "parameters.0", d)
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
@@ -225,7 +225,7 @@ func resourceWirelessDynamicInterfaceUpdate(ctx context.Context, d *schema.Resou
 	vInterfaceName := resourceMap["interface_name"]
 	vvInterfaceName := interfaceToString(vInterfaceName)
 
-	queryParams1 := catalystcentersdkgo.GetDynamicInterfaceV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.GetDynamicInterfaceQueryParams{}
 
 	queryParams1.InterfaceName = vvInterfaceName
 
@@ -300,7 +300,7 @@ func resourceWirelessDynamicInterfaceDelete(ctx context.Context, d *schema.Resou
 	resourceMap := separateResourceID(resourceID)
 	vInterfaceName := resourceMap["interface_name"]
 
-	queryParams1 := catalystcentersdkgo.GetDynamicInterfaceV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.GetDynamicInterfaceQueryParams{}
 	queryParams1.InterfaceName = vInterfaceName
 	item, err := searchWirelessGetDynamicInterface(m, queryParams1)
 	var vvInterfaceName string
@@ -321,7 +321,7 @@ func resourceWirelessDynamicInterfaceDelete(ctx context.Context, d *schema.Resou
 		vvInterfaceName = queryParams1.InterfaceName
 	}
 
-	_, restyResp1, err := client.Wireless.DeleteDynamicInterface(nil, &catalystcentersdkgo.DeleteDynamicInterfaceV1QueryParams{
+	_, restyResp1, err := client.Wireless.DeleteDynamicInterface(nil, &catalystcentersdkgo.DeleteDynamicInterfaceQueryParams{
 		InterfaceName: vvInterfaceName,
 	})
 	if err != nil {
@@ -344,8 +344,9 @@ func resourceWirelessDynamicInterfaceDelete(ctx context.Context, d *schema.Resou
 
 	return diags
 }
-func expandRequestWirelessDynamicInterfaceCreateUpdateDynamicInterfaceV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateUpdateDynamicInterfaceV1 {
-	request := catalystcentersdkgo.RequestWirelessCreateUpdateDynamicInterfaceV1{}
+
+func expandRequestWirelessDynamicInterfaceCreateUpdateDynamicInterface(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateUpdateDynamicInterface {
+	request := catalystcentersdkgo.RequestWirelessCreateUpdateDynamicInterface{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".interface_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".interface_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".interface_name")))) {
 		request.InterfaceName = interfaceToString(v)
 	}
@@ -358,11 +359,11 @@ func expandRequestWirelessDynamicInterfaceCreateUpdateDynamicInterfaceV1(ctx con
 	return &request
 }
 
-func searchWirelessGetDynamicInterface(m interface{}, queryParams catalystcentersdkgo.GetDynamicInterfaceV1QueryParams) (*catalystcentersdkgo.ResponseItemWirelessGetDynamicInterfaceV1, error) {
+func searchWirelessGetDynamicInterface(m interface{}, queryParams catalystcentersdkgo.GetDynamicInterfaceQueryParams) (*catalystcentersdkgo.ResponseItemWirelessGetDynamicInterface, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseItemWirelessGetDynamicInterfaceV1
-	var ite *catalystcentersdkgo.ResponseWirelessGetDynamicInterfaceV1
+	var foundItem *catalystcentersdkgo.ResponseItemWirelessGetDynamicInterface
+	var ite *catalystcentersdkgo.ResponseWirelessGetDynamicInterface
 	ite, _, err = client.Wireless.GetDynamicInterface(&queryParams)
 	if err != nil {
 		return foundItem, err
@@ -378,7 +379,7 @@ func searchWirelessGetDynamicInterface(m interface{}, queryParams catalystcenter
 	for _, item := range itemsCopy {
 		// Call get by _ method and set value to foundItem and return
 		if item.InterfaceName == queryParams.InterfaceName {
-			var getItem *catalystcentersdkgo.ResponseItemWirelessGetDynamicInterfaceV1
+			var getItem *catalystcentersdkgo.ResponseItemWirelessGetDynamicInterface
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

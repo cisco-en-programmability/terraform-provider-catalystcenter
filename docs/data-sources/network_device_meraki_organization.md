@@ -4,14 +4,14 @@ page_title: "catalystcenter_network_device_meraki_organization Data Source - ter
 subcategory: ""
 description: |-
   It performs read operation on Devices.
-  Returns list of organizations for meraki dashboard
+  Returns list of organizations for catalystcenter dashboard
 ---
 
 # catalystcenter_network_device_meraki_organization (Data Source)
 
 It performs read operation on Devices.
 
-- Returns list of organizations for meraki dashboard
+- Returns list of organizations for catalystcenter dashboard
 
 ## Example Usage
 

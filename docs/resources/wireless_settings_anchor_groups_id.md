@@ -20,7 +20,7 @@ It manages read, update and delete operations on Wireless.
 ```terraform
 resource "catalystcenter_wireless_settings_anchor_groups_id" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     anchor_group_name = "string"

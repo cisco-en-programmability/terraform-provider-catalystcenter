@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,8 +15,8 @@ func dataSourceWirelessProfilesIDPolicyTagsCount() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Wireless.
 
-- This endpoint retrieves the total count of Policy Tags associated with a specific Wireless Profile.This data
-source requires the id of the Wireless Profile to be provided as a path parameter.
+- This endpoint retrieves the total count of **Policy Tags** associated with a specific **Wireless Profile**.This data
+source requires the **id** of the **Wireless Profile** to be provided as a path parameter.
 `,
 
 		ReadContext: dataSourceWirelessProfilesIDPolicyTagsCountRead,
@@ -55,29 +55,41 @@ func dataSourceWirelessProfilesIDPolicyTagsCountRead(ctx context.Context, d *sch
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveTheCountOfPolicyTagsForAWirelessProfileV1")
+		log.Printf("[DEBUG] Selected method: RetrieveTheCountOfPolicyTagsForAWirelessProfile")
 		vvID := vID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Wireless.RetrieveTheCountOfPolicyTagsForAWirelessProfileV1(vvID)
+		response1, restyResp1, err := client.Wireless.RetrieveTheCountOfPolicyTagsForAWirelessProfile(vvID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveTheCountOfPolicyTagsForAWirelessProfileV1", err,
-				"Failure at RetrieveTheCountOfPolicyTagsForAWirelessProfileV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveTheCountOfPolicyTagsForAWirelessProfile", err,
+				"Failure at RetrieveTheCountOfPolicyTagsForAWirelessProfile, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessRetrieveTheCountOfPolicyTagsForAWirelessProfileV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveTheCountOfPolicyTagsForAWirelessProfile", err,
+				"Failure at RetrieveTheCountOfPolicyTagsForAWirelessProfile, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenWirelessRetrieveTheCountOfPolicyTagsForAWirelessProfileItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveTheCountOfPolicyTagsForAWirelessProfileV1 response",
+				"Failure when setting RetrieveTheCountOfPolicyTagsForAWirelessProfile response",
 				err))
 			return diags
 		}
@@ -89,7 +101,7 @@ func dataSourceWirelessProfilesIDPolicyTagsCountRead(ctx context.Context, d *sch
 	return diags
 }
 
-func flattenWirelessRetrieveTheCountOfPolicyTagsForAWirelessProfileV1Item(item *catalystcentersdkgo.ResponseWirelessRetrieveTheCountOfPolicyTagsForAWirelessProfileV1Response) []map[string]interface{} {
+func flattenWirelessRetrieveTheCountOfPolicyTagsForAWirelessProfileItem(item *catalystcentersdkgo.ResponseWirelessRetrieveTheCountOfPolicyTagsForAWirelessProfileResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -97,30 +97,44 @@ func dataSourceGoldenTagImageRead(ctx context.Context, d *schema.ResourceData, m
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetGoldenTagStatusOfAnImageV1")
+		log.Printf("[DEBUG] Selected method: GetGoldenTagStatusOfAnImage")
 		vvSiteID := vSiteID.(string)
 		vvDeviceFamilyIDentifier := vDeviceFamilyIDentifier.(string)
 		vvDeviceRole := vDeviceRole.(string)
 		vvImageID := vImageID.(string)
 
-		response1, restyResp1, err := client.SoftwareImageManagementSwim.GetGoldenTagStatusOfAnImageV1(vvSiteID, vvDeviceFamilyIDentifier, vvDeviceRole, vvImageID)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.SoftwareImageManagementSwim.GetGoldenTagStatusOfAnImage(vvSiteID, vvDeviceFamilyIDentifier, vvDeviceRole, vvImageID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetGoldenTagStatusOfAnImageV1", err,
-				"Failure at GetGoldenTagStatusOfAnImageV1, unexpected response", ""))
+				"Failure when executing 2 GetGoldenTagStatusOfAnImage", err,
+				"Failure at GetGoldenTagStatusOfAnImage, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSoftwareImageManagementSwimGetGoldenTagStatusOfAnImageV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetGoldenTagStatusOfAnImage", err,
+				"Failure at GetGoldenTagStatusOfAnImage, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSoftwareImageManagementSwimGetGoldenTagStatusOfAnImageItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetGoldenTagStatusOfAnImageV1 response",
+				"Failure when setting GetGoldenTagStatusOfAnImage response",
 				err))
 			return diags
 		}
@@ -132,7 +146,7 @@ func dataSourceGoldenTagImageRead(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func flattenSoftwareImageManagementSwimGetGoldenTagStatusOfAnImageV1Item(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetGoldenTagStatusOfAnImageV1Response) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimGetGoldenTagStatusOfAnImageItem(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetGoldenTagStatusOfAnImageResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

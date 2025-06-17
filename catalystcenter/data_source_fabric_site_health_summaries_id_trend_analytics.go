@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -18,12 +18,12 @@ func dataSourceFabricSiteHealthSummariesIDTrendAnalytics() *schema.Resource {
 - Get health time series for a specific Fabric Site by providing the unique Fabric site id in the url path. The data
 will be grouped based on the specified trend time interval. If startTime and endTime are not provided, the API defaults
 to the last 24 hours.
-By default: the number of records returned will be 500. the records will be sorted in time ascending (asc) order
+By default: the number of records returned will be 500. the records will be sorted in time ascending (**asc**) order
 ex: id:93a25378-7740-4e20-8d90-0060ad9a1be0
-This data source provides the latest health data until the given endTime. If data is not ready for the provided
-endTime, the request will fail with error code 400 Bad Request, and the error message will indicate the recommended
+This data source provides the latest health data until the given **endTime**. If data is not ready for the provided
+endTime, the request will fail with error code **400 Bad Request**, and the error message will indicate the recommended
 endTime to use to retrieve a complete data set. This behavior may occur if the provided endTime=currentTime, since we
-are not a real time system. When endTime is not provided, the API returns the latest data.
+are not a real time system. When **endTime** is not provided, the API returns the latest data.
 For detailed information about the usage of the API, please refer to the Open API specification document
 https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 fabricSiteHealthSummaries-1.0.1-resolved.yaml
@@ -141,11 +141,11 @@ func dataSourceFabricSiteHealthSummariesIDTrendAnalyticsRead(ctx context.Context
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: TheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRangeV1")
+		log.Printf("[DEBUG] Selected method: TheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRange")
 		vvID := vID.(string)
 
-		headerParams1 := catalystcentersdkgo.TheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRangeV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.TheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRangeV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.TheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRangeHeaderParams{}
+		queryParams1 := catalystcentersdkgo.TheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRangeQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -171,24 +171,36 @@ func dataSourceFabricSiteHealthSummariesIDTrendAnalyticsRead(ctx context.Context
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sda.TheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRangeV1(vvID, &headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Sda.TheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRange(vvID, &headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 TheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRangeV1", err,
-				"Failure at TheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRangeV1, unexpected response", ""))
+				"Failure when executing 2 TheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRange", err,
+				"Failure at TheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRange, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaTheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRangeV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 TheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRange", err,
+				"Failure at TheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRange, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSdaTheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRangeItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting TheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRangeV1 response",
+				"Failure when setting TheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRange response",
 				err))
 			return diags
 		}
@@ -200,7 +212,7 @@ func dataSourceFabricSiteHealthSummariesIDTrendAnalyticsRead(ctx context.Context
 	return diags
 }
 
-func flattenSdaTheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRangeV1Items(items *[]catalystcentersdkgo.ResponseSdaTheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRangeV1Response) []map[string]interface{} {
+func flattenSdaTheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRangeItems(items *[]catalystcentersdkgo.ResponseSdaTheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRangeResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -208,13 +220,13 @@ func flattenSdaTheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRangeV1Items
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["timestamp"] = item.Timestamp
-		respItem["attributes"] = flattenSdaTheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRangeV1ItemsAttributes(item.Attributes)
+		respItem["attributes"] = flattenSdaTheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRangeItemsAttributes(item.Attributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSdaTheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRangeV1ItemsAttributes(items *[]catalystcentersdkgo.ResponseSdaTheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRangeV1ResponseAttributes) []map[string]interface{} {
+func flattenSdaTheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRangeItemsAttributes(items *[]catalystcentersdkgo.ResponseSdaTheTrendAnalyticsDataForAFabricSiteInTheSpecifiedTimeRangeResponseAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

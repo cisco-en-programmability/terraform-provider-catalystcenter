@@ -38,7 +38,7 @@ output "catalystcenter_planned_access_points_example" {
 
 ### Optional
 
-- `limit` (Number) limit query parameter. The page size limit for the response, e.g. limit=100 will return a maximum of 100 records
+- `limit` (Number) limit query parameter. The number of records to show for this page;The minimum is 1, and the maximum is 500.
 - `offset` (Number) offset query parameter. The page offset for the response. E.g. if limit=100, offset=0 will return first 100 records, offset=1 will return next 100 records, etc.
 - `radios` (Boolean) radios query parameter. Whether to include the planned radio details of the planned access points
 

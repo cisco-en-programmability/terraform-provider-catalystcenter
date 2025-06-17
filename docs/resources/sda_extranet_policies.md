@@ -24,7 +24,7 @@ It manages create, read, update and delete operations on SDA.
 ```terraform
 resource "catalystcenter_sda_extranet_policies" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     extranet_policy_name             = "string"

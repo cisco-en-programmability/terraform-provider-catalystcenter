@@ -1,7 +1,7 @@
 
 resource "catalystcenter_pnp_workflow" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     id               = "string"

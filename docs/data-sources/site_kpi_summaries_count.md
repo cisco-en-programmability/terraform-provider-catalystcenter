@@ -46,25 +46,25 @@ output "catalystcenter_site_kpi_summaries_count_example" {
 ### Optional
 
 - `end_time` (Number) endTime query parameter. End time to which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
-- `site_hierarchy` (String) siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. Global/AreaName/BuildingName/FloorName)
-This field supports wildcard asterisk (*) character search support. E.g. */San*, */San, /San*
+- `site_hierarchy` (String) siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. **Global/AreaName/BuildingName/FloorName**)
+This field supports wildcard asterisk (*****) character search support. E.g. ***/San*, */San, /San***
 Examples:
-?siteHierarchy=Global/AreaName/BuildingName/FloorName (single siteHierarchy requested)
-?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2 (multiple siteHierarchies requested)
-- `site_hierarchy_id` (String) siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. globalUuid/areaUuid/buildingUuid/floorUuid)
-This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*
+**?siteHierarchy=Global/AreaName/BuildingName/FloorName** (single siteHierarchy requested)
+**?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2** (multiple siteHierarchies requested)
+- `site_hierarchy_id` (String) siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. **globalUuid/areaUuid/buildingUuid/floorUuid**)
+This field supports wildcard asterisk (*****) character search support. E.g. ***uuid*, *uuid, uuid***
 Examples:
-?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid (single siteHierarchyId requested)
-?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2 (multiple siteHierarchyIds requested)
-- `site_id` (String) siteId query parameter. The UUID of the site. (Ex. flooruuid)
+**?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid **(single siteHierarchyId requested)
+**?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2** (multiple siteHierarchyIds requested)
+- `site_id` (String) siteId query parameter. The UUID of the site. (Ex. **flooruuid**)
 Examples:
-?siteId=id1 (single id requested)
-?siteId=id1&siteId=id2&siteId=id3 (multiple ids requested)
+**?siteId=id1** (single id requested)
+**?siteId=id1&siteId=id2&siteId=id3** (multiple ids requested)
 - `site_type` (String) siteType query parameter. The type of the site. A site can be an area, building, or floor.
-Default when not provided will be [floor,building,area]
+Default when not provided will be **[floor,building,area]**
 Examples:
-?siteType=area (single siteType requested)
-?siteType=area&siteType=building&siteType=floor (multiple siteTypes requested)
+**?siteType=area** (single siteType requested)
+**?siteType=area&siteType=building&siteType=floor** (multiple siteTypes requested)
 - `start_time` (Number) startTime query parameter. Start time from which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
 
 ### Read-Only

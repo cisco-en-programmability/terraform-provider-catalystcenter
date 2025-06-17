@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -321,8 +321,8 @@ func dataSourceApplicationsHealthRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: ApplicationsV1")
-		queryParams1 := catalystcentersdkgo.ApplicationsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: Applications")
+		queryParams1 := catalystcentersdkgo.ApplicationsQueryParams{}
 
 		if okSiteID {
 			queryParams1.SiteID = vSiteID.(string)
@@ -352,24 +352,38 @@ func dataSourceApplicationsHealthRead(ctx context.Context, d *schema.ResourceDat
 			queryParams1.ApplicationName = vApplicationName.(string)
 		}
 
-		response1, restyResp1, err := client.Applications.ApplicationsV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Applications.Applications(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 ApplicationsV1", err,
-				"Failure at ApplicationsV1, unexpected response", ""))
+				"Failure when executing 2 Applications", err,
+				"Failure at Applications, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenApplicationsApplicationsV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 Applications", err,
+				"Failure at Applications, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenApplicationsApplicationsItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting ApplicationsV1 response",
+				"Failure when setting Applications response",
 				err))
 			return diags
 		}
@@ -381,7 +395,7 @@ func dataSourceApplicationsHealthRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenApplicationsApplicationsV1Items(items *[]catalystcentersdkgo.ResponseApplicationsApplicationsV1Response) []map[string]interface{} {
+func flattenApplicationsApplicationsItems(items *[]catalystcentersdkgo.ResponseApplicationsApplicationsResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -394,12 +408,12 @@ func flattenApplicationsApplicationsV1Items(items *[]catalystcentersdkgo.Respons
 		respItem["traffic_class"] = item.TrafficClass
 		respItem["usage_bytes"] = item.UsageBytes
 		respItem["average_throughput"] = item.AverageThroughput
-		respItem["packet_loss_percent"] = flattenApplicationsApplicationsV1ItemsPacketLossPercent(item.PacketLossPercent)
-		respItem["network_latency"] = flattenApplicationsApplicationsV1ItemsNetworkLatency(item.NetworkLatency)
-		respItem["jitter"] = flattenApplicationsApplicationsV1ItemsJitter(item.Jitter)
-		respItem["application_server_latency"] = flattenApplicationsApplicationsV1ItemsApplicationServerLatency(item.ApplicationServerLatency)
-		respItem["client_network_latency"] = flattenApplicationsApplicationsV1ItemsClientNetworkLatency(item.ClientNetworkLatency)
-		respItem["server_network_latency"] = flattenApplicationsApplicationsV1ItemsServerNetworkLatency(item.ServerNetworkLatency)
+		respItem["packet_loss_percent"] = flattenApplicationsApplicationsItemsPacketLossPercent(item.PacketLossPercent)
+		respItem["network_latency"] = flattenApplicationsApplicationsItemsNetworkLatency(item.NetworkLatency)
+		respItem["jitter"] = flattenApplicationsApplicationsItemsJitter(item.Jitter)
+		respItem["application_server_latency"] = flattenApplicationsApplicationsItemsApplicationServerLatency(item.ApplicationServerLatency)
+		respItem["client_network_latency"] = flattenApplicationsApplicationsItemsClientNetworkLatency(item.ClientNetworkLatency)
+		respItem["server_network_latency"] = flattenApplicationsApplicationsItemsServerNetworkLatency(item.ServerNetworkLatency)
 		respItem["exporter_ip_address"] = item.ExporterIPAddress
 		respItem["exporter_name"] = item.ExporterName
 		respItem["exporter_uui_d"] = item.ExporterUUID
@@ -424,7 +438,7 @@ func flattenApplicationsApplicationsV1Items(items *[]catalystcentersdkgo.Respons
 	return respItems
 }
 
-func flattenApplicationsApplicationsV1ItemsPacketLossPercent(item *catalystcentersdkgo.ResponseApplicationsApplicationsV1ResponsePacketLossPercent) interface{} {
+func flattenApplicationsApplicationsItemsPacketLossPercent(item *catalystcentersdkgo.ResponseApplicationsApplicationsResponsePacketLossPercent) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -434,7 +448,7 @@ func flattenApplicationsApplicationsV1ItemsPacketLossPercent(item *catalystcente
 
 }
 
-func flattenApplicationsApplicationsV1ItemsNetworkLatency(item *catalystcentersdkgo.ResponseApplicationsApplicationsV1ResponseNetworkLatency) interface{} {
+func flattenApplicationsApplicationsItemsNetworkLatency(item *catalystcentersdkgo.ResponseApplicationsApplicationsResponseNetworkLatency) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -444,7 +458,7 @@ func flattenApplicationsApplicationsV1ItemsNetworkLatency(item *catalystcentersd
 
 }
 
-func flattenApplicationsApplicationsV1ItemsJitter(item *catalystcentersdkgo.ResponseApplicationsApplicationsV1ResponseJitter) interface{} {
+func flattenApplicationsApplicationsItemsJitter(item *catalystcentersdkgo.ResponseApplicationsApplicationsResponseJitter) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -454,7 +468,7 @@ func flattenApplicationsApplicationsV1ItemsJitter(item *catalystcentersdkgo.Resp
 
 }
 
-func flattenApplicationsApplicationsV1ItemsApplicationServerLatency(item *catalystcentersdkgo.ResponseApplicationsApplicationsV1ResponseApplicationServerLatency) interface{} {
+func flattenApplicationsApplicationsItemsApplicationServerLatency(item *catalystcentersdkgo.ResponseApplicationsApplicationsResponseApplicationServerLatency) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -464,7 +478,7 @@ func flattenApplicationsApplicationsV1ItemsApplicationServerLatency(item *cataly
 
 }
 
-func flattenApplicationsApplicationsV1ItemsClientNetworkLatency(item *catalystcentersdkgo.ResponseApplicationsApplicationsV1ResponseClientNetworkLatency) interface{} {
+func flattenApplicationsApplicationsItemsClientNetworkLatency(item *catalystcentersdkgo.ResponseApplicationsApplicationsResponseClientNetworkLatency) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -474,7 +488,7 @@ func flattenApplicationsApplicationsV1ItemsClientNetworkLatency(item *catalystce
 
 }
 
-func flattenApplicationsApplicationsV1ItemsServerNetworkLatency(item *catalystcentersdkgo.ResponseApplicationsApplicationsV1ResponseServerNetworkLatency) interface{} {
+func flattenApplicationsApplicationsItemsServerNetworkLatency(item *catalystcentersdkgo.ResponseApplicationsApplicationsResponseServerNetworkLatency) interface{} {
 	if item == nil {
 		return nil
 	}

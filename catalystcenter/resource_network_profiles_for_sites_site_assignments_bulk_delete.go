@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -9,7 +10,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -62,14 +63,14 @@ building first if this site is a floor.
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"profile_id": &schema.Schema{
-							Description: `profileId path parameter. The *id* of the network profile, retrievable from *GET /intent/api/v1/networkProfilesForSites*
+							Description: `profileId path parameter. The **id** of the network profile, retrievable from **GET /intent/api/v1/networkProfilesForSites**
 `,
 							Type:     schema.TypeString,
 							Required: true,
 							ForceNew: true,
 						},
 						"site_id": &schema.Schema{
-							Description: `siteId query parameter. The *id* of the site, retrievable from *GET /intent/api/v1/sites*
+							Description: `siteId query parameter. The id or ids of the network profile, retrievable from /dna/intent/api/v1/sites.. A list of profile ids can be passed as a queryParameter in two ways:  1. a comma-separated string ( siteId=388a23e9-4739-4be7-a0aa-cc5a95d158dd,2726dc60-3a12-451e-947a-d972ebf58743), or... 2. as separate query parameters with the same name ( siteId=388a23e9-4739-4be7-a0aa-cc5a95d158dd&siteId=2726dc60-3a12-451e-947a-d972ebf58743
 `,
 							Type:     schema.TypeString,
 							Required: true,
@@ -93,20 +94,20 @@ func resourceNetworkProfilesForSitesSiteAssignmentsBulkDeleteCreate(ctx context.
 	vSiteID := resourceItem["site_id"]
 
 	vvProfileID := vProfileID.(string)
-	queryParams1 := catalystcentersdkgo.UnassignsANetworkProfileForSitesFromMultipleSitesV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.UnassignsANetworkProfileForSitesFromMultipleSitesQueryParams{}
 
 	queryParams1.SiteID = vSiteID.(string)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.SiteDesign.UnassignsANetworkProfileForSitesFromMultipleSitesV1(vvProfileID, &queryParams1)
+	response1, restyResp1, err := client.SiteDesign.UnassignsANetworkProfileForSitesFromMultipleSites(vvProfileID, &queryParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing UnassignsANetworkProfileForSitesFromMultipleSitesV1", err))
+			"Failure when executing UnassignsANetworkProfileForSitesFromMultipleSites", err))
 		return diags
 	}
 
@@ -114,7 +115,7 @@ func resourceNetworkProfilesForSitesSiteAssignmentsBulkDeleteCreate(ctx context.
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing UnassignsANetworkProfileForSitesFromMultipleSitesV1", err))
+			"Failure when executing UnassignsANetworkProfileForSitesFromMultipleSites", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -141,21 +142,21 @@ func resourceNetworkProfilesForSitesSiteAssignmentsBulkDeleteCreate(ctx context.
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing UnassignsANetworkProfileForSitesFromMultipleSitesV1", err1))
+				"Failure when executing UnassignsANetworkProfileForSitesFromMultipleSites", err1))
 			return diags
 		}
 	}
-	vItem1 := flattenSiteDesignUnassignsANetworkProfileForSitesFromMultipleSitesV1Item(response1.Response)
+	vItem1 := flattenSiteDesignUnassignsANetworkProfileForSitesFromMultipleSitesItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting UnassignsANetworkProfileForSitesFromMultipleSitesV1 response",
+			"Failure when setting UnassignsANetworkProfileForSitesFromMultipleSites response",
 			err))
 		return diags
 	}
@@ -176,7 +177,7 @@ func resourceNetworkProfilesForSitesSiteAssignmentsBulkDeleteDelete(ctx context.
 	return diags
 }
 
-func flattenSiteDesignUnassignsANetworkProfileForSitesFromMultipleSitesV1Item(item *catalystcentersdkgo.ResponseSiteDesignUnassignsANetworkProfileForSitesFromMultipleSitesV1Response) []map[string]interface{} {
+func flattenSiteDesignUnassignsANetworkProfileForSitesFromMultipleSitesItem(item *catalystcentersdkgo.ResponseSiteDesignUnassignsANetworkProfileForSitesFromMultipleSitesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

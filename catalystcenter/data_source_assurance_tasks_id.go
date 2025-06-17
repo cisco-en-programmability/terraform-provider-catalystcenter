@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -122,33 +122,45 @@ func dataSourceAssuranceTasksIDRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveASpecificAssuranceTaskByIDV1")
+		log.Printf("[DEBUG] Selected method: RetrieveASpecificAssuranceTaskByID")
 		vvID := vID.(string)
 
-		headerParams1 := catalystcentersdkgo.RetrieveASpecificAssuranceTaskByIDV1HeaderParams{}
+		headerParams1 := catalystcentersdkgo.RetrieveASpecificAssuranceTaskByIDHeaderParams{}
 
 		headerParams1.XCaLLERID = vXCaLLERID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Task.RetrieveASpecificAssuranceTaskByIDV1(vvID, &headerParams1)
+		response1, restyResp1, err := client.Task.RetrieveASpecificAssuranceTaskByID(vvID, &headerParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveASpecificAssuranceTaskByIDV1", err,
-				"Failure at RetrieveASpecificAssuranceTaskByIDV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveASpecificAssuranceTaskByID", err,
+				"Failure at RetrieveASpecificAssuranceTaskByID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenTaskRetrieveASpecificAssuranceTaskByIDV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveASpecificAssuranceTaskByID", err,
+				"Failure at RetrieveASpecificAssuranceTaskByID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenTaskRetrieveASpecificAssuranceTaskByIDItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveASpecificAssuranceTaskByIDV1 response",
+				"Failure when setting RetrieveASpecificAssuranceTaskByID response",
 				err))
 			return diags
 		}
@@ -160,7 +172,7 @@ func dataSourceAssuranceTasksIDRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenTaskRetrieveASpecificAssuranceTaskByIDV1Item(item *catalystcentersdkgo.ResponseTaskRetrieveASpecificAssuranceTaskByIDV1Response) []map[string]interface{} {
+func flattenTaskRetrieveASpecificAssuranceTaskByIDItem(item *catalystcentersdkgo.ResponseTaskRetrieveASpecificAssuranceTaskByIDResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -174,14 +186,14 @@ func flattenTaskRetrieveASpecificAssuranceTaskByIDV1Item(item *catalystcentersdk
 	respItem["failure_reason"] = item.FailureReason
 	respItem["error_code"] = item.ErrorCode
 	respItem["request_type"] = item.RequestType
-	respItem["data"] = flattenTaskRetrieveASpecificAssuranceTaskByIDV1ItemData(item.Data)
+	respItem["data"] = flattenTaskRetrieveASpecificAssuranceTaskByIDItemData(item.Data)
 	respItem["result_url"] = item.ResultURL
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenTaskRetrieveASpecificAssuranceTaskByIDV1ItemData(item *catalystcentersdkgo.ResponseTaskRetrieveASpecificAssuranceTaskByIDV1ResponseData) interface{} {
+func flattenTaskRetrieveASpecificAssuranceTaskByIDItemData(item *catalystcentersdkgo.ResponseTaskRetrieveASpecificAssuranceTaskByIDResponseData) interface{} {
 	if item == nil {
 		return nil
 	}

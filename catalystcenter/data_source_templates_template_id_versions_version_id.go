@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -21,13 +21,13 @@ func dataSourceTemplatesTemplateIDVersionsVersionID() *schema.Resource {
 		ReadContext: dataSourceTemplatesTemplateIDVersionsVersionIDRead,
 		Schema: map[string]*schema.Schema{
 			"template_id": &schema.Schema{
-				Description: `templateId path parameter. The id of the template to get versions of, retrieveable from GET /dna/intent/api/v1/templates
+				Description: `templateId path parameter. The id of the template to get versions of, retrieveable from **GET /dna/intent/api/v1/templates**
 `,
 				Type:     schema.TypeString,
 				Required: true,
 			},
 			"version_id": &schema.Schema{
-				Description: `versionId path parameter. The id of the versioned template to get versions of, retrieveable from GET /dna/intent/api/v1/templates/{id}/versions
+				Description: `versionId path parameter. The id of the versioned template to get versions of, retrieveable from **GET /dna/intent/api/v1/templates/{id}/versions**
 `,
 				Type:     schema.TypeString,
 				Required: true,
@@ -284,30 +284,42 @@ func dataSourceTemplatesTemplateIDVersionsVersionIDRead(ctx context.Context, d *
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTemplateVersionV1")
+		log.Printf("[DEBUG] Selected method: GetTemplateVersion")
 		vvTemplateID := vTemplateID.(string)
 		vvVersionID := vVersionID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.ConfigurationTemplates.GetTemplateVersionV1(vvTemplateID, vvVersionID)
+		response1, restyResp1, err := client.ConfigurationTemplates.GetTemplateVersion(vvTemplateID, vvVersionID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTemplateVersionV1", err,
-				"Failure at GetTemplateVersionV1, unexpected response", ""))
+				"Failure when executing 2 GetTemplateVersion", err,
+				"Failure at GetTemplateVersion, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenConfigurationTemplatesGetTemplateVersionV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetTemplateVersion", err,
+				"Failure at GetTemplateVersion, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenConfigurationTemplatesGetTemplateVersionItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTemplateVersionV1 response",
+				"Failure when setting GetTemplateVersion response",
 				err))
 			return diags
 		}
@@ -319,7 +331,7 @@ func dataSourceTemplatesTemplateIDVersionsVersionIDRead(ctx context.Context, d *
 	return diags
 }
 
-func flattenConfigurationTemplatesGetTemplateVersionV1Item(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetTemplateVersionV1Response) []map[string]interface{} {
+func flattenConfigurationTemplatesGetTemplateVersionItem(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetTemplateVersionResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -327,14 +339,14 @@ func flattenConfigurationTemplatesGetTemplateVersionV1Item(item *catalystcenters
 	respItem["version_id"] = item.VersionID
 	respItem["version"] = item.Version
 	respItem["version_time"] = item.VersionTime
-	respItem["regular_template"] = flattenConfigurationTemplatesGetTemplateVersionV1ItemRegularTemplate(item.RegularTemplate)
-	respItem["composite_template"] = flattenConfigurationTemplatesGetTemplateVersionV1ItemCompositeTemplate(item.CompositeTemplate)
+	respItem["regular_template"] = flattenConfigurationTemplatesGetTemplateVersionItemRegularTemplate(item.RegularTemplate)
+	respItem["composite_template"] = flattenConfigurationTemplatesGetTemplateVersionItemCompositeTemplate(item.CompositeTemplate)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenConfigurationTemplatesGetTemplateVersionV1ItemRegularTemplate(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetTemplateVersionV1ResponseRegularTemplate) []map[string]interface{} {
+func flattenConfigurationTemplatesGetTemplateVersionItemRegularTemplate(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetTemplateVersionResponseRegularTemplate) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -345,7 +357,7 @@ func flattenConfigurationTemplatesGetTemplateVersionV1ItemRegularTemplate(item *
 	respItem["description"] = item.Description
 	respItem["software_family"] = item.SoftwareFamily
 	respItem["author"] = item.Author
-	respItem["products"] = flattenConfigurationTemplatesGetTemplateVersionV1ItemRegularTemplateProducts(item.Products)
+	respItem["products"] = flattenConfigurationTemplatesGetTemplateVersionItemRegularTemplateProducts(item.Products)
 	respItem["last_update_time"] = item.LastUpdateTime
 	respItem["type"] = item.Type
 	respItem["language"] = item.Language
@@ -357,7 +369,7 @@ func flattenConfigurationTemplatesGetTemplateVersionV1ItemRegularTemplate(item *
 
 }
 
-func flattenConfigurationTemplatesGetTemplateVersionV1ItemRegularTemplateProducts(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetTemplateVersionV1ResponseRegularTemplateProducts) []map[string]interface{} {
+func flattenConfigurationTemplatesGetTemplateVersionItemRegularTemplateProducts(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetTemplateVersionResponseRegularTemplateProducts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -372,7 +384,7 @@ func flattenConfigurationTemplatesGetTemplateVersionV1ItemRegularTemplateProduct
 	return respItems
 }
 
-func flattenConfigurationTemplatesGetTemplateVersionV1ItemCompositeTemplate(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetTemplateVersionV1ResponseCompositeTemplate) []map[string]interface{} {
+func flattenConfigurationTemplatesGetTemplateVersionItemCompositeTemplate(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetTemplateVersionResponseCompositeTemplate) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -383,7 +395,7 @@ func flattenConfigurationTemplatesGetTemplateVersionV1ItemCompositeTemplate(item
 	respItem["description"] = item.Description
 	respItem["software_family"] = item.SoftwareFamily
 	respItem["author"] = item.Author
-	respItem["products"] = flattenConfigurationTemplatesGetTemplateVersionV1ItemCompositeTemplateProducts(item.Products)
+	respItem["products"] = flattenConfigurationTemplatesGetTemplateVersionItemCompositeTemplateProducts(item.Products)
 	respItem["last_update_time"] = item.LastUpdateTime
 	respItem["type"] = item.Type
 	respItem["failure_policy"] = item.FailurePolicy
@@ -394,7 +406,7 @@ func flattenConfigurationTemplatesGetTemplateVersionV1ItemCompositeTemplate(item
 
 }
 
-func flattenConfigurationTemplatesGetTemplateVersionV1ItemCompositeTemplateProducts(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetTemplateVersionV1ResponseCompositeTemplateProducts) []map[string]interface{} {
+func flattenConfigurationTemplatesGetTemplateVersionItemCompositeTemplateProducts(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetTemplateVersionResponseCompositeTemplateProducts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

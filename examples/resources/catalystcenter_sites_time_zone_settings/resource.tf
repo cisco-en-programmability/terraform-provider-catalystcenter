@@ -1,7 +1,7 @@
 
 resource "catalystcenter_sites_time_zone_settings" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     id = "string"

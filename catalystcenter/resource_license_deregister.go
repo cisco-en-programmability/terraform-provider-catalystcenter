@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -59,19 +59,10 @@ func resourceLicenseDeregister() *schema.Resource {
 func resourceLicenseDeregisterCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
+
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Licenses.SmartLicensingDeregistrationV1()
-
-	vItem1 := flattenLicensesSmartLicensingDeregistrationV1Item(response1.Response)
-	if err := d.Set("item", vItem1); err != nil {
-		diags = append(diags, diagError(
-			"Failure when setting SmartLicensingDeregistrationV1 response",
-			err))
-		return diags
-	}
-
-	//Analizar verificacion.
+	response1, restyResp1, err := client.Licenses.SmartLicensingDeregistration()
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
@@ -82,23 +73,35 @@ func resourceLicenseDeregisterCreate(ctx context.Context, d *schema.ResourceData
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+	vItem1 := flattenLicensesSmartLicensingDeregistrationItem(response1.Response)
+	if err := d.Set("item", vItem1); err != nil {
+		diags = append(diags, diagError(
+			"Failure when setting SmartLicensingDeregistration response",
+			err))
+		return diags
+	}
+
 	d.SetId(getUnixTimeString())
 	return diags
+
+	//Analizar verificacion.
+
 }
 func resourceLicenseDeregisterRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 	return diags
 }
 
 func resourceLicenseDeregisterDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 	return diags
 }
 
-func flattenLicensesSmartLicensingDeregistrationV1Item(item *catalystcentersdkgo.ResponseLicensesSmartLicensingDeregistrationV1Response) []map[string]interface{} {
+func flattenLicensesSmartLicensingDeregistrationItem(item *catalystcentersdkgo.ResponseLicensesSmartLicensingDeregistrationResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -146,31 +146,45 @@ func dataSourceItsmIntegrationEventsFailedRead(ctx context.Context, d *schema.Re
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetFailedItsmEventsV1")
-		queryParams1 := catalystcentersdkgo.GetFailedItsmEventsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetFailedItsmEvents")
+		queryParams1 := catalystcentersdkgo.GetFailedItsmEventsQueryParams{}
 
 		if okInstanceID {
 			queryParams1.InstanceID = vInstanceID.(string)
 		}
 
-		response1, restyResp1, err := client.Itsm.GetFailedItsmEventsV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Itsm.GetFailedItsmEvents(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetFailedItsmEventsV1", err,
-				"Failure at GetFailedItsmEventsV1, unexpected response", ""))
+				"Failure when executing 2 GetFailedItsmEvents", err,
+				"Failure at GetFailedItsmEvents, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenItsmGetFailedItsmEventsV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetFailedItsmEvents", err,
+				"Failure at GetFailedItsmEvents, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenItsmGetFailedItsmEventsItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetFailedItsmEventsV1 response",
+				"Failure when setting GetFailedItsmEvents response",
 				err))
 			return diags
 		}
@@ -182,7 +196,7 @@ func dataSourceItsmIntegrationEventsFailedRead(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func flattenItsmGetFailedItsmEventsV1Items(items *catalystcentersdkgo.ResponseItsmGetFailedItsmEventsV1) []map[string]interface{} {
+func flattenItsmGetFailedItsmEventsItems(items *catalystcentersdkgo.ResponseItsmGetFailedItsmEvents) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -199,14 +213,14 @@ func flattenItsmGetFailedItsmEventsV1Items(items *catalystcentersdkgo.ResponseIt
 		respItem["severity"] = item.Severity
 		respItem["source"] = item.Source
 		respItem["timestamp"] = item.Timestamp
-		respItem["enrichment_info"] = flattenItsmGetFailedItsmEventsV1ItemsEnrichmentInfo(item.EnrichmentInfo)
+		respItem["enrichment_info"] = flattenItsmGetFailedItsmEventsItemsEnrichmentInfo(item.EnrichmentInfo)
 		respItem["description"] = item.Description
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenItsmGetFailedItsmEventsV1ItemsEnrichmentInfo(item *catalystcentersdkgo.ResponseItemItsmGetFailedItsmEventsV1EnrichmentInfo) []map[string]interface{} {
+func flattenItsmGetFailedItsmEventsItemsEnrichmentInfo(item *catalystcentersdkgo.ResponseItemItsmGetFailedItsmEventsEnrichmentInfo) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -214,7 +228,7 @@ func flattenItsmGetFailedItsmEventsV1ItemsEnrichmentInfo(item *catalystcentersdk
 	respItem["event_status"] = item.EventStatus
 	respItem["error_code"] = item.ErrorCode
 	respItem["error_description"] = item.ErrorDescription
-	respItem["response_received_from_itsmsystem"] = flattenItsmGetFailedItsmEventsV1ItemsEnrichmentInfoResponseReceivedFromITSmsystem(item.ResponseReceivedFromITSmsystem)
+	respItem["response_received_from_itsmsystem"] = flattenItsmGetFailedItsmEventsItemsEnrichmentInfoResponseReceivedFromITSmsystem(item.ResponseReceivedFromITSmsystem)
 
 	return []map[string]interface{}{
 		respItem,
@@ -222,7 +236,7 @@ func flattenItsmGetFailedItsmEventsV1ItemsEnrichmentInfo(item *catalystcentersdk
 
 }
 
-func flattenItsmGetFailedItsmEventsV1ItemsEnrichmentInfoResponseReceivedFromITSmsystem(item *catalystcentersdkgo.ResponseItemItsmGetFailedItsmEventsV1EnrichmentInfoResponseReceivedFromITSmsystem) interface{} {
+func flattenItsmGetFailedItsmEventsItemsEnrichmentInfoResponseReceivedFromITSmsystem(item *catalystcentersdkgo.ResponseItemItsmGetFailedItsmEventsEnrichmentInfoResponseReceivedFromITSmsystem) interface{} {
 	if item == nil {
 		return nil
 	}

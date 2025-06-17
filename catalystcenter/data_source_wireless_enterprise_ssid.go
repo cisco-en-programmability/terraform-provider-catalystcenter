@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -322,31 +322,45 @@ func dataSourceWirelessEnterpriseSSIDRead(ctx context.Context, d *schema.Resourc
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetEnterpriseSSIDV1")
-		queryParams1 := catalystcentersdkgo.GetEnterpriseSSIDV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetEnterpriseSSID")
+		queryParams1 := catalystcentersdkgo.GetEnterpriseSSIDQueryParams{}
 
 		if okSSIDName {
 			queryParams1.SSIDName = vSSIDName.(string)
 		}
 
-		response1, restyResp1, err := client.Wireless.GetEnterpriseSSIDV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Wireless.GetEnterpriseSSID(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetEnterpriseSSIDV1", err,
-				"Failure at GetEnterpriseSSIDV1, unexpected response", ""))
+				"Failure when executing 2 GetEnterpriseSSID", err,
+				"Failure at GetEnterpriseSSID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenWirelessGetEnterpriseSSIDV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetEnterpriseSSID", err,
+				"Failure at GetEnterpriseSSID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenWirelessGetEnterpriseSSIDItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetEnterpriseSSIDV1 response",
+				"Failure when setting GetEnterpriseSSID response",
 				err))
 			return diags
 		}
@@ -358,7 +372,7 @@ func dataSourceWirelessEnterpriseSSIDRead(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func flattenWirelessGetEnterpriseSSIDV1Items(items *catalystcentersdkgo.ResponseWirelessGetEnterpriseSSIDV1) []map[string]interface{} {
+func flattenWirelessGetEnterpriseSSIDItems(items *catalystcentersdkgo.ResponseWirelessGetEnterpriseSSID) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -367,7 +381,7 @@ func flattenWirelessGetEnterpriseSSIDV1Items(items *catalystcentersdkgo.Response
 		respItem := make(map[string]interface{})
 		respItem["instance_uuid"] = item.InstanceUUID
 		respItem["version"] = item.Version
-		respItem["ssid_details"] = flattenWirelessGetEnterpriseSSIDV1ItemsSSIDDetails(item.SSIDDetails)
+		respItem["ssid_details"] = flattenWirelessGetEnterpriseSSIDItemsSSIDDetails(item.SSIDDetails)
 		respItem["group_uuid"] = item.GroupUUID
 		respItem["inherited_group_uuid"] = item.InheritedGroupUUID
 		respItem["inherited_group_name"] = item.InheritedGroupName
@@ -376,7 +390,7 @@ func flattenWirelessGetEnterpriseSSIDV1Items(items *catalystcentersdkgo.Response
 	return respItems
 }
 
-func flattenWirelessGetEnterpriseSSIDV1ItemsSSIDDetails(items *[]catalystcentersdkgo.ResponseItemWirelessGetEnterpriseSSIDV1SSIDDetails) []map[string]interface{} {
+func flattenWirelessGetEnterpriseSSIDItemsSSIDDetails(items *[]catalystcentersdkgo.ResponseItemWirelessGetEnterpriseSSIDSSIDDetails) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -400,7 +414,7 @@ func flattenWirelessGetEnterpriseSSIDV1ItemsSSIDDetails(items *[]catalystcenters
 		respItem["aaa_override"] = boolPtrToString(item.AAAOverride)
 		respItem["coverage_hole_detection_enable"] = boolPtrToString(item.CoverageHoleDetectionEnable)
 		respItem["protected_management_frame"] = item.ProtectedManagementFrame
-		respItem["multi_psk_settings"] = flattenWirelessGetEnterpriseSSIDV1ItemsSSIDDetailsMultipSKSettings(item.MultipSKSettings)
+		respItem["multi_psk_settings"] = flattenWirelessGetEnterpriseSSIDItemsSSIDDetailsMultipSKSettings(item.MultipSKSettings)
 		respItem["client_rate_limit"] = item.ClientRateLimit
 		respItem["enable_session_time_out"] = boolPtrToString(item.EnableSessionTimeOut)
 		respItem["session_time_out"] = item.SessionTimeOut
@@ -416,7 +430,7 @@ func flattenWirelessGetEnterpriseSSIDV1ItemsSSIDDetails(items *[]catalystcenters
 	return respItems
 }
 
-func flattenWirelessGetEnterpriseSSIDV1ItemsSSIDDetailsMultipSKSettings(items *[]catalystcentersdkgo.ResponseItemWirelessGetEnterpriseSSIDV1SSIDDetailsMultipSKSettings) []map[string]interface{} {
+func flattenWirelessGetEnterpriseSSIDItemsSSIDDetailsMultipSKSettings(items *[]catalystcentersdkgo.ResponseItemWirelessGetEnterpriseSSIDSSIDDetailsMultipSKSettings) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

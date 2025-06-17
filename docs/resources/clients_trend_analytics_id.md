@@ -18,6 +18,8 @@ It performs create operation on Clients.
 grouping. The data will be grouped based on the specified trend time interval. For detailed information about the usage
 of the API, please refer to the Open API specification document https://github.com/cisco-en-programmability/catalyst-
 center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-clients1-1.0.0-resolved.yaml
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -29,31 +31,31 @@ resource "catalystcenter_clients_trend_analytics_id" "example" {
   provider    = catalystcenter
   id          = "string"
   xca_lle_rid = "string"
-  parameters {
+  parameters = [{
 
-    aggregate_attributes {
+    aggregate_attributes = [{
 
       function = "string"
       name     = "string"
-    }
+    }]
     attributes = ["string"]
     end_time   = 1
-    filters {
+    filters = [{
 
       key      = "string"
       operator = "string"
       value    = 1
-    }
+    }]
     group_by = ["string"]
-    page {
+    page = [{
 
       cursor          = "string"
       limit           = 1
       time_sort_order = "string"
-    }
+    }]
     start_time     = 1
     trend_interval = "string"
-  }
+  }]
 }
 
 output "catalystcenter_clients_trend_analytics_id_example" {
@@ -78,7 +80,7 @@ output "catalystcenter_clients_trend_analytics_id_example" {
 
 Required:
 
-- `id` (String) id path parameter. id is the client mac address. It can be specified in one of the notational conventions  01:23:45:67:89:AB or 01-23-45-67-89-AB or 0123.4567.89AB and is case insensitive
+- `id` (String) id path parameter. id is the client mac address. It can be specified in one of the notational conventions 01:23:45:67:89:AB or 01-23-45-67-89-AB or 0123.4567.89AB and is case insensitive
 - `xca_lle_rid` (String) X-CALLER-ID header parameter. Caller ID is used to trace the origin of API calls and their associated queries executed on the database. It's an optional header parameter that can be added to an API request.
 
 Optional:

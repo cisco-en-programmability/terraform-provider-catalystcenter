@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -189,34 +189,6 @@ func resourceFabricsFabricIDSwitchWirelessSettingRead(ctx context.Context, d *sc
 	return diags
 }
 
-func flattenFabricWirelessGetSdaWirelessDetailsFromSwitchesByIDItem(items *[]catalystcentersdkgo.ResponseFabricWirelessGetSdaWirelessDetailsFromSwitchesV1Response) []map[string]interface{} {
-	if items == nil {
-		return nil
-	}
-	var respItems []map[string]interface{}
-	for _, item := range *items {
-		respItem := make(map[string]interface{})
-		respItem["id"] = item.ID
-		respItem["enableWireless"] = item.EnableWireless
-		respItem["rollingApUpgrade"] = flattenFabricWirelessGetSdaWirelessDetailsFromSwitchesByIDItemRollingApUpgrade(item.RollingApUpgrade)
-		respItems = append(respItems, respItem)
-	}
-	return respItems
-}
-
-func flattenFabricWirelessGetSdaWirelessDetailsFromSwitchesByIDItemRollingApUpgrade(item *catalystcentersdkgo.ResponseFabricWirelessGetSdaWirelessDetailsFromSwitchesV1ResponseRollingApUpgrade) []map[string]interface{} {
-	if item == nil {
-		return nil
-	}
-	respItem := make(map[string]interface{})
-	respItem["enableRollingApUpgrade"] = item.EnableRollingApUpgrade
-	respItem["apRebootPercentage"] = item.ApRebootPercentage
-	return []map[string]interface{}{
-		respItem,
-	}
-
-}
-
 func resourceFabricsFabricIDSwitchWirelessSettingUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := m.(*catalystcentersdkgo.Client)
 
@@ -227,7 +199,7 @@ func resourceFabricsFabricIDSwitchWirelessSettingUpdate(ctx context.Context, d *
 	vFabricID := resourceMap["fabric_id"]
 
 	if d.HasChange("parameters") {
-		request1 := expandRequestFabricsFabricIDSwitchWirelessSettingSwitchWirelessSettingAndRollingApUpgradeManagementV1(ctx, "parameters.0", d)
+		request1 := expandRequestFabricsFabricIDSwitchWirelessSettingSwitchWirelessSettingAndRollingApUpgradeManagement(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		if request1 != nil && request1.ID == "" {
 			log.Printf("[DEBUG] resty response for update operation => %v", request1)
@@ -286,12 +258,13 @@ func resourceFabricsFabricIDSwitchWirelessSettingUpdate(ctx context.Context, d *
 
 func resourceFabricsFabricIDSwitchWirelessSettingDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	// NOTE: Unable to delete FabricsFabricIDSwitchWirelessSetting on Dna Center
+	// NOTE: Unable to delete FabricsFabricIDSwitchWirelessSetting on Catalyst Center
 	//       Returning empty diags to delete it on Terraform
 	return diags
 }
-func expandRequestFabricsFabricIDSwitchWirelessSettingSwitchWirelessSettingAndRollingApUpgradeManagementV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestFabricWirelessSwitchWirelessSettingAndRollingApUpgradeManagementV1 {
-	request := catalystcentersdkgo.RequestFabricWirelessSwitchWirelessSettingAndRollingApUpgradeManagementV1{}
+
+func expandRequestFabricsFabricIDSwitchWirelessSettingSwitchWirelessSettingAndRollingApUpgradeManagement(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestFabricWirelessSwitchWirelessSettingAndRollingApUpgradeManagement {
+	request := catalystcentersdkgo.RequestFabricWirelessSwitchWirelessSettingAndRollingApUpgradeManagement{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -299,7 +272,7 @@ func expandRequestFabricsFabricIDSwitchWirelessSettingSwitchWirelessSettingAndRo
 		request.EnableWireless = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rolling_ap_upgrade")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rolling_ap_upgrade")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rolling_ap_upgrade")))) {
-		request.RollingApUpgrade = expandRequestFabricsFabricIDSwitchWirelessSettingSwitchWirelessSettingAndRollingApUpgradeManagementV1RollingApUpgrade(ctx, key+".rolling_ap_upgrade.0", d)
+		request.RollingApUpgrade = expandRequestFabricsFabricIDSwitchWirelessSettingSwitchWirelessSettingAndRollingApUpgradeManagementRollingApUpgrade(ctx, key+".rolling_ap_upgrade.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -307,8 +280,8 @@ func expandRequestFabricsFabricIDSwitchWirelessSettingSwitchWirelessSettingAndRo
 	return &request
 }
 
-func expandRequestFabricsFabricIDSwitchWirelessSettingSwitchWirelessSettingAndRollingApUpgradeManagementV1RollingApUpgrade(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestFabricWirelessSwitchWirelessSettingAndRollingApUpgradeManagementV1RollingApUpgrade {
-	request := catalystcentersdkgo.RequestFabricWirelessSwitchWirelessSettingAndRollingApUpgradeManagementV1RollingApUpgrade{}
+func expandRequestFabricsFabricIDSwitchWirelessSettingSwitchWirelessSettingAndRollingApUpgradeManagementRollingApUpgrade(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestFabricWirelessSwitchWirelessSettingAndRollingApUpgradeManagementRollingApUpgrade {
+	request := catalystcentersdkgo.RequestFabricWirelessSwitchWirelessSettingAndRollingApUpgradeManagementRollingApUpgrade{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".enable_rolling_ap_upgrade")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".enable_rolling_ap_upgrade")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".enable_rolling_ap_upgrade")))) {
 		request.EnableRollingApUpgrade = interfaceToBoolPtr(v)
 	}
@@ -319,4 +292,32 @@ func expandRequestFabricsFabricIDSwitchWirelessSettingSwitchWirelessSettingAndRo
 		return nil
 	}
 	return &request
+}
+
+func flattenFabricWirelessGetSdaWirelessDetailsFromSwitchesByIDItem(items *[]catalystcentersdkgo.ResponseFabricWirelessGetSdaWirelessDetailsFromSwitchesResponse) []map[string]interface{} {
+	if items == nil {
+		return nil
+	}
+	var respItems []map[string]interface{}
+	for _, item := range *items {
+		respItem := make(map[string]interface{})
+		respItem["id"] = item.ID
+		respItem["enableWireless"] = item.EnableWireless
+		respItem["rollingApUpgrade"] = flattenFabricWirelessGetSdaWirelessDetailsFromSwitchesByIDItemRollingApUpgrade(item.RollingApUpgrade)
+		respItems = append(respItems, respItem)
+	}
+	return respItems
+}
+
+func flattenFabricWirelessGetSdaWirelessDetailsFromSwitchesByIDItemRollingApUpgrade(item *catalystcentersdkgo.ResponseFabricWirelessGetSdaWirelessDetailsFromSwitchesResponseRollingApUpgrade) []map[string]interface{} {
+	if item == nil {
+		return nil
+	}
+	respItem := make(map[string]interface{})
+	respItem["enableRollingApUpgrade"] = item.EnableRollingApUpgrade
+	respItem["apRebootPercentage"] = item.ApRebootPercentage
+	return []map[string]interface{}{
+		respItem,
+	}
+
 }

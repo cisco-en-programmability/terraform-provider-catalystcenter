@@ -12,6 +12,8 @@ description: |-
 It performs create operation on File.
 
 - Uploads a new file within a specific nameSpace
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -21,10 +23,12 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_file_import" "example" {
   provider   = catalystcenter
+  file_name  = "string"
+  file_path  = "string"
   name_space = "string"
-  parameters {
+  parameters = [{
 
-  }
+  }]
 }
 
 output "catalystcenter_file_import_example" {

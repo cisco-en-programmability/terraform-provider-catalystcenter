@@ -20,7 +20,7 @@ It manages create, read and delete operations on SDA.
 ```terraform
 resource "catalystcenter_sda_fabric_control_plane_device" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     device_management_ip_address = "string"

@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -182,7 +182,7 @@ func resourceWirelessSettingsDot11BeProfilesCreate(ctx context.Context, d *schem
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestWirelessSettingsDot11BeProfilesCreateA80211BeProfileV1(ctx, "parameters.0", d)
+	request1 := expandRequestWirelessSettingsDot11BeProfilesCreateA80211BeProfile(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vID, okID := resourceItem["id"]
@@ -198,7 +198,7 @@ func resourceWirelessSettingsDot11BeProfilesCreate(ctx context.Context, d *schem
 			return resourceWirelessSettingsDot11BeProfilesRead(ctx, d, m)
 		}
 	} else {
-		queryParamImport := catalystcentersdkgo.Get80211BeProfilesV1QueryParams{}
+		queryParamImport := catalystcentersdkgo.Get80211BeProfilesQueryParams{}
 
 		response2, err := searchWirelessGetAll80211BeProfiles(m, queryParamImport, vvName)
 		if response2 != nil && err == nil {
@@ -247,7 +247,7 @@ func resourceWirelessSettingsDot11BeProfilesCreate(ctx context.Context, d *schem
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.Get80211BeProfilesV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.Get80211BeProfilesQueryParams{}
 	item3, err := searchWirelessGetAll80211BeProfiles(m, queryParamValidate, vvName)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
@@ -290,7 +290,7 @@ func resourceWirelessSettingsDot11BeProfilesRead(ctx context.Context, d *schema.
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
 		// Review flatten function used
-		vItem1 := flattenWirelessGet80211BeProfileByIDV1Item(response1.Response)
+		vItem1 := flattenWirelessGet80211BeProfileByIDItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetAll80211BeProfiles search response",
@@ -312,7 +312,7 @@ func resourceWirelessSettingsDot11BeProfilesUpdate(ctx context.Context, d *schem
 	vvID := resourceMap["id"]
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvID)
-		request1 := expandRequestWirelessSettingsDot11BeProfilesUpdate80211BeProfileV1(ctx, "parameters.0", d)
+		request1 := expandRequestWirelessSettingsDot11BeProfilesUpdate80211BeProfile(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.Wireless.Update80211BeProfile(vvID, request1)
 		if err != nil || response1 == nil {
@@ -424,8 +424,9 @@ func resourceWirelessSettingsDot11BeProfilesDelete(ctx context.Context, d *schem
 
 	return diags
 }
-func expandRequestWirelessSettingsDot11BeProfilesCreateA80211BeProfileV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateA80211BeProfileV1 {
-	request := catalystcentersdkgo.RequestWirelessCreateA80211BeProfileV1{}
+
+func expandRequestWirelessSettingsDot11BeProfilesCreateA80211BeProfile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateA80211BeProfile {
+	request := catalystcentersdkgo.RequestWirelessCreateA80211BeProfile{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".profile_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".profile_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".profile_name")))) {
 		request.ProfileName = interfaceToString(v)
 	}
@@ -450,8 +451,8 @@ func expandRequestWirelessSettingsDot11BeProfilesCreateA80211BeProfileV1(ctx con
 	return &request
 }
 
-func expandRequestWirelessSettingsDot11BeProfilesUpdate80211BeProfileV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdate80211BeProfileV1 {
-	request := catalystcentersdkgo.RequestWirelessUpdate80211BeProfileV1{}
+func expandRequestWirelessSettingsDot11BeProfilesUpdate80211BeProfile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdate80211BeProfile {
+	request := catalystcentersdkgo.RequestWirelessUpdate80211BeProfile{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".profile_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".profile_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".profile_name")))) {
 		request.ProfileName = interfaceToString(v)
 	}
@@ -476,10 +477,10 @@ func expandRequestWirelessSettingsDot11BeProfilesUpdate80211BeProfileV1(ctx cont
 	return &request
 }
 
-func searchWirelessGetAll80211BeProfiles(m interface{}, queryParams catalystcentersdkgo.Get80211BeProfilesV1QueryParams, vID string) (*catalystcentersdkgo.ResponseWirelessGet80211BeProfilesV1Response, error) {
+func searchWirelessGetAll80211BeProfiles(m interface{}, queryParams catalystcentersdkgo.Get80211BeProfilesQueryParams, vID string) (*catalystcentersdkgo.ResponseWirelessGet80211BeProfilesResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseWirelessGet80211BeProfilesV1Response
+	var foundItem *catalystcentersdkgo.ResponseWirelessGet80211BeProfilesResponse
 	// var ite *catalystcentersdkgo.ResponseWirelessGetAll80211BeProfiles
 
 	queryParams.Offset = 1

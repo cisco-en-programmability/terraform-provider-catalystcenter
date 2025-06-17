@@ -36,7 +36,7 @@ output "catalystcenter_license_device_count_example" {
 ### Optional
 
 - `device_type` (String) device_type query parameter. Type of device
-- `dna_level` (String) dna_level query parameter. Device Cisco Catalyst License Level
+- `dna_level` (String) dna_level query parameter. Device Cisco DNA License Level
 - `registration_status` (String) registration_status query parameter. Smart license registration status of device
 - `smart_account_id` (String) smart_account_id query parameter. Smart account id
 - `virtual_account_name` (String) virtual_account_name query parameter. Virtual account name

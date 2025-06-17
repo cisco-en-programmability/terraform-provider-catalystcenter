@@ -1,25 +1,25 @@
 
 resource "catalystcenter_pnp_device_site_claim" "example" {
-  provider = meraki
-  parameters {
+  provider = catalystcenter
+  parameters = [{
 
-    config_info {
+    config_info = [{
 
       config_id = "string"
-      config_parameters {
+      config_parameters = [{
 
         key   = "string"
         value = "string"
-      }
-    }
+      }]
+    }]
     device_id = "string"
     gateway   = "string"
     hostname  = "string"
-    image_info {
+    image_info = [{
 
       image_id = "string"
       skip     = "false"
-    }
+    }]
     ip_interface_name = "string"
     rf_profile        = "string"
     sensor_profile    = "string"
@@ -28,7 +28,7 @@ resource "catalystcenter_pnp_device_site_claim" "example" {
     subnet_mask       = "string"
     type              = "string"
     vlan_id           = "string"
-  }
+  }]
 }
 
 output "catalystcenter_pnp_device_site_claim_example" {

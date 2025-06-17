@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -54,26 +54,40 @@ func dataSourceQosDeviceInterfaceInfoCountRead(ctx context.Context, d *schema.Re
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetQosDeviceInterfaceInfoCountV1")
+		log.Printf("[DEBUG] Selected method: GetQosDeviceInterfaceInfoCount")
 
-		response1, restyResp1, err := client.ApplicationPolicy.GetQosDeviceInterfaceInfoCountV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.ApplicationPolicy.GetQosDeviceInterfaceInfoCount()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetQosDeviceInterfaceInfoCountV1", err,
-				"Failure at GetQosDeviceInterfaceInfoCountV1, unexpected response", ""))
+				"Failure when executing 2 GetQosDeviceInterfaceInfoCount", err,
+				"Failure at GetQosDeviceInterfaceInfoCount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenApplicationPolicyGetQosDeviceInterfaceInfoCountV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetQosDeviceInterfaceInfoCount", err,
+				"Failure at GetQosDeviceInterfaceInfoCount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenApplicationPolicyGetQosDeviceInterfaceInfoCountItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetQosDeviceInterfaceInfoCountV1 response",
+				"Failure when setting GetQosDeviceInterfaceInfoCount response",
 				err))
 			return diags
 		}
@@ -85,7 +99,7 @@ func dataSourceQosDeviceInterfaceInfoCountRead(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func flattenApplicationPolicyGetQosDeviceInterfaceInfoCountV1Item(item *catalystcentersdkgo.ResponseApplicationPolicyGetQosDeviceInterfaceInfoCountV1) []map[string]interface{} {
+func flattenApplicationPolicyGetQosDeviceInterfaceInfoCountItem(item *catalystcentersdkgo.ResponseApplicationPolicyGetQosDeviceInterfaceInfoCount) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

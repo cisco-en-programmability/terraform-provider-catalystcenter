@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -208,28 +208,40 @@ func dataSourceLicenseStatusRead(ctx context.Context, d *schema.ResourceData, m 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: SystemLicensingStatusV1")
+		log.Printf("[DEBUG] Selected method: SystemLicensingStatus")
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Licenses.SystemLicensingStatusV1()
+		response1, restyResp1, err := client.Licenses.SystemLicensingStatus()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 SystemLicensingStatusV1", err,
-				"Failure at SystemLicensingStatusV1, unexpected response", ""))
+				"Failure when executing 2 SystemLicensingStatus", err,
+				"Failure at SystemLicensingStatus, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenLicensesSystemLicensingStatusV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 SystemLicensingStatus", err,
+				"Failure at SystemLicensingStatus, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenLicensesSystemLicensingStatusItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting SystemLicensingStatusV1 response",
+				"Failure when setting SystemLicensingStatus response",
 				err))
 			return diags
 		}
@@ -241,14 +253,14 @@ func dataSourceLicenseStatusRead(ctx context.Context, d *schema.ResourceData, m 
 	return diags
 }
 
-func flattenLicensesSystemLicensingStatusV1Item(item *catalystcentersdkgo.ResponseLicensesSystemLicensingStatusV1Response) []map[string]interface{} {
+func flattenLicensesSystemLicensingStatusItem(item *catalystcentersdkgo.ResponseLicensesSystemLicensingStatusResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["registration_status"] = flattenLicensesSystemLicensingStatusV1ItemRegistrationStatus(item.RegistrationStatus)
-	respItem["authorization_status"] = flattenLicensesSystemLicensingStatusV1ItemAuthorizationStatus(item.AuthorizationStatus)
-	respItem["entitlements"] = flattenLicensesSystemLicensingStatusV1ItemEntitlements(item.Entitlements)
+	respItem["registration_status"] = flattenLicensesSystemLicensingStatusItemRegistrationStatus(item.RegistrationStatus)
+	respItem["authorization_status"] = flattenLicensesSystemLicensingStatusItemAuthorizationStatus(item.AuthorizationStatus)
+	respItem["entitlements"] = flattenLicensesSystemLicensingStatusItemEntitlements(item.Entitlements)
 	respItem["smart_account_id"] = item.SmartAccountID
 	respItem["virtual_account_id"] = item.VirtualAccountID
 	respItem["export_control"] = item.ExportControl
@@ -257,7 +269,7 @@ func flattenLicensesSystemLicensingStatusV1Item(item *catalystcentersdkgo.Respon
 	}
 }
 
-func flattenLicensesSystemLicensingStatusV1ItemRegistrationStatus(item *catalystcentersdkgo.ResponseLicensesSystemLicensingStatusV1ResponseRegistrationStatus) []map[string]interface{} {
+func flattenLicensesSystemLicensingStatusItemRegistrationStatus(item *catalystcentersdkgo.ResponseLicensesSystemLicensingStatusResponseRegistrationStatus) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -275,7 +287,7 @@ func flattenLicensesSystemLicensingStatusV1ItemRegistrationStatus(item *catalyst
 
 }
 
-func flattenLicensesSystemLicensingStatusV1ItemAuthorizationStatus(item *catalystcentersdkgo.ResponseLicensesSystemLicensingStatusV1ResponseAuthorizationStatus) []map[string]interface{} {
+func flattenLicensesSystemLicensingStatusItemAuthorizationStatus(item *catalystcentersdkgo.ResponseLicensesSystemLicensingStatusResponseAuthorizationStatus) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -294,7 +306,7 @@ func flattenLicensesSystemLicensingStatusV1ItemAuthorizationStatus(item *catalys
 
 }
 
-func flattenLicensesSystemLicensingStatusV1ItemEntitlements(item *catalystcentersdkgo.ResponseLicensesSystemLicensingStatusV1ResponseEntitlements) []map[string]interface{} {
+func flattenLicensesSystemLicensingStatusItemEntitlements(item *catalystcentersdkgo.ResponseLicensesSystemLicensingStatusResponseEntitlements) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

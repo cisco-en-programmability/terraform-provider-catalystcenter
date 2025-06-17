@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -121,17 +121,17 @@ func resourceBusinessSdaHostonboardingSSIDIPpoolCreate(ctx context.Context, d *s
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestBusinessSdaHostonboardingSSIDIPpoolAddSSIDToIPPoolMappingV1(ctx, "parameters.0", d)
+	request1 := expandRequestBusinessSdaHostonboardingSSIDIPpoolAddSSIDToIPPoolMapping(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vVLANName := resourceItem["vlan_name"]
 	vvVLANName := interfaceToString(vVLANName)
 	vSiteNameHierarchy := resourceItem["site_name_hierarchy"]
 	vvSiteNameHierarchy := interfaceToString(vSiteNameHierarchy)
-	queryParamImport := catalystcentersdkgo.GetSSIDToIPPoolMappingV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetSSIDToIPPoolMappingQueryParams{}
 	queryParamImport.VLANName = vvVLANName
 	queryParamImport.SiteNameHierarchy = vvSiteNameHierarchy
-	item2, _, err := client.FabricWireless.GetSSIDToIPPoolMappingV1(&queryParamImport)
+	item2, _, err := client.FabricWireless.GetSSIDToIPPoolMapping(&queryParamImport)
 	if err != nil || item2 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["vlan_name"] = item2.VLANName
@@ -139,15 +139,15 @@ func resourceBusinessSdaHostonboardingSSIDIPpoolCreate(ctx context.Context, d *s
 		d.SetId(joinResourceID(resourceMap))
 		return resourceBusinessSdaHostonboardingSSIDIPpoolRead(ctx, d, m)
 	}
-	resp1, restyResp1, err := client.FabricWireless.AddSSIDToIPPoolMappingV1(request1)
+	resp1, restyResp1, err := client.FabricWireless.AddSSIDToIPPoolMapping(request1)
 	if err != nil || resp1 == nil {
 		if restyResp1 != nil {
 			diags = append(diags, diagErrorWithResponse(
-				"Failure when executing AddSSIDToIPPoolMappingV1", err, restyResp1.String()))
+				"Failure when executing AddSSIDToIPPoolMapping", err, restyResp1.String()))
 			return diags
 		}
 		diags = append(diags, diagError(
-			"Failure when executing AddSSIDToIPPoolMappingV1", err))
+			"Failure when executing AddSSIDToIPPoolMapping", err))
 		return diags
 	}
 	executionId := resp1.ExecutionID
@@ -180,18 +180,18 @@ func resourceBusinessSdaHostonboardingSSIDIPpoolCreate(ctx context.Context, d *s
 		if response2.Status == "FAILURE" {
 			log.Printf("[DEBUG] Error %s", response2.BapiError)
 			diags = append(diags, diagError(
-				"Failure when executing AddSSIDToIPPoolMappingV1", err))
+				"Failure when executing AddSSIDToIPPoolMapping", err))
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetSSIDToIPPoolMappingV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetSSIDToIPPoolMappingQueryParams{}
 	queryParamValidate.VLANName = vvVLANName
 	queryParamValidate.SiteNameHierarchy = vvSiteNameHierarchy
-	item3, _, err := client.FabricWireless.GetSSIDToIPPoolMappingV1(&queryParamValidate)
+	item3, _, err := client.FabricWireless.GetSSIDToIPPoolMapping(&queryParamValidate)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing AddSSIDToIPPoolMappingV1", err,
-			"Failure at AddSSIDToIPPoolMappingV1, unexpected response", ""))
+			"Failure when executing AddSSIDToIPPoolMapping", err,
+			"Failure at AddSSIDToIPPoolMapping, unexpected response", ""))
 		return diags
 	}
 
@@ -217,8 +217,8 @@ func resourceBusinessSdaHostonboardingSSIDIPpoolRead(ctx context.Context, d *sch
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSSIDToIPPoolMappingV1")
-		queryParams1 := catalystcentersdkgo.GetSSIDToIPPoolMappingV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetSSIDToIPPoolMapping")
+		queryParams1 := catalystcentersdkgo.GetSSIDToIPPoolMappingQueryParams{}
 
 		queryParams1.VLANName = vVLANName
 
@@ -226,7 +226,7 @@ func resourceBusinessSdaHostonboardingSSIDIPpoolRead(ctx context.Context, d *sch
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.FabricWireless.GetSSIDToIPPoolMappingV1(&queryParams1)
+		response1, restyResp1, err := client.FabricWireless.GetSSIDToIPPoolMapping(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
@@ -238,10 +238,10 @@ func resourceBusinessSdaHostonboardingSSIDIPpoolRead(ctx context.Context, d *sch
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenFabricWirelessGetSSIDToIPPoolMappingV1Item(response1)
+		vItem1 := flattenFabricWirelessGetSSIDToIPPoolMappingItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSSIDToIPPoolMappingV1 response",
+				"Failure when setting GetSSIDToIPPoolMapping response",
 				err))
 			return diags
 		}
@@ -258,20 +258,20 @@ func resourceBusinessSdaHostonboardingSSIDIPpoolUpdate(ctx context.Context, d *s
 	var diags diag.Diagnostics
 
 	if d.HasChange("parameters") {
-		request1 := expandRequestBusinessSdaHostonboardingSSIDIPpoolUpdateSSIDToIPPoolMappingV1(ctx, "parameters.0", d)
+		request1 := expandRequestBusinessSdaHostonboardingSSIDIPpoolUpdateSSIDToIPPoolMapping(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-		response1, restyResp1, err := client.FabricWireless.UpdateSSIDToIPPoolMappingV1(request1)
+		response1, restyResp1, err := client.FabricWireless.UpdateSSIDToIPPoolMapping(request1)
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] resty response for update operation => %v", restyResp1.String())
 				diags = append(diags, diagErrorWithAltAndResponse(
-					"Failure when executing UpdateSSIDToIPPoolMappingV1", err, restyResp1.String(),
-					"Failure at UpdateSSIDToIPPoolMappingV1, unexpected response", ""))
+					"Failure when executing UpdateSSIDToIPPoolMapping", err, restyResp1.String(),
+					"Failure at UpdateSSIDToIPPoolMapping, unexpected response", ""))
 				return diags
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing UpdateSSIDToIPPoolMappingV1", err,
-				"Failure at UpdateSSIDToIPPoolMappingV1, unexpected response", ""))
+				"Failure when executing UpdateSSIDToIPPoolMapping", err,
+				"Failure at UpdateSSIDToIPPoolMapping, unexpected response", ""))
 			return diags
 		}
 
@@ -305,7 +305,7 @@ func resourceBusinessSdaHostonboardingSSIDIPpoolUpdate(ctx context.Context, d *s
 			if response2.Status == "FAILURE" {
 				log.Printf("[DEBUG] Error %s", response2.BapiError)
 				diags = append(diags, diagError(
-					"Failure when executing UpdateSSIDToIPPoolMappingV1", err))
+					"Failure when executing UpdateSSIDToIPPoolMapping", err))
 				return diags
 			}
 		}
@@ -317,12 +317,13 @@ func resourceBusinessSdaHostonboardingSSIDIPpoolUpdate(ctx context.Context, d *s
 
 func resourceBusinessSdaHostonboardingSSIDIPpoolDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	// NOTE: Unable to delete BusinessSdaHostonboardingSSIDIPpool on Dna Center
+	// NOTE: Unable to delete BusinessSdaHostonboardingSSIDIPpool on Catalyst Center
 	//       Returning empty diags to delete it on Terraform
 	return diags
 }
-func expandRequestBusinessSdaHostonboardingSSIDIPpoolAddSSIDToIPPoolMappingV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestFabricWirelessAddSSIDToIPPoolMappingV1 {
-	request := catalystcentersdkgo.RequestFabricWirelessAddSSIDToIPPoolMappingV1{}
+
+func expandRequestBusinessSdaHostonboardingSSIDIPpoolAddSSIDToIPPoolMapping(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestFabricWirelessAddSSIDToIPPoolMapping {
+	request := catalystcentersdkgo.RequestFabricWirelessAddSSIDToIPPoolMapping{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".vlan_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".vlan_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".vlan_name")))) {
 		request.VLANName = interfaceToString(v)
 	}
@@ -341,8 +342,8 @@ func expandRequestBusinessSdaHostonboardingSSIDIPpoolAddSSIDToIPPoolMappingV1(ct
 	return &request
 }
 
-func expandRequestBusinessSdaHostonboardingSSIDIPpoolUpdateSSIDToIPPoolMappingV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestFabricWirelessUpdateSSIDToIPPoolMappingV1 {
-	request := catalystcentersdkgo.RequestFabricWirelessUpdateSSIDToIPPoolMappingV1{}
+func expandRequestBusinessSdaHostonboardingSSIDIPpoolUpdateSSIDToIPPoolMapping(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestFabricWirelessUpdateSSIDToIPPoolMapping {
+	request := catalystcentersdkgo.RequestFabricWirelessUpdateSSIDToIPPoolMapping{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".vlan_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".vlan_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".vlan_name")))) {
 		request.VLANName = interfaceToString(v)
 	}

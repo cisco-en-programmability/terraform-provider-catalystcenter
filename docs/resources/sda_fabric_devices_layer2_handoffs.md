@@ -22,7 +22,7 @@ It manages create, read, update and delete operations on SDA.
 ```terraform
 resource "catalystcenter_sda_fabric_devices_layer2_handoffs" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     external_vlan_id  = 1
@@ -44,7 +44,7 @@ output "catalystcenter_sda_fabric_devices_layer2_handoffs_example" {
 
 ### Optional
 
-- `parameters` (Block List) Array of RequestSdaAddFabricDevicesLayer2HandoffsV1 (see [below for nested schema](#nestedblock--parameters))
+- `parameters` (Block List) Array of RequestSdaAddFabricDevicesLayer2Handoffs (see [below for nested schema](#nestedblock--parameters))
 
 ### Read-Only
 

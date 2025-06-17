@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -67,8 +67,8 @@ func dataSourceFieldNoticesResultsNoticesCountRead(ctx context.Context, d *schem
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetCountOfFieldNoticesV1")
-		queryParams1 := catalystcentersdkgo.GetCountOfFieldNoticesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetCountOfFieldNotices")
+		queryParams1 := catalystcentersdkgo.GetCountOfFieldNoticesQueryParams{}
 
 		if okID {
 			queryParams1.ID = vID.(string)
@@ -82,24 +82,36 @@ func dataSourceFieldNoticesResultsNoticesCountRead(ctx context.Context, d *schem
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Compliance.GetCountOfFieldNoticesV1(&queryParams1)
+		response1, restyResp1, err := client.Compliance.GetCountOfFieldNotices(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetCountOfFieldNoticesV1", err,
-				"Failure at GetCountOfFieldNoticesV1, unexpected response", ""))
+				"Failure when executing 2 GetCountOfFieldNotices", err,
+				"Failure at GetCountOfFieldNotices, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenComplianceGetCountOfFieldNoticesV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetCountOfFieldNotices", err,
+				"Failure at GetCountOfFieldNotices, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenComplianceGetCountOfFieldNoticesItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetCountOfFieldNoticesV1 response",
+				"Failure when setting GetCountOfFieldNotices response",
 				err))
 			return diags
 		}
@@ -111,7 +123,7 @@ func dataSourceFieldNoticesResultsNoticesCountRead(ctx context.Context, d *schem
 	return diags
 }
 
-func flattenComplianceGetCountOfFieldNoticesV1Item(item *catalystcentersdkgo.ResponseComplianceGetCountOfFieldNoticesV1Response) []map[string]interface{} {
+func flattenComplianceGetCountOfFieldNoticesItem(item *catalystcentersdkgo.ResponseComplianceGetCountOfFieldNoticesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

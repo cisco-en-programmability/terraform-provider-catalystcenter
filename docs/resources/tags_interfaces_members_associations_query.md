@@ -4,18 +4,20 @@ page_title: "catalystcenter_tags_interfaces_members_associations_query Resource 
 subcategory: ""
 description: |-
   It performs create operation on Tag.
-  Fetches the tags associated with the given interface ids. Interfaces that don't have any tags associated will not be
-  included in the response. A tag is a user-defined or system-defined construct to group resources. When an interface is
-  tagged, it is called a member of the tag. ids can be fetched via /dna/intent/api/v1/interface API.
+  Fetches the tags associated with the given interface ids. Interfaces that don't have any tags associated will not
+  be included in the response. A tag is a user-defined or system-defined construct to group resources. When an interface
+  is tagged, it is called a member of the tag. ids can be fetched via /dna/intent/api/v1/interface API.
 ---
 
 # catalystcenter_tags_interfaces_members_associations_query (Resource)
 
 It performs create operation on Tag.
 
-- Fetches the tags associated with the given interface *ids*. Interfaces that don't have any tags associated will not be
-included in the response. A tag is a user-defined or system-defined construct to group resources. When an interface is
-tagged, it is called a member of the tag. *ids* can be fetched via */dna/intent/api/v1/interface* API.
+- Fetches the tags associated with the given interface **ids**. Interfaces that don't have any tags associated will not
+be included in the response. A tag is a user-defined or system-defined construct to group resources. When an interface
+is tagged, it is called a member of the tag. **ids** can be fetched via **/dna/intent/api/v1/interface** API.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -25,10 +27,10 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_tags_interfaces_members_associations_query" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
     ids = ["string"]
-  }
+  }]
 }
 
 output "catalystcenter_tags_interfaces_members_associations_query_example" {

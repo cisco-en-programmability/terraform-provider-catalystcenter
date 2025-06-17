@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -214,7 +214,7 @@ func resourceWirelessSettingsPowerProfilesIDRead(ctx context.Context, d *schema.
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessGetPowerProfileByIDV1Item(response1.Response)
+		vItem1 := flattenWirelessGetPowerProfileByIDItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetPowerProfileByID response",
@@ -237,7 +237,7 @@ func resourceWirelessSettingsPowerProfilesIDUpdate(ctx context.Context, d *schem
 	vvID := resourceMap["id"]
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvID)
-		request1 := expandRequestWirelessSettingsPowerProfilesIDUpdatePowerProfileByIDV1(ctx, "parameters.0", d)
+		request1 := expandRequestWirelessSettingsPowerProfilesIDUpdatePowerProfileByID(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.Wireless.UpdatePowerProfileByID(vvID, request1)
 		if err != nil || response1 == nil {
@@ -347,8 +347,9 @@ func resourceWirelessSettingsPowerProfilesIDDelete(ctx context.Context, d *schem
 
 	return diags
 }
-func expandRequestWirelessSettingsPowerProfilesIDUpdatePowerProfileByIDV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdatePowerProfileByIDV1 {
-	request := catalystcentersdkgo.RequestWirelessUpdatePowerProfileByIDV1{}
+
+func expandRequestWirelessSettingsPowerProfilesIDUpdatePowerProfileByID(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdatePowerProfileByID {
+	request := catalystcentersdkgo.RequestWirelessUpdatePowerProfileByID{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".profile_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".profile_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".profile_name")))) {
 		request.ProfileName = interfaceToString(v)
 	}
@@ -356,7 +357,7 @@ func expandRequestWirelessSettingsPowerProfilesIDUpdatePowerProfileByIDV1(ctx co
 		request.Description = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rules")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rules")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rules")))) {
-		request.Rules = expandRequestWirelessSettingsPowerProfilesIDUpdatePowerProfileByIDV1RulesArray(ctx, key+".rules", d)
+		request.Rules = expandRequestWirelessSettingsPowerProfilesIDUpdatePowerProfileByIDRulesArray(ctx, key+".rules", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -364,8 +365,8 @@ func expandRequestWirelessSettingsPowerProfilesIDUpdatePowerProfileByIDV1(ctx co
 	return &request
 }
 
-func expandRequestWirelessSettingsPowerProfilesIDUpdatePowerProfileByIDV1RulesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessUpdatePowerProfileByIDV1Rules {
-	request := []catalystcentersdkgo.RequestWirelessUpdatePowerProfileByIDV1Rules{}
+func expandRequestWirelessSettingsPowerProfilesIDUpdatePowerProfileByIDRulesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessUpdatePowerProfileByIDRules {
+	request := []catalystcentersdkgo.RequestWirelessUpdatePowerProfileByIDRules{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -376,7 +377,7 @@ func expandRequestWirelessSettingsPowerProfilesIDUpdatePowerProfileByIDV1RulesAr
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestWirelessSettingsPowerProfilesIDUpdatePowerProfileByIDV1Rules(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestWirelessSettingsPowerProfilesIDUpdatePowerProfileByIDRules(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -387,8 +388,8 @@ func expandRequestWirelessSettingsPowerProfilesIDUpdatePowerProfileByIDV1RulesAr
 	return &request
 }
 
-func expandRequestWirelessSettingsPowerProfilesIDUpdatePowerProfileByIDV1Rules(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdatePowerProfileByIDV1Rules {
-	request := catalystcentersdkgo.RequestWirelessUpdatePowerProfileByIDV1Rules{}
+func expandRequestWirelessSettingsPowerProfilesIDUpdatePowerProfileByIDRules(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdatePowerProfileByIDRules {
+	request := catalystcentersdkgo.RequestWirelessUpdatePowerProfileByIDRules{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".interface_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".interface_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".interface_type")))) {
 		request.InterfaceType = interfaceToString(v)
 	}

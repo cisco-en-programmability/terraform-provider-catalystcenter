@@ -20,7 +20,7 @@ Devices currently provisioned cannot be deleted. To delete a provisioned device,
 ```terraform
 resource "catalystcenter_network_device" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     id = "string"

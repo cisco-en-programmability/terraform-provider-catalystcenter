@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -304,31 +304,45 @@ func dataSourceWirelessRfProfileRead(ctx context.Context, d *schema.ResourceData
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveRfProfilesV1")
-		queryParams1 := catalystcentersdkgo.RetrieveRfProfilesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: RetrieveRfProfiles")
+		queryParams1 := catalystcentersdkgo.RetrieveRfProfilesQueryParams{}
 
 		if okRfProfileName {
 			queryParams1.RfProfileName = vRfProfileName.(string)
 		}
 
-		response1, restyResp1, err := client.Wireless.RetrieveRfProfilesV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Wireless.RetrieveRfProfiles(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveRfProfilesV1", err,
-				"Failure at RetrieveRfProfilesV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveRfProfiles", err,
+				"Failure at RetrieveRfProfiles, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessRetrieveRfProfilesV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveRfProfiles", err,
+				"Failure at RetrieveRfProfiles, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenWirelessRetrieveRfProfilesItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveRfProfilesV1 response",
+				"Failure when setting RetrieveRfProfiles response",
 				err))
 			return diags
 		}
@@ -340,7 +354,7 @@ func dataSourceWirelessRfProfileRead(ctx context.Context, d *schema.ResourceData
 	return diags
 }
 
-func flattenWirelessRetrieveRfProfilesV1Item(item *catalystcentersdkgo.ResponseWirelessRetrieveRfProfilesV1) []map[string]interface{} {
+func flattenWirelessRetrieveRfProfilesItem(item *catalystcentersdkgo.ResponseWirelessRetrieveRfProfiles) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -352,16 +366,16 @@ func flattenWirelessRetrieveRfProfilesV1Item(item *catalystcentersdkgo.ResponseW
 	respItem["channel_width"] = item.ChannelWidth
 	respItem["enable_custom"] = boolPtrToString(item.EnableCustom)
 	respItem["enable_brown_field"] = boolPtrToString(item.EnableBrownField)
-	respItem["radio_type_a_properties"] = flattenWirelessRetrieveRfProfilesV1ItemRadioTypeAProperties(item.RadioTypeAProperties)
-	respItem["radio_type_b_properties"] = flattenWirelessRetrieveRfProfilesV1ItemRadioTypeBProperties(item.RadioTypeBProperties)
-	respItem["radio_type_c_properties"] = flattenWirelessRetrieveRfProfilesV1ItemRadioTypeCProperties(item.RadioTypeCProperties)
+	respItem["radio_type_a_properties"] = flattenWirelessRetrieveRfProfilesItemRadioTypeAProperties(item.RadioTypeAProperties)
+	respItem["radio_type_b_properties"] = flattenWirelessRetrieveRfProfilesItemRadioTypeBProperties(item.RadioTypeBProperties)
+	respItem["radio_type_c_properties"] = flattenWirelessRetrieveRfProfilesItemRadioTypeCProperties(item.RadioTypeCProperties)
 	respItem["enable_radio_type_c"] = boolPtrToString(item.EnableRadioTypeC)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenWirelessRetrieveRfProfilesV1ItemRadioTypeAProperties(item *catalystcentersdkgo.ResponseWirelessRetrieveRfProfilesV1RadioTypeAProperties) []map[string]interface{} {
+func flattenWirelessRetrieveRfProfilesItemRadioTypeAProperties(item *catalystcentersdkgo.ResponseWirelessRetrieveRfProfilesRadioTypeAProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -381,7 +395,7 @@ func flattenWirelessRetrieveRfProfilesV1ItemRadioTypeAProperties(item *catalystc
 
 }
 
-func flattenWirelessRetrieveRfProfilesV1ItemRadioTypeBProperties(item *catalystcentersdkgo.ResponseWirelessRetrieveRfProfilesV1RadioTypeBProperties) []map[string]interface{} {
+func flattenWirelessRetrieveRfProfilesItemRadioTypeBProperties(item *catalystcentersdkgo.ResponseWirelessRetrieveRfProfilesRadioTypeBProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -401,7 +415,7 @@ func flattenWirelessRetrieveRfProfilesV1ItemRadioTypeBProperties(item *catalystc
 
 }
 
-func flattenWirelessRetrieveRfProfilesV1ItemRadioTypeCProperties(item *catalystcentersdkgo.ResponseWirelessRetrieveRfProfilesV1RadioTypeCProperties) []map[string]interface{} {
+func flattenWirelessRetrieveRfProfilesItemRadioTypeCProperties(item *catalystcentersdkgo.ResponseWirelessRetrieveRfProfilesRadioTypeCProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

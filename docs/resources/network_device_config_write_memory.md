@@ -12,6 +12,8 @@ description: |-
 It performs create operation on Configuration Archive.
 
 - This operation would commit device running configuration to startup by issuing "write memory" to device
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -21,10 +23,10 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_network_device_config_write_memory" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
     device_id = ["string"]
-  }
+  }]
 }
 
 output "catalystcenter_network_device_config_write_memory_example" {

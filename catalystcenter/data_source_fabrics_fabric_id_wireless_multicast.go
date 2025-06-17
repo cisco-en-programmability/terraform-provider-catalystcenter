@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -57,29 +57,41 @@ func dataSourceFabricsFabricIDWirelessMulticastRead(ctx context.Context, d *sche
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSdaWirelessMulticastV1")
+		log.Printf("[DEBUG] Selected method: GetSdaWirelessMulticast")
 		vvFabricID := vFabricID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.FabricWireless.GetSdaWirelessMulticastV1(vvFabricID)
+		response1, restyResp1, err := client.FabricWireless.GetSdaWirelessMulticast(vvFabricID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSdaWirelessMulticastV1", err,
-				"Failure at GetSdaWirelessMulticastV1, unexpected response", ""))
+				"Failure when executing 2 GetSdaWirelessMulticast", err,
+				"Failure at GetSdaWirelessMulticast, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenFabricWirelessGetSdaWirelessMulticastV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetSdaWirelessMulticast", err,
+				"Failure at GetSdaWirelessMulticast, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenFabricWirelessGetSdaWirelessMulticastItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSdaWirelessMulticastV1 response",
+				"Failure when setting GetSdaWirelessMulticast response",
 				err))
 			return diags
 		}
@@ -91,7 +103,7 @@ func dataSourceFabricsFabricIDWirelessMulticastRead(ctx context.Context, d *sche
 	return diags
 }
 
-func flattenFabricWirelessGetSdaWirelessMulticastV1Item(item *catalystcentersdkgo.ResponseFabricWirelessGetSdaWirelessMulticastV1Response) []map[string]interface{} {
+func flattenFabricWirelessGetSdaWirelessMulticastItem(item *catalystcentersdkgo.ResponseFabricWirelessGetSdaWirelessMulticastResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

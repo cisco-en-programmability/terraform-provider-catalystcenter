@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -216,27 +216,27 @@ func resourcePnpDeviceClaimCreate(ctx context.Context, d *schema.ResourceData, m
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestPnpDeviceClaimClaimDeviceV1(ctx, "parameters.0", d)
+	request1 := expandRequestPnpDeviceClaimClaimDevice(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.DeviceOnboardingPnp.ClaimDeviceV1(request1)
+	response1, restyResp1, err := client.DeviceOnboardingPnp.ClaimDevice(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ClaimDeviceV1", err))
+			"Failure when executing ClaimDevice", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItem1 := flattenDeviceOnboardingPnpClaimDeviceV1Item(response1)
+	vItem1 := flattenDeviceOnboardingPnpClaimDeviceItem(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ClaimDeviceV1 response",
+			"Failure when setting ClaimDevice response",
 			err))
 		return diags
 	}
@@ -260,8 +260,8 @@ func resourcePnpDeviceClaimDelete(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func expandRequestPnpDeviceClaimClaimDeviceV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceV1 {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceV1{}
+func expandRequestPnpDeviceClaimClaimDevice(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDevice {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDevice{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".config_file_url")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".config_file_url")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".config_file_url")))) {
 		request.ConfigFileURL = interfaceToString(v)
 	}
@@ -269,7 +269,7 @@ func expandRequestPnpDeviceClaimClaimDeviceV1(ctx context.Context, key string, d
 		request.ConfigID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_claim_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_claim_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_claim_list")))) {
-		request.DeviceClaimList = expandRequestPnpDeviceClaimClaimDeviceV1DeviceClaimListArray(ctx, key+".device_claim_list", d)
+		request.DeviceClaimList = expandRequestPnpDeviceClaimClaimDeviceDeviceClaimListArray(ctx, key+".device_claim_list", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".file_service_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".file_service_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".file_service_id")))) {
 		request.FileServiceID = interfaceToString(v)
@@ -295,8 +295,8 @@ func expandRequestPnpDeviceClaimClaimDeviceV1(ctx context.Context, key string, d
 	return &request
 }
 
-func expandRequestPnpDeviceClaimClaimDeviceV1DeviceClaimListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceV1DeviceClaimList {
-	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceV1DeviceClaimList{}
+func expandRequestPnpDeviceClaimClaimDeviceDeviceClaimListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceDeviceClaimList {
+	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceDeviceClaimList{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -307,7 +307,7 @@ func expandRequestPnpDeviceClaimClaimDeviceV1DeviceClaimListArray(ctx context.Co
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestPnpDeviceClaimClaimDeviceV1DeviceClaimList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestPnpDeviceClaimClaimDeviceDeviceClaimList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -315,10 +315,10 @@ func expandRequestPnpDeviceClaimClaimDeviceV1DeviceClaimListArray(ctx context.Co
 	return &request
 }
 
-func expandRequestPnpDeviceClaimClaimDeviceV1DeviceClaimList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceV1DeviceClaimList {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceV1DeviceClaimList{}
+func expandRequestPnpDeviceClaimClaimDeviceDeviceClaimList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceDeviceClaimList {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceDeviceClaimList{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".config_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".config_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".config_list")))) {
-		request.ConfigList = expandRequestPnpDeviceClaimClaimDeviceV1DeviceClaimListConfigListArray(ctx, key+".config_list", d)
+		request.ConfigList = expandRequestPnpDeviceClaimClaimDeviceDeviceClaimListConfigListArray(ctx, key+".config_list", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_id")))) {
 		request.DeviceID = interfaceToString(v)
@@ -335,8 +335,8 @@ func expandRequestPnpDeviceClaimClaimDeviceV1DeviceClaimList(ctx context.Context
 	return &request
 }
 
-func expandRequestPnpDeviceClaimClaimDeviceV1DeviceClaimListConfigListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceV1DeviceClaimListConfigList {
-	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceV1DeviceClaimListConfigList{}
+func expandRequestPnpDeviceClaimClaimDeviceDeviceClaimListConfigListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceDeviceClaimListConfigList {
+	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceDeviceClaimListConfigList{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -347,7 +347,7 @@ func expandRequestPnpDeviceClaimClaimDeviceV1DeviceClaimListConfigListArray(ctx 
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestPnpDeviceClaimClaimDeviceV1DeviceClaimListConfigList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestPnpDeviceClaimClaimDeviceDeviceClaimListConfigList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -355,19 +355,19 @@ func expandRequestPnpDeviceClaimClaimDeviceV1DeviceClaimListConfigListArray(ctx 
 	return &request
 }
 
-func expandRequestPnpDeviceClaimClaimDeviceV1DeviceClaimListConfigList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceV1DeviceClaimListConfigList {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceV1DeviceClaimListConfigList{}
+func expandRequestPnpDeviceClaimClaimDeviceDeviceClaimListConfigList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceDeviceClaimListConfigList {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceDeviceClaimListConfigList{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".config_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".config_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".config_id")))) {
 		request.ConfigID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".config_parameters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".config_parameters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".config_parameters")))) {
-		request.ConfigParameters = expandRequestPnpDeviceClaimClaimDeviceV1DeviceClaimListConfigListConfigParametersArray(ctx, key+".config_parameters", d)
+		request.ConfigParameters = expandRequestPnpDeviceClaimClaimDeviceDeviceClaimListConfigListConfigParametersArray(ctx, key+".config_parameters", d)
 	}
 	return &request
 }
 
-func expandRequestPnpDeviceClaimClaimDeviceV1DeviceClaimListConfigListConfigParametersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceV1DeviceClaimListConfigListConfigParameters {
-	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceV1DeviceClaimListConfigListConfigParameters{}
+func expandRequestPnpDeviceClaimClaimDeviceDeviceClaimListConfigListConfigParametersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceDeviceClaimListConfigListConfigParameters {
+	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceDeviceClaimListConfigListConfigParameters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -378,7 +378,7 @@ func expandRequestPnpDeviceClaimClaimDeviceV1DeviceClaimListConfigListConfigPara
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestPnpDeviceClaimClaimDeviceV1DeviceClaimListConfigListConfigParameters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestPnpDeviceClaimClaimDeviceDeviceClaimListConfigListConfigParameters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -386,8 +386,8 @@ func expandRequestPnpDeviceClaimClaimDeviceV1DeviceClaimListConfigListConfigPara
 	return &request
 }
 
-func expandRequestPnpDeviceClaimClaimDeviceV1DeviceClaimListConfigListConfigParameters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceV1DeviceClaimListConfigListConfigParameters {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceV1DeviceClaimListConfigListConfigParameters{}
+func expandRequestPnpDeviceClaimClaimDeviceDeviceClaimListConfigListConfigParameters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceDeviceClaimListConfigListConfigParameters {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpClaimDeviceDeviceClaimListConfigListConfigParameters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -397,13 +397,13 @@ func expandRequestPnpDeviceClaimClaimDeviceV1DeviceClaimListConfigListConfigPara
 	return &request
 }
 
-func flattenDeviceOnboardingPnpClaimDeviceV1Item(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpClaimDeviceV1) []map[string]interface{} {
+func flattenDeviceOnboardingPnpClaimDeviceItem(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpClaimDevice) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["json_array_response"] = flattenDeviceOnboardingPnpClaimDeviceV1ItemJSONArrayResponse(item.JSONArrayResponse)
-	respItem["json_response"] = flattenDeviceOnboardingPnpClaimDeviceV1ItemJSONResponse(item.JSONResponse)
+	respItem["json_array_response"] = flattenDeviceOnboardingPnpClaimDeviceItemJSONArrayResponse(item.JSONArrayResponse)
+	respItem["json_response"] = flattenDeviceOnboardingPnpClaimDeviceItemJSONResponse(item.JSONResponse)
 	respItem["message"] = item.Message
 	respItem["status_code"] = item.StatusCode
 	return []map[string]interface{}{
@@ -411,7 +411,7 @@ func flattenDeviceOnboardingPnpClaimDeviceV1Item(item *catalystcentersdkgo.Respo
 	}
 }
 
-func flattenDeviceOnboardingPnpClaimDeviceV1ItemJSONArrayResponse(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpClaimDeviceV1JSONArrayResponse) []interface{} {
+func flattenDeviceOnboardingPnpClaimDeviceItemJSONArrayResponse(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpClaimDeviceJSONArrayResponse) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -423,7 +423,7 @@ func flattenDeviceOnboardingPnpClaimDeviceV1ItemJSONArrayResponse(items *[]catal
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpClaimDeviceV1ItemJSONResponse(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpClaimDeviceV1JSONResponse) interface{} {
+func flattenDeviceOnboardingPnpClaimDeviceItemJSONResponse(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpClaimDeviceJSONResponse) interface{} {
 	if item == nil {
 		return nil
 	}

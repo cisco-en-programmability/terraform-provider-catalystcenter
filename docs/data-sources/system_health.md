@@ -36,8 +36,8 @@ output "catalystcenter_system_health_example" {
 ### Optional
 
 - `domain` (String) domain query parameter. Fetch system events with this domain. Possible values of domain are listed here : /dna/platform/app/consumer-portal/developer-toolkit/events
-- `limit` (Number) limit query parameter.
-- `offset` (Number) offset query parameter.
+- `limit` (Number) limit query parameter. Specifies the maximum number of system health events to return per page. Must be an integer between 1 and 50, inclusive
+- `offset` (Number) offset query parameter. Specifies the starting point for the list of system health events to return. Must be an integer greater than or equal to 0
 - `subdomain` (String) subdomain query parameter. Fetch system events with this subdomain. Possible values of subdomain are listed here : /dna/platform/app/consumer-portal/developer-toolkit/events
 - `summary` (Boolean) summary query parameter. Fetch the latest high severity event
 

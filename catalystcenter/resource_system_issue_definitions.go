@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -203,7 +203,7 @@ func resourceSystemIssueDefinitionsRead(ctx context.Context, d *schema.ResourceD
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 		// Review flatten function used
-		vItem1 := flattenIssuesGetIssueTriggerDefinitionForGivenIDV1Item(response1.Response)
+		vItem1 := flattenIssuesGetIssueTriggerDefinitionForGivenIDItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting ReturnsAllIssueTriggerDefinitionsForGivenFilters search response",
@@ -225,7 +225,7 @@ func resourceSystemIssueDefinitionsUpdate(ctx context.Context, d *schema.Resourc
 	vvID := resourceMap["id"]
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvID)
-		request1 := expandRequestSystemIssueDefinitionsIssueTriggerDefinitionUpdateV1(ctx, "parameters.0", d)
+		request1 := expandRequestSystemIssueDefinitionsIssueTriggerDefinitionUpdate(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.Issues.IssueTriggerDefinitionUpdate(vvID, request1)
 		if err != nil || response1 == nil {
@@ -257,8 +257,9 @@ func resourceSystemIssueDefinitionsDelete(ctx context.Context, d *schema.Resourc
 		"Failure at SystemIssueDefinitionsDelete, unexpected response", ""))
 	return diags
 }
-func expandRequestSystemIssueDefinitionsIssueTriggerDefinitionUpdateV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesIssueTriggerDefinitionUpdateV1 {
-	request := catalystcentersdkgo.RequestIssuesIssueTriggerDefinitionUpdateV1{}
+
+func expandRequestSystemIssueDefinitionsIssueTriggerDefinitionUpdate(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesIssueTriggerDefinitionUpdate {
+	request := catalystcentersdkgo.RequestIssuesIssueTriggerDefinitionUpdate{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".synchronize_to_health_threshold")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".synchronize_to_health_threshold")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".synchronize_to_health_threshold")))) {
 		request.SynchronizeToHealthThreshold = interfaceToBoolPtr(v)
 	}

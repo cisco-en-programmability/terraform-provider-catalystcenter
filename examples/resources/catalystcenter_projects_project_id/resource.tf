@@ -1,15 +1,15 @@
 
 resource "catalystcenter_projects_project_id" "example" {
-    provider = catalystcenter
+  provider = catalystcenter
+ 
+  parameters {
 
-    parameters {
-
-      description = "string"
-      name = "string"
-      project_id = "string"
-    }
+    description = "string"
+    name        = "string"
+    project_id  = "string"
+  }
 }
 
 output "catalystcenter_projects_project_id_example" {
-    value = catalystcenter_projects_project_id.example
+  value = catalystcenter_projects_project_id.example
 }

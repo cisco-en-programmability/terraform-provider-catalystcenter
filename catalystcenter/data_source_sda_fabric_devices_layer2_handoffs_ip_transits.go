@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -27,7 +27,7 @@ func dataSourceSdaFabricDevicesLayer2HandoffsIPTransits() *schema.Resource {
 				Required: true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter. Maximum number of records to return.
+				Description: `limit query parameter. Maximum number of records to return. The maximum number of objects supported in a single request is 500.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -159,8 +159,8 @@ func dataSourceSdaFabricDevicesLayer2HandoffsIPTransitsRead(ctx context.Context,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetFabricDevicesLayer3HandoffsWithIPTransitV1")
-		queryParams1 := catalystcentersdkgo.GetFabricDevicesLayer3HandoffsWithIPTransitV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetFabricDevicesLayer3HandoffsWithIPTransit")
+		queryParams1 := catalystcentersdkgo.GetFabricDevicesLayer3HandoffsWithIPTransitQueryParams{}
 
 		queryParams1.FabricID = vFabricID.(string)
 
@@ -174,24 +174,38 @@ func dataSourceSdaFabricDevicesLayer2HandoffsIPTransitsRead(ctx context.Context,
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.Sda.GetFabricDevicesLayer3HandoffsWithIPTransitV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sda.GetFabricDevicesLayer3HandoffsWithIPTransit(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetFabricDevicesLayer3HandoffsWithIPTransitV1", err,
-				"Failure at GetFabricDevicesLayer3HandoffsWithIPTransitV1, unexpected response", ""))
+				"Failure when executing 2 GetFabricDevicesLayer3HandoffsWithIPTransit", err,
+				"Failure at GetFabricDevicesLayer3HandoffsWithIPTransit, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaGetFabricDevicesLayer3HandoffsWithIPTransitV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetFabricDevicesLayer3HandoffsWithIPTransit", err,
+				"Failure at GetFabricDevicesLayer3HandoffsWithIPTransit, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSdaGetFabricDevicesLayer3HandoffsWithIPTransitItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetFabricDevicesLayer3HandoffsWithIPTransitV1 response",
+				"Failure when setting GetFabricDevicesLayer3HandoffsWithIPTransit response",
 				err))
 			return diags
 		}
@@ -203,7 +217,7 @@ func dataSourceSdaFabricDevicesLayer2HandoffsIPTransitsRead(ctx context.Context,
 	return diags
 }
 
-func flattenSdaGetFabricDevicesLayer3HandoffsWithIPTransitV1Items(items *[]catalystcentersdkgo.ResponseSdaGetFabricDevicesLayer3HandoffsWithIPTransitV1Response) []map[string]interface{} {
+func flattenSdaGetFabricDevicesLayer3HandoffsWithIPTransitItems(items *[]catalystcentersdkgo.ResponseSdaGetFabricDevicesLayer3HandoffsWithIPTransitResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

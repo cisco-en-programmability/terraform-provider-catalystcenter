@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -46,26 +46,40 @@ func dataSourceEventArtifactCountRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: EventArtifactCountV1")
+		log.Printf("[DEBUG] Selected method: EventArtifactCount")
 
-		response1, restyResp1, err := client.EventManagement.EventArtifactCountV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.EventManagement.EventArtifactCount()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 EventArtifactCountV1", err,
-				"Failure at EventArtifactCountV1, unexpected response", ""))
+				"Failure when executing 2 EventArtifactCount", err,
+				"Failure at EventArtifactCount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenEventManagementEventArtifactCountV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 EventArtifactCount", err,
+				"Failure at EventArtifactCount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenEventManagementEventArtifactCountItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting EventArtifactCountV1 response",
+				"Failure when setting EventArtifactCount response",
 				err))
 			return diags
 		}
@@ -77,7 +91,7 @@ func dataSourceEventArtifactCountRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenEventManagementEventArtifactCountV1Item(item *catalystcentersdkgo.ResponseEventManagementEventArtifactCountV1) []map[string]interface{} {
+func flattenEventManagementEventArtifactCountItem(item *catalystcentersdkgo.ResponseEventManagementEventArtifactCount) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

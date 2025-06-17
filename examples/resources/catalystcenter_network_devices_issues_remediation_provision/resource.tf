@@ -1,10 +1,10 @@
 
 resource "catalystcenter_network_devices_issues_remediation_provision" "example" {
-  provider = meraki
+  provider = catalystcenter
   id       = "string"
-  parameters {
+  parameters = [{
 
-  }
+  }]
 }
 
 output "catalystcenter_network_devices_issues_remediation_provision_example" {

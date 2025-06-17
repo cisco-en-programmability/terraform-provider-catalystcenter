@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -1370,27 +1370,27 @@ func resourceSensorTestTemplateDuplicateCreate(ctx context.Context, d *schema.Re
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestSensorTestTemplateDuplicateDuplicateSensorTestTemplateV1(ctx, "parameters.0", d)
+	request1 := expandRequestSensorTestTemplateDuplicateDuplicateSensorTestTemplate(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Sensors.DuplicateSensorTestTemplateV1(request1)
+	response1, restyResp1, err := client.Sensors.DuplicateSensorTestTemplate(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing DuplicateSensorTestTemplateV1", err))
+			"Failure when executing DuplicateSensorTestTemplate", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItem1 := flattenSensorsDuplicateSensorTestTemplateV1Item(response1.Response)
+	vItem1 := flattenSensorsDuplicateSensorTestTemplateItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting DuplicateSensorTestTemplateV1 response",
+			"Failure when setting DuplicateSensorTestTemplate response",
 			err))
 		return diags
 	}
@@ -1412,8 +1412,8 @@ func resourceSensorTestTemplateDuplicateDelete(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func expandRequestSensorTestTemplateDuplicateDuplicateSensorTestTemplateV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsDuplicateSensorTestTemplateV1 {
-	request := catalystcentersdkgo.RequestSensorsDuplicateSensorTestTemplateV1{}
+func expandRequestSensorTestTemplateDuplicateDuplicateSensorTestTemplate(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsDuplicateSensorTestTemplate {
+	request := catalystcentersdkgo.RequestSensorsDuplicateSensorTestTemplate{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".template_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".template_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".template_name")))) {
 		request.TemplateName = interfaceToString(v)
 	}
@@ -1423,7 +1423,7 @@ func expandRequestSensorTestTemplateDuplicateDuplicateSensorTestTemplateV1(ctx c
 	return &request
 }
 
-func flattenSensorsDuplicateSensorTestTemplateV1Item(item *catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateV1Response) []map[string]interface{} {
+func flattenSensorsDuplicateSensorTestTemplateItem(item *catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1440,27 +1440,27 @@ func flattenSensorsDuplicateSensorTestTemplateV1Item(item *catalystcentersdkgo.R
 	respItem["status"] = item.Status
 	respItem["connection"] = item.Connection
 	respItem["action_in_progress"] = item.ActionInProgress
-	respItem["frequency"] = flattenSensorsDuplicateSensorTestTemplateV1ItemFrequency(item.Frequency)
+	respItem["frequency"] = flattenSensorsDuplicateSensorTestTemplateItemFrequency(item.Frequency)
 	respItem["rssi_threshold"] = item.RssiThreshold
 	respItem["num_neighbor_apthreshold"] = item.NumNeighborApThreshold
 	respItem["schedule_in_days"] = item.ScheduleInDays
 	respItem["wlans"] = item.WLANs
-	respItem["ssids"] = flattenSensorsDuplicateSensorTestTemplateV1ItemSSIDs(item.SSIDs)
-	respItem["profiles"] = flattenSensorsDuplicateSensorTestTemplateV1ItemProfiles(item.Profiles)
+	respItem["ssids"] = flattenSensorsDuplicateSensorTestTemplateItemSSIDs(item.SSIDs)
+	respItem["profiles"] = flattenSensorsDuplicateSensorTestTemplateItemProfiles(item.Profiles)
 	respItem["test_schedule_mode"] = item.TestScheduleMode
 	respItem["show_wlc_upgrade_banner"] = boolPtrToString(item.ShowWlcUpgradeBanner)
 	respItem["radio_as_sensor_removed"] = boolPtrToString(item.RadioAsSensorRemoved)
 	respItem["encryption_mode"] = item.EncryptionMode
 	respItem["run_now"] = item.RunNow
-	respItem["location_info_list"] = flattenSensorsDuplicateSensorTestTemplateV1ItemLocationInfoList(item.LocationInfoList)
-	respItem["sensors"] = flattenSensorsDuplicateSensorTestTemplateV1ItemSensors(item.Sensors)
-	respItem["ap_coverage"] = flattenSensorsDuplicateSensorTestTemplateV1ItemApCoverage(item.ApCoverage)
+	respItem["location_info_list"] = flattenSensorsDuplicateSensorTestTemplateItemLocationInfoList(item.LocationInfoList)
+	respItem["sensors"] = flattenSensorsDuplicateSensorTestTemplateItemSensors(item.Sensors)
+	respItem["ap_coverage"] = flattenSensorsDuplicateSensorTestTemplateItemApCoverage(item.ApCoverage)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenSensorsDuplicateSensorTestTemplateV1ItemFrequency(item *catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateV1ResponseFrequency) []map[string]interface{} {
+func flattenSensorsDuplicateSensorTestTemplateItemFrequency(item *catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateResponseFrequency) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1474,7 +1474,7 @@ func flattenSensorsDuplicateSensorTestTemplateV1ItemFrequency(item *catalystcent
 
 }
 
-func flattenSensorsDuplicateSensorTestTemplateV1ItemSSIDs(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateV1ResponseSSIDs) []map[string]interface{} {
+func flattenSensorsDuplicateSensorTestTemplateItemSSIDs(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateResponseSSIDs) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1490,7 +1490,7 @@ func flattenSensorsDuplicateSensorTestTemplateV1ItemSSIDs(items *[]catalystcente
 		respItem["layer3web_authuser_name"] = item.Layer3WebAuthuserName
 		respItem["layer3web_authpassword"] = item.Layer3WebAuthpassword
 		respItem["layer3web_auth_email_address"] = item.Layer3WebAuthEmailAddress
-		respItem["third_party"] = flattenSensorsDuplicateSensorTestTemplateV1ItemSSIDsThirdParty(item.ThirdParty)
+		respItem["third_party"] = flattenSensorsDuplicateSensorTestTemplateItemSSIDsThirdParty(item.ThirdParty)
 		respItem["id"] = item.ID
 		respItem["wlan_id"] = item.WLANID
 		respItem["wlc"] = item.Wlc
@@ -1519,15 +1519,15 @@ func flattenSensorsDuplicateSensorTestTemplateV1ItemSSIDs(items *[]catalystcente
 		respItem["white_list"] = boolPtrToString(item.WhiteList)
 		respItem["ext_web_auth_portal"] = item.ExtWebAuthPortal
 		respItem["ext_web_auth_access_url"] = item.ExtWebAuthAccessURL
-		respItem["ext_web_auth_html_tag"] = flattenSensorsDuplicateSensorTestTemplateV1ItemSSIDsExtWebAuthHTMLTag(item.ExtWebAuthHTMLTag)
+		respItem["ext_web_auth_html_tag"] = flattenSensorsDuplicateSensorTestTemplateItemSSIDsExtWebAuthHTMLTag(item.ExtWebAuthHTMLTag)
 		respItem["qos_policy"] = item.QosPolicy
-		respItem["tests"] = flattenSensorsDuplicateSensorTestTemplateV1ItemSSIDsTests(item.Tests)
+		respItem["tests"] = flattenSensorsDuplicateSensorTestTemplateItemSSIDsTests(item.Tests)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSensorsDuplicateSensorTestTemplateV1ItemSSIDsThirdParty(item *catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateV1ResponseSSIDsThirdParty) []map[string]interface{} {
+func flattenSensorsDuplicateSensorTestTemplateItemSSIDsThirdParty(item *catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateResponseSSIDsThirdParty) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1540,7 +1540,7 @@ func flattenSensorsDuplicateSensorTestTemplateV1ItemSSIDsThirdParty(item *cataly
 
 }
 
-func flattenSensorsDuplicateSensorTestTemplateV1ItemSSIDsExtWebAuthHTMLTag(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateV1ResponseSSIDsExtWebAuthHTMLTag) []map[string]interface{} {
+func flattenSensorsDuplicateSensorTestTemplateItemSSIDsExtWebAuthHTMLTag(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateResponseSSIDsExtWebAuthHTMLTag) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1555,7 +1555,7 @@ func flattenSensorsDuplicateSensorTestTemplateV1ItemSSIDsExtWebAuthHTMLTag(items
 	return respItems
 }
 
-func flattenSensorsDuplicateSensorTestTemplateV1ItemSSIDsTests(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateV1ResponseSSIDsTests) []map[string]interface{} {
+func flattenSensorsDuplicateSensorTestTemplateItemSSIDsTests(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateResponseSSIDsTests) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1563,13 +1563,13 @@ func flattenSensorsDuplicateSensorTestTemplateV1ItemSSIDsTests(items *[]catalyst
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["name"] = item.Name
-		respItem["config"] = flattenSensorsDuplicateSensorTestTemplateV1ItemSSIDsTestsConfig(item.Config)
+		respItem["config"] = flattenSensorsDuplicateSensorTestTemplateItemSSIDsTestsConfig(item.Config)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSensorsDuplicateSensorTestTemplateV1ItemSSIDsTestsConfig(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateV1ResponseSSIDsTestsConfig) []map[string]interface{} {
+func flattenSensorsDuplicateSensorTestTemplateItemSSIDsTestsConfig(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateResponseSSIDsTestsConfig) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1611,7 +1611,7 @@ func flattenSensorsDuplicateSensorTestTemplateV1ItemSSIDsTestsConfig(items *[]ca
 	return respItems
 }
 
-func flattenSensorsDuplicateSensorTestTemplateV1ItemProfiles(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateV1ResponseProfiles) []map[string]interface{} {
+func flattenSensorsDuplicateSensorTestTemplateItemProfiles(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateResponseProfiles) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1636,19 +1636,19 @@ func flattenSensorsDuplicateSensorTestTemplateV1ItemProfiles(items *[]catalystce
 		respItem["white_list"] = boolPtrToString(item.WhiteList)
 		respItem["ext_web_auth_portal"] = item.ExtWebAuthPortal
 		respItem["ext_web_auth_access_url"] = item.ExtWebAuthAccessURL
-		respItem["ext_web_auth_html_tag"] = flattenSensorsDuplicateSensorTestTemplateV1ItemProfilesExtWebAuthHTMLTag(item.ExtWebAuthHTMLTag)
+		respItem["ext_web_auth_html_tag"] = flattenSensorsDuplicateSensorTestTemplateItemProfilesExtWebAuthHTMLTag(item.ExtWebAuthHTMLTag)
 		respItem["qos_policy"] = item.QosPolicy
-		respItem["tests"] = flattenSensorsDuplicateSensorTestTemplateV1ItemProfilesTests(item.Tests)
+		respItem["tests"] = flattenSensorsDuplicateSensorTestTemplateItemProfilesTests(item.Tests)
 		respItem["profile_name"] = item.ProfileName
 		respItem["device_type"] = item.DeviceType
 		respItem["vlan"] = item.VLAN
-		respItem["location_vlan_list"] = flattenSensorsDuplicateSensorTestTemplateV1ItemProfilesLocationVLANList(item.LocationVLANList)
+		respItem["location_vlan_list"] = flattenSensorsDuplicateSensorTestTemplateItemProfilesLocationVLANList(item.LocationVLANList)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSensorsDuplicateSensorTestTemplateV1ItemProfilesExtWebAuthHTMLTag(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateV1ResponseProfilesExtWebAuthHTMLTag) []map[string]interface{} {
+func flattenSensorsDuplicateSensorTestTemplateItemProfilesExtWebAuthHTMLTag(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateResponseProfilesExtWebAuthHTMLTag) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1663,7 +1663,7 @@ func flattenSensorsDuplicateSensorTestTemplateV1ItemProfilesExtWebAuthHTMLTag(it
 	return respItems
 }
 
-func flattenSensorsDuplicateSensorTestTemplateV1ItemProfilesTests(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateV1ResponseProfilesTests) []map[string]interface{} {
+func flattenSensorsDuplicateSensorTestTemplateItemProfilesTests(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateResponseProfilesTests) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1671,13 +1671,13 @@ func flattenSensorsDuplicateSensorTestTemplateV1ItemProfilesTests(items *[]catal
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["name"] = item.Name
-		respItem["config"] = flattenSensorsDuplicateSensorTestTemplateV1ItemProfilesTestsConfig(item.Config)
+		respItem["config"] = flattenSensorsDuplicateSensorTestTemplateItemProfilesTestsConfig(item.Config)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSensorsDuplicateSensorTestTemplateV1ItemProfilesTestsConfig(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateV1ResponseProfilesTestsConfig) []map[string]interface{} {
+func flattenSensorsDuplicateSensorTestTemplateItemProfilesTestsConfig(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateResponseProfilesTestsConfig) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1719,7 +1719,7 @@ func flattenSensorsDuplicateSensorTestTemplateV1ItemProfilesTestsConfig(items *[
 	return respItems
 }
 
-func flattenSensorsDuplicateSensorTestTemplateV1ItemProfilesLocationVLANList(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateV1ResponseProfilesLocationVLANList) []map[string]interface{} {
+func flattenSensorsDuplicateSensorTestTemplateItemProfilesLocationVLANList(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateResponseProfilesLocationVLANList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1733,7 +1733,7 @@ func flattenSensorsDuplicateSensorTestTemplateV1ItemProfilesLocationVLANList(ite
 	return respItems
 }
 
-func flattenSensorsDuplicateSensorTestTemplateV1ItemLocationInfoList(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateV1ResponseLocationInfoList) []map[string]interface{} {
+func flattenSensorsDuplicateSensorTestTemplateItemLocationInfoList(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateResponseLocationInfoList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1752,7 +1752,7 @@ func flattenSensorsDuplicateSensorTestTemplateV1ItemLocationInfoList(items *[]ca
 	return respItems
 }
 
-func flattenSensorsDuplicateSensorTestTemplateV1ItemSensors(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateV1ResponseSensors) []map[string]interface{} {
+func flattenSensorsDuplicateSensorTestTemplateItemSensors(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateResponseSensors) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1778,16 +1778,16 @@ func flattenSensorsDuplicateSensorTestTemplateV1ItemSensors(items *[]catalystcen
 		respItem["all_sensor_addition"] = boolPtrToString(item.AllSensorAddition)
 		respItem["config_updated"] = item.ConfigUpdated
 		respItem["sensor_type"] = item.SensorType
-		respItem["test_mac_addresses"] = flattenSensorsDuplicateSensorTestTemplateV1ItemSensorsTestMacAddresses(item.TestMacAddresses)
+		respItem["test_mac_addresses"] = flattenSensorsDuplicateSensorTestTemplateItemSensorsTestMacAddresses(item.TestMacAddresses)
 		respItem["id"] = item.ID
 		respItem["service_policy"] = item.ServicePolicy
-		respItem["i_perf_info"] = flattenSensorsDuplicateSensorTestTemplateV1ItemSensorsIPerfInfo(item.IPerfInfo)
+		respItem["i_perf_info"] = flattenSensorsDuplicateSensorTestTemplateItemSensorsIPerfInfo(item.IPerfInfo)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSensorsDuplicateSensorTestTemplateV1ItemSensorsTestMacAddresses(item *catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateV1ResponseSensorsTestMacAddresses) interface{} {
+func flattenSensorsDuplicateSensorTestTemplateItemSensorsTestMacAddresses(item *catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateResponseSensorsTestMacAddresses) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1797,7 +1797,7 @@ func flattenSensorsDuplicateSensorTestTemplateV1ItemSensorsTestMacAddresses(item
 
 }
 
-func flattenSensorsDuplicateSensorTestTemplateV1ItemSensorsIPerfInfo(item *catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateV1ResponseSensorsIPerfInfo) interface{} {
+func flattenSensorsDuplicateSensorTestTemplateItemSensorsIPerfInfo(item *catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateResponseSensorsIPerfInfo) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1807,7 +1807,7 @@ func flattenSensorsDuplicateSensorTestTemplateV1ItemSensorsIPerfInfo(item *catal
 
 }
 
-func flattenSensorsDuplicateSensorTestTemplateV1ItemApCoverage(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateV1ResponseApCoverage) []map[string]interface{} {
+func flattenSensorsDuplicateSensorTestTemplateItemApCoverage(items *[]catalystcentersdkgo.ResponseSensorsDuplicateSensorTestTemplateResponseApCoverage) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

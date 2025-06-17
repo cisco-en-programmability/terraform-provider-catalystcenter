@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -197,7 +197,7 @@ func dataSourceWirelessSettingsRfProfiles() *schema.Resource {
 										Computed: true,
 									},
 
-									"fra_properties": &schema.Schema{
+									"fra_properties_c": &schema.Schema{
 										Type:     schema.TypeList,
 										Computed: true,
 										Elem: &schema.Resource{
@@ -534,7 +534,7 @@ func dataSourceWirelessSettingsRfProfiles() *schema.Resource {
 										Computed: true,
 									},
 
-									"fra_properties": &schema.Schema{
+									"fra_properties_a": &schema.Schema{
 										Type:     schema.TypeList,
 										Computed: true,
 										Elem: &schema.Resource{
@@ -990,7 +990,7 @@ func dataSourceWirelessSettingsRfProfiles() *schema.Resource {
 										Computed: true,
 									},
 
-									"fra_properties": &schema.Schema{
+									"fra_properties_c": &schema.Schema{
 										Type:     schema.TypeList,
 										Computed: true,
 										Elem: &schema.Resource{
@@ -1327,7 +1327,7 @@ func dataSourceWirelessSettingsRfProfiles() *schema.Resource {
 										Computed: true,
 									},
 
-									"fra_properties": &schema.Schema{
+									"fra_properties_a": &schema.Schema{
 										Type:     schema.TypeList,
 										Computed: true,
 										Elem: &schema.Resource{
@@ -1673,8 +1673,8 @@ func dataSourceWirelessSettingsRfProfilesRead(ctx context.Context, d *schema.Res
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetRfProfilesV1")
-		queryParams1 := catalystcentersdkgo.GetRfProfilesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetRfProfiles")
+		queryParams1 := catalystcentersdkgo.GetRfProfilesQueryParams{}
 
 		if okLimit {
 			queryParams1.Limit = vLimit.(float64)
@@ -1697,24 +1697,36 @@ func dataSourceWirelessSettingsRfProfilesRead(ctx context.Context, d *schema.Res
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Wireless.GetRfProfilesV1(&queryParams1)
+		response1, restyResp1, err := client.Wireless.GetRfProfiles(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetRfProfilesV1", err,
-				"Failure at GetRfProfilesV1, unexpected response", ""))
+				"Failure when executing 2 GetRfProfiles", err,
+				"Failure at GetRfProfiles, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenWirelessGetRfProfilesV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetRfProfiles", err,
+				"Failure at GetRfProfiles, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenWirelessGetRfProfilesItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetRfProfilesV1 response",
+				"Failure when setting GetRfProfiles response",
 				err))
 			return diags
 		}
@@ -1724,29 +1736,41 @@ func dataSourceWirelessSettingsRfProfilesRead(ctx context.Context, d *schema.Res
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetRfProfileByIDV1")
+		log.Printf("[DEBUG] Selected method: GetRfProfileByID")
 		vvID := vID.(string)
 
 		// has_unknown_response: None
 
-		response2, restyResp2, err := client.Wireless.GetRfProfileByIDV1(vvID)
+		response2, restyResp2, err := client.Wireless.GetRfProfileByID(vvID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetRfProfileByIDV1", err,
-				"Failure at GetRfProfileByIDV1, unexpected response", ""))
+				"Failure when executing 2 GetRfProfileByID", err,
+				"Failure at GetRfProfileByID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenWirelessGetRfProfileByIDV1Item(response2.Response)
+		if err != nil || response2 == nil {
+			if restyResp2 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetRfProfileByID", err,
+				"Failure at GetRfProfileByID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
+
+		vItem2 := flattenWirelessGetRfProfileByIDItem(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetRfProfileByIDV1 response",
+				"Failure when setting GetRfProfileByID response",
 				err))
 			return diags
 		}
@@ -1758,7 +1782,7 @@ func dataSourceWirelessSettingsRfProfilesRead(ctx context.Context, d *schema.Res
 	return diags
 }
 
-func flattenWirelessGetRfProfilesV1Items(items *[]catalystcentersdkgo.ResponseWirelessGetRfProfilesV1Response) []map[string]interface{} {
+func flattenWirelessGetRfProfilesItems(items *[]catalystcentersdkgo.ResponseWirelessGetRfProfilesResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1771,16 +1795,16 @@ func flattenWirelessGetRfProfilesV1Items(items *[]catalystcentersdkgo.ResponseWi
 		respItem["enable_radio_type_b"] = boolPtrToString(item.EnableRadioTypeB)
 		respItem["enable_radio_type6_g_hz"] = boolPtrToString(item.EnableRadioType6GHz)
 		respItem["enable_custom"] = boolPtrToString(item.EnableCustom)
-		respItem["radio_type_a_properties"] = flattenWirelessGetRfProfilesV1ItemsRadioTypeAProperties(item.RadioTypeAProperties)
-		respItem["radio_type_b_properties"] = flattenWirelessGetRfProfilesV1ItemsRadioTypeBProperties(item.RadioTypeBProperties)
-		respItem["radio_type6_g_hz_properties"] = flattenWirelessGetRfProfilesV1ItemsRadioType6GHzProperties(item.RadioType6GHzProperties)
+		respItem["radio_type_a_properties"] = flattenWirelessGetRfProfilesItemsRadioTypeAProperties(item.RadioTypeAProperties)
+		respItem["radio_type_b_properties"] = flattenWirelessGetRfProfilesItemsRadioTypeBProperties(item.RadioTypeBProperties)
+		respItem["radio_type6_g_hz_properties"] = flattenWirelessGetRfProfilesItemsRadioType6GHzProperties(item.RadioType6GHzProperties)
 		respItem["id"] = item.ID
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenWirelessGetRfProfilesV1ItemsRadioTypeAProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesV1ResponseRadioTypeAProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfilesItemsRadioTypeAProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesResponseRadioTypeAProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1798,9 +1822,9 @@ func flattenWirelessGetRfProfilesV1ItemsRadioTypeAProperties(item *catalystcente
 	respItem["zero_wait_dfs_enable"] = boolPtrToString(item.ZeroWaitDfsEnable)
 	respItem["custom_rx_sop_threshold"] = item.CustomRxSopThreshold
 	respItem["max_radio_clients"] = item.MaxRadioClients
-	respItem["fra_properties"] = flattenWirelessGetRfProfilesV1ItemsRadioTypeAPropertiesFraProperties(item.FraProperties)
-	respItem["coverage_hole_detection_properties"] = flattenWirelessGetRfProfilesV1ItemsRadioTypeAPropertiesCoverageHoleDetectionProperties(item.CoverageHoleDetectionProperties)
-	respItem["spatial_reuse_properties"] = flattenWirelessGetRfProfilesV1ItemsRadioTypeAPropertiesSpatialReuseProperties(item.SpatialReuseProperties)
+	respItem["fra_properties_a"] = flattenWirelessGetRfProfilesItemsRadioTypeAPropertiesFraPropertiesA(item.FraPropertiesA)
+	respItem["coverage_hole_detection_properties"] = flattenWirelessGetRfProfilesItemsRadioTypeAPropertiesCoverageHoleDetectionProperties(item.CoverageHoleDetectionProperties)
+	respItem["spatial_reuse_properties"] = flattenWirelessGetRfProfilesItemsRadioTypeAPropertiesSpatialReuseProperties(item.SpatialReuseProperties)
 
 	return []map[string]interface{}{
 		respItem,
@@ -1808,7 +1832,7 @@ func flattenWirelessGetRfProfilesV1ItemsRadioTypeAProperties(item *catalystcente
 
 }
 
-func flattenWirelessGetRfProfilesV1ItemsRadioTypeAPropertiesFraProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesV1ResponseRadioTypeAPropertiesFraProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfilesItemsRadioTypeAPropertiesFraPropertiesA(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesResponseRadioTypeAPropertiesFraPropertiesA) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1823,7 +1847,7 @@ func flattenWirelessGetRfProfilesV1ItemsRadioTypeAPropertiesFraProperties(item *
 
 }
 
-func flattenWirelessGetRfProfilesV1ItemsRadioTypeAPropertiesCoverageHoleDetectionProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesV1ResponseRadioTypeAPropertiesCoverageHoleDetectionProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfilesItemsRadioTypeAPropertiesCoverageHoleDetectionProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesResponseRadioTypeAPropertiesCoverageHoleDetectionProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1839,7 +1863,7 @@ func flattenWirelessGetRfProfilesV1ItemsRadioTypeAPropertiesCoverageHoleDetectio
 
 }
 
-func flattenWirelessGetRfProfilesV1ItemsRadioTypeAPropertiesSpatialReuseProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesV1ResponseRadioTypeAPropertiesSpatialReuseProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfilesItemsRadioTypeAPropertiesSpatialReuseProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesResponseRadioTypeAPropertiesSpatialReuseProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1856,7 +1880,7 @@ func flattenWirelessGetRfProfilesV1ItemsRadioTypeAPropertiesSpatialReuseProperti
 
 }
 
-func flattenWirelessGetRfProfilesV1ItemsRadioTypeBProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesV1ResponseRadioTypeBProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfilesItemsRadioTypeBProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesResponseRadioTypeBProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1871,8 +1895,8 @@ func flattenWirelessGetRfProfilesV1ItemsRadioTypeBProperties(item *catalystcente
 	respItem["max_power_level"] = item.MaxPowerLevel
 	respItem["custom_rx_sop_threshold"] = item.CustomRxSopThreshold
 	respItem["max_radio_clients"] = item.MaxRadioClients
-	respItem["coverage_hole_detection_properties"] = flattenWirelessGetRfProfilesV1ItemsRadioTypeBPropertiesCoverageHoleDetectionProperties(item.CoverageHoleDetectionProperties)
-	respItem["spatial_reuse_properties"] = flattenWirelessGetRfProfilesV1ItemsRadioTypeBPropertiesSpatialReuseProperties(item.SpatialReuseProperties)
+	respItem["coverage_hole_detection_properties"] = flattenWirelessGetRfProfilesItemsRadioTypeBPropertiesCoverageHoleDetectionProperties(item.CoverageHoleDetectionProperties)
+	respItem["spatial_reuse_properties"] = flattenWirelessGetRfProfilesItemsRadioTypeBPropertiesSpatialReuseProperties(item.SpatialReuseProperties)
 
 	return []map[string]interface{}{
 		respItem,
@@ -1880,7 +1904,7 @@ func flattenWirelessGetRfProfilesV1ItemsRadioTypeBProperties(item *catalystcente
 
 }
 
-func flattenWirelessGetRfProfilesV1ItemsRadioTypeBPropertiesCoverageHoleDetectionProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesV1ResponseRadioTypeBPropertiesCoverageHoleDetectionProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfilesItemsRadioTypeBPropertiesCoverageHoleDetectionProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesResponseRadioTypeBPropertiesCoverageHoleDetectionProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1896,7 +1920,7 @@ func flattenWirelessGetRfProfilesV1ItemsRadioTypeBPropertiesCoverageHoleDetectio
 
 }
 
-func flattenWirelessGetRfProfilesV1ItemsRadioTypeBPropertiesSpatialReuseProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesV1ResponseRadioTypeBPropertiesSpatialReuseProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfilesItemsRadioTypeBPropertiesSpatialReuseProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesResponseRadioTypeBPropertiesSpatialReuseProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1913,7 +1937,7 @@ func flattenWirelessGetRfProfilesV1ItemsRadioTypeBPropertiesSpatialReuseProperti
 
 }
 
-func flattenWirelessGetRfProfilesV1ItemsRadioType6GHzProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesV1ResponseRadioType6GHzProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfilesItemsRadioType6GHzProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesResponseRadioType6GHzProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1927,7 +1951,7 @@ func flattenWirelessGetRfProfilesV1ItemsRadioType6GHzProperties(item *catalystce
 	respItem["min_power_level"] = item.MinPowerLevel
 	respItem["max_power_level"] = item.MaxPowerLevel
 	respItem["enable_standard_power_service"] = boolPtrToString(item.EnableStandardPowerService)
-	respItem["multi_bssid_properties"] = flattenWirelessGetRfProfilesV1ItemsRadioType6GHzPropertiesMultiBssidProperties(item.MultiBssidProperties)
+	respItem["multi_bssid_properties"] = flattenWirelessGetRfProfilesItemsRadioType6GHzPropertiesMultiBssidProperties(item.MultiBssidProperties)
 	respItem["preamble_puncture"] = boolPtrToString(item.PreamblePuncture)
 	respItem["min_dbs_width"] = item.MinDbsWidth
 	respItem["max_dbs_width"] = item.MaxDbsWidth
@@ -1936,9 +1960,9 @@ func flattenWirelessGetRfProfilesV1ItemsRadioType6GHzProperties(item *catalystce
 	respItem["psc_enforcing_enabled"] = boolPtrToString(item.PscEnforcingEnabled)
 	respItem["discovery_frames6_g_hz"] = item.DiscoveryFrames6GHz
 	respItem["broadcast_probe_response_interval"] = item.BroadcastProbeResponseInterval
-	respItem["fra_properties"] = flattenWirelessGetRfProfilesV1ItemsRadioType6GHzPropertiesFraProperties(item.FraProperties)
-	respItem["coverage_hole_detection_properties"] = flattenWirelessGetRfProfilesV1ItemsRadioType6GHzPropertiesCoverageHoleDetectionProperties(item.CoverageHoleDetectionProperties)
-	respItem["spatial_reuse_properties"] = flattenWirelessGetRfProfilesV1ItemsRadioType6GHzPropertiesSpatialReuseProperties(item.SpatialReuseProperties)
+	respItem["fra_properties_c"] = flattenWirelessGetRfProfilesItemsRadioType6GHzPropertiesFraPropertiesC(item.FraPropertiesC)
+	respItem["coverage_hole_detection_properties"] = flattenWirelessGetRfProfilesItemsRadioType6GHzPropertiesCoverageHoleDetectionProperties(item.CoverageHoleDetectionProperties)
+	respItem["spatial_reuse_properties"] = flattenWirelessGetRfProfilesItemsRadioType6GHzPropertiesSpatialReuseProperties(item.SpatialReuseProperties)
 
 	return []map[string]interface{}{
 		respItem,
@@ -1946,13 +1970,13 @@ func flattenWirelessGetRfProfilesV1ItemsRadioType6GHzProperties(item *catalystce
 
 }
 
-func flattenWirelessGetRfProfilesV1ItemsRadioType6GHzPropertiesMultiBssidProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesV1ResponseRadioType6GHzPropertiesMultiBssidProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfilesItemsRadioType6GHzPropertiesMultiBssidProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesResponseRadioType6GHzPropertiesMultiBssidProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["dot11ax_parameters"] = flattenWirelessGetRfProfilesV1ItemsRadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters(item.Dot11AxParameters)
-	respItem["dot11be_parameters"] = flattenWirelessGetRfProfilesV1ItemsRadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters(item.Dot11BeParameters)
+	respItem["dot11ax_parameters"] = flattenWirelessGetRfProfilesItemsRadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters(item.Dot11AxParameters)
+	respItem["dot11be_parameters"] = flattenWirelessGetRfProfilesItemsRadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters(item.Dot11BeParameters)
 	respItem["target_wake_time"] = boolPtrToString(item.TargetWakeTime)
 	respItem["twt_broadcast_support"] = boolPtrToString(item.TwtBroadcastSupport)
 
@@ -1962,7 +1986,7 @@ func flattenWirelessGetRfProfilesV1ItemsRadioType6GHzPropertiesMultiBssidPropert
 
 }
 
-func flattenWirelessGetRfProfilesV1ItemsRadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesV1ResponseRadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters) []map[string]interface{} {
+func flattenWirelessGetRfProfilesItemsRadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesResponseRadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1978,7 +2002,7 @@ func flattenWirelessGetRfProfilesV1ItemsRadioType6GHzPropertiesMultiBssidPropert
 
 }
 
-func flattenWirelessGetRfProfilesV1ItemsRadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesV1ResponseRadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters) []map[string]interface{} {
+func flattenWirelessGetRfProfilesItemsRadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesResponseRadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1995,7 +2019,7 @@ func flattenWirelessGetRfProfilesV1ItemsRadioType6GHzPropertiesMultiBssidPropert
 
 }
 
-func flattenWirelessGetRfProfilesV1ItemsRadioType6GHzPropertiesFraProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesV1ResponseRadioType6GHzPropertiesFraProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfilesItemsRadioType6GHzPropertiesFraPropertiesC(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesResponseRadioType6GHzPropertiesFraPropertiesC) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -2009,7 +2033,7 @@ func flattenWirelessGetRfProfilesV1ItemsRadioType6GHzPropertiesFraProperties(ite
 
 }
 
-func flattenWirelessGetRfProfilesV1ItemsRadioType6GHzPropertiesCoverageHoleDetectionProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesV1ResponseRadioType6GHzPropertiesCoverageHoleDetectionProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfilesItemsRadioType6GHzPropertiesCoverageHoleDetectionProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesResponseRadioType6GHzPropertiesCoverageHoleDetectionProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -2025,7 +2049,7 @@ func flattenWirelessGetRfProfilesV1ItemsRadioType6GHzPropertiesCoverageHoleDetec
 
 }
 
-func flattenWirelessGetRfProfilesV1ItemsRadioType6GHzPropertiesSpatialReuseProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesV1ResponseRadioType6GHzPropertiesSpatialReuseProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfilesItemsRadioType6GHzPropertiesSpatialReuseProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfilesResponseRadioType6GHzPropertiesSpatialReuseProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -2042,7 +2066,7 @@ func flattenWirelessGetRfProfilesV1ItemsRadioType6GHzPropertiesSpatialReusePrope
 
 }
 
-func flattenWirelessGetRfProfileByIDV1Item(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDV1Response) []map[string]interface{} {
+func flattenWirelessGetRfProfileByIDItem(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -2053,16 +2077,16 @@ func flattenWirelessGetRfProfileByIDV1Item(item *catalystcentersdkgo.ResponseWir
 	respItem["enable_radio_type_b"] = boolPtrToString(item.EnableRadioTypeB)
 	respItem["enable_radio_type6_g_hz"] = boolPtrToString(item.EnableRadioType6GHz)
 	respItem["enable_custom"] = boolPtrToString(item.EnableCustom)
-	respItem["radio_type_a_properties"] = flattenWirelessGetRfProfileByIDV1ItemRadioTypeAProperties(item.RadioTypeAProperties)
-	respItem["radio_type_b_properties"] = flattenWirelessGetRfProfileByIDV1ItemRadioTypeBProperties(item.RadioTypeBProperties)
-	respItem["radio_type6_g_hz_properties"] = flattenWirelessGetRfProfileByIDV1ItemRadioType6GHzProperties(item.RadioType6GHzProperties)
+	respItem["radio_type_a_properties"] = flattenWirelessGetRfProfileByIDItemRadioTypeAProperties(item.RadioTypeAProperties)
+	respItem["radio_type_b_properties"] = flattenWirelessGetRfProfileByIDItemRadioTypeBProperties(item.RadioTypeBProperties)
+	respItem["radio_type6_g_hz_properties"] = flattenWirelessGetRfProfileByIDItemRadioType6GHzProperties(item.RadioType6GHzProperties)
 	respItem["id"] = item.ID
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenWirelessGetRfProfileByIDV1ItemRadioTypeAProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDV1ResponseRadioTypeAProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfileByIDItemRadioTypeAProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDResponseRadioTypeAProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -2080,9 +2104,9 @@ func flattenWirelessGetRfProfileByIDV1ItemRadioTypeAProperties(item *catalystcen
 	respItem["zero_wait_dfs_enable"] = boolPtrToString(item.ZeroWaitDfsEnable)
 	respItem["custom_rx_sop_threshold"] = item.CustomRxSopThreshold
 	respItem["max_radio_clients"] = item.MaxRadioClients
-	respItem["fra_properties"] = flattenWirelessGetRfProfileByIDV1ItemRadioTypeAPropertiesFraProperties(item.FraProperties)
-	respItem["coverage_hole_detection_properties"] = flattenWirelessGetRfProfileByIDV1ItemRadioTypeAPropertiesCoverageHoleDetectionProperties(item.CoverageHoleDetectionProperties)
-	respItem["spatial_reuse_properties"] = flattenWirelessGetRfProfileByIDV1ItemRadioTypeAPropertiesSpatialReuseProperties(item.SpatialReuseProperties)
+	respItem["fra_properties_a"] = flattenWirelessGetRfProfileByIDItemRadioTypeAPropertiesFraPropertiesA(item.FraPropertiesA)
+	respItem["coverage_hole_detection_properties"] = flattenWirelessGetRfProfileByIDItemRadioTypeAPropertiesCoverageHoleDetectionProperties(item.CoverageHoleDetectionProperties)
+	respItem["spatial_reuse_properties"] = flattenWirelessGetRfProfileByIDItemRadioTypeAPropertiesSpatialReuseProperties(item.SpatialReuseProperties)
 
 	return []map[string]interface{}{
 		respItem,
@@ -2090,7 +2114,7 @@ func flattenWirelessGetRfProfileByIDV1ItemRadioTypeAProperties(item *catalystcen
 
 }
 
-func flattenWirelessGetRfProfileByIDV1ItemRadioTypeAPropertiesFraProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDV1ResponseRadioTypeAPropertiesFraProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfileByIDItemRadioTypeAPropertiesFraPropertiesA(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDResponseRadioTypeAPropertiesFraPropertiesA) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -2105,7 +2129,7 @@ func flattenWirelessGetRfProfileByIDV1ItemRadioTypeAPropertiesFraProperties(item
 
 }
 
-func flattenWirelessGetRfProfileByIDV1ItemRadioTypeAPropertiesCoverageHoleDetectionProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDV1ResponseRadioTypeAPropertiesCoverageHoleDetectionProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfileByIDItemRadioTypeAPropertiesCoverageHoleDetectionProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDResponseRadioTypeAPropertiesCoverageHoleDetectionProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -2121,7 +2145,7 @@ func flattenWirelessGetRfProfileByIDV1ItemRadioTypeAPropertiesCoverageHoleDetect
 
 }
 
-func flattenWirelessGetRfProfileByIDV1ItemRadioTypeAPropertiesSpatialReuseProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDV1ResponseRadioTypeAPropertiesSpatialReuseProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfileByIDItemRadioTypeAPropertiesSpatialReuseProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDResponseRadioTypeAPropertiesSpatialReuseProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -2138,7 +2162,7 @@ func flattenWirelessGetRfProfileByIDV1ItemRadioTypeAPropertiesSpatialReuseProper
 
 }
 
-func flattenWirelessGetRfProfileByIDV1ItemRadioTypeBProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDV1ResponseRadioTypeBProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfileByIDItemRadioTypeBProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDResponseRadioTypeBProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -2153,8 +2177,8 @@ func flattenWirelessGetRfProfileByIDV1ItemRadioTypeBProperties(item *catalystcen
 	respItem["max_power_level"] = item.MaxPowerLevel
 	respItem["custom_rx_sop_threshold"] = item.CustomRxSopThreshold
 	respItem["max_radio_clients"] = item.MaxRadioClients
-	respItem["coverage_hole_detection_properties"] = flattenWirelessGetRfProfileByIDV1ItemRadioTypeBPropertiesCoverageHoleDetectionProperties(item.CoverageHoleDetectionProperties)
-	respItem["spatial_reuse_properties"] = flattenWirelessGetRfProfileByIDV1ItemRadioTypeBPropertiesSpatialReuseProperties(item.SpatialReuseProperties)
+	respItem["coverage_hole_detection_properties"] = flattenWirelessGetRfProfileByIDItemRadioTypeBPropertiesCoverageHoleDetectionProperties(item.CoverageHoleDetectionProperties)
+	respItem["spatial_reuse_properties"] = flattenWirelessGetRfProfileByIDItemRadioTypeBPropertiesSpatialReuseProperties(item.SpatialReuseProperties)
 
 	return []map[string]interface{}{
 		respItem,
@@ -2162,7 +2186,7 @@ func flattenWirelessGetRfProfileByIDV1ItemRadioTypeBProperties(item *catalystcen
 
 }
 
-func flattenWirelessGetRfProfileByIDV1ItemRadioTypeBPropertiesCoverageHoleDetectionProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDV1ResponseRadioTypeBPropertiesCoverageHoleDetectionProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfileByIDItemRadioTypeBPropertiesCoverageHoleDetectionProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDResponseRadioTypeBPropertiesCoverageHoleDetectionProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -2178,7 +2202,7 @@ func flattenWirelessGetRfProfileByIDV1ItemRadioTypeBPropertiesCoverageHoleDetect
 
 }
 
-func flattenWirelessGetRfProfileByIDV1ItemRadioTypeBPropertiesSpatialReuseProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDV1ResponseRadioTypeBPropertiesSpatialReuseProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfileByIDItemRadioTypeBPropertiesSpatialReuseProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDResponseRadioTypeBPropertiesSpatialReuseProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -2195,7 +2219,7 @@ func flattenWirelessGetRfProfileByIDV1ItemRadioTypeBPropertiesSpatialReuseProper
 
 }
 
-func flattenWirelessGetRfProfileByIDV1ItemRadioType6GHzProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDV1ResponseRadioType6GHzProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfileByIDItemRadioType6GHzProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDResponseRadioType6GHzProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -2209,7 +2233,7 @@ func flattenWirelessGetRfProfileByIDV1ItemRadioType6GHzProperties(item *catalyst
 	respItem["min_power_level"] = item.MinPowerLevel
 	respItem["max_power_level"] = item.MaxPowerLevel
 	respItem["enable_standard_power_service"] = boolPtrToString(item.EnableStandardPowerService)
-	respItem["multi_bssid_properties"] = flattenWirelessGetRfProfileByIDV1ItemRadioType6GHzPropertiesMultiBssidProperties(item.MultiBssidProperties)
+	respItem["multi_bssid_properties"] = flattenWirelessGetRfProfileByIDItemRadioType6GHzPropertiesMultiBssidProperties(item.MultiBssidProperties)
 	respItem["preamble_puncture"] = boolPtrToString(item.PreamblePuncture)
 	respItem["min_dbs_width"] = item.MinDbsWidth
 	respItem["max_dbs_width"] = item.MaxDbsWidth
@@ -2218,9 +2242,9 @@ func flattenWirelessGetRfProfileByIDV1ItemRadioType6GHzProperties(item *catalyst
 	respItem["psc_enforcing_enabled"] = boolPtrToString(item.PscEnforcingEnabled)
 	respItem["discovery_frames6_g_hz"] = item.DiscoveryFrames6GHz
 	respItem["broadcast_probe_response_interval"] = item.BroadcastProbeResponseInterval
-	respItem["fra_properties"] = flattenWirelessGetRfProfileByIDV1ItemRadioType6GHzPropertiesFraProperties(item.FraProperties)
-	respItem["coverage_hole_detection_properties"] = flattenWirelessGetRfProfileByIDV1ItemRadioType6GHzPropertiesCoverageHoleDetectionProperties(item.CoverageHoleDetectionProperties)
-	respItem["spatial_reuse_properties"] = flattenWirelessGetRfProfileByIDV1ItemRadioType6GHzPropertiesSpatialReuseProperties(item.SpatialReuseProperties)
+	respItem["fra_properties_c"] = flattenWirelessGetRfProfileByIDItemRadioType6GHzPropertiesFraPropertiesC(item.FraPropertiesC)
+	respItem["coverage_hole_detection_properties"] = flattenWirelessGetRfProfileByIDItemRadioType6GHzPropertiesCoverageHoleDetectionProperties(item.CoverageHoleDetectionProperties)
+	respItem["spatial_reuse_properties"] = flattenWirelessGetRfProfileByIDItemRadioType6GHzPropertiesSpatialReuseProperties(item.SpatialReuseProperties)
 
 	return []map[string]interface{}{
 		respItem,
@@ -2228,13 +2252,13 @@ func flattenWirelessGetRfProfileByIDV1ItemRadioType6GHzProperties(item *catalyst
 
 }
 
-func flattenWirelessGetRfProfileByIDV1ItemRadioType6GHzPropertiesMultiBssidProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDV1ResponseRadioType6GHzPropertiesMultiBssidProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfileByIDItemRadioType6GHzPropertiesMultiBssidProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDResponseRadioType6GHzPropertiesMultiBssidProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["dot11ax_parameters"] = flattenWirelessGetRfProfileByIDV1ItemRadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters(item.Dot11AxParameters)
-	respItem["dot11be_parameters"] = flattenWirelessGetRfProfileByIDV1ItemRadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters(item.Dot11BeParameters)
+	respItem["dot11ax_parameters"] = flattenWirelessGetRfProfileByIDItemRadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters(item.Dot11AxParameters)
+	respItem["dot11be_parameters"] = flattenWirelessGetRfProfileByIDItemRadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters(item.Dot11BeParameters)
 	respItem["target_wake_time"] = boolPtrToString(item.TargetWakeTime)
 	respItem["twt_broadcast_support"] = boolPtrToString(item.TwtBroadcastSupport)
 
@@ -2244,7 +2268,7 @@ func flattenWirelessGetRfProfileByIDV1ItemRadioType6GHzPropertiesMultiBssidPrope
 
 }
 
-func flattenWirelessGetRfProfileByIDV1ItemRadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDV1ResponseRadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters) []map[string]interface{} {
+func flattenWirelessGetRfProfileByIDItemRadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDResponseRadioType6GHzPropertiesMultiBssidPropertiesDot11AxParameters) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -2260,7 +2284,7 @@ func flattenWirelessGetRfProfileByIDV1ItemRadioType6GHzPropertiesMultiBssidPrope
 
 }
 
-func flattenWirelessGetRfProfileByIDV1ItemRadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDV1ResponseRadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters) []map[string]interface{} {
+func flattenWirelessGetRfProfileByIDItemRadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDResponseRadioType6GHzPropertiesMultiBssidPropertiesDot11BeParameters) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -2277,7 +2301,7 @@ func flattenWirelessGetRfProfileByIDV1ItemRadioType6GHzPropertiesMultiBssidPrope
 
 }
 
-func flattenWirelessGetRfProfileByIDV1ItemRadioType6GHzPropertiesFraProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDV1ResponseRadioType6GHzPropertiesFraProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfileByIDItemRadioType6GHzPropertiesFraPropertiesC(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDResponseRadioType6GHzPropertiesFraPropertiesC) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -2291,7 +2315,7 @@ func flattenWirelessGetRfProfileByIDV1ItemRadioType6GHzPropertiesFraProperties(i
 
 }
 
-func flattenWirelessGetRfProfileByIDV1ItemRadioType6GHzPropertiesCoverageHoleDetectionProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDV1ResponseRadioType6GHzPropertiesCoverageHoleDetectionProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfileByIDItemRadioType6GHzPropertiesCoverageHoleDetectionProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDResponseRadioType6GHzPropertiesCoverageHoleDetectionProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -2307,7 +2331,7 @@ func flattenWirelessGetRfProfileByIDV1ItemRadioType6GHzPropertiesCoverageHoleDet
 
 }
 
-func flattenWirelessGetRfProfileByIDV1ItemRadioType6GHzPropertiesSpatialReuseProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDV1ResponseRadioType6GHzPropertiesSpatialReuseProperties) []map[string]interface{} {
+func flattenWirelessGetRfProfileByIDItemRadioType6GHzPropertiesSpatialReuseProperties(item *catalystcentersdkgo.ResponseWirelessGetRfProfileByIDResponseRadioType6GHzPropertiesSpatialReuseProperties) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

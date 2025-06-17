@@ -36,7 +36,7 @@ output "catalystcenter_sda_transit_networks_example" {
 ### Optional
 
 - `id` (String) id query parameter. ID of the transit network.
-- `limit` (Number) limit query parameter. Maximum number of records to return.
+- `limit` (Number) limit query parameter. Maximum number of records to return. The maximum number of objects supported in a single request is 500.
 - `name` (String) name query parameter. Name of the transit network.
 - `offset` (Number) offset query parameter. Starting record for pagination.
 - `type` (String) type query parameter. Type of the transit network. Allowed values are [IP_BASED_TRANSIT, SDA_LISP_PUB_SUB_TRANSIT, SDA_LISP_BGP_TRANSIT].
@@ -54,6 +54,7 @@ Read-Only:
 - `ip_transit_settings` (List of Object) (see [below for nested schema](#nestedobjatt--items--ip_transit_settings))
 - `name` (String)
 - `sda_transit_settings` (List of Object) (see [below for nested schema](#nestedobjatt--items--sda_transit_settings))
+- `site_id` (String)
 - `type` (String)
 
 <a id="nestedobjatt--items--ip_transit_settings"></a>

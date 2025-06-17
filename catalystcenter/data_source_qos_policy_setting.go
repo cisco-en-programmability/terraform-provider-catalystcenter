@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -48,28 +48,40 @@ func dataSourceQosPolicySettingRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesTheApplicationQoSPolicySettingV1")
+		log.Printf("[DEBUG] Selected method: RetrievesTheApplicationQoSPolicySetting")
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.ApplicationPolicy.RetrievesTheApplicationQoSPolicySettingV1()
+		response1, restyResp1, err := client.ApplicationPolicy.RetrievesTheApplicationQoSPolicySetting()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesTheApplicationQoSPolicySettingV1", err,
-				"Failure at RetrievesTheApplicationQoSPolicySettingV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesTheApplicationQoSPolicySetting", err,
+				"Failure at RetrievesTheApplicationQoSPolicySetting, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenApplicationPolicyRetrievesTheApplicationQoSPolicySettingV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesTheApplicationQoSPolicySetting", err,
+				"Failure at RetrievesTheApplicationQoSPolicySetting, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenApplicationPolicyRetrievesTheApplicationQoSPolicySettingItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesTheApplicationQoSPolicySettingV1 response",
+				"Failure when setting RetrievesTheApplicationQoSPolicySetting response",
 				err))
 			return diags
 		}
@@ -81,7 +93,7 @@ func dataSourceQosPolicySettingRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenApplicationPolicyRetrievesTheApplicationQoSPolicySettingV1Item(item *catalystcentersdkgo.ResponseApplicationPolicyRetrievesTheApplicationQoSPolicySettingV1Response) []map[string]interface{} {
+func flattenApplicationPolicyRetrievesTheApplicationQoSPolicySettingItem(item *catalystcentersdkgo.ResponseApplicationPolicyRetrievesTheApplicationQoSPolicySettingResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -95,29 +95,43 @@ func dataSourceSdaFabricControlPlaneDeviceRead(ctx context.Context, d *schema.Re
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetControlPlaneDeviceFromSdaFabricV1")
-		queryParams1 := catalystcentersdkgo.GetControlPlaneDeviceFromSdaFabricV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetControlPlaneDeviceFromSdaFabric")
+		queryParams1 := catalystcentersdkgo.GetControlPlaneDeviceFromSdaFabricQueryParams{}
 
 		queryParams1.DeviceManagementIPAddress = vDeviceManagementIPAddress.(string)
 
-		response1, restyResp1, err := client.Sda.GetControlPlaneDeviceFromSdaFabricV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sda.GetControlPlaneDeviceFromSdaFabric(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetControlPlaneDeviceFromSdaFabricV1", err,
-				"Failure at GetControlPlaneDeviceFromSdaFabricV1, unexpected response", ""))
+				"Failure when executing 2 GetControlPlaneDeviceFromSdaFabric", err,
+				"Failure at GetControlPlaneDeviceFromSdaFabric, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetControlPlaneDeviceFromSdaFabricV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetControlPlaneDeviceFromSdaFabric", err,
+				"Failure at GetControlPlaneDeviceFromSdaFabric, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSdaGetControlPlaneDeviceFromSdaFabricItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetControlPlaneDeviceFromSdaFabricV1 response",
+				"Failure when setting GetControlPlaneDeviceFromSdaFabric response",
 				err))
 			return diags
 		}
@@ -129,7 +143,7 @@ func dataSourceSdaFabricControlPlaneDeviceRead(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func flattenSdaGetControlPlaneDeviceFromSdaFabricV1Item(item *catalystcentersdkgo.ResponseSdaGetControlPlaneDeviceFromSdaFabricV1) []map[string]interface{} {
+func flattenSdaGetControlPlaneDeviceFromSdaFabricItem(item *catalystcentersdkgo.ResponseSdaGetControlPlaneDeviceFromSdaFabric) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

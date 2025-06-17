@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -258,31 +258,45 @@ func dataSourceClientHealthRead(ctx context.Context, d *schema.ResourceData, m i
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetOverallClientHealthV1")
-		queryParams1 := catalystcentersdkgo.GetOverallClientHealthV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetOverallClientHealth")
+		queryParams1 := catalystcentersdkgo.GetOverallClientHealthQueryParams{}
 
 		if okTimestamp {
 			queryParams1.Timestamp = vTimestamp.(float64)
 		}
 
-		response1, restyResp1, err := client.Clients.GetOverallClientHealthV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Clients.GetOverallClientHealth(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetOverallClientHealthV1", err,
-				"Failure at GetOverallClientHealthV1, unexpected response", ""))
+				"Failure when executing 2 GetOverallClientHealth", err,
+				"Failure at GetOverallClientHealth, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenClientsGetOverallClientHealthV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetOverallClientHealth", err,
+				"Failure at GetOverallClientHealth, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenClientsGetOverallClientHealthItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetOverallClientHealthV1 response",
+				"Failure when setting GetOverallClientHealth response",
 				err))
 			return diags
 		}
@@ -294,7 +308,7 @@ func dataSourceClientHealthRead(ctx context.Context, d *schema.ResourceData, m i
 	return diags
 }
 
-func flattenClientsGetOverallClientHealthV1Items(items *[]catalystcentersdkgo.ResponseClientsGetOverallClientHealthV1Response) []map[string]interface{} {
+func flattenClientsGetOverallClientHealthItems(items *[]catalystcentersdkgo.ResponseClientsGetOverallClientHealthResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -302,20 +316,20 @@ func flattenClientsGetOverallClientHealthV1Items(items *[]catalystcentersdkgo.Re
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["site_id"] = item.SiteID
-		respItem["score_detail"] = flattenClientsGetOverallClientHealthV1ItemsScoreDetail(item.ScoreDetail)
+		respItem["score_detail"] = flattenClientsGetOverallClientHealthItemsScoreDetail(item.ScoreDetail)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenClientsGetOverallClientHealthV1ItemsScoreDetail(items *[]catalystcentersdkgo.ResponseClientsGetOverallClientHealthV1ResponseScoreDetail) []map[string]interface{} {
+func flattenClientsGetOverallClientHealthItemsScoreDetail(items *[]catalystcentersdkgo.ResponseClientsGetOverallClientHealthResponseScoreDetail) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["score_category"] = flattenClientsGetOverallClientHealthV1ItemsScoreDetailScoreCategory(item.ScoreCategory)
+		respItem["score_category"] = flattenClientsGetOverallClientHealthItemsScoreDetailScoreCategory(item.ScoreCategory)
 		respItem["score_value"] = item.ScoreValue
 		respItem["client_count"] = item.ClientCount
 		respItem["client_unique_count"] = item.ClientUniqueCount
@@ -326,13 +340,13 @@ func flattenClientsGetOverallClientHealthV1ItemsScoreDetail(items *[]catalystcen
 		respItem["endtime"] = item.Endtime
 		respItem["connected_to_udn_count"] = item.ConnectedToUdnCount
 		respItem["unconnected_to_udn_count"] = item.UnconnectedToUdnCount
-		respItem["score_list"] = flattenClientsGetOverallClientHealthV1ItemsScoreDetailScoreList(item.ScoreList)
+		respItem["score_list"] = flattenClientsGetOverallClientHealthItemsScoreDetailScoreList(item.ScoreList)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenClientsGetOverallClientHealthV1ItemsScoreDetailScoreCategory(item *catalystcentersdkgo.ResponseClientsGetOverallClientHealthV1ResponseScoreDetailScoreCategory) []map[string]interface{} {
+func flattenClientsGetOverallClientHealthItemsScoreDetailScoreCategory(item *catalystcentersdkgo.ResponseClientsGetOverallClientHealthResponseScoreDetailScoreCategory) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -346,14 +360,14 @@ func flattenClientsGetOverallClientHealthV1ItemsScoreDetailScoreCategory(item *c
 
 }
 
-func flattenClientsGetOverallClientHealthV1ItemsScoreDetailScoreList(items *[]catalystcentersdkgo.ResponseClientsGetOverallClientHealthV1ResponseScoreDetailScoreList) []map[string]interface{} {
+func flattenClientsGetOverallClientHealthItemsScoreDetailScoreList(items *[]catalystcentersdkgo.ResponseClientsGetOverallClientHealthResponseScoreDetailScoreList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["score_category"] = flattenClientsGetOverallClientHealthV1ItemsScoreDetailScoreListScoreCategory(item.ScoreCategory)
+		respItem["score_category"] = flattenClientsGetOverallClientHealthItemsScoreDetailScoreListScoreCategory(item.ScoreCategory)
 		respItem["score_value"] = item.ScoreValue
 		respItem["client_count"] = item.ClientCount
 		respItem["client_unique_count"] = item.ClientUniqueCount
@@ -369,7 +383,7 @@ func flattenClientsGetOverallClientHealthV1ItemsScoreDetailScoreList(items *[]ca
 	return respItems
 }
 
-func flattenClientsGetOverallClientHealthV1ItemsScoreDetailScoreListScoreCategory(item *catalystcentersdkgo.ResponseClientsGetOverallClientHealthV1ResponseScoreDetailScoreListScoreCategory) []map[string]interface{} {
+func flattenClientsGetOverallClientHealthItemsScoreDetailScoreListScoreCategory(item *catalystcentersdkgo.ResponseClientsGetOverallClientHealthResponseScoreDetailScoreListScoreCategory) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -22,7 +22,7 @@ It manages create, read, update and delete operations on SDA.
 ```terraform
 resource "catalystcenter_sda_layer3_virtual_networks" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     anchored_site_id     = "string"
@@ -42,7 +42,7 @@ output "catalystcenter_sda_layer3_virtual_networks_example" {
 
 ### Optional
 
-- `parameters` (Block List) Array of RequestSdaAddLayer3VirtualNetworksV1 (see [below for nested schema](#nestedblock--parameters))
+- `parameters` (Block List) Array of RequestSdaAddLayer3VirtualNetworks (see [below for nested schema](#nestedblock--parameters))
 
 ### Read-Only
 

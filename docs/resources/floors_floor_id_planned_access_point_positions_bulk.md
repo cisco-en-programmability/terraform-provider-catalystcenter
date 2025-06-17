@@ -13,6 +13,7 @@ It performs create operation on Site Design.
 
 - Add Planned Access Points Positions on the map.
 
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -23,30 +24,30 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_floors_floor_id_planned_access_point_positions_bulk" "example" {
   provider = catalystcenter
   floor_id = "string"
-  parameters {
+  parameters = [{
 
     mac_address = "string"
     name        = "string"
-    position {
+    position = [{
 
       x = 1.0
       y = 1.0
       z = 1.0
-    }
-    radios {
+    }]
+    radios = [{
 
-      antenna {
+      antenna = [{
 
         azimuth   = 1
         elevation = 1
         name      = "string"
-      }
+      }]
       bands    = []
       channel  = 1
       tx_power = 1
-    }
+    }]
     type = "string"
-  }
+  }]
 }
 
 output "catalystcenter_floors_floor_id_planned_access_point_positions_bulk_example" {
@@ -87,7 +88,7 @@ Optional:
 - `name` (String) Planned Access Point Name
 - `position` (Block List) (see [below for nested schema](#nestedblock--parameters--payload--position))
 - `radios` (Block List) (see [below for nested schema](#nestedblock--parameters--payload--radios))
-- `type` (String) Planned Access Point type. Use dna/intent/api/v1/maps/supported-access-points to find the supported models
+- `type` (String) Planned Access Point type. Use **dna/intent/api/v1/maps/supported-access-points** to find the supported models
 
 <a id="nestedblock--parameters--payload--position"></a>
 ### Nested Schema for `parameters.payload.position`
@@ -116,7 +117,7 @@ Optional:
 
 - `azimuth` (Number) Angle of the antenna, measured relative to the x axis, clockwise. The azimuth range is from 0 through 360
 - `elevation` (Number) Elevation of the antenna. The elevation range is from -90 through 90
-- `name` (String) Antenna type for this Planned Access Point. Use /dna/intent/api/v1/maps/supported-access-points to find supported Antennas for a particualr Planned Access Point type
+- `name` (String) Antenna type for this Planned Access Point. Use **/dna/intent/api/v1/maps/supported-access-points** to find supported Antennas for a particualr Planned Access Point type
 
 
 

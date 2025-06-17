@@ -1,7 +1,7 @@
 
 resource "catalystcenter_tag" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     description = "string"

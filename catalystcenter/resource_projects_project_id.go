@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -91,7 +91,7 @@ func resourceProjectsProjectID() *schema.Resource {
 							Computed: true,
 						},
 						"project_id": &schema.Schema{
-							Description: `projectId path parameter. The id of the project to update, retrieveable from *GET /dna/intent/api/v1/projects*
+							Description: `projectId path parameter. The id of the project to update, retrieveable from **GET /dna/intent/api/v1/projects**
 `,
 							Type:     schema.TypeString,
 							Required: true,
@@ -143,7 +143,7 @@ func resourceProjectsProjectIDRead(ctx context.Context, d *schema.ResourceData, 
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenConfigurationTemplatesGetTemplateProjectV1Item(response1.Response)
+		vItem1 := flattenConfigurationTemplatesGetTemplateProjectItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetTemplateProject response",
@@ -166,7 +166,7 @@ func resourceProjectsProjectIDUpdate(ctx context.Context, d *schema.ResourceData
 	vvProjectID := interfaceToString(vProjectID)
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvProjectID)
-		request1 := expandRequestProjectsProjectIDUpdateTemplateProjectV1(ctx, "parameters.0", d)
+		request1 := expandRequestProjectsProjectIDUpdateTemplateProject(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.ConfigurationTemplates.UpdateTemplateProject(vvProjectID, request1)
 		if err != nil || response1 == nil {
@@ -276,8 +276,9 @@ func resourceProjectsProjectIDDelete(ctx context.Context, d *schema.ResourceData
 
 	return diags
 }
-func expandRequestProjectsProjectIDUpdateTemplateProjectV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateProjectV1 {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateProjectV1{}
+
+func expandRequestProjectsProjectIDUpdateTemplateProject(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateProject {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateProject{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}

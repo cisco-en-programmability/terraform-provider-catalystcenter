@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -129,7 +129,7 @@ func resourceImagesDistributionServerSettingsCreate(ctx context.Context, d *sche
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestImagesDistributionServerSettingsAddImageDistributionServerV1(ctx, "parameters.0", d)
+	request1 := expandRequestImagesDistributionServerSettingsAddImageDistributionServer(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	vServer := resourceItem["server_address"]
 	vvServer := interfaceToString(vServer)
@@ -213,12 +213,12 @@ func resourceImagesDistributionServerSettingsRead(ctx context.Context, d *schema
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		items := []catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrieveImageDistributionServersV1Response{
+		items := []catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrieveImageDistributionServersResponse{
 			*response1,
 		}
 
 		// Review flatten function used
-		vItem1 := flattenSoftwareImageManagementSwimRetrieveImageDistributionServersV1Items(&items)
+		vItem1 := flattenSoftwareImageManagementSwimRetrieveImageDistributionServersItems(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrieveImageDistributionServers search response",
@@ -242,8 +242,9 @@ func resourceImagesDistributionServerSettingsDelete(ctx context.Context, d *sche
 		"Failure at ImagesDistributionServerSettingsDelete, unexpected response", ""))
 	return diags
 }
-func expandRequestImagesDistributionServerSettingsAddImageDistributionServerV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSoftwareImageManagementSwimAddImageDistributionServerV1 {
-	request := catalystcentersdkgo.RequestSoftwareImageManagementSwimAddImageDistributionServerV1{}
+
+func expandRequestImagesDistributionServerSettingsAddImageDistributionServer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSoftwareImageManagementSwimAddImageDistributionServer {
+	request := catalystcentersdkgo.RequestSoftwareImageManagementSwimAddImageDistributionServer{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".server_address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".server_address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".server_address")))) {
 		request.ServerAddress = interfaceToString(v)
 	}
@@ -265,11 +266,11 @@ func expandRequestImagesDistributionServerSettingsAddImageDistributionServerV1(c
 	return &request
 }
 
-func searchSoftwareImageManagementSwimRetrieveImageDistributionServers(m interface{}, vServerAddress string) (*catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrieveImageDistributionServersV1Response, error) {
+func searchSoftwareImageManagementSwimRetrieveImageDistributionServers(m interface{}, vServerAddress string) (*catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrieveImageDistributionServersResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrieveImageDistributionServersV1Response
-	var ite *catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrieveImageDistributionServersV1
+	var foundItem *catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrieveImageDistributionServersResponse
+	var ite *catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrieveImageDistributionServers
 	ite, _, err = client.SoftwareImageManagementSwim.RetrieveImageDistributionServers()
 	if err != nil || ite == nil {
 		return foundItem, err
@@ -280,7 +281,7 @@ func searchSoftwareImageManagementSwimRetrieveImageDistributionServers(m interfa
 	for _, item := range itemsCopy {
 		// Call get by _ method and set value to foundItem and return
 		if item.ServerAddress == vServerAddress {
-			var getItem *catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrieveImageDistributionServersV1Response
+			var getItem *catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrieveImageDistributionServersResponse
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

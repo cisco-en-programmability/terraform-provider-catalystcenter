@@ -20,7 +20,7 @@ It manages create, read and update operations on Fabric Wireless.
 ```terraform
 resource "catalystcenter_business_sda_hostonboarding_ssid_ippool" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     scalable_group_name = "string"

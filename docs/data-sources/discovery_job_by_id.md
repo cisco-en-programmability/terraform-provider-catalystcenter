@@ -41,7 +41,7 @@ output "catalystcenter_discovery_job_by_id_example" {
 ### Optional
 
 - `ip_address` (String) ipAddress query parameter. Filter records based on IP address
-- `limit` (Number) limit query parameter. Number of records to fetch from the starting index
+- `limit` (Number) limit query parameter. Number of records to fetch from the starting index. Min: 1, Max: 500
 - `offset` (Number) offset query parameter. Starting index for the records
 
 ### Read-Only

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -67,8 +67,8 @@ func dataSourceNetworkDeviceConfigFilesCountRead(ctx context.Context, d *schema.
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: CountOfNetworkDeviceConfigurationFilesV1")
-		queryParams1 := catalystcentersdkgo.CountOfNetworkDeviceConfigurationFilesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: CountOfNetworkDeviceConfigurationFiles")
+		queryParams1 := catalystcentersdkgo.CountOfNetworkDeviceConfigurationFilesQueryParams{}
 
 		if okID {
 			queryParams1.ID = vID.(string)
@@ -82,24 +82,36 @@ func dataSourceNetworkDeviceConfigFilesCountRead(ctx context.Context, d *schema.
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.ConfigurationArchive.CountOfNetworkDeviceConfigurationFilesV1(&queryParams1)
+		response1, restyResp1, err := client.ConfigurationArchive.CountOfNetworkDeviceConfigurationFiles(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 CountOfNetworkDeviceConfigurationFilesV1", err,
-				"Failure at CountOfNetworkDeviceConfigurationFilesV1, unexpected response", ""))
+				"Failure when executing 2 CountOfNetworkDeviceConfigurationFiles", err,
+				"Failure at CountOfNetworkDeviceConfigurationFiles, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenConfigurationArchiveCountOfNetworkDeviceConfigurationFilesV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 CountOfNetworkDeviceConfigurationFiles", err,
+				"Failure at CountOfNetworkDeviceConfigurationFiles, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenConfigurationArchiveCountOfNetworkDeviceConfigurationFilesItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting CountOfNetworkDeviceConfigurationFilesV1 response",
+				"Failure when setting CountOfNetworkDeviceConfigurationFiles response",
 				err))
 			return diags
 		}
@@ -111,7 +123,7 @@ func dataSourceNetworkDeviceConfigFilesCountRead(ctx context.Context, d *schema.
 	return diags
 }
 
-func flattenConfigurationArchiveCountOfNetworkDeviceConfigurationFilesV1Item(item *catalystcentersdkgo.ResponseConfigurationArchiveCountOfNetworkDeviceConfigurationFilesV1Response) []map[string]interface{} {
+func flattenConfigurationArchiveCountOfNetworkDeviceConfigurationFilesItem(item *catalystcentersdkgo.ResponseConfigurationArchiveCountOfNetworkDeviceConfigurationFilesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

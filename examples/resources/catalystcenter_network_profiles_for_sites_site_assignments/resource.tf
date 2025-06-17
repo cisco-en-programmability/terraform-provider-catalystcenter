@@ -1,7 +1,7 @@
 
 resource "catalystcenter_network_profiles_for_sites_site_assignments" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     id         = "string"

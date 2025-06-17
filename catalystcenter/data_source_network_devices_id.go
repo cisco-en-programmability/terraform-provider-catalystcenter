@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,8 +15,8 @@ func dataSourceNetworkDevicesID() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Devices.
 
-- API to fetch the details of network device using the id. Use the /dna/intent/api/v1/networkDevices/query API for
-advanced filtering. The API supports views to fetch only the required fields. Refer features for more details.
+- API to fetch the details of network device using the **id**. Use the **/dna/intent/api/v1/networkDevices/query** API
+for advanced filtering. The API supports views to fetch only the required fields. Refer features for more details.
 `,
 
 		ReadContext: dataSourceNetworkDevicesIDRead,
@@ -347,9 +347,9 @@ func dataSourceNetworkDevicesIDRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDetailsOfASingleNetworkDeviceV1")
+		log.Printf("[DEBUG] Selected method: GetDetailsOfASingleNetworkDevice")
 		vvID := vID.(string)
-		queryParams1 := catalystcentersdkgo.GetDetailsOfASingleNetworkDeviceV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetDetailsOfASingleNetworkDeviceQueryParams{}
 
 		if okViews {
 			queryParams1.Views = vViews.(string)
@@ -357,24 +357,36 @@ func dataSourceNetworkDevicesIDRead(ctx context.Context, d *schema.ResourceData,
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Devices.GetDetailsOfASingleNetworkDeviceV1(vvID, &queryParams1)
+		response1, restyResp1, err := client.Devices.GetDetailsOfASingleNetworkDevice(vvID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDetailsOfASingleNetworkDeviceV1", err,
-				"Failure at GetDetailsOfASingleNetworkDeviceV1, unexpected response", ""))
+				"Failure when executing 2 GetDetailsOfASingleNetworkDevice", err,
+				"Failure at GetDetailsOfASingleNetworkDevice, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesGetDetailsOfASingleNetworkDeviceV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetDetailsOfASingleNetworkDevice", err,
+				"Failure at GetDetailsOfASingleNetworkDevice, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenDevicesGetDetailsOfASingleNetworkDeviceItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDetailsOfASingleNetworkDeviceV1 response",
+				"Failure when setting GetDetailsOfASingleNetworkDevice response",
 				err))
 			return diags
 		}
@@ -386,7 +398,7 @@ func dataSourceNetworkDevicesIDRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenDevicesGetDetailsOfASingleNetworkDeviceV1Item(item *catalystcentersdkgo.ResponseDevicesGetDetailsOfASingleNetworkDeviceV1Response) []map[string]interface{} {
+func flattenDevicesGetDetailsOfASingleNetworkDeviceItem(item *catalystcentersdkgo.ResponseDevicesGetDetailsOfASingleNetworkDeviceResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -429,13 +441,13 @@ func flattenDevicesGetDetailsOfASingleNetworkDeviceV1Item(item *catalystcentersd
 	respItem["resync_interval_minutes"] = item.ResyncIntervalMinutes
 	respItem["error_code"] = item.ErrorCode
 	respItem["error_description"] = item.ErrorDescription
-	respItem["user_defined_fields"] = flattenDevicesGetDetailsOfASingleNetworkDeviceV1ItemUserDefinedFields(item.UserDefinedFields)
+	respItem["user_defined_fields"] = flattenDevicesGetDetailsOfASingleNetworkDeviceItemUserDefinedFields(item.UserDefinedFields)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenDevicesGetDetailsOfASingleNetworkDeviceV1ItemUserDefinedFields(item *catalystcentersdkgo.ResponseDevicesGetDetailsOfASingleNetworkDeviceV1ResponseUserDefinedFields) interface{} {
+func flattenDevicesGetDetailsOfASingleNetworkDeviceItemUserDefinedFields(item *catalystcentersdkgo.ResponseDevicesGetDetailsOfASingleNetworkDeviceResponseUserDefinedFields) interface{} {
 	if item == nil {
 		return nil
 	}

@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -173,15 +173,15 @@ func resourceWirelessSettingsPowerProfilesCreate(ctx context.Context, d *schema.
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestWirelessSettingsPowerProfilesCreatePowerProfileV1(ctx, "parameters.0", d)
+	request1 := expandRequestWirelessSettingsPowerProfilesCreatePowerProfile(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vProfileName := resourceItem["profile_name"]
 	vvProfileName := interfaceToString(vProfileName)
 
-	queryParamImport := catalystcentersdkgo.GetPowerProfilesV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetPowerProfilesQueryParams{}
 	queryParamImport.ProfileName = vvProfileName
-	item2, err := searchWirelessGetPowerProfilesV1(m, queryParamImport, vvProfileName)
+	item2, err := searchWirelessGetPowerProfiles(m, queryParamImport, vvProfileName)
 	if err != nil || item2 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["profile_name"] = item2.ProfileName
@@ -227,9 +227,9 @@ func resourceWirelessSettingsPowerProfilesCreate(ctx context.Context, d *schema.
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetPowerProfilesV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetPowerProfilesQueryParams{}
 	queryParamValidate.ProfileName = vvProfileName
-	item3, err := searchWirelessGetPowerProfilesV1(m, queryParamValidate, vvProfileName)
+	item3, err := searchWirelessGetPowerProfiles(m, queryParamValidate, vvProfileName)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
 			"Failure when executing CreatePowerProfile", err,
@@ -255,7 +255,7 @@ func resourceWirelessSettingsPowerProfilesRead(ctx context.Context, d *schema.Re
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetPowerProfiles")
-		queryParams1 := catalystcentersdkgo.GetPowerProfilesV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetPowerProfilesQueryParams{}
 		queryParams1.ProfileName = vvProfileName
 		response1, restyResp1, err := client.Wireless.GetPowerProfiles(&queryParams1)
 
@@ -268,7 +268,7 @@ func resourceWirelessSettingsPowerProfilesRead(ctx context.Context, d *schema.Re
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
-		item1, err := searchWirelessGetPowerProfilesV1(m, queryParams1, vvProfileName)
+		item1, err := searchWirelessGetPowerProfiles(m, queryParams1, vvProfileName)
 		if err != nil || item1 == nil {
 			d.SetId("")
 			return diags
@@ -285,7 +285,7 @@ func resourceWirelessSettingsPowerProfilesRead(ctx context.Context, d *schema.Re
 	}
 	return diags
 }
-func flattenWirelessGetPowerProfilesByIDItem(item *catalystcentersdkgo.ResponseWirelessGetPowerProfilesV1Response) []map[string]interface{} {
+func flattenWirelessGetPowerProfilesByIDItem(item *catalystcentersdkgo.ResponseWirelessGetPowerProfilesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -299,7 +299,7 @@ func flattenWirelessGetPowerProfilesByIDItem(item *catalystcentersdkgo.ResponseW
 	}
 }
 
-func flattenWirelessGetPowerProfilesByIDItemRules(items *[]catalystcentersdkgo.ResponseWirelessGetPowerProfilesV1ResponseRules) []map[string]interface{} {
+func flattenWirelessGetPowerProfilesByIDItemRules(items *[]catalystcentersdkgo.ResponseWirelessGetPowerProfilesResponseRules) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -322,12 +322,13 @@ func resourceWirelessSettingsPowerProfilesUpdate(ctx context.Context, d *schema.
 
 func resourceWirelessSettingsPowerProfilesDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	// NOTE: Unable to delete WirelessSettingsPowerProfiles on Dna Center
+	// NOTE: Unable to delete WirelessSettingsPowerProfiles on Catalyst Center
 	//       Returning empty diags to delete it on Terraform
 	return diags
 }
-func expandRequestWirelessSettingsPowerProfilesCreatePowerProfileV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreatePowerProfileV1 {
-	request := catalystcentersdkgo.RequestWirelessCreatePowerProfileV1{}
+
+func expandRequestWirelessSettingsPowerProfilesCreatePowerProfile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreatePowerProfile {
+	request := catalystcentersdkgo.RequestWirelessCreatePowerProfile{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".profile_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".profile_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".profile_name")))) {
 		request.ProfileName = interfaceToString(v)
 	}
@@ -335,7 +336,7 @@ func expandRequestWirelessSettingsPowerProfilesCreatePowerProfileV1(ctx context.
 		request.Description = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rules")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rules")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rules")))) {
-		request.Rules = expandRequestWirelessSettingsPowerProfilesCreatePowerProfileV1RulesArray(ctx, key+".rules", d)
+		request.Rules = expandRequestWirelessSettingsPowerProfilesCreatePowerProfileRulesArray(ctx, key+".rules", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -343,8 +344,8 @@ func expandRequestWirelessSettingsPowerProfilesCreatePowerProfileV1(ctx context.
 	return &request
 }
 
-func expandRequestWirelessSettingsPowerProfilesCreatePowerProfileV1RulesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessCreatePowerProfileV1Rules {
-	request := []catalystcentersdkgo.RequestWirelessCreatePowerProfileV1Rules{}
+func expandRequestWirelessSettingsPowerProfilesCreatePowerProfileRulesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessCreatePowerProfileRules {
+	request := []catalystcentersdkgo.RequestWirelessCreatePowerProfileRules{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -355,7 +356,7 @@ func expandRequestWirelessSettingsPowerProfilesCreatePowerProfileV1RulesArray(ct
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestWirelessSettingsPowerProfilesCreatePowerProfileV1Rules(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestWirelessSettingsPowerProfilesCreatePowerProfileRules(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -366,8 +367,8 @@ func expandRequestWirelessSettingsPowerProfilesCreatePowerProfileV1RulesArray(ct
 	return &request
 }
 
-func expandRequestWirelessSettingsPowerProfilesCreatePowerProfileV1Rules(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreatePowerProfileV1Rules {
-	request := catalystcentersdkgo.RequestWirelessCreatePowerProfileV1Rules{}
+func expandRequestWirelessSettingsPowerProfilesCreatePowerProfileRules(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreatePowerProfileRules {
+	request := catalystcentersdkgo.RequestWirelessCreatePowerProfileRules{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".interface_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".interface_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".interface_type")))) {
 		request.InterfaceType = interfaceToString(v)
 	}
@@ -386,11 +387,11 @@ func expandRequestWirelessSettingsPowerProfilesCreatePowerProfileV1Rules(ctx con
 	return &request
 }
 
-func searchWirelessGetPowerProfilesV1(m interface{}, queryParams catalystcentersdkgo.GetPowerProfilesV1QueryParams, vID string) (*catalystcentersdkgo.ResponseWirelessGetPowerProfilesV1Response, error) {
+func searchWirelessGetPowerProfiles(m interface{}, queryParams catalystcentersdkgo.GetPowerProfilesQueryParams, vID string) (*catalystcentersdkgo.ResponseWirelessGetPowerProfilesResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseWirelessGetPowerProfilesV1Response
-	var ite *catalystcentersdkgo.ResponseWirelessGetPowerProfilesV1
+	var foundItem *catalystcentersdkgo.ResponseWirelessGetPowerProfilesResponse
+	var ite *catalystcentersdkgo.ResponseWirelessGetPowerProfiles
 	if vID != "" {
 		queryParams.Offset = 1
 		nResponse, _, err := client.Wireless.GetPowerProfiles(nil)

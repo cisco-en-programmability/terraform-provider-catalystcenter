@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -106,29 +106,43 @@ func dataSourceSdaVirtualNetworkV2Read(ctx context.Context, d *schema.ResourceDa
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetVirtualNetworkWithScalableGroupsV1")
-		queryParams1 := catalystcentersdkgo.GetVirtualNetworkWithScalableGroupsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetVirtualNetworkWithScalableGroups")
+		queryParams1 := catalystcentersdkgo.GetVirtualNetworkWithScalableGroupsQueryParams{}
 
 		queryParams1.VirtualNetworkName = vVirtualNetworkName.(string)
 
-		response1, restyResp1, err := client.Sda.GetVirtualNetworkWithScalableGroupsV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sda.GetVirtualNetworkWithScalableGroups(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetVirtualNetworkWithScalableGroupsV1", err,
-				"Failure at GetVirtualNetworkWithScalableGroupsV1, unexpected response", ""))
+				"Failure when executing 2 GetVirtualNetworkWithScalableGroups", err,
+				"Failure at GetVirtualNetworkWithScalableGroups, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetVirtualNetworkWithScalableGroupsV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetVirtualNetworkWithScalableGroups", err,
+				"Failure at GetVirtualNetworkWithScalableGroups, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSdaGetVirtualNetworkWithScalableGroupsItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetVirtualNetworkWithScalableGroupsV1 response",
+				"Failure when setting GetVirtualNetworkWithScalableGroups response",
 				err))
 			return diags
 		}
@@ -140,7 +154,7 @@ func dataSourceSdaVirtualNetworkV2Read(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func flattenSdaGetVirtualNetworkWithScalableGroupsV1Item(item *catalystcentersdkgo.ResponseSdaGetVirtualNetworkWithScalableGroupsV1) []map[string]interface{} {
+func flattenSdaGetVirtualNetworkWithScalableGroupsItem(item *catalystcentersdkgo.ResponseSdaGetVirtualNetworkWithScalableGroups) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

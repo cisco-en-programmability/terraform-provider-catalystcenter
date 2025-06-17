@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -89,29 +89,41 @@ func dataSourceSecurityAdvisoriesResultsNetworkDevicesNetworkDeviceIDRead(ctx co
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSecurityAdvisoryNetworkDeviceByNetworkDeviceIDV1")
+		log.Printf("[DEBUG] Selected method: GetSecurityAdvisoryNetworkDeviceByNetworkDeviceID")
 		vvNetworkDeviceID := vNetworkDeviceID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Compliance.GetSecurityAdvisoryNetworkDeviceByNetworkDeviceIDV1(vvNetworkDeviceID)
+		response1, restyResp1, err := client.Compliance.GetSecurityAdvisoryNetworkDeviceByNetworkDeviceID(vvNetworkDeviceID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSecurityAdvisoryNetworkDeviceByNetworkDeviceIDV1", err,
-				"Failure at GetSecurityAdvisoryNetworkDeviceByNetworkDeviceIDV1, unexpected response", ""))
+				"Failure when executing 2 GetSecurityAdvisoryNetworkDeviceByNetworkDeviceID", err,
+				"Failure at GetSecurityAdvisoryNetworkDeviceByNetworkDeviceID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenComplianceGetSecurityAdvisoryNetworkDeviceByNetworkDeviceIDV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetSecurityAdvisoryNetworkDeviceByNetworkDeviceID", err,
+				"Failure at GetSecurityAdvisoryNetworkDeviceByNetworkDeviceID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenComplianceGetSecurityAdvisoryNetworkDeviceByNetworkDeviceIDItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSecurityAdvisoryNetworkDeviceByNetworkDeviceIDV1 response",
+				"Failure when setting GetSecurityAdvisoryNetworkDeviceByNetworkDeviceID response",
 				err))
 			return diags
 		}
@@ -123,7 +135,7 @@ func dataSourceSecurityAdvisoriesResultsNetworkDevicesNetworkDeviceIDRead(ctx co
 	return diags
 }
 
-func flattenComplianceGetSecurityAdvisoryNetworkDeviceByNetworkDeviceIDV1Item(item *catalystcentersdkgo.ResponseComplianceGetSecurityAdvisoryNetworkDeviceByNetworkDeviceIDV1Response) []map[string]interface{} {
+func flattenComplianceGetSecurityAdvisoryNetworkDeviceByNetworkDeviceIDItem(item *catalystcentersdkgo.ResponseComplianceGetSecurityAdvisoryNetworkDeviceByNetworkDeviceIDResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

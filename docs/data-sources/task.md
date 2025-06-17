@@ -60,8 +60,8 @@ output "catalystcenter_task_example" {
 - `error_code` (String) errorCode query parameter. Fetch tasks that have this error code
 - `failure_reason` (String) failureReason query parameter. Fetch tasks that contains this failure reason
 - `is_error` (String) isError query parameter. Fetch tasks ended as success or failure. Valid values: true, false
-- `limit` (Number) limit query parameter.
-- `offset` (Number) offset query parameter.
+- `limit` (Number) limit query parameter. The number of records to show for this page;The minimum is 1, and the maximum is 500.
+- `offset` (Number) offset query parameter. The first record to show for this page; the first record is numbered 1.
 - `order` (String) order query parameter. Sort order asc or dsc
 - `parent_id` (String) parentId query parameter. Fetch tasks that have this parent Id
 - `progress` (String) progress query parameter. Fetch tasks that contains this progress

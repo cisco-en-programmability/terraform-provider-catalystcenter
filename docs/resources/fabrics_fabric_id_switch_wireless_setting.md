@@ -20,7 +20,7 @@ upgrades on the fabric site. Reboot action is required to remove wireless config
 ```terraform
 resource "catalystcenter_fabrics_fabric_id_switch_wireless_setting" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     enable_wireless = "false"

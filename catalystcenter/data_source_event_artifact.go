@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -305,8 +305,8 @@ func dataSourceEventArtifactRead(ctx context.Context, d *schema.ResourceData, m 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetEventArtifactsV1")
-		queryParams1 := catalystcentersdkgo.GetEventArtifactsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetEventArtifacts")
+		queryParams1 := catalystcentersdkgo.GetEventArtifactsQueryParams{}
 
 		if okEventIDs {
 			queryParams1.EventIDs = vEventIDs.(string)
@@ -332,24 +332,36 @@ func dataSourceEventArtifactRead(ctx context.Context, d *schema.ResourceData, m 
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.EventManagement.GetEventArtifactsV1(&queryParams1)
+		response1, restyResp1, err := client.EventManagement.GetEventArtifacts(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetEventArtifactsV1", err,
-				"Failure at GetEventArtifactsV1, unexpected response", ""))
+				"Failure when executing 2 GetEventArtifacts", err,
+				"Failure at GetEventArtifacts, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenEventManagementGetEventArtifactsV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetEventArtifacts", err,
+				"Failure at GetEventArtifacts, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenEventManagementGetEventArtifactsItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetEventArtifactsV1 response",
+				"Failure when setting GetEventArtifacts response",
 				err))
 			return diags
 		}
@@ -361,7 +373,7 @@ func dataSourceEventArtifactRead(ctx context.Context, d *schema.ResourceData, m 
 	return diags
 }
 
-func flattenEventManagementGetEventArtifactsV1Items(items *catalystcentersdkgo.ResponseEventManagementGetEventArtifactsV1) []map[string]interface{} {
+func flattenEventManagementGetEventArtifactsItems(items *catalystcentersdkgo.ResponseEventManagementGetEventArtifacts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -382,18 +394,18 @@ func flattenEventManagementGetEventArtifactsV1Items(items *catalystcentersdkgo.R
 		respItem["cisco_dna_event_link"] = item.CiscoDnaEventLink
 		respItem["note"] = item.Note
 		respItem["is_private"] = boolPtrToString(item.IsPrivate)
-		respItem["event_payload"] = flattenEventManagementGetEventArtifactsV1ItemsEventPayload(item.EventPayload)
-		respItem["event_templates"] = flattenEventManagementGetEventArtifactsV1ItemsEventTemplates(item.EventTemplates)
+		respItem["event_payload"] = flattenEventManagementGetEventArtifactsItemsEventPayload(item.EventPayload)
+		respItem["event_templates"] = flattenEventManagementGetEventArtifactsItemsEventTemplates(item.EventTemplates)
 		respItem["is_tenant_aware"] = boolPtrToString(item.IsTenantAware)
 		respItem["supported_connector_types"] = item.SupportedConnectorTypes
-		respItem["configs"] = flattenEventManagementGetEventArtifactsV1ItemsConfigs(item.Configs)
+		respItem["configs"] = flattenEventManagementGetEventArtifactsItemsConfigs(item.Configs)
 		respItem["tenant_id"] = item.TenantID
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenEventManagementGetEventArtifactsV1ItemsEventPayload(item *catalystcentersdkgo.ResponseItemEventManagementGetEventArtifactsV1EventPayload) []map[string]interface{} {
+func flattenEventManagementGetEventArtifactsItemsEventPayload(item *catalystcentersdkgo.ResponseItemEventManagementGetEventArtifactsEventPayload) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -404,8 +416,8 @@ func flattenEventManagementGetEventArtifactsV1ItemsEventPayload(item *catalystce
 	respItem["type"] = item.Type
 	respItem["source"] = item.Source
 	respItem["severity"] = item.Severity
-	respItem["details"] = flattenEventManagementGetEventArtifactsV1ItemsEventPayloadDetails(item.Details)
-	respItem["additional_details"] = flattenEventManagementGetEventArtifactsV1ItemsEventPayloadAdditionalDetails(item.AdditionalDetails)
+	respItem["details"] = flattenEventManagementGetEventArtifactsItemsEventPayloadDetails(item.Details)
+	respItem["additional_details"] = flattenEventManagementGetEventArtifactsItemsEventPayloadAdditionalDetails(item.AdditionalDetails)
 
 	return []map[string]interface{}{
 		respItem,
@@ -413,7 +425,7 @@ func flattenEventManagementGetEventArtifactsV1ItemsEventPayload(item *catalystce
 
 }
 
-func flattenEventManagementGetEventArtifactsV1ItemsEventPayloadDetails(item *catalystcentersdkgo.ResponseItemEventManagementGetEventArtifactsV1EventPayloadDetails) []map[string]interface{} {
+func flattenEventManagementGetEventArtifactsItemsEventPayloadDetails(item *catalystcentersdkgo.ResponseItemEventManagementGetEventArtifactsEventPayloadDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -427,7 +439,7 @@ func flattenEventManagementGetEventArtifactsV1ItemsEventPayloadDetails(item *cat
 
 }
 
-func flattenEventManagementGetEventArtifactsV1ItemsEventPayloadAdditionalDetails(item *catalystcentersdkgo.ResponseItemEventManagementGetEventArtifactsV1EventPayloadAdditionalDetails) interface{} {
+func flattenEventManagementGetEventArtifactsItemsEventPayloadAdditionalDetails(item *catalystcentersdkgo.ResponseItemEventManagementGetEventArtifactsEventPayloadAdditionalDetails) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -437,7 +449,7 @@ func flattenEventManagementGetEventArtifactsV1ItemsEventPayloadAdditionalDetails
 
 }
 
-func flattenEventManagementGetEventArtifactsV1ItemsEventTemplates(items *[]catalystcentersdkgo.ResponseItemEventManagementGetEventArtifactsV1EventTemplates) []interface{} {
+func flattenEventManagementGetEventArtifactsItemsEventTemplates(items *[]catalystcentersdkgo.ResponseItemEventManagementGetEventArtifactsEventTemplates) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -449,7 +461,7 @@ func flattenEventManagementGetEventArtifactsV1ItemsEventTemplates(items *[]catal
 	return respItems
 }
 
-func flattenEventManagementGetEventArtifactsV1ItemsConfigs(item *catalystcentersdkgo.ResponseItemEventManagementGetEventArtifactsV1Configs) []map[string]interface{} {
+func flattenEventManagementGetEventArtifactsItemsConfigs(item *catalystcentersdkgo.ResponseItemEventManagementGetEventArtifactsConfigs) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

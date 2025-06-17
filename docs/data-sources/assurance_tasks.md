@@ -6,9 +6,9 @@ description: |-
   It performs read operation on Task.
   returns all existing tasks in a paginated list
   default sorting of list is startTime, asc
-  valid field to sort by are [startTime,endTime,updateTime,status] For detailed information about the usage of the
-  API, please refer to the Open API specification document https://github.com/cisco-en-programmability/catalyst-center-
-  api-specs/blob/main/Assurance/CECatCenter_Org-AssuranceTasks-1.0.0-resolved.yaml
+  valid field to sort by are [startTime,endTime,updateTime,status] For detailed information about the
+  usage of the API, please refer to the Open API specification document https://github.com/cisco-en-
+  programmability/catalyst-center-api-specs/blob/main/Assurance/CECatCenter_Org-AssuranceTasks-1.0.0-resolved.yaml
 ---
 
 # catalystcenter_assurance_tasks (Data Source)
@@ -16,10 +16,10 @@ description: |-
 It performs read operation on Task.
 
 - returns all existing tasks in a paginated list
-default sorting of list is startTime, asc
-valid field to sort by are [startTime,endTime,updateTime,status] For detailed information about the usage of the
-API, please refer to the Open API specification document https://github.com/cisco-en-programmability/catalyst-center-
-api-specs/blob/main/Assurance/CE_Cat_Center_Org-AssuranceTasks-1.0.0-resolved.yaml
+default sorting of list is **startTime**, **asc**
+valid field to sort by are [**startTime**,**endTime**,**updateTime**,**status**] For detailed information about the
+usage of the API, please refer to the Open API specification document https://github.com/cisco-en-
+programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-AssuranceTasks-1.0.0-resolved.yaml
 
 ## Example Usage
 

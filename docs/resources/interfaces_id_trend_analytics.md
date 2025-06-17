@@ -27,10 +27,10 @@ For detailed information about the usage of the API, please refer to the Open AP
 https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 interfaces-2.0.0-resolved.yaml
 
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
-
 
 ## Example Usage
 
@@ -38,25 +38,25 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_interfaces_id_trend_analytics" "example" {
   provider = catalystcenter
   id       = "string"
-  parameters {
+  parameters = [{
 
-    aggregate_attributes {
+    aggregate_attributes = [{
 
       function = "string"
       name     = "string"
-    }
+    }]
     attributes = ["string"]
     end_time   = 1
-    filters {
+    filters = [{
 
       key      = "string"
       operator = "string"
       value    = "string"
-    }
+    }]
     start_time                = 1
     timestamp_order           = "string"
     trend_interval_in_minutes = 1
-  }
+  }]
 }
 
 output "catalystcenter_interfaces_id_trend_analytics_example" {

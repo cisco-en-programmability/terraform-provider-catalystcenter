@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,21 +15,21 @@ func dataSourceSitesDeviceCredentials() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Network Settings.
 
-- Gets device credential settings for a site; *null* values indicate that the setting will be inherited from the parent
-site; empty objects (*{}*) indicate that the credential is unset, and that no credential of that type will be used for
-the site.
+- Gets device credential settings for a site; **null** values indicate that the setting will be inherited from the
+parent site; empty objects (**{}**) indicate that the credential is unset, and that no credential of that type will be
+used for the site.
 `,
 
 		ReadContext: dataSourceSitesDeviceCredentialsRead,
 		Schema: map[string]*schema.Schema{
 			"id": &schema.Schema{
-				Description: `id path parameter. Site Id, retrievable from the *id* attribute in */dna/intent/api/v1/sites*
+				Description: `id path parameter. Site Id, retrievable from the **id** attribute in **/dna/intent/api/v1/sites**
 `,
 				Type:     schema.TypeString,
 				Required: true,
 			},
 			"inherited": &schema.Schema{
-				Description: `_inherited query parameter. Include settings explicitly set for this site and settings inherited from sites higher in the site hierarchy; when *false*, *null* values indicate that the site inherits that setting from the parent site or a site higher in the site hierarchy.
+				Description: `_inherited query parameter. Include settings explicitly set for this site and settings inherited from sites higher in the site hierarchy; when **false**, **null** values indicate that the site inherits that setting from the parent site or a site higher in the site hierarchy.
 `,
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -48,7 +48,7 @@ the site.
 								Schema: map[string]*schema.Schema{
 
 									"credentials_id": &schema.Schema{
-										Description: `The *id* of the credentials.
+										Description: `The **id** of the credentials.
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -76,7 +76,7 @@ the site.
 								Schema: map[string]*schema.Schema{
 
 									"credentials_id": &schema.Schema{
-										Description: `The *id* of the credentials.
+										Description: `The **id** of the credentials.
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -104,7 +104,7 @@ the site.
 								Schema: map[string]*schema.Schema{
 
 									"credentials_id": &schema.Schema{
-										Description: `The *id* of the credentials.
+										Description: `The **id** of the credentials.
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -132,7 +132,7 @@ the site.
 								Schema: map[string]*schema.Schema{
 
 									"credentials_id": &schema.Schema{
-										Description: `The *id* of the credentials.
+										Description: `The **id** of the credentials.
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -160,7 +160,7 @@ the site.
 								Schema: map[string]*schema.Schema{
 
 									"credentials_id": &schema.Schema{
-										Description: `The *id* of the credentials.
+										Description: `The **id** of the credentials.
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -188,7 +188,7 @@ the site.
 								Schema: map[string]*schema.Schema{
 
 									"credentials_id": &schema.Schema{
-										Description: `The *id* of the credentials.
+										Description: `The **id** of the credentials.
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -224,32 +224,46 @@ func dataSourceSitesDeviceCredentialsRead(ctx context.Context, d *schema.Resourc
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceCredentialSettingsForASiteV1")
+		log.Printf("[DEBUG] Selected method: GetDeviceCredentialSettingsForASite")
 		vvID := vID.(string)
-		queryParams1 := catalystcentersdkgo.GetDeviceCredentialSettingsForASiteV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetDeviceCredentialSettingsForASiteQueryParams{}
 
 		if okInherited {
 			queryParams1.Inherited = vInherited.(bool)
 		}
 
-		response1, restyResp1, err := client.NetworkSettings.GetDeviceCredentialSettingsForASiteV1(vvID, &queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.NetworkSettings.GetDeviceCredentialSettingsForASite(vvID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceCredentialSettingsForASiteV1", err,
-				"Failure at GetDeviceCredentialSettingsForASiteV1, unexpected response", ""))
+				"Failure when executing 2 GetDeviceCredentialSettingsForASite", err,
+				"Failure at GetDeviceCredentialSettingsForASite, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenNetworkSettingsGetDeviceCredentialSettingsForASiteV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetDeviceCredentialSettingsForASite", err,
+				"Failure at GetDeviceCredentialSettingsForASite, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenNetworkSettingsGetDeviceCredentialSettingsForASiteItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceCredentialSettingsForASiteV1 response",
+				"Failure when setting GetDeviceCredentialSettingsForASite response",
 				err))
 			return diags
 		}
@@ -261,38 +275,23 @@ func dataSourceSitesDeviceCredentialsRead(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func flattenNetworkSettingsGetDeviceCredentialSettingsForASiteV1Item(item *catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialSettingsForASiteV1Response) []map[string]interface{} {
+func flattenNetworkSettingsGetDeviceCredentialSettingsForASiteItem(item *catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialSettingsForASiteResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["cli_credentials_id"] = flattenNetworkSettingsGetDeviceCredentialSettingsForASiteV1ItemCliCredentialsID(item.CliCredentialsID)
-	respItem["snmpv2c_read_credentials_id"] = flattenNetworkSettingsGetDeviceCredentialSettingsForASiteV1ItemSNMPv2CReadCredentialsID(item.SNMPv2CReadCredentialsID)
-	respItem["snmpv2c_write_credentials_id"] = flattenNetworkSettingsGetDeviceCredentialSettingsForASiteV1ItemSNMPv2CWriteCredentialsID(item.SNMPv2CWriteCredentialsID)
-	respItem["snmpv3_credentials_id"] = flattenNetworkSettingsGetDeviceCredentialSettingsForASiteV1ItemSNMPv3CredentialsID(item.SNMPv3CredentialsID)
-	respItem["http_read_credentials_id"] = flattenNetworkSettingsGetDeviceCredentialSettingsForASiteV1ItemHTTPReadCredentialsID(item.HTTPReadCredentialsID)
-	respItem["http_write_credentials_id"] = flattenNetworkSettingsGetDeviceCredentialSettingsForASiteV1ItemHTTPWriteCredentialsID(item.HTTPWriteCredentialsID)
+	respItem["cli_credentials_id"] = flattenNetworkSettingsGetDeviceCredentialSettingsForASiteItemCliCredentialsID(item.CliCredentialsID)
+	respItem["snmpv2c_read_credentials_id"] = flattenNetworkSettingsGetDeviceCredentialSettingsForASiteItemSNMPv2CReadCredentialsID(item.SNMPv2CReadCredentialsID)
+	respItem["snmpv2c_write_credentials_id"] = flattenNetworkSettingsGetDeviceCredentialSettingsForASiteItemSNMPv2CWriteCredentialsID(item.SNMPv2CWriteCredentialsID)
+	respItem["snmpv3_credentials_id"] = flattenNetworkSettingsGetDeviceCredentialSettingsForASiteItemSNMPv3CredentialsID(item.SNMPv3CredentialsID)
+	respItem["http_read_credentials_id"] = flattenNetworkSettingsGetDeviceCredentialSettingsForASiteItemHTTPReadCredentialsID(item.HTTPReadCredentialsID)
+	respItem["http_write_credentials_id"] = flattenNetworkSettingsGetDeviceCredentialSettingsForASiteItemHTTPWriteCredentialsID(item.HTTPWriteCredentialsID)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenNetworkSettingsGetDeviceCredentialSettingsForASiteV1ItemCliCredentialsID(item *catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialSettingsForASiteV1ResponseCliCredentialsID) []map[string]interface{} {
-	if item == nil {
-		return nil
-	}
-	respItem := make(map[string]interface{})
-	respItem["credentials_id"] = item.CredentialsID
-	respItem["inherited_site_id"] = item.InheritedSiteID
-	respItem["inherited_site_name"] = item.InheritedSiteName
-
-	return []map[string]interface{}{
-		respItem,
-	}
-
-}
-
-func flattenNetworkSettingsGetDeviceCredentialSettingsForASiteV1ItemSNMPv2CReadCredentialsID(item *catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialSettingsForASiteV1ResponseSNMPv2CReadCredentialsID) []map[string]interface{} {
+func flattenNetworkSettingsGetDeviceCredentialSettingsForASiteItemCliCredentialsID(item *catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialSettingsForASiteResponseCliCredentialsID) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -307,7 +306,7 @@ func flattenNetworkSettingsGetDeviceCredentialSettingsForASiteV1ItemSNMPv2CReadC
 
 }
 
-func flattenNetworkSettingsGetDeviceCredentialSettingsForASiteV1ItemSNMPv2CWriteCredentialsID(item *catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialSettingsForASiteV1ResponseSNMPv2CWriteCredentialsID) []map[string]interface{} {
+func flattenNetworkSettingsGetDeviceCredentialSettingsForASiteItemSNMPv2CReadCredentialsID(item *catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialSettingsForASiteResponseSNMPv2CReadCredentialsID) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -322,7 +321,7 @@ func flattenNetworkSettingsGetDeviceCredentialSettingsForASiteV1ItemSNMPv2CWrite
 
 }
 
-func flattenNetworkSettingsGetDeviceCredentialSettingsForASiteV1ItemSNMPv3CredentialsID(item *catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialSettingsForASiteV1ResponseSNMPv3CredentialsID) []map[string]interface{} {
+func flattenNetworkSettingsGetDeviceCredentialSettingsForASiteItemSNMPv2CWriteCredentialsID(item *catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialSettingsForASiteResponseSNMPv2CWriteCredentialsID) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -337,7 +336,7 @@ func flattenNetworkSettingsGetDeviceCredentialSettingsForASiteV1ItemSNMPv3Creden
 
 }
 
-func flattenNetworkSettingsGetDeviceCredentialSettingsForASiteV1ItemHTTPReadCredentialsID(item *catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialSettingsForASiteV1ResponseHTTPReadCredentialsID) []map[string]interface{} {
+func flattenNetworkSettingsGetDeviceCredentialSettingsForASiteItemSNMPv3CredentialsID(item *catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialSettingsForASiteResponseSNMPv3CredentialsID) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -352,7 +351,22 @@ func flattenNetworkSettingsGetDeviceCredentialSettingsForASiteV1ItemHTTPReadCred
 
 }
 
-func flattenNetworkSettingsGetDeviceCredentialSettingsForASiteV1ItemHTTPWriteCredentialsID(item *catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialSettingsForASiteV1ResponseHTTPWriteCredentialsID) []map[string]interface{} {
+func flattenNetworkSettingsGetDeviceCredentialSettingsForASiteItemHTTPReadCredentialsID(item *catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialSettingsForASiteResponseHTTPReadCredentialsID) []map[string]interface{} {
+	if item == nil {
+		return nil
+	}
+	respItem := make(map[string]interface{})
+	respItem["credentials_id"] = item.CredentialsID
+	respItem["inherited_site_id"] = item.InheritedSiteID
+	respItem["inherited_site_name"] = item.InheritedSiteName
+
+	return []map[string]interface{}{
+		respItem,
+	}
+
+}
+
+func flattenNetworkSettingsGetDeviceCredentialSettingsForASiteItemHTTPWriteCredentialsID(item *catalystcentersdkgo.ResponseNetworkSettingsGetDeviceCredentialSettingsForASiteResponseHTTPWriteCredentialsID) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

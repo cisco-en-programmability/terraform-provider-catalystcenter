@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,8 +15,8 @@ func dataSourceSitesDNSSettings() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Network Settings.
 
-- Retrieve DNS settings for a site; *null* values indicate that the setting will be inherited from the parent site;
-empty objects (*{}*) indicate that the setting is unset at a site.
+- Retrieve DNS settings for a site; **null** values indicate that the setting will be inherited from the parent site;
+empty objects (**{}**) indicate that the setting is unset at a site.
 `,
 
 		ReadContext: dataSourceSitesDNSSettingsRead,
@@ -28,7 +28,7 @@ empty objects (*{}*) indicate that the setting is unset at a site.
 				Required: true,
 			},
 			"inherited": &schema.Schema{
-				Description: `_inherited query parameter. Include settings explicitly set for this site and settings inherited from sites higher in the site hierarchy; when *false*, *null* values indicate that the site inherits that setting from the parent site or a site higher in the site hierarchy.
+				Description: `_inherited query parameter. Include settings explicitly set for this site and settings inherited from sites higher in the site hierarchy; when **false**, **null** values indicate that the site inherits that setting from the parent site or a site higher in the site hierarchy.
 `,
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -95,32 +95,46 @@ func dataSourceSitesDNSSettingsRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveDNSSettingsForASiteV1")
+		log.Printf("[DEBUG] Selected method: RetrieveDNSSettingsForASite")
 		vvID := vID.(string)
-		queryParams1 := catalystcentersdkgo.RetrieveDNSSettingsForASiteV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrieveDNSSettingsForASiteQueryParams{}
 
 		if okInherited {
 			queryParams1.Inherited = vInherited.(bool)
 		}
 
-		response1, restyResp1, err := client.NetworkSettings.RetrieveDNSSettingsForASiteV1(vvID, &queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.NetworkSettings.RetrieveDNSSettingsForASite(vvID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveDNSSettingsForASiteV1", err,
-				"Failure at RetrieveDNSSettingsForASiteV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveDNSSettingsForASite", err,
+				"Failure at RetrieveDNSSettingsForASite, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenNetworkSettingsRetrieveDNSSettingsForASiteV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveDNSSettingsForASite", err,
+				"Failure at RetrieveDNSSettingsForASite, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenNetworkSettingsRetrieveDNSSettingsForASiteItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveDNSSettingsForASiteV1 response",
+				"Failure when setting RetrieveDNSSettingsForASite response",
 				err))
 			return diags
 		}
@@ -132,18 +146,18 @@ func dataSourceSitesDNSSettingsRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenNetworkSettingsRetrieveDNSSettingsForASiteV1Item(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveDNSSettingsForASiteV1Response) []map[string]interface{} {
+func flattenNetworkSettingsRetrieveDNSSettingsForASiteItem(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveDNSSettingsForASiteResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["dns"] = flattenNetworkSettingsRetrieveDNSSettingsForASiteV1ItemDNS(item.DNS)
+	respItem["dns"] = flattenNetworkSettingsRetrieveDNSSettingsForASiteItemDNS(item.DNS)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenNetworkSettingsRetrieveDNSSettingsForASiteV1ItemDNS(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveDNSSettingsForASiteV1ResponseDNS) []map[string]interface{} {
+func flattenNetworkSettingsRetrieveDNSSettingsForASiteItemDNS(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveDNSSettingsForASiteResponseDNS) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

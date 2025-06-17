@@ -27,10 +27,10 @@ reporting for EVPN protocol deployments. The special Layer 3 VN called ‘INFRA_
 through Assurance virtualNetworkHealthSummaries APIS. Please find INFRA_VN related health metrics under
 /data/api/v1/fabricSiteHealthSummaries (Ex: attributes ‘pubsubInfraVnGoodHealthPercentage’ and
 ‘bgpPeerInfraVnScoreGoodHealthPercentage’).
-This data source provides the latest health data until the given endTime. If data is not ready for the provided
-endTime, the request will fail with error code 400 Bad Request, and the error message will indicate the recommended
+This data source provides the latest health data until the given **endTime**. If data is not ready for the provided
+endTime, the request will fail with error code **400 Bad Request**, and the error message will indicate the recommended
 endTime to use to retrieve a complete data set. This behavior may occur if the provided endTime=currentTime, since we
-are not a real time system. When endTime is not provided, the API returns the latest data.
+are not a real time system. When **endTime** is not provided, the API returns the latest data.
 For detailed information about the usage of the API, please refer to the Open API specification document
 https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 virtualNetworkHealthSummaries-1.0.1-resolved.yaml
@@ -39,18 +39,20 @@ virtualNetworkHealthSummaries-1.0.1-resolved.yaml
 
 ```terraform
 data "catalystcenter_virtual_network_health_summaries" "example" {
-  provider    = catalystcenter
-  attribute   = "string"
-  end_time    = 1609459200
-  id          = "string"
-  limit       = 1
-  offset      = 1
-  order       = "string"
-  sort_by     = "string"
-  start_time  = 1609459200
-  view        = "string"
-  vn_layer    = "string"
-  xca_lle_rid = "string"
+  provider          = catalystcenter
+  attribute         = "string"
+  end_time          = 1609459200
+  id                = "string"
+  limit             = 1
+  offset            = 1
+  order             = "string"
+  site_hierarchy    = "string"
+  site_hierarchy_id = "string"
+  sort_by           = "string"
+  start_time        = 1609459200
+  view              = "string"
+  vn_layer          = "string"
+  xca_lle_rid       = "string"
 }
 
 output "catalystcenter_virtual_network_health_summaries_example" {
@@ -73,6 +75,8 @@ output "catalystcenter_virtual_network_health_summaries_example" {
 - `limit` (Number) limit query parameter. Maximum number of records to return
 - `offset` (Number) offset query parameter. Specifies the starting point within all records returned by the API. It's one based offset. The starting value is 1.
 - `order` (String) order query parameter. The sort order of the field ascending or descending.
+- `site_hierarchy` (String) siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. **Global/AreaName/BuildingName/FloorName**)          This field supports wildcard asterisk (*****) character search support. E.g. ***/San*, */San, /San***          Examples:          **?siteHierarchy=Global/AreaName/BuildingName/FloorName** (single siteHierarchy requested)          **?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2** (multiple siteHierarchies requested)
+- `site_hierarchy_id` (String) SiteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. **globalUuid/areaUuid/buildingUuid/floorUuid**)          This field supports wildcard asterisk (*****) character search support. E.g. ***uuid*, *uuid, uuid***          Examples:          **?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid **(single siteHierarchyId requested)          **?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2** (multiple siteHierarchyIds requested)
 - `sort_by` (String) sortBy query parameter. A field within the response to sort by.
 - `start_time` (Number) startTime query parameter. Start time from which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
 - `view` (String) view query parameter. The specific summary view being requested. This is an optional parameter which can be passed to get one or more of the specific health data summaries associated with virtual networks.
@@ -107,8 +111,7 @@ Read-Only:
 - `layer` (String)
 - `multi_cast_fair_health_device_count` (Number)
 - `multi_cast_good_health_device_count` (Number)
-- `multi_cast_good_health_percentage` (String)
-- `multi_cast_no_health_device_count` (Number)
+- `multi_cast_good_health_percentage` (Number)
 - `multi_cast_poor_health_device_count` (Number)
 - `multi_cast_total_device_count` (Number)
 - `name` (String)
@@ -121,9 +124,9 @@ Read-Only:
 - `pubsub_session_no_health_device_count` (Number)
 - `pubsub_session_poor_health_device_count` (Number)
 - `pubsub_session_total_device_count` (Number)
-- `total_device_count` (Number)
 - `total_endpoints` (Number)
 - `total_fabric_sites` (Number)
+- `total_health_device_count` (Number)
 - `vlan` (String)
 - `vn_exit_fair_health_device_count` (Number)
 - `vn_exit_good_health_device_count` (Number)
@@ -145,14 +148,14 @@ Read-Only:
 - `vn_services_total_device_count` (Number)
 - `vn_status_fair_health_device_count` (Number)
 - `vn_status_good_health_device_count` (Number)
-- `vn_status_health_percentage` (String)
+- `vn_status_health_percentage` (Number)
 - `vn_status_no_health_device_count` (Number)
 - `vn_status_poor_health_device_count` (Number)
 - `vn_status_total_device_count` (Number)
 - `vni_fair_health_device_count` (Number)
 - `vni_good_health_device_count` (Number)
-- `vni_good_health_percentage` (String)
+- `vni_good_health_percentage` (Number)
 - `vni_no_health_device_count` (Number)
 - `vni_poor_health_device_count` (Number)
 - `vni_total_device_count` (Number)
-- `vnid` (Number)
+- `vnid` (String)

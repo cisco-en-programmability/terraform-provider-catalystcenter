@@ -1,7 +1,7 @@
 
 resource "catalystcenter_license_device" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     device_uuids         = ["string"]

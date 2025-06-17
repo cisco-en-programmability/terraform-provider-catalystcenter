@@ -19,6 +19,7 @@ provided, the API defaults to the last 24 hours. For detailed information about 
 the Open API specification document https://github.com/cisco-en-programmability/catalyst-center-api-
 specs/blob/main/Assurance/CE_Cat_Center_Org-icap-1.0.0-resolved.yaml
 
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -30,23 +31,23 @@ resource "catalystcenter_icap_radios_id_stats" "example" {
   provider    = catalystcenter
   id          = "string"
   xca_lle_rid = "string"
-  parameters {
+  parameters = [{
 
     end_time = 1
-    filters {
+    filters = [{
 
       key      = "string"
       operator = "string"
       value    = 1
-    }
-    page {
+    }]
+    page = [{
 
       limit           = 1
       offset          = 1
       time_sort_order = "string"
-    }
+    }]
     start_time = 1
-  }
+  }]
 }
 
 output "catalystcenter_icap_radios_id_stats_example" {

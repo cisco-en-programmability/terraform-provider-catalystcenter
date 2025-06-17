@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -292,21 +292,21 @@ func dataSourceSiteHealth() *schema.Resource {
 								Schema: map[string]*schema.Schema{
 
 									"ip": &schema.Schema{
-										Description: `IP address of the DNAC
+										Description: `IP address of the CATALYST
 `,
 										Type:     schema.TypeString,
 										Computed: true,
 									},
 
 									"status": &schema.Schema{
-										Description: `Status of the DNAC
+										Description: `Status of the CATALYST
 `,
 										Type:     schema.TypeString,
 										Computed: true,
 									},
 
 									"uuid": &schema.Schema{
-										Description: `UUID of the DNAC
+										Description: `UUID of the CATALYST
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -591,8 +591,8 @@ func dataSourceSiteHealthRead(ctx context.Context, d *schema.ResourceData, m int
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSiteHealthV1")
-		queryParams1 := catalystcentersdkgo.GetSiteHealthV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetSiteHealth")
+		queryParams1 := catalystcentersdkgo.GetSiteHealthQueryParams{}
 
 		if okSiteType {
 			queryParams1.SiteType = vSiteType.(string)
@@ -607,24 +607,38 @@ func dataSourceSiteHealthRead(ctx context.Context, d *schema.ResourceData, m int
 			queryParams1.Timestamp = vTimestamp.(float64)
 		}
 
-		response1, restyResp1, err := client.Sites.GetSiteHealthV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sites.GetSiteHealth(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSiteHealthV1", err,
-				"Failure at GetSiteHealthV1, unexpected response", ""))
+				"Failure when executing 2 GetSiteHealth", err,
+				"Failure at GetSiteHealth, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSitesGetSiteHealthV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetSiteHealth", err,
+				"Failure at GetSiteHealth, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSitesGetSiteHealthItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSiteHealthV1 response",
+				"Failure when setting GetSiteHealth response",
 				err))
 			return diags
 		}
@@ -636,7 +650,7 @@ func dataSourceSiteHealthRead(ctx context.Context, d *schema.ResourceData, m int
 	return diags
 }
 
-func flattenSitesGetSiteHealthV1Items(items *[]catalystcentersdkgo.ResponseSitesGetSiteHealthV1Response) []map[string]interface{} {
+func flattenSitesGetSiteHealthItems(items *[]catalystcentersdkgo.ResponseSitesGetSiteHealthResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -690,19 +704,19 @@ func flattenSitesGetSiteHealthV1Items(items *[]catalystcentersdkgo.ResponseSites
 		respItem["switch_device_good_count"] = item.SwitchDeviceGoodCount
 		respItem["switch_device_total_count"] = item.SwitchDeviceTotalCount
 		respItem["application_health"] = item.ApplicationHealth
-		respItem["application_health_info"] = flattenSitesGetSiteHealthV1ItemsApplicationHealthInfo(item.ApplicationHealthInfo)
+		respItem["application_health_info"] = flattenSitesGetSiteHealthItemsApplicationHealthInfo(item.ApplicationHealthInfo)
 		respItem["application_good_count"] = item.ApplicationGoodCount
 		respItem["application_total_count"] = item.ApplicationTotalCount
 		respItem["application_bytes_total_count"] = item.ApplicationBytesTotalCount
-		respItem["dnac_info"] = flattenSitesGetSiteHealthV1ItemsDnacInfo(item.DnacInfo)
+		respItem["dnac_info"] = flattenSitesGetSiteHealthItemsDnacInfo(item.DnacInfo)
 		respItem["usage"] = item.Usage
-		respItem["application_health_stats"] = flattenSitesGetSiteHealthV1ItemsApplicationHealthStats(item.ApplicationHealthStats)
+		respItem["application_health_stats"] = flattenSitesGetSiteHealthItemsApplicationHealthStats(item.ApplicationHealthStats)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSitesGetSiteHealthV1ItemsApplicationHealthInfo(items *[]catalystcentersdkgo.ResponseSitesGetSiteHealthV1ResponseApplicationHealthInfo) []map[string]interface{} {
+func flattenSitesGetSiteHealthItemsApplicationHealthInfo(items *[]catalystcentersdkgo.ResponseSitesGetSiteHealthResponseApplicationHealthInfo) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -717,7 +731,7 @@ func flattenSitesGetSiteHealthV1ItemsApplicationHealthInfo(items *[]catalystcent
 	return respItems
 }
 
-func flattenSitesGetSiteHealthV1ItemsDnacInfo(item *catalystcentersdkgo.ResponseSitesGetSiteHealthV1ResponseDnacInfo) []map[string]interface{} {
+func flattenSitesGetSiteHealthItemsDnacInfo(item *catalystcentersdkgo.ResponseSitesGetSiteHealthResponseDnacInfo) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -732,15 +746,15 @@ func flattenSitesGetSiteHealthV1ItemsDnacInfo(item *catalystcentersdkgo.Response
 
 }
 
-func flattenSitesGetSiteHealthV1ItemsApplicationHealthStats(item *catalystcentersdkgo.ResponseSitesGetSiteHealthV1ResponseApplicationHealthStats) []map[string]interface{} {
+func flattenSitesGetSiteHealthItemsApplicationHealthStats(item *catalystcentersdkgo.ResponseSitesGetSiteHealthResponseApplicationHealthStats) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["app_total_count"] = item.AppTotalCount
-	respItem["business_relevant_app_count"] = flattenSitesGetSiteHealthV1ItemsApplicationHealthStatsBusinessRelevantAppCount(item.BusinessRelevantAppCount)
-	respItem["business_irrelevant_app_count"] = flattenSitesGetSiteHealthV1ItemsApplicationHealthStatsBusinessIrrelevantAppCount(item.BusinessIrrelevantAppCount)
-	respItem["default_health_app_count"] = flattenSitesGetSiteHealthV1ItemsApplicationHealthStatsDefaultHealthAppCount(item.DefaultHealthAppCount)
+	respItem["business_relevant_app_count"] = flattenSitesGetSiteHealthItemsApplicationHealthStatsBusinessRelevantAppCount(item.BusinessRelevantAppCount)
+	respItem["business_irrelevant_app_count"] = flattenSitesGetSiteHealthItemsApplicationHealthStatsBusinessIrrelevantAppCount(item.BusinessIrrelevantAppCount)
+	respItem["default_health_app_count"] = flattenSitesGetSiteHealthItemsApplicationHealthStatsDefaultHealthAppCount(item.DefaultHealthAppCount)
 
 	return []map[string]interface{}{
 		respItem,
@@ -748,7 +762,7 @@ func flattenSitesGetSiteHealthV1ItemsApplicationHealthStats(item *catalystcenter
 
 }
 
-func flattenSitesGetSiteHealthV1ItemsApplicationHealthStatsBusinessRelevantAppCount(item *catalystcentersdkgo.ResponseSitesGetSiteHealthV1ResponseApplicationHealthStatsBusinessRelevantAppCount) []map[string]interface{} {
+func flattenSitesGetSiteHealthItemsApplicationHealthStatsBusinessRelevantAppCount(item *catalystcentersdkgo.ResponseSitesGetSiteHealthResponseApplicationHealthStatsBusinessRelevantAppCount) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -763,7 +777,7 @@ func flattenSitesGetSiteHealthV1ItemsApplicationHealthStatsBusinessRelevantAppCo
 
 }
 
-func flattenSitesGetSiteHealthV1ItemsApplicationHealthStatsBusinessIrrelevantAppCount(item *catalystcentersdkgo.ResponseSitesGetSiteHealthV1ResponseApplicationHealthStatsBusinessIrrelevantAppCount) []map[string]interface{} {
+func flattenSitesGetSiteHealthItemsApplicationHealthStatsBusinessIrrelevantAppCount(item *catalystcentersdkgo.ResponseSitesGetSiteHealthResponseApplicationHealthStatsBusinessIrrelevantAppCount) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -778,7 +792,7 @@ func flattenSitesGetSiteHealthV1ItemsApplicationHealthStatsBusinessIrrelevantApp
 
 }
 
-func flattenSitesGetSiteHealthV1ItemsApplicationHealthStatsDefaultHealthAppCount(item *catalystcentersdkgo.ResponseSitesGetSiteHealthV1ResponseApplicationHealthStatsDefaultHealthAppCount) []map[string]interface{} {
+func flattenSitesGetSiteHealthItemsApplicationHealthStatsDefaultHealthAppCount(item *catalystcentersdkgo.ResponseSitesGetSiteHealthResponseApplicationHealthStatsDefaultHealthAppCount) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -138,29 +138,41 @@ func dataSourceDnacaapManagementExecutionStatusRead(ctx context.Context, d *sche
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetBusinessAPIExecutionDetailsV1")
+		log.Printf("[DEBUG] Selected method: GetBusinessAPIExecutionDetails")
 		vvExecutionID := vExecutionID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Task.GetBusinessAPIExecutionDetailsV1(vvExecutionID)
+		response1, restyResp1, err := client.Task.GetBusinessAPIExecutionDetails(vvExecutionID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetBusinessAPIExecutionDetailsV1", err,
-				"Failure at GetBusinessAPIExecutionDetailsV1, unexpected response", ""))
+				"Failure when executing 2 GetBusinessAPIExecutionDetails", err,
+				"Failure at GetBusinessAPIExecutionDetails, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenTaskGetBusinessAPIExecutionDetailsV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetBusinessAPIExecutionDetails", err,
+				"Failure at GetBusinessAPIExecutionDetails, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenTaskGetBusinessAPIExecutionDetailsItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetBusinessAPIExecutionDetailsV1 response",
+				"Failure when setting GetBusinessAPIExecutionDetails response",
 				err))
 			return diags
 		}
@@ -172,7 +184,7 @@ func dataSourceDnacaapManagementExecutionStatusRead(ctx context.Context, d *sche
 	return diags
 }
 
-func flattenTaskGetBusinessAPIExecutionDetailsV1Item(item *catalystcentersdkgo.ResponseTaskGetBusinessAPIExecutionDetailsV1) []map[string]interface{} {
+func flattenTaskGetBusinessAPIExecutionDetailsItem(item *catalystcentersdkgo.ResponseTaskGetBusinessAPIExecutionDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -187,7 +199,7 @@ func flattenTaskGetBusinessAPIExecutionDetailsV1Item(item *catalystcentersdkgo.R
 	respItem["time_duration"] = item.TimeDuration
 	respItem["status"] = item.Status
 	respItem["bapi_sync_response"] = item.BapiSyncResponse
-	respItem["bapi_sync_response_json"] = flattenTaskGetBusinessAPIExecutionDetailsV1ItemBapiSyncResponseJSON(item.BapiSyncResponseJSON)
+	respItem["bapi_sync_response_json"] = flattenTaskGetBusinessAPIExecutionDetailsItemBapiSyncResponseJSON(item.BapiSyncResponseJSON)
 	respItem["runtime_instance_id"] = item.RuntimeInstanceID
 	respItem["bapi_error"] = item.BapiError
 	return []map[string]interface{}{
@@ -195,7 +207,7 @@ func flattenTaskGetBusinessAPIExecutionDetailsV1Item(item *catalystcentersdkgo.R
 	}
 }
 
-func flattenTaskGetBusinessAPIExecutionDetailsV1ItemBapiSyncResponseJSON(item *catalystcentersdkgo.ResponseTaskGetBusinessAPIExecutionDetailsV1BapiSyncResponseJSON) interface{} {
+func flattenTaskGetBusinessAPIExecutionDetailsItemBapiSyncResponseJSON(item *catalystcentersdkgo.ResponseTaskGetBusinessAPIExecutionDetailsBapiSyncResponseJSON) interface{} {
 	if item == nil {
 		return nil
 	}

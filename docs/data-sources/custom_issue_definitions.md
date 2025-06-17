@@ -24,6 +24,7 @@ It performs read operation on Issues.
 definition enable status, priority, severity, facility and mnemonic. The issue definition configurations may vary across
 profiles, hence specifying the profile Id in the query parameter is important and the default profile is global.
 
+
   The assurance profile definitions can be obtain via the API endpoint: /api/v1/siteprofile?namespace=assurance. For
 detailed information about the usage of the API, please refer to the Open API specification document
 https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-

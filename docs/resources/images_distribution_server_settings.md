@@ -18,7 +18,7 @@ It manages create, read, update and delete operations on Software Image Manageme
 ```terraform
 resource "catalystcenter_images_distribution_server_settings" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     password       = "******"

@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -794,7 +794,7 @@ func resourceApplicationsV2Create(ctx context.Context, d *schema.ResourceData, m
 		d.SetId(joinResourceID(resourceMap))
 		return resourceApplicationsV2Read(ctx, d, m)
 	}
-	resp1, restyResp1, err := client.ApplicationPolicy.CreateApplications(request1)
+	resp1, restyResp1, err := client.ApplicationPolicy.CreateApplicationsV2(request1)
 	if err != nil || resp1 == nil {
 		if restyResp1 != nil {
 			diags = append(diags, diagErrorWithResponse(
@@ -900,7 +900,7 @@ func resourceApplicationsV2Update(ctx context.Context, d *schema.ResourceData, m
 			req[0].ID = vID
 			request1 = &req
 		}
-		response1, restyResp1, err := client.ApplicationPolicy.EditApplications(request1)
+		response1, restyResp1, err := client.ApplicationPolicy.EditApplicationsV2(request1)
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] resty response for update operation => %v", restyResp1.String())
@@ -958,7 +958,7 @@ func resourceApplicationsV2Delete(ctx context.Context, d *schema.ResourceData, m
 	resourceID := d.Id()
 	resourceMap := separateResourceID(resourceID)
 	vvID := resourceMap["id"]
-	response1, restyResp1, err := client.ApplicationPolicy.DeleteApplication(&catalystcentersdkgo.DeleteApplicationV1QueryParams{
+	response1, restyResp1, err := client.ApplicationPolicy.DeleteApplication(&catalystcentersdkgo.DeleteApplicationQueryParams{
 		ID: vvID,
 	})
 	if err != nil || response1 == nil {
@@ -1010,6 +1010,7 @@ func resourceApplicationsV2Delete(ctx context.Context, d *schema.ResourceData, m
 
 	return diags
 }
+
 func expandRequestApplicationsV2CreateApplicationsV2(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyCreateApplicationsV2 {
 	request := catalystcentersdkgo.RequestApplicationPolicyCreateApplicationsV2{}
 	if v := expandRequestApplicationsV2CreateApplicationsV2ItemArray(ctx, key+".payload", d); v != nil {

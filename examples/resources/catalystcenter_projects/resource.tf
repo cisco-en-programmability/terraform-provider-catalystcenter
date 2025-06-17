@@ -1,14 +1,14 @@
 
 resource "catalystcenter_projects" "example" {
-    provider = catalystcenter
+  provider = catalystcenter
+ 
+  parameters {
 
-    parameters {
-
-      description = "string"
-      name = "string"
-    }
+    description = "string"
+    name        = "string"
+  }
 }
 
 output "catalystcenter_projects_example" {
-    value = catalystcenter_projects.example
+  value = catalystcenter_projects.example
 }

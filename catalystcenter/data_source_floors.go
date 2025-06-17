@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -95,6 +95,13 @@ func dataSourceFloors() *schema.Resource {
 							Computed: true,
 						},
 
+						"site_hierarchy_id": &schema.Schema{
+							Description: `Site Hierarchical Id. Read only. Can be used to add the access groups using the API POST:/dna/system/api/v1/accessGroups, this value should be used to populate the srcResourceId field of the request payload.
+`,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
 						"type": &schema.Schema{
 							Description: `Example : floor
 `,
@@ -138,7 +145,21 @@ func dataSourceFloorsRead(ctx context.Context, d *schema.ResourceData, m interfa
 			queryParams1.UnitsOfMeasure = vUnitsOfMeasure.(string)
 		}
 
+		// has_unknown_response: None
+
 		response1, restyResp1, err := client.SiteDesign.GetsAFloorV2(vvID, &queryParams1)
+
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetsAFloorV2", err,
+				"Failure at GetsAFloorV2, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
@@ -183,6 +204,7 @@ func flattenSiteDesignGetsAFloorV2Item(item *catalystcentersdkgo.ResponseSiteDes
 	respItem["type"] = item.Type
 	respItem["id"] = item.ID
 	respItem["name_hierarchy"] = item.NameHierarchy
+	respItem["site_hierarchy_id"] = item.SiteHierarchyID
 	return []map[string]interface{}{
 		respItem,
 	}

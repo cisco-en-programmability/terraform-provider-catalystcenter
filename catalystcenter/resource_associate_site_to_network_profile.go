@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -9,7 +10,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -18,7 +19,7 @@ import (
 // resourceAction
 func resourceAssociateSiteToNetworkProfile() *schema.Resource {
 	return &schema.Resource{
-		Description: `It performs create operation on SiteDesign.
+		Description: `It performs create operation on Sites.
 
 - Associate Site to a Network Profile
 `,
@@ -94,14 +95,14 @@ func resourceAssociateSiteToNetworkProfileCreate(ctx context.Context, d *schema.
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.SiteDesign.AssociateV1(vvNetworkProfileID, vvSiteID)
+	response1, restyResp1, err := client.SiteDesign.Associate(vvNetworkProfileID, vvSiteID)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing AssociateV1", err))
+			"Failure when executing Associate", err))
 		return diags
 	}
 
@@ -109,7 +110,7 @@ func resourceAssociateSiteToNetworkProfileCreate(ctx context.Context, d *schema.
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing AssociateV1", err))
+			"Failure when executing Associate", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -136,21 +137,21 @@ func resourceAssociateSiteToNetworkProfileCreate(ctx context.Context, d *schema.
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing AssociateV1", err1))
+				"Failure when executing Associate", err1))
 			return diags
 		}
 	}
-	vItem1 := flattenSiteDesignAssociateV1Item(response1.Response)
+	vItem1 := flattenSiteDesignAssociateItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting AssociateV1 response",
+			"Failure when setting Associate response",
 			err))
 		return diags
 	}
@@ -171,7 +172,7 @@ func resourceAssociateSiteToNetworkProfileDelete(ctx context.Context, d *schema.
 	return diags
 }
 
-func flattenSiteDesignAssociateV1Item(item *catalystcentersdkgo.ResponseSiteDesignAssociateV1Response) []map[string]interface{} {
+func flattenSiteDesignAssociateItem(item *catalystcentersdkgo.ResponseSiteDesignAssociateResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

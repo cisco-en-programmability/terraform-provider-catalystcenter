@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -94,7 +94,7 @@ func dataSourceDeviceDetails() *schema.Resource {
 						},
 
 						"collection_status": &schema.Schema{
-							Description: `Device's telemetry data collection status for DNAC
+							Description: `Device's telemetry data collection status for CATALYST
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -637,8 +637,8 @@ func dataSourceDeviceDetailsRead(ctx context.Context, d *schema.ResourceData, m 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceDetailV1")
-		queryParams1 := catalystcentersdkgo.GetDeviceDetailV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetDeviceDetail")
+		queryParams1 := catalystcentersdkgo.GetDeviceDetailQueryParams{}
 
 		if okTimestamp {
 			queryParams1.Timestamp = vTimestamp.(float64)
@@ -647,24 +647,38 @@ func dataSourceDeviceDetailsRead(ctx context.Context, d *schema.ResourceData, m 
 
 		queryParams1.SearchBy = vSearchBy.(string)
 
-		response1, restyResp1, err := client.Devices.GetDeviceDetailV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Devices.GetDeviceDetail(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceDetailV1", err,
-				"Failure at GetDeviceDetailV1, unexpected response", ""))
+				"Failure when executing 2 GetDeviceDetail", err,
+				"Failure at GetDeviceDetail, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesGetDeviceDetailV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetDeviceDetail", err,
+				"Failure at GetDeviceDetail, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenDevicesGetDeviceDetailItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceDetailV1 response",
+				"Failure when setting GetDeviceDetail response",
 				err))
 			return diags
 		}
@@ -676,7 +690,7 @@ func dataSourceDeviceDetailsRead(ctx context.Context, d *schema.ResourceData, m 
 	return diags
 }
 
-func flattenDevicesGetDeviceDetailV1Item(item *catalystcentersdkgo.ResponseDevicesGetDeviceDetailV1Response) []map[string]interface{} {
+func flattenDevicesGetDeviceDetailItem(item *catalystcentersdkgo.ResponseDevicesGetDeviceDetailResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -713,7 +727,7 @@ func flattenDevicesGetDeviceDetailV1Item(item *catalystcentersdkgo.ResponseDevic
 	respItem["maintenance_mode"] = boolPtrToString(item.MaintenanceMode)
 	respItem["interference"] = item.Interference
 	respItem["software_version"] = item.SoftwareVersion
-	respItem["tag_id_list"] = flattenDevicesGetDeviceDetailV1ItemTagIDList(item.TagIDList)
+	respItem["tag_id_list"] = flattenDevicesGetDeviceDetailItemTagIDList(item.TagIDList)
 	respItem["power_type"] = item.PowerType
 	respItem["overall_health"] = item.OverallHealth
 	respItem["management_ip_addr"] = item.ManagementIPAddr
@@ -768,7 +782,7 @@ func flattenDevicesGetDeviceDetailV1Item(item *catalystcentersdkgo.ResponseDevic
 	}
 }
 
-func flattenDevicesGetDeviceDetailV1ItemTagIDList(items *[]catalystcentersdkgo.ResponseDevicesGetDeviceDetailV1ResponseTagIDList) []interface{} {
+func flattenDevicesGetDeviceDetailItemTagIDList(items *[]catalystcentersdkgo.ResponseDevicesGetDeviceDetailResponseTagIDList) []interface{} {
 	if items == nil {
 		return nil
 	}

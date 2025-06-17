@@ -42,7 +42,7 @@ output "catalystcenter_tag_member_example" {
 ### Optional
 
 - `level` (String) level query parameter.
-- `limit` (Number) limit query parameter. Used to Number of maximum members to return in the result
+- `limit` (Number) limit query parameter. The number of members to be retrieved. If not specified, the default is 500. The maximum allowed limit is 500.
 - `member_association_type` (String) memberAssociationType query parameter. Indicates how the member is associated with the tag. Possible values and description. 1) DYNAMIC : The member is associated to the tag through rules. 2) STATIC – The member is associated to the tag manually. 3) MIXED – The member is associated manually and also satisfies the rule defined for the tag
 - `offset` (Number) offset query parameter. Used for pagination. It indicates the starting row number out of available member records
 

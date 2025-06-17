@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"os"
+	"strings"
 
 	"errors"
 
@@ -11,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -22,7 +23,7 @@ func resourceSwimImageFile() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs create operation on Software Image Management (SWIM).
 
-- Fetches a software image from local file system and uploads to DNA Center. Supported software image files extensions
+- Fetches a software image from local file system and uploads to Catalyst Center. Supported software image files extensions
 are bin, img, tar, smu, pie, aes, iso, ova, tar_gz and qcow2
 `,
 
@@ -119,7 +120,7 @@ func resourceSwimImageFileCreate(ctx context.Context, d *schema.ResourceData, m 
 	vFilePath := resourceItem["file_path"]
 
 	if vFileName.(string) != "" {
-		query := catalystcentersdkgo.GetSoftwareImageDetailsV1QueryParams{
+		query := catalystcentersdkgo.GetSoftwareImageDetailsQueryParams{
 			Name: vFileName.(string),
 		}
 		item, err := searchSoftwareImageManagementSwimGetSoftwareImageDetailsFile(m, query)
@@ -136,7 +137,7 @@ func resourceSwimImageFileCreate(ctx context.Context, d *schema.ResourceData, m 
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method 1: ImportLocalSoftwareImage")
-		queryParams1 := catalystcentersdkgo.ImportLocalSoftwareImageV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.ImportLocalSoftwareImageQueryParams{}
 
 		if okIsThirdParty {
 			queryParams1.IsThirdParty = vIsThirdParty.(bool)
@@ -218,7 +219,7 @@ func resourceSwimImageFileCreate(ctx context.Context, d *schema.ResourceData, m 
 					return diags
 				}
 				var errorMsg string
-				if restyResp3 == nil {
+				if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 					errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 				} else {
 					errorMsg = restyResp3.String()
@@ -248,7 +249,7 @@ func resourceSwimImageFileRead(ctx context.Context, d *schema.ResourceData, m in
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method 1: GetSoftwareImageDetails")
-		queryParams1 := catalystcentersdkgo.GetSoftwareImageDetailsV1QueryParams{
+		queryParams1 := catalystcentersdkgo.GetSoftwareImageDetailsQueryParams{
 			Name: vName,
 		}
 
@@ -266,10 +267,10 @@ func resourceSwimImageFileRead(ctx context.Context, d *schema.ResourceData, m in
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
-		items := []catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsV1Response{
+		items := []catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsResponse{
 			*response1,
 		}
-		vItem1 := flattenSoftwareImageManagementSwimGetSoftwareImageDetailsV1Items(&items)
+		vItem1 := flattenSoftwareImageManagementSwimGetSoftwareImageDetailsItems(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting ImportLocalSoftwareImage response",
@@ -293,11 +294,11 @@ func resourceSwimImageFileDelete(ctx context.Context, d *schema.ResourceData, m 
 	return diags
 }
 
-func searchSoftwareImageManagementSwimGetSoftwareImageDetailsFile(m interface{}, queryParams catalystcentersdkgo.GetSoftwareImageDetailsV1QueryParams) (*catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsV1Response, error) {
+func searchSoftwareImageManagementSwimGetSoftwareImageDetailsFile(m interface{}, queryParams catalystcentersdkgo.GetSoftwareImageDetailsQueryParams) (*catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsV1Response
-	var ite *catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsV1
+	var foundItem *catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsResponse
+	var ite *catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetails
 	ite, _, err = client.SoftwareImageManagementSwim.GetSoftwareImageDetails(&queryParams)
 	if err != nil {
 		return foundItem, err
@@ -310,7 +311,7 @@ func searchSoftwareImageManagementSwimGetSoftwareImageDetailsFile(m interface{},
 	for _, item := range itemsCopy {
 		// Call get by _ method and set value to foundItem and return
 		if item.Name == queryParams.Name {
-			var getItem *catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsV1Response
+			var getItem *catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsResponse
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

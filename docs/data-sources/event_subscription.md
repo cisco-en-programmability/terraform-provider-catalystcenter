@@ -4,14 +4,16 @@ page_title: "catalystcenter_event_subscription Data Source - terraform-provider-
 subcategory: ""
 description: |-
   It performs read operation on Event Management.
-  Gets the list of Subscriptions's based on provided offset and limit (Deprecated)
+  Gets the list of Subscriptions's based on provided offset and limit. Deprecated since Guardian release. Alternative:
+  GET /intent/api/v1/event/subscription/rest
 ---
 
 # catalystcenter_event_subscription (Data Source)
 
 It performs read operation on Event Management.
 
-- Gets the list of Subscriptions's based on provided offset and limit (Deprecated)
+- Gets the list of Subscriptions's based on provided offset and limit. Deprecated since Guardian release. Alternative:
+GET /intent/api/v1/event/subscription/rest
 
 ## Example Usage
 

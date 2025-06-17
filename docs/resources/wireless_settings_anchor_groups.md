@@ -18,7 +18,7 @@ It manages create and read operations on Wireless.
 ```terraform
 resource "catalystcenter_wireless_settings_anchor_groups" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     anchor_group_name = "string"

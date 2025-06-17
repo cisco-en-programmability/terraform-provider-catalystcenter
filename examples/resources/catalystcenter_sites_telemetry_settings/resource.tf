@@ -1,7 +1,7 @@
 
 resource "catalystcenter_sites_telemetry_settings" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     application_visibility {
@@ -27,7 +27,7 @@ resource "catalystcenter_sites_telemetry_settings" "example" {
     }
     wired_data_collection {
 
-      enable_wired_data_collectio = "false"
+      enable_wired_data_collection = "false"
     }
     wireless_telemetry {
 

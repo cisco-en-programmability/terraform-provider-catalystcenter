@@ -4,7 +4,7 @@ page_title: "catalystcenter_discovery Resource - terraform-provider-catalystcent
 subcategory: ""
 description: |-
   It manages create, read, update and delete operations on Discovery.
-  Stops all the discoveries and removes themStops or starts an existing discoveryInitiates discovery with the given parametersStops the discovery for the given Discovery ID and removes it. Discovery ID can be obtained using the "Get Discoveries
+  Stops all the discoveries and removes them.Stops or starts an existing discoveryInitiates discovery with the given parametersStops the discovery for the given Discovery ID and removes it. Discovery ID can be obtained using the "Get Discoveries
   by range" API.
 ---
 
@@ -12,7 +12,7 @@ description: |-
 
 It manages create, read, update and delete operations on Discovery.
 
-- Stops all the discoveries and removes them
+- Stops all the discoveries and removes them.
 
 - Stops or starts an existing discovery
 
@@ -26,72 +26,10 @@ by range" API.
 ```terraform
 resource "catalystcenter_discovery" "example" {
   provider = catalystcenter
-  item {
-
-
-
-
-
-
-
-
-
-    http_read_credential {
-
-
-
-
-
-
-
-
-
-
-
-    }
-    http_write_credential {
-
-
-
-
-
-
-
-
-
-
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  }
+ 
   parameters {
 
-    attribute_info            = "------"
+    attribute_info            = "string"
     cdp_level                 = 1
     device_ids                = "string"
     discovery_condition       = "string"

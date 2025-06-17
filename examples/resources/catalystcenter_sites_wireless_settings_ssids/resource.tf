@@ -1,7 +1,7 @@
 
 resource "catalystcenter_sites_wireless_settings_ssids" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     aaa_override                                       = "false"
@@ -48,6 +48,7 @@ resource "catalystcenter_sites_wireless_settings_ssids" "example" {
     is_hex                                             = "false"
     is_mac_filtering_enabled                           = "false"
     is_posturing_enabled                               = "false"
+    is_radius_profiling_enabled                        = "false"
     is_random_mac_filter_enabled                       = "false"
     l3_auth_type                                       = "string"
     management_frame_protection_clientprotection       = "string"
@@ -61,6 +62,7 @@ resource "catalystcenter_sites_wireless_settings_ssids" "example" {
     neighbor_list_enable       = "false"
     open_ssid                  = "string"
     passphrase                 = "string"
+    policy_profile_name        = "string"
     profile_name               = "string"
     protected_management_frame = "string"
     rsn_cipher_suite_ccmp128   = "false"

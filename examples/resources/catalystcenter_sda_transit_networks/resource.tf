@@ -1,7 +1,7 @@
 
 resource "catalystcenter_sda_transit_networks" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     id = "string"
@@ -16,7 +16,8 @@ resource "catalystcenter_sda_transit_networks" "example" {
       control_plane_network_device_ids  = ["string"]
       is_multicast_over_transit_enabled = "false"
     }
-    type = "string"
+    site_id = "string"
+    type    = "string"
   }
 }
 

@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -9,7 +10,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -86,14 +87,14 @@ func resourceSdaAnycastGatewaysDeleteCreate(ctx context.Context, d *schema.Resou
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Sda.DeleteAnycastGatewayByIDV1(vvID)
+	response1, restyResp1, err := client.Sda.DeleteAnycastGatewayByID(vvID)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing DeleteAnycastGatewayByIDV1", err))
+			"Failure when executing DeleteAnycastGatewayByID", err))
 		return diags
 	}
 
@@ -101,7 +102,7 @@ func resourceSdaAnycastGatewaysDeleteCreate(ctx context.Context, d *schema.Resou
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing DeleteAnycastGatewayByIdV1", err))
+			"Failure when executing DeleteAnycastGatewayById", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -128,21 +129,21 @@ func resourceSdaAnycastGatewaysDeleteCreate(ctx context.Context, d *schema.Resou
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing DeleteAnycastGatewayByIdV1", err1))
+				"Failure when executing DeleteAnycastGatewayById", err1))
 			return diags
 		}
 	}
-	vItem1 := flattenSdaDeleteAnycastGatewayByIDV1Item(response1.Response)
+	vItem1 := flattenSdaDeleteAnycastGatewayByIDItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting DeleteAnycastGatewayByIDV1 response",
+			"Failure when setting DeleteAnycastGatewayByID response",
 			err))
 		return diags
 	}
@@ -163,7 +164,7 @@ func resourceSdaAnycastGatewaysDeleteDelete(ctx context.Context, d *schema.Resou
 	return diags
 }
 
-func flattenSdaDeleteAnycastGatewayByIDV1Item(item *catalystcentersdkgo.ResponseSdaDeleteAnycastGatewayByIDV1Response) []map[string]interface{} {
+func flattenSdaDeleteAnycastGatewayByIDItem(item *catalystcentersdkgo.ResponseSdaDeleteAnycastGatewayByIDResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

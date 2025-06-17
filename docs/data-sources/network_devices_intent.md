@@ -5,15 +5,23 @@ subcategory: ""
 description: |-
   It performs read operation on Devices.
   API to fetch the list of network devices using basic filters. Use the /dna/intent/api/v1/networkDevices/query API
-  for advanced filtering. Refer features for more details.
+  for advanced filtering. Refer features for more details. The API returns a paginated response based on 'limit' and
+  'offset' parameters, allowing up to 500 records per page. 'limit' specifies the number of records, and 'offset' sets the
+  starting point using 1-based indexing. Use /dna/intent/api/v1/networkDevices/count API to get the total record count.
+  For data sets over 500 records, make multiple calls, adjusting 'limit' and 'offset' to retrieve all records
+  incrementally.
 ---
 
 # catalystcenter_network_devices_intent (Data Source)
 
 It performs read operation on Devices.
 
-- API to fetch the list of network devices using basic filters. Use the /dna/intent/api/v1/networkDevices/query API
-for advanced filtering. Refer features for more details.
+- API to fetch the list of network devices using basic filters. Use the **/dna/intent/api/v1/networkDevices/query** API
+for advanced filtering. Refer features for more details. The API returns a paginated response based on 'limit' and
+'offset' parameters, allowing up to 500 records per page. 'limit' specifies the number of records, and 'offset' sets the
+starting point using 1-based indexing. Use /dna/intent/api/v1/networkDevices/count API to get the total record count.
+For data sets over 500 records, make multiple calls, adjusting 'limit' and 'offset' to retrieve all records
+incrementally.
 
 ## Example Usage
 

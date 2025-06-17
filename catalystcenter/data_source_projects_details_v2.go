@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -27,9 +27,9 @@ func dataSourceProjectsDetailsV2() *schema.Resource {
 				Optional: true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter. Limits number of results
+				Description: `limit query parameter. The number of records to show for this page;The minimum is 1, and the maximum is 500.
 `,
-				Type:     schema.TypeInt,
+				Type:     schema.TypeFloat,
 				Optional: true,
 			},
 			"name": &schema.Schema{
@@ -167,7 +167,21 @@ func dataSourceProjectsDetailsV2Read(ctx context.Context, d *schema.ResourceData
 			queryParams1.SortOrder = vSortOrder.(string)
 		}
 
+		// has_unknown_response: None
+
 		response1, restyResp1, err := client.ConfigurationTemplates.GetProjectsDetailsV2(&queryParams1)
+
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetProjectsDetailsV2", err,
+				"Failure at GetProjectsDetailsV2, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
@@ -201,20 +215,20 @@ func flattenConfigurationTemplatesGetProjectsDetailsV2Item(item *catalystcenters
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["createTime"] = item.CreateTime
+	respItem["create_time"] = item.CreateTime
 	respItem["description"] = item.Description
 	respItem["id"] = item.ID
 	respItem["is_deletable"] = boolPtrToString(item.IsDeletable)
 	respItem["last_update_time"] = item.LastUpdateTime
 	respItem["name"] = item.Name
-	respItem["tags"] = flattenConfigurationTemplatesGetProjectsDetailsItemTags(item.Tags)
-	respItem["templates"] = flattenConfigurationTemplatesGetProjectsDetailsItemTemplates(item.Templates)
+	respItem["tags"] = flattenConfigurationTemplatesGetProjectsDetailsV2ItemTags(item.Tags)
+	respItem["templates"] = flattenConfigurationTemplatesGetProjectsDetailsV2ItemTemplates(item.Templates)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenConfigurationTemplatesGetProjectsDetailsItemTags(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetProjectsDetailsV2Tags) []map[string]interface{} {
+func flattenConfigurationTemplatesGetProjectsDetailsV2ItemTags(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetProjectsDetailsV2Tags) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -228,7 +242,7 @@ func flattenConfigurationTemplatesGetProjectsDetailsItemTags(items *[]catalystce
 	return respItems
 }
 
-func flattenConfigurationTemplatesGetProjectsDetailsItemTemplates(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetProjectsDetailsV2Templates) interface{} {
+func flattenConfigurationTemplatesGetProjectsDetailsV2ItemTemplates(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetProjectsDetailsV2Templates) interface{} {
 	if item == nil {
 		return nil
 	}

@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -9,7 +10,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -61,7 +62,7 @@ func resourceImagesID() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": &schema.Schema{
-							Description: `id path parameter. The software image identifier that needs to be deleted can be obtained from the API /dna/intent/api/v1/images?imported=true. Use this API to obtain the id of the image.
+							Description: `id path parameter. The software image identifier that needs to be deleted can be obtained from the API **/dna/intent/api/v1/images?imported=true**. Use this API to obtain the **id** of the image.
 `,
 							Type:     schema.TypeString,
 							Required: true,
@@ -84,21 +85,21 @@ func resourceImagesIDCreate(ctx context.Context, d *schema.ResourceData, m inter
 
 	vvID := vID.(string)
 
-	// has_unknown_response: None
+	response1, restyResp1, err := client.SoftwareImageManagementSwim.DeleteImage(vvID)
 
-	response1, restyResp1, err := client.SoftwareImageManagementSwim.DeleteImageV1(vvID)
-
-	vItem1 := flattenSoftwareImageManagementSwimDeleteImageV1Item(response1.Response)
-	if err := d.Set("item", vItem1); err != nil {
-		diags = append(diags, diagError(
-			"Failure when setting DeleteImageV1 response",
-			err))
+	if err != nil || response1 == nil {
+		if restyResp1 != nil {
+			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+		}
+		d.SetId("")
 		return diags
 	}
 
+	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing DeleteImageV1", err))
+			"Failure when executing DeleteImage", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -125,44 +126,43 @@ func resourceImagesIDCreate(ctx context.Context, d *schema.ResourceData, m inter
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing DeleteImageV1", err1))
+				"Failure when executing DeleteImage", err1))
 			return diags
 		}
 	}
 
-	if err != nil || response1 == nil {
-		if restyResp1 != nil {
-			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
-		}
-		d.SetId("")
+	vItem1 := flattenSoftwareImageManagementSwimDeleteImageItem(response1.Response)
+	if err := d.Set("item", vItem1); err != nil {
+		diags = append(diags, diagError(
+			"Failure when setting DeleteImage response",
+			err))
 		return diags
 	}
 
-	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 	d.SetId(getUnixTimeString())
 	return diags
 }
 func resourceImagesIDRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 	return diags
 }
 
 func resourceImagesIDDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 	return diags
 }
 
-func flattenSoftwareImageManagementSwimDeleteImageV1Item(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimDeleteImageV1Response) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimDeleteImageItem(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimDeleteImageResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

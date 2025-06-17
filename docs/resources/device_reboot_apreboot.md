@@ -18,7 +18,7 @@ It manages create and read operations on Wireless.
 ```terraform
 resource "catalystcenter_device_reboot_apreboot" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     ap_mac_addresses = ["string"]

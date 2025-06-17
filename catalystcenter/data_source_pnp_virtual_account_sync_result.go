@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -218,28 +218,42 @@ func dataSourcePnpVirtualAccountSyncResultRead(ctx context.Context, d *schema.Re
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSyncResultForVirtualAccountV1")
+		log.Printf("[DEBUG] Selected method: GetSyncResultForVirtualAccount")
 		vvDomain := vDomain.(string)
 		vvName := vName.(string)
 
-		response1, restyResp1, err := client.DeviceOnboardingPnp.GetSyncResultForVirtualAccountV1(vvDomain, vvName)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.DeviceOnboardingPnp.GetSyncResultForVirtualAccount(vvDomain, vvName)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSyncResultForVirtualAccountV1", err,
-				"Failure at GetSyncResultForVirtualAccountV1, unexpected response", ""))
+				"Failure when executing 2 GetSyncResultForVirtualAccount", err,
+				"Failure at GetSyncResultForVirtualAccount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDeviceOnboardingPnpGetSyncResultForVirtualAccountV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetSyncResultForVirtualAccount", err,
+				"Failure at GetSyncResultForVirtualAccount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenDeviceOnboardingPnpGetSyncResultForVirtualAccountItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSyncResultForVirtualAccountV1 response",
+				"Failure when setting GetSyncResultForVirtualAccount response",
 				err))
 			return diags
 		}
@@ -251,7 +265,7 @@ func dataSourcePnpVirtualAccountSyncResultRead(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func flattenDeviceOnboardingPnpGetSyncResultForVirtualAccountV1Item(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetSyncResultForVirtualAccountV1) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetSyncResultForVirtualAccountItem(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetSyncResultForVirtualAccount) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -259,9 +273,9 @@ func flattenDeviceOnboardingPnpGetSyncResultForVirtualAccountV1Item(item *cataly
 	respItem["virtual_account_id"] = item.VirtualAccountID
 	respItem["auto_sync_period"] = item.AutoSyncPeriod
 	respItem["sync_result_str"] = item.SyncResultStr
-	respItem["profile"] = flattenDeviceOnboardingPnpGetSyncResultForVirtualAccountV1ItemProfile(item.Profile)
+	respItem["profile"] = flattenDeviceOnboardingPnpGetSyncResultForVirtualAccountItemProfile(item.Profile)
 	respItem["cco_user"] = item.CcoUser
-	respItem["sync_result"] = flattenDeviceOnboardingPnpGetSyncResultForVirtualAccountV1ItemSyncResult(item.SyncResult)
+	respItem["sync_result"] = flattenDeviceOnboardingPnpGetSyncResultForVirtualAccountItemSyncResult(item.SyncResult)
 	respItem["token"] = item.Token
 	respItem["sync_start_time"] = item.SyncStartTime
 	respItem["last_sync"] = item.LastSync
@@ -274,7 +288,7 @@ func flattenDeviceOnboardingPnpGetSyncResultForVirtualAccountV1Item(item *cataly
 	}
 }
 
-func flattenDeviceOnboardingPnpGetSyncResultForVirtualAccountV1ItemProfile(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetSyncResultForVirtualAccountV1Profile) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetSyncResultForVirtualAccountItemProfile(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetSyncResultForVirtualAccountProfile) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -294,12 +308,12 @@ func flattenDeviceOnboardingPnpGetSyncResultForVirtualAccountV1ItemProfile(item 
 
 }
 
-func flattenDeviceOnboardingPnpGetSyncResultForVirtualAccountV1ItemSyncResult(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetSyncResultForVirtualAccountV1SyncResult) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetSyncResultForVirtualAccountItemSyncResult(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetSyncResultForVirtualAccountSyncResult) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["sync_list"] = flattenDeviceOnboardingPnpGetSyncResultForVirtualAccountV1ItemSyncResultSyncList(item.SyncList)
+	respItem["sync_list"] = flattenDeviceOnboardingPnpGetSyncResultForVirtualAccountItemSyncResultSyncList(item.SyncList)
 	respItem["sync_msg"] = item.SyncMsg
 
 	return []map[string]interface{}{
@@ -308,7 +322,7 @@ func flattenDeviceOnboardingPnpGetSyncResultForVirtualAccountV1ItemSyncResult(it
 
 }
 
-func flattenDeviceOnboardingPnpGetSyncResultForVirtualAccountV1ItemSyncResultSyncList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetSyncResultForVirtualAccountV1SyncResultSyncList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetSyncResultForVirtualAccountItemSyncResultSyncList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetSyncResultForVirtualAccountSyncResultSyncList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

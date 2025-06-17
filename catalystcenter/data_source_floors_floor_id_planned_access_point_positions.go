@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -141,7 +141,7 @@ func dataSourceFloorsFloorIDPlannedAccessPointPositions() *schema.Resource {
 												},
 
 												"name": &schema.Schema{
-													Description: `Antenna type for this Planned Access Point. Use /dna/intent/api/v1/maps/supported-access-points to find supported Antennas for a particualr Planned Access Point type
+													Description: `Antenna type for this Planned Access Point. Use **/dna/intent/api/v1/maps/supported-access-points** to find supported Antennas for a particualr Planned Access Point type
 `,
 													Type:     schema.TypeString,
 													Computed: true,
@@ -185,7 +185,7 @@ func dataSourceFloorsFloorIDPlannedAccessPointPositions() *schema.Resource {
 						},
 
 						"type": &schema.Schema{
-							Description: `Planned Access Point type. Use dna/intent/api/v1/maps/supported-access-points to find the supported models
+							Description: `Planned Access Point type. Use **dna/intent/api/v1/maps/supported-access-points** to find the supported models
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -233,6 +233,18 @@ func dataSourceFloorsFloorIDPlannedAccessPointPositionsRead(ctx context.Context,
 		// has_unknown_response: None
 
 		response1, restyResp1, err := client.SiteDesign.GetPlannedAccessPointsPositionsV2(vvFloorID, &queryParams1)
+
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetPlannedAccessPointsPositionsV2", err,
+				"Failure at GetPlannedAccessPointsPositionsV2, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {

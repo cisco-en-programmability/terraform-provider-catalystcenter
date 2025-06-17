@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -28,7 +28,7 @@ particular Fabric Site.
 				Required: true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter. The number of records to show for this page.
+				Description: `limit query parameter. The number of records to show for this page. Default is 500 if not specified. Maximum allowed limit is 500.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -91,9 +91,9 @@ func dataSourceSdaFabricsVLANToSSIDsFabricIDRead(ctx context.Context, d *schema.
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1")
+		log.Printf("[DEBUG] Selected method: RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSite")
 		vvFabricID := vFabricID.(string)
-		queryParams1 := catalystcentersdkgo.RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteQueryParams{}
 
 		if okLimit {
 			queryParams1.Limit = vLimit.(float64)
@@ -102,24 +102,38 @@ func dataSourceSdaFabricsVLANToSSIDsFabricIDRead(ctx context.Context, d *schema.
 			queryParams1.Offset = vOffset.(float64)
 		}
 
-		response1, restyResp1, err := client.FabricWireless.RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1(vvFabricID, &queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.FabricWireless.RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSite(vvFabricID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1", err,
-				"Failure at RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSite", err,
+				"Failure at RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSite, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSite", err,
+				"Failure at RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSite, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1 response",
+				"Failure when setting RetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSite response",
 				err))
 			return diags
 		}
@@ -131,7 +145,7 @@ func dataSourceSdaFabricsVLANToSSIDsFabricIDRead(ctx context.Context, d *schema.
 	return diags
 }
 
-func flattenFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1Items(items *[]catalystcentersdkgo.ResponseFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1Response) []map[string]interface{} {
+func flattenFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteItems(items *[]catalystcentersdkgo.ResponseFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -139,13 +153,13 @@ func flattenFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSi
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["vlan_name"] = item.VLANName
-		respItem["ssid_details"] = flattenFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1ItemsSSIDDetails(item.SSIDDetails)
+		respItem["ssid_details"] = flattenFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteItemsSSIDDetails(item.SSIDDetails)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1ItemsSSIDDetails(items *[]catalystcentersdkgo.ResponseFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteV1ResponseSSIDDetails) []map[string]interface{} {
+func flattenFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteItemsSSIDDetails(items *[]catalystcentersdkgo.ResponseFabricWirelessRetrieveTheVLANsAndSSIDsMappedToTheVLANWithinAFabricSiteResponseSSIDDetails) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

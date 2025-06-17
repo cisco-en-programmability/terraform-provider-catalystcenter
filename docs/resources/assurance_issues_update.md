@@ -4,9 +4,11 @@ page_title: "catalystcenter_assurance_issues_update Resource - terraform-provide
 subcategory: ""
 description: |-
   It performs create operation on Issues.
-  Updates selected fields in the given issue. Currently the only field that can be updated is 'notes' field. For
-  detailed information about the usage of the API, please refer to the Open API specification document
-  https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CECatCenter_Org-
+  Updates selected fields in the given issue. Currently the only field that can be updated is 'notes' field. After this
+  API returns success response, it may take few seconds for the issue details to be updated if the system is heavily
+  loaded. Please use GET /dna/data/api/v1/assuranceIssues/{id} API to fetch the details of a particular issue and
+  verify updatedTime. For detailed information about the usage of the API, please refer to the Open API specification
+  document https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CECatCenter_Org-
   IssuesLifecycle-1.0.0-resolved.yaml
 ---
 
@@ -14,10 +16,14 @@ description: |-
 
 It performs create operation on Issues.
 
-- Updates selected fields in the given issue. Currently the only field that can be updated is 'notes' field. For
-detailed information about the usage of the API, please refer to the Open API specification document
-https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
+- Updates selected fields in the given issue. Currently the only field that can be updated is 'notes' field. After this
+API returns success response, it may take few seconds for the issue details to be updated if the system is heavily
+loaded. Please use **GET /dna/data/api/v1/assuranceIssues/{id}** API to fetch the details of a particular issue and
+verify **updatedTime**. For detailed information about the usage of the API, please refer to the Open API specification
+document https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 IssuesLifecycle-1.0.0-resolved.yaml
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -30,10 +36,10 @@ resource "catalystcenter_assurance_issues_update" "example" {
   accept_language = "string"
   id              = "string"
   xca_lle_rid     = "string"
-  parameters {
+  parameters = [{
 
     notes = "string"
-  }
+  }]
 }
 
 output "catalystcenter_assurance_issues_update_example" {

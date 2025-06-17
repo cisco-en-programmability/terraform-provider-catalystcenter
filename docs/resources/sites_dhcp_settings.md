@@ -12,15 +12,15 @@ description: |-
 
 It manages read and update operations on Network Settings.
 
-- Set DHCP settings for a site; *null* values indicate that the setting will be inherited from the parent site; empty
-objects (*{}*) indicate that the settings is unset.
+- Set DHCP settings for a site; **null** values indicate that the setting will be inherited from the parent site; empty
+objects (**{}**) indicate that the settings is unset.
 
 ## Example Usage
 
 ```terraform
 resource "catalystcenter_sites_dhcp_settings" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     dhcp {

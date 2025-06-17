@@ -16,6 +16,8 @@ It performs create operation on Devices.
 - This data source action provides additional information of the rogue threats with details at BSSID level. The
 additional information includes Switch Port details in case of Rogue on Wire, first time when the rogue is seen in the
 network etc.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -25,7 +27,7 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_security_rogue_additional_details" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
     end_time     = 1609459200
     limit        = 1
@@ -34,7 +36,7 @@ resource "catalystcenter_security_rogue_additional_details" "example" {
     start_time   = 1609459200
     threat_level = ["string"]
     threat_type  = ["string"]
-  }
+  }]
 }
 
 output "catalystcenter_security_rogue_additional_details_example" {

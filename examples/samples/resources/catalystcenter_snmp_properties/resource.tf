@@ -21,7 +21,6 @@ resource "catalystcenter_snmp_properties" "example" {
     #instance_tenant_id   = "string"
     #instance_uuid        = "string"
     #int_value            = 1
-    system_property_name = "Timeout"
   }
 }
 

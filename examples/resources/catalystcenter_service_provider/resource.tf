@@ -1,7 +1,7 @@
 
 resource "catalystcenter_service_provider" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     settings {

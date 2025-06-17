@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -18,9 +18,11 @@ func resourceAssuranceIssuesUpdate() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs create operation on Issues.
 
-- Updates selected fields in the given issue. Currently the only field that can be updated is 'notes' field. For
-detailed information about the usage of the API, please refer to the Open API specification document
-https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
+- Updates selected fields in the given issue. Currently the only field that can be updated is 'notes' field. After this
+API returns success response, it may take few seconds for the issue details to be updated if the system is heavily
+loaded. Please use **GET /dna/data/api/v1/assuranceIssues/{id}** API to fetch the details of a particular issue and
+verify **updatedTime**. For detailed information about the usage of the API, please refer to the Open API specification
+document https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 IssuesLifecycle-1.0.0-resolved.yaml
 `,
 
@@ -236,9 +238,9 @@ func resourceAssuranceIssuesUpdateCreate(ctx context.Context, d *schema.Resource
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
 	vvID := vID.(string)
-	request1 := expandRequestAssuranceIssuesUpdateUpdateTheGivenIssueByUpdatingSelectedFieldsV1(ctx, "parameters.0", d)
+	request1 := expandRequestAssuranceIssuesUpdateUpdateTheGivenIssueByUpdatingSelectedFields(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.UpdateTheGivenIssueByUpdatingSelectedFieldsV1HeaderParams{}
+	headerParams1 := catalystcentersdkgo.UpdateTheGivenIssueByUpdatingSelectedFieldsHeaderParams{}
 
 	headerParams1.AcceptLanguage = vAcceptLanguage.(string)
 
@@ -246,23 +248,23 @@ func resourceAssuranceIssuesUpdateCreate(ctx context.Context, d *schema.Resource
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Issues.UpdateTheGivenIssueByUpdatingSelectedFieldsV1(vvID, request1, &headerParams1)
+	response1, restyResp1, err := client.Issues.UpdateTheGivenIssueByUpdatingSelectedFields(vvID, request1, &headerParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing UpdateTheGivenIssueByUpdatingSelectedFieldsV1", err))
+			"Failure when executing UpdateTheGivenIssueByUpdatingSelectedFields", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItem1 := flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1Item(response1.Response)
+	vItem1 := flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting UpdateTheGivenIssueByUpdatingSelectedFieldsV1 response",
+			"Failure when setting UpdateTheGivenIssueByUpdatingSelectedFields response",
 			err))
 		return diags
 	}
@@ -284,15 +286,15 @@ func resourceAssuranceIssuesUpdateDelete(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func expandRequestAssuranceIssuesUpdateUpdateTheGivenIssueByUpdatingSelectedFieldsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1 {
-	request := catalystcentersdkgo.RequestIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1{}
+func expandRequestAssuranceIssuesUpdateUpdateTheGivenIssueByUpdatingSelectedFields(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesUpdateTheGivenIssueByUpdatingSelectedFields {
+	request := catalystcentersdkgo.RequestIssuesUpdateTheGivenIssueByUpdatingSelectedFields{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".notes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".notes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".notes")))) {
 		request.Notes = interfaceToString(v)
 	}
 	return &request
 }
 
-func flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1Item(item *catalystcentersdkgo.ResponseIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1Response) []map[string]interface{} {
+func flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsItem(item *catalystcentersdkgo.ResponseIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -318,14 +320,14 @@ func flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1Item(item *cataly
 	respItem["site_hierarchy_id"] = item.SiteHierarchyID
 	respItem["site_name"] = item.SiteName
 	respItem["site_hierarchy"] = item.SiteHierarchy
-	respItem["suggested_actions"] = flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1ItemSuggestedActions(item.SuggestedActions)
-	respItem["additional_attributes"] = flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1ItemAdditionalAttributes(item.AdditionalAttributes)
+	respItem["suggested_actions"] = flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsItemSuggestedActions(item.SuggestedActions)
+	respItem["additional_attributes"] = flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsItemAdditionalAttributes(item.AdditionalAttributes)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1ItemSuggestedActions(items *[]catalystcentersdkgo.ResponseIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1ResponseSuggestedActions) []map[string]interface{} {
+func flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsItemSuggestedActions(items *[]catalystcentersdkgo.ResponseIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsResponseSuggestedActions) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -338,7 +340,7 @@ func flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1ItemSuggestedActi
 	return respItems
 }
 
-func flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1ItemAdditionalAttributes(items *[]catalystcentersdkgo.ResponseIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsV1ResponseAdditionalAttributes) []map[string]interface{} {
+func flattenIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsItemAdditionalAttributes(items *[]catalystcentersdkgo.ResponseIssuesUpdateTheGivenIssueByUpdatingSelectedFieldsResponseAdditionalAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

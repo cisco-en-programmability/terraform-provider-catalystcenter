@@ -22,7 +22,7 @@ It manages create, read, update and delete operations on SDA.
 ```terraform
 resource "catalystcenter_sda_fabric_zones" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     authentication_profile_name = "string"

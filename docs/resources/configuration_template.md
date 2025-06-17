@@ -260,7 +260,7 @@ resource "catalystcenter_configuration_template" "example" {
           default_selected_values = ["string"]
           id                      = "string"
           selection_type          = "string"
-          selection_values        = "------"
+          selection_values        = "string"
         }
       }
       tags {
@@ -298,7 +298,7 @@ resource "catalystcenter_configuration_template" "example" {
           default_selected_values = ["string"]
           id                      = "string"
           selection_type          = "string"
-          selection_values        = "------"
+          selection_values        = "string"
         }
       }
       version = "string"
@@ -351,7 +351,7 @@ resource "catalystcenter_configuration_template" "example" {
         default_selected_values = ["string"]
         id                      = "string"
         selection_type          = "string"
-        selection_values        = "------"
+        selection_values        = "string"
       }
     }
     software_type    = "string"
@@ -393,13 +393,13 @@ resource "catalystcenter_configuration_template" "example" {
         default_selected_values = ["string"]
         id                      = "string"
         selection_type          = "string"
-        selection_values        = "------"
+        selection_values        = "string"
       }
     }
     validation_errors {
 
-      rollback_template_errors = "------"
-      template_errors          = "------"
+      rollback_template_errors = "string"
+      template_errors          = "string"
       template_id              = "string"
       template_version         = "string"
     }
@@ -427,6 +427,10 @@ output "catalystcenter_configuration_template_example" {
 
 <a id="nestedblock--parameters"></a>
 ### Nested Schema for `parameters`
+
+Required:
+
+- `template_id` (String) templateId path parameter. templateId(UUID) of template to be deleted
 
 Optional:
 

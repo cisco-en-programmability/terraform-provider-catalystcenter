@@ -1,8 +1,8 @@
 
 data "catalystcenter_application_sets_count" "example" {
-    provider = catalystcenter
+  provider = catalystcenter
 }
 
 output "catalystcenter_application_sets_count_example" {
-    value = data.catalystcenter_application_sets_count.example.item
+  value = data.catalystcenter_application_sets_count.example.item
 }

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -111,30 +111,42 @@ func dataSourceNetworkBugsResultsBugsIDNetworkDevicesNetworkDeviceIDRead(ctx con
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetNetworkBugDeviceForTheBugByNetworkDeviceIDV1")
+		log.Printf("[DEBUG] Selected method: GetNetworkBugDeviceForTheBugByNetworkDeviceID")
 		vvID := vID.(string)
 		vvNetworkDeviceID := vNetworkDeviceID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Compliance.GetNetworkBugDeviceForTheBugByNetworkDeviceIDV1(vvID, vvNetworkDeviceID)
+		response1, restyResp1, err := client.Compliance.GetNetworkBugDeviceForTheBugByNetworkDeviceID(vvID, vvNetworkDeviceID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetNetworkBugDeviceForTheBugByNetworkDeviceIDV1", err,
-				"Failure at GetNetworkBugDeviceForTheBugByNetworkDeviceIDV1, unexpected response", ""))
+				"Failure when executing 2 GetNetworkBugDeviceForTheBugByNetworkDeviceID", err,
+				"Failure at GetNetworkBugDeviceForTheBugByNetworkDeviceID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenComplianceGetNetworkBugDeviceForTheBugByNetworkDeviceIDV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetNetworkBugDeviceForTheBugByNetworkDeviceID", err,
+				"Failure at GetNetworkBugDeviceForTheBugByNetworkDeviceID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenComplianceGetNetworkBugDeviceForTheBugByNetworkDeviceIDItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetNetworkBugDeviceForTheBugByNetworkDeviceIDV1 response",
+				"Failure when setting GetNetworkBugDeviceForTheBugByNetworkDeviceID response",
 				err))
 			return diags
 		}
@@ -146,21 +158,21 @@ func dataSourceNetworkBugsResultsBugsIDNetworkDevicesNetworkDeviceIDRead(ctx con
 	return diags
 }
 
-func flattenComplianceGetNetworkBugDeviceForTheBugByNetworkDeviceIDV1Items(items *catalystcentersdkgo.ResponseComplianceGetNetworkBugDeviceForTheBugByNetworkDeviceIDV1) []map[string]interface{} {
+func flattenComplianceGetNetworkBugDeviceForTheBugByNetworkDeviceIDItems(items *catalystcentersdkgo.ResponseComplianceGetNetworkBugDeviceForTheBugByNetworkDeviceID) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["response"] = flattenComplianceGetNetworkBugDeviceForTheBugByNetworkDeviceIDV1ItemsResponse(item.Response)
+		respItem["response"] = flattenComplianceGetNetworkBugDeviceForTheBugByNetworkDeviceIDItemsResponse(item.Response)
 		respItem["version"] = item.Version
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenComplianceGetNetworkBugDeviceForTheBugByNetworkDeviceIDV1ItemsResponse(item *catalystcentersdkgo.ResponseItemComplianceGetNetworkBugDeviceForTheBugByNetworkDeviceIDV1Response) []map[string]interface{} {
+func flattenComplianceGetNetworkBugDeviceForTheBugByNetworkDeviceIDItemsResponse(item *catalystcentersdkgo.ResponseItemComplianceGetNetworkBugDeviceForTheBugByNetworkDeviceIDResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

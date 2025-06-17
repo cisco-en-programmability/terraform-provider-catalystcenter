@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -26,9 +26,10 @@ func dataSourceDiscoveryJobs() *schema.Resource {
 				Required:    true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter.`,
-				Type:        schema.TypeInt,
-				Optional:    true,
+				Description: `limit query parameter. The number of records to show for this page. Min: 1, Max: 500
+`,
+				Type:     schema.TypeInt,
+				Optional: true,
 			},
 			"name": &schema.Schema{
 				Description: `name query parameter.`,
@@ -144,8 +145,8 @@ func dataSourceDiscoveryJobsRead(ctx context.Context, d *schema.ResourceData, m 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDiscoveryJobsByIPV1")
-		queryParams1 := catalystcentersdkgo.GetDiscoveryJobsByIPV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetDiscoveryJobsByIP")
+		queryParams1 := catalystcentersdkgo.GetDiscoveryJobsByIPQueryParams{}
 
 		if okOffset {
 			queryParams1.Offset = vOffset.(int)
@@ -159,24 +160,38 @@ func dataSourceDiscoveryJobsRead(ctx context.Context, d *schema.ResourceData, m 
 			queryParams1.Name = vName.(string)
 		}
 
-		response1, restyResp1, err := client.Discovery.GetDiscoveryJobsByIPV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Discovery.GetDiscoveryJobsByIP(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDiscoveryJobsByIPV1", err,
-				"Failure at GetDiscoveryJobsByIPV1, unexpected response", ""))
+				"Failure when executing 2 GetDiscoveryJobsByIP", err,
+				"Failure at GetDiscoveryJobsByIP, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDiscoveryGetDiscoveryJobsByIPV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetDiscoveryJobsByIP", err,
+				"Failure at GetDiscoveryJobsByIP, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDiscoveryGetDiscoveryJobsByIPItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDiscoveryJobsByIPV1 response",
+				"Failure when setting GetDiscoveryJobsByIP response",
 				err))
 			return diags
 		}
@@ -188,14 +203,14 @@ func dataSourceDiscoveryJobsRead(ctx context.Context, d *schema.ResourceData, m 
 	return diags
 }
 
-func flattenDiscoveryGetDiscoveryJobsByIPV1Items(items *[]catalystcentersdkgo.ResponseDiscoveryGetDiscoveryJobsByIPV1Response) []map[string]interface{} {
+func flattenDiscoveryGetDiscoveryJobsByIPItems(items *[]catalystcentersdkgo.ResponseDiscoveryGetDiscoveryJobsByIPResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["attribute_info"] = flattenDiscoveryGetDiscoveryJobsByIPV1ItemsAttributeInfo(item.AttributeInfo)
+		respItem["attribute_info"] = flattenDiscoveryGetDiscoveryJobsByIPItemsAttributeInfo(item.AttributeInfo)
 		respItem["clistatus"] = item.Clistatus
 		respItem["discovery_status"] = item.DiscoveryStatus
 		respItem["end_time"] = item.EndTime
@@ -216,7 +231,7 @@ func flattenDiscoveryGetDiscoveryJobsByIPV1Items(items *[]catalystcentersdkgo.Re
 	return respItems
 }
 
-func flattenDiscoveryGetDiscoveryJobsByIPV1ItemsAttributeInfo(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveryJobsByIPV1ResponseAttributeInfo) interface{} {
+func flattenDiscoveryGetDiscoveryJobsByIPItemsAttributeInfo(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveryJobsByIPResponseAttributeInfo) interface{} {
 	if item == nil {
 		return nil
 	}

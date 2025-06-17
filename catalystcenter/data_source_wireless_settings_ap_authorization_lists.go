@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -134,8 +134,8 @@ func dataSourceWirelessSettingsApAuthorizationListsRead(ctx context.Context, d *
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetApAuthorizationListsV1")
-		queryParams1 := catalystcentersdkgo.GetApAuthorizationListsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetApAuthorizationLists")
+		queryParams1 := catalystcentersdkgo.GetApAuthorizationListsQueryParams{}
 
 		if okApAuthorizationListName {
 			queryParams1.ApAuthorizationListName = vApAuthorizationListName.(string)
@@ -149,24 +149,36 @@ func dataSourceWirelessSettingsApAuthorizationListsRead(ctx context.Context, d *
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Wireless.GetApAuthorizationListsV1(&queryParams1)
+		response1, restyResp1, err := client.Wireless.GetApAuthorizationLists(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetApAuthorizationListsV1", err,
-				"Failure at GetApAuthorizationListsV1, unexpected response", ""))
+				"Failure when executing 2 GetApAuthorizationLists", err,
+				"Failure at GetApAuthorizationLists, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessGetApAuthorizationListsV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetApAuthorizationLists", err,
+				"Failure at GetApAuthorizationLists, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenWirelessGetApAuthorizationListsItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetApAuthorizationListsV1 response",
+				"Failure when setting GetApAuthorizationLists response",
 				err))
 			return diags
 		}
@@ -178,21 +190,21 @@ func dataSourceWirelessSettingsApAuthorizationListsRead(ctx context.Context, d *
 	return diags
 }
 
-func flattenWirelessGetApAuthorizationListsV1Item(item *catalystcentersdkgo.ResponseWirelessGetApAuthorizationListsV1Response) []map[string]interface{} {
+func flattenWirelessGetApAuthorizationListsItem(item *catalystcentersdkgo.ResponseWirelessGetApAuthorizationListsResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["id"] = item.ID
 	respItem["ap_authorization_list_name"] = item.ApAuthorizationListName
-	respItem["local_authorization"] = flattenWirelessGetApAuthorizationListsV1ItemLocalAuthorization(item.LocalAuthorization)
-	respItem["remote_authorization"] = flattenWirelessGetApAuthorizationListsV1ItemRemoteAuthorization(item.RemoteAuthorization)
+	respItem["local_authorization"] = flattenWirelessGetApAuthorizationListsItemLocalAuthorization(item.LocalAuthorization)
+	respItem["remote_authorization"] = flattenWirelessGetApAuthorizationListsItemRemoteAuthorization(item.RemoteAuthorization)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenWirelessGetApAuthorizationListsV1ItemLocalAuthorization(item *catalystcentersdkgo.ResponseWirelessGetApAuthorizationListsV1ResponseLocalAuthorization) []map[string]interface{} {
+func flattenWirelessGetApAuthorizationListsItemLocalAuthorization(item *catalystcentersdkgo.ResponseWirelessGetApAuthorizationListsResponseLocalAuthorization) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -206,7 +218,7 @@ func flattenWirelessGetApAuthorizationListsV1ItemLocalAuthorization(item *cataly
 
 }
 
-func flattenWirelessGetApAuthorizationListsV1ItemRemoteAuthorization(item *catalystcentersdkgo.ResponseWirelessGetApAuthorizationListsV1ResponseRemoteAuthorization) []map[string]interface{} {
+func flattenWirelessGetApAuthorizationListsItemRemoteAuthorization(item *catalystcentersdkgo.ResponseWirelessGetApAuthorizationListsResponseRemoteAuthorization) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -12,7 +13,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -23,7 +24,7 @@ func resourceImageDistribution() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs create operation on Software Image Management (SWIM).
 
-- Distributes a software image on a given device. Software image must be imported successfully into DNA Center before it
+- Distributes a software image on a given device. Software image must be imported successfully into Catalyst Center before it
 can be distributed
 `,
 
@@ -61,7 +62,7 @@ can be distributed
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"payload": &schema.Schema{
-							Description: `Array of RequestSoftwareImageManagementSwimTriggerSoftwareImageDistributionV1`,
+							Description: `Array of RequestSoftwareImageManagementSwimTriggerSoftwareImageDistribution`,
 							Type:        schema.TypeList,
 							Optional:    true,
 							ForceNew:    true,
@@ -95,18 +96,18 @@ func resourceImageDistributionCreate(ctx context.Context, d *schema.ResourceData
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestImageDistributionTriggerSoftwareImageDistributionV1(ctx, "parameters.0", d)
+	request1 := expandRequestImageDistributionTriggerSoftwareImageDistribution(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.SoftwareImageManagementSwim.TriggerSoftwareImageDistributionV1(request1)
+	response1, restyResp1, err := client.SoftwareImageManagementSwim.TriggerSoftwareImageDistribution(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing TriggerSoftwareImageDistributionV1", err))
+			"Failure when executing TriggerSoftwareImageDistribution", err))
 		return diags
 	}
 
@@ -114,7 +115,7 @@ func resourceImageDistributionCreate(ctx context.Context, d *schema.ResourceData
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing TriggerSoftwareImageDistributionV1", err))
+			"Failure when executing TriggerSoftwareImageDistribution", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -141,14 +142,14 @@ func resourceImageDistributionCreate(ctx context.Context, d *schema.ResourceData
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing TriggerSoftwareImageDistributionV1", err1))
+				"Failure when executing TriggerSoftwareImageDistribution", err1))
 			return diags
 		}
 	}
@@ -156,10 +157,10 @@ func resourceImageDistributionCreate(ctx context.Context, d *schema.ResourceData
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenSoftwareImageManagementSwimTriggerSoftwareImageDistributionV1Item(response1.Response)
+	vItem1 := flattenSoftwareImageManagementSwimTriggerSoftwareImageDistributionItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting TriggerSoftwareImageDistributionV1 response",
+			"Failure when setting TriggerSoftwareImageDistribution response",
 			err))
 		return diags
 	}
@@ -180,16 +181,16 @@ func resourceImageDistributionDelete(ctx context.Context, d *schema.ResourceData
 	return diags
 }
 
-func expandRequestImageDistributionTriggerSoftwareImageDistributionV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSoftwareImageManagementSwimTriggerSoftwareImageDistributionV1 {
-	request := catalystcentersdkgo.RequestSoftwareImageManagementSwimTriggerSoftwareImageDistributionV1{}
-	if v := expandRequestImageDistributionTriggerSoftwareImageDistributionV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestImageDistributionTriggerSoftwareImageDistribution(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSoftwareImageManagementSwimTriggerSoftwareImageDistribution {
+	request := catalystcentersdkgo.RequestSoftwareImageManagementSwimTriggerSoftwareImageDistribution{}
+	if v := expandRequestImageDistributionTriggerSoftwareImageDistributionItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	return &request
 }
 
-func expandRequestImageDistributionTriggerSoftwareImageDistributionV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSoftwareImageManagementSwimTriggerSoftwareImageDistributionV1 {
-	request := []catalystcentersdkgo.RequestItemSoftwareImageManagementSwimTriggerSoftwareImageDistributionV1{}
+func expandRequestImageDistributionTriggerSoftwareImageDistributionItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSoftwareImageManagementSwimTriggerSoftwareImageDistribution {
+	request := []catalystcentersdkgo.RequestItemSoftwareImageManagementSwimTriggerSoftwareImageDistribution{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -200,7 +201,7 @@ func expandRequestImageDistributionTriggerSoftwareImageDistributionV1ItemArray(c
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestImageDistributionTriggerSoftwareImageDistributionV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestImageDistributionTriggerSoftwareImageDistributionItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -208,8 +209,8 @@ func expandRequestImageDistributionTriggerSoftwareImageDistributionV1ItemArray(c
 	return &request
 }
 
-func expandRequestImageDistributionTriggerSoftwareImageDistributionV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSoftwareImageManagementSwimTriggerSoftwareImageDistributionV1 {
-	request := catalystcentersdkgo.RequestItemSoftwareImageManagementSwimTriggerSoftwareImageDistributionV1{}
+func expandRequestImageDistributionTriggerSoftwareImageDistributionItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSoftwareImageManagementSwimTriggerSoftwareImageDistribution {
+	request := catalystcentersdkgo.RequestItemSoftwareImageManagementSwimTriggerSoftwareImageDistribution{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_uuid")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_uuid")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_uuid")))) {
 		request.DeviceUUID = interfaceToString(v)
 	}
@@ -219,7 +220,7 @@ func expandRequestImageDistributionTriggerSoftwareImageDistributionV1Item(ctx co
 	return &request
 }
 
-func flattenSoftwareImageManagementSwimTriggerSoftwareImageDistributionV1Item(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimTriggerSoftwareImageDistributionV1Response) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimTriggerSoftwareImageDistributionItem(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimTriggerSoftwareImageDistributionResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

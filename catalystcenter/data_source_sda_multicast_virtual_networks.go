@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -27,7 +27,7 @@ func dataSourceSdaMulticastVirtualNetworks() *schema.Resource {
 				Optional: true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter. Maximum number of records to return.
+				Description: `limit query parameter. Maximum number of records to return. The maximum number of objects supported in a single request is 500.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -182,8 +182,8 @@ func dataSourceSdaMulticastVirtualNetworksRead(ctx context.Context, d *schema.Re
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetMulticastVirtualNetworksV1")
-		queryParams1 := catalystcentersdkgo.GetMulticastVirtualNetworksV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetMulticastVirtualNetworks")
+		queryParams1 := catalystcentersdkgo.GetMulticastVirtualNetworksQueryParams{}
 
 		if okFabricID {
 			queryParams1.FabricID = vFabricID.(string)
@@ -198,24 +198,38 @@ func dataSourceSdaMulticastVirtualNetworksRead(ctx context.Context, d *schema.Re
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.Sda.GetMulticastVirtualNetworksV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sda.GetMulticastVirtualNetworks(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetMulticastVirtualNetworksV1", err,
-				"Failure at GetMulticastVirtualNetworksV1, unexpected response", ""))
+				"Failure when executing 2 GetMulticastVirtualNetworks", err,
+				"Failure at GetMulticastVirtualNetworks, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaGetMulticastVirtualNetworksV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetMulticastVirtualNetworks", err,
+				"Failure at GetMulticastVirtualNetworks, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSdaGetMulticastVirtualNetworksItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetMulticastVirtualNetworksV1 response",
+				"Failure when setting GetMulticastVirtualNetworks response",
 				err))
 			return diags
 		}
@@ -227,7 +241,7 @@ func dataSourceSdaMulticastVirtualNetworksRead(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func flattenSdaGetMulticastVirtualNetworksV1Items(items *[]catalystcentersdkgo.ResponseSdaGetMulticastVirtualNetworksV1Response) []map[string]interface{} {
+func flattenSdaGetMulticastVirtualNetworksItems(items *[]catalystcentersdkgo.ResponseSdaGetMulticastVirtualNetworksResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -239,13 +253,13 @@ func flattenSdaGetMulticastVirtualNetworksV1Items(items *[]catalystcentersdkgo.R
 		respItem["virtual_network_name"] = item.VirtualNetworkName
 		respItem["ip_pool_name"] = item.IPPoolName
 		respItem["ipv4_ssm_ranges"] = item.IPv4SsmRanges
-		respItem["multicast_r_ps"] = flattenSdaGetMulticastVirtualNetworksV1ItemsMulticastRPs(item.MulticastRPs)
+		respItem["multicast_r_ps"] = flattenSdaGetMulticastVirtualNetworksItemsMulticastRPs(item.MulticastRPs)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSdaGetMulticastVirtualNetworksV1ItemsMulticastRPs(items *[]catalystcentersdkgo.ResponseSdaGetMulticastVirtualNetworksV1ResponseMulticastRPs) []map[string]interface{} {
+func flattenSdaGetMulticastVirtualNetworksItemsMulticastRPs(items *[]catalystcentersdkgo.ResponseSdaGetMulticastVirtualNetworksResponseMulticastRPs) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

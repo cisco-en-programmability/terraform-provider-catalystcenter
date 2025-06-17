@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -18,8 +18,8 @@ func resourceSitesDeviceCredentials() *schema.Resource {
 	return &schema.Resource{
 		Description: `It manages read and update operations on Network Settings.
 
-- Updates device credential settings for a site; *null* values indicate that the setting will be inherited from the
-parent site; empty objects (*{}*) indicate that the credential is unset, and that no credential of that type will be
+- Updates device credential settings for a site; **null** values indicate that the setting will be inherited from the
+parent site; empty objects (**{}**) indicate that the credential is unset, and that no credential of that type will be
 used for the site.
 `,
 
@@ -49,7 +49,7 @@ used for the site.
 								Schema: map[string]*schema.Schema{
 
 									"credentials_id": &schema.Schema{
-										Description: `The *id* of the credentials.
+										Description: `The **id** of the credentials.
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -74,7 +74,7 @@ used for the site.
 								Schema: map[string]*schema.Schema{
 
 									"credentials_id": &schema.Schema{
-										Description: `The *id* of the credentials.
+										Description: `The **id** of the credentials.
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -99,7 +99,7 @@ used for the site.
 								Schema: map[string]*schema.Schema{
 
 									"credentials_id": &schema.Schema{
-										Description: `The *id* of the credentials.
+										Description: `The **id** of the credentials.
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -124,7 +124,7 @@ used for the site.
 								Schema: map[string]*schema.Schema{
 
 									"credentials_id": &schema.Schema{
-										Description: `The *id* of the credentials.
+										Description: `The **id** of the credentials.
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -149,7 +149,7 @@ used for the site.
 								Schema: map[string]*schema.Schema{
 
 									"credentials_id": &schema.Schema{
-										Description: `The *id* of the credentials.
+										Description: `The **id** of the credentials.
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -174,7 +174,7 @@ used for the site.
 								Schema: map[string]*schema.Schema{
 
 									"credentials_id": &schema.Schema{
-										Description: `The *id* of the credentials.
+										Description: `The **id** of the credentials.
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -210,7 +210,7 @@ used for the site.
 								Schema: map[string]*schema.Schema{
 
 									"credentials_id": &schema.Schema{
-										Description: `The *id* of the credentials.
+										Description: `The **id** of the credentials.
 `,
 										Type:     schema.TypeString,
 										Optional: true,
@@ -227,7 +227,7 @@ used for the site.
 								Schema: map[string]*schema.Schema{
 
 									"credentials_id": &schema.Schema{
-										Description: `The *id* of the credentials.
+										Description: `The **id** of the credentials.
 `,
 										Type:     schema.TypeString,
 										Optional: true,
@@ -244,7 +244,7 @@ used for the site.
 								Schema: map[string]*schema.Schema{
 
 									"credentials_id": &schema.Schema{
-										Description: `The *id* of the credentials.
+										Description: `The **id** of the credentials.
 `,
 										Type:     schema.TypeString,
 										Optional: true,
@@ -254,7 +254,7 @@ used for the site.
 							},
 						},
 						"id": &schema.Schema{
-							Description: `id path parameter. Site Id, retrievable from the *id* attribute in */dna/intent/api/v1/sites*
+							Description: `id path parameter. Site Id, retrievable from the **id** attribute in **/dna/intent/api/v1/sites**
 `,
 							Type:     schema.TypeString,
 							Required: true,
@@ -267,7 +267,7 @@ used for the site.
 								Schema: map[string]*schema.Schema{
 
 									"credentials_id": &schema.Schema{
-										Description: `The *id* of the credentials.
+										Description: `The **id** of the credentials.
 `,
 										Type:     schema.TypeString,
 										Optional: true,
@@ -284,7 +284,7 @@ used for the site.
 								Schema: map[string]*schema.Schema{
 
 									"credentials_id": &schema.Schema{
-										Description: `The *id* of the credentials.
+										Description: `The **id** of the credentials.
 `,
 										Type:     schema.TypeString,
 										Optional: true,
@@ -301,7 +301,7 @@ used for the site.
 								Schema: map[string]*schema.Schema{
 
 									"credentials_id": &schema.Schema{
-										Description: `The *id* of the credentials.
+										Description: `The **id** of the credentials.
 `,
 										Type:     schema.TypeString,
 										Optional: true,
@@ -342,7 +342,7 @@ func resourceSitesDeviceCredentialsRead(ctx context.Context, d *schema.ResourceD
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetDeviceCredentialSettingsForASite")
 		vvID := vID
-		queryParams1 := catalystcentersdkgo.GetDeviceCredentialSettingsForASiteV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetDeviceCredentialSettingsForASiteQueryParams{}
 
 		response1, restyResp1, err := client.NetworkSettings.GetDeviceCredentialSettingsForASite(vvID, &queryParams1)
 
@@ -356,7 +356,7 @@ func resourceSitesDeviceCredentialsRead(ctx context.Context, d *schema.ResourceD
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenNetworkSettingsGetDeviceCredentialSettingsForASiteV1Item(response1.Response)
+		vItem1 := flattenNetworkSettingsGetDeviceCredentialSettingsForASiteItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetDeviceCredentialSettingsForASite response",
@@ -379,7 +379,7 @@ func resourceSitesDeviceCredentialsUpdate(ctx context.Context, d *schema.Resourc
 
 	vvID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteV1(ctx, "parameters.0", d)
+		request1 := expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASite(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.NetworkSettings.UpdateDeviceCredentialSettingsForASite(vvID, request1)
 		if err != nil || response1 == nil {
@@ -438,25 +438,26 @@ func resourceSitesDeviceCredentialsDelete(ctx context.Context, d *schema.Resourc
 		"Failure at SitesDeviceCredentialsDelete, unexpected response", ""))
 	return diags
 }
-func expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteV1 {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteV1{}
+
+func expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASite {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASite{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".cli_credentials_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".cli_credentials_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".cli_credentials_id")))) {
-		request.CliCredentialsID = expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteV1CliCredentialsID(ctx, key+".cli_credentials_id.0", d)
+		request.CliCredentialsID = expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteCliCredentialsID(ctx, key+".cli_credentials_id.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmpv2c_read_credentials_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmpv2c_read_credentials_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmpv2c_read_credentials_id")))) {
-		request.SNMPv2CReadCredentialsID = expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteV1SNMPv2CReadCredentialsID(ctx, key+".snmpv2c_read_credentials_id.0", d)
+		request.SNMPv2CReadCredentialsID = expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteSNMPv2CReadCredentialsID(ctx, key+".snmpv2c_read_credentials_id.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmpv2c_write_credentials_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmpv2c_write_credentials_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmpv2c_write_credentials_id")))) {
-		request.SNMPv2CWriteCredentialsID = expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteV1SNMPv2CWriteCredentialsID(ctx, key+".snmpv2c_write_credentials_id.0", d)
+		request.SNMPv2CWriteCredentialsID = expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteSNMPv2CWriteCredentialsID(ctx, key+".snmpv2c_write_credentials_id.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmpv3_credentials_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmpv3_credentials_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmpv3_credentials_id")))) {
-		request.SNMPv3CredentialsID = expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteV1SNMPv3CredentialsID(ctx, key+".snmpv3_credentials_id.0", d)
+		request.SNMPv3CredentialsID = expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteSNMPv3CredentialsID(ctx, key+".snmpv3_credentials_id.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".http_read_credentials_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".http_read_credentials_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".http_read_credentials_id")))) {
-		request.HTTPReadCredentialsID = expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteV1HTTPReadCredentialsID(ctx, key+".http_read_credentials_id.0", d)
+		request.HTTPReadCredentialsID = expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteHTTPReadCredentialsID(ctx, key+".http_read_credentials_id.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".http_write_credentials_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".http_write_credentials_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".http_write_credentials_id")))) {
-		request.HTTPWriteCredentialsID = expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteV1HTTPWriteCredentialsID(ctx, key+".http_write_credentials_id.0", d)
+		request.HTTPWriteCredentialsID = expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteHTTPWriteCredentialsID(ctx, key+".http_write_credentials_id.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -464,8 +465,8 @@ func expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteV1
 	return &request
 }
 
-func expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteV1CliCredentialsID(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteV1CliCredentialsID {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteV1CliCredentialsID{}
+func expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteCliCredentialsID(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteCliCredentialsID {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteCliCredentialsID{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".credentials_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".credentials_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".credentials_id")))) {
 		request.CredentialsID = interfaceToString(v)
 	}
@@ -475,8 +476,8 @@ func expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteV1
 	return &request
 }
 
-func expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteV1SNMPv2CReadCredentialsID(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteV1SNMPv2CReadCredentialsID {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteV1SNMPv2CReadCredentialsID{}
+func expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteSNMPv2CReadCredentialsID(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteSNMPv2CReadCredentialsID {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteSNMPv2CReadCredentialsID{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".credentials_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".credentials_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".credentials_id")))) {
 		request.CredentialsID = interfaceToString(v)
 	}
@@ -486,8 +487,8 @@ func expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteV1
 	return &request
 }
 
-func expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteV1SNMPv2CWriteCredentialsID(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteV1SNMPv2CWriteCredentialsID {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteV1SNMPv2CWriteCredentialsID{}
+func expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteSNMPv2CWriteCredentialsID(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteSNMPv2CWriteCredentialsID {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteSNMPv2CWriteCredentialsID{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".credentials_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".credentials_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".credentials_id")))) {
 		request.CredentialsID = interfaceToString(v)
 	}
@@ -497,8 +498,8 @@ func expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteV1
 	return &request
 }
 
-func expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteV1SNMPv3CredentialsID(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteV1SNMPv3CredentialsID {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteV1SNMPv3CredentialsID{}
+func expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteSNMPv3CredentialsID(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteSNMPv3CredentialsID {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteSNMPv3CredentialsID{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".credentials_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".credentials_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".credentials_id")))) {
 		request.CredentialsID = interfaceToString(v)
 	}
@@ -508,8 +509,8 @@ func expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteV1
 	return &request
 }
 
-func expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteV1HTTPReadCredentialsID(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteV1HTTPReadCredentialsID {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteV1HTTPReadCredentialsID{}
+func expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteHTTPReadCredentialsID(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteHTTPReadCredentialsID {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteHTTPReadCredentialsID{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".credentials_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".credentials_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".credentials_id")))) {
 		request.CredentialsID = interfaceToString(v)
 	}
@@ -519,8 +520,8 @@ func expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteV1
 	return &request
 }
 
-func expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteV1HTTPWriteCredentialsID(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteV1HTTPWriteCredentialsID {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteV1HTTPWriteCredentialsID{}
+func expandRequestSitesDeviceCredentialsUpdateDeviceCredentialSettingsForASiteHTTPWriteCredentialsID(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteHTTPWriteCredentialsID {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateDeviceCredentialSettingsForASiteHTTPWriteCredentialsID{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".credentials_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".credentials_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".credentials_id")))) {
 		request.CredentialsID = interfaceToString(v)
 	}

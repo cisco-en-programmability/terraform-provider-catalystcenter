@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -55,16 +55,16 @@ name=BGP_Down&name=BGP_Flap (multiple issue names separated by & operator)
 			},
 			"priority": &schema.Schema{
 				Description: `priority query parameter. Issue priority, possible values are P1, P2, P3, P4.
-*P1*: A critical issue that needs immediate attention and can have a wide impact on network operations.
-*P2*: A major issue that can potentially impact multiple devices or clients.
-*P3*: A minor issue that has a localized or minimal impact.
-*P4*: A warning issue that may not be an immediate problem but addressing it can optimize the network performance.
+**P1**: A critical issue that needs immediate attention and can have a wide impact on network operations.
+**P2**: A major issue that can potentially impact multiple devices or clients.
+**P3**: A minor issue that has a localized or minimal impact.
+**P4**: A warning issue that may not be an immediate problem but addressing it can optimize the network performance.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"profile_id": &schema.Schema{
-				Description: `profileId query parameter. The profile identier to fetch the profile associated issue defintions. The default is *global*. Please refer Network design profiles documentation for more details.
+				Description: `profileId query parameter. The profile identier to fetch the profile associated issue defintions. The default is **global**. Please refer Network design profiles documentation for more details.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -108,10 +108,10 @@ func dataSourceSystemIssueDefinitionsCountRead(ctx context.Context, d *schema.Re
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTheCountOfSystemDefinedIssueDefinitionsBasedOnProvidedFiltersV1")
+		log.Printf("[DEBUG] Selected method: GetTheCountOfSystemDefinedIssueDefinitionsBasedOnProvidedFilters")
 
-		headerParams1 := catalystcentersdkgo.GetTheCountOfSystemDefinedIssueDefinitionsBasedOnProvidedFiltersV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.GetTheCountOfSystemDefinedIssueDefinitionsBasedOnProvidedFiltersV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.GetTheCountOfSystemDefinedIssueDefinitionsBasedOnProvidedFiltersHeaderParams{}
+		queryParams1 := catalystcentersdkgo.GetTheCountOfSystemDefinedIssueDefinitionsBasedOnProvidedFiltersQueryParams{}
 
 		if okDeviceType {
 			queryParams1.DeviceType = vDeviceType.(string)
@@ -133,24 +133,38 @@ func dataSourceSystemIssueDefinitionsCountRead(ctx context.Context, d *schema.Re
 		}
 		headerParams1.XCaLLERID = vXCaLLERID.(string)
 
-		response1, restyResp1, err := client.Issues.GetTheCountOfSystemDefinedIssueDefinitionsBasedOnProvidedFiltersV1(&headerParams1, &queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Issues.GetTheCountOfSystemDefinedIssueDefinitionsBasedOnProvidedFilters(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTheCountOfSystemDefinedIssueDefinitionsBasedOnProvidedFiltersV1", err,
-				"Failure at GetTheCountOfSystemDefinedIssueDefinitionsBasedOnProvidedFiltersV1, unexpected response", ""))
+				"Failure when executing 2 GetTheCountOfSystemDefinedIssueDefinitionsBasedOnProvidedFilters", err,
+				"Failure at GetTheCountOfSystemDefinedIssueDefinitionsBasedOnProvidedFilters, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenIssuesGetTheCountOfSystemDefinedIssueDefinitionsBasedOnProvidedFiltersV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetTheCountOfSystemDefinedIssueDefinitionsBasedOnProvidedFilters", err,
+				"Failure at GetTheCountOfSystemDefinedIssueDefinitionsBasedOnProvidedFilters, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenIssuesGetTheCountOfSystemDefinedIssueDefinitionsBasedOnProvidedFiltersItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTheCountOfSystemDefinedIssueDefinitionsBasedOnProvidedFiltersV1 response",
+				"Failure when setting GetTheCountOfSystemDefinedIssueDefinitionsBasedOnProvidedFilters response",
 				err))
 			return diags
 		}
@@ -162,7 +176,7 @@ func dataSourceSystemIssueDefinitionsCountRead(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func flattenIssuesGetTheCountOfSystemDefinedIssueDefinitionsBasedOnProvidedFiltersV1Item(item *catalystcentersdkgo.ResponseIssuesGetTheCountOfSystemDefinedIssueDefinitionsBasedOnProvidedFiltersV1Response) []map[string]interface{} {
+func flattenIssuesGetTheCountOfSystemDefinedIssueDefinitionsBasedOnProvidedFiltersItem(item *catalystcentersdkgo.ResponseIssuesGetTheCountOfSystemDefinedIssueDefinitionsBasedOnProvidedFiltersResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

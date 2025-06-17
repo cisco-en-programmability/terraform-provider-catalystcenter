@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -12,7 +13,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -281,7 +282,7 @@ not support configuration of CleanAir or SI for IOS-XE devices with version grea
 										Computed: true,
 									},
 									"antenna_gain": &schema.Schema{
-										Description: `Configure the antenna gain on the specified radio for an access point by setting a decimal value (in dBi). To configure "antennaGain", set "antennaPatternName" value to "other".
+										Description: `Configure the antenna gain on the specified radio for an access point by setting a decimal value (in dBi). To configure "antennaGain", set "antennaPatternName" value to "other". The External Antenna Gain value will be applied in 0.5 dBi increments on the controller. Therefore, the value entered will be multiplied by 2 to configure the absolute gain value. AntennaGain should be in range of 0-20.
 `,
 										Type:     schema.TypeInt,
 										Optional: true,
@@ -433,7 +434,7 @@ not support configuration of CleanAir or SI for IOS-XE devices with version grea
 										Computed: true,
 									},
 									"radio_band": &schema.Schema{
-										Description: `Configure the band on the specified radio for an access point: for 2.4 GHz, set "RADIO24"; for 5 GHz, set "RADIO5". Any other string is invalid, including empty string
+										Description: `Configure the band on the specified radio for an access point: for 2.4 GHz, set "RADIO24"; for 5 GHz, set "RADIO5"; for 6 GHz, set "RADIO6". Any other string is invalid, including empty string.
 `,
 										Type:     schema.TypeString,
 										Optional: true,
@@ -441,7 +442,7 @@ not support configuration of CleanAir or SI for IOS-XE devices with version grea
 										Computed: true,
 									},
 									"radio_role_assignment": &schema.Schema{
-										Description: `Configure only one of the following roles on the specified radio for an access point as "AUTO", "SERVING", or "MONITOR". Any other string is invalid, including empty string
+										Description: `Configure only one of the following roles on the specified radio for an access point as "AUTO", "SERVING", or "MONITOR". Any other string is invalid, including empty string.
 `,
 										Type:     schema.TypeString,
 										Optional: true,
@@ -524,18 +525,18 @@ func resourceWirelessAccespointConfigurationCreate(ctx context.Context, d *schem
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1(ctx, "parameters.0", d)
+	request1 := expandRequestWirelessAccespointConfigurationConfigureAccessPoints(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Wireless.ConfigureAccessPointsV1(request1)
+	response1, restyResp1, err := client.Wireless.ConfigureAccessPoints(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ConfigureAccessPointsV1", err))
+			"Failure when executing ConfigureAccessPoints", err))
 		return diags
 	}
 
@@ -543,7 +544,7 @@ func resourceWirelessAccespointConfigurationCreate(ctx context.Context, d *schem
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing ConfigureAccessPointsV1", err))
+			"Failure when executing ConfigureAccessPoints", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -570,14 +571,14 @@ func resourceWirelessAccespointConfigurationCreate(ctx context.Context, d *schem
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing ConfigureAccessPointsV1", err1))
+				"Failure when executing ConfigureAccessPoints", err1))
 			return diags
 		}
 	}
@@ -585,10 +586,10 @@ func resourceWirelessAccespointConfigurationCreate(ctx context.Context, d *schem
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenWirelessConfigureAccessPointsV1Item(response1.Response)
+	vItem1 := flattenWirelessConfigureAccessPointsItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ConfigureAccessPointsV1 response",
+			"Failure when setting ConfigureAccessPoints response",
 			err))
 		return diags
 	}
@@ -609,10 +610,10 @@ func resourceWirelessAccespointConfigurationDelete(ctx context.Context, d *schem
 	return diags
 }
 
-func expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessConfigureAccessPointsV1 {
-	request := catalystcentersdkgo.RequestWirelessConfigureAccessPointsV1{}
+func expandRequestWirelessAccespointConfigurationConfigureAccessPoints(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessConfigureAccessPoints {
+	request := catalystcentersdkgo.RequestWirelessConfigureAccessPoints{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ap_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ap_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ap_list")))) {
-		request.ApList = expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1ApListArray(ctx, key+".ap_list", d)
+		request.ApList = expandRequestWirelessAccespointConfigurationConfigureAccessPointsApListArray(ctx, key+".ap_list", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".configure_admin_status")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".configure_admin_status")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".configure_admin_status")))) {
 		request.ConfigureAdminStatus = interfaceToBoolPtr(v)
@@ -657,22 +658,22 @@ func expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1(ctx con
 		request.PrimaryControllerName = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".primary_ip_address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".primary_ip_address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".primary_ip_address")))) {
-		request.PrimaryIPAddress = expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1PrimaryIPAddress(ctx, key+".primary_ip_address.0", d)
+		request.PrimaryIPAddress = expandRequestWirelessAccespointConfigurationConfigureAccessPointsPrimaryIPAddress(ctx, key+".primary_ip_address.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".secondary_controller_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".secondary_controller_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".secondary_controller_name")))) {
 		request.SecondaryControllerName = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".secondary_ip_address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".secondary_ip_address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".secondary_ip_address")))) {
-		request.SecondaryIPAddress = expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1SecondaryIPAddress(ctx, key+".secondary_ip_address.0", d)
+		request.SecondaryIPAddress = expandRequestWirelessAccespointConfigurationConfigureAccessPointsSecondaryIPAddress(ctx, key+".secondary_ip_address.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tertiary_controller_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tertiary_controller_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tertiary_controller_name")))) {
 		request.TertiaryControllerName = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tertiary_ip_address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tertiary_ip_address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tertiary_ip_address")))) {
-		request.TertiaryIPAddress = expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1TertiaryIPAddress(ctx, key+".tertiary_ip_address.0", d)
+		request.TertiaryIPAddress = expandRequestWirelessAccespointConfigurationConfigureAccessPointsTertiaryIPAddress(ctx, key+".tertiary_ip_address.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".radio_configurations")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".radio_configurations")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".radio_configurations")))) {
-		request.RadioConfigurations = expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1RadioConfigurationsArray(ctx, key+".radio_configurations", d)
+		request.RadioConfigurations = expandRequestWirelessAccespointConfigurationConfigureAccessPointsRadioConfigurationsArray(ctx, key+".radio_configurations", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_assigned_site_as_location")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_assigned_site_as_location")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_assigned_site_as_location")))) {
 		request.IsAssignedSiteAsLocation = interfaceToBoolPtr(v)
@@ -680,8 +681,8 @@ func expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1(ctx con
 	return &request
 }
 
-func expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1ApListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessConfigureAccessPointsV1ApList {
-	request := []catalystcentersdkgo.RequestWirelessConfigureAccessPointsV1ApList{}
+func expandRequestWirelessAccespointConfigurationConfigureAccessPointsApListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessConfigureAccessPointsApList {
+	request := []catalystcentersdkgo.RequestWirelessConfigureAccessPointsApList{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -692,7 +693,7 @@ func expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1ApListAr
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1ApList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestWirelessAccespointConfigurationConfigureAccessPointsApList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -700,8 +701,8 @@ func expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1ApListAr
 	return &request
 }
 
-func expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1ApList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessConfigureAccessPointsV1ApList {
-	request := catalystcentersdkgo.RequestWirelessConfigureAccessPointsV1ApList{}
+func expandRequestWirelessAccespointConfigurationConfigureAccessPointsApList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessConfigureAccessPointsApList {
+	request := catalystcentersdkgo.RequestWirelessConfigureAccessPointsApList{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ap_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ap_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ap_name")))) {
 		request.ApName = interfaceToString(v)
 	}
@@ -714,32 +715,32 @@ func expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1ApList(c
 	return &request
 }
 
-func expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1PrimaryIPAddress(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessConfigureAccessPointsV1PrimaryIPAddress {
-	request := catalystcentersdkgo.RequestWirelessConfigureAccessPointsV1PrimaryIPAddress{}
+func expandRequestWirelessAccespointConfigurationConfigureAccessPointsPrimaryIPAddress(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessConfigureAccessPointsPrimaryIPAddress {
+	request := catalystcentersdkgo.RequestWirelessConfigureAccessPointsPrimaryIPAddress{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".address")))) {
 		request.Address = interfaceToString(v)
 	}
 	return &request
 }
 
-func expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1SecondaryIPAddress(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessConfigureAccessPointsV1SecondaryIPAddress {
-	request := catalystcentersdkgo.RequestWirelessConfigureAccessPointsV1SecondaryIPAddress{}
+func expandRequestWirelessAccespointConfigurationConfigureAccessPointsSecondaryIPAddress(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessConfigureAccessPointsSecondaryIPAddress {
+	request := catalystcentersdkgo.RequestWirelessConfigureAccessPointsSecondaryIPAddress{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".address")))) {
 		request.Address = interfaceToString(v)
 	}
 	return &request
 }
 
-func expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1TertiaryIPAddress(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessConfigureAccessPointsV1TertiaryIPAddress {
-	request := catalystcentersdkgo.RequestWirelessConfigureAccessPointsV1TertiaryIPAddress{}
+func expandRequestWirelessAccespointConfigurationConfigureAccessPointsTertiaryIPAddress(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessConfigureAccessPointsTertiaryIPAddress {
+	request := catalystcentersdkgo.RequestWirelessConfigureAccessPointsTertiaryIPAddress{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".address")))) {
 		request.Address = interfaceToString(v)
 	}
 	return &request
 }
 
-func expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1RadioConfigurationsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessConfigureAccessPointsV1RadioConfigurations {
-	request := []catalystcentersdkgo.RequestWirelessConfigureAccessPointsV1RadioConfigurations{}
+func expandRequestWirelessAccespointConfigurationConfigureAccessPointsRadioConfigurationsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessConfigureAccessPointsRadioConfigurations {
+	request := []catalystcentersdkgo.RequestWirelessConfigureAccessPointsRadioConfigurations{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -750,7 +751,7 @@ func expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1RadioCon
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1RadioConfigurations(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestWirelessAccespointConfigurationConfigureAccessPointsRadioConfigurations(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -758,8 +759,8 @@ func expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1RadioCon
 	return &request
 }
 
-func expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1RadioConfigurations(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessConfigureAccessPointsV1RadioConfigurations {
-	request := catalystcentersdkgo.RequestWirelessConfigureAccessPointsV1RadioConfigurations{}
+func expandRequestWirelessAccespointConfigurationConfigureAccessPointsRadioConfigurations(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessConfigureAccessPointsRadioConfigurations {
+	request := catalystcentersdkgo.RequestWirelessConfigureAccessPointsRadioConfigurations{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".configure_radio_role_assignment")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".configure_radio_role_assignment")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".configure_radio_role_assignment")))) {
 		request.ConfigureRadioRoleAssignment = interfaceToBoolPtr(v)
 	}
@@ -829,7 +830,7 @@ func expandRequestWirelessAccespointConfigurationConfigureAccessPointsV1RadioCon
 	return &request
 }
 
-func flattenWirelessConfigureAccessPointsV1Item(item *catalystcentersdkgo.ResponseWirelessConfigureAccessPointsV1Response) []map[string]interface{} {
+func flattenWirelessConfigureAccessPointsItem(item *catalystcentersdkgo.ResponseWirelessConfigureAccessPointsResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -97,28 +97,40 @@ func dataSourceFieldNoticesTrialsRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTrialDetailsForFieldNoticesDetectionOnNetworkDevicesV1")
+		log.Printf("[DEBUG] Selected method: GetTrialDetailsForFieldNoticesDetectionOnNetworkDevices")
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Compliance.GetTrialDetailsForFieldNoticesDetectionOnNetworkDevicesV1()
+		response1, restyResp1, err := client.Compliance.GetTrialDetailsForFieldNoticesDetectionOnNetworkDevices()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTrialDetailsForFieldNoticesDetectionOnNetworkDevicesV1", err,
-				"Failure at GetTrialDetailsForFieldNoticesDetectionOnNetworkDevicesV1, unexpected response", ""))
+				"Failure when executing 2 GetTrialDetailsForFieldNoticesDetectionOnNetworkDevices", err,
+				"Failure at GetTrialDetailsForFieldNoticesDetectionOnNetworkDevices, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenComplianceGetTrialDetailsForFieldNoticesDetectionOnNetworkDevicesV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetTrialDetailsForFieldNoticesDetectionOnNetworkDevices", err,
+				"Failure at GetTrialDetailsForFieldNoticesDetectionOnNetworkDevices, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenComplianceGetTrialDetailsForFieldNoticesDetectionOnNetworkDevicesItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTrialDetailsForFieldNoticesDetectionOnNetworkDevicesV1 response",
+				"Failure when setting GetTrialDetailsForFieldNoticesDetectionOnNetworkDevices response",
 				err))
 			return diags
 		}
@@ -130,7 +142,7 @@ func dataSourceFieldNoticesTrialsRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenComplianceGetTrialDetailsForFieldNoticesDetectionOnNetworkDevicesV1Item(item *catalystcentersdkgo.ResponseComplianceGetTrialDetailsForFieldNoticesDetectionOnNetworkDevicesV1Response) []map[string]interface{} {
+func flattenComplianceGetTrialDetailsForFieldNoticesDetectionOnNetworkDevicesItem(item *catalystcentersdkgo.ResponseComplianceGetTrialDetailsForFieldNoticesDetectionOnNetworkDevicesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

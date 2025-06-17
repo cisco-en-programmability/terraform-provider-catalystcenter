@@ -5,7 +5,9 @@ subcategory: ""
 description: |-
   It performs create operation on Devices.
   This data source action endpoint facilitates the deletion of a network device without performing configuration cleanup
-  on the device.
+  on the device. To delete a device via API, you must have permission to provision the network device. Although the API
+  operation does not change the device configuration, removing a device without cleaning up its configuration could lead
+  to a network behaviour that is not consistent with the configurations that are known to the system.
 ---
 
 # catalystcenter_network_devices_delete_without_cleanup (Resource)
@@ -13,7 +15,10 @@ description: |-
 It performs create operation on Devices.
 
 - This data source action endpoint facilitates the deletion of a network device without performing configuration cleanup
-on the device.
+on the device. To delete a device via API, you must have permission to provision the network device. Although the API
+operation does not change the device configuration, removing a device without cleaning up its configuration could lead
+to a network behaviour that is not consistent with the configurations that are known to the system.
+
 
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
@@ -24,10 +29,10 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_network_devices_delete_without_cleanup" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
     id = "string"
-  }
+  }]
 }
 
 output "catalystcenter_network_devices_delete_without_cleanup_example" {

@@ -19,9 +19,11 @@ It performs create operation on Software Image Management (SWIM).
 - Untag the golden images specifically designed for a particular device type or supervisor engine module. Conditions for
 untagging the golden image:
 1) Untagging the golden image can only be done where the golden tagged is applied.
+
   For example, if golden tagging is applied to a global site, then untagging can only be done on a global site. Even
 though the same setting will be inherited on native, attempting to untag will fail.
 2) Untagging of SUBPACKAGE and ROMMON image type is not supported.
+
 
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
@@ -34,13 +36,13 @@ resource "catalystcenter_images_id_sites_site_id_untag_golden" "example" {
   provider = catalystcenter
   id       = "string"
   site_id  = "string"
-  parameters {
+  parameters = [{
 
     device_roles                    = ["string"]
     device_tags                     = ["string"]
     product_name_ordinal            = 1.0
     supervisor_product_name_ordinal = 1.0
-  }
+  }]
 }
 
 output "catalystcenter_images_id_sites_site_id_untag_golden_example" {
@@ -66,15 +68,15 @@ output "catalystcenter_images_id_sites_site_id_untag_golden_example" {
 
 Required:
 
-- `id` (String) id path parameter. Software image identifier is used for golden tagging or intent to tag it. The value of id can be obtained from the response of the API /dna/intent/api/v1/images?imported=true&isAddonImages=false for the base image and /dna/images/{id}/addonImages where id will be the software image identifier of the base image.
-- `site_id` (String) siteId path parameter. Site identifier for tagged image or intent to tag it. The default value is global site id. See [https://developer.cisco.com/docs/dna-center](#!get-site) for siteId
+- `id` (String) id path parameter. Software image identifier is used for golden tagging or intent to tag it. The value of **id** can be obtained from the response of the API **/dna/intent/api/v1/images?imported=true&isAddonImages=false** for the base image and **/dna/images/{id}/addonImages** where **id** will be the software image identifier of the base image.
+- `site_id` (String) siteId path parameter. Site identifier for tagged image or intent to tag it. The default value is global site id. See [https://developer.cisco.com/docs/dna-center](#!get-site) for **siteId**
 
 Optional:
 
 - `device_roles` (List of String) Device Roles. Available value will be [ CORE, DISTRIBUTION, UNKNOWN, ACCESS, BORDER ROUTER ]
 - `device_tags` (List of String) Device tags can be fetched fom API https://developer.cisco.com/docs/dna-center/#!get-tag
-- `product_name_ordinal` (Number) The product name ordinal is a unique value for each network device product. productNameOrdinal can be obtained from the response of API /dna/intent/api/v1/siteWiseProductNames?siteId=<siteId>
-- `supervisor_product_name_ordinal` (Number) The supervisor engine module ordinal is a unique value for each supervisor module. supervisorProductNameOrdinal can be obtained from the response of API /dna/intent/api/v1/siteWiseProductNames?siteId=<siteId>
+- `product_name_ordinal` (Number) The product name ordinal is a unique value for each network device product. **productNameOrdinal** can be obtained from the response of API **/dna/intent/api/v1/siteWiseProductNames?siteId=<siteId>**
+- `supervisor_product_name_ordinal` (Number) The supervisor engine module ordinal is a unique value for each supervisor module. **supervisorProductNameOrdinal** can be obtained from the response of API **/dna/intent/api/v1/siteWiseProductNames?siteId=<siteId>**
 
 
 <a id="nestedatt--item"></a>

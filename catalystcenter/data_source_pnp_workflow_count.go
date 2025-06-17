@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -56,31 +56,45 @@ func dataSourcePnpWorkflowCountRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetWorkflowCountV1")
-		queryParams1 := catalystcentersdkgo.GetWorkflowCountV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetWorkflowCount")
+		queryParams1 := catalystcentersdkgo.GetWorkflowCountQueryParams{}
 
 		if okName {
 			queryParams1.Name = interfaceToSliceString(vName)
 		}
 
-		response1, restyResp1, err := client.DeviceOnboardingPnp.GetWorkflowCountV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.DeviceOnboardingPnp.GetWorkflowCount(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetWorkflowCountV1", err,
-				"Failure at GetWorkflowCountV1, unexpected response", ""))
+				"Failure when executing 2 GetWorkflowCount", err,
+				"Failure at GetWorkflowCount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDeviceOnboardingPnpGetWorkflowCountV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetWorkflowCount", err,
+				"Failure at GetWorkflowCount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenDeviceOnboardingPnpGetWorkflowCountItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetWorkflowCountV1 response",
+				"Failure when setting GetWorkflowCount response",
 				err))
 			return diags
 		}
@@ -92,7 +106,7 @@ func dataSourcePnpWorkflowCountRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenDeviceOnboardingPnpGetWorkflowCountV1Item(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetWorkflowCountV1) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetWorkflowCountItem(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetWorkflowCount) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

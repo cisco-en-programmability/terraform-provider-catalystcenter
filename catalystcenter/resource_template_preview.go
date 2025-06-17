@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -113,27 +113,27 @@ func resourceTemplatePreviewCreate(ctx context.Context, d *schema.ResourceData, 
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestTemplatePreviewPreviewTemplateV1(ctx, "parameters.0", d)
+	request1 := expandRequestTemplatePreviewPreviewTemplate(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.ConfigurationTemplates.PreviewTemplateV1(request1)
+	response1, restyResp1, err := client.ConfigurationTemplates.PreviewTemplate(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing PreviewTemplateV1", err))
+			"Failure when executing PreviewTemplate", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItem1 := flattenConfigurationTemplatesPreviewTemplateV1Item(response1)
+	vItem1 := flattenConfigurationTemplatesPreviewTemplateItem(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting PreviewTemplateV1 response",
+			"Failure when setting PreviewTemplate response",
 			err))
 		return diags
 	}
@@ -155,16 +155,16 @@ func resourceTemplatePreviewDelete(ctx context.Context, d *schema.ResourceData, 
 	return diags
 }
 
-func expandRequestTemplatePreviewPreviewTemplateV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesPreviewTemplateV1 {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesPreviewTemplateV1{}
+func expandRequestTemplatePreviewPreviewTemplate(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesPreviewTemplate {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesPreviewTemplate{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_id")))) {
 		request.DeviceID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".params")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".params")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".params")))) {
-		request.Params = expandRequestTemplatePreviewPreviewTemplateV1Params(ctx, key+".params.0", d)
+		request.Params = expandRequestTemplatePreviewPreviewTemplateParams(ctx, key+".params.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".resource_params")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".resource_params")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".resource_params")))) {
-		request.ResourceParams = expandRequestTemplatePreviewPreviewTemplateV1ResourceParams(ctx, key+".resource_params.0", d)
+		request.ResourceParams = expandRequestTemplatePreviewPreviewTemplateResourceParams(ctx, key+".resource_params.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".template_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".template_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".template_id")))) {
 		request.TemplateID = interfaceToString(v)
@@ -172,19 +172,19 @@ func expandRequestTemplatePreviewPreviewTemplateV1(ctx context.Context, key stri
 	return &request
 }
 
-func expandRequestTemplatePreviewPreviewTemplateV1Params(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesPreviewTemplateV1Params {
-	var request catalystcentersdkgo.RequestConfigurationTemplatesPreviewTemplateV1Params
+func expandRequestTemplatePreviewPreviewTemplateParams(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesPreviewTemplateParams {
+	var request catalystcentersdkgo.RequestConfigurationTemplatesPreviewTemplateParams
 	request = d.Get(fixKeyAccess(key))
 	return &request
 }
 
-func expandRequestTemplatePreviewPreviewTemplateV1ResourceParams(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesPreviewTemplateV1ResourceParams {
-	var request catalystcentersdkgo.RequestConfigurationTemplatesPreviewTemplateV1ResourceParams
+func expandRequestTemplatePreviewPreviewTemplateResourceParams(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesPreviewTemplateResourceParams {
+	var request catalystcentersdkgo.RequestConfigurationTemplatesPreviewTemplateResourceParams
 	request = d.Get(fixKeyAccess(key))
 	return &request
 }
 
-func flattenConfigurationTemplatesPreviewTemplateV1Item(item *catalystcentersdkgo.ResponseConfigurationTemplatesPreviewTemplateV1) []map[string]interface{} {
+func flattenConfigurationTemplatesPreviewTemplateItem(item *catalystcentersdkgo.ResponseConfigurationTemplatesPreviewTemplate) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -192,13 +192,13 @@ func flattenConfigurationTemplatesPreviewTemplateV1Item(item *catalystcentersdkg
 	respItem["cli_preview"] = item.CliPreview
 	respItem["device_id"] = item.DeviceID
 	respItem["template_id"] = item.TemplateID
-	respItem["validation_errors"] = flattenConfigurationTemplatesPreviewTemplateV1ItemValidationErrors(item.ValidationErrors)
+	respItem["validation_errors"] = flattenConfigurationTemplatesPreviewTemplateItemValidationErrors(item.ValidationErrors)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenConfigurationTemplatesPreviewTemplateV1ItemValidationErrors(item *catalystcentersdkgo.ResponseConfigurationTemplatesPreviewTemplateV1ValidationErrors) interface{} {
+func flattenConfigurationTemplatesPreviewTemplateItemValidationErrors(item *catalystcentersdkgo.ResponseConfigurationTemplatesPreviewTemplateValidationErrors) interface{} {
 	if item == nil {
 		return nil
 	}

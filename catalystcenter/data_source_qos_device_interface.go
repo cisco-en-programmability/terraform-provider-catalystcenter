@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -327,31 +327,45 @@ func dataSourceQosDeviceInterfaceRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetQosDeviceInterfaceInfoV1")
-		queryParams1 := catalystcentersdkgo.GetQosDeviceInterfaceInfoV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetQosDeviceInterfaceInfo")
+		queryParams1 := catalystcentersdkgo.GetQosDeviceInterfaceInfoQueryParams{}
 
 		if okNetworkDeviceID {
 			queryParams1.NetworkDeviceID = vNetworkDeviceID.(string)
 		}
 
-		response1, restyResp1, err := client.ApplicationPolicy.GetQosDeviceInterfaceInfoV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.ApplicationPolicy.GetQosDeviceInterfaceInfo(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetQosDeviceInterfaceInfoV1", err,
-				"Failure at GetQosDeviceInterfaceInfoV1, unexpected response", ""))
+				"Failure when executing 2 GetQosDeviceInterfaceInfo", err,
+				"Failure at GetQosDeviceInterfaceInfo, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenApplicationPolicyGetQosDeviceInterfaceInfoV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetQosDeviceInterfaceInfo", err,
+				"Failure at GetQosDeviceInterfaceInfo, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenApplicationPolicyGetQosDeviceInterfaceInfoItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetQosDeviceInterfaceInfoV1 response",
+				"Failure when setting GetQosDeviceInterfaceInfo response",
 				err))
 			return diags
 		}
@@ -363,7 +377,7 @@ func dataSourceQosDeviceInterfaceRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenApplicationPolicyGetQosDeviceInterfaceInfoV1Items(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetQosDeviceInterfaceInfoV1Response) []map[string]interface{} {
+func flattenApplicationPolicyGetQosDeviceInterfaceInfoItems(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetQosDeviceInterfaceInfoResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -386,20 +400,20 @@ func flattenApplicationPolicyGetQosDeviceInterfaceInfoV1Items(items *[]catalystc
 		respItem["provisioning_state"] = item.ProvisioningState
 		respItem["qualifier"] = item.Qualifier
 		respItem["resource_version"] = item.ResourceVersion
-		respItem["target_id_list"] = flattenApplicationPolicyGetQosDeviceInterfaceInfoV1ItemsTargetIDList(item.TargetIDList)
+		respItem["target_id_list"] = flattenApplicationPolicyGetQosDeviceInterfaceInfoItemsTargetIDList(item.TargetIDList)
 		respItem["type"] = item.Type
-		respItem["cfs_change_info"] = flattenApplicationPolicyGetQosDeviceInterfaceInfoV1ItemsCfsChangeInfo(item.CfsChangeInfo)
-		respItem["custom_provisions"] = flattenApplicationPolicyGetQosDeviceInterfaceInfoV1ItemsCustomProvisions(item.CustomProvisions)
+		respItem["cfs_change_info"] = flattenApplicationPolicyGetQosDeviceInterfaceInfoItemsCfsChangeInfo(item.CfsChangeInfo)
+		respItem["custom_provisions"] = flattenApplicationPolicyGetQosDeviceInterfaceInfoItemsCustomProvisions(item.CustomProvisions)
 		respItem["excluded_interfaces"] = item.ExcludedInterfaces
 		respItem["is_excluded"] = boolPtrToString(item.IsExcluded)
 		respItem["network_device_id"] = item.NetworkDeviceID
-		respItem["qos_device_interface_info"] = flattenApplicationPolicyGetQosDeviceInterfaceInfoV1ItemsQosDeviceInterfaceInfo(item.QosDeviceInterfaceInfo)
+		respItem["qos_device_interface_info"] = flattenApplicationPolicyGetQosDeviceInterfaceInfoItemsQosDeviceInterfaceInfo(item.QosDeviceInterfaceInfo)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenApplicationPolicyGetQosDeviceInterfaceInfoV1ItemsTargetIDList(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetQosDeviceInterfaceInfoV1ResponseTargetIDList) []interface{} {
+func flattenApplicationPolicyGetQosDeviceInterfaceInfoItemsTargetIDList(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetQosDeviceInterfaceInfoResponseTargetIDList) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -411,7 +425,7 @@ func flattenApplicationPolicyGetQosDeviceInterfaceInfoV1ItemsTargetIDList(items 
 	return respItems
 }
 
-func flattenApplicationPolicyGetQosDeviceInterfaceInfoV1ItemsCfsChangeInfo(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetQosDeviceInterfaceInfoV1ResponseCfsChangeInfo) []interface{} {
+func flattenApplicationPolicyGetQosDeviceInterfaceInfoItemsCfsChangeInfo(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetQosDeviceInterfaceInfoResponseCfsChangeInfo) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -423,7 +437,7 @@ func flattenApplicationPolicyGetQosDeviceInterfaceInfoV1ItemsCfsChangeInfo(items
 	return respItems
 }
 
-func flattenApplicationPolicyGetQosDeviceInterfaceInfoV1ItemsCustomProvisions(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetQosDeviceInterfaceInfoV1ResponseCustomProvisions) []interface{} {
+func flattenApplicationPolicyGetQosDeviceInterfaceInfoItemsCustomProvisions(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetQosDeviceInterfaceInfoResponseCustomProvisions) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -435,7 +449,7 @@ func flattenApplicationPolicyGetQosDeviceInterfaceInfoV1ItemsCustomProvisions(it
 	return respItems
 }
 
-func flattenApplicationPolicyGetQosDeviceInterfaceInfoV1ItemsQosDeviceInterfaceInfo(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetQosDeviceInterfaceInfoV1ResponseQosDeviceInterfaceInfo) []map[string]interface{} {
+func flattenApplicationPolicyGetQosDeviceInterfaceInfoItemsQosDeviceInterfaceInfo(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetQosDeviceInterfaceInfoResponseQosDeviceInterfaceInfo) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

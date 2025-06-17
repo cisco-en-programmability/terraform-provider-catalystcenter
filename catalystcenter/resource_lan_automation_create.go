@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -60,7 +60,7 @@ func resourceLanAutomationCreate() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"payload": &schema.Schema{
-							Description: `Array of RequestLanAutomationLANAutomationStartV1`,
+							Description: `Array of RequestLanAutomationLANAutomationStart`,
 							Type:        schema.TypeList,
 							Optional:    true,
 							ForceNew:    true,
@@ -188,27 +188,27 @@ func resourceLanAutomationCreateCreate(ctx context.Context, d *schema.ResourceDa
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestLanAutomationCreateLanAutomationStartV1(ctx, "parameters.0", d)
+	request1 := expandRequestLanAutomationCreateLanAutomationStart(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.LanAutomation.LanAutomationStartV1(request1)
+	response1, restyResp1, err := client.LanAutomation.LanAutomationStart(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing LanAutomationStartV1", err))
+			"Failure when executing LanAutomationStart", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItem1 := flattenLanAutomationLanAutomationStartV1Item(response1.Response)
+	vItem1 := flattenLanAutomationLanAutomationStartItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting LanAutomationStartV1 response",
+			"Failure when setting LanAutomationStart response",
 			err))
 		return diags
 	}
@@ -230,16 +230,16 @@ func resourceLanAutomationCreateDelete(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func expandRequestLanAutomationCreateLanAutomationStartV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLanAutomationLanAutomationStartV1 {
-	request := catalystcentersdkgo.RequestLanAutomationLanAutomationStartV1{}
-	if v := expandRequestLanAutomationCreateLanAutomationStartV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestLanAutomationCreateLanAutomationStart(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLanAutomationLanAutomationStart {
+	request := catalystcentersdkgo.RequestLanAutomationLanAutomationStart{}
+	if v := expandRequestLanAutomationCreateLanAutomationStartItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	return &request
 }
 
-func expandRequestLanAutomationCreateLanAutomationStartV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemLanAutomationLanAutomationStartV1 {
-	request := []catalystcentersdkgo.RequestItemLanAutomationLanAutomationStartV1{}
+func expandRequestLanAutomationCreateLanAutomationStartItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemLanAutomationLanAutomationStart {
+	request := []catalystcentersdkgo.RequestItemLanAutomationLanAutomationStart{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -250,7 +250,7 @@ func expandRequestLanAutomationCreateLanAutomationStartV1ItemArray(ctx context.C
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestLanAutomationCreateLanAutomationStartV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestLanAutomationCreateLanAutomationStartItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -258,8 +258,8 @@ func expandRequestLanAutomationCreateLanAutomationStartV1ItemArray(ctx context.C
 	return &request
 }
 
-func expandRequestLanAutomationCreateLanAutomationStartV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemLanAutomationLanAutomationStartV1 {
-	request := catalystcentersdkgo.RequestItemLanAutomationLanAutomationStartV1{}
+func expandRequestLanAutomationCreateLanAutomationStartItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemLanAutomationLanAutomationStart {
+	request := catalystcentersdkgo.RequestItemLanAutomationLanAutomationStart{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".discovered_device_site_name_hierarchy")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".discovered_device_site_name_hierarchy")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".discovered_device_site_name_hierarchy")))) {
 		request.DiscoveredDeviceSiteNameHierarchy = interfaceToString(v)
 	}
@@ -273,7 +273,7 @@ func expandRequestLanAutomationCreateLanAutomationStartV1Item(ctx context.Contex
 		request.PrimaryDeviceInterfaceNames = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ip_pools")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ip_pools")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ip_pools")))) {
-		request.IPPools = expandRequestLanAutomationCreateLanAutomationStartV1ItemIPPoolsArray(ctx, key+".ip_pools", d)
+		request.IPPools = expandRequestLanAutomationCreateLanAutomationStartItemIPPoolsArray(ctx, key+".ip_pools", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".mulitcast_enabled")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".mulitcast_enabled")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".mulitcast_enabled")))) {
 		request.MulitcastEnabled = interfaceToBoolPtr(v)
@@ -293,8 +293,8 @@ func expandRequestLanAutomationCreateLanAutomationStartV1Item(ctx context.Contex
 	return &request
 }
 
-func expandRequestLanAutomationCreateLanAutomationStartV1ItemIPPoolsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemLanAutomationLanAutomationStartV1IPPools {
-	request := []catalystcentersdkgo.RequestItemLanAutomationLanAutomationStartV1IPPools{}
+func expandRequestLanAutomationCreateLanAutomationStartItemIPPoolsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemLanAutomationLanAutomationStartIPPools {
+	request := []catalystcentersdkgo.RequestItemLanAutomationLanAutomationStartIPPools{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -305,7 +305,7 @@ func expandRequestLanAutomationCreateLanAutomationStartV1ItemIPPoolsArray(ctx co
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestLanAutomationCreateLanAutomationStartV1ItemIPPools(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestLanAutomationCreateLanAutomationStartItemIPPools(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -313,8 +313,8 @@ func expandRequestLanAutomationCreateLanAutomationStartV1ItemIPPoolsArray(ctx co
 	return &request
 }
 
-func expandRequestLanAutomationCreateLanAutomationStartV1ItemIPPools(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemLanAutomationLanAutomationStartV1IPPools {
-	request := catalystcentersdkgo.RequestItemLanAutomationLanAutomationStartV1IPPools{}
+func expandRequestLanAutomationCreateLanAutomationStartItemIPPools(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemLanAutomationLanAutomationStartIPPools {
+	request := catalystcentersdkgo.RequestItemLanAutomationLanAutomationStartIPPools{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ip_pool_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ip_pool_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ip_pool_name")))) {
 		request.IPPoolName = interfaceToString(v)
 	}
@@ -324,7 +324,7 @@ func expandRequestLanAutomationCreateLanAutomationStartV1ItemIPPools(ctx context
 	return &request
 }
 
-func flattenLanAutomationLanAutomationStartV1Item(item *catalystcentersdkgo.ResponseLanAutomationLanAutomationStartV1Response) []map[string]interface{} {
+func flattenLanAutomationLanAutomationStartItem(item *catalystcentersdkgo.ResponseLanAutomationLanAutomationStartResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

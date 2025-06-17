@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -69,9 +69,9 @@ func dataSourceTagMemberCountRead(ctx context.Context, d *schema.ResourceData, m
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTagMemberCountV1")
+		log.Printf("[DEBUG] Selected method: GetTagMemberCount")
 		vvID := vID.(string)
-		queryParams1 := catalystcentersdkgo.GetTagMemberCountV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetTagMemberCountQueryParams{}
 
 		queryParams1.MemberType = vMemberType.(string)
 
@@ -79,24 +79,38 @@ func dataSourceTagMemberCountRead(ctx context.Context, d *schema.ResourceData, m
 			queryParams1.MemberAssociationType = vMemberAssociationType.(string)
 		}
 
-		response1, restyResp1, err := client.Tag.GetTagMemberCountV1(vvID, &queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Tag.GetTagMemberCount(vvID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTagMemberCountV1", err,
-				"Failure at GetTagMemberCountV1, unexpected response", ""))
+				"Failure when executing 2 GetTagMemberCount", err,
+				"Failure at GetTagMemberCount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenTagGetTagMemberCountV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetTagMemberCount", err,
+				"Failure at GetTagMemberCount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenTagGetTagMemberCountItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTagMemberCountV1 response",
+				"Failure when setting GetTagMemberCount response",
 				err))
 			return diags
 		}
@@ -108,7 +122,7 @@ func dataSourceTagMemberCountRead(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func flattenTagGetTagMemberCountV1Item(item *catalystcentersdkgo.ResponseTagGetTagMemberCountV1) []map[string]interface{} {
+func flattenTagGetTagMemberCountItem(item *catalystcentersdkgo.ResponseTagGetTagMemberCount) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

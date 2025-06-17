@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -243,8 +243,8 @@ func dataSourceWirelessSettingsDot11BeProfilesRead(ctx context.Context, d *schem
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: Get80211BeProfilesV1")
-		queryParams1 := catalystcentersdkgo.Get80211BeProfilesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: Get80211BeProfiles")
+		queryParams1 := catalystcentersdkgo.Get80211BeProfilesQueryParams{}
 
 		if okLimit {
 			queryParams1.Limit = vLimit.(float64)
@@ -273,24 +273,36 @@ func dataSourceWirelessSettingsDot11BeProfilesRead(ctx context.Context, d *schem
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Wireless.Get80211BeProfilesV1(&queryParams1)
+		response1, restyResp1, err := client.Wireless.Get80211BeProfiles(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 Get80211BeProfilesV1", err,
-				"Failure at Get80211BeProfilesV1, unexpected response", ""))
+				"Failure when executing 2 Get80211BeProfiles", err,
+				"Failure at Get80211BeProfiles, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenWirelessGet80211BeProfilesV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 Get80211BeProfiles", err,
+				"Failure at Get80211BeProfiles, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenWirelessGet80211BeProfilesItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting Get80211BeProfilesV1 response",
+				"Failure when setting Get80211BeProfiles response",
 				err))
 			return diags
 		}
@@ -300,29 +312,41 @@ func dataSourceWirelessSettingsDot11BeProfilesRead(ctx context.Context, d *schem
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: Get80211BeProfileByIDV1")
+		log.Printf("[DEBUG] Selected method: Get80211BeProfileByID")
 		vvID := vID.(string)
 
 		// has_unknown_response: None
 
-		response2, restyResp2, err := client.Wireless.Get80211BeProfileByIDV1(vvID)
+		response2, restyResp2, err := client.Wireless.Get80211BeProfileByID(vvID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 Get80211BeProfileByIDV1", err,
-				"Failure at Get80211BeProfileByIDV1, unexpected response", ""))
+				"Failure when executing 2 Get80211BeProfileByID", err,
+				"Failure at Get80211BeProfileByID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenWirelessGet80211BeProfileByIDV1Item(response2.Response)
+		if err != nil || response2 == nil {
+			if restyResp2 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 Get80211BeProfileByID", err,
+				"Failure at Get80211BeProfileByID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
+
+		vItem2 := flattenWirelessGet80211BeProfileByIDItem(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting Get80211BeProfileByIDV1 response",
+				"Failure when setting Get80211BeProfileByID response",
 				err))
 			return diags
 		}
@@ -334,7 +358,7 @@ func dataSourceWirelessSettingsDot11BeProfilesRead(ctx context.Context, d *schem
 	return diags
 }
 
-func flattenWirelessGet80211BeProfilesV1Items(items *[]catalystcentersdkgo.ResponseWirelessGet80211BeProfilesV1Response) []map[string]interface{} {
+func flattenWirelessGet80211BeProfilesItems(items *[]catalystcentersdkgo.ResponseWirelessGet80211BeProfilesResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -354,7 +378,7 @@ func flattenWirelessGet80211BeProfilesV1Items(items *[]catalystcentersdkgo.Respo
 	return respItems
 }
 
-func flattenWirelessGet80211BeProfileByIDV1Item(item *catalystcentersdkgo.ResponseWirelessGet80211BeProfileByIDV1Response) []map[string]interface{} {
+func flattenWirelessGet80211BeProfileByIDItem(item *catalystcentersdkgo.ResponseWirelessGet80211BeProfileByIDResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

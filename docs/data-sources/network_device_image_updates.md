@@ -47,7 +47,7 @@ output "catalystcenter_network_device_image_updates_example" {
 - `host_name` (String) hostName query parameter. Host name of the network device for the image update. Supports case-insensitive partial search
 - `id` (String) id query parameter. Update id which is unique for each network device under the parentId
 - `image_name` (String) imageName query parameter. Software image name for the update
-- `limit` (Number) limit query parameter. The number of records to show for this page.
+- `limit` (Number) limit query parameter. The number of records to show for this page. The minimum and maximum values are 1 and 500, respectively
 - `management_address` (String) managementAddress query parameter. Management address of the network device
 - `network_device_id` (String) networkDeviceId query parameter. Network device id
 - `offset` (Number) offset query parameter. The first record to show for this page; the first record is numbered 1.

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -31,11 +31,8 @@ performing the import.
 				Computed: true,
 			},
 			"item": &schema.Schema{
-				Type:     schema.TypeList,
+				Type:     schema.TypeString,
 				Computed: true,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
 			},
 			"parameters": &schema.Schema{
 				Type:     schema.TypeList,
@@ -71,22 +68,22 @@ func resourceMapsImportPerformCreate(ctx context.Context, d *schema.ResourceData
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Sites.ImportMapArchivePerformImportV1(vvImportContextUUID)
+	response1, restyResp1, err := client.Sites.ImportMapArchivePerformImport(vvImportContextUUID)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ImportMapArchivePerformImportV1", err))
+			"Failure when executing ImportMapArchivePerformImport", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	if err := d.Set("item", response1); err != nil {
+	if err := d.Set("item", restyResp1.String()); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ImportMapArchivePerformImportV1 response",
+			"Failure when setting ImportMapArchivePerformImport response",
 			err))
 		return diags
 	}

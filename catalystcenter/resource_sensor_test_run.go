@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -59,11 +59,11 @@ func resourceSensorTestRunCreate(ctx context.Context, d *schema.ResourceData, m 
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestSensorTestRunRunNowSensorTestV1(ctx, "parameters.0", d)
+	request1 := expandRequestSensorTestRunRunNowSensorTest(ctx, "parameters.0", d)
 
 	// has_unknown_response: True
 
-	response1, err := client.Sensors.RunNowSensorTestV1(request1)
+	response1, err := client.Sensors.RunNowSensorTest(request1)
 
 	if err != nil || response1 == nil {
 		d.SetId("")
@@ -76,7 +76,7 @@ func resourceSensorTestRunCreate(ctx context.Context, d *schema.ResourceData, m 
 
 	if err := d.Set("item", response1.String()); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting RunNowSensorTestV1 response",
+			"Failure when setting RunNowSensorTest response",
 			err))
 		return diags
 	}
@@ -97,8 +97,8 @@ func resourceSensorTestRunDelete(ctx context.Context, d *schema.ResourceData, m 
 	return diags
 }
 
-func expandRequestSensorTestRunRunNowSensorTestV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsRunNowSensorTestV1 {
-	request := catalystcentersdkgo.RequestSensorsRunNowSensorTestV1{}
+func expandRequestSensorTestRunRunNowSensorTest(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsRunNowSensorTest {
+	request := catalystcentersdkgo.RequestSensorsRunNowSensorTest{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".template_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".template_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".template_name")))) {
 		request.TemplateName = interfaceToString(v)
 	}

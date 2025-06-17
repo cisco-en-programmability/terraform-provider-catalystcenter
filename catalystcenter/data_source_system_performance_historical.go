@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -191,8 +191,8 @@ func dataSourceSystemPerformanceHistoricalRead(ctx context.Context, d *schema.Re
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: SystemPerformanceHistoricalAPIV1")
-		queryParams1 := catalystcentersdkgo.SystemPerformanceHistoricalAPIV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: SystemPerformanceHistoricalAPI")
+		queryParams1 := catalystcentersdkgo.SystemPerformanceHistoricalAPIQueryParams{}
 
 		if okKpi {
 			queryParams1.Kpi = vKpi.(string)
@@ -204,24 +204,26 @@ func dataSourceSystemPerformanceHistoricalRead(ctx context.Context, d *schema.Re
 			queryParams1.EndTime = vEndTime.(float64)
 		}
 
-		response1, restyResp1, err := client.HealthAndPerformance.SystemPerformanceHistoricalAPIV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.HealthAndPerformance.SystemPerformanceHistoricalAPI(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 SystemPerformanceHistoricalAPIV1", err,
-				"Failure at SystemPerformanceHistoricalAPIV1, unexpected response", ""))
+				"Failure when executing 2 SystemPerformanceHistoricalAPI", err,
+				"Failure at SystemPerformanceHistoricalAPI, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenHealthAndPerformanceSystemPerformanceHistoricalAPIV1Item(response1)
+		vItem1 := flattenHealthAndPerformanceSystemPerformanceHistoricalAPIItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting SystemPerformanceHistoricalAPIV1 response",
+				"Failure when setting SystemPerformanceHistoricalAPI response",
 				err))
 			return diags
 		}
@@ -233,26 +235,26 @@ func dataSourceSystemPerformanceHistoricalRead(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func flattenHealthAndPerformanceSystemPerformanceHistoricalAPIV1Item(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceHistoricalAPIV1) []map[string]interface{} {
+func flattenHealthAndPerformanceSystemPerformanceHistoricalAPIItem(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceHistoricalAPI) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["host_name"] = item.HostName
 	respItem["version"] = item.Version
-	respItem["kpis"] = flattenHealthAndPerformanceSystemPerformanceHistoricalAPIV1ItemKpis(item.Kpis)
+	respItem["kpis"] = flattenHealthAndPerformanceSystemPerformanceHistoricalAPIItemKpis(item.Kpis)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenHealthAndPerformanceSystemPerformanceHistoricalAPIV1ItemKpis(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceHistoricalAPIV1Kpis) []map[string]interface{} {
+func flattenHealthAndPerformanceSystemPerformanceHistoricalAPIItemKpis(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceHistoricalAPIKpis) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["legends"] = flattenHealthAndPerformanceSystemPerformanceHistoricalAPIV1ItemKpisLegends(item.Legends)
-	respItem["data"] = flattenHealthAndPerformanceSystemPerformanceHistoricalAPIV1ItemKpisData(item.Data)
+	respItem["legends"] = flattenHealthAndPerformanceSystemPerformanceHistoricalAPIItemKpisLegends(item.Legends)
+	respItem["data"] = flattenHealthAndPerformanceSystemPerformanceHistoricalAPIItemKpisData(item.Data)
 	respItem["cpu_avg"] = item.CPUAvg
 	respItem["memory_avg"] = item.MemoryAvg
 
@@ -262,15 +264,15 @@ func flattenHealthAndPerformanceSystemPerformanceHistoricalAPIV1ItemKpis(item *c
 
 }
 
-func flattenHealthAndPerformanceSystemPerformanceHistoricalAPIV1ItemKpisLegends(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceHistoricalAPIV1KpisLegends) []map[string]interface{} {
+func flattenHealthAndPerformanceSystemPerformanceHistoricalAPIItemKpisLegends(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceHistoricalAPIKpisLegends) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["cpu"] = flattenHealthAndPerformanceSystemPerformanceHistoricalAPIV1ItemKpisLegendsCPU(item.CPU)
-	respItem["memory"] = flattenHealthAndPerformanceSystemPerformanceHistoricalAPIV1ItemKpisLegendsMemory(item.Memory)
-	respItem["network_tx_rate"] = flattenHealthAndPerformanceSystemPerformanceHistoricalAPIV1ItemKpisLegendsNetworktxRate(item.NetworktxRate)
-	respItem["network_rx_rate"] = flattenHealthAndPerformanceSystemPerformanceHistoricalAPIV1ItemKpisLegendsNetworkrxRate(item.NetworkrxRate)
+	respItem["cpu"] = flattenHealthAndPerformanceSystemPerformanceHistoricalAPIItemKpisLegendsCPU(item.CPU)
+	respItem["memory"] = flattenHealthAndPerformanceSystemPerformanceHistoricalAPIItemKpisLegendsMemory(item.Memory)
+	respItem["network_tx_rate"] = flattenHealthAndPerformanceSystemPerformanceHistoricalAPIItemKpisLegendsNetworktxRate(item.NetworktxRate)
+	respItem["network_rx_rate"] = flattenHealthAndPerformanceSystemPerformanceHistoricalAPIItemKpisLegendsNetworkrxRate(item.NetworkrxRate)
 
 	return []map[string]interface{}{
 		respItem,
@@ -278,20 +280,7 @@ func flattenHealthAndPerformanceSystemPerformanceHistoricalAPIV1ItemKpisLegends(
 
 }
 
-func flattenHealthAndPerformanceSystemPerformanceHistoricalAPIV1ItemKpisLegendsCPU(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceHistoricalAPIV1KpisLegendsCPU) []map[string]interface{} {
-	if item == nil {
-		return nil
-	}
-	respItem := make(map[string]interface{})
-	respItem["units"] = item.Units
-
-	return []map[string]interface{}{
-		respItem,
-	}
-
-}
-
-func flattenHealthAndPerformanceSystemPerformanceHistoricalAPIV1ItemKpisLegendsMemory(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceHistoricalAPIV1KpisLegendsMemory) []map[string]interface{} {
+func flattenHealthAndPerformanceSystemPerformanceHistoricalAPIItemKpisLegendsCPU(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceHistoricalAPIKpisLegendsCPU) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -304,7 +293,7 @@ func flattenHealthAndPerformanceSystemPerformanceHistoricalAPIV1ItemKpisLegendsM
 
 }
 
-func flattenHealthAndPerformanceSystemPerformanceHistoricalAPIV1ItemKpisLegendsNetworktxRate(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceHistoricalAPIV1KpisLegendsNetworktxRate) []map[string]interface{} {
+func flattenHealthAndPerformanceSystemPerformanceHistoricalAPIItemKpisLegendsMemory(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceHistoricalAPIKpisLegendsMemory) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -317,7 +306,7 @@ func flattenHealthAndPerformanceSystemPerformanceHistoricalAPIV1ItemKpisLegendsN
 
 }
 
-func flattenHealthAndPerformanceSystemPerformanceHistoricalAPIV1ItemKpisLegendsNetworkrxRate(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceHistoricalAPIV1KpisLegendsNetworkrxRate) []map[string]interface{} {
+func flattenHealthAndPerformanceSystemPerformanceHistoricalAPIItemKpisLegendsNetworktxRate(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceHistoricalAPIKpisLegendsNetworktxRate) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -330,7 +319,20 @@ func flattenHealthAndPerformanceSystemPerformanceHistoricalAPIV1ItemKpisLegendsN
 
 }
 
-func flattenHealthAndPerformanceSystemPerformanceHistoricalAPIV1ItemKpisData(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceHistoricalAPIV1KpisData) []map[string]interface{} {
+func flattenHealthAndPerformanceSystemPerformanceHistoricalAPIItemKpisLegendsNetworkrxRate(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceHistoricalAPIKpisLegendsNetworkrxRate) []map[string]interface{} {
+	if item == nil {
+		return nil
+	}
+	respItem := make(map[string]interface{})
+	respItem["units"] = item.Units
+
+	return []map[string]interface{}{
+		respItem,
+	}
+
+}
+
+func flattenHealthAndPerformanceSystemPerformanceHistoricalAPIItemKpisData(item *catalystcentersdkgo.ResponseHealthAndPerformanceSystemPerformanceHistoricalAPIKpisData) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

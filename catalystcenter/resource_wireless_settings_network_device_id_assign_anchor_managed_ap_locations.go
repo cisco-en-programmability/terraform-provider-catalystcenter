@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -11,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -25,6 +26,7 @@ func resourceWirelessSettingsNetworkDeviceIDAssignAnchorManagedApLocations() *sc
 - This data source action allows user to assign Anchor Managed AP Locations for WLC by device ID. The payload should
 always be a complete list. The Managed AP Locations included in the payload will be fully processed for both addition
 and deletion.
+
 
        When anchor managed location array present then it will add the anchor managed locations.
 `,
@@ -44,13 +46,13 @@ and deletion.
 					Schema: map[string]*schema.Schema{
 
 						"task_id": &schema.Schema{
-							Description: `Unique identifier for the task
+							Description: `Unique identifier for the task.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
 						},
 						"url": &schema.Schema{
-							Description: `URL for the task
+							Description: `URL for the task.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -98,28 +100,29 @@ func resourceWirelessSettingsNetworkDeviceIDAssignAnchorManagedApLocationsCreate
 	resourceItem := *getResourceItem(d.Get("parameters"))
 
 	vNetworkDeviceID := resourceItem["network_device_id"]
+
 	vvNetworkDeviceID := vNetworkDeviceID.(string)
-	request1 := expandRequestWirelessSettingsNetworkDeviceIDAssignAnchorManagedApLocationsAssignAnchorManagedApLocationsForWLCV1(ctx, "parameters.0", d)
+	request1 := expandRequestWirelessSettingsNetworkDeviceIDAssignAnchorManagedApLocationsAssignAnchorManagedApLocationsForWLC(ctx, "parameters.0", d)
 
-	// has_unknown_response: None
+	response1, restyResp1, err := client.Wireless.AssignAnchorManagedApLocationsForWLC(vvNetworkDeviceID, request1)
 
-	response1, restyResp1, err := client.Wireless.AssignAnchorManagedApLocationsForWLCV1(vvNetworkDeviceID, request1)
+	if err != nil || response1 == nil {
+		if restyResp1 != nil {
+			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+		}
+		d.SetId("")
+		return diags
+	}
 
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
 
-	vItem1 := flattenWirelessAssignAnchorManagedApLocationsForWLCV1Item(response1.Response)
-	if err := d.Set("item", vItem1); err != nil {
-		diags = append(diags, diagError(
-			"Failure when setting AssignAnchorManagedApLocationsForWLCV1 response",
-			err))
-		return diags
-	}
+	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing AssignAnchorManagedAPLocationsForWLCV1", err))
+			"Failure when executing AssignAnchorManagedAPLocationsForWLC", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -146,52 +149,51 @@ func resourceWirelessSettingsNetworkDeviceIDAssignAnchorManagedApLocationsCreate
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing AssignAnchorManagedAPLocationsForWLCV1", err1))
+				"Failure when executing AssignAnchorManagedAPLocationsForWLC", err1))
 			return diags
 		}
 	}
 
-	if err != nil || response1 == nil {
-		if restyResp1 != nil {
-			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
-		}
-		d.SetId("")
+	vItem1 := flattenWirelessAssignAnchorManagedApLocationsForWLCItem(response1.Response)
+	if err := d.Set("item", vItem1); err != nil {
+		diags = append(diags, diagError(
+			"Failure when setting AssignAnchorManagedApLocationsForWLC response",
+			err))
 		return diags
 	}
 
-	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 	d.SetId(getUnixTimeString())
 	return diags
 }
 func resourceWirelessSettingsNetworkDeviceIDAssignAnchorManagedApLocationsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 	return diags
 }
 
 func resourceWirelessSettingsNetworkDeviceIDAssignAnchorManagedApLocationsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 	return diags
 }
 
-func expandRequestWirelessSettingsNetworkDeviceIDAssignAnchorManagedApLocationsAssignAnchorManagedApLocationsForWLCV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessAssignAnchorManagedApLocationsForWLCV1 {
-	request := catalystcentersdkgo.RequestWirelessAssignAnchorManagedApLocationsForWLCV1{}
+func expandRequestWirelessSettingsNetworkDeviceIDAssignAnchorManagedApLocationsAssignAnchorManagedApLocationsForWLC(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessAssignAnchorManagedApLocationsForWLC {
+	request := catalystcentersdkgo.RequestWirelessAssignAnchorManagedApLocationsForWLC{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".anchor_managed_aplocations_site_ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".anchor_managed_aplocations_site_ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".anchor_managed_aplocations_site_ids")))) {
 		request.AnchorManagedApLocationsSiteIDs = interfaceToSliceString(v)
 	}
 	return &request
 }
 
-func flattenWirelessAssignAnchorManagedApLocationsForWLCV1Item(item *catalystcentersdkgo.ResponseWirelessAssignAnchorManagedApLocationsForWLCV1Response) []map[string]interface{} {
+func flattenWirelessAssignAnchorManagedApLocationsForWLCItem(item *catalystcentersdkgo.ResponseWirelessAssignAnchorManagedApLocationsForWLCResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

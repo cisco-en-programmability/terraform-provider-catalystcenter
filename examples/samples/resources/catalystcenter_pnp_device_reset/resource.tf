@@ -28,8 +28,6 @@ resource "catalystcenter_pnp_device_reset" "example" {
       license_level              = "string"
       license_type               = "string"
       top_of_stack_serial_number = "string"
-      project_id                 = "string"
-      workflow_id                = "string"
     }
 
   }

@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -165,9 +165,11 @@ func dataSourceThreatDetailRead(ctx context.Context, d *schema.ResourceData, m i
 
 	var diags diag.Diagnostics
 
-	request1 := expandRequestThreatDetailThreatDetailsV1(ctx, "", d)
+	request1 := expandRequestThreatDetailThreatDetails(ctx, "", d)
 
-	response1, restyResp1, err := client.Devices.ThreatDetailsV1(request1)
+	// has_unknown_response: None
+
+	response1, restyResp1, err := client.Devices.ThreatDetails(request1)
 
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
@@ -178,17 +180,29 @@ func dataSourceThreatDetailRead(ctx context.Context, d *schema.ResourceData, m i
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing 2 ThreatDetailsV1", err,
-			"Failure at ThreatDetailsV1, unexpected response", ""))
+			"Failure when executing 2 ThreatDetails", err,
+			"Failure at ThreatDetails, unexpected response", ""))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItems1 := flattenDevicesThreatDetailsV1Items(response1.Response)
+	if err != nil || response1 == nil {
+		if restyResp1 != nil {
+			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+		}
+		diags = append(diags, diagErrorWithAlt(
+			"Failure when executing 2 ThreatDetails", err,
+			"Failure at ThreatDetails, unexpected response", ""))
+		return diags
+	}
+
+	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+	vItems1 := flattenDevicesThreatDetailsItems(response1.Response)
 	if err := d.Set("items", vItems1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ThreatDetailsV1 response",
+			"Failure when setting ThreatDetails response",
 			err))
 		return diags
 	}
@@ -199,8 +213,8 @@ func dataSourceThreatDetailRead(ctx context.Context, d *schema.ResourceData, m i
 	return diags
 }
 
-func expandRequestThreatDetailThreatDetailsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesThreatDetailsV1 {
-	request := catalystcentersdkgo.RequestDevicesThreatDetailsV1{}
+func expandRequestThreatDetailThreatDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesThreatDetails {
+	request := catalystcentersdkgo.RequestDevicesThreatDetails{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".offset")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".offset")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".offset")))) {
 		request.Offset = interfaceToIntPtr(v)
 	}
@@ -226,4 +240,29 @@ func expandRequestThreatDetailThreatDetailsV1(ctx context.Context, key string, d
 		request.IsNewThreat = interfaceToBoolPtr(v)
 	}
 	return &request
+}
+
+func flattenDevicesThreatDetailsItems(items *[]catalystcentersdkgo.ResponseDevicesThreatDetailsResponse) []map[string]interface{} {
+	if items == nil {
+		return nil
+	}
+	var respItems []map[string]interface{}
+	for _, item := range *items {
+		respItem := make(map[string]interface{})
+		respItem["mac_address"] = item.MacAddress
+		respItem["updated_time"] = item.UpdatedTime
+		respItem["vendor"] = item.Vendor
+		respItem["threat_type"] = item.ThreatType
+		respItem["threat_level"] = item.ThreatLevel
+		respItem["ap_name"] = item.ApName
+		respItem["detecting_apmac"] = item.DetectingApMac
+		respItem["site_id"] = item.SiteID
+		respItem["rssi"] = item.Rssi
+		respItem["ssid"] = item.SSID
+		respItem["containment"] = item.Containment
+		respItem["state"] = item.State
+		respItem["site_name_hierarchy"] = item.SiteNameHierarchy
+		respItems = append(respItems, respItem)
+	}
+	return respItems
 }

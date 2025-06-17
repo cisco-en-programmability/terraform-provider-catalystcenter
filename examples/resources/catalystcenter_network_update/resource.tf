@@ -1,58 +1,58 @@
 
 resource "catalystcenter_network_update" "example" {
-  provider = meraki
+  provider = catalystcenter
   site_id  = "string"
-  parameters {
+  parameters = [{
 
-    settings {
+    settings = [{
 
-      client_and_endpoint_aaa {
+      client_and_endpoint_aaa = [{
 
         ip_address    = "string"
         network       = "string"
         protocol      = "string"
         servers       = "string"
         shared_secret = "string"
-      }
+      }]
       dhcp_server = ["string"]
-      dns_server {
+      dns_server = [{
 
         domain_name          = "string"
         primary_ip_address   = "string"
         secondary_ip_address = "string"
-      }
-      message_of_theday {
+      }]
+      message_of_theday = [{
 
         banner_message         = "string"
         retain_existing_banner = "string"
-      }
-      netflowcollector {
+      }]
+      netflowcollector = [{
 
         ip_address = "string"
         port       = 9090
-      }
-      network_aaa {
+      }]
+      network_aaa = [{
 
         ip_address    = "string"
         network       = "string"
         protocol      = "string"
         servers       = "string"
         shared_secret = "string"
-      }
+      }]
       ntp_server = ["string"]
-      snmp_server {
+      snmp_server = [{
 
         configure_dnac_ip = "false"
         ip_addresses      = ["string"]
-      }
-      syslog_server {
+      }]
+      syslog_server = [{
 
         configure_dnac_ip = "false"
         ip_addresses      = ["string"]
-      }
+      }]
       timezone = "string"
-    }
-  }
+    }]
+  }]
 }
 
 output "catalystcenter_network_update_example" {

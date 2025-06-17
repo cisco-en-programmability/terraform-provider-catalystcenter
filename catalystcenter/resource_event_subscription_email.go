@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -230,7 +230,7 @@ func resourceEventSubscriptionEmail() *schema.Resource {
 				},
 			},
 			"parameters": &schema.Schema{
-				Description: `Array of RequestEventManagementCreateEmailEventSubscriptionV1`,
+				Description: `Array of RequestEventManagementCreateEmailEventSubscription`,
 				Type:        schema.TypeList,
 				Optional:    true,
 				Computed:    true,
@@ -443,14 +443,14 @@ func resourceEventSubscriptionEmailCreate(ctx context.Context, d *schema.Resourc
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters.0.payload"))
-	request1 := expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1(ctx, "parameters.0", d)
+	request1 := expandRequestEventSubscriptionEmailCreateEmailEventSubscription(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vName := resourceItem["name"]
 	vvName := interfaceToString(vName)
 	vSubscriptionID := resourceItem["subscription_id"]
 	vvSubscriptionID := interfaceToString(vSubscriptionID)
-	queryParamImport := catalystcentersdkgo.GetEmailEventSubscriptionsV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetEmailEventSubscriptionsQueryParams{}
 	queryParamImport.Name = vvName
 	item2, err := searchEventManagementGetEmailEventSubscriptions(m, queryParamImport, vvSubscriptionID)
 	if err == nil && item2 != nil {
@@ -472,7 +472,7 @@ func resourceEventSubscriptionEmailCreate(ctx context.Context, d *schema.Resourc
 		return diags
 	}
 	// TODO REVIEW
-	queryParamValidate := catalystcentersdkgo.GetEmailEventSubscriptionsV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetEmailEventSubscriptionsQueryParams{}
 	queryParamValidate.Name = vvName
 	item3, err := searchEventManagementGetEmailEventSubscriptions(m, queryParamValidate, vvSubscriptionID)
 	if err != nil || item3 == nil {
@@ -501,20 +501,20 @@ func resourceEventSubscriptionEmailRead(ctx context.Context, d *schema.ResourceD
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetEmailEventSubscriptions")
-		queryParams1 := catalystcentersdkgo.GetEmailEventSubscriptionsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetEmailEventSubscriptionsQueryParams{}
 
 		item1, err := searchEventManagementGetEmailEventSubscriptions(m, queryParams1, vvID)
 		if err != nil || item1 == nil {
 			d.SetId("")
 			return diags
 		}
-		items := []catalystcentersdkgo.ResponseItemEventManagementGetEmailEventSubscriptionsV1{
+		items := []catalystcentersdkgo.ResponseItemEventManagementGetEmailEventSubscriptions{
 			*item1,
 		}
-		var finalItem catalystcentersdkgo.ResponseEventManagementGetEmailEventSubscriptionsV1
+		var finalItem catalystcentersdkgo.ResponseEventManagementGetEmailEventSubscriptions
 		finalItem = items
 		// Review flatten function used
-		vItem1 := flattenEventManagementGetEmailEventSubscriptionsV1Items(&finalItem)
+		vItem1 := flattenEventManagementGetEmailEventSubscriptionsItems(&finalItem)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetEmailEventSubscriptions search response",
@@ -535,7 +535,7 @@ func resourceEventSubscriptionEmailUpdate(ctx context.Context, d *schema.Resourc
 
 	vvID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1(ctx, "parameters.0", d)
+		request1 := expandRequestEventSubscriptionEmailUpdateEmailEventSubscription(ctx, "parameters.0", d)
 		if request1 != nil {
 			log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		}
@@ -577,9 +577,10 @@ func resourceEventSubscriptionEmailDelete(ctx context.Context, d *schema.Resourc
 
 	return diags
 }
-func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementCreateEmailEventSubscriptionV1 {
-	request := catalystcentersdkgo.RequestEventManagementCreateEmailEventSubscriptionV1{}
-	if v := expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemArray(ctx, key+".payload", d); v != nil {
+
+func expandRequestEventSubscriptionEmailCreateEmailEventSubscription(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementCreateEmailEventSubscription {
+	request := catalystcentersdkgo.RequestEventManagementCreateEmailEventSubscription{}
+	if v := expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -588,8 +589,8 @@ func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1(ctx conte
 	return &request
 }
 
-func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionV1 {
-	request := []catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionV1{}
+func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscription {
+	request := []catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscription{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -600,7 +601,7 @@ func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemArray(
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -611,8 +612,8 @@ func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemArray(
 	return &request
 }
 
-func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionV1 {
-	request := catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionV1{}
+func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscription {
+	request := catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscription{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_id")))) {
 		request.SubscriptionID = interfaceToString(v)
 	}
@@ -626,10 +627,10 @@ func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1Item(ctx c
 		request.Description = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_endpoints")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_endpoints")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_endpoints")))) {
-		request.SubscriptionEndpoints = expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemSubscriptionEndpointsArray(ctx, key+".subscription_endpoints", d)
+		request.SubscriptionEndpoints = expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionItemSubscriptionEndpointsArray(ctx, key+".subscription_endpoints", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filter")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filter")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filter")))) {
-		request.Filter = expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemFilter(ctx, key+".filter.0", d)
+		request.Filter = expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionItemFilter(ctx, key+".filter.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -637,8 +638,8 @@ func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1Item(ctx c
 	return &request
 }
 
-func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemSubscriptionEndpointsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionV1SubscriptionEndpoints {
-	request := []catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionV1SubscriptionEndpoints{}
+func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionItemSubscriptionEndpointsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionSubscriptionEndpoints {
+	request := []catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionSubscriptionEndpoints{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -649,7 +650,7 @@ func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemSubscr
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemSubscriptionEndpoints(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionItemSubscriptionEndpoints(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -660,13 +661,13 @@ func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemSubscr
 	return &request
 }
 
-func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemSubscriptionEndpoints(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionV1SubscriptionEndpoints {
-	request := catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionV1SubscriptionEndpoints{}
+func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionItemSubscriptionEndpoints(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionSubscriptionEndpoints {
+	request := catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionSubscriptionEndpoints{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".instance_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".instance_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".instance_id")))) {
 		request.InstanceID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_details")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_details")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_details")))) {
-		request.SubscriptionDetails = expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemSubscriptionEndpointsSubscriptionDetails(ctx, key+".subscription_details.0", d)
+		request.SubscriptionDetails = expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionItemSubscriptionEndpointsSubscriptionDetails(ctx, key+".subscription_details.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -674,8 +675,8 @@ func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemSubscr
 	return &request
 }
 
-func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemSubscriptionEndpointsSubscriptionDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionV1SubscriptionEndpointsSubscriptionDetails {
-	request := catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionV1SubscriptionEndpointsSubscriptionDetails{}
+func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionItemSubscriptionEndpointsSubscriptionDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionSubscriptionEndpointsSubscriptionDetails {
+	request := catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionSubscriptionEndpointsSubscriptionDetails{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".connector_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".connector_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".connector_type")))) {
 		request.ConnectorType = interfaceToString(v)
 	}
@@ -700,13 +701,13 @@ func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemSubscr
 	return &request
 }
 
-func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemFilter(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionV1Filter {
-	request := catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionV1Filter{}
+func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionItemFilter(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionFilter {
+	request := catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionFilter{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".event_ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".event_ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".event_ids")))) {
 		request.EventIDs = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".domains_subdomains")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".domains_subdomains")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".domains_subdomains")))) {
-		request.DomainsSubdomains = expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemFilterDomainsSubdomainsArray(ctx, key+".domains_subdomains", d)
+		request.DomainsSubdomains = expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionItemFilterDomainsSubdomainsArray(ctx, key+".domains_subdomains", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".types")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".types")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".types")))) {
 		request.Types = interfaceToSliceString(v)
@@ -729,8 +730,8 @@ func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemFilter
 	return &request
 }
 
-func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemFilterDomainsSubdomainsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionV1FilterDomainsSubdomains {
-	request := []catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionV1FilterDomainsSubdomains{}
+func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionItemFilterDomainsSubdomainsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionFilterDomainsSubdomains {
+	request := []catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionFilterDomainsSubdomains{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -741,7 +742,7 @@ func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemFilter
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemFilterDomainsSubdomains(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionItemFilterDomainsSubdomains(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -752,8 +753,8 @@ func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemFilter
 	return &request
 }
 
-func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemFilterDomainsSubdomains(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionV1FilterDomainsSubdomains {
-	request := catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionV1FilterDomainsSubdomains{}
+func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionItemFilterDomainsSubdomains(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionFilterDomainsSubdomains {
+	request := catalystcentersdkgo.RequestItemEventManagementCreateEmailEventSubscriptionFilterDomainsSubdomains{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".domain")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".domain")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".domain")))) {
 		request.Domain = interfaceToString(v)
 	}
@@ -766,9 +767,9 @@ func expandRequestEventSubscriptionEmailCreateEmailEventSubscriptionV1ItemFilter
 	return &request
 }
 
-func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateEmailEventSubscriptionV1 {
-	request := catalystcentersdkgo.RequestEventManagementUpdateEmailEventSubscriptionV1{}
-	if v := expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestEventSubscriptionEmailUpdateEmailEventSubscription(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateEmailEventSubscription {
+	request := catalystcentersdkgo.RequestEventManagementUpdateEmailEventSubscription{}
+	if v := expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -777,8 +778,8 @@ func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1(ctx conte
 	return &request
 }
 
-func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionV1 {
-	request := []catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionV1{}
+func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscription {
+	request := []catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscription{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -789,7 +790,7 @@ func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemArray(
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -800,8 +801,8 @@ func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemArray(
 	return &request
 }
 
-func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionV1 {
-	request := catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionV1{}
+func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscription {
+	request := catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscription{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_id")))) {
 		request.SubscriptionID = interfaceToString(v)
 	}
@@ -815,10 +816,10 @@ func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1Item(ctx c
 		request.Description = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_endpoints")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_endpoints")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_endpoints")))) {
-		request.SubscriptionEndpoints = expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemSubscriptionEndpointsArray(ctx, key+".subscription_endpoints", d)
+		request.SubscriptionEndpoints = expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionItemSubscriptionEndpointsArray(ctx, key+".subscription_endpoints", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filter")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filter")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filter")))) {
-		request.Filter = expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemFilter(ctx, key+".filter.0", d)
+		request.Filter = expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionItemFilter(ctx, key+".filter.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -826,8 +827,8 @@ func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1Item(ctx c
 	return &request
 }
 
-func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemSubscriptionEndpointsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionV1SubscriptionEndpoints {
-	request := []catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionV1SubscriptionEndpoints{}
+func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionItemSubscriptionEndpointsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionSubscriptionEndpoints {
+	request := []catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionSubscriptionEndpoints{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -838,7 +839,7 @@ func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemSubscr
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemSubscriptionEndpoints(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionItemSubscriptionEndpoints(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -849,13 +850,13 @@ func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemSubscr
 	return &request
 }
 
-func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemSubscriptionEndpoints(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionV1SubscriptionEndpoints {
-	request := catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionV1SubscriptionEndpoints{}
+func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionItemSubscriptionEndpoints(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionSubscriptionEndpoints {
+	request := catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionSubscriptionEndpoints{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".instance_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".instance_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".instance_id")))) {
 		request.InstanceID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_details")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_details")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_details")))) {
-		request.SubscriptionDetails = expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemSubscriptionEndpointsSubscriptionDetails(ctx, key+".subscription_details.0", d)
+		request.SubscriptionDetails = expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionItemSubscriptionEndpointsSubscriptionDetails(ctx, key+".subscription_details.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -863,8 +864,8 @@ func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemSubscr
 	return &request
 }
 
-func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemSubscriptionEndpointsSubscriptionDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionV1SubscriptionEndpointsSubscriptionDetails {
-	request := catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionV1SubscriptionEndpointsSubscriptionDetails{}
+func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionItemSubscriptionEndpointsSubscriptionDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionSubscriptionEndpointsSubscriptionDetails {
+	request := catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionSubscriptionEndpointsSubscriptionDetails{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".connector_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".connector_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".connector_type")))) {
 		request.ConnectorType = interfaceToString(v)
 	}
@@ -889,13 +890,13 @@ func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemSubscr
 	return &request
 }
 
-func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemFilter(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionV1Filter {
-	request := catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionV1Filter{}
+func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionItemFilter(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionFilter {
+	request := catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionFilter{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".event_ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".event_ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".event_ids")))) {
 		request.EventIDs = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".domains_subdomains")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".domains_subdomains")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".domains_subdomains")))) {
-		request.DomainsSubdomains = expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemFilterDomainsSubdomainsArray(ctx, key+".domains_subdomains", d)
+		request.DomainsSubdomains = expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionItemFilterDomainsSubdomainsArray(ctx, key+".domains_subdomains", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".types")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".types")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".types")))) {
 		request.Types = interfaceToSliceString(v)
@@ -918,8 +919,8 @@ func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemFilter
 	return &request
 }
 
-func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemFilterDomainsSubdomainsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionV1FilterDomainsSubdomains {
-	request := []catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionV1FilterDomainsSubdomains{}
+func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionItemFilterDomainsSubdomainsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionFilterDomainsSubdomains {
+	request := []catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionFilterDomainsSubdomains{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -930,7 +931,7 @@ func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemFilter
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemFilterDomainsSubdomains(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionItemFilterDomainsSubdomains(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -941,8 +942,8 @@ func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemFilter
 	return &request
 }
 
-func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemFilterDomainsSubdomains(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionV1FilterDomainsSubdomains {
-	request := catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionV1FilterDomainsSubdomains{}
+func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionItemFilterDomainsSubdomains(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionFilterDomainsSubdomains {
+	request := catalystcentersdkgo.RequestItemEventManagementUpdateEmailEventSubscriptionFilterDomainsSubdomains{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".domain")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".domain")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".domain")))) {
 		request.Domain = interfaceToString(v)
 	}
@@ -955,11 +956,11 @@ func expandRequestEventSubscriptionEmailUpdateEmailEventSubscriptionV1ItemFilter
 	return &request
 }
 
-func searchEventManagementGetEmailEventSubscriptions(m interface{}, queryParams catalystcentersdkgo.GetEmailEventSubscriptionsV1QueryParams, vID string) (*catalystcentersdkgo.ResponseItemEventManagementGetEmailEventSubscriptionsV1, error) {
+func searchEventManagementGetEmailEventSubscriptions(m interface{}, queryParams catalystcentersdkgo.GetEmailEventSubscriptionsQueryParams, vID string) (*catalystcentersdkgo.ResponseItemEventManagementGetEmailEventSubscriptions, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseItemEventManagementGetEmailEventSubscriptionsV1
-	var ite *catalystcentersdkgo.ResponseEventManagementGetEmailEventSubscriptionsV1
+	var foundItem *catalystcentersdkgo.ResponseItemEventManagementGetEmailEventSubscriptions
+	var ite *catalystcentersdkgo.ResponseEventManagementGetEmailEventSubscriptions
 	if vID != "" {
 		queryParams.Offset = 1
 		nResponse, _, err := client.EventManagement.GetEmailEventSubscriptions(nil)

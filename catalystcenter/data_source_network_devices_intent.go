@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,8 +15,12 @@ func dataSourceNetworkDevicesIntent() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Devices.
 
-- API to fetch the list of network devices using basic filters. Use the /dna/intent/api/v1/networkDevices/query API
-for advanced filtering. Refer features for more details.
+- API to fetch the list of network devices using basic filters. Use the **/dna/intent/api/v1/networkDevices/query** API
+for advanced filtering. Refer features for more details. The API returns a paginated response based on 'limit' and
+'offset' parameters, allowing up to 500 records per page. 'limit' specifies the number of records, and 'offset' sets the
+starting point using 1-based indexing. Use /dna/intent/api/v1/networkDevices/count API to get the total record count.
+For data sets over 500 records, make multiple calls, adjusting 'limit' and 'offset' to retrieve all records
+incrementally.
 `,
 
 		ReadContext: dataSourceNetworkDevicesIntentRead,
@@ -431,8 +435,8 @@ func dataSourceNetworkDevicesIntentRead(ctx context.Context, d *schema.ResourceD
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveNetworkDevicesV1")
-		queryParams1 := catalystcentersdkgo.RetrieveNetworkDevicesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: RetrieveNetworkDevices")
+		queryParams1 := catalystcentersdkgo.RetrieveNetworkDevicesQueryParams{}
 
 		if okID {
 			queryParams1.ID = vID.(string)
@@ -479,24 +483,36 @@ func dataSourceNetworkDevicesIntentRead(ctx context.Context, d *schema.ResourceD
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Devices.RetrieveNetworkDevicesV1(&queryParams1)
+		response1, restyResp1, err := client.Devices.RetrieveNetworkDevices(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveNetworkDevicesV1", err,
-				"Failure at RetrieveNetworkDevicesV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveNetworkDevices", err,
+				"Failure at RetrieveNetworkDevices, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesRetrieveNetworkDevicesV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveNetworkDevices", err,
+				"Failure at RetrieveNetworkDevices, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDevicesRetrieveNetworkDevicesItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveNetworkDevicesV1 response",
+				"Failure when setting RetrieveNetworkDevices response",
 				err))
 			return diags
 		}
@@ -508,7 +524,7 @@ func dataSourceNetworkDevicesIntentRead(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func flattenDevicesRetrieveNetworkDevicesV1Items(items *[]catalystcentersdkgo.ResponseDevicesRetrieveNetworkDevicesV1Response) []map[string]interface{} {
+func flattenDevicesRetrieveNetworkDevicesItems(items *[]catalystcentersdkgo.ResponseDevicesRetrieveNetworkDevicesResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -553,13 +569,13 @@ func flattenDevicesRetrieveNetworkDevicesV1Items(items *[]catalystcentersdkgo.Re
 		respItem["resync_interval_minutes"] = item.ResyncIntervalMinutes
 		respItem["error_code"] = item.ErrorCode
 		respItem["error_description"] = item.ErrorDescription
-		respItem["user_defined_fields"] = flattenDevicesRetrieveNetworkDevicesV1ItemsUserDefinedFields(item.UserDefinedFields)
+		respItem["user_defined_fields"] = flattenDevicesRetrieveNetworkDevicesItemsUserDefinedFields(item.UserDefinedFields)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesRetrieveNetworkDevicesV1ItemsUserDefinedFields(item *catalystcentersdkgo.ResponseDevicesRetrieveNetworkDevicesV1ResponseUserDefinedFields) interface{} {
+func flattenDevicesRetrieveNetworkDevicesItemsUserDefinedFields(item *catalystcentersdkgo.ResponseDevicesRetrieveNetworkDevicesResponseUserDefinedFields) interface{} {
 	if item == nil {
 		return nil
 	}

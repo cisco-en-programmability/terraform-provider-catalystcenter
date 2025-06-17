@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -12,7 +13,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -177,7 +178,7 @@ func resourceDeployTemplateV2Create(ctx context.Context, d *schema.ResourceData,
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestDeployTemplateDeployTemplateV2(ctx, "parameters.0", d)
+	request1 := expandRequestDeployTemplateV2DeployTemplateV2(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
@@ -223,7 +224,7 @@ func resourceDeployTemplateV2Create(ctx context.Context, d *schema.ResourceData,
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
@@ -262,7 +263,7 @@ func resourceDeployTemplateV2Delete(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func expandRequestDeployTemplateDeployTemplateV2(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesDeployTemplateV2 {
+func expandRequestDeployTemplateV2DeployTemplateV2(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesDeployTemplateV2 {
 	request := catalystcentersdkgo.RequestConfigurationTemplatesDeployTemplateV2{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".force_push_template")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".force_push_template")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".force_push_template")))) {
 		request.ForcePushTemplate = interfaceToBoolPtr(v)
@@ -274,10 +275,10 @@ func expandRequestDeployTemplateDeployTemplateV2(ctx context.Context, key string
 		request.MainTemplateID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".member_template_deployment_info")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".member_template_deployment_info")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".member_template_deployment_info")))) {
-		request.MemberTemplateDeploymentInfo = interfaceToSliceString(v)
+		request.MemberTemplateDeploymentInfo = expandRequestDeployTemplateV2DeployTemplateV2MemberTemplateDeploymentInfoArray(ctx, key+".member_template_deployment_info", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".target_info")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".target_info")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".target_info")))) {
-		request.TargetInfo = expandRequestDeployTemplateDeployTemplateV2TargetInfoArray(ctx, key+".target_info", d)
+		request.TargetInfo = expandRequestDeployTemplateV2DeployTemplateV2TargetInfoArray(ctx, key+".target_info", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".template_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".template_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".template_id")))) {
 		request.TemplateID = interfaceToString(v)
@@ -285,7 +286,33 @@ func expandRequestDeployTemplateDeployTemplateV2(ctx context.Context, key string
 	return &request
 }
 
-func expandRequestDeployTemplateDeployTemplateV2TargetInfoArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesDeployTemplateV2TargetInfo {
+func expandRequestDeployTemplateV2DeployTemplateV2MemberTemplateDeploymentInfoArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesDeployTemplateV2MemberTemplateDeploymentInfo {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesDeployTemplateV2MemberTemplateDeploymentInfo{}
+	key = fixKeyAccess(key)
+	o := d.Get(key)
+	if o == nil {
+		return nil
+	}
+	objs := o.([]interface{})
+	if len(objs) == 0 {
+		return nil
+	}
+	for item_no := range objs {
+		i := expandRequestDeployTemplateV2DeployTemplateV2MemberTemplateDeploymentInfo(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		if i != nil {
+			request = append(request, *i)
+		}
+	}
+	return &request
+}
+
+func expandRequestDeployTemplateV2DeployTemplateV2MemberTemplateDeploymentInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesDeployTemplateV2MemberTemplateDeploymentInfo {
+	var request catalystcentersdkgo.RequestConfigurationTemplatesDeployTemplateV2MemberTemplateDeploymentInfo
+	request = d.Get(fixKeyAccess(key))
+	return &request
+}
+
+func expandRequestDeployTemplateV2DeployTemplateV2TargetInfoArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesDeployTemplateV2TargetInfo {
 	request := []catalystcentersdkgo.RequestConfigurationTemplatesDeployTemplateV2TargetInfo{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
@@ -297,7 +324,7 @@ func expandRequestDeployTemplateDeployTemplateV2TargetInfoArray(ctx context.Cont
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestDeployTemplateDeployTemplateV2TargetInfo(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestDeployTemplateV2DeployTemplateV2TargetInfo(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -305,7 +332,7 @@ func expandRequestDeployTemplateDeployTemplateV2TargetInfoArray(ctx context.Cont
 	return &request
 }
 
-func expandRequestDeployTemplateDeployTemplateV2TargetInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesDeployTemplateV2TargetInfo {
+func expandRequestDeployTemplateV2DeployTemplateV2TargetInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesDeployTemplateV2TargetInfo {
 	request := catalystcentersdkgo.RequestConfigurationTemplatesDeployTemplateV2TargetInfo{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".host_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".host_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".host_name")))) {
 		request.HostName = interfaceToString(v)
@@ -314,7 +341,7 @@ func expandRequestDeployTemplateDeployTemplateV2TargetInfo(ctx context.Context, 
 		request.ID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".params")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".params")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".params")))) {
-		request.Params = expandRequestDeployTemplateDeployTemplateV2TargetInfoParams(ctx, key+".params.0", d)
+		request.Params = expandRequestDeployTemplateV2DeployTemplateV2TargetInfoParams(ctx, key+".params.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".resource_params")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".resource_params")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".resource_params")))) {
 		request.ResourceParams = interfaceToSliceString(v)
@@ -328,7 +355,7 @@ func expandRequestDeployTemplateDeployTemplateV2TargetInfo(ctx context.Context, 
 	return &request
 }
 
-func expandRequestDeployTemplateDeployTemplateV2TargetInfoParams(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesDeployTemplateV2TargetInfoParams {
+func expandRequestDeployTemplateV2DeployTemplateV2TargetInfoParams(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesDeployTemplateV2TargetInfoParams {
 	var request catalystcentersdkgo.RequestConfigurationTemplatesDeployTemplateV2TargetInfoParams
 	request = d.Get(fixKeyAccess(key)).(map[string]interface{})
 	return &request

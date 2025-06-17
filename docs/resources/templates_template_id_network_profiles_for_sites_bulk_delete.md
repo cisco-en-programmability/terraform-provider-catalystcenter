@@ -13,6 +13,7 @@ It performs delete operation on Configuration Templates.
 
 - Detach a list of network profiles from a Day-N CLI template with a list of profile IDs along with the template ID.
 
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -24,9 +25,9 @@ resource "catalystcenter_templates_template_id_network_profiles_for_sites_bulk_d
   provider    = catalystcenter
   profile_id  = "string"
   template_id = "string"
-  parameters {
+  parameters = [{
 
-  }
+  }]
 }
 
 output "catalystcenter_templates_template_id_network_profiles_for_sites_bulk_delete_example" {
@@ -53,7 +54,7 @@ output "catalystcenter_templates_template_id_network_profiles_for_sites_bulk_del
 Required:
 
 - `profile_id` (String) profileId query parameter. The id or ids of the network profile, retrievable from /dna/intent/api/v1/networkProfilesForSites. The maximum number of profile Ids allowed is 20.  A list of profile ids can be passed as a queryParameter in two ways:   a comma-separated string ( profileId=388a23e9-4739-4be7-a0aa-cc5a95d158dd,2726dc60-3a12-451e-947a-d972ebf58743), or...  as separate query parameters with the same name ( profileId=388a23e9-4739-4be7-a0aa-cc5a95d158dd&profileId=2726dc60-3a12-451e-947a-d972ebf58743
-- `template_id` (String) templateId path parameter. The id of the template, retrievable from GET /intent/api/v1/templates
+- `template_id` (String) templateId path parameter. The **id** of the template, retrievable from **GET /intent/api/v1/templates**
 
 
 <a id="nestedatt--item"></a>

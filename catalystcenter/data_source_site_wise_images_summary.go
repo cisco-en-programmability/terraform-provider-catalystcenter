@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -16,13 +16,13 @@ func dataSourceSiteWiseImagesSummary() *schema.Resource {
 		Description: `It performs read operation on Software Image Management (SWIM).
 
 - Returns aggregate counts of network device product names, golden and non-golden tagged products, imported images,
-golden images tagged, and advisor for a specific site provide, the default value of siteId is set to global.
+golden images tagged, and advisor for a specific site provide, the default value of **siteId** is set to global.
 `,
 
 		ReadContext: dataSourceSiteWiseImagesSummaryRead,
 		Schema: map[string]*schema.Schema{
 			"site_id": &schema.Schema{
-				Description: `siteId query parameter. Site identifier to get the aggreagte counts products under the site. The default value is global site id. See [https://developer.cisco.com/docs/dna-center](#!get-site) for siteId
+				Description: `siteId query parameter. Site identifier to get the aggreagte counts products under the site. The default value is global site id. See [https://developer.cisco.com/docs/dna-center](#!get-site) for **siteId**
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -104,8 +104,8 @@ func dataSourceSiteWiseImagesSummaryRead(ctx context.Context, d *schema.Resource
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: ReturnsTheImageSummaryForTheGivenSiteV1")
-		queryParams1 := catalystcentersdkgo.ReturnsTheImageSummaryForTheGivenSiteV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: ReturnsTheImageSummaryForTheGivenSite")
+		queryParams1 := catalystcentersdkgo.ReturnsTheImageSummaryForTheGivenSiteQueryParams{}
 
 		if okSiteID {
 			queryParams1.SiteID = vSiteID.(string)
@@ -113,24 +113,36 @@ func dataSourceSiteWiseImagesSummaryRead(ctx context.Context, d *schema.Resource
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.SoftwareImageManagementSwim.ReturnsTheImageSummaryForTheGivenSiteV1(&queryParams1)
+		response1, restyResp1, err := client.SoftwareImageManagementSwim.ReturnsTheImageSummaryForTheGivenSite(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 ReturnsTheImageSummaryForTheGivenSiteV1", err,
-				"Failure at ReturnsTheImageSummaryForTheGivenSiteV1, unexpected response", ""))
+				"Failure when executing 2 ReturnsTheImageSummaryForTheGivenSite", err,
+				"Failure at ReturnsTheImageSummaryForTheGivenSite, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSoftwareImageManagementSwimReturnsTheImageSummaryForTheGivenSiteV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 ReturnsTheImageSummaryForTheGivenSite", err,
+				"Failure at ReturnsTheImageSummaryForTheGivenSite, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSoftwareImageManagementSwimReturnsTheImageSummaryForTheGivenSiteItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting ReturnsTheImageSummaryForTheGivenSiteV1 response",
+				"Failure when setting ReturnsTheImageSummaryForTheGivenSite response",
 				err))
 			return diags
 		}
@@ -142,7 +154,7 @@ func dataSourceSiteWiseImagesSummaryRead(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func flattenSoftwareImageManagementSwimReturnsTheImageSummaryForTheGivenSiteV1Item(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimReturnsTheImageSummaryForTheGivenSiteV1Response) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimReturnsTheImageSummaryForTheGivenSiteItem(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimReturnsTheImageSummaryForTheGivenSiteResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -130,10 +130,13 @@ programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 									},
 									"value": &schema.Schema{
 										Description: `Value`,
-										Type:        schema.TypeString, //TEST,
+										Type:        schema.TypeList,
 										Optional:    true,
 										ForceNew:    true,
 										Computed:    true,
+										Elem: &schema.Schema{
+											Type: schema.TypeString,
+										},
 									},
 								},
 							},
@@ -341,9 +344,9 @@ func resourceAAAServicesTrendAnalyticsCreate(ctx context.Context, d *schema.Reso
 
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
-	request1 := expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1(ctx, "parameters.0", d)
+	request1 := expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFilters(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.GetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1HeaderParams{}
+	headerParams1 := catalystcentersdkgo.GetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersHeaderParams{}
 
 	headerParams1.XCaLLERID = vXCaLLERID.(string)
 
@@ -365,7 +368,7 @@ func resourceAAAServicesTrendAnalyticsCreate(ctx context.Context, d *schema.Reso
 
 	//Analizar verificacion.
 
-	vItems1 := flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1Items(response1.Response)
+	vItems1 := flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersItems(response1.Response)
 	if err := d.Set("items", vItems1); err != nil {
 		diags = append(diags, diagError(
 			"Failure when setting GetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFilters response",
@@ -390,8 +393,8 @@ func resourceAAAServicesTrendAnalyticsDelete(ctx context.Context, d *schema.Reso
 	return diags
 }
 
-func expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1 {
-	request := catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1{}
+func expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFilters {
+	request := catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -405,22 +408,22 @@ func expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesFor
 		request.GroupBy = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1FiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersFiltersArray(ctx, key+".filters", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".attributes")))) {
 		request.Attributes = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".aggregate_attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".aggregate_attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".aggregate_attributes")))) {
-		request.AggregateAttributes = expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1AggregateAttributesArray(ctx, key+".aggregate_attributes", d)
+		request.AggregateAttributes = expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersAggregateAttributesArray(ctx, key+".aggregate_attributes", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".page")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".page")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".page")))) {
-		request.Page = expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1Page(ctx, key+".page.0", d)
+		request.Page = expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersPage(ctx, key+".page.0", d)
 	}
 	return &request
 }
 
-func expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1Filters {
-	request := []catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1Filters{}
+func expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersFilters {
+	request := []catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -431,7 +434,7 @@ func expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesFor
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -439,8 +442,8 @@ func expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesFor
 	return &request
 }
 
-func expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1Filters {
-	request := catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1Filters{}
+func expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersFilters {
+	request := catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -451,7 +454,7 @@ func expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesFor
 		request.LogicalOperator = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".value")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".value")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".value")))) {
-		request.Value = expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1FiltersValue(ctx, key+".value.0", d)
+		request.Value = expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersFiltersValue(ctx, key+".value.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
 		request.Filters = interfaceToSliceString(v)
@@ -459,14 +462,14 @@ func expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesFor
 	return &request
 }
 
-func expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1FiltersValue(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1FiltersValue {
-	var request catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1FiltersValue
+func expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersFiltersValue(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersFiltersValue {
+	var request catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersFiltersValue
 	request = d.Get(fixKeyAccess(key))
 	return &request
 }
 
-func expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1AggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1AggregateAttributes {
-	request := []catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1AggregateAttributes{}
+func expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersAggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersAggregateAttributes {
+	request := []catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersAggregateAttributes{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -477,7 +480,7 @@ func expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesFor
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1AggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersAggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -485,8 +488,8 @@ func expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesFor
 	return &request
 }
 
-func expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1AggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1AggregateAttributes {
-	request := catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1AggregateAttributes{}
+func expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersAggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersAggregateAttributes {
+	request := catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersAggregateAttributes{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -496,8 +499,8 @@ func expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesFor
 	return &request
 }
 
-func expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1Page(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1Page {
-	request := catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1Page{}
+func expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersPage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersPage {
+	request := catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersPage{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".limit")))) {
 		request.Limit = interfaceToIntPtr(v)
 	}
@@ -510,7 +513,7 @@ func expandRequestAAAServicesTrendAnalyticsGetTrendAnalyticsDataOfAAAServicesFor
 	return &request
 }
 
-func flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1Response) []map[string]interface{} {
+func flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersItems(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -518,15 +521,15 @@ func flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFilters
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["timestamp"] = item.Timestamp
-		respItem["groups"] = flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1ItemsGroups(item.Groups)
-		respItem["attributes"] = flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1ItemsAttributes(item.Attributes)
-		respItem["aggregate_attributes"] = flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1ItemsAggregateAttributes(item.AggregateAttributes)
+		respItem["groups"] = flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersItemsGroups(item.Groups)
+		respItem["attributes"] = flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersItemsAttributes(item.Attributes)
+		respItem["aggregate_attributes"] = flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersItemsAggregateAttributes(item.AggregateAttributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1ItemsGroups(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1ResponseGroups) []map[string]interface{} {
+func flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersItemsGroups(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersResponseGroups) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -534,14 +537,14 @@ func flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFilters
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["id"] = item.ID
-		respItem["attributes"] = flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1ItemsGroupsAttributes(item.Attributes)
-		respItem["aggregate_attributes"] = flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1ItemsGroupsAggregateAttributes(item.AggregateAttributes)
+		respItem["attributes"] = flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersItemsGroupsAttributes(item.Attributes)
+		respItem["aggregate_attributes"] = flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersItemsGroupsAggregateAttributes(item.AggregateAttributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1ItemsGroupsAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1ResponseGroupsAttributes) []map[string]interface{} {
+func flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersItemsGroupsAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersResponseGroupsAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -555,7 +558,7 @@ func flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFilters
 	return respItems
 }
 
-func flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1ItemsGroupsAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1ResponseGroupsAggregateAttributes) []map[string]interface{} {
+func flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersItemsGroupsAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersResponseGroupsAggregateAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -570,7 +573,7 @@ func flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFilters
 	return respItems
 }
 
-func flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1ItemsAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1ResponseAttributes) []map[string]interface{} {
+func flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersItemsAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersResponseAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -584,7 +587,7 @@ func flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFilters
 	return respItems
 }
 
-func flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1ItemsAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersV1ResponseAggregateAttributes) []map[string]interface{} {
+func flattenDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersItemsAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataOfAAAServicesForGivenSetOfComplexFiltersResponseAggregateAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

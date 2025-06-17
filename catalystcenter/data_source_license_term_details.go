@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -110,31 +110,45 @@ func dataSourceLicenseTermDetailsRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: LicenseTermDetailsV1")
+		log.Printf("[DEBUG] Selected method: LicenseTermDetails")
 		vvSmartAccountID := vSmartAccountID.(string)
 		vvVirtualAccountName := vVirtualAccountName.(string)
-		queryParams1 := catalystcentersdkgo.LicenseTermDetailsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.LicenseTermDetailsQueryParams{}
 
 		queryParams1.DeviceType = vDeviceType.(string)
 
-		response1, restyResp1, err := client.Licenses.LicenseTermDetailsV1(vvSmartAccountID, vvVirtualAccountName, &queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Licenses.LicenseTermDetails(vvSmartAccountID, vvVirtualAccountName, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 LicenseTermDetailsV1", err,
-				"Failure at LicenseTermDetailsV1, unexpected response", ""))
+				"Failure when executing 2 LicenseTermDetails", err,
+				"Failure at LicenseTermDetails, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenLicensesLicenseTermDetailsV1Items(response1.LicenseDetails)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 LicenseTermDetails", err,
+				"Failure at LicenseTermDetails, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenLicensesLicenseTermDetailsItems(response1.LicenseDetails)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting LicenseTermDetailsV1 response",
+				"Failure when setting LicenseTermDetails response",
 				err))
 			return diags
 		}
@@ -146,7 +160,7 @@ func dataSourceLicenseTermDetailsRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenLicensesLicenseTermDetailsV1Items(items *[]catalystcentersdkgo.ResponseLicensesLicenseTermDetailsV1LicenseDetails) []map[string]interface{} {
+func flattenLicensesLicenseTermDetailsItems(items *[]catalystcentersdkgo.ResponseLicensesLicenseTermDetailsLicenseDetails) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

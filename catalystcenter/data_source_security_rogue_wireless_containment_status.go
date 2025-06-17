@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -188,27 +188,41 @@ func dataSourceSecurityRogueWirelessContainmentStatusRead(ctx context.Context, d
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: WirelessRogueApContainmentStatusV1")
+		log.Printf("[DEBUG] Selected method: WirelessRogueApContainmentStatus")
 		vvMacAddress := vMacAddress.(string)
 
-		response1, restyResp1, err := client.Devices.WirelessRogueApContainmentStatusV1(vvMacAddress)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Devices.WirelessRogueApContainmentStatus(vvMacAddress)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 WirelessRogueApContainmentStatusV1", err,
-				"Failure at WirelessRogueApContainmentStatusV1, unexpected response", ""))
+				"Failure when executing 2 WirelessRogueApContainmentStatus", err,
+				"Failure at WirelessRogueApContainmentStatus, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesWirelessRogueApContainmentStatusV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 WirelessRogueApContainmentStatus", err,
+				"Failure at WirelessRogueApContainmentStatus, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDevicesWirelessRogueApContainmentStatusItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting WirelessRogueApContainmentStatusV1 response",
+				"Failure when setting WirelessRogueApContainmentStatus response",
 				err))
 			return diags
 		}
@@ -220,7 +234,7 @@ func dataSourceSecurityRogueWirelessContainmentStatusRead(ctx context.Context, d
 	return diags
 }
 
-func flattenDevicesWirelessRogueApContainmentStatusV1Items(items *[]catalystcentersdkgo.ResponseDevicesWirelessRogueApContainmentStatusV1Response) []map[string]interface{} {
+func flattenDevicesWirelessRogueApContainmentStatusItems(items *[]catalystcentersdkgo.ResponseDevicesWirelessRogueApContainmentStatusResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -234,14 +248,14 @@ func flattenDevicesWirelessRogueApContainmentStatusV1Items(items *[]catalystcent
 		respItem["contained_by_wlc_ip"] = item.ContainedByWlcIP
 		respItem["last_seen"] = item.LastSeen
 		respItem["strongest_detecting_wlc_ip"] = item.StrongestDetectingWlcIP
-		respItem["last_task_detail"] = flattenDevicesWirelessRogueApContainmentStatusV1ItemsLastTaskDetail(item.LastTaskDetail)
-		respItem["bssid_containment_status"] = flattenDevicesWirelessRogueApContainmentStatusV1ItemsBssidContainmentStatus(item.BssidContainmentStatus)
+		respItem["last_task_detail"] = flattenDevicesWirelessRogueApContainmentStatusItemsLastTaskDetail(item.LastTaskDetail)
+		respItem["bssid_containment_status"] = flattenDevicesWirelessRogueApContainmentStatusItemsBssidContainmentStatus(item.BssidContainmentStatus)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesWirelessRogueApContainmentStatusV1ItemsLastTaskDetail(item *catalystcentersdkgo.ResponseDevicesWirelessRogueApContainmentStatusV1ResponseLastTaskDetail) []map[string]interface{} {
+func flattenDevicesWirelessRogueApContainmentStatusItemsLastTaskDetail(item *catalystcentersdkgo.ResponseDevicesWirelessRogueApContainmentStatusResponseLastTaskDetail) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -259,7 +273,7 @@ func flattenDevicesWirelessRogueApContainmentStatusV1ItemsLastTaskDetail(item *c
 
 }
 
-func flattenDevicesWirelessRogueApContainmentStatusV1ItemsBssidContainmentStatus(items *[]catalystcentersdkgo.ResponseDevicesWirelessRogueApContainmentStatusV1ResponseBssidContainmentStatus) []map[string]interface{} {
+func flattenDevicesWirelessRogueApContainmentStatusItemsBssidContainmentStatus(items *[]catalystcentersdkgo.ResponseDevicesWirelessRogueApContainmentStatusResponseBssidContainmentStatus) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

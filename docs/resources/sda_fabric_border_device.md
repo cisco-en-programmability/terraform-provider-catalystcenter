@@ -20,138 +20,6 @@ It manages create, read and delete operations on SDA.
 ```terraform
 resource "catalystcenter_sda_fabric_border_device" "example" {
   provider = catalystcenter
-  item {
-
-
-    payload {
-
-
-
-
-
-
-
-
-
-
-
-      device_settings {
-
-
-
-
-
-
-        ext_connectivity_settings {
-
-
-
-
-
-
-
-
-
-
-          l3_handoff {
-
-
-
-
-
-
-
-
-
-            virtual_network {
-
-
-            }
-
-          }
-
-
-        }
-
-
-
-
-
-
-
-
-
-
-      }
-
-
-
-
-
-
-
-
-
-
-
-
-      network_widesettings {
-
-
-
-
-        dhcp {
-
-
-          ip_address {
-
-
-
-
-
-          }
-        }
-
-        dns {
-
-
-
-          ip {
-
-
-
-
-
-          }
-        }
-
-
-
-
-
-
-
-
-
-
-      }
-
-
-
-
-
-
-
-      transit_networks {
-
-
-      }
-
-
-
-    }
-
-  }
   parameters {
 
     border_priority                    = "string"
@@ -198,7 +66,7 @@ output "catalystcenter_sda_fabric_border_device_example" {
 
 ### Optional
 
-- `parameters` (Block List) Array of RequestSdaAddBorderDeviceInSDAFabricV1 (see [below for nested schema](#nestedblock--parameters))
+- `parameters` (Block List) Array of RequestSdaAddBorderDeviceInSDAFabric (see [below for nested schema](#nestedblock--parameters))
 
 ### Read-Only
 

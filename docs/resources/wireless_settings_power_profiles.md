@@ -18,7 +18,7 @@ It manages create and read operations on Wireless.
 ```terraform
 resource "catalystcenter_wireless_settings_power_profiles" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     description  = "string"

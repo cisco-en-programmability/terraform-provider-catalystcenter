@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -140,17 +140,17 @@ func resourceSdaVirtualNetworkCreate(ctx context.Context, d *schema.ResourceData
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestSdaVirtualNetworkAddVnInFabricV1(ctx, "parameters.0", d)
+	request1 := expandRequestSdaVirtualNetworkAddVnInFabric(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vVirtualNetworkName := resourceItem["virtual_network_name"]
 	vvVirtualNetworkName := interfaceToString(vVirtualNetworkName)
 	vSiteNameHierarchy := resourceItem["site_name_hierarchy"]
 	vvSiteNameHierarchy := interfaceToString(vSiteNameHierarchy)
-	queryParamImport := catalystcentersdkgo.GetVnFromSdaFabricV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetVnFromSdaFabricQueryParams{}
 	queryParamImport.VirtualNetworkName = vvVirtualNetworkName
 	queryParamImport.SiteNameHierarchy = vvSiteNameHierarchy
-	item2, _, err := client.Sda.GetVnFromSdaFabricV1(&queryParamImport)
+	item2, _, err := client.Sda.GetVnFromSdaFabric(&queryParamImport)
 	if err != nil || item2 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["virtual_network_name"] = item2.VirtualNetworkName
@@ -158,15 +158,15 @@ func resourceSdaVirtualNetworkCreate(ctx context.Context, d *schema.ResourceData
 		d.SetId(joinResourceID(resourceMap))
 		return resourceSdaVirtualNetworkRead(ctx, d, m)
 	}
-	resp1, restyResp1, err := client.Sda.AddVnInFabricV1(request1)
+	resp1, restyResp1, err := client.Sda.AddVnInFabric(request1)
 	if err != nil || resp1 == nil {
 		if restyResp1 != nil {
 			diags = append(diags, diagErrorWithResponse(
-				"Failure when executing AddVnInFabricV1", err, restyResp1.String()))
+				"Failure when executing AddVnInFabric", err, restyResp1.String()))
 			return diags
 		}
 		diags = append(diags, diagError(
-			"Failure when executing AddVnInFabricV1", err))
+			"Failure when executing AddVnInFabric", err))
 		return diags
 	}
 	executionId := resp1.ExecutionID
@@ -199,18 +199,18 @@ func resourceSdaVirtualNetworkCreate(ctx context.Context, d *schema.ResourceData
 		if response2.Status == "FAILURE" {
 			log.Printf("[DEBUG] Error %s", response2.BapiError)
 			diags = append(diags, diagError(
-				"Failure when executing AddVnInFabricV1", err))
+				"Failure when executing AddVnInFabric", err))
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetVnFromSdaFabricV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetVnFromSdaFabricQueryParams{}
 	queryParamValidate.VirtualNetworkName = vvVirtualNetworkName
 	queryParamValidate.SiteNameHierarchy = vvSiteNameHierarchy
-	item3, _, err := client.Sda.GetVnFromSdaFabricV1(&queryParamValidate)
+	item3, _, err := client.Sda.GetVnFromSdaFabric(&queryParamValidate)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing AddVnInFabricV1", err,
-			"Failure at AddVnInFabricV1, unexpected response", ""))
+			"Failure when executing AddVnInFabric", err,
+			"Failure at AddVnInFabric, unexpected response", ""))
 		return diags
 	}
 
@@ -236,8 +236,8 @@ func resourceSdaVirtualNetworkRead(ctx context.Context, d *schema.ResourceData, 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetVnFromSdaFabricV1")
-		queryParams1 := catalystcentersdkgo.GetVnFromSdaFabricV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetVnFromSdaFabric")
+		queryParams1 := catalystcentersdkgo.GetVnFromSdaFabricQueryParams{}
 
 		queryParams1.VirtualNetworkName = vVirtualNetworkName
 
@@ -245,7 +245,7 @@ func resourceSdaVirtualNetworkRead(ctx context.Context, d *schema.ResourceData, 
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sda.GetVnFromSdaFabricV1(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetVnFromSdaFabric(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
@@ -257,10 +257,10 @@ func resourceSdaVirtualNetworkRead(ctx context.Context, d *schema.ResourceData, 
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetVnFromSdaFabricV1Item(response1)
+		vItem1 := flattenSdaGetVnFromSdaFabricItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetVnFromSdaFabricV1 response",
+				"Failure when setting GetVnFromSdaFabric response",
 				err))
 			return diags
 		}
@@ -284,7 +284,7 @@ func resourceSdaVirtualNetworkDelete(ctx context.Context, d *schema.ResourceData
 	resourceID := d.Id()
 	resourceMap := separateResourceID(resourceID)
 
-	queryParamDelete := catalystcentersdkgo.DeleteVnFromSdaFabricV1QueryParams{}
+	queryParamDelete := catalystcentersdkgo.DeleteVnFromSdaFabricQueryParams{}
 
 	vvVirtualNetworkName := resourceMap["virtual_network_name"]
 
@@ -293,18 +293,18 @@ func resourceSdaVirtualNetworkDelete(ctx context.Context, d *schema.ResourceData
 
 	queryParamDelete.SiteNameHierarchy = vvSiteNameHierarchy
 
-	response1, restyResp1, err := client.Sda.DeleteVnFromSdaFabricV1(&queryParamDelete)
+	response1, restyResp1, err := client.Sda.DeleteVnFromSdaFabric(&queryParamDelete)
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] resty response for delete operation => %v", restyResp1.String())
 			diags = append(diags, diagErrorWithAltAndResponse(
-				"Failure when executing DeleteVnFromSdaFabricV1", err, restyResp1.String(),
-				"Failure at DeleteVnFromSdaFabricV1, unexpected response", ""))
+				"Failure when executing DeleteVnFromSdaFabric", err, restyResp1.String(),
+				"Failure at DeleteVnFromSdaFabric, unexpected response", ""))
 			return diags
 		}
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing DeleteVnFromSdaFabricV1", err,
-			"Failure at DeleteVnFromSdaFabricV1, unexpected response", ""))
+			"Failure when executing DeleteVnFromSdaFabric", err,
+			"Failure at DeleteVnFromSdaFabric, unexpected response", ""))
 		return diags
 	}
 
@@ -338,7 +338,7 @@ func resourceSdaVirtualNetworkDelete(ctx context.Context, d *schema.ResourceData
 		if response2.Status == "FAILURE" {
 			log.Printf("[DEBUG] Error %s", response2.BapiError)
 			diags = append(diags, diagError(
-				"Failure when executing DeleteVnFromSdaFabricV1", err))
+				"Failure when executing DeleteVnFromSdaFabric", err))
 			return diags
 		}
 	}
@@ -349,8 +349,9 @@ func resourceSdaVirtualNetworkDelete(ctx context.Context, d *schema.ResourceData
 
 	return diags
 }
-func expandRequestSdaVirtualNetworkAddVnInFabricV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddVnInFabricV1 {
-	request := catalystcentersdkgo.RequestSdaAddVnInFabricV1{}
+
+func expandRequestSdaVirtualNetworkAddVnInFabric(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddVnInFabric {
+	request := catalystcentersdkgo.RequestSdaAddVnInFabric{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".virtual_network_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".virtual_network_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".virtual_network_name")))) {
 		request.VirtualNetworkName = interfaceToString(v)
 	}

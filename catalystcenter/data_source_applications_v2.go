@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -24,13 +24,13 @@ func dataSourceApplicationsV2() *schema.Resource {
 				Description: `attributes query parameter. Attributes to retrieve, valid value application
 `,
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 			},
 			"limit": &schema.Schema{
 				Description: `limit query parameter. The limit which is the maximum number of items to include in a single page of results, max value 500
 `,
 				Type:     schema.TypeFloat,
-				Optional: true,
+				Required: true,
 			},
 			"name": &schema.Schema{
 				Description: `name query parameter. The application name
@@ -42,7 +42,7 @@ func dataSourceApplicationsV2() *schema.Resource {
 				Description: `offset query parameter. The starting point or index from where the paginated results should begin.
 `,
 				Type:     schema.TypeFloat,
-				Optional: true,
+				Required: true,
 			},
 
 			"items": &schema.Schema{
@@ -446,7 +446,21 @@ func dataSourceApplicationsV2Read(ctx context.Context, d *schema.ResourceData, m
 
 		queryParams1.Limit = vLimit.(float64)
 
+		// has_unknown_response: None
+
 		response1, restyResp1, err := client.ApplicationPolicy.GetApplicationsV2(&queryParams1)
+
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetApplicationsV2", err,
+				"Failure at GetApplicationsV2, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {

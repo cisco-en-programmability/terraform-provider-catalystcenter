@@ -18,7 +18,9 @@ It performs create operation on Wireless.
 always be a complete list. The Managed AP Locations included in the payload will be fully processed for both addition
 and deletion.
 
+
        When anchor managed location array present then it will add the anchor managed locations.
+
 
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
@@ -30,10 +32,10 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_wireless_settings_network_device_id_assign_anchor_managed_ap_locations" "example" {
   provider          = catalystcenter
   network_device_id = "string"
-  parameters {
+  parameters = [{
 
     anchor_managed_aplocations_site_ids = ["string"]
-  }
+  }]
 }
 
 output "catalystcenter_wireless_settings_network_device_id_assign_anchor_managed_ap_locations_example" {

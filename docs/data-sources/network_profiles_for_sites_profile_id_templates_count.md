@@ -31,7 +31,7 @@ output "catalystcenter_network_profiles_for_sites_profile_id_templates_count_exa
 
 ### Required
 
-- `profile_id` (String) profileId path parameter. The id of the network profile, retrievable from GET /intent/api/v1/networkProfilesForSites
+- `profile_id` (String) profileId path parameter. The **id** of the network profile, retrievable from **GET /intent/api/v1/networkProfilesForSites**
 
 ### Read-Only
 

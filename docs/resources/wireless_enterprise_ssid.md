@@ -22,7 +22,7 @@ It manages create, read, update and delete operations on Wireless.
 ```terraform
 resource "catalystcenter_wireless_enterprise_ssid" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     aaa_override                          = "false"

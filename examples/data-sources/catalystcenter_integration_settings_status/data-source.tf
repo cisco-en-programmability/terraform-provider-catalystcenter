@@ -1,8 +1,8 @@
 
 data "catalystcenter_integration_settings_status" "example" {
-    provider = catalystcenter
+  provider = catalystcenter
 }
 
 output "catalystcenter_integration_settings_status_example" {
-    value = data.catalystcenter_integration_settings_status.example.items
+  value = data.catalystcenter_integration_settings_status.example.items
 }

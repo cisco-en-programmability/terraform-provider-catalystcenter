@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -118,7 +118,7 @@ func resourceSdaFabricZonesCreate(ctx context.Context, d *schema.ResourceData, m
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters.0.payload"))
-	request1 := expandRequestSdaFabricZonesAddFabricZoneV1(ctx, "parameters.0", d)
+	request1 := expandRequestSdaFabricZonesAddFabricZone(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	// vID := resourceItem["id"]
@@ -127,7 +127,7 @@ func resourceSdaFabricZonesCreate(ctx context.Context, d *schema.ResourceData, m
 	vvSiteID := interfaceToString(vSiteID)
 	vName := resourceItem["authentication_profile_name"]
 	vvName := interfaceToString(vName)
-	queryParamImport := catalystcentersdkgo.GetFabricZonesV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetFabricZonesQueryParams{}
 	queryParamImport.SiteID = vvSiteID
 	item2, err := searchSdaGetFabricZones(m, queryParamImport, vvName)
 	if err == nil && item2 != nil {
@@ -177,7 +177,7 @@ func resourceSdaFabricZonesCreate(ctx context.Context, d *schema.ResourceData, m
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetFabricZonesV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetFabricZonesQueryParams{}
 	queryParamValidate.SiteID = vvSiteID
 	item3, err := searchSdaGetFabricZones(m, queryParamValidate, vvName)
 	if err != nil || item3 == nil {
@@ -208,7 +208,7 @@ func resourceSdaFabricZonesRead(ctx context.Context, d *schema.ResourceData, m i
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetFabricZones")
-		queryParams1 := catalystcentersdkgo.GetFabricZonesV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetFabricZonesQueryParams{}
 		queryParams1.SiteID = vSiteID
 
 		item1, err := searchSdaGetFabricZones(m, queryParams1, vName)
@@ -217,10 +217,10 @@ func resourceSdaFabricZonesRead(ctx context.Context, d *schema.ResourceData, m i
 			return diags
 		}
 		// Review flatten function used
-		items := []catalystcentersdkgo.ResponseSdaGetFabricZonesV1Response{
+		items := []catalystcentersdkgo.ResponseSdaGetFabricZonesResponse{
 			*item1,
 		}
-		vItem1 := flattenSdaGetFabricZonesV1Items(&items)
+		vItem1 := flattenSdaGetFabricZonesItems(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetFabricZones search response",
@@ -241,7 +241,7 @@ func resourceSdaFabricZonesUpdate(ctx context.Context, d *schema.ResourceData, m
 
 	vID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestSdaFabricZonesUpdateFabricZoneV1(ctx, "parameters.0", d)
+		request1 := expandRequestSdaFabricZonesUpdateFabricZone(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		if request1 != nil && len(*request1) > 0 {
 			req := *request1
@@ -356,9 +356,10 @@ func resourceSdaFabricZonesDelete(ctx context.Context, d *schema.ResourceData, m
 
 	return diags
 }
-func expandRequestSdaFabricZonesAddFabricZoneV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddFabricZoneV1 {
-	request := catalystcentersdkgo.RequestSdaAddFabricZoneV1{}
-	if v := expandRequestSdaFabricZonesAddFabricZoneV1ItemArray(ctx, key+".payload", d); v != nil {
+
+func expandRequestSdaFabricZonesAddFabricZone(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddFabricZone {
+	request := catalystcentersdkgo.RequestSdaAddFabricZone{}
+	if v := expandRequestSdaFabricZonesAddFabricZoneItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -367,8 +368,8 @@ func expandRequestSdaFabricZonesAddFabricZoneV1(ctx context.Context, key string,
 	return &request
 }
 
-func expandRequestSdaFabricZonesAddFabricZoneV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddFabricZoneV1 {
-	request := []catalystcentersdkgo.RequestItemSdaAddFabricZoneV1{}
+func expandRequestSdaFabricZonesAddFabricZoneItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddFabricZone {
+	request := []catalystcentersdkgo.RequestItemSdaAddFabricZone{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -379,7 +380,7 @@ func expandRequestSdaFabricZonesAddFabricZoneV1ItemArray(ctx context.Context, ke
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaFabricZonesAddFabricZoneV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaFabricZonesAddFabricZoneItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -390,8 +391,8 @@ func expandRequestSdaFabricZonesAddFabricZoneV1ItemArray(ctx context.Context, ke
 	return &request
 }
 
-func expandRequestSdaFabricZonesAddFabricZoneV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddFabricZoneV1 {
-	request := catalystcentersdkgo.RequestItemSdaAddFabricZoneV1{}
+func expandRequestSdaFabricZonesAddFabricZoneItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddFabricZone {
+	request := catalystcentersdkgo.RequestItemSdaAddFabricZone{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".site_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".site_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".site_id")))) {
 		request.SiteID = interfaceToString(v)
 	}
@@ -404,9 +405,9 @@ func expandRequestSdaFabricZonesAddFabricZoneV1Item(ctx context.Context, key str
 	return &request
 }
 
-func expandRequestSdaFabricZonesUpdateFabricZoneV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateFabricZoneV1 {
-	request := catalystcentersdkgo.RequestSdaUpdateFabricZoneV1{}
-	if v := expandRequestSdaFabricZonesUpdateFabricZoneV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaFabricZonesUpdateFabricZone(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateFabricZone {
+	request := catalystcentersdkgo.RequestSdaUpdateFabricZone{}
+	if v := expandRequestSdaFabricZonesUpdateFabricZoneItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -415,8 +416,8 @@ func expandRequestSdaFabricZonesUpdateFabricZoneV1(ctx context.Context, key stri
 	return &request
 }
 
-func expandRequestSdaFabricZonesUpdateFabricZoneV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateFabricZoneV1 {
-	request := []catalystcentersdkgo.RequestItemSdaUpdateFabricZoneV1{}
+func expandRequestSdaFabricZonesUpdateFabricZoneItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateFabricZone {
+	request := []catalystcentersdkgo.RequestItemSdaUpdateFabricZone{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -427,7 +428,7 @@ func expandRequestSdaFabricZonesUpdateFabricZoneV1ItemArray(ctx context.Context,
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaFabricZonesUpdateFabricZoneV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaFabricZonesUpdateFabricZoneItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -438,8 +439,8 @@ func expandRequestSdaFabricZonesUpdateFabricZoneV1ItemArray(ctx context.Context,
 	return &request
 }
 
-func expandRequestSdaFabricZonesUpdateFabricZoneV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateFabricZoneV1 {
-	request := catalystcentersdkgo.RequestItemSdaUpdateFabricZoneV1{}
+func expandRequestSdaFabricZonesUpdateFabricZoneItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateFabricZone {
+	request := catalystcentersdkgo.RequestItemSdaUpdateFabricZone{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -455,11 +456,11 @@ func expandRequestSdaFabricZonesUpdateFabricZoneV1Item(ctx context.Context, key 
 	return &request
 }
 
-func searchSdaGetFabricZones(m interface{}, queryParams catalystcentersdkgo.GetFabricZonesV1QueryParams, vName string) (*catalystcentersdkgo.ResponseSdaGetFabricZonesV1Response, error) {
+func searchSdaGetFabricZones(m interface{}, queryParams catalystcentersdkgo.GetFabricZonesQueryParams, vName string) (*catalystcentersdkgo.ResponseSdaGetFabricZonesResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseSdaGetFabricZonesV1Response
-	var ite *catalystcentersdkgo.ResponseSdaGetFabricZonesV1
+	var foundItem *catalystcentersdkgo.ResponseSdaGetFabricZonesResponse
+	var ite *catalystcentersdkgo.ResponseSdaGetFabricZones
 
 	ite, _, err = client.Sda.GetFabricZones(&queryParams)
 	if err != nil || ite == nil {

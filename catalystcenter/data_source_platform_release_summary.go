@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -39,14 +39,14 @@ Cisco Catalyst Center name and version, supported direct updates, and tenant ID.
 						},
 
 						"installed_version": &schema.Schema{
-							Description: `The installed Cisco Catalyst Center version
+							Description: `The installed Cisco CATALYST version
 `,
 							Type:     schema.TypeString,
 							Computed: true,
 						},
 
 						"name": &schema.Schema{
-							Description: `Name of the release (example "dnac")
+							Description: `Name of the release (example "catalystcenter")
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -99,28 +99,40 @@ func dataSourcePlatformReleaseSummaryRead(ctx context.Context, d *schema.Resourc
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: CiscoCatalystCenterReleaseSummaryV1")
+		log.Printf("[DEBUG] Selected method: CiscoCatalystCenterReleaseSummary")
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Platform.CiscoCatalystCenterReleaseSummaryV1()
+		response1, restyResp1, err := client.Platform.CiscoCatalystCenterReleaseSummary()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 CiscoCatalystCenterReleaseSummaryV1", err,
-				"Failure at CiscoCatalystCenterReleaseSummaryV1, unexpected response", ""))
+				"Failure when executing 2 CiscoCatalystCenterReleaseSummary", err,
+				"Failure at CiscoCatalystCenterReleaseSummary, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenPlatformConfigurationCiscoCatalystCenterReleaseSummaryV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 CiscoCatalystCenterReleaseSummary", err,
+				"Failure at CiscoCatalystCenterReleaseSummary, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenPlatformCiscoCatalystCenterReleaseSummaryItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting CiscoCatalystCenterReleaseSummaryV1 response",
+				"Failure when setting CiscoCatalystCenterReleaseSummary response",
 				err))
 			return diags
 		}
@@ -132,7 +144,7 @@ func dataSourcePlatformReleaseSummaryRead(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func flattenPlatformConfigurationCiscoCatalystCenterReleaseSummaryV1Item(item *catalystcentersdkgo.ResponsePlatformCiscoCatalystCenterReleaseSummaryV1Response) []map[string]interface{} {
+func flattenPlatformCiscoCatalystCenterReleaseSummaryItem(item *catalystcentersdkgo.ResponsePlatformCiscoCatalystCenterReleaseSummaryResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -142,14 +154,14 @@ func flattenPlatformConfigurationCiscoCatalystCenterReleaseSummaryV1Item(item *c
 	respItem["name"] = item.Name
 	respItem["installed_version"] = item.InstalledVersion
 	respItem["system_version"] = item.SystemVersion
-	respItem["supported_direct_updates"] = flattenPlatformConfigurationCiscoCatalystCenterReleaseSummaryV1ItemSupportedDirectUpdates(item.SupportedDirectUpdates)
+	respItem["supported_direct_updates"] = flattenPlatformCiscoCatalystCenterReleaseSummaryItemSupportedDirectUpdates(item.SupportedDirectUpdates)
 	respItem["tenant_id"] = item.TenantID
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenPlatformConfigurationCiscoCatalystCenterReleaseSummaryV1ItemSupportedDirectUpdates(items *[]catalystcentersdkgo.ResponsePlatformCiscoCatalystCenterReleaseSummaryV1ResponseSupportedDirectUpdates) []interface{} {
+func flattenPlatformCiscoCatalystCenterReleaseSummaryItemSupportedDirectUpdates(items *[]catalystcentersdkgo.ResponsePlatformCiscoCatalystCenterReleaseSummaryResponseSupportedDirectUpdates) []interface{} {
 	if items == nil {
 		return nil
 	}

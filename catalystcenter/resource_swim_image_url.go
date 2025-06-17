@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -12,7 +13,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -23,7 +24,7 @@ func resourceSwimImageURL() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs create operation on Software Image Management (SWIM).
 
-- Fetches a software image from remote file system (using URL for HTTP/FTP) and uploads to DNA Center. Supported image
+- Fetches a software image from remote file system (using URL for HTTP/FTP) and uploads to Catalyst Center. Supported image
 files extensions are bin, img, tar, smu, pie, aes, iso, ova, tar_gz and qcow2
 `,
 
@@ -82,7 +83,7 @@ files extensions are bin, img, tar, smu, pie, aes, iso, ova, tar_gz and qcow2
 							ForceNew: true,
 						},
 						"payload": &schema.Schema{
-							Description: `Array of RequestSoftwareImageManagementSwimImportSoftwareImageViaURLV1`,
+							Description: `Array of RequestSoftwareImageManagementSwimImportSoftwareImageViaURL`,
 							Type:        schema.TypeList,
 							Optional:    true,
 							ForceNew:    true,
@@ -136,19 +137,19 @@ func resourceSwimImageURLCreate(ctx context.Context, d *schema.ResourceData, m i
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestSwimImageURLImportSoftwareImageViaURLV1(ctx, "parameters.0", d)
-	queryParams1 := catalystcentersdkgo.ImportSoftwareImageViaURLV1QueryParams{}
+	request1 := expandRequestSwimImageURLImportSoftwareImageViaURL(ctx, "parameters.0", d)
+	queryParams1 := catalystcentersdkgo.ImportSoftwareImageViaURLQueryParams{}
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.SoftwareImageManagementSwim.ImportSoftwareImageViaURLV1(request1, &queryParams1)
+	response1, restyResp1, err := client.SoftwareImageManagementSwim.ImportSoftwareImageViaURL(request1, &queryParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ImportSoftwareImageViaURLV1", err))
+			"Failure when executing ImportSoftwareImageViaURL", err))
 		return diags
 	}
 
@@ -156,7 +157,7 @@ func resourceSwimImageURLCreate(ctx context.Context, d *schema.ResourceData, m i
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing ImportSoftwareImageViaURLV1", err))
+			"Failure when executing ImportSoftwareImageViaURL", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -183,14 +184,14 @@ func resourceSwimImageURLCreate(ctx context.Context, d *schema.ResourceData, m i
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing ImportSoftwareImageViaURLV1", err1))
+				"Failure when executing ImportSoftwareImageViaURL", err1))
 			return diags
 		}
 	}
@@ -198,10 +199,10 @@ func resourceSwimImageURLCreate(ctx context.Context, d *schema.ResourceData, m i
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenSoftwareImageManagementSwimImportSoftwareImageViaURLV1Item(response1.Response)
+	vItem1 := flattenSoftwareImageManagementSwimImportSoftwareImageViaURLItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ImportSoftwareImageViaURLV1 response",
+			"Failure when setting ImportSoftwareImageViaURL response",
 			err))
 		return diags
 	}
@@ -222,16 +223,16 @@ func resourceSwimImageURLDelete(ctx context.Context, d *schema.ResourceData, m i
 	return diags
 }
 
-func expandRequestSwimImageURLImportSoftwareImageViaURLV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSoftwareImageManagementSwimImportSoftwareImageViaURLV1 {
-	request := catalystcentersdkgo.RequestSoftwareImageManagementSwimImportSoftwareImageViaURLV1{}
-	if v := expandRequestSwimImageURLImportSoftwareImageViaURLV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSwimImageURLImportSoftwareImageViaURL(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSoftwareImageManagementSwimImportSoftwareImageViaURL {
+	request := catalystcentersdkgo.RequestSoftwareImageManagementSwimImportSoftwareImageViaURL{}
+	if v := expandRequestSwimImageURLImportSoftwareImageViaURLItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	return &request
 }
 
-func expandRequestSwimImageURLImportSoftwareImageViaURLV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSoftwareImageManagementSwimImportSoftwareImageViaURLV1 {
-	request := []catalystcentersdkgo.RequestItemSoftwareImageManagementSwimImportSoftwareImageViaURLV1{}
+func expandRequestSwimImageURLImportSoftwareImageViaURLItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSoftwareImageManagementSwimImportSoftwareImageViaURL {
+	request := []catalystcentersdkgo.RequestItemSoftwareImageManagementSwimImportSoftwareImageViaURL{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -242,7 +243,7 @@ func expandRequestSwimImageURLImportSoftwareImageViaURLV1ItemArray(ctx context.C
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSwimImageURLImportSoftwareImageViaURLV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSwimImageURLImportSoftwareImageViaURLItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -250,8 +251,8 @@ func expandRequestSwimImageURLImportSoftwareImageViaURLV1ItemArray(ctx context.C
 	return &request
 }
 
-func expandRequestSwimImageURLImportSoftwareImageViaURLV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSoftwareImageManagementSwimImportSoftwareImageViaURLV1 {
-	request := catalystcentersdkgo.RequestItemSoftwareImageManagementSwimImportSoftwareImageViaURLV1{}
+func expandRequestSwimImageURLImportSoftwareImageViaURLItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSoftwareImageManagementSwimImportSoftwareImageViaURL {
+	request := catalystcentersdkgo.RequestItemSoftwareImageManagementSwimImportSoftwareImageViaURL{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".application_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".application_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".application_type")))) {
 		request.ApplicationType = interfaceToString(v)
 	}
@@ -270,7 +271,7 @@ func expandRequestSwimImageURLImportSoftwareImageViaURLV1Item(ctx context.Contex
 	return &request
 }
 
-func flattenSoftwareImageManagementSwimImportSoftwareImageViaURLV1Item(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimImportSoftwareImageViaURLV1Response) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimImportSoftwareImageViaURLItem(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimImportSoftwareImageViaURLResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

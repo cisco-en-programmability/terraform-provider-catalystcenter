@@ -16,7 +16,7 @@ It performs read operation on Site Design.
 
 - Retrieves the list of profiles that the given site has been assigned.  These profiles may either be directly assigned
 to this site, or were assigned to a parent site and have been inherited.
-These assigments can be modified via the */dna/intent/api/v1/networkProfilesForSites/{profileId}/siteAssignments*
+These assigments can be modified via the **/dna/intent/api/v1/networkProfilesForSites/{profileId}/siteAssignments**
 resources.
 
 ## Example Usage
@@ -39,11 +39,11 @@ output "catalystcenter_sites_profile_assignments_example" {
 
 ### Required
 
-- `site_id` (String) siteId path parameter. The *id* of the site, retrievable from */dna/intent/api/v1/sites*
+- `site_id` (String) siteId path parameter. The **id** of the site, retrievable from **/dna/intent/api/v1/sites**
 
 ### Optional
 
-- `limit` (Number) limit query parameter. The number of records to show for this page.
+- `limit` (Number) limit query parameter. The number of records to show for this page;The minimum is 1, and the maximum is 500.
 - `offset` (Number) offset query parameter. The first record to show for this page; the first record is numbered 1.
 
 ### Read-Only

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -124,8 +124,8 @@ func dataSourceWirelessSettingsPowerProfilesRead(ctx context.Context, d *schema.
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetPowerProfilesV1")
-		queryParams1 := catalystcentersdkgo.GetPowerProfilesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetPowerProfiles")
+		queryParams1 := catalystcentersdkgo.GetPowerProfilesQueryParams{}
 
 		if okLimit {
 			queryParams1.Limit = vLimit.(float64)
@@ -139,24 +139,36 @@ func dataSourceWirelessSettingsPowerProfilesRead(ctx context.Context, d *schema.
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Wireless.GetPowerProfilesV1(&queryParams1)
+		response1, restyResp1, err := client.Wireless.GetPowerProfiles(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetPowerProfilesV1", err,
-				"Failure at GetPowerProfilesV1, unexpected response", ""))
+				"Failure when executing 2 GetPowerProfiles", err,
+				"Failure at GetPowerProfiles, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenWirelessGetPowerProfilesV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetPowerProfiles", err,
+				"Failure at GetPowerProfiles, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenWirelessGetPowerProfilesItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetPowerProfilesV1 response",
+				"Failure when setting GetPowerProfiles response",
 				err))
 			return diags
 		}
@@ -168,7 +180,7 @@ func dataSourceWirelessSettingsPowerProfilesRead(ctx context.Context, d *schema.
 	return diags
 }
 
-func flattenWirelessGetPowerProfilesV1Items(items *[]catalystcentersdkgo.ResponseWirelessGetPowerProfilesV1Response) []map[string]interface{} {
+func flattenWirelessGetPowerProfilesItems(items *[]catalystcentersdkgo.ResponseWirelessGetPowerProfilesResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -178,13 +190,13 @@ func flattenWirelessGetPowerProfilesV1Items(items *[]catalystcentersdkgo.Respons
 		respItem["id"] = item.ID
 		respItem["profile_name"] = item.ProfileName
 		respItem["description"] = item.Description
-		respItem["rules"] = flattenWirelessGetPowerProfilesV1ItemsRules(item.Rules)
+		respItem["rules"] = flattenWirelessGetPowerProfilesItemsRules(item.Rules)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenWirelessGetPowerProfilesV1ItemsRules(items *[]catalystcentersdkgo.ResponseWirelessGetPowerProfilesV1ResponseRules) []map[string]interface{} {
+func flattenWirelessGetPowerProfilesItemsRules(items *[]catalystcentersdkgo.ResponseWirelessGetPowerProfilesResponseRules) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

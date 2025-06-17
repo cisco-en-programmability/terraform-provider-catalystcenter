@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -9,7 +10,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -74,7 +75,7 @@ func resourceConfigurationTemplateImportProjectCreate(ctx context.Context, d *sc
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	queryParams1 := catalystcentersdkgo.ImportsTheProjectsProvidedV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.ImportsTheProjectsProvidedQueryParams{}
 
 	// has_unknown_response: None
 
@@ -120,7 +121,7 @@ func resourceConfigurationTemplateImportProjectCreate(ctx context.Context, d *sc
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
@@ -132,7 +133,7 @@ func resourceConfigurationTemplateImportProjectCreate(ctx context.Context, d *sc
 		}
 	}
 
-	vItem1 := flattenConfigurationTemplatesImportsTheProjectsProvidedV1Item(response1.Response)
+	vItem1 := flattenConfigurationTemplatesImportsTheProjectsProvidedItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
 			"Failure when setting ImportsTheProjectsProvided response",
@@ -157,7 +158,7 @@ func resourceConfigurationTemplateImportProjectDelete(ctx context.Context, d *sc
 	return diags
 }
 
-func flattenConfigurationTemplatesImportsTheProjectsProvidedV1Item(item *catalystcentersdkgo.ResponseConfigurationTemplatesImportsTheProjectsProvidedV1Response) []map[string]interface{} {
+func flattenConfigurationTemplatesImportsTheProjectsProvidedItem(item *catalystcentersdkgo.ResponseConfigurationTemplatesImportsTheProjectsProvidedResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

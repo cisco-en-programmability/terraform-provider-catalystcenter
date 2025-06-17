@@ -1,7 +1,7 @@
 
 resource "catalystcenter_sites_dns_settings" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     dns {

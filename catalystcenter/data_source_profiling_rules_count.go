@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -13,7 +13,7 @@ import (
 
 func dataSourceProfilingRulesCount() *schema.Resource {
 	return &schema.Resource{
-		Description: `It performs read operation on AIEndpointAnalytics.
+		Description: `It performs read operation on AiEndpointAnalytics.
 
 - This data source fetches the count of profiling rules based on the filter values provided in the query parameters. The
 filter parameters are same as that of 'GET /profiling-rules' API, excluding the pagination and sort parameters.
@@ -60,8 +60,8 @@ func dataSourceProfilingRulesCountRead(ctx context.Context, d *schema.ResourceDa
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetCountOfProfilingRulesV1")
-		queryParams1 := catalystcentersdkgo.GetCountOfProfilingRulesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetCountOfProfilingRules")
+		queryParams1 := catalystcentersdkgo.GetCountOfProfilingRulesQueryParams{}
 
 		if okRuleType {
 			queryParams1.RuleType = vRuleType.(string)
@@ -70,24 +70,38 @@ func dataSourceProfilingRulesCountRead(ctx context.Context, d *schema.ResourceDa
 			queryParams1.IncludeDeleted = vIncludeDeleted.(bool)
 		}
 
-		response1, restyResp1, err := client.AIEndpointAnalytics.GetCountOfProfilingRulesV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.AiEndpointAnalytics.GetCountOfProfilingRules(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetCountOfProfilingRulesV1", err,
-				"Failure at GetCountOfProfilingRulesV1, unexpected response", ""))
+				"Failure when executing 2 GetCountOfProfilingRules", err,
+				"Failure at GetCountOfProfilingRules, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenAIEndpointAnalyticsGetCountOfProfilingRulesV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetCountOfProfilingRules", err,
+				"Failure at GetCountOfProfilingRules, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenAiEndpointAnalyticsGetCountOfProfilingRulesItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetCountOfProfilingRulesV1 response",
+				"Failure when setting GetCountOfProfilingRules response",
 				err))
 			return diags
 		}

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -16,10 +16,10 @@ func dataSourceTransitNetworkHealthSummaries() *schema.Resource {
 		Description: `It performs read operation on SDA.
 
 - Get a paginated list of Transit Networks with health summary.
-This data source provides the latest health data until the given endTime. If data is not ready for the provided
-endTime, the request will fail with error code 400 Bad Request, and the error message will indicate the recommended
+This data source provides the latest health data until the given **endTime**. If data is not ready for the provided
+endTime, the request will fail with error code **400 Bad Request**, and the error message will indicate the recommended
 endTime to use to retrieve a complete data set. This behavior may occur if the provided endTime=currentTime, since we
-are not a real time system. When endTime is not provided, the API returns the latest data.
+are not a real time system. When **endTime** is not provided, the API returns the latest data.
 For detailed information about the usage of the API, please refer to the Open API specification document
 https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 transitNetworkHealthSummaries-1.0.1-resolved.yaml
@@ -108,7 +108,7 @@ transitNetworkHealthSummaries-1.0.1-resolved.yaml
 
 						"bgp_tcp_health_percentage": &schema.Schema{
 							Description: `Bgp Tcp Health Percentage`,
-							Type:        schema.TypeInt,
+							Type:        schema.TypeFloat,
 							Computed:    true,
 						},
 
@@ -150,7 +150,7 @@ transitNetworkHealthSummaries-1.0.1-resolved.yaml
 
 						"good_health_percentage": &schema.Schema{
 							Description: `Good Health Percentage`,
-							Type:        schema.TypeInt,
+							Type:        schema.TypeFloat,
 							Computed:    true,
 						},
 
@@ -174,7 +174,7 @@ transitNetworkHealthSummaries-1.0.1-resolved.yaml
 
 						"internet_avail_transit_health_percentage": &schema.Schema{
 							Description: `Internet Avail Transit Health Percentage`,
-							Type:        schema.TypeInt,
+							Type:        schema.TypeFloat,
 							Computed:    true,
 						},
 
@@ -204,13 +204,13 @@ transitNetworkHealthSummaries-1.0.1-resolved.yaml
 
 						"lisp_transit_health_percentage": &schema.Schema{
 							Description: `Lisp Transit Health Percentage`,
-							Type:        schema.TypeInt,
+							Type:        schema.TypeFloat,
 							Computed:    true,
 						},
 
 						"lisp_transit_poor_health_device_count": &schema.Schema{
 							Description: `Lisp Transit Poor Health Device Count`,
-							Type:        schema.TypeFloat,
+							Type:        schema.TypeInt,
 							Computed:    true,
 						},
 
@@ -222,6 +222,12 @@ transitNetworkHealthSummaries-1.0.1-resolved.yaml
 
 						"name": &schema.Schema{
 							Description: `Name`,
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+
+						"network_protocol": &schema.Schema{
+							Description: `Network Protocol`,
 							Type:        schema.TypeString,
 							Computed:    true,
 						},
@@ -246,7 +252,7 @@ transitNetworkHealthSummaries-1.0.1-resolved.yaml
 
 						"pubsub_transit_health_percentage": &schema.Schema{
 							Description: `Pubsub Transit Health Percentage`,
-							Type:        schema.TypeInt,
+							Type:        schema.TypeFloat,
 							Computed:    true,
 						},
 
@@ -262,8 +268,20 @@ transitNetworkHealthSummaries-1.0.1-resolved.yaml
 							Computed:    true,
 						},
 
-						"total_device_count": &schema.Schema{
-							Description: `Total Device Count`,
+						"site_hierarchy": &schema.Schema{
+							Description: `Site Hierarchy`,
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+
+						"site_hierarchy_id": &schema.Schema{
+							Description: `Site Hierarchy Id`,
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+
+						"total_health_device_count": &schema.Schema{
+							Description: `Total Health Device Count`,
 							Type:        schema.TypeInt,
 							Computed:    true,
 						},
@@ -282,7 +300,7 @@ transitNetworkHealthSummaries-1.0.1-resolved.yaml
 
 						"transit_control_plane_health_percentage": &schema.Schema{
 							Description: `Transit Control Plane Health Percentage`,
-							Type:        schema.TypeInt,
+							Type:        schema.TypeFloat,
 							Computed:    true,
 						},
 
@@ -312,13 +330,13 @@ transitNetworkHealthSummaries-1.0.1-resolved.yaml
 
 						"transit_services_health_percentage": &schema.Schema{
 							Description: `Transit Services Health Percentage`,
-							Type:        schema.TypeInt,
+							Type:        schema.TypeFloat,
 							Computed:    true,
 						},
 
 						"transit_services_poor_health_device_count": &schema.Schema{
 							Description: `Transit Services Poor Health Device Count`,
-							Type:        schema.TypeFloat,
+							Type:        schema.TypeInt,
 							Computed:    true,
 						},
 
@@ -330,8 +348,11 @@ transitNetworkHealthSummaries-1.0.1-resolved.yaml
 
 						"transit_type": &schema.Schema{
 							Description: `Transit Type`,
-							Type:        schema.TypeString,
+							Type:        schema.TypeList,
 							Computed:    true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
 						},
 					},
 				},
@@ -357,10 +378,10 @@ func dataSourceTransitNetworkHealthSummariesRead(ctx context.Context, d *schema.
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: ReadListOfTransitNetworksWithTheirHealthSummaryV1")
+		log.Printf("[DEBUG] Selected method: ReadListOfTransitNetworksWithTheirHealthSummary")
 
-		headerParams1 := catalystcentersdkgo.ReadListOfTransitNetworksWithTheirHealthSummaryV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.ReadListOfTransitNetworksWithTheirHealthSummaryV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.ReadListOfTransitNetworksWithTheirHealthSummaryHeaderParams{}
+		queryParams1 := catalystcentersdkgo.ReadListOfTransitNetworksWithTheirHealthSummaryQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -393,24 +414,36 @@ func dataSourceTransitNetworkHealthSummariesRead(ctx context.Context, d *schema.
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sda.ReadListOfTransitNetworksWithTheirHealthSummaryV1(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Sda.ReadListOfTransitNetworksWithTheirHealthSummary(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 ReadListOfTransitNetworksWithTheirHealthSummaryV1", err,
-				"Failure at ReadListOfTransitNetworksWithTheirHealthSummaryV1, unexpected response", ""))
+				"Failure when executing 2 ReadListOfTransitNetworksWithTheirHealthSummary", err,
+				"Failure at ReadListOfTransitNetworksWithTheirHealthSummary, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaReadListOfTransitNetworksWithTheirHealthSummaryV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 ReadListOfTransitNetworksWithTheirHealthSummary", err,
+				"Failure at ReadListOfTransitNetworksWithTheirHealthSummary, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSdaReadListOfTransitNetworksWithTheirHealthSummaryItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting ReadListOfTransitNetworksWithTheirHealthSummaryV1 response",
+				"Failure when setting ReadListOfTransitNetworksWithTheirHealthSummary response",
 				err))
 			return diags
 		}
@@ -422,7 +455,7 @@ func dataSourceTransitNetworkHealthSummariesRead(ctx context.Context, d *schema.
 	return diags
 }
 
-func flattenSdaReadListOfTransitNetworksWithTheirHealthSummaryV1Items(items *[]catalystcentersdkgo.ResponseSdaReadListOfTransitNetworksWithTheirHealthSummaryV1Response) []map[string]interface{} {
+func flattenSdaReadListOfTransitNetworksWithTheirHealthSummaryItems(items *[]catalystcentersdkgo.ResponseSdaReadListOfTransitNetworksWithTheirHealthSummaryResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -433,10 +466,11 @@ func flattenSdaReadListOfTransitNetworksWithTheirHealthSummaryV1Items(items *[]c
 		respItem["name"] = item.Name
 		respItem["control_plane_count"] = item.ControlPlaneCount
 		respItem["transit_type"] = item.TransitType
+		respItem["network_protocol"] = item.NetworkProtocol
 		respItem["fabric_sites_count"] = item.FabricSitesCount
 		respItem["good_health_percentage"] = item.GoodHealthPercentage
 		respItem["good_health_device_count"] = item.GoodHealthDeviceCount
-		respItem["total_device_count"] = item.TotalDeviceCount
+		respItem["total_health_device_count"] = item.TotalHealthDeviceCount
 		respItem["poor_health_device_count"] = item.PoorHealthDeviceCount
 		respItem["fair_health_device_count"] = item.FairHealthDeviceCount
 		respItem["transit_control_plane_health_percentage"] = item.TransitControlPlaneHealthPercentage
@@ -469,6 +503,8 @@ func flattenSdaReadListOfTransitNetworksWithTheirHealthSummaryV1Items(items *[]c
 		respItem["bgp_tcp_good_health_device_count"] = item.BgpTCPGoodHealthDeviceCount
 		respItem["bgp_tcp_poor_health_device_count"] = item.BgpTCPPoorHealthDeviceCount
 		respItem["bgp_tcp_fair_health_device_count"] = item.BgpTCPFairHealthDeviceCount
+		respItem["site_hierarchy"] = item.SiteHierarchy
+		respItem["site_hierarchy_id"] = item.SiteHierarchyID
 		respItems = append(respItems, respItem)
 	}
 	return respItems

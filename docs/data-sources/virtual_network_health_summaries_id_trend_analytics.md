@@ -29,12 +29,12 @@ Layer 2 Virtual Networks are only included in health reporting for EVPN protocol
 called ‘INFRA_VN’ is also not included for user access through Assurance virtualNetworkHealthSummaries APIS.
 The data will be grouped based on the specified trend time interval. If startTime and endTime are not provided, the API
 defaults to the last 24 hours.
-By default: the number of records returned will be 500. the records will be sorted in time ascending (asc) order
+By default: the number of records returned will be 500. the records will be sorted in time ascending (**asc**) order
 For EVPN , {id} is a combination of VN:FabrisiteId. ex: L2VN1:93a25378-7740-4e20-8d90-0060ad9a1be0
-This data source provides the latest health data until the given endTime. If data is not ready for the provided
-endTime, the request will fail with error code 400 Bad Request, and the error message will indicate the recommended
+This data source provides the latest health data until the given **endTime**. If data is not ready for the provided
+endTime, the request will fail with error code **400 Bad Request**, and the error message will indicate the recommended
 endTime to use to retrieve a complete data set. This behavior may occur if the provided endTime=currentTime, since we
-are not a real time system. When endTime is not provided, the API returns the latest data.
+are not a real time system. When **endTime** is not provided, the API returns the latest data.
 For detailed information about the usage of the API, please refer to the Open API specification document
 https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 virtualNetworkHealthSummaries-1.0.1-resolved.yaml

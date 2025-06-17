@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -353,6 +353,7 @@ func resourceServiceProviderV2Delete(ctx context.Context, d *schema.ResourceData
 
 	return diags
 }
+
 func expandRequestServiceProviderV2CreateSpProfileV2(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateSpProfileV2 {
 	request := catalystcentersdkgo.RequestNetworkSettingsCreateSpProfileV2{}
 	request.Settings = expandRequestServiceProviderV2CreateSpProfileV2Settings(ctx, key, d)

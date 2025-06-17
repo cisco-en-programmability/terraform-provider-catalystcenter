@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -102,32 +102,46 @@ func dataSourceNetworkDeviceEquipmentRead(ctx context.Context, d *schema.Resourc
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTheDetailsOfPhysicalComponentsOfTheGivenDeviceV1")
+		log.Printf("[DEBUG] Selected method: GetTheDetailsOfPhysicalComponentsOfTheGivenDevice")
 		vvDeviceUUID := vDeviceUUID.(string)
-		queryParams1 := catalystcentersdkgo.GetTheDetailsOfPhysicalComponentsOfTheGivenDeviceV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetTheDetailsOfPhysicalComponentsOfTheGivenDeviceQueryParams{}
 
 		if okType {
 			queryParams1.Type = vType.(string)
 		}
 
-		response1, restyResp1, err := client.Devices.GetTheDetailsOfPhysicalComponentsOfTheGivenDeviceV1(vvDeviceUUID, &queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Devices.GetTheDetailsOfPhysicalComponentsOfTheGivenDevice(vvDeviceUUID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTheDetailsOfPhysicalComponentsOfTheGivenDeviceV1", err,
-				"Failure at GetTheDetailsOfPhysicalComponentsOfTheGivenDeviceV1, unexpected response", ""))
+				"Failure when executing 2 GetTheDetailsOfPhysicalComponentsOfTheGivenDevice", err,
+				"Failure at GetTheDetailsOfPhysicalComponentsOfTheGivenDevice, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetTheDetailsOfPhysicalComponentsOfTheGivenDeviceV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetTheDetailsOfPhysicalComponentsOfTheGivenDevice", err,
+				"Failure at GetTheDetailsOfPhysicalComponentsOfTheGivenDevice, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDevicesGetTheDetailsOfPhysicalComponentsOfTheGivenDeviceItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTheDetailsOfPhysicalComponentsOfTheGivenDeviceV1 response",
+				"Failure when setting GetTheDetailsOfPhysicalComponentsOfTheGivenDevice response",
 				err))
 			return diags
 		}
@@ -139,7 +153,7 @@ func dataSourceNetworkDeviceEquipmentRead(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func flattenDevicesGetTheDetailsOfPhysicalComponentsOfTheGivenDeviceV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetTheDetailsOfPhysicalComponentsOfTheGivenDeviceV1Response) []map[string]interface{} {
+func flattenDevicesGetTheDetailsOfPhysicalComponentsOfTheGivenDeviceItems(items *[]catalystcentersdkgo.ResponseDevicesGetTheDetailsOfPhysicalComponentsOfTheGivenDeviceResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

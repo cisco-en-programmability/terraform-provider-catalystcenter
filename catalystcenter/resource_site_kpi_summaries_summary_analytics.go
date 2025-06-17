@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -87,16 +87,6 @@ specs/blob/main/Assurance/CE_Cat_Center_Org-SiteKpiSummaries-1.0.0-resolved.yaml
 							Optional:    true,
 							Computed:    true,
 						},
-						"task_id": &schema.Schema{
-							Description: `task id`,
-							Type:        schema.TypeString,
-							Required:    true,
-						},
-						"xca_lle_rid": &schema.Schema{
-							Description: `xca lle rid`,
-							Type:        schema.TypeString,
-							Required:    true,
-						},
 						"filters": &schema.Schema{
 							Type:     schema.TypeList,
 							Optional: true,
@@ -144,14 +134,14 @@ func resourceSiteKpiSummariesSummaryAnalyticsCreate(ctx context.Context, d *sche
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestSiteKpiSummariesSummaryAnalyticsSubmitRequestForSiteAnalyticsSummaryDataV1(ctx, "parameters.0", d)
+	request1 := expandRequestSiteKpiSummariesSummaryAnalyticsSubmitRequestForSiteAnalyticsSummaryData(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vTaskID := resourceItem["task_id"]
 	vvTaskID := interfaceToString(vTaskID)
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 	vvXCaLLERID := interfaceToString(vXCaLLERID)
-	queryParamImport := catalystcentersdkgo.GetSiteAnalyticsSummaryDataForTheGivenTaskIDV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetSiteAnalyticsSummaryDataForTheGivenTaskIDQueryParams{}
 	queryParamImport.TaskID = vvTaskID
 	item2, _, err := client.Sites.GetSiteAnalyticsSummaryDataForTheGivenTaskID(nil, &queryParamImport)
 	if err != nil || item2 != nil {
@@ -200,7 +190,7 @@ func resourceSiteKpiSummariesSummaryAnalyticsCreate(ctx context.Context, d *sche
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetSiteAnalyticsSummaryDataForTheGivenTaskIDV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetSiteAnalyticsSummaryDataForTheGivenTaskIDQueryParams{}
 	queryParamValidate.TaskID = vvTaskID
 	item3, _, err := client.Sites.GetSiteAnalyticsSummaryDataForTheGivenTaskID(nil, &queryParamValidate)
 	if err != nil || item3 == nil {
@@ -233,8 +223,8 @@ func resourceSiteKpiSummariesSummaryAnalyticsRead(ctx context.Context, d *schema
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetSiteAnalyticsSummaryDataForTheGivenTaskID")
 
-		headerParams1 := catalystcentersdkgo.GetSiteAnalyticsSummaryDataForTheGivenTaskIDV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.GetSiteAnalyticsSummaryDataForTheGivenTaskIDV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.GetSiteAnalyticsSummaryDataForTheGivenTaskIDHeaderParams{}
+		queryParams1 := catalystcentersdkgo.GetSiteAnalyticsSummaryDataForTheGivenTaskIDQueryParams{}
 
 		queryParams1.TaskID = vTaskID
 
@@ -252,7 +242,7 @@ func resourceSiteKpiSummariesSummaryAnalyticsRead(ctx context.Context, d *schema
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSitesGetSiteAnalyticsSummaryDataForTheGivenTaskIDV1Item(response1.Response)
+		vItem1 := flattenSitesGetSiteAnalyticsSummaryDataForTheGivenTaskIDItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetSiteAnalyticsSummaryDataForTheGivenTaskID response",
@@ -272,12 +262,13 @@ func resourceSiteKpiSummariesSummaryAnalyticsUpdate(ctx context.Context, d *sche
 
 func resourceSiteKpiSummariesSummaryAnalyticsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	// NOTE: Unable to delete SiteKpiSummariesSummaryAnalytics on Dna Center
+	// NOTE: Unable to delete SiteKpiSummariesSummaryAnalytics on Catalyst Center
 	//       Returning empty diags to delete it on Terraform
 	return diags
 }
-func expandRequestSiteKpiSummariesSummaryAnalyticsSubmitRequestForSiteAnalyticsSummaryDataV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsSummaryDataV1 {
-	request := catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsSummaryDataV1{}
+
+func expandRequestSiteKpiSummariesSummaryAnalyticsSubmitRequestForSiteAnalyticsSummaryData(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsSummaryData {
+	request := catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsSummaryData{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -285,7 +276,7 @@ func expandRequestSiteKpiSummariesSummaryAnalyticsSubmitRequestForSiteAnalyticsS
 		request.EndTime = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestSiteKpiSummariesSummaryAnalyticsSubmitRequestForSiteAnalyticsSummaryDataV1FiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestSiteKpiSummariesSummaryAnalyticsSubmitRequestForSiteAnalyticsSummaryDataFiltersArray(ctx, key+".filters", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".attributes")))) {
 		request.Attributes = interfaceToSliceString(v)
@@ -296,8 +287,8 @@ func expandRequestSiteKpiSummariesSummaryAnalyticsSubmitRequestForSiteAnalyticsS
 	return &request
 }
 
-func expandRequestSiteKpiSummariesSummaryAnalyticsSubmitRequestForSiteAnalyticsSummaryDataV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsSummaryDataV1Filters {
-	request := []catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsSummaryDataV1Filters{}
+func expandRequestSiteKpiSummariesSummaryAnalyticsSubmitRequestForSiteAnalyticsSummaryDataFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsSummaryDataFilters {
+	request := []catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsSummaryDataFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -308,7 +299,7 @@ func expandRequestSiteKpiSummariesSummaryAnalyticsSubmitRequestForSiteAnalyticsS
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSiteKpiSummariesSummaryAnalyticsSubmitRequestForSiteAnalyticsSummaryDataV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSiteKpiSummariesSummaryAnalyticsSubmitRequestForSiteAnalyticsSummaryDataFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -319,8 +310,8 @@ func expandRequestSiteKpiSummariesSummaryAnalyticsSubmitRequestForSiteAnalyticsS
 	return &request
 }
 
-func expandRequestSiteKpiSummariesSummaryAnalyticsSubmitRequestForSiteAnalyticsSummaryDataV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsSummaryDataV1Filters {
-	request := catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsSummaryDataV1Filters{}
+func expandRequestSiteKpiSummariesSummaryAnalyticsSubmitRequestForSiteAnalyticsSummaryDataFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsSummaryDataFilters {
+	request := catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsSummaryDataFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}

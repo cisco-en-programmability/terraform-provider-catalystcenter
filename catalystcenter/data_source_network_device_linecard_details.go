@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -75,27 +75,41 @@ func dataSourceNetworkDeviceLinecardDetailsRead(ctx context.Context, d *schema.R
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetLinecardDetailsV1")
+		log.Printf("[DEBUG] Selected method: GetLinecardDetails")
 		vvDeviceUUID := vDeviceUUID.(string)
 
-		response1, restyResp1, err := client.Devices.GetLinecardDetailsV1(vvDeviceUUID)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Devices.GetLinecardDetails(vvDeviceUUID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetLinecardDetailsV1", err,
-				"Failure at GetLinecardDetailsV1, unexpected response", ""))
+				"Failure when executing 2 GetLinecardDetails", err,
+				"Failure at GetLinecardDetails, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetLinecardDetailsV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetLinecardDetails", err,
+				"Failure at GetLinecardDetails, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDevicesGetLinecardDetailsItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetLinecardDetailsV1 response",
+				"Failure when setting GetLinecardDetails response",
 				err))
 			return diags
 		}
@@ -107,7 +121,7 @@ func dataSourceNetworkDeviceLinecardDetailsRead(ctx context.Context, d *schema.R
 	return diags
 }
 
-func flattenDevicesGetLinecardDetailsV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetLinecardDetailsV1Response) []map[string]interface{} {
+func flattenDevicesGetLinecardDetailsItems(items *[]catalystcentersdkgo.ResponseDevicesGetLinecardDetailsResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

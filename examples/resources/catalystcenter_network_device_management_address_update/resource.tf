@@ -1,11 +1,11 @@
 
 resource "catalystcenter_network_device_management_address_update" "example" {
-  provider = meraki
+  provider = catalystcenter
   deviceid = "string"
-  parameters {
+  parameters = [{
 
     new_ip = "string"
-  }
+  }]
 }
 
 output "catalystcenter_network_device_management_address_update_example" {

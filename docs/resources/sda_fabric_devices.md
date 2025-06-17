@@ -24,7 +24,7 @@ It manages create, read, update and delete operations on SDA.
 ```terraform
 resource "catalystcenter_sda_fabric_devices" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     border_device_settings {

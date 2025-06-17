@@ -20,6 +20,7 @@ you to enable or disable the multicast feature. For optimal performance, ensure 
 ```terraform
 resource "catalystcenter_fabrics_fabric_id_wireless_multicast" "example" {
   provider = catalystcenter
+ 
   parameters {
 
     fabric_id         = "string"

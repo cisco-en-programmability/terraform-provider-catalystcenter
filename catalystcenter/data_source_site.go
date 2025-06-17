@@ -6,7 +6,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -121,8 +121,8 @@ func dataSourceSiteRead(ctx context.Context, d *schema.ResourceData, m interface
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSiteV1")
-		queryParams1 := catalystcentersdkgo.GetSiteV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetSite")
+		queryParams1 := catalystcentersdkgo.GetSiteQueryParams{}
 
 		if okName {
 			queryParams1.Name = vName.(string)
@@ -140,24 +140,38 @@ func dataSourceSiteRead(ctx context.Context, d *schema.ResourceData, m interface
 			queryParams1.Limit = vLimit.(int)
 		}
 
-		response1, restyResp1, err := client.Sites.GetSiteV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sites.GetSite(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSiteV1", err,
-				"Failure at GetSiteV1, unexpected response", ""))
+				"Failure when executing 2 GetSite", err,
+				"Failure at GetSite, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSitesGetSiteV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetSite", err,
+				"Failure at GetSite, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSitesGetSiteItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSiteV1 response",
+				"Failure when setting GetSite response",
 				err))
 			return diags
 		}
@@ -169,7 +183,7 @@ func dataSourceSiteRead(ctx context.Context, d *schema.ResourceData, m interface
 	return diags
 }
 
-func flattenSitesGetSiteV1Items(items *[]catalystcentersdkgo.ResponseSitesGetSiteV1Response) []map[string]interface{} {
+func flattenSitesGetSiteItems(items *[]catalystcentersdkgo.ResponseSitesGetSiteResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -187,7 +201,7 @@ func flattenSitesGetSiteV1Items(items *[]catalystcentersdkgo.ResponseSitesGetSit
 	}
 	return respItems
 }
-func flattenSitesGetFloorItems(items *[]catalystcentersdkgo.ResponseSitesGetFloorV1Response) []map[string]interface{} {
+func flattenSitesGetFloorItems(items *[]catalystcentersdkgo.ResponseSitesGetFloorResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -205,7 +219,7 @@ func flattenSitesGetFloorItems(items *[]catalystcentersdkgo.ResponseSitesGetFloo
 	}
 	return respItems
 }
-func flattenSitesGetAreaItems(items *[]catalystcentersdkgo.ResponseSitesGetAreaV1Response) []map[string]interface{} {
+func flattenSitesGetAreaItems(items *[]catalystcentersdkgo.ResponseSitesGetAreaResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -223,7 +237,7 @@ func flattenSitesGetAreaItems(items *[]catalystcentersdkgo.ResponseSitesGetAreaV
 	}
 	return respItems
 }
-func flattenSitesGetSiteParams(items *[]catalystcentersdkgo.ResponseSitesGetSiteV1Response, parameters []interface{}) map[string]interface{} {
+func flattenSitesGetSiteParams(items *[]catalystcentersdkgo.ResponseSitesGetSiteResponse, parameters []interface{}) map[string]interface{} {
 	respParams := make(map[string]interface{})
 	buildings := make([]map[string]interface{}, 0)
 	parentName := getParametersOfLastUpdatedBuilding(parameters, "parent_name", "building")
@@ -272,7 +286,7 @@ func flattenSitesGetSiteParams(items *[]catalystcentersdkgo.ResponseSitesGetSite
 
 }
 
-func flattenSitesGetFloorParams(items *[]catalystcentersdkgo.ResponseSitesGetFloorV1Response, parameters []interface{}) map[string]interface{} {
+func flattenSitesGetFloorParams(items *[]catalystcentersdkgo.ResponseSitesGetFloorResponse, parameters []interface{}) map[string]interface{} {
 	respParams := make(map[string]interface{})
 	parentName := getParametersOfLastUpdatedBuilding(parameters, "parent_name", "floor")
 	rfModel := getParametersOfLastUpdatedBuilding(parameters, "rf_model", "floor")
@@ -348,7 +362,7 @@ func flattenSitesGetFloorParams(items *[]catalystcentersdkgo.ResponseSitesGetFlo
 
 }
 
-func flattenSitesGetAreaParams(items *[]catalystcentersdkgo.ResponseSitesGetAreaV1Response, parameters []interface{}) map[string]interface{} {
+func flattenSitesGetAreaParams(items *[]catalystcentersdkgo.ResponseSitesGetAreaResponse, parameters []interface{}) map[string]interface{} {
 	respParams := make(map[string]interface{})
 	areas := make([]map[string]interface{}, 0)
 	parentName := getParametersOfLastUpdatedBuilding(parameters, "parent_name", "area")
@@ -412,7 +426,7 @@ func flattenSitesGetSiteItemsAdditionalInfo(items []catalystcentersdkgo.Response
 	return respItems
 }
 
-func flattenSitesGetFloorItemsAdditionalInfo(items []catalystcentersdkgo.ResponseSitesGetFloorV1ResponseAdditionalInfo) []map[string]interface{} {
+func flattenSitesGetFloorItemsAdditionalInfo(items []catalystcentersdkgo.ResponseSitesGetFloorResponseAdditionalInfo) []map[string]interface{} {
 	var respItems []map[string]interface{}
 	for _, item := range items {
 		respItem := make(map[string]interface{})
@@ -433,7 +447,7 @@ func flattenSitesGetFloorItemsAdditionalInfo(items []catalystcentersdkgo.Respons
 	return respItems
 }
 
-func flattenSitesGetAreaItemsAdditionalInfo(items []catalystcentersdkgo.ResponseSitesGetAreaV1ResponseAdditionalInfo, parameters []interface{}) []map[string]interface{} {
+func flattenSitesGetAreaItemsAdditionalInfo(items []catalystcentersdkgo.ResponseSitesGetAreaResponseAdditionalInfo, parameters []interface{}) []map[string]interface{} {
 	var respItems []map[string]interface{}
 	var parentName string
 	if parameters != nil {

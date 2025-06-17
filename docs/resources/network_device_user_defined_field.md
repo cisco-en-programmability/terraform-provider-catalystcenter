@@ -22,7 +22,7 @@ It manages create, read, update and delete operations on Devices.
 ```terraform
 resource "catalystcenter_network_device_user_defined_field" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     description = "string"

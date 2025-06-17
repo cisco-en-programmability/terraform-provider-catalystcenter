@@ -11,7 +11,7 @@ description: |-
 
 It performs read operation on Software Image Management (SWIM).
 
-- Returns the count of network device product names for given filters. The default value of *siteId* is global.
+- Returns the count of network device product names for given filters. The default value of **siteId** is global.
 
 ## Example Usage
 

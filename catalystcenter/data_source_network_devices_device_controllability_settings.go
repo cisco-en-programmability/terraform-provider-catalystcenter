@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -72,26 +72,40 @@ func dataSourceNetworkDevicesDeviceControllabilitySettingsRead(ctx context.Conte
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceControllabilitySettingsV1")
+		log.Printf("[DEBUG] Selected method: GetDeviceControllabilitySettings")
 
-		response1, restyResp1, err := client.SiteDesign.GetDeviceControllabilitySettingsV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.SiteDesign.GetDeviceControllabilitySettings()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceControllabilitySettingsV1", err,
-				"Failure at GetDeviceControllabilitySettingsV1, unexpected response", ""))
+				"Failure when executing 2 GetDeviceControllabilitySettings", err,
+				"Failure at GetDeviceControllabilitySettings, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSiteDesignGetDeviceControllabilitySettingsV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetDeviceControllabilitySettings", err,
+				"Failure at GetDeviceControllabilitySettings, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSiteDesignGetDeviceControllabilitySettingsItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceControllabilitySettingsV1 response",
+				"Failure when setting GetDeviceControllabilitySettings response",
 				err))
 			return diags
 		}
@@ -103,7 +117,7 @@ func dataSourceNetworkDevicesDeviceControllabilitySettingsRead(ctx context.Conte
 	return diags
 }
 
-func flattenSiteDesignGetDeviceControllabilitySettingsV1Item(item *catalystcentersdkgo.ResponseSiteDesignGetDeviceControllabilitySettingsV1Response) []map[string]interface{} {
+func flattenSiteDesignGetDeviceControllabilitySettingsItem(item *catalystcentersdkgo.ResponseSiteDesignGetDeviceControllabilitySettingsResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

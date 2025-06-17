@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -164,9 +164,9 @@ func dataSourceIssuesEnrichmentDetailsRead(ctx context.Context, d *schema.Resour
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetIssueEnrichmentDetailsV1")
+		log.Printf("[DEBUG] Selected method: GetIssueEnrichmentDetails")
 
-		headerParams1 := catalystcentersdkgo.GetIssueEnrichmentDetailsV1HeaderParams{}
+		headerParams1 := catalystcentersdkgo.GetIssueEnrichmentDetailsHeaderParams{}
 
 		headerParams1.EntityType = vEntityType.(string)
 
@@ -174,24 +174,38 @@ func dataSourceIssuesEnrichmentDetailsRead(ctx context.Context, d *schema.Resour
 
 		headerParams1.Persistbapioutput = vPersistbapioutput.(string)
 
-		response1, restyResp1, err := client.Issues.GetIssueEnrichmentDetailsV1(&headerParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Issues.GetIssueEnrichmentDetails(&headerParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetIssueEnrichmentDetailsV1", err,
-				"Failure at GetIssueEnrichmentDetailsV1, unexpected response", ""))
+				"Failure when executing 2 GetIssueEnrichmentDetails", err,
+				"Failure at GetIssueEnrichmentDetails, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenIssuesGetIssueEnrichmentDetailsV1Item(response1.IssueDetails)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetIssueEnrichmentDetails", err,
+				"Failure at GetIssueEnrichmentDetails, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenIssuesGetIssueEnrichmentDetailsItem(response1.IssueDetails)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetIssueEnrichmentDetailsV1 response",
+				"Failure when setting GetIssueEnrichmentDetails response",
 				err))
 			return diags
 		}
@@ -203,18 +217,18 @@ func dataSourceIssuesEnrichmentDetailsRead(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func flattenIssuesGetIssueEnrichmentDetailsV1Item(item *catalystcentersdkgo.ResponseIssuesGetIssueEnrichmentDetailsV1IssueDetails) []map[string]interface{} {
+func flattenIssuesGetIssueEnrichmentDetailsItem(item *catalystcentersdkgo.ResponseIssuesGetIssueEnrichmentDetailsIssueDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["issue"] = flattenIssuesGetIssueEnrichmentDetailsV1ItemIssue(item.Issue)
+	respItem["issue"] = flattenIssuesGetIssueEnrichmentDetailsItemIssue(item.Issue)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenIssuesGetIssueEnrichmentDetailsV1ItemIssue(items *[]catalystcentersdkgo.ResponseIssuesGetIssueEnrichmentDetailsV1IssueDetailsIssue) []map[string]interface{} {
+func flattenIssuesGetIssueEnrichmentDetailsItemIssue(items *[]catalystcentersdkgo.ResponseIssuesGetIssueEnrichmentDetailsIssueDetailsIssue) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -232,14 +246,14 @@ func flattenIssuesGetIssueEnrichmentDetailsV1ItemIssue(items *[]catalystcentersd
 		respItem["issue_priority"] = item.IssuePriority
 		respItem["issue_summary"] = item.IssueSummary
 		respItem["issue_timestamp"] = item.IssueTimestamp
-		respItem["suggested_actions"] = flattenIssuesGetIssueEnrichmentDetailsV1ItemIssueSuggestedActions(item.SuggestedActions)
-		respItem["impacted_hosts"] = flattenIssuesGetIssueEnrichmentDetailsV1ItemIssueImpactedHosts(item.ImpactedHosts)
+		respItem["suggested_actions"] = flattenIssuesGetIssueEnrichmentDetailsItemIssueSuggestedActions(item.SuggestedActions)
+		respItem["impacted_hosts"] = flattenIssuesGetIssueEnrichmentDetailsItemIssueImpactedHosts(item.ImpactedHosts)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenIssuesGetIssueEnrichmentDetailsV1ItemIssueSuggestedActions(items *[]catalystcentersdkgo.ResponseIssuesGetIssueEnrichmentDetailsV1IssueDetailsIssueSuggestedActions) []map[string]interface{} {
+func flattenIssuesGetIssueEnrichmentDetailsItemIssueSuggestedActions(items *[]catalystcentersdkgo.ResponseIssuesGetIssueEnrichmentDetailsIssueDetailsIssueSuggestedActions) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -247,13 +261,13 @@ func flattenIssuesGetIssueEnrichmentDetailsV1ItemIssueSuggestedActions(items *[]
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["message"] = item.Message
-		respItem["steps"] = flattenIssuesGetIssueEnrichmentDetailsV1ItemIssueSuggestedActionsSteps(item.Steps)
+		respItem["steps"] = flattenIssuesGetIssueEnrichmentDetailsItemIssueSuggestedActionsSteps(item.Steps)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenIssuesGetIssueEnrichmentDetailsV1ItemIssueSuggestedActionsSteps(items *[]catalystcentersdkgo.ResponseIssuesGetIssueEnrichmentDetailsV1IssueDetailsIssueSuggestedActionsSteps) []interface{} {
+func flattenIssuesGetIssueEnrichmentDetailsItemIssueSuggestedActionsSteps(items *[]catalystcentersdkgo.ResponseIssuesGetIssueEnrichmentDetailsIssueDetailsIssueSuggestedActionsSteps) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -265,7 +279,7 @@ func flattenIssuesGetIssueEnrichmentDetailsV1ItemIssueSuggestedActionsSteps(item
 	return respItems
 }
 
-func flattenIssuesGetIssueEnrichmentDetailsV1ItemIssueImpactedHosts(items *[]catalystcentersdkgo.ResponseIssuesGetIssueEnrichmentDetailsV1IssueDetailsIssueImpactedHosts) []interface{} {
+func flattenIssuesGetIssueEnrichmentDetailsItemIssueImpactedHosts(items *[]catalystcentersdkgo.ResponseIssuesGetIssueEnrichmentDetailsIssueDetailsIssueImpactedHosts) []interface{} {
 	if items == nil {
 		return nil
 	}

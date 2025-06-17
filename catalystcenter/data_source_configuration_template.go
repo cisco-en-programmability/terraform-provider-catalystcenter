@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -1367,8 +1367,8 @@ func dataSourceConfigurationTemplateRead(ctx context.Context, d *schema.Resource
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetsTheTemplatesAvailableV1")
-		queryParams1 := catalystcentersdkgo.GetsTheTemplatesAvailableV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetsTheTemplatesAvailable")
+		queryParams1 := catalystcentersdkgo.GetsTheTemplatesAvailableQueryParams{}
 
 		if okProjectID {
 			queryParams1.ProjectID = vProjectID.(string)
@@ -1404,24 +1404,38 @@ func dataSourceConfigurationTemplateRead(ctx context.Context, d *schema.Resource
 			queryParams1.SortOrder = vSortOrder.(string)
 		}
 
-		response1, restyResp1, err := client.ConfigurationTemplates.GetsTheTemplatesAvailableV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.ConfigurationTemplates.GetsTheTemplatesAvailable(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetsTheTemplatesAvailableV1", err,
-				"Failure at GetsTheTemplatesAvailableV1, unexpected response", ""))
+				"Failure when executing 2 GetsTheTemplatesAvailable", err,
+				"Failure at GetsTheTemplatesAvailable, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenConfigurationTemplatesGetsTheTemplatesAvailableV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetsTheTemplatesAvailable", err,
+				"Failure at GetsTheTemplatesAvailable, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenConfigurationTemplatesGetsTheTemplatesAvailableItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetsTheTemplatesAvailableV1 response",
+				"Failure when setting GetsTheTemplatesAvailable response",
 				err))
 			return diags
 		}
@@ -1431,32 +1445,46 @@ func dataSourceConfigurationTemplateRead(ctx context.Context, d *schema.Resource
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetsDetailsOfAGivenTemplateV1")
+		log.Printf("[DEBUG] Selected method: GetsDetailsOfAGivenTemplate")
 		vvTemplateID := vTemplateID.(string)
-		queryParams2 := catalystcentersdkgo.GetsDetailsOfAGivenTemplateV1QueryParams{}
+		queryParams2 := catalystcentersdkgo.GetsDetailsOfAGivenTemplateQueryParams{}
 
 		if okLatestVersion {
 			queryParams2.LatestVersion = vLatestVersion.(bool)
 		}
 
-		response2, restyResp2, err := client.ConfigurationTemplates.GetsDetailsOfAGivenTemplateV1(vvTemplateID, &queryParams2)
+		// has_unknown_response: None
+
+		response2, restyResp2, err := client.ConfigurationTemplates.GetsDetailsOfAGivenTemplate(vvTemplateID, &queryParams2)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetsDetailsOfAGivenTemplateV1", err,
-				"Failure at GetsDetailsOfAGivenTemplateV1, unexpected response", ""))
+				"Failure when executing 2 GetsDetailsOfAGivenTemplate", err,
+				"Failure at GetsDetailsOfAGivenTemplate, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1Item(response2)
+		if err != nil || response2 == nil {
+			if restyResp2 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetsDetailsOfAGivenTemplate", err,
+				"Failure at GetsDetailsOfAGivenTemplate, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
+
+		vItem2 := flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItem(response2)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetsDetailsOfAGivenTemplateV1 response",
+				"Failure when setting GetsDetailsOfAGivenTemplate response",
 				err))
 			return diags
 		}
@@ -1468,7 +1496,7 @@ func dataSourceConfigurationTemplateRead(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func flattenConfigurationTemplatesGetsTheTemplatesAvailableV1Items(items *catalystcentersdkgo.ResponseConfigurationTemplatesGetsTheTemplatesAvailableV1) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsTheTemplatesAvailableItems(items *catalystcentersdkgo.ResponseConfigurationTemplatesGetsTheTemplatesAvailable) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1480,13 +1508,13 @@ func flattenConfigurationTemplatesGetsTheTemplatesAvailableV1Items(items *cataly
 		respItem["project_id"] = item.ProjectID
 		respItem["project_name"] = item.ProjectName
 		respItem["template_id"] = item.TemplateID
-		respItem["versions_info"] = flattenConfigurationTemplatesGetsTheTemplatesAvailableV1ItemsVersionsInfo(item.VersionsInfo)
+		respItem["versions_info"] = flattenConfigurationTemplatesGetsTheTemplatesAvailableItemsVersionsInfo(item.VersionsInfo)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenConfigurationTemplatesGetsTheTemplatesAvailableV1ItemsVersionsInfo(items *[]catalystcentersdkgo.ResponseItemConfigurationTemplatesGetsTheTemplatesAvailableV1VersionsInfo) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsTheTemplatesAvailableItemsVersionsInfo(items *[]catalystcentersdkgo.ResponseItemConfigurationTemplatesGetsTheTemplatesAvailableVersionsInfo) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1504,19 +1532,19 @@ func flattenConfigurationTemplatesGetsTheTemplatesAvailableV1ItemsVersionsInfo(i
 	return respItems
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1Item(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItem(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplate) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["tags"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemTags(item.Tags)
+	respItem["tags"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemTags(item.Tags)
 	respItem["author"] = item.Author
 	respItem["composite"] = boolPtrToString(item.Composite)
-	respItem["containing_templates"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTemplates(item.ContainingTemplates)
+	respItem["containing_templates"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemContainingTemplates(item.ContainingTemplates)
 	respItem["create_time"] = item.CreateTime
 	respItem["custom_params_order"] = boolPtrToString(item.CustomParamsOrder)
 	respItem["description"] = item.Description
-	respItem["device_types"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemDeviceTypes(item.DeviceTypes)
+	respItem["device_types"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemDeviceTypes(item.DeviceTypes)
 	respItem["failure_policy"] = item.FailurePolicy
 	respItem["id"] = item.ID
 	respItem["language"] = item.Language
@@ -1527,20 +1555,20 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1Item(item *cataly
 	respItem["project_id"] = item.ProjectID
 	respItem["project_name"] = item.ProjectName
 	respItem["rollback_template_content"] = item.RollbackTemplateContent
-	respItem["rollback_template_params"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemRollbackTemplateParams(item.RollbackTemplateParams)
+	respItem["rollback_template_params"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemRollbackTemplateParams(item.RollbackTemplateParams)
 	respItem["software_type"] = item.SoftwareType
 	respItem["software_variant"] = item.SoftwareVariant
 	respItem["software_version"] = item.SoftwareVersion
 	respItem["template_content"] = item.TemplateContent
-	respItem["template_params"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemTemplateParams(item.TemplateParams)
-	respItem["validation_errors"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemValidationErrors(item.ValidationErrors)
+	respItem["template_params"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemTemplateParams(item.TemplateParams)
+	respItem["validation_errors"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemValidationErrors(item.ValidationErrors)
 	respItem["version"] = item.Version
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemTags(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1Tags) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemTags(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateTags) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1554,31 +1582,31 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemTags(items *[
 	return respItems
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTemplates(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ContainingTemplates) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemContainingTemplates(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateContainingTemplates) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["tags"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTemplatesTags(item.Tags)
+		respItem["tags"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemContainingTemplatesTags(item.Tags)
 		respItem["composite"] = boolPtrToString(item.Composite)
 		respItem["description"] = item.Description
-		respItem["device_types"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTemplatesDeviceTypes(item.DeviceTypes)
+		respItem["device_types"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemContainingTemplatesDeviceTypes(item.DeviceTypes)
 		respItem["id"] = item.ID
 		respItem["language"] = item.Language
 		respItem["name"] = item.Name
 		respItem["project_name"] = item.ProjectName
-		respItem["rollback_template_params"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTemplatesRollbackTemplateParams(item.RollbackTemplateParams)
+		respItem["rollback_template_params"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemContainingTemplatesRollbackTemplateParams(item.RollbackTemplateParams)
 		respItem["template_content"] = item.TemplateContent
-		respItem["template_params"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTemplatesTemplateParams(item.TemplateParams)
+		respItem["template_params"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemContainingTemplatesTemplateParams(item.TemplateParams)
 		respItem["version"] = item.Version
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTemplatesTags(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ContainingTemplatesTags) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemContainingTemplatesTags(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateContainingTemplatesTags) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1592,7 +1620,7 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTem
 	return respItems
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTemplatesDeviceTypes(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ContainingTemplatesDeviceTypes) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemContainingTemplatesDeviceTypes(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateContainingTemplatesDeviceTypes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1607,7 +1635,7 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTem
 	return respItems
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTemplatesRollbackTemplateParams(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ContainingTemplatesRollbackTemplateParams) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemContainingTemplatesRollbackTemplateParams(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateContainingTemplatesRollbackTemplateParams) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1629,15 +1657,15 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTem
 		respItem["param_array"] = boolPtrToString(item.ParamArray)
 		respItem["parameter_name"] = item.ParameterName
 		respItem["provider"] = item.Provider
-		respItem["range"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTemplatesRollbackTemplateParamsRange(item.Range)
+		respItem["range"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemContainingTemplatesRollbackTemplateParamsRange(item.Range)
 		respItem["required"] = boolPtrToString(item.Required)
-		respItem["selection"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTemplatesRollbackTemplateParamsSelection(item.Selection)
+		respItem["selection"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemContainingTemplatesRollbackTemplateParamsSelection(item.Selection)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTemplatesRollbackTemplateParamsRange(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ContainingTemplatesRollbackTemplateParamsRange) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemContainingTemplatesRollbackTemplateParamsRange(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateContainingTemplatesRollbackTemplateParamsRange) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1652,7 +1680,7 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTem
 	return respItems
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTemplatesRollbackTemplateParamsSelection(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ContainingTemplatesRollbackTemplateParamsSelection) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemContainingTemplatesRollbackTemplateParamsSelection(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateContainingTemplatesRollbackTemplateParamsSelection) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1660,7 +1688,7 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTem
 	respItem["default_selected_values"] = item.DefaultSelectedValues
 	respItem["id"] = item.ID
 	respItem["selection_type"] = item.SelectionType
-	respItem["selection_values"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTemplatesRollbackTemplateParamsSelectionSelectionValues(item.SelectionValues)
+	respItem["selection_values"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemContainingTemplatesRollbackTemplateParamsSelectionSelectionValues(item.SelectionValues)
 
 	return []map[string]interface{}{
 		respItem,
@@ -1668,7 +1696,7 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTem
 
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTemplatesRollbackTemplateParamsSelectionSelectionValues(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ContainingTemplatesRollbackTemplateParamsSelectionSelectionValues) interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemContainingTemplatesRollbackTemplateParamsSelectionSelectionValues(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateContainingTemplatesRollbackTemplateParamsSelectionSelectionValues) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1678,7 +1706,7 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTem
 
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTemplatesTemplateParams(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ContainingTemplatesTemplateParams) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemContainingTemplatesTemplateParams(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateContainingTemplatesTemplateParams) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1700,15 +1728,15 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTem
 		respItem["param_array"] = boolPtrToString(item.ParamArray)
 		respItem["parameter_name"] = item.ParameterName
 		respItem["provider"] = item.Provider
-		respItem["range"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTemplatesTemplateParamsRange(item.Range)
+		respItem["range"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemContainingTemplatesTemplateParamsRange(item.Range)
 		respItem["required"] = boolPtrToString(item.Required)
-		respItem["selection"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTemplatesTemplateParamsSelection(item.Selection)
+		respItem["selection"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemContainingTemplatesTemplateParamsSelection(item.Selection)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTemplatesTemplateParamsRange(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ContainingTemplatesTemplateParamsRange) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemContainingTemplatesTemplateParamsRange(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateContainingTemplatesTemplateParamsRange) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1723,7 +1751,7 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTem
 	return respItems
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTemplatesTemplateParamsSelection(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ContainingTemplatesTemplateParamsSelection) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemContainingTemplatesTemplateParamsSelection(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateContainingTemplatesTemplateParamsSelection) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1731,7 +1759,7 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTem
 	respItem["default_selected_values"] = item.DefaultSelectedValues
 	respItem["id"] = item.ID
 	respItem["selection_type"] = item.SelectionType
-	respItem["selection_values"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTemplatesTemplateParamsSelectionSelectionValues(item.SelectionValues)
+	respItem["selection_values"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemContainingTemplatesTemplateParamsSelectionSelectionValues(item.SelectionValues)
 
 	return []map[string]interface{}{
 		respItem,
@@ -1739,7 +1767,7 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTem
 
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTemplatesTemplateParamsSelectionSelectionValues(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ContainingTemplatesTemplateParamsSelectionSelectionValues) interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemContainingTemplatesTemplateParamsSelectionSelectionValues(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateContainingTemplatesTemplateParamsSelectionSelectionValues) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1749,7 +1777,7 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemContainingTem
 
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemDeviceTypes(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1DeviceTypes) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemDeviceTypes(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateDeviceTypes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1764,7 +1792,7 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemDeviceTypes(i
 	return respItems
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemRollbackTemplateParams(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1RollbackTemplateParams) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemRollbackTemplateParams(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateRollbackTemplateParams) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1786,15 +1814,15 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemRollbackTempl
 		respItem["param_array"] = boolPtrToString(item.ParamArray)
 		respItem["parameter_name"] = item.ParameterName
 		respItem["provider"] = item.Provider
-		respItem["range"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemRollbackTemplateParamsRange(item.Range)
+		respItem["range"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemRollbackTemplateParamsRange(item.Range)
 		respItem["required"] = boolPtrToString(item.Required)
-		respItem["selection"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemRollbackTemplateParamsSelection(item.Selection)
+		respItem["selection"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemRollbackTemplateParamsSelection(item.Selection)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemRollbackTemplateParamsRange(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1RollbackTemplateParamsRange) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemRollbackTemplateParamsRange(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateRollbackTemplateParamsRange) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1809,7 +1837,7 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemRollbackTempl
 	return respItems
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemRollbackTemplateParamsSelection(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1RollbackTemplateParamsSelection) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemRollbackTemplateParamsSelection(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateRollbackTemplateParamsSelection) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1817,7 +1845,7 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemRollbackTempl
 	respItem["default_selected_values"] = item.DefaultSelectedValues
 	respItem["id"] = item.ID
 	respItem["selection_type"] = item.SelectionType
-	respItem["selection_values"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemRollbackTemplateParamsSelectionSelectionValues(item.SelectionValues)
+	respItem["selection_values"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemRollbackTemplateParamsSelectionSelectionValues(item.SelectionValues)
 
 	return []map[string]interface{}{
 		respItem,
@@ -1825,7 +1853,7 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemRollbackTempl
 
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemRollbackTemplateParamsSelectionSelectionValues(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1RollbackTemplateParamsSelectionSelectionValues) interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemRollbackTemplateParamsSelectionSelectionValues(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateRollbackTemplateParamsSelectionSelectionValues) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1835,7 +1863,7 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemRollbackTempl
 
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemTemplateParams(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1TemplateParams) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemTemplateParams(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateTemplateParams) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1857,15 +1885,15 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemTemplateParam
 		respItem["param_array"] = boolPtrToString(item.ParamArray)
 		respItem["parameter_name"] = item.ParameterName
 		respItem["provider"] = item.Provider
-		respItem["range"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemTemplateParamsRange(item.Range)
+		respItem["range"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemTemplateParamsRange(item.Range)
 		respItem["required"] = boolPtrToString(item.Required)
-		respItem["selection"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemTemplateParamsSelection(item.Selection)
+		respItem["selection"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemTemplateParamsSelection(item.Selection)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemTemplateParamsRange(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1TemplateParamsRange) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemTemplateParamsRange(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateTemplateParamsRange) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1880,7 +1908,7 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemTemplateParam
 	return respItems
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemTemplateParamsSelection(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1TemplateParamsSelection) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemTemplateParamsSelection(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateTemplateParamsSelection) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1888,7 +1916,7 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemTemplateParam
 	respItem["default_selected_values"] = item.DefaultSelectedValues
 	respItem["id"] = item.ID
 	respItem["selection_type"] = item.SelectionType
-	respItem["selection_values"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemTemplateParamsSelectionSelectionValues(item.SelectionValues)
+	respItem["selection_values"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemTemplateParamsSelectionSelectionValues(item.SelectionValues)
 
 	return []map[string]interface{}{
 		respItem,
@@ -1896,7 +1924,7 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemTemplateParam
 
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemTemplateParamsSelectionSelectionValues(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1TemplateParamsSelectionSelectionValues) interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemTemplateParamsSelectionSelectionValues(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateTemplateParamsSelectionSelectionValues) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1906,13 +1934,13 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemTemplateParam
 
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemValidationErrors(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ValidationErrors) []map[string]interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemValidationErrors(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateValidationErrors) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["rollback_template_errors"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemValidationErrorsRollbackTemplateErrors(item.RollbackTemplateErrors)
-	respItem["template_errors"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemValidationErrorsTemplateErrors(item.TemplateErrors)
+	respItem["rollback_template_errors"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemValidationErrorsRollbackTemplateErrors(item.RollbackTemplateErrors)
+	respItem["template_errors"] = flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemValidationErrorsTemplateErrors(item.TemplateErrors)
 	respItem["template_id"] = item.TemplateID
 	respItem["template_version"] = item.TemplateVersion
 
@@ -1922,7 +1950,7 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemValidationErr
 
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemValidationErrorsRollbackTemplateErrors(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ValidationErrorsRollbackTemplateErrors) interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemValidationErrorsRollbackTemplateErrors(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateValidationErrorsRollbackTemplateErrors) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1932,7 +1960,7 @@ func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemValidationErr
 
 }
 
-func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ItemValidationErrorsTemplateErrors(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateV1ValidationErrorsTemplateErrors) interface{} {
+func flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItemValidationErrorsTemplateErrors(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplateValidationErrorsTemplateErrors) interface{} {
 	if item == nil {
 		return nil
 	}

@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -255,13 +255,13 @@ func resourceDhcpServicesQueryCreate(ctx context.Context, d *schema.ResourceData
 
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
-	request1 := expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1(ctx, "parameters.0", d)
+	request1 := expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFilters(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.RetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1HeaderParams{}
+	headerParams1 := catalystcentersdkgo.RetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersHeaderParams{}
 
 	headerParams1.XCaLLERID = vXCaLLERID.(string)
 
-	response1, restyResp1, err := client.Devices.RetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1(request1, &headerParams1)
+	response1, restyResp1, err := client.Devices.RetrievesTheListOfDHCPServicesForGivenSetOfComplexFilters(request1, &headerParams1)
 
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
@@ -279,7 +279,7 @@ func resourceDhcpServicesQueryCreate(ctx context.Context, d *schema.ResourceData
 
 	//Analizar verificacion.
 
-	vItems1 := flattenDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1Items(response1.Response)
+	vItems1 := flattenDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersItems(response1.Response)
 	if err := d.Set("items", vItems1); err != nil {
 		diags = append(diags, diagError(
 			"Failure when setting RetrievesTheListOfDHCPServicesForGivenSetOfComplexFilters response",
@@ -303,8 +303,9 @@ func resourceDhcpServicesQueryDelete(ctx context.Context, d *schema.ResourceData
 	var diags diag.Diagnostics
 	return diags
 }
-func expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1 {
-	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1{}
+
+func expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFilters {
+	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -312,16 +313,16 @@ func expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfCo
 		request.EndTime = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1FiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersFiltersArray(ctx, key+".filters", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".page")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".page")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".page")))) {
-		request.Page = expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1Page(ctx, key+".page.0", d)
+		request.Page = expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersPage(ctx, key+".page.0", d)
 	}
 	return &request
 }
 
-func expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1Filters {
-	request := []catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1Filters{}
+func expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersFilters {
+	request := []catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -332,7 +333,7 @@ func expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfCo
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -340,8 +341,8 @@ func expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfCo
 	return &request
 }
 
-func expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1Filters {
-	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1Filters{}
+func expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersFilters {
+	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -354,8 +355,8 @@ func expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfCo
 	return &request
 }
 
-func expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1Page(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1Page {
-	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1Page{}
+func expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersPage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersPage {
+	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersPage{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".limit")))) {
 		request.Limit = interfaceToIntPtr(v)
 	}
@@ -363,13 +364,13 @@ func expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfCo
 		request.Offset = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".sort_by")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".sort_by")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".sort_by")))) {
-		request.SortBy = expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1PageSortByArray(ctx, key+".sort_by", d)
+		request.SortBy = expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersPageSortByArray(ctx, key+".sort_by", d)
 	}
 	return &request
 }
 
-func expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1PageSortByArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1PageSortBy {
-	request := []catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1PageSortBy{}
+func expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersPageSortByArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersPageSortBy {
+	request := []catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersPageSortBy{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -380,7 +381,7 @@ func expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfCo
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1PageSortBy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersPageSortBy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -388,8 +389,8 @@ func expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfCo
 	return &request
 }
 
-func expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1PageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1PageSortBy {
-	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1PageSortBy{}
+func expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersPageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersPageSortBy {
+	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersPageSortBy{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -399,7 +400,7 @@ func expandRequestDhcpServicesQueryRetrievesTheListOfDHCPServicesForGivenSetOfCo
 	return &request
 }
 
-func flattenDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1Items(items *[]catalystcentersdkgo.ResponseDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersV1Response) []map[string]interface{} {
+func flattenDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersItems(items *[]catalystcentersdkgo.ResponseDevicesRetrievesTheListOfDHCPServicesForGivenSetOfComplexFiltersResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

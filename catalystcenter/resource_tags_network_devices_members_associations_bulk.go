@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -12,7 +13,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -25,7 +26,7 @@ func resourceTagsNetworkDevicesMembersAssociationsBulk() *schema.Resource {
 
 - Updates the tags associated with the devices. A tag is a user-defined or system-defined construct to group resources.
 When a device is tagged, it is called a member of the tag. A tag can be created by using this POST
-/dna/intent/api/v1/tag API.
+**/dna/intent/api/v1/tag** API.
 `,
 
 		CreateContext: resourceTagsNetworkDevicesMembersAssociationsBulkCreate,
@@ -66,7 +67,7 @@ When a device is tagged, it is called a member of the tag. A tag can be created 
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"payload": &schema.Schema{
-							Description: `Array of RequestTagUpdateTagsAssociatedWithTheNetworkDevicesV1`,
+							Description: `Array of RequestTagUpdateTagsAssociatedWithTheNetworkDevices`,
 							Type:        schema.TypeList,
 							Optional:    true,
 							ForceNew:    true,
@@ -114,32 +115,31 @@ When a device is tagged, it is called a member of the tag. A tag can be created 
 func resourceTagsNetworkDevicesMembersAssociationsBulkCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
-	request1 := expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedWithTheNetworkDevicesV1(ctx, "parameters.0", d)
 
-	// has_unknown_response: None
+	request1 := expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedWithTheNetworkDevices(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.Tag.UpdateTagsAssociatedWithTheNetworkDevicesV1(request1)
+	response1, restyResp1, err := client.Tag.UpdateTagsAssociatedWithTheNetworkDevices(request1)
 
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
 
-	vItem1 := flattenTagUpdateTagsAssociatedWithTheNetworkDevicesV1Item(response1.Response)
-	if err := d.Set("item", vItem1); err != nil {
-		diags = append(diags, diagError(
-			"Failure when setting UpdateTagsAssociatedWithTheNetworkDevicesV1 response",
-			err))
+	if err != nil || response1 == nil {
+		if restyResp1 != nil {
+			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+		}
+		d.SetId("")
 		return diags
 	}
 
-	d.SetId(getUnixTimeString())
-	return diags
+	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing UpdateTagsAssociatedWithTheNetworkDevicesV1", err))
+			"Failure when executing UpdateTagsAssociatedWithTheNetworkDevices", err))
 		return diags
 	}
+
 	taskId := response1.Response.TaskID
 	log.Printf("[DEBUG] TASKID => %s", taskId)
 	if taskId != "" {
@@ -164,53 +164,52 @@ func resourceTagsNetworkDevicesMembersAssociationsBulkCreate(ctx context.Context
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing UpdateTagsAssociatedWithTheNetworkDevicesV1", err1))
+				"Failure when executing UpdateTagsAssociatedWithTheNetworkDevices", err1))
 			return diags
 		}
 	}
 
-	if err != nil || response1 == nil {
-		if restyResp1 != nil {
-			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
-		}
-		d.SetId("")
+	vItem1 := flattenTagUpdateTagsAssociatedWithTheNetworkDevicesItem(response1.Response)
+	if err := d.Set("item", vItem1); err != nil {
+		diags = append(diags, diagError(
+			"Failure when setting UpdateTagsAssociatedWithTheNetworkDevices response",
+			err))
 		return diags
 	}
 
-	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 	d.SetId(getUnixTimeString())
 	return diags
 }
 func resourceTagsNetworkDevicesMembersAssociationsBulkRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 	return diags
 }
 
 func resourceTagsNetworkDevicesMembersAssociationsBulkDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 	return diags
 }
 
-func expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedWithTheNetworkDevicesV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagUpdateTagsAssociatedWithTheNetworkDevicesV1 {
-	request := catalystcentersdkgo.RequestTagUpdateTagsAssociatedWithTheNetworkDevicesV1{}
-	if v := expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedWithTheNetworkDevicesV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedWithTheNetworkDevices(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagUpdateTagsAssociatedWithTheNetworkDevices {
+	request := catalystcentersdkgo.RequestTagUpdateTagsAssociatedWithTheNetworkDevices{}
+	if v := expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedWithTheNetworkDevicesItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	return &request
 }
 
-func expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedWithTheNetworkDevicesV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheNetworkDevicesV1 {
-	request := []catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheNetworkDevicesV1{}
+func expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedWithTheNetworkDevicesItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheNetworkDevices {
+	request := []catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheNetworkDevices{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -221,7 +220,7 @@ func expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedW
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedWithTheNetworkDevicesV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedWithTheNetworkDevicesItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -229,19 +228,19 @@ func expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedW
 	return &request
 }
 
-func expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedWithTheNetworkDevicesV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheNetworkDevicesV1 {
-	request := catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheNetworkDevicesV1{}
+func expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedWithTheNetworkDevicesItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheNetworkDevices {
+	request := catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheNetworkDevices{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tags")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tags")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tags")))) {
-		request.Tags = expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedWithTheNetworkDevicesV1ItemTagsArray(ctx, key+".tags", d)
+		request.Tags = expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedWithTheNetworkDevicesItemTagsArray(ctx, key+".tags", d)
 	}
 	return &request
 }
 
-func expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedWithTheNetworkDevicesV1ItemTagsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheNetworkDevicesV1Tags {
-	request := []catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheNetworkDevicesV1Tags{}
+func expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedWithTheNetworkDevicesItemTagsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheNetworkDevicesTags {
+	request := []catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheNetworkDevicesTags{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -252,7 +251,7 @@ func expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedW
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedWithTheNetworkDevicesV1ItemTags(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedWithTheNetworkDevicesItemTags(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -260,15 +259,15 @@ func expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedW
 	return &request
 }
 
-func expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedWithTheNetworkDevicesV1ItemTags(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheNetworkDevicesV1Tags {
-	request := catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheNetworkDevicesV1Tags{}
+func expandRequestTagsNetworkDevicesMembersAssociationsBulkUpdateTagsAssociatedWithTheNetworkDevicesItemTags(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheNetworkDevicesTags {
+	request := catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheNetworkDevicesTags{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
 	return &request
 }
 
-func flattenTagUpdateTagsAssociatedWithTheNetworkDevicesV1Item(item *catalystcentersdkgo.ResponseTagUpdateTagsAssociatedWithTheNetworkDevicesV1Response) []map[string]interface{} {
+func flattenTagUpdateTagsAssociatedWithTheNetworkDevicesItem(item *catalystcentersdkgo.ResponseTagUpdateTagsAssociatedWithTheNetworkDevicesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

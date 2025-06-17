@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -126,31 +126,45 @@ func dataSourceNetworkRead(ctx context.Context, d *schema.ResourceData, m interf
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetNetworkV1")
-		queryParams1 := catalystcentersdkgo.GetNetworkV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetNetwork")
+		queryParams1 := catalystcentersdkgo.GetNetworkQueryParams{}
 
 		if okSiteID {
 			queryParams1.SiteID = vSiteID.(string)
 		}
 
-		response1, restyResp1, err := client.NetworkSettings.GetNetworkV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.NetworkSettings.GetNetwork(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetNetworkV1", err,
-				"Failure at GetNetworkV1, unexpected response", ""))
+				"Failure when executing 2 GetNetwork", err,
+				"Failure at GetNetwork, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenNetworkSettingsGetNetworkV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetNetwork", err,
+				"Failure at GetNetwork, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenNetworkSettingsGetNetworkItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetNetworkV1 response",
+				"Failure when setting GetNetwork response",
 				err))
 			return diags
 		}
@@ -162,7 +176,7 @@ func dataSourceNetworkRead(ctx context.Context, d *schema.ResourceData, m interf
 	return diags
 }
 
-func flattenNetworkSettingsGetNetworkV1Items(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetNetworkV1Response) []map[string]interface{} {
+func flattenNetworkSettingsGetNetworkItems(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetNetworkResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -175,7 +189,7 @@ func flattenNetworkSettingsGetNetworkV1Items(items *[]catalystcentersdkgo.Respon
 		respItem["type"] = item.Type
 		respItem["key"] = item.Key
 		respItem["version"] = item.Version
-		respItem["value"] = flattenNetworkSettingsGetNetworkV1ItemsValue(item.Value)
+		respItem["value"] = flattenNetworkSettingsGetNetworkItemsValue(item.Value)
 		respItem["group_uuid"] = item.GroupUUID
 		respItem["inherited_group_uuid"] = item.InheritedGroupUUID
 		respItem["inherited_group_name"] = item.InheritedGroupName
@@ -184,7 +198,7 @@ func flattenNetworkSettingsGetNetworkV1Items(items *[]catalystcentersdkgo.Respon
 	return respItems
 }
 
-func flattenNetworkSettingsGetNetworkV1ItemsValue(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetNetworkV1ResponseValue) []map[string]interface{} {
+func flattenNetworkSettingsGetNetworkItemsValue(items *[]catalystcentersdkgo.ResponseNetworkSettingsGetNetworkResponseValue) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

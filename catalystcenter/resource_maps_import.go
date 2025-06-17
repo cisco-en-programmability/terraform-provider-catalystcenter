@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -27,13 +27,6 @@ ensures the import cannot accidentally be performed / approved at a later time.
 			"last_updated": &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
-			},
-			"item": &schema.Schema{
-				Type:     schema.TypeList,
-				Computed: true,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
 			},
 			"parameters": &schema.Schema{
 				Type:     schema.TypeList,
@@ -69,14 +62,14 @@ func resourceMapsImportCreate(ctx context.Context, d *schema.ResourceData, m int
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Sites.ImportMapArchiveCancelAnImportV1(vvImportContextUUID)
+	response1, restyResp1, err := client.Sites.ImportMapArchiveCancelAnImport(vvImportContextUUID)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ImportMapArchiveCancelAnImportV1", err))
+			"Failure when executing ImportMapArchiveCancelAnImport", err))
 		return diags
 	}
 
@@ -84,7 +77,7 @@ func resourceMapsImportCreate(ctx context.Context, d *schema.ResourceData, m int
 
 	if err := d.Set("item", response1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ImportMapArchiveCancelAnImportV1 response",
+			"Failure when setting ImportMapArchiveCancelAnImport response",
 			err))
 		return diags
 	}

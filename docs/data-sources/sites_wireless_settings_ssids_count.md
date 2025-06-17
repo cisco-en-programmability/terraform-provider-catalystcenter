@@ -4,14 +4,14 @@ page_title: "catalystcenter_sites_wireless_settings_ssids_count Data Source - te
 subcategory: ""
 description: |-
   It performs read operation on Wireless.
-  This data source allows the user to get count of all SSIDs (Service Set Identifier) present at global site.
+  This data source allows the user to get count of all SSIDs (Service Set Identifier) .
 ---
 
 # catalystcenter_sites_wireless_settings_ssids_count (Data Source)
 
 It performs read operation on Wireless.
 
-- This data source allows the user to get count of all SSIDs (Service Set Identifier) present at global site.
+- This data source allows the user to get count of all SSIDs (Service Set Identifier) .
 
 ## Example Usage
 
@@ -33,6 +33,10 @@ output "catalystcenter_sites_wireless_settings_ssids_count_example" {
 ### Required
 
 - `site_id` (String) siteId path parameter. Site UUID
+
+### Optional
+
+- `inherited` (Boolean) _inherited query parameter. This query parameter indicates whether the current SSID count at the given 'siteId' is of the SSID(s) it is inheriting or count of non-inheriting SSID(s)
 
 ### Read-Only
 

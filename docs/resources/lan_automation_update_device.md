@@ -14,6 +14,8 @@ It performs update operation on LAN Automation.
 
 - Invoke this API to perform a DAY-N update on LAN Automation-related devices. Supported features include Loopback0 IP
 update, hostname update, link addition, and link deletion.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -24,27 +26,27 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_lan_automation_update_device" "example" {
   provider = catalystcenter
   feature  = "string"
-  parameters {
+  parameters = [{
 
-    hostname_update_devices {
+    hostname_update_devices = [{
 
       device_management_ipaddress = "string"
       new_host_name               = "string"
-    }
-    link_update {
+    }]
+    link_update = [{
 
       destination_device_interface_name       = "string"
       destination_device_management_ipaddress = "string"
       ip_pool_name                            = "string"
       source_device_interface_name            = "string"
       source_device_management_ipaddress      = "string"
-    }
-    loopback_update_device_list {
+    }]
+    loopback_update_device_list = [{
 
       device_management_ipaddress = "string"
       new_loopback0_ipaddress     = "string"
-    }
-  }
+    }]
+  }]
 }
 
 output "catalystcenter_lan_automation_update_device_example" {
@@ -94,7 +96,7 @@ Optional:
 
 - `destination_device_interface_name` (String) Destination Device Interface Name
 - `destination_device_management_ipaddress` (String) Destination Device Management IP Address
-- `ip_pool_name` (String) Name of the IP LAN Pool, required for Link Add should be from discovery site of source and destination device.
+- `ip_pool_name` (String) Name of the IP LAN Pool, required for Link Add should be from discovery site of source and destination device. It is optional for Link Delete.
 - `source_device_interface_name` (String) Source Device Interface Name
 - `source_device_management_ipaddress` (String) Source Device Management IP Address
 

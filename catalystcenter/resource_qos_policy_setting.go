@@ -6,7 +6,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -104,7 +104,7 @@ func resourceQosPolicySettingRead(ctx context.Context, d *schema.ResourceData, m
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenApplicationPolicyRetrievesTheApplicationQoSPolicySettingV1Item(response1.Response)
+		vItem1 := flattenApplicationPolicyRetrievesTheApplicationQoSPolicySettingItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrievesTheApplicationQoSPolicySetting response",
@@ -150,12 +150,13 @@ func resourceQosPolicySettingUpdate(ctx context.Context, d *schema.ResourceData,
 
 func resourceQosPolicySettingDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	// NOTE: Unable to delete QosPolicySetting on Dna Center
+	// NOTE: Unable to delete QosPolicySetting on Catalyst Center
 	//       Returning empty diags to delete it on Terraform
 	return diags
 }
-func expandRequestQosPolicySettingUpdatesTheApplicationQoSPolicySetting(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyUpdatesTheApplicationQoSPolicySettingV1 {
-	request := catalystcentersdkgo.RequestApplicationPolicyUpdatesTheApplicationQoSPolicySettingV1{}
+
+func expandRequestQosPolicySettingUpdatesTheApplicationQoSPolicySetting(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyUpdatesTheApplicationQoSPolicySetting {
+	request := catalystcentersdkgo.RequestApplicationPolicyUpdatesTheApplicationQoSPolicySetting{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".deploy_by_default_on_wired_devices")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".deploy_by_default_on_wired_devices")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".deploy_by_default_on_wired_devices")))) {
 		request.DeployByDefaultOnWiredDevices = interfaceToBoolPtr(v)
 	}

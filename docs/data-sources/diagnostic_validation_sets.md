@@ -43,7 +43,7 @@ output "catalystcenter_diagnostic_validation_sets_example" {
 ### Optional
 
 - `id` (String) id path parameter. Validation set id
-- `view` (String) view query parameter. When the query parameter *view=DETAIL* is passed, all validation sets and associated validations will be returned. When the query parameter *view=DEFAULT* is passed, only validation sets metadata will be returned.
+- `view` (String) view query parameter. When the query parameter **view=DETAIL** is passed, all validation sets and associated validations will be returned. When the query parameter **view=DEFAULT** is passed, only validation sets metadata will be returned.
 
 ### Read-Only
 

@@ -12,8 +12,8 @@ description: |-
 
 It performs read operation on Wireless.
 
-- This endpoint retrieves the details of a specific Site Tag associated with a given Wireless Profile. This data
-source requires the id of the Wireless Profile and the siteTagId of the Site Tag.
+- This endpoint retrieves the details of a specific **Site Tag** associated with a given **Wireless Profile**. This data
+source requires the **id** of the **Wireless Profile** and the **siteTagId** of the **Site Tag**.
 
 ## Example Usage
 

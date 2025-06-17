@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -27,7 +27,7 @@ func dataSourcePlannedAccessPoints() *schema.Resource {
 				Required: true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter. The page size limit for the response, e.g. limit=100 will return a maximum of 100 records
+				Description: `limit query parameter. The number of records to show for this page;The minimum is 1, and the maximum is 500.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -355,9 +355,9 @@ func dataSourcePlannedAccessPointsRead(ctx context.Context, d *schema.ResourceDa
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetPlannedAccessPointsForFloorV1")
+		log.Printf("[DEBUG] Selected method: GetPlannedAccessPointsForFloor")
 		vvFloorID := vFloorID.(string)
-		queryParams1 := catalystcentersdkgo.GetPlannedAccessPointsForFloorV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetPlannedAccessPointsForFloorQueryParams{}
 
 		if okLimit {
 			queryParams1.Limit = vLimit.(float64)
@@ -369,24 +369,38 @@ func dataSourcePlannedAccessPointsRead(ctx context.Context, d *schema.ResourceDa
 			queryParams1.Radios = vRadios.(bool)
 		}
 
-		response1, restyResp1, err := client.Devices.GetPlannedAccessPointsForFloorV1(vvFloorID, &queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Devices.GetPlannedAccessPointsForFloor(vvFloorID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetPlannedAccessPointsForFloorV1", err,
-				"Failure at GetPlannedAccessPointsForFloorV1, unexpected response", ""))
+				"Failure when executing 2 GetPlannedAccessPointsForFloor", err,
+				"Failure at GetPlannedAccessPointsForFloor, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetPlannedAccessPointsForFloorV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetPlannedAccessPointsForFloor", err,
+				"Failure at GetPlannedAccessPointsForFloor, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDevicesGetPlannedAccessPointsForFloorItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetPlannedAccessPointsForFloorV1 response",
+				"Failure when setting GetPlannedAccessPointsForFloor response",
 				err))
 			return diags
 		}
@@ -398,25 +412,25 @@ func dataSourcePlannedAccessPointsRead(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func flattenDevicesGetPlannedAccessPointsForFloorV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetPlannedAccessPointsForFloorV1Response) []map[string]interface{} {
+func flattenDevicesGetPlannedAccessPointsForFloorItems(items *[]catalystcentersdkgo.ResponseDevicesGetPlannedAccessPointsForFloorResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["attributes"] = flattenDevicesGetPlannedAccessPointsForFloorV1ItemsAttributes(item.Attributes)
-		respItem["location"] = flattenDevicesGetPlannedAccessPointsForFloorV1ItemsLocation(item.Location)
-		respItem["position"] = flattenDevicesGetPlannedAccessPointsForFloorV1ItemsPosition(item.Position)
+		respItem["attributes"] = flattenDevicesGetPlannedAccessPointsForFloorItemsAttributes(item.Attributes)
+		respItem["location"] = flattenDevicesGetPlannedAccessPointsForFloorItemsLocation(item.Location)
+		respItem["position"] = flattenDevicesGetPlannedAccessPointsForFloorItemsPosition(item.Position)
 		respItem["radio_count"] = item.RadioCount
-		respItem["radios"] = flattenDevicesGetPlannedAccessPointsForFloorV1ItemsRadios(item.Radios)
+		respItem["radios"] = flattenDevicesGetPlannedAccessPointsForFloorItemsRadios(item.Radios)
 		respItem["is_sensor"] = boolPtrToString(item.IsSensor)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesGetPlannedAccessPointsForFloorV1ItemsAttributes(item *catalystcentersdkgo.ResponseDevicesGetPlannedAccessPointsForFloorV1ResponseAttributes) []map[string]interface{} {
+func flattenDevicesGetPlannedAccessPointsForFloorItemsAttributes(item *catalystcentersdkgo.ResponseDevicesGetPlannedAccessPointsForFloorResponseAttributes) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -437,7 +451,7 @@ func flattenDevicesGetPlannedAccessPointsForFloorV1ItemsAttributes(item *catalys
 
 }
 
-func flattenDevicesGetPlannedAccessPointsForFloorV1ItemsLocation(item *catalystcentersdkgo.ResponseDevicesGetPlannedAccessPointsForFloorV1ResponseLocation) []map[string]interface{} {
+func flattenDevicesGetPlannedAccessPointsForFloorItemsLocation(item *catalystcentersdkgo.ResponseDevicesGetPlannedAccessPointsForFloorResponseLocation) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -452,7 +466,7 @@ func flattenDevicesGetPlannedAccessPointsForFloorV1ItemsLocation(item *catalystc
 
 }
 
-func flattenDevicesGetPlannedAccessPointsForFloorV1ItemsPosition(item *catalystcentersdkgo.ResponseDevicesGetPlannedAccessPointsForFloorV1ResponsePosition) []map[string]interface{} {
+func flattenDevicesGetPlannedAccessPointsForFloorItemsPosition(item *catalystcentersdkgo.ResponseDevicesGetPlannedAccessPointsForFloorResponsePosition) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -467,22 +481,22 @@ func flattenDevicesGetPlannedAccessPointsForFloorV1ItemsPosition(item *catalystc
 
 }
 
-func flattenDevicesGetPlannedAccessPointsForFloorV1ItemsRadios(items *[]catalystcentersdkgo.ResponseDevicesGetPlannedAccessPointsForFloorV1ResponseRadios) []map[string]interface{} {
+func flattenDevicesGetPlannedAccessPointsForFloorItemsRadios(items *[]catalystcentersdkgo.ResponseDevicesGetPlannedAccessPointsForFloorResponseRadios) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["attributes"] = flattenDevicesGetPlannedAccessPointsForFloorV1ItemsRadiosAttributes(item.Attributes)
-		respItem["antenna"] = flattenDevicesGetPlannedAccessPointsForFloorV1ItemsRadiosAntenna(item.Antenna)
+		respItem["attributes"] = flattenDevicesGetPlannedAccessPointsForFloorItemsRadiosAttributes(item.Attributes)
+		respItem["antenna"] = flattenDevicesGetPlannedAccessPointsForFloorItemsRadiosAntenna(item.Antenna)
 		respItem["is_sensor"] = boolPtrToString(item.IsSensor)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesGetPlannedAccessPointsForFloorV1ItemsRadiosAttributes(item *catalystcentersdkgo.ResponseDevicesGetPlannedAccessPointsForFloorV1ResponseRadiosAttributes) []map[string]interface{} {
+func flattenDevicesGetPlannedAccessPointsForFloorItemsRadiosAttributes(item *catalystcentersdkgo.ResponseDevicesGetPlannedAccessPointsForFloorResponseRadiosAttributes) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -503,7 +517,7 @@ func flattenDevicesGetPlannedAccessPointsForFloorV1ItemsRadiosAttributes(item *c
 
 }
 
-func flattenDevicesGetPlannedAccessPointsForFloorV1ItemsRadiosAntenna(item *catalystcentersdkgo.ResponseDevicesGetPlannedAccessPointsForFloorV1ResponseRadiosAntenna) []map[string]interface{} {
+func flattenDevicesGetPlannedAccessPointsForFloorItemsRadiosAntenna(item *catalystcentersdkgo.ResponseDevicesGetPlannedAccessPointsForFloorResponseRadiosAntenna) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

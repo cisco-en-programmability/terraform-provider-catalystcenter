@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -911,12 +911,6 @@ AssuranceNetworkDevices-2.0.1-resolved.yaml
 													ForceNew:    true,
 													Computed:    true,
 												},
-												"overall_fabric_score": &schema.Schema{
-													Description: `Overall Fabric Score`,
-													Type:        schema.TypeInt,
-													ForceNew:    true,
-													Computed:    true,
-												},
 												"overall_health_score": &schema.Schema{
 													Description: `Overall Health Score`,
 													Type:        schema.TypeInt,
@@ -1344,27 +1338,31 @@ func resourceNetworkDevicesQueryCreate(ctx context.Context, d *schema.ResourceDa
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1(ctx, "parameters.0", d)
+	request1 := expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctions(ctx, "parameters.0", d)
 
-	// has_unknown_response: None
+	response1, restyResp1, err := client.Devices.GetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctions(request1)
 
-	response1, restyResp1, err := client.Devices.GetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1(request1)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing GetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1", err))
+			"Failure when executing GetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctions", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItems1 := flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1Items(response1.Response)
+	//Analizar verificacion.
+
+	vItems1 := flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsItems(response1.Response)
 	if err := d.Set("items", vItems1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting GetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1 response",
+			"Failure when setting GetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctions response",
 			err))
 		return diags
 	}
@@ -1386,8 +1384,8 @@ func resourceNetworkDevicesQueryDelete(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1 {
-	request := catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1{}
+func expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctions(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctions {
+	request := catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctions{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -1401,19 +1399,19 @@ func expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvid
 		request.Attributes = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1FiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsFiltersArray(ctx, key+".filters", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".aggregate_attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".aggregate_attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".aggregate_attributes")))) {
-		request.AggregateAttributes = expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1AggregateAttributesArray(ctx, key+".aggregate_attributes", d)
+		request.AggregateAttributes = expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsAggregateAttributesArray(ctx, key+".aggregate_attributes", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".page")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".page")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".page")))) {
-		request.Page = expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1Page(ctx, key+".page.0", d)
+		request.Page = expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsPage(ctx, key+".page.0", d)
 	}
 	return &request
 }
 
-func expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1Filters {
-	request := []catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1Filters{}
+func expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsFilters {
+	request := []catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1424,7 +1422,7 @@ func expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvid
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1432,8 +1430,8 @@ func expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvid
 	return &request
 }
 
-func expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1Filters {
-	request := catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1Filters{}
+func expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsFilters {
+	request := catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -1446,8 +1444,8 @@ func expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvid
 	return &request
 }
 
-func expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1AggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1AggregateAttributes {
-	request := []catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1AggregateAttributes{}
+func expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsAggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsAggregateAttributes {
+	request := []catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsAggregateAttributes{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1458,7 +1456,7 @@ func expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvid
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1AggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsAggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1466,8 +1464,8 @@ func expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvid
 	return &request
 }
 
-func expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1AggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1AggregateAttributes {
-	request := catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1AggregateAttributes{}
+func expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsAggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsAggregateAttributes {
+	request := catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsAggregateAttributes{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -1477,8 +1475,8 @@ func expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvid
 	return &request
 }
 
-func expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1Page(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1Page {
-	request := catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1Page{}
+func expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsPage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsPage {
+	request := catalystcentersdkgo.RequestDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsPage{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".limit")))) {
 		request.Limit = interfaceToIntPtr(v)
 	}
@@ -1494,7 +1492,7 @@ func expandRequestNetworkDevicesQueryGetsTheListOfNetworkDevicesBasedOnTheProvid
 	return &request
 }
 
-func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1Response) []map[string]interface{} {
+func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsItems(items *[]catalystcentersdkgo.ResponseDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1542,18 +1540,18 @@ func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAn
 		respItem["physical_port_count"] = item.PhysicalPortCount
 		respItem["virtual_port_count"] = item.VirtualPortCount
 		respItem["client_count"] = item.ClientCount
-		respItem["ap_details"] = flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ItemsApDetails(item.ApDetails)
-		respItem["metrics_details"] = flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ItemsMetricsDetails(item.MetricsDetails)
-		respItem["fabric_details"] = flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ItemsFabricDetails(item.FabricDetails)
-		respItem["switch_poe_details"] = flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ItemsSwitchPoeDetails(item.SwitchPoeDetails)
-		respItem["fabric_metrics_details"] = flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ItemsFabricMetricsDetails(item.FabricMetricsDetails)
-		respItem["aggregate_attributes"] = flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ItemsAggregateAttributes(item.AggregateAttributes)
+		respItem["ap_details"] = flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsItemsApDetails(item.ApDetails)
+		respItem["metrics_details"] = flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsItemsMetricsDetails(item.MetricsDetails)
+		respItem["fabric_details"] = flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsItemsFabricDetails(item.FabricDetails)
+		respItem["switch_poe_details"] = flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsItemsSwitchPoeDetails(item.SwitchPoeDetails)
+		respItem["fabric_metrics_details"] = flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsItemsFabricMetricsDetails(item.FabricMetricsDetails)
+		respItem["aggregate_attributes"] = flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsItemsAggregateAttributes(item.AggregateAttributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ItemsApDetails(item *catalystcentersdkgo.ResponseDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ResponseApDetails) []map[string]interface{} {
+func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsItemsApDetails(item *catalystcentersdkgo.ResponseDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsResponseApDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1584,7 +1582,7 @@ func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAn
 	respItem["flex_group"] = item.FlexGroup
 	respItem["power_calendar_profile"] = item.PowerCalendarProfile
 	respItem["ap_group"] = item.ApGroup
-	respItem["radios"] = flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ItemsApDetailsRadios(item.Radios)
+	respItem["radios"] = flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsItemsApDetailsRadios(item.Radios)
 
 	return []map[string]interface{}{
 		respItem,
@@ -1592,7 +1590,7 @@ func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAn
 
 }
 
-func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ItemsApDetailsRadios(items *[]catalystcentersdkgo.ResponseDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ResponseApDetailsRadios) []map[string]interface{} {
+func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsItemsApDetailsRadios(items *[]catalystcentersdkgo.ResponseDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsResponseApDetailsRadios) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1612,13 +1610,12 @@ func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAn
 	return respItems
 }
 
-func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ItemsMetricsDetails(item *catalystcentersdkgo.ResponseDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ResponseMetricsDetails) []map[string]interface{} {
+func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsItemsMetricsDetails(item *catalystcentersdkgo.ResponseDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsResponseMetricsDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["overall_health_score"] = item.OverallHealthScore
-	respItem["overall_fabric_score"] = item.OverallFabricScore
 	respItem["cpu_utilization"] = item.CPUUtilization
 	respItem["cpu_score"] = item.CPUScore
 	respItem["memory_utilization"] = item.MemoryUtilization
@@ -1653,7 +1650,7 @@ func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAn
 
 }
 
-func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ItemsFabricDetails(item *catalystcentersdkgo.ResponseDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ResponseFabricDetails) []map[string]interface{} {
+func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsItemsFabricDetails(item *catalystcentersdkgo.ResponseDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsResponseFabricDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1672,7 +1669,7 @@ func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAn
 
 }
 
-func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ItemsSwitchPoeDetails(item *catalystcentersdkgo.ResponseDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ResponseSwitchPoeDetails) []map[string]interface{} {
+func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsItemsSwitchPoeDetails(item *catalystcentersdkgo.ResponseDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsResponseSwitchPoeDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1690,7 +1687,7 @@ func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAn
 	respItem["poe_version"] = item.PoeVersion
 	respItem["chassis_count"] = item.ChassisCount
 	respItem["module_count"] = item.ModuleCount
-	respItem["module_details"] = flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ItemsSwitchPoeDetailsModuleDetails(item.ModuleDetails)
+	respItem["module_details"] = flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsItemsSwitchPoeDetailsModuleDetails(item.ModuleDetails)
 
 	return []map[string]interface{}{
 		respItem,
@@ -1698,7 +1695,7 @@ func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAn
 
 }
 
-func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ItemsSwitchPoeDetailsModuleDetails(items *[]catalystcentersdkgo.ResponseDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ResponseSwitchPoeDetailsModuleDetails) []map[string]interface{} {
+func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsItemsSwitchPoeDetailsModuleDetails(items *[]catalystcentersdkgo.ResponseDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsResponseSwitchPoeDetailsModuleDetails) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1723,7 +1720,7 @@ func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAn
 	return respItems
 }
 
-func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ItemsFabricMetricsDetails(item *catalystcentersdkgo.ResponseDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ResponseFabricMetricsDetails) []map[string]interface{} {
+func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsItemsFabricMetricsDetails(item *catalystcentersdkgo.ResponseDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsResponseFabricMetricsDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1768,7 +1765,7 @@ func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAn
 
 }
 
-func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ItemsAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsV1ResponseAggregateAttributes) []map[string]interface{} {
+func flattenDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsItemsAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetsTheListOfNetworkDevicesBasedOnTheProvidedComplexFiltersAndAggregationFunctionsResponseAggregateAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

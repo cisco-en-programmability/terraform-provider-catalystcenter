@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -217,7 +217,7 @@ func resourceInterfacesIDTrendAnalyticsCreate(ctx context.Context, d *schema.Res
 	vID := resourceItem["id"]
 
 	vvID := vID.(string)
-	request1 := expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1(ctx, "parameters.0", d)
+	request1 := expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRange(ctx, "parameters.0", d)
 
 	response1, restyResp1, err := client.Devices.TheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRange(vvID, request1)
 
@@ -237,7 +237,7 @@ func resourceInterfacesIDTrendAnalyticsCreate(ctx context.Context, d *schema.Res
 
 	//Analizar verificacion.
 
-	vItems1 := flattenDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1Items(response1.Response)
+	vItems1 := flattenDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeItems(response1.Response)
 	if err := d.Set("items", vItems1); err != nil {
 		diags = append(diags, diagError(
 			"Failure when setting TheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRange response",
@@ -262,8 +262,8 @@ func resourceInterfacesIDTrendAnalyticsDelete(ctx context.Context, d *schema.Res
 	return diags
 }
 
-func expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1 {
-	request := catalystcentersdkgo.RequestDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1{}
+func expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRange(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRange {
+	request := catalystcentersdkgo.RequestDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRange{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -277,10 +277,10 @@ func expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterface
 		request.Attributes = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1FiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeFiltersArray(ctx, key+".filters", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".aggregate_attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".aggregate_attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".aggregate_attributes")))) {
-		request.AggregateAttributes = expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1AggregateAttributesArray(ctx, key+".aggregate_attributes", d)
+		request.AggregateAttributes = expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeAggregateAttributesArray(ctx, key+".aggregate_attributes", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".timestamp_order")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".timestamp_order")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".timestamp_order")))) {
 		request.TimestampOrder = interfaceToString(v)
@@ -288,8 +288,8 @@ func expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterface
 	return &request
 }
 
-func expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1Filters {
-	request := []catalystcentersdkgo.RequestDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1Filters{}
+func expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeFilters {
+	request := []catalystcentersdkgo.RequestDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -300,7 +300,7 @@ func expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterface
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -308,8 +308,8 @@ func expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterface
 	return &request
 }
 
-func expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1Filters {
-	request := catalystcentersdkgo.RequestDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1Filters{}
+func expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeFilters {
+	request := catalystcentersdkgo.RequestDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -322,8 +322,8 @@ func expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterface
 	return &request
 }
 
-func expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1AggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1AggregateAttributes {
-	request := []catalystcentersdkgo.RequestDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1AggregateAttributes{}
+func expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeAggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeAggregateAttributes {
+	request := []catalystcentersdkgo.RequestDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeAggregateAttributes{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -334,7 +334,7 @@ func expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterface
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1AggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeAggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -342,8 +342,8 @@ func expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterface
 	return &request
 }
 
-func expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1AggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1AggregateAttributes {
-	request := catalystcentersdkgo.RequestDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1AggregateAttributes{}
+func expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeAggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeAggregateAttributes {
+	request := catalystcentersdkgo.RequestDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeAggregateAttributes{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -353,7 +353,7 @@ func expandRequestInterfacesIDTrendAnalyticsTheTrendAnalytcisDataForTheInterface
 	return &request
 }
 
-func flattenDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1Items(items *[]catalystcentersdkgo.ResponseDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1Response) []map[string]interface{} {
+func flattenDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeItems(items *[]catalystcentersdkgo.ResponseDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -361,14 +361,14 @@ func flattenDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["timestamp"] = item.Timestamp
-		respItem["attributes"] = flattenDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1ItemsAttributes(item.Attributes)
-		respItem["aggregate_attributes"] = flattenDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1ItemsAggregateAttributes(item.AggregateAttributes)
+		respItem["attributes"] = flattenDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeItemsAttributes(item.Attributes)
+		respItem["aggregate_attributes"] = flattenDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeItemsAggregateAttributes(item.AggregateAttributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1ItemsAttributes(items *[]catalystcentersdkgo.ResponseDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1ResponseAttributes) []map[string]interface{} {
+func flattenDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeItemsAttributes(items *[]catalystcentersdkgo.ResponseDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeResponseAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -382,7 +382,7 @@ func flattenDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV
 	return respItems
 }
 
-func flattenDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1ItemsAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeV1ResponseAggregateAttributes) []map[string]interface{} {
+func flattenDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeItemsAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesTheTrendAnalytcisDataForTheInterfacesInTheSpecifiedTimeRangeResponseAggregateAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

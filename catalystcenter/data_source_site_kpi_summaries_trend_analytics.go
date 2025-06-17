@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -83,10 +83,10 @@ func dataSourceSiteKpiSummariesTrendAnalyticsRead(ctx context.Context, d *schema
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSiteAnalyticsTrendDataForTheGivenTaskIDV1")
+		log.Printf("[DEBUG] Selected method: GetSiteAnalyticsTrendDataForTheGivenTaskID")
 
-		headerParams1 := catalystcentersdkgo.GetSiteAnalyticsTrendDataForTheGivenTaskIDV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.GetSiteAnalyticsTrendDataForTheGivenTaskIDV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.GetSiteAnalyticsTrendDataForTheGivenTaskIDHeaderParams{}
+		queryParams1 := catalystcentersdkgo.GetSiteAnalyticsTrendDataForTheGivenTaskIDQueryParams{}
 
 		queryParams1.TaskID = vTaskID.(string)
 
@@ -94,24 +94,36 @@ func dataSourceSiteKpiSummariesTrendAnalyticsRead(ctx context.Context, d *schema
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sites.GetSiteAnalyticsTrendDataForTheGivenTaskIDV1(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Sites.GetSiteAnalyticsTrendDataForTheGivenTaskID(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSiteAnalyticsTrendDataForTheGivenTaskIDV1", err,
-				"Failure at GetSiteAnalyticsTrendDataForTheGivenTaskIDV1, unexpected response", ""))
+				"Failure when executing 2 GetSiteAnalyticsTrendDataForTheGivenTaskID", err,
+				"Failure at GetSiteAnalyticsTrendDataForTheGivenTaskID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetSiteAnalyticsTrendDataForTheGivenTaskID", err,
+				"Failure at GetSiteAnalyticsTrendDataForTheGivenTaskID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSiteAnalyticsTrendDataForTheGivenTaskIDV1 response",
+				"Failure when setting GetSiteAnalyticsTrendDataForTheGivenTaskID response",
 				err))
 			return diags
 		}
@@ -123,7 +135,7 @@ func dataSourceSiteKpiSummariesTrendAnalyticsRead(ctx context.Context, d *schema
 	return diags
 }
 
-func flattenSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDV1Items(items *[]catalystcentersdkgo.ResponseSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDV1Response) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDItems(items *[]catalystcentersdkgo.ResponseSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -131,13 +143,13 @@ func flattenSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDV1Items(items *[]cata
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["timestamp"] = item.Timestamp
-		respItem["attributes"] = flattenSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDV1ItemsAttributes(item.Attributes)
+		respItem["attributes"] = flattenSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDItemsAttributes(item.Attributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDV1ItemsAttributes(items *[]catalystcentersdkgo.ResponseSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDV1ResponseAttributes) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDItemsAttributes(items *[]catalystcentersdkgo.ResponseSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDResponseAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

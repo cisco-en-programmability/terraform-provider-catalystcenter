@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -56,26 +56,40 @@ func dataSourceUsersExternalServersAAAAttributeRead(ctx context.Context, d *sche
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAAAAttributeAPIV1")
+		log.Printf("[DEBUG] Selected method: GetAAAAttributeAPI")
 
-		response1, restyResp1, err := client.UserandRoles.GetAAAAttributeAPIV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.UserandRoles.GetAAAAttributeAPI()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAAAAttributeAPIV1", err,
-				"Failure at GetAAAAttributeAPIV1, unexpected response", ""))
+				"Failure when executing 2 GetAAAAttributeAPI", err,
+				"Failure at GetAAAAttributeAPI, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenUserandRolesGetAAAAttributeAPIV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetAAAAttributeAPI", err,
+				"Failure at GetAAAAttributeAPI, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenUserandRolesGetAAAAttributeAPIItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAAAAttributeAPIV1 response",
+				"Failure when setting GetAAAAttributeAPI response",
 				err))
 			return diags
 		}
@@ -87,18 +101,18 @@ func dataSourceUsersExternalServersAAAAttributeRead(ctx context.Context, d *sche
 	return diags
 }
 
-func flattenUserandRolesGetAAAAttributeAPIV1Item(item *catalystcentersdkgo.ResponseUserandRolesGetAAAAttributeAPIV1Response) []map[string]interface{} {
+func flattenUserandRolesGetAAAAttributeAPIItem(item *catalystcentersdkgo.ResponseUserandRolesGetAAAAttributeAPIResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["aaa_attributes"] = flattenUserandRolesGetAAAAttributeAPIV1ItemAAAAttributes(item.AAAAttributes)
+	respItem["aaa_attributes"] = flattenUserandRolesGetAAAAttributeAPIItemAAAAttributes(item.AAAAttributes)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenUserandRolesGetAAAAttributeAPIV1ItemAAAAttributes(items *[]catalystcentersdkgo.ResponseUserandRolesGetAAAAttributeAPIV1ResponseAAAAttributes) []map[string]interface{} {
+func flattenUserandRolesGetAAAAttributeAPIItemAAAAttributes(items *[]catalystcentersdkgo.ResponseUserandRolesGetAAAAttributeAPIResponseAAAAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

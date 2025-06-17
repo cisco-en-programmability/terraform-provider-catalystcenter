@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -198,8 +198,8 @@ func dataSourceEventWebhookRead(ctx context.Context, d *schema.ResourceData, m i
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetWebhookDestinationV1")
-		queryParams1 := catalystcentersdkgo.GetWebhookDestinationV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetWebhookDestination")
+		queryParams1 := catalystcentersdkgo.GetWebhookDestinationQueryParams{}
 
 		if okWebhookIDs {
 			queryParams1.WebhookIDs = vWebhookIDs.(string)
@@ -219,24 +219,36 @@ func dataSourceEventWebhookRead(ctx context.Context, d *schema.ResourceData, m i
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.EventManagement.GetWebhookDestinationV1(&queryParams1)
+		response1, restyResp1, err := client.EventManagement.GetWebhookDestination(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetWebhookDestinationV1", err,
-				"Failure at GetWebhookDestinationV1, unexpected response", ""))
+				"Failure when executing 2 GetWebhookDestination", err,
+				"Failure at GetWebhookDestination, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenEventManagementGetWebhookDestinationV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetWebhookDestination", err,
+				"Failure at GetWebhookDestination, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenEventManagementGetWebhookDestinationItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetWebhookDestinationV1 response",
+				"Failure when setting GetWebhookDestination response",
 				err))
 			return diags
 		}
@@ -248,20 +260,20 @@ func dataSourceEventWebhookRead(ctx context.Context, d *schema.ResourceData, m i
 	return diags
 }
 
-func flattenEventManagementGetWebhookDestinationV1Item(item *catalystcentersdkgo.ResponseEventManagementGetWebhookDestinationV1) []map[string]interface{} {
+func flattenEventManagementGetWebhookDestinationItem(item *catalystcentersdkgo.ResponseEventManagementGetWebhookDestination) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["error_message"] = flattenEventManagementGetWebhookDestinationV1ItemErrorMessage(item.ErrorMessage)
+	respItem["error_message"] = flattenEventManagementGetWebhookDestinationItemErrorMessage(item.ErrorMessage)
 	respItem["api_status"] = item.APIStatus
-	respItem["status_message"] = flattenEventManagementGetWebhookDestinationV1ItemStatusMessage(item.StatusMessage)
+	respItem["status_message"] = flattenEventManagementGetWebhookDestinationItemStatusMessage(item.StatusMessage)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenEventManagementGetWebhookDestinationV1ItemErrorMessage(item *catalystcentersdkgo.ResponseEventManagementGetWebhookDestinationV1ErrorMessage) []map[string]interface{} {
+func flattenEventManagementGetWebhookDestinationItemErrorMessage(item *catalystcentersdkgo.ResponseEventManagementGetWebhookDestinationErrorMessage) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -274,7 +286,7 @@ func flattenEventManagementGetWebhookDestinationV1ItemErrorMessage(item *catalys
 
 }
 
-func flattenEventManagementGetWebhookDestinationV1ItemStatusMessage(items *[]catalystcentersdkgo.ResponseEventManagementGetWebhookDestinationV1StatusMessage) []map[string]interface{} {
+func flattenEventManagementGetWebhookDestinationItemStatusMessage(items *[]catalystcentersdkgo.ResponseEventManagementGetWebhookDestinationStatusMessage) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -289,14 +301,14 @@ func flattenEventManagementGetWebhookDestinationV1ItemStatusMessage(items *[]cat
 		respItem["url"] = item.URL
 		respItem["method"] = item.Method
 		respItem["trust_cert"] = boolPtrToString(item.TrustCert)
-		respItem["headers"] = flattenEventManagementGetWebhookDestinationV1ItemStatusMessageHeaders(item.Headers)
+		respItem["headers"] = flattenEventManagementGetWebhookDestinationItemStatusMessageHeaders(item.Headers)
 		respItem["is_proxy_route"] = boolPtrToString(item.IsProxyRoute)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenEventManagementGetWebhookDestinationV1ItemStatusMessageHeaders(items *[]catalystcentersdkgo.ResponseEventManagementGetWebhookDestinationV1StatusMessageHeaders) []map[string]interface{} {
+func flattenEventManagementGetWebhookDestinationItemStatusMessageHeaders(items *[]catalystcentersdkgo.ResponseEventManagementGetWebhookDestinationStatusMessageHeaders) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

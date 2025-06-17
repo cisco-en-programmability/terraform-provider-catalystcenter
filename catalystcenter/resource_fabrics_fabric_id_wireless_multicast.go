@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -119,7 +119,7 @@ func resourceFabricsFabricIDWirelessMulticastRead(ctx context.Context, d *schema
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenFabricWirelessGetSdaWirelessMulticastV1Item(response1.Response)
+		vItem1 := flattenFabricWirelessGetSdaWirelessMulticastItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetSdaWirelessMulticast response",
@@ -143,7 +143,7 @@ func resourceFabricsFabricIDWirelessMulticastUpdate(ctx context.Context, d *sche
 	vFabricID := resourceMap["fabric_id"]
 
 	if d.HasChange("parameters") {
-		request1 := expandRequestFabricsFabricIDWirelessMulticastUpdateSdaWirelessMulticastV1(ctx, "parameters.0", d)
+		request1 := expandRequestFabricsFabricIDWirelessMulticastUpdateSdaWirelessMulticast(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.FabricWireless.UpdateSdaWirelessMulticast(vFabricID, request1)
 		if err != nil || response1 == nil {
@@ -196,12 +196,13 @@ func resourceFabricsFabricIDWirelessMulticastUpdate(ctx context.Context, d *sche
 
 func resourceFabricsFabricIDWirelessMulticastDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	// NOTE: Unable to delete FabricsFabricIDWirelessMulticast on Dna Center
+	// NOTE: Unable to delete FabricsFabricIDWirelessMulticast on Catalyst Center
 	//       Returning empty diags to delete it on Terraform
 	return diags
 }
-func expandRequestFabricsFabricIDWirelessMulticastUpdateSdaWirelessMulticastV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestFabricWirelessUpdateSdaWirelessMulticastV1 {
-	request := catalystcentersdkgo.RequestFabricWirelessUpdateSdaWirelessMulticastV1{}
+
+func expandRequestFabricsFabricIDWirelessMulticastUpdateSdaWirelessMulticast(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestFabricWirelessUpdateSdaWirelessMulticast {
+	request := catalystcentersdkgo.RequestFabricWirelessUpdateSdaWirelessMulticast{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".multicast_enabled")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".multicast_enabled")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".multicast_enabled")))) {
 		request.MulticastEnabled = interfaceToBoolPtr(v)
 	}

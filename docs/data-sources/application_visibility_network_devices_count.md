@@ -47,10 +47,10 @@ output "catalystcenter_application_visibility_network_devices_count_example" {
 - `cbar_deployment_status` (String) cbarDeploymentStatus query parameter. Status of the CBAR deployment on the network device. Available values: SCHEDULED, IN_PROGRESS, COMPLETED, FAILED, NOT_DEPLOYED
 - `cbar_readiness_status` (String) cbarReadinessStatus query parameter. Indicates whether the network device is ready for CBAR enablement or not. Available values: ENABLED, READY, NOT_READY, NOT_SUPPORTED
 - `hostname` (String) hostname query parameter. The host name of the network device.
-Partial search is supported. For example, searching for switch will include edge-switch1.domain.com, switch25, etc.
+Partial search is supported. For example, searching for **switch** will include **edge-switch1.domain.com**, **switch25**, etc.
 - `ids` (String) ids query parameter. List of network devices ids. If this parameter is not provided, all network devices will be included in the response. Multiple network device IDs can be provided.
-- `management_address` (String) managementAddress query parameter. The management address for the network device. This is normally IP address of the device. But it could be hostname in some cases like Meraki devices.
-Partial search is supported. For example, searching for 25. would include 10.25.1.1, 25.5.10.1, 225.225.1.0, 10.10.10.125, etc.
+- `management_address` (String) managementAddress query parameter. The management address for the network device. This is normally IP address of the device. But it could be hostname in some cases like catalystcenter devices.
+Partial search is supported. For example, searching for **25.** would include **10.25.1.1**, **25.5.10.1**, **225.225.1.0**, **10.10.10.125**, etc.
 - `protocol_pack_status` (String) protocolPackStatus query parameter. Indicates whether the NBAR protocol pack is up-to-date or not on the network device. Available values: LATEST, OUTDATED, UNKNOWN
 - `protocol_pack_update_status` (String) protocolPackUpdateStatus query parameter. Status of the NBAR protocol pack update on the network device. Available values: SCHEDULED, IN_PROGRESS, SUCCESS, FAILED, NONE
 - `site_id` (String) siteId query parameter. The site ID where the network device is assigned.

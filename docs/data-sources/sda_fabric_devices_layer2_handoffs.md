@@ -38,7 +38,7 @@ output "catalystcenter_sda_fabric_devices_layer2_handoffs_example" {
 
 ### Optional
 
-- `limit` (Number) limit query parameter. Maximum number of records to return.
+- `limit` (Number) limit query parameter. Maximum number of records to return. The maximum number of objects supported in a single request is 500.
 - `network_device_id` (String) networkDeviceId query parameter. Network device ID of the fabric device.
 - `offset` (Number) offset query parameter. Starting record for pagination.
 

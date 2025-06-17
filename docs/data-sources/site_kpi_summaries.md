@@ -56,39 +56,39 @@ output "catalystcenter_site_kpi_summaries_example" {
 
 ### Optional
 
-- `attribute` (String) attribute query parameter. List of attributes related to site analytics. If these are provided, then only those attributes will be part of response along with the default attributes. Examples: attribute=coverageAverage (single attribute requested) attribute=coverageFailureMetrics&attribute=coverageTotalCount (multiple attributes requested)
-- `band` (String) band query parameter. WiFi frequency band that client or Access Point operates. Band value is represented in Giga Hertz GHz Examples: band=5 (single band requested) band=2.4&band=6 (multiple band requested)
+- `attribute` (String) attribute query parameter. List of attributes related to site analytics. If these are provided, then only those attributes will be part of response along with the default attributes. Examples: **attribute=coverageAverage** (single attribute requested) **attribute=coverageFailureMetrics&attribute=coverageTotalCount** (multiple attributes requested)
+- `band` (String) band query parameter. WiFi frequency band that client or Access Point operates. Band value is represented in Giga Hertz GHz Examples: **band=5** (single band requested) **band=2.4&band=6** (multiple band requested)
 - `end_time` (Number) endTime query parameter. End time to which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
-- `failure_category` (String) failureCategory query parameter. Category of failure when a client fails to meet the threshold. Examples: failureCategory=AUTH (single failure category requested) failureCategory=AUTH&failureCategory=DHCP (multiple failure categories requested)
-- `failure_reason` (String) failureReason query parameter. Reason for failure when a client fails to meet the threshold. Examples: failureReason=MOBILITY_FAILURE (single ssid requested) failureReason=REASON_IPLEARN_CONNECT_TIMEOUT&failureReason=ST_EAP_TIMEOUT   (multiple ssid requested)
+- `failure_category` (String) failureCategory query parameter. Category of failure when a client fails to meet the threshold. Examples: **failureCategory=AUTH** (single failure category requested) **failureCategory=AUTH&failureCategory=DHCP** (multiple failure categories requested)
+- `failure_reason` (String) failureReason query parameter. Reason for failure when a client fails to meet the threshold. Examples: **failureReason=MOBILITY_FAILURE** (single ssid requested) **failureReason=REASON_IPLEARN_CONNECT_TIMEOUT&failureReason=ST_EAP_TIMEOUT**   (multiple ssid requested)
 - `limit` (Number) limit query parameter. Maximum number of records to return
 - `offset` (Number) offset query parameter. Specifies the starting point within all records returned by the API. It's one based offset. The starting value is 1.
 - `order` (String) order query parameter. The sort order of the field ascending or descending.
-- `site_hierarchy` (String) siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. Global/AreaName/BuildingName/FloorName)
-This field supports wildcard asterisk (*) character search support. E.g. */San*, */San, /San*
+- `site_hierarchy` (String) siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. **Global/AreaName/BuildingName/FloorName**)
+This field supports wildcard asterisk (*****) character search support. E.g. ***/San*, */San, /San***
 Examples:
-?siteHierarchy=Global/AreaName/BuildingName/FloorName (single siteHierarchy requested)
-?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2 (multiple siteHierarchies requested)
-- `site_hierarchy_id` (String) siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. globalUuid/areaUuid/buildingUuid/floorUuid)
-This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*
+**?siteHierarchy=Global/AreaName/BuildingName/FloorName** (single siteHierarchy requested)
+**?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2** (multiple siteHierarchies requested)
+- `site_hierarchy_id` (String) siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. **globalUuid/areaUuid/buildingUuid/floorUuid**)
+This field supports wildcard asterisk (*****) character search support. E.g. ***uuid*, *uuid, uuid***
 Examples:
-?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid(single siteHierarchyId requested)
-?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2 (multiple siteHierarchyIds requested)
-- `site_id` (String) siteId query parameter. The UUID of the site. (Ex. flooruuid)
+**?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid **(single siteHierarchyId requested)
+**?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2** (multiple siteHierarchyIds requested)
+- `site_id` (String) siteId query parameter. The UUID of the site. (Ex. **flooruuid**)
 Examples:
-?siteId=id1 (single id requested)
-?siteId=id1&siteId=id2&siteId=id3 (multiple ids requested)
+**?siteId=id1** (single id requested)
+**?siteId=id1&siteId=id2&siteId=id3** (multiple ids requested)
 - `site_type` (String) siteType query parameter. The type of the site. A site can be an area, building, or floor.
-Default when not provided will be [floor,building,area]
+Default when not provided will be **[floor,building,area]**
 Examples:
-?siteType=area (single siteType requested)
-?siteType=area&siteType=building&siteType=floor (multiple siteTypes requested)
+**?siteType=area** (single siteType requested)
+**?siteType=area&siteType=building&siteType=floor** (multiple siteTypes requested)
 - `sort_by` (String) sortBy query parameter. Field name on which sorting needs to be done
-- `ssid` (String) ssid query parameter. SSID is the name of wireless network to which client connects to. It is also referred to as WLAN ID Wireless Local Area Network Identifier. Examples: ssid=Alpha (single ssid requested) ssid=Alpha&ssid=Guest (multiple ssid requested)
+- `ssid` (String) ssid query parameter. SSID is the name of wireless network to which client connects to. It is also referred to as WLAN ID Wireless Local Area Network Identifier. Examples: **ssid=Alpha** (single ssid requested) **ssid=Alpha&ssid=Guest** (multiple ssid requested)
 - `start_time` (Number) startTime query parameter. Start time from which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
 - `task_id` (String) taskId query parameter. used to retrieve asynchronously processed & stored data. When this parameter is used, the rest of the request params will be ignored.
-- `view` (String) view query parameter.
-The name of the View. Each view represents a specific data set. Please refer to the
+- `view` (String) view query parameter. 
+The name of the View. Each view represents a specific data set. Please refer to the 
 SiteAnalyticsView
  Model for supported views. View is predefined set of attributes supported by the API. Only the attributes related to the given view will be part of the API response along with default attributes. If multiple views are provided, then response will contain attributes from all those views. If no views are specified, all attributes will be returned.
 View Name
@@ -105,9 +105,9 @@ roamingDuration
 roamingDurationAverage, roamingDurationSuccessPercentage, roamingDurationSuccessCount, roamingDurationTotalCount, roamingDurationFailureCount, roamingDurationClientCount, roamingDurationImpactedEntities, roamingDurationFailureImpactedEntities, roamingDurationFailureMetrics
 connectionSpeed
 connectionSpeedAverage, connectionSpeedSuccessPercentage, connectionSpeedSuccessCount, connectionSpeedTotalCount, connectionSpeedFailureCount, connectionSpeedClientCount, connectionSpeedImpactedEntities, connectionSpeedFailureImpactedEntities, connectionSpeedFailureMetrics
-Examples:
+Examples: 
 view=connectionSpeed
- (single view requested)
+ (single view requested) 
 view=roamingDuration&view=roamingAttempts
  (multiple views requested)
 

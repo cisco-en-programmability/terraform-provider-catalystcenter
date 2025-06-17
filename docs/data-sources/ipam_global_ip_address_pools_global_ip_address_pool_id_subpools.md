@@ -13,7 +13,7 @@ description: |-
 It performs read operation on Network Settings.
 
 - Retrieves subpools IDs of a global IP address pool.  The IDs can be fetched with
-/dna/intent/api/v1/ipam/siteIpAddressPools/{id}
+**/dna/intent/api/v1/ipam/siteIpAddressPools/{id}**
 
 ## Example Usage
 
@@ -35,11 +35,11 @@ output "catalystcenter_ipam_global_ip_address_pools_global_ip_address_pool_id_su
 
 ### Required
 
-- `global_ip_address_pool_id` (String) globalIpAddressPoolId path parameter. The id of the global IP address pool for which to retrieve subpool IDs.
+- `global_ip_address_pool_id` (String) globalIpAddressPoolId path parameter. The **id** of the global IP address pool for which to retrieve subpool IDs.
 
 ### Optional
 
-- `limit` (Number) limit query parameter. The number of records to show for this page;The minimum is 1, and the maximum is 500.
+- `limit` (Number) limit query parameter. The number of records to show for this page; the minimum is 1, and the maximum is 500.
 - `offset` (Number) offset query parameter. The first record to show for this page; the first record is numbered 1.
 
 ### Read-Only

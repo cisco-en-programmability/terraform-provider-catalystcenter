@@ -1,7 +1,7 @@
 
 resource "catalystcenter_sites_banner_settings" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     banner {

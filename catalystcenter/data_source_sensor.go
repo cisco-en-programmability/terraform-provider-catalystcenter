@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -168,31 +168,45 @@ func dataSourceSensorRead(ctx context.Context, d *schema.ResourceData, m interfa
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: SensorsV1")
-		queryParams1 := catalystcentersdkgo.SensorsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: Sensors")
+		queryParams1 := catalystcentersdkgo.SensorsQueryParams{}
 
 		if okSiteID {
 			queryParams1.SiteID = vSiteID.(string)
 		}
 
-		response1, restyResp1, err := client.Sensors.SensorsV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sensors.Sensors(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 SensorsV1", err,
-				"Failure at SensorsV1, unexpected response", ""))
+				"Failure when executing 2 Sensors", err,
+				"Failure at Sensors, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSensorsSensorsV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 Sensors", err,
+				"Failure at Sensors, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSensorsSensorsItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting SensorsV1 response",
+				"Failure when setting Sensors response",
 				err))
 			return diags
 		}
@@ -204,7 +218,7 @@ func dataSourceSensorRead(ctx context.Context, d *schema.ResourceData, m interfa
 	return diags
 }
 
-func flattenSensorsSensorsV1Items(items *[]catalystcentersdkgo.ResponseSensorsSensorsV1Response) []map[string]interface{} {
+func flattenSensorsSensorsItems(items *[]catalystcentersdkgo.ResponseSensorsSensorsResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -222,14 +236,14 @@ func flattenSensorsSensorsV1Items(items *[]catalystcentersdkgo.ResponseSensorsSe
 		respItem["version"] = item.Version
 		respItem["last_seen"] = item.LastSeen
 		respItem["type"] = item.Type
-		respItem["ssh"] = flattenSensorsSensorsV1ItemsSSH(item.SSH)
+		respItem["ssh"] = flattenSensorsSensorsItemsSSH(item.SSH)
 		respItem["led"] = boolPtrToString(item.Led)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSensorsSensorsV1ItemsSSH(item *catalystcentersdkgo.ResponseSensorsSensorsV1ResponseSSH) []map[string]interface{} {
+func flattenSensorsSensorsItemsSSH(item *catalystcentersdkgo.ResponseSensorsSensorsResponseSSH) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

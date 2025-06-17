@@ -1,15 +1,15 @@
 
 resource "catalystcenter_wireless_accespoint_configuration_v2" "example" {
-  provider = meraki
-  parameters {
+  provider = catalystcenter
+  parameters = [{
 
     admin_status = "false"
-    ap_list {
+    ap_list = [{
 
       ap_name     = "string"
       ap_name_new = "string"
       mac_address = "string"
-    }
+    }]
     ap_mode                        = 1
     clean_air_s_i24                = "false"
     clean_air_s_i5                 = "false"
@@ -30,11 +30,11 @@ resource "catalystcenter_wireless_accespoint_configuration_v2" "example" {
     led_status                     = "false"
     location                       = "string"
     primary_controller_name        = "string"
-    primary_ip_address {
+    primary_ip_address = [{
 
       address = "string"
-    }
-    radio_configurations {
+    }]
+    radio_configurations = [{
 
       admin_status                    = "false"
       antenna_cable_name              = "string"
@@ -56,18 +56,18 @@ resource "catalystcenter_wireless_accespoint_configuration_v2" "example" {
       radio_band                      = "string"
       radio_role_assignment           = "string"
       radio_type                      = 1
-    }
+    }]
     secondary_controller_name = "string"
-    secondary_ip_address {
+    secondary_ip_address = [{
 
       address = "string"
-    }
+    }]
     tertiary_controller_name = "string"
-    tertiary_ip_address {
+    tertiary_ip_address = [{
 
       address = "string"
-    }
-  }
+    }]
+  }]
 }
 
 output "catalystcenter_wireless_accespoint_configuration_v2_example" {

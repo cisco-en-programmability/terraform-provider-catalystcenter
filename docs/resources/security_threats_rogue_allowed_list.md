@@ -20,7 +20,7 @@ It manages create, read and delete operations on Devices.
 ```terraform
 resource "catalystcenter_security_threats_rogue_allowed_list" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     category    = 1
@@ -38,7 +38,7 @@ output "catalystcenter_security_threats_rogue_allowed_list_example" {
 
 ### Optional
 
-- `parameters` (Block List) Array of RequestDevicesAddAllowedMacAddressV1 (see [below for nested schema](#nestedblock--parameters))
+- `parameters` (Block List) Array of RequestDevicesAddAllowedMacAddress (see [below for nested schema](#nestedblock--parameters))
 
 ### Read-Only
 

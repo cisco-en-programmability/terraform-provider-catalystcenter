@@ -22,7 +22,7 @@ specs/blob/main/Assurance/CE_Cat_Center_Org-SiteKpiSummaries-1.0.0-resolved.yaml
 ```terraform
 resource "catalystcenter_site_kpi_summaries_summary_analytics" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     attributes = ["string"]
@@ -57,11 +57,6 @@ output "catalystcenter_site_kpi_summaries_summary_analytics_example" {
 
 <a id="nestedblock--parameters"></a>
 ### Nested Schema for `parameters`
-
-Required:
-
-- `task_id` (String) task id
-- `xca_lle_rid` (String) xca lle rid
 
 Optional:
 

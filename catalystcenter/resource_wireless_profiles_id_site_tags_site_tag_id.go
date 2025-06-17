@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -18,17 +18,18 @@ func resourceWirelessProfilesIDSiteTagsSiteTagID() *schema.Resource {
 	return &schema.Resource{
 		Description: `It manages read, update and delete operations on Wireless.
 
-- This endpoint allows updating the details of a specific *Site Tag* associated with a given *Wireless Profile*. The
-*id* of the *Wireless Profile* and the *siteTagId* of the Site Tag must be provided as path parameters, and the request
-body should contain the updated *Site Tag* details.  The *siteTagName* cannot be modified through this endpoint. Note:
-When updating a Site Tag (siteTag), if the siteId already has an associated siteTag and the same siteId is included in
-the update request, the existing siteTag for that siteId will be overridden by the new one. For Flex-enabled Wireless
-Profiles (i.e., a Wireless Profile with one or more Flex SSIDs), a non-default Flex Profile Name (flexProfileName) will
-be used. If no custom flexProfileName is provided, the System will automatically generate one and configure it in the
-controller.
+- This endpoint allows updating the details of a specific **Site Tag** associated with a given **Wireless Profile**. The
+**id** of the **Wireless Profile** and the **siteTagId** of the Site Tag must be provided as path parameters, and the
+request body should contain the updated **Site Tag** details.  The **siteTagName** cannot be modified through this
+endpoint. Note: When updating a Site Tag (siteTag), if the siteId already has an associated siteTag and the same siteId
+is included in the update request, the existing siteTag for that siteId will be overridden by the new one. For Flex-
+enabled Wireless Profiles (i.e., a Wireless Profile with one or more Flex SSIDs), a non-default Flex Profile Name
+(flexProfileName) will be used. If no custom flexProfileName is provided, the System will automatically generate one and
+configure it in the controller.
 
-- This endpoint enables the deletion of a specific *Site Tag* associated with a given *Wireless Profile*. This resource
-requires the *id* of the *Wireless Profile* and the *siteTagId* of the *Site Tag* to be provided as path parameters.
+- This endpoint enables the deletion of a specific **Site Tag** associated with a given **Wireless Profile**. This
+resource requires the **id** of the **Wireless Profile** and the **siteTagId** of the **Site Tag** to be provided as
+path parameters.
 `,
 
 		CreateContext: resourceWirelessProfilesIDSiteTagsSiteTagIDCreate,
@@ -177,7 +178,7 @@ func resourceWirelessProfilesIDSiteTagsSiteTagIDRead(ctx context.Context, d *sch
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessRetrieveASpecificSiteTagForAWirelessProfileV1Item(response1.Response)
+		vItem1 := flattenWirelessRetrieveASpecificSiteTagForAWirelessProfileItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrieveASpecificSiteTagForAWirelessProfile response",
@@ -202,7 +203,7 @@ func resourceWirelessProfilesIDSiteTagsSiteTagIDUpdate(ctx context.Context, d *s
 	vSiteTagID := resourceMap["site_tag_id"]
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vID)
-		request1 := expandRequestWirelessProfilesIDSiteTagsSiteTagIDUpdateASpecificSiteTagForAWirelessProfileV1(ctx, "parameters.0", d)
+		request1 := expandRequestWirelessProfilesIDSiteTagsSiteTagIDUpdateASpecificSiteTagForAWirelessProfile(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.Wireless.UpdateASpecificSiteTagForAWirelessProfile(vID, vSiteTagID, request1)
 		if err != nil || response1 == nil {
@@ -313,8 +314,9 @@ func resourceWirelessProfilesIDSiteTagsSiteTagIDDelete(ctx context.Context, d *s
 
 	return diags
 }
-func expandRequestWirelessProfilesIDSiteTagsSiteTagIDUpdateASpecificSiteTagForAWirelessProfileV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateASpecificSiteTagForAWirelessProfileV1 {
-	request := catalystcentersdkgo.RequestWirelessUpdateASpecificSiteTagForAWirelessProfileV1{}
+
+func expandRequestWirelessProfilesIDSiteTagsSiteTagIDUpdateASpecificSiteTagForAWirelessProfile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateASpecificSiteTagForAWirelessProfile {
+	request := catalystcentersdkgo.RequestWirelessUpdateASpecificSiteTagForAWirelessProfile{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".site_ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".site_ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".site_ids")))) {
 		request.SiteIDs = interfaceToSliceString(v)
 	}

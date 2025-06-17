@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -2388,7 +2388,7 @@ func resourceConfigurationTemplateProjectCreate(ctx context.Context, d *schema.R
 			return resourceConfigurationTemplateProjectRead(ctx, d, m)
 		}
 	} else {
-		queryParams1 := catalystcentersdkgo.GetsAListOfProjectsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetsAListOfProjectsQueryParams{}
 		queryParams1.Name = vvName
 		item2, err := searchConfigurationTemplatesGetsAListOfProjects(m, queryParams1)
 		if err == nil && item2 != nil {
@@ -2463,7 +2463,7 @@ func resourceConfigurationTemplateProjectRead(ctx context.Context, d *schema.Res
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method 1: GetsAListOfProjects")
-		queryParams1 := catalystcentersdkgo.GetsAListOfProjectsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetsAListOfProjectsQueryParams{}
 
 		if okName {
 			queryParams1.Name = vName
@@ -2565,7 +2565,7 @@ func resourceConfigurationTemplateProjectUpdate(ctx context.Context, d *schema.R
 			return diags
 		}
 	} else if vName != "" {
-		queryParams1 := catalystcentersdkgo.GetsAListOfProjectsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetsAListOfProjectsQueryParams{}
 		queryParams1.Name = vName
 		item2, err := searchConfigurationTemplatesGetsAListOfProjects(m, queryParams1)
 		if err != nil || item2 == nil {
@@ -2652,7 +2652,7 @@ func resourceConfigurationTemplateProjectDelete(ctx context.Context, d *schema.R
 	// REVIEW: Add getAllItems and search function to get missing params
 	var vvID string
 	if selectedMethod == 1 {
-		queryParams1 := catalystcentersdkgo.GetsAListOfProjectsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetsAListOfProjectsQueryParams{}
 		queryParams1.Name = vName
 		item1, err := searchConfigurationTemplatesGetsAListOfProjects(m, queryParams1)
 		if err != nil || item1 == nil {
@@ -2694,8 +2694,9 @@ func resourceConfigurationTemplateProjectDelete(ctx context.Context, d *schema.R
 
 	return diags
 }
-func expandRequestConfigurationTemplateProjectCreateProject(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateProjectV1 {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateProjectV1{}
+
+func expandRequestConfigurationTemplateProjectCreateProject(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateProject {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateProject{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tags")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tags")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tags")))) {
 		request.Tags = expandRequestConfigurationTemplateProjectCreateProjectTagsArray(ctx, key+".tags", d)
 	}
@@ -2723,8 +2724,8 @@ func expandRequestConfigurationTemplateProjectCreateProject(ctx context.Context,
 	return &request
 }
 
-func expandRequestConfigurationTemplateProjectCreateProjectTagsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateProjectV1Tags {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateProjectV1Tags{}
+func expandRequestConfigurationTemplateProjectCreateProjectTagsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateProjectTags {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateProjectTags{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -2746,8 +2747,8 @@ func expandRequestConfigurationTemplateProjectCreateProjectTagsArray(ctx context
 	return &request
 }
 
-func expandRequestConfigurationTemplateProjectCreateProjectTags(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateProjectV1Tags {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateProjectV1Tags{}
+func expandRequestConfigurationTemplateProjectCreateProjectTags(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateProjectTags {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateProjectTags{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -2760,8 +2761,8 @@ func expandRequestConfigurationTemplateProjectCreateProjectTags(ctx context.Cont
 	return &request
 }
 
-func expandRequestConfigurationTemplateProjectCreateProjectTemplates(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateProjectV1Templates {
-	var request catalystcentersdkgo.RequestConfigurationTemplatesCreateProjectV1Templates
+func expandRequestConfigurationTemplateProjectCreateProjectTemplates(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateProjectTemplates {
+	var request catalystcentersdkgo.RequestConfigurationTemplatesCreateProjectTemplates
 	request = d.Get(fixKeyAccess(key))
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -2769,8 +2770,8 @@ func expandRequestConfigurationTemplateProjectCreateProjectTemplates(ctx context
 	return &request
 }
 
-func expandRequestConfigurationTemplateProjectUpdateProject(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateProjectV1 {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateProjectV1{}
+func expandRequestConfigurationTemplateProjectUpdateProject(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateProject {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateProject{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tags")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tags")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tags")))) {
 		request.Tags = expandRequestConfigurationTemplateProjectUpdateProjectTagsArray(ctx, key+".tags", d)
 	}
@@ -2798,8 +2799,8 @@ func expandRequestConfigurationTemplateProjectUpdateProject(ctx context.Context,
 	return &request
 }
 
-func expandRequestConfigurationTemplateProjectUpdateProjectTagsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateProjectV1Tags {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateProjectV1Tags{}
+func expandRequestConfigurationTemplateProjectUpdateProjectTagsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateProjectTags {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateProjectTags{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -2821,8 +2822,8 @@ func expandRequestConfigurationTemplateProjectUpdateProjectTagsArray(ctx context
 	return &request
 }
 
-func expandRequestConfigurationTemplateProjectUpdateProjectTags(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateProjectV1Tags {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateProjectV1Tags{}
+func expandRequestConfigurationTemplateProjectUpdateProjectTags(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateProjectTags {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateProjectTags{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -2835,8 +2836,8 @@ func expandRequestConfigurationTemplateProjectUpdateProjectTags(ctx context.Cont
 	return &request
 }
 
-func expandRequestConfigurationTemplateProjectUpdateProjectTemplates(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateProjectV1Templates {
-	var request catalystcentersdkgo.RequestConfigurationTemplatesUpdateProjectV1Templates
+func expandRequestConfigurationTemplateProjectUpdateProjectTemplates(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateProjectTemplates {
+	var request catalystcentersdkgo.RequestConfigurationTemplatesUpdateProjectTemplates
 	request = d.Get(fixKeyAccess(key))
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -2844,12 +2845,12 @@ func expandRequestConfigurationTemplateProjectUpdateProjectTemplates(ctx context
 	return &request
 }
 
-func searchConfigurationTemplatesGetsAListOfProjects(m interface{}, queryParams catalystcentersdkgo.GetsAListOfProjectsV1QueryParams) (*catalystcentersdkgo.ResponseItemConfigurationTemplatesGetsAListOfProjectsV1, error) {
+func searchConfigurationTemplatesGetsAListOfProjects(m interface{}, queryParams catalystcentersdkgo.GetsAListOfProjectsQueryParams) (*catalystcentersdkgo.ResponseItemConfigurationTemplatesGetsAListOfProjects, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
 
-	var foundItem *catalystcentersdkgo.ResponseItemConfigurationTemplatesGetsAListOfProjectsV1
-	var ite *catalystcentersdkgo.ResponseConfigurationTemplatesGetsAListOfProjectsV1
+	var foundItem *catalystcentersdkgo.ResponseItemConfigurationTemplatesGetsAListOfProjects
+	var ite *catalystcentersdkgo.ResponseConfigurationTemplatesGetsAListOfProjects
 	ite, _, err = client.ConfigurationTemplates.GetsAListOfProjects(&queryParams)
 	if err != nil {
 		return foundItem, err
@@ -2864,7 +2865,7 @@ func searchConfigurationTemplatesGetsAListOfProjects(m interface{}, queryParams 
 	for _, item := range itemsCopy {
 		// Call get by _ method and set value to foundItem and return
 		if item.Name == queryParams.Name {
-			var getItem *catalystcentersdkgo.ResponseItemConfigurationTemplatesGetsAListOfProjectsV1
+			var getItem *catalystcentersdkgo.ResponseItemConfigurationTemplatesGetsAListOfProjects
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

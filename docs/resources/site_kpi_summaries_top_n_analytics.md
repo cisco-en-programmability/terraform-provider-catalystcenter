@@ -22,7 +22,7 @@ center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-SiteKpiSummaries-1.0.0-re
 ```terraform
 resource "catalystcenter_site_kpi_summaries_top_n_analytics" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     end_time = 1
@@ -58,11 +58,6 @@ output "catalystcenter_site_kpi_summaries_top_n_analytics_example" {
 
 <a id="nestedblock--parameters"></a>
 ### Nested Schema for `parameters`
-
-Required:
-
-- `task_id` (String) task id
-- `xca_lle_rid` (String) xca lle rid
 
 Optional:
 

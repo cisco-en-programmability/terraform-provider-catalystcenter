@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -13,11 +13,11 @@ import (
 
 func dataSourceEndpointAnalyticsProfilingRules() *schema.Resource {
 	return &schema.Resource{
-		Description: `It performs read operation on AIEndpointAnalytics.
+		Description: `It performs read operation on AiEndpointAnalytics.
 
 - This data source fetches the list of profiling rules. It can be used to show profiling rules in client applications,
 or export those from an environment. 'POST /profiling-rules/bulk' API can be used to import such exported rules into
-another environment. If this API is used to export rules to be imported into another Cisco DNA Center system, then
+another environment. If this API is used to export rules to be imported into another Cisco Catalyst Center system, then
 ensure that 'includeDeleted' parameter is 'true', so that deleted rules get synchronized correctly. Use query parameters
 to filter the data, as required. If no filter is provided, then it will include only rules of type 'Custom Rule' in the
 response. By default, the response is limited to 500 records. Use 'limit' parameter to fetch higher number of records,
@@ -513,8 +513,8 @@ func dataSourceEndpointAnalyticsProfilingRulesRead(ctx context.Context, d *schem
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetListOfProfilingRulesV1")
-		queryParams1 := catalystcentersdkgo.GetListOfProfilingRulesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetListOfProfilingRules")
+		queryParams1 := catalystcentersdkgo.GetListOfProfilingRulesQueryParams{}
 
 		if okRuleType {
 			queryParams1.RuleType = vRuleType.(string)
@@ -535,24 +535,38 @@ func dataSourceEndpointAnalyticsProfilingRulesRead(ctx context.Context, d *schem
 			queryParams1.Order = vOrder.(string)
 		}
 
-		response1, restyResp1, err := client.AIEndpointAnalytics.GetListOfProfilingRulesV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.AiEndpointAnalytics.GetListOfProfilingRules(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetListOfProfilingRulesV1", err,
-				"Failure at GetListOfProfilingRulesV1, unexpected response", ""))
+				"Failure when executing 2 GetListOfProfilingRules", err,
+				"Failure at GetListOfProfilingRules, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenAIEndpointAnalyticsGetListOfProfilingRulesV1Items(response1.ProfilingRules)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetListOfProfilingRules", err,
+				"Failure at GetListOfProfilingRules, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenAiEndpointAnalyticsGetListOfProfilingRulesItems(response1.ProfilingRules)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetListOfProfilingRulesV1 response",
+				"Failure when setting GetListOfProfilingRules response",
 				err))
 			return diags
 		}
@@ -562,27 +576,41 @@ func dataSourceEndpointAnalyticsProfilingRulesRead(ctx context.Context, d *schem
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetDetailsOfASingleProfilingRuleV1")
+		log.Printf("[DEBUG] Selected method: GetDetailsOfASingleProfilingRule")
 		vvRuleID := vRuleID.(string)
 
-		response2, restyResp2, err := client.AIEndpointAnalytics.GetDetailsOfASingleProfilingRuleV1(vvRuleID)
+		// has_unknown_response: None
+
+		response2, restyResp2, err := client.AiEndpointAnalytics.GetDetailsOfASingleProfilingRule(vvRuleID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDetailsOfASingleProfilingRuleV1", err,
-				"Failure at GetDetailsOfASingleProfilingRuleV1, unexpected response", ""))
+				"Failure when executing 2 GetDetailsOfASingleProfilingRule", err,
+				"Failure at GetDetailsOfASingleProfilingRule, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenAIEndpointAnalyticsGetDetailsOfASingleProfilingRuleV1Item(response2)
+		if err != nil || response2 == nil {
+			if restyResp2 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetDetailsOfASingleProfilingRule", err,
+				"Failure at GetDetailsOfASingleProfilingRule, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
+
+		vItem2 := flattenAiEndpointAnalyticsGetDetailsOfASingleProfilingRuleItem(response2)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDetailsOfASingleProfilingRuleV1 response",
+				"Failure when setting GetDetailsOfASingleProfilingRule response",
 				err))
 			return diags
 		}

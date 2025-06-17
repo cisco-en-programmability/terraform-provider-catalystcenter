@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -106,7 +106,7 @@ func resourceGlobalCredentialCli() *schema.Resource {
 				},
 			},
 			"parameters": &schema.Schema{
-				Description: `Array of RequestDiscoveryCreateCliCredentialsV1`,
+				Description: `Array of RequestDiscoveryCreateCliCredentials`,
 				Type:        schema.TypeList,
 				MaxItems:    1,
 				MinItems:    1,
@@ -171,14 +171,14 @@ func resourceGlobalCredentialCliCreate(ctx context.Context, d *schema.ResourceDa
 	vvUsername := interfaceToString(vUsername)
 	vID := resourceItem["id"]
 	vvID := interfaceToString(vID)
-	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
 
 	queryParams1.CredentialSubType = "CLI"
 	item, err := searchDiscoveryGetGlobalCredentialsCli(m, queryParams1, vvUsername, vvID)
 	if item != nil || err != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["username"] = vvUsername
-		resourceMap["id"] = vvID
+		resourceMap["id"] = item.ID
 		d.SetId(joinResourceID(resourceMap))
 		return resourceGlobalCredentialCliRead(ctx, d, m)
 	}
@@ -237,7 +237,7 @@ func resourceGlobalCredentialCliRead(ctx context.Context, d *schema.ResourceData
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method 1: GetGlobalCredentials")
-		queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
 
 		queryParams1.CredentialSubType = vCredentialSubType
 
@@ -255,11 +255,11 @@ func resourceGlobalCredentialCliRead(ctx context.Context, d *schema.ResourceData
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		//TODO FOR DNAC
-		items := []catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response{
+		//TODO FOR CATALYST
+		items := []catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse{
 			*response1,
 		}
-		vItem1 := flattenDiscoveryGetGlobalCredentialsV1Items(&items)
+		vItem1 := flattenDiscoveryGetGlobalCredentialsItems(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetGlobalCredentials search response",
@@ -282,7 +282,7 @@ func resourceGlobalCredentialCliUpdate(ctx context.Context, d *schema.ResourceDa
 	vUsername := resourceMap["username"]
 	vID := resourceMap["id"]
 
-	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
 	queryParams1.CredentialSubType = vCredentialSubType
 	response1, err := searchDiscoveryGetGlobalCredentialsCli(m, queryParams1, vUsername, vID)
 	if err != nil || response1 == nil {
@@ -356,7 +356,7 @@ func resourceGlobalCredentialCliDelete(ctx context.Context, d *schema.ResourceDa
 	vID := resourceMap["id"]
 	vUsername := resourceMap["username"]
 
-	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
 
 	queryParams1.CredentialSubType = "CLI"
 	item, err := searchDiscoveryGetGlobalCredentialsCli(m, queryParams1, vUsername, vID)
@@ -380,8 +380,8 @@ func resourceGlobalCredentialCliDelete(ctx context.Context, d *schema.ResourceDa
 	}
 	return diags
 }
-func expandRequestGlobalCredentialCliCreateCliCredentials(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryCreateCliCredentialsV1 {
-	request := catalystcentersdkgo.RequestDiscoveryCreateCliCredentialsV1{}
+func expandRequestGlobalCredentialCliCreateCliCredentials(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryCreateCliCredentials {
+	request := catalystcentersdkgo.RequestDiscoveryCreateCliCredentials{}
 	if v := expandRequestGlobalCredentialCliCreateCliCredentialsItemArray(ctx, key, d); v != nil {
 		request = *v
 	}
@@ -392,8 +392,8 @@ func expandRequestGlobalCredentialCliCreateCliCredentials(ctx context.Context, k
 	return &request
 }
 
-func expandRequestGlobalCredentialCliCreateCliCredentialsItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDiscoveryCreateCliCredentialsV1 {
-	request := []catalystcentersdkgo.RequestItemDiscoveryCreateCliCredentialsV1{}
+func expandRequestGlobalCredentialCliCreateCliCredentialsItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDiscoveryCreateCliCredentials {
+	request := []catalystcentersdkgo.RequestItemDiscoveryCreateCliCredentials{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -416,8 +416,8 @@ func expandRequestGlobalCredentialCliCreateCliCredentialsItemArray(ctx context.C
 	return &request
 }
 
-func expandRequestGlobalCredentialCliCreateCliCredentialsItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDiscoveryCreateCliCredentialsV1 {
-	request := catalystcentersdkgo.RequestItemDiscoveryCreateCliCredentialsV1{}
+func expandRequestGlobalCredentialCliCreateCliCredentialsItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDiscoveryCreateCliCredentials {
+	request := catalystcentersdkgo.RequestItemDiscoveryCreateCliCredentials{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".comments")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".comments")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".comments")))) {
 		request.Comments = interfaceToString(v)
 	}
@@ -452,8 +452,8 @@ func expandRequestGlobalCredentialCliCreateCliCredentialsItem(ctx context.Contex
 	return &request
 }
 
-func expandRequestGlobalCredentialCliUpdateCliCredentials(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdateCliCredentialsV1 {
-	request := catalystcentersdkgo.RequestDiscoveryUpdateCliCredentialsV1{}
+func expandRequestGlobalCredentialCliUpdateCliCredentials(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdateCliCredentials {
+	request := catalystcentersdkgo.RequestDiscoveryUpdateCliCredentials{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".comments")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".comments")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".comments")))) {
 		request.Comments = interfaceToString(v)
 	}
@@ -488,11 +488,11 @@ func expandRequestGlobalCredentialCliUpdateCliCredentials(ctx context.Context, k
 	return &request
 }
 
-func searchDiscoveryGetGlobalCredentialsCli(m interface{}, queryParams catalystcentersdkgo.GetGlobalCredentialsV1QueryParams, vUsername string, vID string) (*catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response, error) {
+func searchDiscoveryGetGlobalCredentialsCli(m interface{}, queryParams catalystcentersdkgo.GetGlobalCredentialsQueryParams, vUsername string, vID string) (*catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response
-	var ite *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1
+	var foundItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse
+	var ite *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentials
 	queryParams.CredentialSubType = "CLI"
 	ite, _, err = client.Discovery.GetGlobalCredentials(&queryParams)
 	if err != nil {
@@ -506,7 +506,7 @@ func searchDiscoveryGetGlobalCredentialsCli(m interface{}, queryParams catalystc
 	for _, item := range *itemsCopy.Response {
 		// Call get by _ method and set value to foundItem and return
 		if item.ID == vID || item.Username == vUsername {
-			var getItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response
+			var getItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

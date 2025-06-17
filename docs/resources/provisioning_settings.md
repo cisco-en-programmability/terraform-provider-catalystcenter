@@ -18,7 +18,7 @@ It manages read and update operations on System Settings.
 ```terraform
 resource "catalystcenter_provisioning_settings" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     require_itsm_approval = "false"

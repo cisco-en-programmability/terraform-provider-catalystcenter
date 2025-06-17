@@ -2,13 +2,12 @@ package catalystcenter
 
 import (
 	"context"
-
 	"reflect"
 	"time"
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -241,7 +240,7 @@ func resourceSite() *schema.Resource {
 							Description: `siteId path parameter. Site id to which site details to be updated.
 `,
 							Type:     schema.TypeString,
-							Required: true,
+							Optional: true,
 						},
 						"type": &schema.Schema{
 							Description: `Type of site to create (eg: area, building, floor)
@@ -264,12 +263,12 @@ func resourceSiteCreate(ctx context.Context, d *schema.ResourceData, m interface
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
 	request1 := expandRequestSiteCreateSiteSiteSite(ctx, "parameters.0", d)
-	header := catalystcentersdkgo.CreateSiteV1HeaderParams{}
+	header := catalystcentersdkgo.CreateSiteHeaderParams{}
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vSiteID := resourceItem["site_id"]
 	vvSiteID := interfaceToString(vSiteID)
-	queryParamImport := catalystcentersdkgo.GetSiteV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetSiteQueryParams{}
 	queryParamImport.SiteID = vvSiteID
 	item2, err := searchSitesGetSite(m, queryParamImport)
 	if err != nil || item2 != nil {
@@ -323,7 +322,7 @@ func resourceSiteCreate(ctx context.Context, d *schema.ResourceData, m interface
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetSiteV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetSiteQueryParams{}
 	queryParamValidate.SiteID = vvSiteID
 	item3, err := searchSitesGetSite(m, queryParamValidate)
 	if err != nil || item3 == nil {
@@ -352,7 +351,7 @@ func resourceSiteRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetSite")
-		queryParams1 := catalystcentersdkgo.GetSiteV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetSiteQueryParams{}
 		queryParams1.SiteID = vvSiteID
 		response1, restyResp1, err := client.Sites.GetSite(&queryParams1)
 
@@ -384,7 +383,7 @@ func resourceSiteRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	return diags
 }
 
-func flattenSitesGetSiteByIDItem(item *catalystcentersdkgo.ResponseSitesGetSiteV1Response) []map[string]interface{} {
+func flattenSitesGetSiteByIDItem(item *catalystcentersdkgo.ResponseSitesGetSiteResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -413,7 +412,7 @@ func resourceSiteUpdate(ctx context.Context, d *schema.ResourceData, m interface
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvSiteID)
 		request1 := expandRequestSiteUpdateSiteSiteSite(ctx, "parameters.0", d)
-		header := catalystcentersdkgo.UpdateSiteV1HeaderParams{}
+		header := catalystcentersdkgo.UpdateSiteHeaderParams{}
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.Sites.UpdateSite(vvSiteID, request1, &header)
 		if err != nil || response1 == nil {
@@ -503,8 +502,8 @@ func resourceSiteDelete(ctx context.Context, d *schema.ResourceData, m interface
 
 	return diags
 }
-func expandRequestSiteCreateSiteSiteSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesCreateSiteV1 {
-	request := catalystcentersdkgo.RequestSitesCreateSiteV1{}
+func expandRequestSiteCreateSiteSiteSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesCreateSite {
+	request := catalystcentersdkgo.RequestSitesCreateSite{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".type")))) {
 		request.Type = interfaceToString(v)
 	}
@@ -517,8 +516,8 @@ func expandRequestSiteCreateSiteSiteSite(ctx context.Context, key string, d *sch
 	return &request
 }
 
-func expandRequestSiteCreateSiteSiteSiteSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesCreateSiteV1Site {
-	request := catalystcentersdkgo.RequestSitesCreateSiteV1Site{}
+func expandRequestSiteCreateSiteSiteSiteSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesCreateSiteSite {
+	request := catalystcentersdkgo.RequestSitesCreateSiteSite{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".area")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".area")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".area")))) {
 		request.Area = expandRequestSiteCreateSiteSiteAreaSite(ctx, key+".area.0", d)
 	}
@@ -534,8 +533,8 @@ func expandRequestSiteCreateSiteSiteSiteSite(ctx context.Context, key string, d 
 	return &request
 }
 
-func expandRequestSiteCreateSiteSiteAreaSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesCreateSiteV1SiteArea {
-	request := catalystcentersdkgo.RequestSitesCreateSiteV1SiteArea{}
+func expandRequestSiteCreateSiteSiteAreaSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesCreateSiteSiteArea {
+	request := catalystcentersdkgo.RequestSitesCreateSiteSiteArea{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -548,8 +547,8 @@ func expandRequestSiteCreateSiteSiteAreaSite(ctx context.Context, key string, d 
 	return &request
 }
 
-func expandRequestSiteCreateSiteSiteBuildingSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesCreateSiteV1SiteBuilding {
-	request := catalystcentersdkgo.RequestSitesCreateSiteV1SiteBuilding{}
+func expandRequestSiteCreateSiteSiteBuildingSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesCreateSiteSiteBuilding {
+	request := catalystcentersdkgo.RequestSitesCreateSiteSiteBuilding{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -574,8 +573,8 @@ func expandRequestSiteCreateSiteSiteBuildingSite(ctx context.Context, key string
 	return &request
 }
 
-func expandRequestSiteCreateSiteSiteFloorSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesCreateSiteV1SiteFloor {
-	request := catalystcentersdkgo.RequestSitesCreateSiteV1SiteFloor{}
+func expandRequestSiteCreateSiteSiteFloorSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesCreateSiteSiteFloor {
+	request := catalystcentersdkgo.RequestSitesCreateSiteSiteFloor{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -603,8 +602,8 @@ func expandRequestSiteCreateSiteSiteFloorSite(ctx context.Context, key string, d
 	return &request
 }
 
-func expandRequestSiteUpdateSiteSiteSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesUpdateSiteV1 {
-	request := catalystcentersdkgo.RequestSitesUpdateSiteV1{}
+func expandRequestSiteUpdateSiteSiteSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesUpdateSite {
+	request := catalystcentersdkgo.RequestSitesUpdateSite{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".type")))) {
 		request.Type = interfaceToString(v)
 	}
@@ -617,8 +616,8 @@ func expandRequestSiteUpdateSiteSiteSite(ctx context.Context, key string, d *sch
 	return &request
 }
 
-func expandRequestSiteUpdateSiteSiteSiteSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesUpdateSiteV1Site {
-	request := catalystcentersdkgo.RequestSitesUpdateSiteV1Site{}
+func expandRequestSiteUpdateSiteSiteSiteSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesUpdateSiteSite {
+	request := catalystcentersdkgo.RequestSitesUpdateSiteSite{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".area")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".area")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".area")))) {
 		request.Area = expandRequestSiteUpdateSiteSiteAreaSite(ctx, key+".area.0", d)
 	}
@@ -634,8 +633,8 @@ func expandRequestSiteUpdateSiteSiteSiteSite(ctx context.Context, key string, d 
 	return &request
 }
 
-func expandRequestSiteUpdateSiteSiteAreaSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesUpdateSiteV1SiteArea {
-	request := catalystcentersdkgo.RequestSitesUpdateSiteV1SiteArea{}
+func expandRequestSiteUpdateSiteSiteAreaSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesUpdateSiteSiteArea {
+	request := catalystcentersdkgo.RequestSitesUpdateSiteSiteArea{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -648,8 +647,8 @@ func expandRequestSiteUpdateSiteSiteAreaSite(ctx context.Context, key string, d 
 	return &request
 }
 
-func expandRequestSiteUpdateSiteSiteBuildingSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesUpdateSiteV1SiteBuilding {
-	request := catalystcentersdkgo.RequestSitesUpdateSiteV1SiteBuilding{}
+func expandRequestSiteUpdateSiteSiteBuildingSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesUpdateSiteSiteBuilding {
+	request := catalystcentersdkgo.RequestSitesUpdateSiteSiteBuilding{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -674,8 +673,8 @@ func expandRequestSiteUpdateSiteSiteBuildingSite(ctx context.Context, key string
 	return &request
 }
 
-func expandRequestSiteUpdateSiteSiteFloorSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesUpdateSiteV1SiteFloor {
-	request := catalystcentersdkgo.RequestSitesUpdateSiteV1SiteFloor{}
+func expandRequestSiteUpdateSiteSiteFloorSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesUpdateSiteSiteFloor {
+	request := catalystcentersdkgo.RequestSitesUpdateSiteSiteFloor{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}

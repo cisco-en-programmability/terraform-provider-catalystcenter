@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -57,31 +57,31 @@ attribute=networkDeviceCount&attribute=clientCount (multiple attributes requeste
 				Optional: true,
 			},
 			"site_hierarchy": &schema.Schema{
-				Description: `siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. Global/AreaName/BuildingName/FloorName)
-This field supports wildcard asterisk (*) character search support. E.g. */San*, */San, /San*
+				Description: `siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. **Global/AreaName/BuildingName/FloorName**)
+This field supports wildcard asterisk (*****) character search support. E.g. ***/San*, */San, /San***
 Examples:
-?siteHierarchy=Global/AreaName/BuildingName/FloorName (single siteHierarchy requested)
-?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2 (multiple siteHierarchies requested)
+**?siteHierarchy=Global/AreaName/BuildingName/FloorName** (single siteHierarchy requested)
+**?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2** (multiple siteHierarchies requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_hierarchy_id": &schema.Schema{
-				Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. globalUuid/areaUuid/buildingUuid/floorUuid)
-This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*
+				Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. **globalUuid/areaUuid/buildingUuid/floorUuid**)
+This field supports wildcard asterisk (*****) character search support. E.g. ***uuid*, *uuid, uuid***
 Examples:
-?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid (single siteHierarchyId requested)
-?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2 (multiple siteHierarchyIds requested)
+**?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid **(single siteHierarchyId requested)
+**?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2** (multiple siteHierarchyIds requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_type": &schema.Schema{
 				Description: `siteType query parameter. The type of the site. A site can be an area, building, or floor.
-Default when not provided will be [floor,building,area]
+Default when not provided will be **[floor,building,area]**
 Examples:
-?siteType=area (single siteType requested)
-?siteType=area&siteType=building&siteType=floor (multiple siteTypes requested)
+**?siteType=area** (single siteType requested)
+**?siteType=area&siteType=building&siteType=floor** (multiple siteTypes requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -176,10 +176,10 @@ func dataSourceSiteHealthSummariesTrendAnalyticsRead(ctx context.Context, d *sch
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: ReadTrendAnalyticsDataForAGroupingOfSitesInYourNetworkV1")
+		log.Printf("[DEBUG] Selected method: ReadTrendAnalyticsDataForAGroupingOfSitesInYourNetwork")
 
-		headerParams1 := catalystcentersdkgo.ReadTrendAnalyticsDataForAGroupingOfSitesInYourNetworkV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.ReadTrendAnalyticsDataForAGroupingOfSitesInYourNetworkV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.ReadTrendAnalyticsDataForAGroupingOfSitesInYourNetworkHeaderParams{}
+		queryParams1 := catalystcentersdkgo.ReadTrendAnalyticsDataForAGroupingOfSitesInYourNetworkQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -221,24 +221,36 @@ func dataSourceSiteHealthSummariesTrendAnalyticsRead(ctx context.Context, d *sch
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sites.ReadTrendAnalyticsDataForAGroupingOfSitesInYourNetworkV1(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Sites.ReadTrendAnalyticsDataForAGroupingOfSitesInYourNetwork(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 ReadTrendAnalyticsDataForAGroupingOfSitesInYourNetworkV1", err,
-				"Failure at ReadTrendAnalyticsDataForAGroupingOfSitesInYourNetworkV1, unexpected response", ""))
+				"Failure when executing 2 ReadTrendAnalyticsDataForAGroupingOfSitesInYourNetwork", err,
+				"Failure at ReadTrendAnalyticsDataForAGroupingOfSitesInYourNetwork, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSitesReadTrendAnalyticsDataForAGroupingOfSitesInYourNetworkV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 ReadTrendAnalyticsDataForAGroupingOfSitesInYourNetwork", err,
+				"Failure at ReadTrendAnalyticsDataForAGroupingOfSitesInYourNetwork, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSitesReadTrendAnalyticsDataForAGroupingOfSitesInYourNetworkItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting ReadTrendAnalyticsDataForAGroupingOfSitesInYourNetworkV1 response",
+				"Failure when setting ReadTrendAnalyticsDataForAGroupingOfSitesInYourNetwork response",
 				err))
 			return diags
 		}
@@ -250,7 +262,7 @@ func dataSourceSiteHealthSummariesTrendAnalyticsRead(ctx context.Context, d *sch
 	return diags
 }
 
-func flattenSitesReadTrendAnalyticsDataForAGroupingOfSitesInYourNetworkV1Items(items *[]catalystcentersdkgo.ResponseSitesReadTrendAnalyticsDataForAGroupingOfSitesInYourNetworkV1Response) []map[string]interface{} {
+func flattenSitesReadTrendAnalyticsDataForAGroupingOfSitesInYourNetworkItems(items *[]catalystcentersdkgo.ResponseSitesReadTrendAnalyticsDataForAGroupingOfSitesInYourNetworkResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -258,13 +270,13 @@ func flattenSitesReadTrendAnalyticsDataForAGroupingOfSitesInYourNetworkV1Items(i
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["timestamp"] = item.Timestamp
-		respItem["attributes"] = flattenSitesReadTrendAnalyticsDataForAGroupingOfSitesInYourNetworkV1ItemsAttributes(item.Attributes)
+		respItem["attributes"] = flattenSitesReadTrendAnalyticsDataForAGroupingOfSitesInYourNetworkItemsAttributes(item.Attributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSitesReadTrendAnalyticsDataForAGroupingOfSitesInYourNetworkV1ItemsAttributes(items *[]catalystcentersdkgo.ResponseSitesReadTrendAnalyticsDataForAGroupingOfSitesInYourNetworkV1ResponseAttributes) []map[string]interface{} {
+func flattenSitesReadTrendAnalyticsDataForAGroupingOfSitesInYourNetworkItemsAttributes(items *[]catalystcentersdkgo.ResponseSitesReadTrendAnalyticsDataForAGroupingOfSitesInYourNetworkResponseAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -12,7 +13,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -163,7 +164,7 @@ func resourceFloorsFloorIDPlannedAccessPointPositionsBulk() *schema.Resource {
 																Computed: true,
 															},
 															"name": &schema.Schema{
-																Description: `Antenna type for this Planned Access Point. Use /dna/intent/api/v1/maps/supported-access-points to find supported Antennas for a particualr Planned Access Point type
+																Description: `Antenna type for this Planned Access Point. Use **/dna/intent/api/v1/maps/supported-access-points** to find supported Antennas for a particualr Planned Access Point type
 `,
 																Type:     schema.TypeString,
 																Optional: true,
@@ -204,7 +205,7 @@ func resourceFloorsFloorIDPlannedAccessPointPositionsBulk() *schema.Resource {
 										},
 									},
 									"type": &schema.Schema{
-										Description: `Planned Access Point type. Use dna/intent/api/v1/maps/supported-access-points to find the supported models
+										Description: `Planned Access Point type. Use **dna/intent/api/v1/maps/supported-access-points** to find the supported models
 `,
 										Type:     schema.TypeString,
 										Optional: true,
@@ -232,27 +233,28 @@ func resourceFloorsFloorIDPlannedAccessPointPositionsBulkCreate(ctx context.Cont
 	vvFloorID := vFloorID.(string)
 	request1 := expandRequestFloorsFloorIDPlannedAccessPointPositionsBulkAddPlannedAccessPointsPositionsV2(ctx, "parameters.0", d)
 
-	// has_unknown_response: None
-
 	response1, restyResp1, err := client.SiteDesign.AddPlannedAccessPointsPositionsV2(vvFloorID, request1)
 
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
 
-	vItem1 := flattenSiteDesignAddPlannedAccessPointsPositionsV2Item(response1.Response)
-	if err := d.Set("item", vItem1); err != nil {
-		diags = append(diags, diagError(
-			"Failure when setting AddPlannedAccessPointsPositionsV2 response",
-			err))
+	if err != nil || response1 == nil {
+		if restyResp1 != nil {
+			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+		}
+		d.SetId("")
 		return diags
 	}
+
+	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
 			"Failure when executing AddPlannedAccessPointsPositionsV2", err))
 		return diags
 	}
+
 	taskId := response1.Response.TaskID
 	log.Printf("[DEBUG] TASKID => %s", taskId)
 	if taskId != "" {
@@ -277,7 +279,7 @@ func resourceFloorsFloorIDPlannedAccessPointPositionsBulkCreate(ctx context.Cont
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
@@ -289,28 +291,25 @@ func resourceFloorsFloorIDPlannedAccessPointPositionsBulkCreate(ctx context.Cont
 		}
 	}
 
-	if err != nil || response1 == nil {
-		if restyResp1 != nil {
-			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
-		}
-		d.SetId("")
+	vItem1 := flattenSiteDesignAddPlannedAccessPointsPositionsV2Item(response1.Response)
+	if err := d.Set("item", vItem1); err != nil {
+		diags = append(diags, diagError(
+			"Failure when setting AddPlannedAccessPointsPositionsV2 response",
+			err))
 		return diags
 	}
 
-	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
-
 	d.SetId(getUnixTimeString())
 	return diags
-
 }
 func resourceFloorsFloorIDPlannedAccessPointPositionsBulkRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 	return diags
 }
 
 func resourceFloorsFloorIDPlannedAccessPointPositionsBulkDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 	return diags
@@ -401,7 +400,7 @@ func expandRequestFloorsFloorIDPlannedAccessPointPositionsBulkAddPlannedAccessPo
 func expandRequestFloorsFloorIDPlannedAccessPointPositionsBulkAddPlannedAccessPointsPositionsV2ItemRadios(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSiteDesignAddPlannedAccessPointsPositionsV2Radios {
 	request := catalystcentersdkgo.RequestItemSiteDesignAddPlannedAccessPointsPositionsV2Radios{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".bands")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".bands")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".bands")))) {
-		request.Bands = responseInterfaceToSliceFloat64(v)
+		request.Bands = interfaceToFloat64PtrArray(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".channel")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".channel")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".channel")))) {
 		request.Channel = interfaceToIntPtr(v)

@@ -2,13 +2,14 @@ package catalystcenter
 
 import (
 	"context"
+
 	"log"
 	"reflect"
 	"strconv"
 	"strings"
 	"time"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -214,7 +215,7 @@ func resourceAreaCreate(ctx context.Context, d *schema.ResourceData, m interface
 		newPathName := []string{"Global", newName}
 		newName = strings.Join(newPathName, "/")
 	}
-	queryParams1 := catalystcentersdkgo.GetSiteV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.GetSiteQueryParams{}
 	queryParams1.Name = newName
 	queryParams1.SiteID = vvSiteID
 	log.Printf("[DEBUG] newName => %s", newName)
@@ -226,7 +227,7 @@ func resourceAreaCreate(ctx context.Context, d *schema.ResourceData, m interface
 		d.SetId(joinResourceID(resourceMap))
 		return resourceAreaRead(ctx, d, m)
 	}
-	headers := catalystcentersdkgo.CreateSiteV1HeaderParams{}
+	headers := catalystcentersdkgo.CreateSiteHeaderParams{}
 	headers.Persistbapioutput = "false"
 	headers.Runsync = "false"
 	/*if okTimeout {
@@ -283,7 +284,7 @@ func resourceAreaCreate(ctx context.Context, d *schema.ResourceData, m interface
 			return diags
 		}
 	}
-	queryParams2 := catalystcentersdkgo.GetSiteV1QueryParams{}
+	queryParams2 := catalystcentersdkgo.GetSiteQueryParams{}
 	queryParams2.Name = newName
 	// queryParams2.SiteID = vvSiteID
 	item2, err := searchSitesGetSite(m, queryParams2)
@@ -312,7 +313,7 @@ func resourceAreaRead(ctx context.Context, d *schema.ResourceData, m interface{}
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		queryParams1 := catalystcentersdkgo.GetSiteV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetSiteQueryParams{}
 		queryParams1.Name = vName
 		// queryParams1.SiteID = vSiteID
 		log.Printf("[DEBUG] Read name => %s", queryParams1.Name)
@@ -361,7 +362,7 @@ func resourceAreaUpdate(ctx context.Context, d *schema.ResourceData, m interface
 	if d.HasChange("parameters") {
 		request1 := expandRequestSiteUpdateSite(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-		headers := catalystcentersdkgo.UpdateSiteV1HeaderParams{}
+		headers := catalystcentersdkgo.UpdateSiteHeaderParams{}
 		headers.Persistbapioutput = "false"
 		headers.Runsync = "false"
 		/*if vTimeout != "" {
@@ -406,7 +407,7 @@ func resourceAreaDelete(ctx context.Context, d *schema.ResourceData, m interface
 	resourceMap := separateResourceID(resourceID)
 	vSiteID := resourceMap["site_id"]
 	// time.Sleep(1 * time.Minute)
-	// queryParams1 := catalystcentersdkgo.GetSiteV1QueryParams{}
+	// queryParams1 := catalystcentersdkgo.GetSiteQueryParams{}
 	// queryParams1.Name = vName
 	// queryParams1.SiteID = vSiteID
 	// item, err := searchSitesGetSite(m, queryParams1)
@@ -483,8 +484,8 @@ func resourceAreaDelete(ctx context.Context, d *schema.ResourceData, m interface
 }
 
 // fixKeyAccess(key + ".type") now is fixKeyAccess("area.type")
-func expandRequestSiteCreateSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesCreateSiteV1 {
-	request := catalystcentersdkgo.RequestSitesCreateSiteV1{}
+func expandRequestSiteCreateSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesCreateSite {
+	request := catalystcentersdkgo.RequestSitesCreateSite{}
 	if v, ok := d.GetOkExists(fixKeyAccess("area.type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess("area.type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess("area.type")))) {
 		request.Type = interfaceToString(v)
 	}
@@ -500,8 +501,8 @@ func expandRequestSiteCreateSite(ctx context.Context, key string, d *schema.Reso
 	return &request
 }
 
-func expandRequestSiteCreateSiteSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesCreateSiteV1Site {
-	request := catalystcentersdkgo.RequestSitesCreateSiteV1Site{}
+func expandRequestSiteCreateSiteSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesCreateSiteSite {
+	request := catalystcentersdkgo.RequestSitesCreateSiteSite{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".area")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".area")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".area")))) {
 		request.Area = expandRequestSiteCreateSiteSiteArea(ctx, key+".area.0", d)
 	} /*
@@ -517,8 +518,8 @@ func expandRequestSiteCreateSiteSite(ctx context.Context, key string, d *schema.
 	return &request
 }
 
-func expandRequestSiteCreateSiteSiteArea(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesCreateSiteV1SiteArea {
-	request := catalystcentersdkgo.RequestSitesCreateSiteV1SiteArea{}
+func expandRequestSiteCreateSiteSiteArea(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesCreateSiteSiteArea {
+	request := catalystcentersdkgo.RequestSitesCreateSiteSiteArea{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -532,8 +533,8 @@ func expandRequestSiteCreateSiteSiteArea(ctx context.Context, key string, d *sch
 }
 
 // GetOkExists(fixKeyAccess(key + ".type")) now is GetOkExists(fixKeyAccess("area.type"))
-func expandRequestSiteUpdateSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesUpdateSiteV1 {
-	request := catalystcentersdkgo.RequestSitesUpdateSiteV1{}
+func expandRequestSiteUpdateSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesUpdateSite {
+	request := catalystcentersdkgo.RequestSitesUpdateSite{}
 	if v, ok := d.GetOkExists(fixKeyAccess("area.type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess("area.type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess("area.type")))) {
 		request.Type = interfaceToString(v)
 	}
@@ -549,8 +550,8 @@ func expandRequestSiteUpdateSite(ctx context.Context, key string, d *schema.Reso
 	return &request
 }
 
-func expandRequestSiteUpdateSiteSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesUpdateSiteV1Site {
-	request := catalystcentersdkgo.RequestSitesUpdateSiteV1Site{}
+func expandRequestSiteUpdateSiteSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesUpdateSiteSite {
+	request := catalystcentersdkgo.RequestSitesUpdateSiteSite{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".area")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".area")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".area")))) {
 		request.Area = expandRequestSiteUpdateSiteSiteArea(ctx, key+".area.0", d)
 	} /*
@@ -566,8 +567,8 @@ func expandRequestSiteUpdateSiteSite(ctx context.Context, key string, d *schema.
 	return &request
 }
 
-func expandRequestSiteUpdateSiteSiteArea(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesUpdateSiteV1SiteArea {
-	request := catalystcentersdkgo.RequestSitesUpdateSiteV1SiteArea{}
+func expandRequestSiteUpdateSiteSiteArea(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesUpdateSiteSiteArea {
+	request := catalystcentersdkgo.RequestSitesUpdateSiteSiteArea{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -580,11 +581,11 @@ func expandRequestSiteUpdateSiteSiteArea(ctx context.Context, key string, d *sch
 	return &request
 }
 
-func searchSitesGetSite(m interface{}, queryParams catalystcentersdkgo.GetSiteV1QueryParams) (*catalystcentersdkgo.ResponseSitesGetSiteV1Response, error) {
+func searchSitesGetSite(m interface{}, queryParams catalystcentersdkgo.GetSiteQueryParams) (*catalystcentersdkgo.ResponseSitesGetSiteResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseSitesGetSiteV1Response
-	// var ite *catalystcentersdkgo.ResponseSitesGetSiteV1
+	var foundItem *catalystcentersdkgo.ResponseSitesGetSiteResponse
+	// var ite *catalystcentersdkgo.ResponseSitesGetSite
 	if queryParams.SiteID == "" {
 		ite, restyResp1, err := client.Sites.GetSite(&queryParams)
 		if err != nil {
@@ -602,7 +603,7 @@ func searchSitesGetSite(m interface{}, queryParams catalystcentersdkgo.GetSiteV1
 		for _, item := range itemsCopy {
 			// Call get by _ method and set value to foundItem and return
 			if item.SiteNameHierarchy == queryParams.Name {
-				var getItem *catalystcentersdkgo.ResponseSitesGetSiteV1Response
+				var getItem *catalystcentersdkgo.ResponseSitesGetSiteResponse
 				getItem = &item
 				foundItem = getItem
 				return foundItem, err

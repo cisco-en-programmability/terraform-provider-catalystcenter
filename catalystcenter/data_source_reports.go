@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -649,8 +649,8 @@ func dataSourceReportsRead(ctx context.Context, d *schema.ResourceData, m interf
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetListOfScheduledReportsV1")
-		queryParams1 := catalystcentersdkgo.GetListOfScheduledReportsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetListOfScheduledReports")
+		queryParams1 := catalystcentersdkgo.GetListOfScheduledReportsQueryParams{}
 
 		if okViewGroupID {
 			queryParams1.ViewGroupID = vViewGroupID.(string)
@@ -659,24 +659,38 @@ func dataSourceReportsRead(ctx context.Context, d *schema.ResourceData, m interf
 			queryParams1.ViewID = vViewID.(string)
 		}
 
-		response1, restyResp1, err := client.Reports.GetListOfScheduledReportsV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Reports.GetListOfScheduledReports(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetListOfScheduledReportsV1", err,
-				"Failure at GetListOfScheduledReportsV1, unexpected response", ""))
+				"Failure when executing 2 GetListOfScheduledReports", err,
+				"Failure at GetListOfScheduledReports, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenReportsGetListOfScheduledReportsV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetListOfScheduledReports", err,
+				"Failure at GetListOfScheduledReports, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenReportsGetListOfScheduledReportsItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetListOfScheduledReportsV1 response",
+				"Failure when setting GetListOfScheduledReports response",
 				err))
 			return diags
 		}
@@ -686,27 +700,41 @@ func dataSourceReportsRead(ctx context.Context, d *schema.ResourceData, m interf
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetAScheduledReportV1")
+		log.Printf("[DEBUG] Selected method: GetAScheduledReport")
 		vvReportID := vReportID.(string)
 
-		response2, restyResp2, err := client.Reports.GetAScheduledReportV1(vvReportID)
+		// has_unknown_response: None
+
+		response2, restyResp2, err := client.Reports.GetAScheduledReport(vvReportID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAScheduledReportV1", err,
-				"Failure at GetAScheduledReportV1, unexpected response", ""))
+				"Failure when executing 2 GetAScheduledReport", err,
+				"Failure at GetAScheduledReport, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenReportsGetAScheduledReportV1Item(response2)
+		if err != nil || response2 == nil {
+			if restyResp2 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetAScheduledReport", err,
+				"Failure at GetAScheduledReport, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
+
+		vItem2 := flattenReportsGetAScheduledReportItem(response2)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAScheduledReportV1 response",
+				"Failure when setting GetAScheduledReport response",
 				err))
 			return diags
 		}
@@ -718,7 +746,7 @@ func dataSourceReportsRead(ctx context.Context, d *schema.ResourceData, m interf
 	return diags
 }
 
-func flattenReportsGetListOfScheduledReportsV1Items(items *catalystcentersdkgo.ResponseReportsGetListOfScheduledReportsV1) []map[string]interface{} {
+func flattenReportsGetListOfScheduledReportsItems(items *catalystcentersdkgo.ResponseReportsGetListOfScheduledReports) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -727,14 +755,14 @@ func flattenReportsGetListOfScheduledReportsV1Items(items *catalystcentersdkgo.R
 		respItem := make(map[string]interface{})
 		respItem["tags"] = item.Tags
 		respItem["data_category"] = item.DataCategory
-		respItem["deliveries"] = flattenReportsGetListOfScheduledReportsV1ItemsDeliveries(item.Deliveries)
+		respItem["deliveries"] = flattenReportsGetListOfScheduledReportsItemsDeliveries(item.Deliveries)
 		respItem["execution_count"] = item.ExecutionCount
-		respItem["executions"] = flattenReportsGetListOfScheduledReportsV1ItemsExecutions(item.Executions)
+		respItem["executions"] = flattenReportsGetListOfScheduledReportsItemsExecutions(item.Executions)
 		respItem["name"] = item.Name
 		respItem["report_id"] = item.ReportID
 		respItem["report_was_executed"] = boolPtrToString(item.ReportWasExecuted)
-		respItem["schedule"] = flattenReportsGetListOfScheduledReportsV1ItemsSchedule(item.Schedule)
-		respItem["view"] = flattenReportsGetListOfScheduledReportsV1ItemsView(item.View)
+		respItem["schedule"] = flattenReportsGetListOfScheduledReportsItemsSchedule(item.Schedule)
+		respItem["view"] = flattenReportsGetListOfScheduledReportsItemsView(item.View)
 		respItem["view_group_id"] = item.ViewGroupID
 		respItem["view_group_version"] = item.ViewGroupVersion
 		respItems = append(respItems, respItem)
@@ -742,7 +770,7 @@ func flattenReportsGetListOfScheduledReportsV1Items(items *catalystcentersdkgo.R
 	return respItems
 }
 
-func flattenReportsGetListOfScheduledReportsV1ItemsDeliveries(items *[]catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReportsV1Deliveries) []interface{} {
+func flattenReportsGetListOfScheduledReportsItemsDeliveries(items *[]catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReportsDeliveries) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -754,7 +782,7 @@ func flattenReportsGetListOfScheduledReportsV1ItemsDeliveries(items *[]catalystc
 	return respItems
 }
 
-func flattenReportsGetListOfScheduledReportsV1ItemsExecutions(items *[]catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReportsV1Executions) []map[string]interface{} {
+func flattenReportsGetListOfScheduledReportsItemsExecutions(items *[]catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReportsExecutions) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -773,7 +801,7 @@ func flattenReportsGetListOfScheduledReportsV1ItemsExecutions(items *[]catalystc
 	return respItems
 }
 
-func flattenReportsGetListOfScheduledReportsV1ItemsSchedule(item *catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReportsV1Schedule) interface{} {
+func flattenReportsGetListOfScheduledReportsItemsSchedule(item *catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReportsSchedule) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -783,14 +811,14 @@ func flattenReportsGetListOfScheduledReportsV1ItemsSchedule(item *catalystcenter
 
 }
 
-func flattenReportsGetListOfScheduledReportsV1ItemsView(item *catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReportsV1View) []map[string]interface{} {
+func flattenReportsGetListOfScheduledReportsItemsView(item *catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReportsView) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["field_groups"] = flattenReportsGetListOfScheduledReportsV1ItemsViewFieldGroups(item.FieldGroups)
-	respItem["filters"] = flattenReportsGetListOfScheduledReportsV1ItemsViewFilters(item.Filters)
-	respItem["format"] = flattenReportsGetListOfScheduledReportsV1ItemsViewFormat(item.Format)
+	respItem["field_groups"] = flattenReportsGetListOfScheduledReportsItemsViewFieldGroups(item.FieldGroups)
+	respItem["filters"] = flattenReportsGetListOfScheduledReportsItemsViewFilters(item.Filters)
+	respItem["format"] = flattenReportsGetListOfScheduledReportsItemsViewFormat(item.Format)
 	respItem["name"] = item.Name
 	respItem["view_id"] = item.ViewID
 	respItem["description"] = item.Description
@@ -802,7 +830,7 @@ func flattenReportsGetListOfScheduledReportsV1ItemsView(item *catalystcentersdkg
 
 }
 
-func flattenReportsGetListOfScheduledReportsV1ItemsViewFieldGroups(items *[]catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReportsV1ViewFieldGroups) []map[string]interface{} {
+func flattenReportsGetListOfScheduledReportsItemsViewFieldGroups(items *[]catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReportsViewFieldGroups) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -811,13 +839,13 @@ func flattenReportsGetListOfScheduledReportsV1ItemsViewFieldGroups(items *[]cata
 		respItem := make(map[string]interface{})
 		respItem["field_group_display_name"] = item.FieldGroupDisplayName
 		respItem["field_group_name"] = item.FieldGroupName
-		respItem["fields"] = flattenReportsGetListOfScheduledReportsV1ItemsViewFieldGroupsFields(item.Fields)
+		respItem["fields"] = flattenReportsGetListOfScheduledReportsItemsViewFieldGroupsFields(item.Fields)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenReportsGetListOfScheduledReportsV1ItemsViewFieldGroupsFields(items *[]catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReportsV1ViewFieldGroupsFields) []map[string]interface{} {
+func flattenReportsGetListOfScheduledReportsItemsViewFieldGroupsFields(items *[]catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReportsViewFieldGroupsFields) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -831,7 +859,7 @@ func flattenReportsGetListOfScheduledReportsV1ItemsViewFieldGroupsFields(items *
 	return respItems
 }
 
-func flattenReportsGetListOfScheduledReportsV1ItemsViewFilters(items *[]catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReportsV1ViewFilters) []map[string]interface{} {
+func flattenReportsGetListOfScheduledReportsItemsViewFilters(items *[]catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReportsViewFilters) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -841,13 +869,13 @@ func flattenReportsGetListOfScheduledReportsV1ItemsViewFilters(items *[]catalyst
 		respItem["display_name"] = item.DisplayName
 		respItem["name"] = item.Name
 		respItem["type"] = item.Type
-		respItem["value"] = flattenReportsGetListOfScheduledReportsV1ItemsViewFiltersValue(item.Value)
+		respItem["value"] = flattenReportsGetListOfScheduledReportsItemsViewFiltersValue(item.Value)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenReportsGetListOfScheduledReportsV1ItemsViewFiltersValue(item *catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReportsV1ViewFiltersValue) interface{} {
+func flattenReportsGetListOfScheduledReportsItemsViewFiltersValue(item *catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReportsViewFiltersValue) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -857,7 +885,7 @@ func flattenReportsGetListOfScheduledReportsV1ItemsViewFiltersValue(item *cataly
 
 }
 
-func flattenReportsGetListOfScheduledReportsV1ItemsViewFormat(item *catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReportsV1ViewFormat) []map[string]interface{} {
+func flattenReportsGetListOfScheduledReportsItemsViewFormat(item *catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReportsViewFormat) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -872,21 +900,21 @@ func flattenReportsGetListOfScheduledReportsV1ItemsViewFormat(item *catalystcent
 
 }
 
-func flattenReportsGetAScheduledReportV1Item(item *catalystcentersdkgo.ResponseReportsGetAScheduledReportV1) []map[string]interface{} {
+func flattenReportsGetAScheduledReportItem(item *catalystcentersdkgo.ResponseReportsGetAScheduledReport) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["tags"] = item.Tags
 	respItem["data_category"] = item.DataCategory
-	respItem["deliveries"] = flattenReportsGetAScheduledReportV1ItemDeliveries(item.Deliveries)
+	respItem["deliveries"] = flattenReportsGetAScheduledReportItemDeliveries(item.Deliveries)
 	respItem["execution_count"] = item.ExecutionCount
-	respItem["executions"] = flattenReportsGetAScheduledReportV1ItemExecutions(item.Executions)
+	respItem["executions"] = flattenReportsGetAScheduledReportItemExecutions(item.Executions)
 	respItem["name"] = item.Name
 	respItem["report_id"] = item.ReportID
 	respItem["report_was_executed"] = boolPtrToString(item.ReportWasExecuted)
-	respItem["schedule"] = flattenReportsGetAScheduledReportV1ItemSchedule(item.Schedule)
-	respItem["view"] = flattenReportsGetAScheduledReportV1ItemView(item.View)
+	respItem["schedule"] = flattenReportsGetAScheduledReportItemSchedule(item.Schedule)
+	respItem["view"] = flattenReportsGetAScheduledReportItemView(item.View)
 	respItem["view_group_id"] = item.ViewGroupID
 	respItem["view_group_version"] = item.ViewGroupVersion
 	return []map[string]interface{}{
@@ -894,7 +922,7 @@ func flattenReportsGetAScheduledReportV1Item(item *catalystcentersdkgo.ResponseR
 	}
 }
 
-func flattenReportsGetAScheduledReportV1ItemDeliveries(items *[]catalystcentersdkgo.ResponseReportsGetAScheduledReportV1Deliveries) []interface{} {
+func flattenReportsGetAScheduledReportItemDeliveries(items *[]catalystcentersdkgo.ResponseReportsGetAScheduledReportDeliveries) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -906,7 +934,7 @@ func flattenReportsGetAScheduledReportV1ItemDeliveries(items *[]catalystcentersd
 	return respItems
 }
 
-func flattenReportsGetAScheduledReportV1ItemExecutions(items *[]catalystcentersdkgo.ResponseReportsGetAScheduledReportV1Executions) []map[string]interface{} {
+func flattenReportsGetAScheduledReportItemExecutions(items *[]catalystcentersdkgo.ResponseReportsGetAScheduledReportExecutions) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -925,7 +953,7 @@ func flattenReportsGetAScheduledReportV1ItemExecutions(items *[]catalystcentersd
 	return respItems
 }
 
-func flattenReportsGetAScheduledReportV1ItemSchedule(item *catalystcentersdkgo.ResponseReportsGetAScheduledReportV1Schedule) interface{} {
+func flattenReportsGetAScheduledReportItemSchedule(item *catalystcentersdkgo.ResponseReportsGetAScheduledReportSchedule) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -935,14 +963,14 @@ func flattenReportsGetAScheduledReportV1ItemSchedule(item *catalystcentersdkgo.R
 
 }
 
-func flattenReportsGetAScheduledReportV1ItemView(item *catalystcentersdkgo.ResponseReportsGetAScheduledReportV1View) []map[string]interface{} {
+func flattenReportsGetAScheduledReportItemView(item *catalystcentersdkgo.ResponseReportsGetAScheduledReportView) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["field_groups"] = flattenReportsGetAScheduledReportV1ItemViewFieldGroups(item.FieldGroups)
-	respItem["filters"] = flattenReportsGetAScheduledReportV1ItemViewFilters(item.Filters)
-	respItem["format"] = flattenReportsGetAScheduledReportV1ItemViewFormat(item.Format)
+	respItem["field_groups"] = flattenReportsGetAScheduledReportItemViewFieldGroups(item.FieldGroups)
+	respItem["filters"] = flattenReportsGetAScheduledReportItemViewFilters(item.Filters)
+	respItem["format"] = flattenReportsGetAScheduledReportItemViewFormat(item.Format)
 	respItem["name"] = item.Name
 	respItem["view_id"] = item.ViewID
 	respItem["description"] = item.Description
@@ -954,7 +982,7 @@ func flattenReportsGetAScheduledReportV1ItemView(item *catalystcentersdkgo.Respo
 
 }
 
-func flattenReportsGetAScheduledReportV1ItemViewFieldGroups(items *[]catalystcentersdkgo.ResponseReportsGetAScheduledReportV1ViewFieldGroups) []map[string]interface{} {
+func flattenReportsGetAScheduledReportItemViewFieldGroups(items *[]catalystcentersdkgo.ResponseReportsGetAScheduledReportViewFieldGroups) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -963,13 +991,13 @@ func flattenReportsGetAScheduledReportV1ItemViewFieldGroups(items *[]catalystcen
 		respItem := make(map[string]interface{})
 		respItem["field_group_display_name"] = item.FieldGroupDisplayName
 		respItem["field_group_name"] = item.FieldGroupName
-		respItem["fields"] = flattenReportsGetAScheduledReportV1ItemViewFieldGroupsFields(item.Fields)
+		respItem["fields"] = flattenReportsGetAScheduledReportItemViewFieldGroupsFields(item.Fields)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenReportsGetAScheduledReportV1ItemViewFieldGroupsFields(items *[]catalystcentersdkgo.ResponseReportsGetAScheduledReportV1ViewFieldGroupsFields) []map[string]interface{} {
+func flattenReportsGetAScheduledReportItemViewFieldGroupsFields(items *[]catalystcentersdkgo.ResponseReportsGetAScheduledReportViewFieldGroupsFields) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -983,7 +1011,7 @@ func flattenReportsGetAScheduledReportV1ItemViewFieldGroupsFields(items *[]catal
 	return respItems
 }
 
-func flattenReportsGetAScheduledReportV1ItemViewFilters(items *[]catalystcentersdkgo.ResponseReportsGetAScheduledReportV1ViewFilters) []map[string]interface{} {
+func flattenReportsGetAScheduledReportItemViewFilters(items *[]catalystcentersdkgo.ResponseReportsGetAScheduledReportViewFilters) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -993,13 +1021,13 @@ func flattenReportsGetAScheduledReportV1ItemViewFilters(items *[]catalystcenters
 		respItem["display_name"] = item.DisplayName
 		respItem["name"] = item.Name
 		respItem["type"] = item.Type
-		respItem["value"] = flattenReportsGetAScheduledReportV1ItemViewFiltersValue(item.Value)
+		respItem["value"] = flattenReportsGetAScheduledReportItemViewFiltersValue(item.Value)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenReportsGetAScheduledReportV1ItemViewFiltersValue(item *catalystcentersdkgo.ResponseReportsGetAScheduledReportV1ViewFiltersValue) interface{} {
+func flattenReportsGetAScheduledReportItemViewFiltersValue(item *catalystcentersdkgo.ResponseReportsGetAScheduledReportViewFiltersValue) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1009,7 +1037,7 @@ func flattenReportsGetAScheduledReportV1ItemViewFiltersValue(item *catalystcente
 
 }
 
-func flattenReportsGetAScheduledReportV1ItemViewFormat(item *catalystcentersdkgo.ResponseReportsGetAScheduledReportV1ViewFormat) []map[string]interface{} {
+func flattenReportsGetAScheduledReportItemViewFormat(item *catalystcentersdkgo.ResponseReportsGetAScheduledReportViewFormat) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

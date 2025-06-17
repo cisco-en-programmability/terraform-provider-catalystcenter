@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -453,27 +453,41 @@ func dataSourceDiscoveryRead(ctx context.Context, d *schema.ResourceData, m inte
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDiscoveryByIDV1")
+		log.Printf("[DEBUG] Selected method: GetDiscoveryByID")
 		vvID := vID.(string)
 
-		response1, restyResp1, err := client.Discovery.GetDiscoveryByIDV1(vvID)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Discovery.GetDiscoveryByID(vvID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDiscoveryByIDV1", err,
-				"Failure at GetDiscoveryByIDV1, unexpected response", ""))
+				"Failure when executing 2 GetDiscoveryByID", err,
+				"Failure at GetDiscoveryByID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDiscoveryGetDiscoveryByIDV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetDiscoveryByID", err,
+				"Failure at GetDiscoveryByID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenDiscoveryGetDiscoveryByIDItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDiscoveryByIDV1 response",
+				"Failure when setting GetDiscoveryByID response",
 				err))
 			return diags
 		}
@@ -485,12 +499,12 @@ func dataSourceDiscoveryRead(ctx context.Context, d *schema.ResourceData, m inte
 	return diags
 }
 
-func flattenDiscoveryGetDiscoveryByIDV1Item(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveryByIDV1Response) []map[string]interface{} {
+func flattenDiscoveryGetDiscoveryByIDItem(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveryByIDResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["attribute_info"] = flattenDiscoveryGetDiscoveryByIDV1ItemAttributeInfo(item.AttributeInfo)
+	respItem["attribute_info"] = flattenDiscoveryGetDiscoveryByIDItemAttributeInfo(item.AttributeInfo)
 	respItem["cdp_level"] = item.CdpLevel
 	respItem["device_ids"] = item.DeviceIDs
 	respItem["discovery_condition"] = item.DiscoveryCondition
@@ -498,8 +512,8 @@ func flattenDiscoveryGetDiscoveryByIDV1Item(item *catalystcentersdkgo.ResponseDi
 	respItem["discovery_type"] = item.DiscoveryType
 	respItem["enable_password_list"] = item.EnablePasswordList
 	respItem["global_credential_id_list"] = item.GlobalCredentialIDList
-	respItem["http_read_credential"] = flattenDiscoveryGetDiscoveryByIDV1ItemHTTPReadCredential(item.HTTPReadCredential)
-	respItem["http_write_credential"] = flattenDiscoveryGetDiscoveryByIDV1ItemHTTPWriteCredential(item.HTTPWriteCredential)
+	respItem["http_read_credential"] = flattenDiscoveryGetDiscoveryByIDItemHTTPReadCredential(item.HTTPReadCredential)
+	respItem["http_write_credential"] = flattenDiscoveryGetDiscoveryByIDItemHTTPWriteCredential(item.HTTPWriteCredential)
 	respItem["id"] = item.ID
 	respItem["ip_address_list"] = item.IPAddressList
 	respItem["ip_filter_list"] = item.IPFilterList
@@ -531,7 +545,7 @@ func flattenDiscoveryGetDiscoveryByIDV1Item(item *catalystcentersdkgo.ResponseDi
 	}
 }
 
-func flattenDiscoveryGetDiscoveryByIDV1ItemAttributeInfo(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveryByIDV1ResponseAttributeInfo) interface{} {
+func flattenDiscoveryGetDiscoveryByIDItemAttributeInfo(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveryByIDResponseAttributeInfo) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -541,7 +555,7 @@ func flattenDiscoveryGetDiscoveryByIDV1ItemAttributeInfo(item *catalystcentersdk
 
 }
 
-func flattenDiscoveryGetDiscoveryByIDV1ItemHTTPReadCredential(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveryByIDV1ResponseHTTPReadCredential) []map[string]interface{} {
+func flattenDiscoveryGetDiscoveryByIDItemHTTPReadCredential(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveryByIDResponseHTTPReadCredential) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -563,7 +577,7 @@ func flattenDiscoveryGetDiscoveryByIDV1ItemHTTPReadCredential(item *catalystcent
 
 }
 
-func flattenDiscoveryGetDiscoveryByIDV1ItemHTTPWriteCredential(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveryByIDV1ResponseHTTPWriteCredential) []map[string]interface{} {
+func flattenDiscoveryGetDiscoveryByIDItemHTTPWriteCredential(item *catalystcentersdkgo.ResponseDiscoveryGetDiscoveryByIDResponseHTTPWriteCredential) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

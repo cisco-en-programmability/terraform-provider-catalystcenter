@@ -22,7 +22,7 @@ It manages create, read, update and delete operations on Sites.
 ```terraform
 resource "catalystcenter_site" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     site {

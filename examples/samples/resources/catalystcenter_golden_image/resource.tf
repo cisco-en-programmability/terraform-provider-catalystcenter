@@ -13,7 +13,7 @@ provider "catalystcenter" {
   debug = "true"
 }
 
-resource "catalystcenter_golden_image" "example" {
+resource "catalystcenter_golden_tag_image" "example" {
   provider = catalystcenter
   parameters {
     image_id                 = "e7f80aaa-62d3-4390-a8ee-49bbfba036a3"

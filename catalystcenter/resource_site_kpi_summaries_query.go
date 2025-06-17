@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -12,7 +13,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -201,9 +202,9 @@ func resourceSiteKpiSummariesQueryCreate(ctx context.Context, d *schema.Resource
 
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
-	request1 := expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1(ctx, "parameters.0", d)
+	request1 := expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFilters(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.GetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1HeaderParams{}
+	headerParams1 := catalystcentersdkgo.GetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersHeaderParams{}
 
 	headerParams1.XCaLLERID = vXCaLLERID.(string)
 
@@ -252,7 +253,7 @@ func resourceSiteKpiSummariesQueryCreate(ctx context.Context, d *schema.Resource
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
@@ -264,7 +265,7 @@ func resourceSiteKpiSummariesQueryCreate(ctx context.Context, d *schema.Resource
 		}
 	}
 
-	vItem1 := flattenSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1Item(response1.Response)
+	vItem1 := flattenSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
 			"Failure when setting GetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFilters response",
@@ -289,8 +290,8 @@ func resourceSiteKpiSummariesQueryDelete(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1 {
-	request := catalystcentersdkgo.RequestSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1{}
+func expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFilters {
+	request := catalystcentersdkgo.RequestSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -298,7 +299,7 @@ func expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenPa
 		request.EndTime = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1FiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersFiltersArray(ctx, key+".filters", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".attributes")))) {
 		request.Attributes = interfaceToSliceString(v)
@@ -307,13 +308,13 @@ func expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenPa
 		request.Views = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".page")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".page")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".page")))) {
-		request.Page = expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1Page(ctx, key+".page.0", d)
+		request.Page = expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersPage(ctx, key+".page.0", d)
 	}
 	return &request
 }
 
-func expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1Filters {
-	request := []catalystcentersdkgo.RequestSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1Filters{}
+func expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersFilters {
+	request := []catalystcentersdkgo.RequestSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -324,7 +325,7 @@ func expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenPa
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -332,8 +333,8 @@ func expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenPa
 	return &request
 }
 
-func expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1Filters {
-	request := catalystcentersdkgo.RequestSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1Filters{}
+func expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersFilters {
+	request := catalystcentersdkgo.RequestSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -346,8 +347,8 @@ func expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenPa
 	return &request
 }
 
-func expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1Page(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1Page {
-	request := catalystcentersdkgo.RequestSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1Page{}
+func expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersPage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersPage {
+	request := catalystcentersdkgo.RequestSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersPage{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".limit")))) {
 		request.Limit = interfaceToIntPtr(v)
 	}
@@ -355,13 +356,13 @@ func expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenPa
 		request.Offset = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".sort_by")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".sort_by")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".sort_by")))) {
-		request.SortBy = expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1PageSortBy(ctx, key+".sort_by.0", d)
+		request.SortBy = expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersPageSortBy(ctx, key+".sort_by.0", d)
 	}
 	return &request
 }
 
-func expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1PageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1PageSortBy {
-	request := catalystcentersdkgo.RequestSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1PageSortBy{}
+func expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersPageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersPageSortBy {
+	request := catalystcentersdkgo.RequestSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersPageSortBy{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -371,7 +372,7 @@ func expandRequestSiteKpiSummariesQueryGetSiteAnalyticsForTheChildSitesOfGivenPa
 	return &request
 }
 
-func flattenSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1Item(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersV1Response) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersItem(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsForTheChildSitesOfGivenParentSiteAndOtherFiltersResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

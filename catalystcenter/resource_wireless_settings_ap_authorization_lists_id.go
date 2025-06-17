@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -243,7 +243,7 @@ func resourceWirelessSettingsApAuthorizationListsIDRead(ctx context.Context, d *
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessGetApAuthorizationListByIDV1Item(response1.Response)
+		vItem1 := flattenWirelessGetApAuthorizationListByIDItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetApAuthorizationListByID response",
@@ -267,7 +267,7 @@ func resourceWirelessSettingsApAuthorizationListsIDUpdate(ctx context.Context, d
 	vvID := resourceMap["id"]
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvID)
-		request1 := expandRequestWirelessSettingsApAuthorizationListsIDUpdateApAuthorizationListV1(ctx, "parameters.0", d)
+		request1 := expandRequestWirelessSettingsApAuthorizationListsIDUpdateApAuthorizationList(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.Wireless.UpdateApAuthorizationList(vvID, request1)
 		if err != nil || response1 == nil {
@@ -379,16 +379,17 @@ func resourceWirelessSettingsApAuthorizationListsIDDelete(ctx context.Context, d
 
 	return diags
 }
-func expandRequestWirelessSettingsApAuthorizationListsIDUpdateApAuthorizationListV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateApAuthorizationListV1 {
-	request := catalystcentersdkgo.RequestWirelessUpdateApAuthorizationListV1{}
+
+func expandRequestWirelessSettingsApAuthorizationListsIDUpdateApAuthorizationList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateApAuthorizationList {
+	request := catalystcentersdkgo.RequestWirelessUpdateApAuthorizationList{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ap_authorization_list_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ap_authorization_list_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ap_authorization_list_name")))) {
 		request.ApAuthorizationListName = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".local_authorization")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".local_authorization")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".local_authorization")))) {
-		request.LocalAuthorization = expandRequestWirelessSettingsApAuthorizationListsIDUpdateApAuthorizationListV1LocalAuthorization(ctx, key+".local_authorization.0", d)
+		request.LocalAuthorization = expandRequestWirelessSettingsApAuthorizationListsIDUpdateApAuthorizationListLocalAuthorization(ctx, key+".local_authorization.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".remote_authorization")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".remote_authorization")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".remote_authorization")))) {
-		request.RemoteAuthorization = expandRequestWirelessSettingsApAuthorizationListsIDUpdateApAuthorizationListV1RemoteAuthorization(ctx, key+".remote_authorization.0", d)
+		request.RemoteAuthorization = expandRequestWirelessSettingsApAuthorizationListsIDUpdateApAuthorizationListRemoteAuthorization(ctx, key+".remote_authorization.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -396,8 +397,8 @@ func expandRequestWirelessSettingsApAuthorizationListsIDUpdateApAuthorizationLis
 	return &request
 }
 
-func expandRequestWirelessSettingsApAuthorizationListsIDUpdateApAuthorizationListV1LocalAuthorization(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateApAuthorizationListV1LocalAuthorization {
-	request := catalystcentersdkgo.RequestWirelessUpdateApAuthorizationListV1LocalAuthorization{}
+func expandRequestWirelessSettingsApAuthorizationListsIDUpdateApAuthorizationListLocalAuthorization(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateApAuthorizationListLocalAuthorization {
+	request := catalystcentersdkgo.RequestWirelessUpdateApAuthorizationListLocalAuthorization{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ap_mac_entries")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ap_mac_entries")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ap_mac_entries")))) {
 		request.ApMacEntries = interfaceToSliceString(v)
 	}
@@ -410,8 +411,8 @@ func expandRequestWirelessSettingsApAuthorizationListsIDUpdateApAuthorizationLis
 	return &request
 }
 
-func expandRequestWirelessSettingsApAuthorizationListsIDUpdateApAuthorizationListV1RemoteAuthorization(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateApAuthorizationListV1RemoteAuthorization {
-	request := catalystcentersdkgo.RequestWirelessUpdateApAuthorizationListV1RemoteAuthorization{}
+func expandRequestWirelessSettingsApAuthorizationListsIDUpdateApAuthorizationListRemoteAuthorization(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateApAuthorizationListRemoteAuthorization {
+	request := catalystcentersdkgo.RequestWirelessUpdateApAuthorizationListRemoteAuthorization{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".aaa_servers")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".aaa_servers")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".aaa_servers")))) {
 		request.AAAServers = interfaceToSliceString(v)
 	}

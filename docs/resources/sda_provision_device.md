@@ -22,7 +22,7 @@ It manages create, read, update and delete operations on SDA.
 ```terraform
 resource "catalystcenter_sda_provision_device" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     device_management_ip_address = "string"

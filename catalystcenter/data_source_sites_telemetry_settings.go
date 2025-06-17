@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,20 +15,20 @@ func dataSourceSitesTelemetrySettings() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Network Settings.
 
-- Retrieves telemetry settings for the given site. *null* values indicate that the setting will be inherited from the
+- Retrieves telemetry settings for the given site. **null** values indicate that the setting will be inherited from the
 parent site.
 `,
 
 		ReadContext: dataSourceSitesTelemetrySettingsRead,
 		Schema: map[string]*schema.Schema{
 			"id": &schema.Schema{
-				Description: `id path parameter. Site Id, retrievable from the *id* attribute in */dna/intent/api/v1/sites*
+				Description: `id path parameter. Site Id, retrievable from the **id** attribute in **/dna/intent/api/v1/sites**
 `,
 				Type:     schema.TypeString,
 				Required: true,
 			},
 			"inherited": &schema.Schema{
-				Description: `_inherited query parameter. Include settings explicitly set for this site and settings inherited from sites higher in the site hierarchy; when *false*, *null* values indicate that the site inherits that setting from the parent site or a site higher in the site hierarchy.
+				Description: `_inherited query parameter. Include settings explicitly set for this site and settings inherited from sites higher in the site hierarchy; when **false**, **null** values indicate that the site inherits that setting from the parent site or a site higher in the site hierarchy.
 `,
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -182,7 +182,7 @@ parent site.
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 
-									"enable_wired_data_collectio": &schema.Schema{
+									"enable_wired_data_collection": &schema.Schema{
 										Description: `Track the presence, location, and movement of wired endpoints in the network. Traffic received from endpoints is used to extract and store their identity information (MAC address and IP address). Other features, such as IEEE 802.1X, web authentication, Cisco Security Groups (formerly TrustSec), SD-Access, and Assurance, depend on this identity information to operate properly. Wired Endpoint Data Collection enables Device Tracking policies on devices assigned to the Access role in Inventory.
 `,
 										// Type:        schema.TypeBool,
@@ -249,32 +249,46 @@ func dataSourceSitesTelemetrySettingsRead(ctx context.Context, d *schema.Resourc
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveTelemetrySettingsForASiteV1")
+		log.Printf("[DEBUG] Selected method: RetrieveTelemetrySettingsForASite")
 		vvID := vID.(string)
-		queryParams1 := catalystcentersdkgo.RetrieveTelemetrySettingsForASiteV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrieveTelemetrySettingsForASiteQueryParams{}
 
 		if okInherited {
 			queryParams1.Inherited = vInherited.(bool)
 		}
 
-		response1, restyResp1, err := client.NetworkSettings.RetrieveTelemetrySettingsForASiteV1(vvID, &queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.NetworkSettings.RetrieveTelemetrySettingsForASite(vvID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveTelemetrySettingsForASiteV1", err,
-				"Failure at RetrieveTelemetrySettingsForASiteV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveTelemetrySettingsForASite", err,
+				"Failure at RetrieveTelemetrySettingsForASite, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenNetworkSettingsRetrieveTelemetrySettingsForASiteV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveTelemetrySettingsForASite", err,
+				"Failure at RetrieveTelemetrySettingsForASite, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenNetworkSettingsRetrieveTelemetrySettingsForASiteItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveTelemetrySettingsForASiteV1 response",
+				"Failure when setting RetrieveTelemetrySettingsForASite response",
 				err))
 			return diags
 		}
@@ -286,27 +300,27 @@ func dataSourceSitesTelemetrySettingsRead(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func flattenNetworkSettingsRetrieveTelemetrySettingsForASiteV1Item(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveTelemetrySettingsForASiteV1Response) []map[string]interface{} {
+func flattenNetworkSettingsRetrieveTelemetrySettingsForASiteItem(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveTelemetrySettingsForASiteResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["wired_data_collection"] = flattenNetworkSettingsRetrieveTelemetrySettingsForASiteV1ItemWiredDataCollection(item.WiredDataCollection)
-	respItem["wireless_telemetry"] = flattenNetworkSettingsRetrieveTelemetrySettingsForASiteV1ItemWirelessTelemetry(item.WirelessTelemetry)
-	respItem["snmp_traps"] = flattenNetworkSettingsRetrieveTelemetrySettingsForASiteV1ItemSNMPTraps(item.SNMPTraps)
-	respItem["syslogs"] = flattenNetworkSettingsRetrieveTelemetrySettingsForASiteV1ItemSyslogs(item.Syslogs)
-	respItem["application_visibility"] = flattenNetworkSettingsRetrieveTelemetrySettingsForASiteV1ItemApplicationVisibility(item.ApplicationVisibility)
+	respItem["wired_data_collection"] = flattenNetworkSettingsRetrieveTelemetrySettingsForASiteItemWiredDataCollection(item.WiredDataCollection)
+	respItem["wireless_telemetry"] = flattenNetworkSettingsRetrieveTelemetrySettingsForASiteItemWirelessTelemetry(item.WirelessTelemetry)
+	respItem["snmp_traps"] = flattenNetworkSettingsRetrieveTelemetrySettingsForASiteItemSNMPTraps(item.SNMPTraps)
+	respItem["syslogs"] = flattenNetworkSettingsRetrieveTelemetrySettingsForASiteItemSyslogs(item.Syslogs)
+	respItem["application_visibility"] = flattenNetworkSettingsRetrieveTelemetrySettingsForASiteItemApplicationVisibility(item.ApplicationVisibility)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenNetworkSettingsRetrieveTelemetrySettingsForASiteV1ItemWiredDataCollection(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveTelemetrySettingsForASiteV1ResponseWiredDataCollection) []map[string]interface{} {
+func flattenNetworkSettingsRetrieveTelemetrySettingsForASiteItemWiredDataCollection(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveTelemetrySettingsForASiteResponseWiredDataCollection) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["enable_wired_data_collectio"] = boolPtrToString(item.EnableWiredDataCollectio)
+	respItem["enable_wired_data_collection"] = boolPtrToString(item.EnableWiredDataCollection)
 	respItem["inherited_site_id"] = item.InheritedSiteID
 	respItem["inherited_site_name"] = item.InheritedSiteName
 
@@ -316,7 +330,7 @@ func flattenNetworkSettingsRetrieveTelemetrySettingsForASiteV1ItemWiredDataColle
 
 }
 
-func flattenNetworkSettingsRetrieveTelemetrySettingsForASiteV1ItemWirelessTelemetry(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveTelemetrySettingsForASiteV1ResponseWirelessTelemetry) []map[string]interface{} {
+func flattenNetworkSettingsRetrieveTelemetrySettingsForASiteItemWirelessTelemetry(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveTelemetrySettingsForASiteResponseWirelessTelemetry) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -331,7 +345,7 @@ func flattenNetworkSettingsRetrieveTelemetrySettingsForASiteV1ItemWirelessTeleme
 
 }
 
-func flattenNetworkSettingsRetrieveTelemetrySettingsForASiteV1ItemSNMPTraps(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveTelemetrySettingsForASiteV1ResponseSNMPTraps) []map[string]interface{} {
+func flattenNetworkSettingsRetrieveTelemetrySettingsForASiteItemSNMPTraps(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveTelemetrySettingsForASiteResponseSNMPTraps) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -347,7 +361,7 @@ func flattenNetworkSettingsRetrieveTelemetrySettingsForASiteV1ItemSNMPTraps(item
 
 }
 
-func flattenNetworkSettingsRetrieveTelemetrySettingsForASiteV1ItemSyslogs(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveTelemetrySettingsForASiteV1ResponseSyslogs) []map[string]interface{} {
+func flattenNetworkSettingsRetrieveTelemetrySettingsForASiteItemSyslogs(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveTelemetrySettingsForASiteResponseSyslogs) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -363,12 +377,12 @@ func flattenNetworkSettingsRetrieveTelemetrySettingsForASiteV1ItemSyslogs(item *
 
 }
 
-func flattenNetworkSettingsRetrieveTelemetrySettingsForASiteV1ItemApplicationVisibility(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveTelemetrySettingsForASiteV1ResponseApplicationVisibility) []map[string]interface{} {
+func flattenNetworkSettingsRetrieveTelemetrySettingsForASiteItemApplicationVisibility(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveTelemetrySettingsForASiteResponseApplicationVisibility) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["collector"] = flattenNetworkSettingsRetrieveTelemetrySettingsForASiteV1ItemApplicationVisibilityCollector(item.Collector)
+	respItem["collector"] = flattenNetworkSettingsRetrieveTelemetrySettingsForASiteItemApplicationVisibilityCollector(item.Collector)
 	respItem["enable_on_wired_access_devices"] = boolPtrToString(item.EnableOnWiredAccessDevices)
 	respItem["inherited_site_id"] = item.InheritedSiteID
 	respItem["inherited_site_name"] = item.InheritedSiteName
@@ -379,7 +393,7 @@ func flattenNetworkSettingsRetrieveTelemetrySettingsForASiteV1ItemApplicationVis
 
 }
 
-func flattenNetworkSettingsRetrieveTelemetrySettingsForASiteV1ItemApplicationVisibilityCollector(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveTelemetrySettingsForASiteV1ResponseApplicationVisibilityCollector) []map[string]interface{} {
+func flattenNetworkSettingsRetrieveTelemetrySettingsForASiteItemApplicationVisibilityCollector(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveTelemetrySettingsForASiteResponseApplicationVisibilityCollector) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

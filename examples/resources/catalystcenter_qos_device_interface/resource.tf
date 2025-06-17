@@ -1,8 +1,10 @@
 
 resource "catalystcenter_qos_device_interface" "example" {
   provider = catalystcenter
-
   parameters {
+    payload {
+      
+    
 
     excluded_interfaces = ["string"]
     id                  = "string"
@@ -17,6 +19,7 @@ resource "catalystcenter_qos_device_interface" "example" {
       label                 = "string"
       role                  = "string"
       upload_bw             = 1
+    }
     }
   }
 }

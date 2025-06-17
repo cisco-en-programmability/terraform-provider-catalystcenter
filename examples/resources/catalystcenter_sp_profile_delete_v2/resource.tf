@@ -1,10 +1,10 @@
 
 resource "catalystcenter_sp_profile_delete_v2" "example" {
-  provider        = meraki
+  provider        = catalystcenter
   sp_profile_name = "string"
-  parameters {
+  parameters = [{
 
-  }
+  }]
 }
 
 output "catalystcenter_sp_profile_delete_v2_example" {

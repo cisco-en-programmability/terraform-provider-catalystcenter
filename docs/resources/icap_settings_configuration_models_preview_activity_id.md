@@ -38,9 +38,9 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_icap_settings_configuration_models_preview_activity_id" "example" {
   provider            = catalystcenter
   preview_activity_id = "string"
-  parameters {
+  parameters = [{
 
-  }
+  }]
 }
 
 output "catalystcenter_icap_settings_configuration_models_preview_activity_id_example" {

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -16,10 +16,10 @@ func dataSourceFabricSiteHealthSummaries() *schema.Resource {
 		Description: `It performs read operation on SDA.
 
 - Get a paginated list of Fabric sites Networks with health summary.
-This data source provides the latest health data until the given endTime. If data is not ready for the provided
-endTime, the request will fail with error code 400 Bad Request, and the error message will indicate the recommended
+This data source provides the latest health data until the given **endTime**. If data is not ready for the provided
+endTime, the request will fail with error code **400 Bad Request**, and the error message will indicate the recommended
 endTime to use to retrieve a complete data set. This behavior may occur if the provided endTime=currentTime, since we
-are not a real time system. When endTime is not provided, the API returns the latest data.
+are not a real time system. When **endTime** is not provided, the API returns the latest data.
 For detailed information about the usage of the API, please refer to the Open API specification document
 https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 fabricSiteHealthSummaries-1.0.1-resolved.yaml
@@ -28,7 +28,7 @@ fabricSiteHealthSummaries-1.0.1-resolved.yaml
 		ReadContext: dataSourceFabricSiteHealthSummariesRead,
 		Schema: map[string]*schema.Schema{
 			"attribute": &schema.Schema{
-				Description: `attribute query parameter. The list of FabricSite health attributes. Please refer to fabricSiteAttributes section in the Open API specification document mentioned in the description.
+				Description: `attribute query parameter. The list of FabricSite health attributes. Please refer to ******fabricSiteAttributes****** section in the Open API specification document mentioned in the description.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -63,6 +63,18 @@ fabricSiteHealthSummaries-1.0.1-resolved.yaml
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"site_hierarchy": &schema.Schema{
+				Description: `siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. **Global/AreaName/BuildingName/FloorName**)          This field supports wildcard asterisk (*****) character search support. E.g. ***/San*, */San, /San***          Examples:          **?siteHierarchy=Global/AreaName/BuildingName/FloorName** (single siteHierarchy requested)          **?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2** (multiple siteHierarchies requested)
+`,
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"site_hierarchy_id": &schema.Schema{
+				Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. **globalUuid/areaUuid/buildingUuid/floorUuid**)          This field supports wildcard asterisk (*****) character search support. E.g. ***uuid*, *uuid, uuid***          Examples:          **?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid **(single siteHierarchyId requested)          **?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2** (multiple siteHierarchyIds requested)
+`,
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 			"sort_by": &schema.Schema{
 				Description: `sortBy query parameter. A field within the response to sort by.
 `,
@@ -76,7 +88,7 @@ fabricSiteHealthSummaries-1.0.1-resolved.yaml
 				Optional: true,
 			},
 			"view": &schema.Schema{
-				Description: `view query parameter. The specific summary view being requested. A maximum of 3 views can be queried at a time per request.  Please refer to fabricSiteViews section in the Open API specification document mentioned in the description.
+				Description: `view query parameter. The specific summary view being requested. A maximum of 3 views can be queried at a time per request.  Please refer to ******fabricSiteViews****** section in the Open API specification document mentioned in the description.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -108,7 +120,7 @@ fabricSiteHealthSummaries-1.0.1-resolved.yaml
 
 						"aaa_status_good_health_percentage": &schema.Schema{
 							Description: `Aaa Status Good Health Percentage`,
-							Type:        schema.TypeInt,
+							Type:        schema.TypeFloat,
 							Computed:    true,
 						},
 
@@ -150,13 +162,13 @@ fabricSiteHealthSummaries-1.0.1-resolved.yaml
 
 						"bgp_bgp_site_good_health_percentage": &schema.Schema{
 							Description: `Bgp Bgp Site Good Health Percentage`,
-							Type:        schema.TypeInt,
+							Type:        schema.TypeFloat,
 							Computed:    true,
 						},
 
 						"bgp_bgp_site_poor_health_device_count": &schema.Schema{
 							Description: `Bgp Bgp Site Poor Health Device Count`,
-							Type:        schema.TypeFloat,
+							Type:        schema.TypeInt,
 							Computed:    true,
 						},
 
@@ -168,37 +180,37 @@ fabricSiteHealthSummaries-1.0.1-resolved.yaml
 
 						"bgp_evpn_fair_health_device_count": &schema.Schema{
 							Description: `Bgp Evpn Fair Health Device Count`,
-							Type:        schema.TypeFloat,
+							Type:        schema.TypeInt,
 							Computed:    true,
 						},
 
 						"bgp_evpn_good_health_device_count": &schema.Schema{
 							Description: `Bgp Evpn Good Health Device Count`,
-							Type:        schema.TypeFloat,
+							Type:        schema.TypeInt,
 							Computed:    true,
 						},
 
 						"bgp_evpn_good_health_percentage": &schema.Schema{
 							Description: `Bgp Evpn Good Health Percentage`,
-							Type:        schema.TypeString, //TEST,
+							Type:        schema.TypeFloat,
 							Computed:    true,
 						},
 
 						"bgp_evpnpoor_health_device_count": &schema.Schema{
 							Description: `Bgp Evpn Poor Health Device Count`,
-							Type:        schema.TypeFloat,
+							Type:        schema.TypeInt,
 							Computed:    true,
 						},
 
 						"bgp_evpn_total_health_device_count": &schema.Schema{
 							Description: `Bgp Evpn Total Health Device Count`,
-							Type:        schema.TypeFloat,
+							Type:        schema.TypeInt,
 							Computed:    true,
 						},
 
 						"bgp_peer_infra_vn_fair_health_device_count": &schema.Schema{
 							Description: `Bgp Peer Infra Vn Fair Health Device Count`,
-							Type:        schema.TypeFloat,
+							Type:        schema.TypeInt,
 							Computed:    true,
 						},
 
@@ -216,7 +228,7 @@ fabricSiteHealthSummaries-1.0.1-resolved.yaml
 
 						"bgp_peer_infra_vn_score_good_health_percentage": &schema.Schema{
 							Description: `Bgp Peer Infra Vn Score Good Health Percentage`,
-							Type:        schema.TypeInt,
+							Type:        schema.TypeFloat,
 							Computed:    true,
 						},
 
@@ -240,13 +252,13 @@ fabricSiteHealthSummaries-1.0.1-resolved.yaml
 
 						"bgp_pubsub_site_good_health_percentage": &schema.Schema{
 							Description: `Bgp Pubsub Site Good Health Percentage`,
-							Type:        schema.TypeInt,
+							Type:        schema.TypeFloat,
 							Computed:    true,
 						},
 
 						"bgp_pubsub_site_poor_health_device_count": &schema.Schema{
 							Description: `Bgp Pubsub Site Poor Health Device Count`,
-							Type:        schema.TypeFloat,
+							Type:        schema.TypeInt,
 							Computed:    true,
 						},
 
@@ -270,13 +282,13 @@ fabricSiteHealthSummaries-1.0.1-resolved.yaml
 
 						"border_to_control_plane_good_health_percentage": &schema.Schema{
 							Description: `Border To Control Plane Good Health Percentage`,
-							Type:        schema.TypeInt,
+							Type:        schema.TypeFloat,
 							Computed:    true,
 						},
 
 						"border_to_control_plane_poor_health_device_count": &schema.Schema{
 							Description: `Border To Control Plane Poor Health Device Count`,
-							Type:        schema.TypeFloat,
+							Type:        schema.TypeInt,
 							Computed:    true,
 						},
 
@@ -300,7 +312,7 @@ fabricSiteHealthSummaries-1.0.1-resolved.yaml
 
 						"connectivity_good_health_percentage": &schema.Schema{
 							Description: `Connectivity Good Health Percentage`,
-							Type:        schema.TypeInt,
+							Type:        schema.TypeFloat,
 							Computed:    true,
 						},
 
@@ -330,13 +342,13 @@ fabricSiteHealthSummaries-1.0.1-resolved.yaml
 
 						"control_plane_good_health_percentage": &schema.Schema{
 							Description: `Control Plane Good Health Percentage`,
-							Type:        schema.TypeInt,
+							Type:        schema.TypeFloat,
 							Computed:    true,
 						},
 
 						"control_plane_poor_health_device_count": &schema.Schema{
 							Description: `Control Plane Poor Health Device Count`,
-							Type:        schema.TypeFloat,
+							Type:        schema.TypeInt,
 							Computed:    true,
 						},
 
@@ -348,7 +360,7 @@ fabricSiteHealthSummaries-1.0.1-resolved.yaml
 
 						"cts_env_data_download_fair_health_device_count": &schema.Schema{
 							Description: `Cts Env Data Download Fair Health Device Count`,
-							Type:        schema.TypeFloat,
+							Type:        schema.TypeInt,
 							Computed:    true,
 						},
 
@@ -360,7 +372,7 @@ fabricSiteHealthSummaries-1.0.1-resolved.yaml
 
 						"cts_env_data_download_good_health_percentage": &schema.Schema{
 							Description: `Cts Env Data Download Good Health Percentage`,
-							Type:        schema.TypeInt,
+							Type:        schema.TypeFloat,
 							Computed:    true,
 						},
 
@@ -390,7 +402,7 @@ fabricSiteHealthSummaries-1.0.1-resolved.yaml
 
 						"good_health_percentage": &schema.Schema{
 							Description: `Good Health Percentage`,
-							Type:        schema.TypeInt,
+							Type:        schema.TypeFloat,
 							Computed:    true,
 						},
 
@@ -402,7 +414,7 @@ fabricSiteHealthSummaries-1.0.1-resolved.yaml
 
 						"infra_fair_health_device_count": &schema.Schema{
 							Description: `Infra Fair Health Device Count`,
-							Type:        schema.TypeFloat,
+							Type:        schema.TypeInt,
 							Computed:    true,
 						},
 
@@ -414,13 +426,13 @@ fabricSiteHealthSummaries-1.0.1-resolved.yaml
 
 						"infra_good_health_percentage": &schema.Schema{
 							Description: `Infra Good Health Percentage`,
-							Type:        schema.TypeInt,
+							Type:        schema.TypeFloat,
 							Computed:    true,
 						},
 
 						"infra_poor_health_device_count": &schema.Schema{
 							Description: `Infra Poor Health Device Count`,
-							Type:        schema.TypeFloat,
+							Type:        schema.TypeInt,
 							Computed:    true,
 						},
 
@@ -432,7 +444,7 @@ fabricSiteHealthSummaries-1.0.1-resolved.yaml
 
 						"lisp_session_fair_health_device_count": &schema.Schema{
 							Description: `Lisp Session Fair Health Device Count`,
-							Type:        schema.TypeFloat,
+							Type:        schema.TypeInt,
 							Computed:    true,
 						},
 
@@ -444,7 +456,7 @@ fabricSiteHealthSummaries-1.0.1-resolved.yaml
 
 						"lisp_session_good_health_percentage": &schema.Schema{
 							Description: `Lisp Session Good Health Percentage`,
-							Type:        schema.TypeInt,
+							Type:        schema.TypeFloat,
 							Computed:    true,
 						},
 
@@ -474,31 +486,31 @@ fabricSiteHealthSummaries-1.0.1-resolved.yaml
 
 						"peer_score_fair_health_device_count": &schema.Schema{
 							Description: `Peer Score Fair Health Device Count`,
-							Type:        schema.TypeFloat,
+							Type:        schema.TypeInt,
 							Computed:    true,
 						},
 
 						"peer_score_good_health_device_count": &schema.Schema{
 							Description: `Peer Score Good Health Device Count`,
-							Type:        schema.TypeFloat,
+							Type:        schema.TypeInt,
 							Computed:    true,
 						},
 
 						"peer_score_good_health_percentage": &schema.Schema{
 							Description: `Peer Score Good Health Percentage`,
-							Type:        schema.TypeString, //TEST,
+							Type:        schema.TypeFloat,
 							Computed:    true,
 						},
 
 						"peer_score_poor_health_device_count": &schema.Schema{
 							Description: `Peer Score Poor Health Device Count`,
-							Type:        schema.TypeFloat,
+							Type:        schema.TypeInt,
 							Computed:    true,
 						},
 
 						"peer_score_total_health_device_count": &schema.Schema{
 							Description: `Peer Score Total Health Device Count`,
-							Type:        schema.TypeFloat,
+							Type:        schema.TypeInt,
 							Computed:    true,
 						},
 
@@ -522,7 +534,7 @@ fabricSiteHealthSummaries-1.0.1-resolved.yaml
 
 						"port_channel_good_health_percentage": &schema.Schema{
 							Description: `Port Channel Good Health Percentage`,
-							Type:        schema.TypeInt,
+							Type:        schema.TypeFloat,
 							Computed:    true,
 						},
 
@@ -552,7 +564,7 @@ fabricSiteHealthSummaries-1.0.1-resolved.yaml
 
 						"pubsub_infra_vn_good_health_percentage": &schema.Schema{
 							Description: `Pubsub Infra Vn Good Health Percentage`,
-							Type:        schema.TypeInt,
+							Type:        schema.TypeFloat,
 							Computed:    true,
 						},
 
@@ -570,6 +582,12 @@ fabricSiteHealthSummaries-1.0.1-resolved.yaml
 
 						"total_device_count": &schema.Schema{
 							Description: `Total Device Count`,
+							Type:        schema.TypeInt,
+							Computed:    true,
+						},
+
+						"total_health_device_count": &schema.Schema{
+							Description: `Total Health Device Count`,
 							Type:        schema.TypeInt,
 							Computed:    true,
 						},
@@ -593,14 +611,16 @@ func dataSourceFabricSiteHealthSummariesRead(ctx context.Context, d *schema.Reso
 	vID, okID := d.GetOk("id")
 	vAttribute, okAttribute := d.GetOk("attribute")
 	vView, okView := d.GetOk("view")
+	vSiteHierarchy, okSiteHierarchy := d.GetOk("site_hierarchy")
+	vSiteHierarchyID, okSiteHierarchyID := d.GetOk("site_hierarchy_id")
 	vXCaLLERID := d.Get("xca_lle_rid")
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: ReadListOfFabricSitesWithTheirHealthSummaryV1")
+		log.Printf("[DEBUG] Selected method: ReadListOfFabricSitesWithTheirHealthSummary")
 
-		headerParams1 := catalystcentersdkgo.ReadListOfFabricSitesWithTheirHealthSummaryV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.ReadListOfFabricSitesWithTheirHealthSummaryV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.ReadListOfFabricSitesWithTheirHealthSummaryHeaderParams{}
+		queryParams1 := catalystcentersdkgo.ReadListOfFabricSitesWithTheirHealthSummaryQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -629,28 +649,46 @@ func dataSourceFabricSiteHealthSummariesRead(ctx context.Context, d *schema.Reso
 		if okView {
 			queryParams1.View = vView.(string)
 		}
+		if okSiteHierarchy {
+			queryParams1.SiteHierarchy = vSiteHierarchy.(string)
+		}
+		if okSiteHierarchyID {
+			queryParams1.SiteHierarchyID = vSiteHierarchyID.(string)
+		}
 		headerParams1.XCaLLERID = vXCaLLERID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sda.ReadListOfFabricSitesWithTheirHealthSummaryV1(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Sda.ReadListOfFabricSitesWithTheirHealthSummary(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 ReadListOfFabricSitesWithTheirHealthSummaryV1", err,
-				"Failure at ReadListOfFabricSitesWithTheirHealthSummaryV1, unexpected response", ""))
+				"Failure when executing 2 ReadListOfFabricSitesWithTheirHealthSummary", err,
+				"Failure at ReadListOfFabricSitesWithTheirHealthSummary, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaReadListOfFabricSitesWithTheirHealthSummaryV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 ReadListOfFabricSitesWithTheirHealthSummary", err,
+				"Failure at ReadListOfFabricSitesWithTheirHealthSummary, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSdaReadListOfFabricSitesWithTheirHealthSummaryItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting ReadListOfFabricSitesWithTheirHealthSummaryV1 response",
+				"Failure when setting ReadListOfFabricSitesWithTheirHealthSummary response",
 				err))
 			return diags
 		}
@@ -662,7 +700,7 @@ func dataSourceFabricSiteHealthSummariesRead(ctx context.Context, d *schema.Reso
 	return diags
 }
 
-func flattenSdaReadListOfFabricSitesWithTheirHealthSummaryV1Items(items *[]catalystcentersdkgo.ResponseSdaReadListOfFabricSitesWithTheirHealthSummaryV1Response) []map[string]interface{} {
+func flattenSdaReadListOfFabricSitesWithTheirHealthSummaryItems(items *[]catalystcentersdkgo.ResponseSdaReadListOfFabricSitesWithTheirHealthSummaryResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -671,14 +709,12 @@ func flattenSdaReadListOfFabricSitesWithTheirHealthSummaryV1Items(items *[]catal
 		respItem := make(map[string]interface{})
 		respItem["id"] = item.ID
 		respItem["name"] = item.Name
-		respItem["good_health_percentage"] = item.GoodHealthPercentage
-		respItem["good_health_device_count"] = item.GoodHealthDeviceCount
 		respItem["total_device_count"] = item.TotalDeviceCount
+		respItem["good_health_percentage"] = item.GoodHealthPercentage
+		respItem["total_health_device_count"] = item.TotalHealthDeviceCount
+		respItem["good_health_device_count"] = item.GoodHealthDeviceCount
 		respItem["poor_health_device_count"] = item.PoorHealthDeviceCount
 		respItem["fair_health_device_count"] = item.FairHealthDeviceCount
-		respItem["associated_l2_vn_count"] = item.AssociatedL2VnCount
-		respItem["associated_l3_vn_count"] = item.AssociatedL3VnCount
-		respItem["network_protocol"] = item.NetworkProtocol
 		respItem["connectivity_good_health_percentage"] = item.ConnectivityGoodHealthPercentage
 		respItem["connectivity_total_health_device_count"] = item.ConnectivityTotalHealthDeviceCount
 		respItem["connectivity_good_health_device_count"] = item.ConnectivityGoodHealthDeviceCount
@@ -699,7 +735,7 @@ func flattenSdaReadListOfFabricSitesWithTheirHealthSummaryV1Items(items *[]catal
 		respItem["pubsub_infra_vn_good_health_device_count"] = item.PubsubInfraVnGoodHealthDeviceCount
 		respItem["pubsub_infra_vn_poor_health_device_count"] = item.PubsubInfraVnPoorHealthDeviceCount
 		respItem["pubsub_infra_vn_fair_health_device_count"] = item.PubsubInfraVnFairHealthDeviceCount
-		respItem["bgp_evpn_good_health_percentage"] = flattenSdaReadListOfFabricSitesWithTheirHealthSummaryV1ItemsBgpEvpnGoodHealthPercentage(item.BgpEvpnGoodHealthPercentage)
+		respItem["bgp_evpn_good_health_percentage"] = item.BgpEvpnGoodHealthPercentage
 		respItem["bgp_evpn_total_health_device_count"] = item.BgpEvpnTotalHealthDeviceCount
 		respItem["bgp_evpn_good_health_device_count"] = item.BgpEvpnGoodHealthDeviceCount
 		respItem["bgp_evpnpoor_health_device_count"] = item.BgpEvpnpoorHealthDeviceCount
@@ -719,7 +755,7 @@ func flattenSdaReadListOfFabricSitesWithTheirHealthSummaryV1Items(items *[]catal
 		respItem["port_channel_good_health_device_count"] = item.PortChannelGoodHealthDeviceCount
 		respItem["port_channel_poor_health_device_count"] = item.PortChannelPoorHealthDeviceCount
 		respItem["port_channel_fair_health_device_count"] = item.PortChannelFairHealthDeviceCount
-		respItem["peer_score_good_health_percentage"] = flattenSdaReadListOfFabricSitesWithTheirHealthSummaryV1ItemsPeerScoreGoodHealthPercentage(item.PeerScoreGoodHealthPercentage)
+		respItem["peer_score_good_health_percentage"] = item.PeerScoreGoodHealthPercentage
 		respItem["peer_score_total_health_device_count"] = item.PeerScoreTotalHealthDeviceCount
 		respItem["peer_score_good_health_device_count"] = item.PeerScoreGoodHealthDeviceCount
 		respItem["peer_score_poor_health_device_count"] = item.PeerScorePoorHealthDeviceCount
@@ -749,27 +785,10 @@ func flattenSdaReadListOfFabricSitesWithTheirHealthSummaryV1Items(items *[]catal
 		respItem["bgp_peer_infra_vn_good_health_device_count"] = item.BgpPeerInfraVnGoodHealthDeviceCount
 		respItem["bgp_peer_infra_vn_poor_health_device_count"] = item.BgpPeerInfraVnPoorHealthDeviceCount
 		respItem["bgp_peer_infra_vn_fair_health_device_count"] = item.BgpPeerInfraVnFairHealthDeviceCount
+		respItem["associated_l2_vn_count"] = item.AssociatedL2VnCount
+		respItem["associated_l3_vn_count"] = item.AssociatedL3VnCount
+		respItem["network_protocol"] = item.NetworkProtocol
 		respItems = append(respItems, respItem)
 	}
 	return respItems
-}
-
-func flattenSdaReadListOfFabricSitesWithTheirHealthSummaryV1ItemsBgpEvpnGoodHealthPercentage(item *catalystcentersdkgo.ResponseSdaReadListOfFabricSitesWithTheirHealthSummaryV1ResponseBgpEvpnGoodHealthPercentage) interface{} {
-	if item == nil {
-		return nil
-	}
-	respItem := *item
-
-	return responseInterfaceToString(respItem)
-
-}
-
-func flattenSdaReadListOfFabricSitesWithTheirHealthSummaryV1ItemsPeerScoreGoodHealthPercentage(item *catalystcentersdkgo.ResponseSdaReadListOfFabricSitesWithTheirHealthSummaryV1ResponsePeerScoreGoodHealthPercentage) interface{} {
-	if item == nil {
-		return nil
-	}
-	respItem := *item
-
-	return responseInterfaceToString(respItem)
-
 }

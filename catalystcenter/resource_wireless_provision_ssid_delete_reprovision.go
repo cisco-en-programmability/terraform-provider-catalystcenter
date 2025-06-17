@@ -6,7 +6,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -17,7 +17,7 @@ func resourceWirelessProvisionSSIDDeleteReprovision() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs delete operation on Wireless.
 
-- Removes SSID or WLAN from the network profile, reprovision the device(s) and deletes the SSID or WLAN from DNA Center
+- Removes SSID or WLAN from the network profile, reprovision the device(s) and deletes the SSID or WLAN from Catalyst Center
 `,
 
 		CreateContext: resourceWirelessProvisionSSIDDeleteReprovisionCreate,
@@ -96,20 +96,20 @@ func resourceWirelessProvisionSSIDDeleteReprovisionCreate(ctx context.Context, d
 	vvSSIDName := vSSIDName.(string)
 	vvManagedApLocations := vManagedApLocations.(string)
 
-	headerParams1 := catalystcentersdkgo.DeleteSSIDAndProvisionItToDevicesV1HeaderParams{}
+	headerParams1 := catalystcentersdkgo.DeleteSSIDAndProvisionItToDevicesHeaderParams{}
 
 	headerParams1.Persistbapioutput = vPersistbapioutput.(string)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Wireless.DeleteSSIDAndProvisionItToDevicesV1(vvSSIDName, vvManagedApLocations, &headerParams1)
+	response1, restyResp1, err := client.Wireless.DeleteSSIDAndProvisionItToDevices(vvSSIDName, vvManagedApLocations, &headerParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing DeleteSSIDAndProvisionItToDevicesV1", err))
+			"Failure when executing DeleteSSIDAndProvisionItToDevices", err))
 		return diags
 	}
 
@@ -145,15 +145,15 @@ func resourceWirelessProvisionSSIDDeleteReprovisionCreate(ctx context.Context, d
 		if response2.Status == "FAILURE" {
 			bapiError := response2.BapiError
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing DeleteSSIDAndProvisionItToDevicesV1", err,
-				"Failure at DeleteSSIDAndProvisionItToDevicesV1 execution", bapiError))
+				"Failure when executing DeleteSSIDAndProvisionItToDevices", err,
+				"Failure at DeleteSSIDAndProvisionItToDevices execution", bapiError))
 			return diags
 		}
 	}
-	vItem1 := flattenWirelessDeleteSSIDAndProvisionItToDevicesV1Item(response1)
+	vItem1 := flattenWirelessDeleteSSIDAndProvisionItToDevicesItem(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting DeleteSSIDAndProvisionItToDevicesV1 response",
+			"Failure when setting DeleteSSIDAndProvisionItToDevices response",
 			err))
 		return diags
 	}
@@ -174,7 +174,7 @@ func resourceWirelessProvisionSSIDDeleteReprovisionDelete(ctx context.Context, d
 	return diags
 }
 
-func flattenWirelessDeleteSSIDAndProvisionItToDevicesV1Item(item *catalystcentersdkgo.ResponseWirelessDeleteSSIDAndProvisionItToDevicesV1) []map[string]interface{} {
+func flattenWirelessDeleteSSIDAndProvisionItToDevicesItem(item *catalystcentersdkgo.ResponseWirelessDeleteSSIDAndProvisionItToDevices) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

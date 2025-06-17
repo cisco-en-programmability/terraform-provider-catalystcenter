@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,7 +15,7 @@ func dataSourceWirelessSettingsApProfiles() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Wireless.
 
-- This data source allows the user to get AP profiles that are captured in wireless settings design.
+- This data source allows the user to get AP Profiles that captured in wireless settings design.
 `,
 
 		ReadContext: dataSourceWirelessSettingsApProfilesRead,
@@ -27,13 +27,13 @@ func dataSourceWirelessSettingsApProfiles() *schema.Resource {
 				Optional: true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter. The number of records to show for this page. The default is 500 if not specified. The maximum allowed limit is 500.
+				Description: `limit query parameter. The number of records to show for this page. Default is 500 if not specified. Maximum allowed limit is 500.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"offset": &schema.Schema{
-				Description: `offset query parameter. The first record to show for this page; the first record is numbered 1.
+				Description: `offset query parameter. The first record to show for this page, the first record is numbered 1.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -88,17 +88,23 @@ func dataSourceWirelessSettingsApProfiles() *schema.Resource {
 											Schema: map[string]*schema.Schema{
 
 												"scheduler_date": &schema.Schema{
-													Description: `Start and End date of the duration setting, applicable for MONTHLY schedulers.
+													Description: `Start and End date of the duration setting, applicable for MONTHLY schedulers. Values will range from 1 to 31.
 `,
-													Type:     schema.TypeString,
+													Type:     schema.TypeList,
 													Computed: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
 												},
 
 												"scheduler_day": &schema.Schema{
-													Description: `Applies every week on the selected days
+													Description: `Applies every week on the selected days. Ex: ["sunday","saturday","tuesday","wednesday","thursday","friday","monday"]
 `,
-													Type:     schema.TypeString,
+													Type:     schema.TypeList,
 													Computed: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
 												},
 
 												"scheduler_end_time": &schema.Schema{
@@ -184,7 +190,7 @@ func dataSourceWirelessSettingsApProfiles() *schema.Resource {
 									},
 
 									"dot1x_password": &schema.Schema{
-										Description: `Password for 802.1X authentication. AP dot1x password length should not exceed 120.
+										Description: `Password for 802.1X authentication. Length must be 8-120 characters.
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -388,8 +394,8 @@ func dataSourceWirelessSettingsApProfilesRead(ctx context.Context, d *schema.Res
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetApProfilesV1")
-		queryParams1 := catalystcentersdkgo.GetApProfilesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetApProfiles")
+		queryParams1 := catalystcentersdkgo.GetApProfilesQueryParams{}
 
 		if okLimit {
 			queryParams1.Limit = vLimit.(string)
@@ -403,24 +409,36 @@ func dataSourceWirelessSettingsApProfilesRead(ctx context.Context, d *schema.Res
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Wireless.GetApProfilesV1(&queryParams1)
+		response1, restyResp1, err := client.Wireless.GetApProfiles(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetApProfilesV1", err,
-				"Failure at GetApProfilesV1, unexpected response", ""))
+				"Failure when executing 2 GetApProfiles", err,
+				"Failure at GetApProfiles, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenWirelessGetApProfilesV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetApProfiles", err,
+				"Failure at GetApProfiles, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenWirelessGetApProfilesItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetApProfilesV1 response",
+				"Failure when setting GetApProfiles response",
 				err))
 			return diags
 		}
@@ -432,7 +450,7 @@ func dataSourceWirelessSettingsApProfilesRead(ctx context.Context, d *schema.Res
 	return diags
 }
 
-func flattenWirelessGetApProfilesV1Items(items *[]catalystcentersdkgo.ResponseWirelessGetApProfilesV1Response) []map[string]interface{} {
+func flattenWirelessGetApProfilesItems(items *[]catalystcentersdkgo.ResponseWirelessGetApProfilesResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -443,15 +461,15 @@ func flattenWirelessGetApProfilesV1Items(items *[]catalystcentersdkgo.ResponseWi
 		respItem["ap_profile_name"] = item.ApProfileName
 		respItem["description"] = item.Description
 		respItem["remote_worker_enabled"] = boolPtrToString(item.RemoteWorkerEnabled)
-		respItem["management_setting"] = flattenWirelessGetApProfilesV1ItemsManagementSetting(item.ManagementSetting)
+		respItem["management_setting"] = flattenWirelessGetApProfilesItemsManagementSetting(item.ManagementSetting)
 		respItem["awips_enabled"] = boolPtrToString(item.AwipsEnabled)
 		respItem["awips_forensic_enabled"] = boolPtrToString(item.AwipsForensicEnabled)
-		respItem["rogue_detection_setting"] = flattenWirelessGetApProfilesV1ItemsRogueDetectionSetting(item.RogueDetectionSetting)
+		respItem["rogue_detection_setting"] = flattenWirelessGetApProfilesItemsRogueDetectionSetting(item.RogueDetectionSetting)
 		respItem["pmf_denial_enabled"] = boolPtrToString(item.PmfDenialEnabled)
 		respItem["mesh_enabled"] = boolPtrToString(item.MeshEnabled)
-		respItem["mesh_setting"] = flattenWirelessGetApProfilesV1ItemsMeshSetting(item.MeshSetting)
+		respItem["mesh_setting"] = flattenWirelessGetApProfilesItemsMeshSetting(item.MeshSetting)
 		respItem["ap_power_profile_name"] = item.ApPowerProfileName
-		respItem["calendar_power_profiles"] = flattenWirelessGetApProfilesV1ItemsCalendarPowerProfiles(item.CalendarPowerProfiles)
+		respItem["calendar_power_profiles"] = flattenWirelessGetApProfilesItemsCalendarPowerProfiles(item.CalendarPowerProfiles)
 		respItem["country_code"] = item.CountryCode
 		respItem["time_zone"] = item.TimeZone
 		respItem["time_zone_offset_hour"] = item.TimeZoneOffsetHour
@@ -462,7 +480,7 @@ func flattenWirelessGetApProfilesV1Items(items *[]catalystcentersdkgo.ResponseWi
 	return respItems
 }
 
-func flattenWirelessGetApProfilesV1ItemsManagementSetting(item *catalystcentersdkgo.ResponseWirelessGetApProfilesV1ResponseManagementSetting) []map[string]interface{} {
+func flattenWirelessGetApProfilesItemsManagementSetting(item *catalystcentersdkgo.ResponseWirelessGetApProfilesResponseManagementSetting) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -483,7 +501,7 @@ func flattenWirelessGetApProfilesV1ItemsManagementSetting(item *catalystcentersd
 
 }
 
-func flattenWirelessGetApProfilesV1ItemsRogueDetectionSetting(item *catalystcentersdkgo.ResponseWirelessGetApProfilesV1ResponseRogueDetectionSetting) []map[string]interface{} {
+func flattenWirelessGetApProfilesItemsRogueDetectionSetting(item *catalystcentersdkgo.ResponseWirelessGetApProfilesResponseRogueDetectionSetting) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -499,7 +517,7 @@ func flattenWirelessGetApProfilesV1ItemsRogueDetectionSetting(item *catalystcent
 
 }
 
-func flattenWirelessGetApProfilesV1ItemsMeshSetting(item *catalystcentersdkgo.ResponseWirelessGetApProfilesV1ResponseMeshSetting) []map[string]interface{} {
+func flattenWirelessGetApProfilesItemsMeshSetting(item *catalystcentersdkgo.ResponseWirelessGetApProfilesResponseMeshSetting) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -517,14 +535,14 @@ func flattenWirelessGetApProfilesV1ItemsMeshSetting(item *catalystcentersdkgo.Re
 
 }
 
-func flattenWirelessGetApProfilesV1ItemsCalendarPowerProfiles(item *catalystcentersdkgo.ResponseWirelessGetApProfilesV1ResponseCalendarPowerProfiles) []map[string]interface{} {
+func flattenWirelessGetApProfilesItemsCalendarPowerProfiles(item *catalystcentersdkgo.ResponseWirelessGetApProfilesResponseCalendarPowerProfiles) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["power_profile_name"] = item.PowerProfileName
 	respItem["scheduler_type"] = item.SchedulerType
-	respItem["duration"] = flattenWirelessGetApProfilesV1ItemsCalendarPowerProfilesDuration(item.Duration)
+	respItem["duration"] = flattenWirelessGetApProfilesItemsCalendarPowerProfilesDuration(item.Duration)
 
 	return []map[string]interface{}{
 		respItem,
@@ -532,7 +550,7 @@ func flattenWirelessGetApProfilesV1ItemsCalendarPowerProfiles(item *catalystcent
 
 }
 
-func flattenWirelessGetApProfilesV1ItemsCalendarPowerProfilesDuration(item *catalystcentersdkgo.ResponseWirelessGetApProfilesV1ResponseCalendarPowerProfilesDuration) []map[string]interface{} {
+func flattenWirelessGetApProfilesItemsCalendarPowerProfilesDuration(item *catalystcentersdkgo.ResponseWirelessGetApProfilesResponseCalendarPowerProfilesDuration) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

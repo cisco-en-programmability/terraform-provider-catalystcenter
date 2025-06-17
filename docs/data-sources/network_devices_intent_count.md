@@ -4,16 +4,16 @@ page_title: "catalystcenter_network_devices_intent_count Data Source - terraform
 subcategory: ""
 description: |-
   It performs read operation on Devices.
-  API to fetch the count of network devices using basic filters. Use the /dna/intent/api/v1/networkDevices/query/count
-  API if you need advanced filtering.
+  API to fetch the count of network devices using basic filters. Use the
+  /dna/intent/api/v1/networkDevices/query/count API if you need advanced filtering.
 ---
 
 # catalystcenter_network_devices_intent_count (Data Source)
 
 It performs read operation on Devices.
 
-- API to fetch the count of network devices using basic filters. Use the /dna/intent/api/v1/networkDevices/query/count
-API if you need advanced filtering.
+- API to fetch the count of network devices using basic filters. Use the
+**/dna/intent/api/v1/networkDevices/query/count** API if you need advanced filtering.
 
 ## Example Usage
 

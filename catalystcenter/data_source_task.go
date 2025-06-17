@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -53,14 +53,16 @@ func dataSourceTask() *schema.Resource {
 				Optional: true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter.`,
-				Type:        schema.TypeInt,
-				Optional:    true,
+				Description: `limit query parameter. The number of records to show for this page;The minimum is 1, and the maximum is 500.
+`,
+				Type:     schema.TypeFloat,
+				Optional: true,
 			},
 			"offset": &schema.Schema{
-				Description: `offset query parameter.`,
-				Type:        schema.TypeInt,
-				Optional:    true,
+				Description: `offset query parameter. The first record to show for this page; the first record is numbered 1.
+`,
+				Type:     schema.TypeFloat,
+				Optional: true,
 			},
 			"order": &schema.Schema{
 				Description: `order query parameter. Sort order asc or dsc
@@ -169,8 +171,9 @@ func dataSourceTask() *schema.Resource {
 						},
 
 						"operation_id_list": &schema.Schema{
-							Type:     schema.TypeList,
-							Computed: true,
+							Description: `Operation Id List`,
+							Type:        schema.TypeList,
+							Computed:    true,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
@@ -272,8 +275,9 @@ func dataSourceTask() *schema.Resource {
 						},
 
 						"operation_id_list": &schema.Schema{
-							Type:     schema.TypeList,
-							Computed: true,
+							Description: `Operation Id List`,
+							Type:        schema.TypeList,
+							Computed:    true,
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 							},
@@ -347,8 +351,8 @@ func dataSourceTaskRead(ctx context.Context, d *schema.ResourceData, m interface
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTasksOperationalTasksV1")
-		queryParams1 := catalystcentersdkgo.GetTasksOperationalTasksV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetTasksOperationalTasks")
+		queryParams1 := catalystcentersdkgo.GetTasksOperationalTasksQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(string)
@@ -393,24 +397,38 @@ func dataSourceTaskRead(ctx context.Context, d *schema.ResourceData, m interface
 			queryParams1.Order = vOrder.(string)
 		}
 
-		response1, restyResp1, err := client.Task.GetTasksOperationalTasksV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Task.GetTasksOperationalTasks(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTasksOperationalTasksV1", err,
-				"Failure at GetTasksOperationalTasksV1, unexpected response", ""))
+				"Failure when executing 2 GetTasksOperationalTasks", err,
+				"Failure at GetTasksOperationalTasks, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenTaskGetTasksOperationalTasksV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetTasksOperationalTasks", err,
+				"Failure at GetTasksOperationalTasks, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenTaskGetTasksOperationalTasksItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTasksOperationalTasksV1 response",
+				"Failure when setting GetTasksOperationalTasks response",
 				err))
 			return diags
 		}
@@ -420,27 +438,41 @@ func dataSourceTaskRead(ctx context.Context, d *schema.ResourceData, m interface
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetTaskByIDV1")
+		log.Printf("[DEBUG] Selected method: GetTaskByID")
 		vvTaskID := vTaskID.(string)
 
-		response2, restyResp2, err := client.Task.GetTaskByIDV1(vvTaskID)
+		// has_unknown_response: None
+
+		response2, restyResp2, err := client.Task.GetTaskByID(vvTaskID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTaskByIDV1", err,
-				"Failure at GetTaskByIDV1, unexpected response", ""))
+				"Failure when executing 2 GetTaskByID", err,
+				"Failure at GetTaskByID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenTaskGetTaskByIDV1Item(response2.Response)
+		if err != nil || response2 == nil {
+			if restyResp2 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetTaskByID", err,
+				"Failure at GetTaskByID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
+
+		vItem2 := flattenTaskGetTaskByIDItem(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTaskByIDV1 response",
+				"Failure when setting GetTaskByID response",
 				err))
 			return diags
 		}
@@ -452,7 +484,7 @@ func dataSourceTaskRead(ctx context.Context, d *schema.ResourceData, m interface
 	return diags
 }
 
-func flattenTaskGetTasksOperationalTasksV1Items(items *[]catalystcentersdkgo.ResponseTaskGetTasksOperationalTasksV1Response) []map[string]interface{} {
+func flattenTaskGetTasksOperationalTasksItems(items *[]catalystcentersdkgo.ResponseTaskGetTasksOperationalTasksResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -482,7 +514,7 @@ func flattenTaskGetTasksOperationalTasksV1Items(items *[]catalystcentersdkgo.Res
 	return respItems
 }
 
-func flattenTaskGetTaskByIDV1Item(item *catalystcentersdkgo.ResponseTaskGetTaskByIDV1Response) []map[string]interface{} {
+func flattenTaskGetTaskByIDItem(item *catalystcentersdkgo.ResponseTaskGetTaskByIDResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

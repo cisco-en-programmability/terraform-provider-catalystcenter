@@ -1,11 +1,11 @@
 
 resource "catalystcenter_wireless_provision_ssid_delete_reprovision" "example" {
-  provider            = meraki
+  provider            = catalystcenter
   managed_aplocations = "string"
   ssid_name           = "string"
-  parameters {
+  parameters = [{
 
-  }
+  }]
 }
 
 output "catalystcenter_wireless_provision_ssid_delete_reprovision_example" {

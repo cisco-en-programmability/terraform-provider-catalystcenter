@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -67,7 +67,7 @@ func resourceWirelessProvisionDeviceCreate() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"payload": &schema.Schema{
-							Description: `Array of RequestWirelessProvisionV1`,
+							Description: `Array of RequestWirelessProvision`,
 							Type:        schema.TypeList,
 							Optional:    true,
 							ForceNew:    true,
@@ -175,18 +175,18 @@ func resourceWirelessProvisionDeviceCreateCreate(ctx context.Context, d *schema.
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestWirelessProvisionDeviceCreateProvisionV1(ctx, "parameters.0", d)
+	request1 := expandRequestWirelessProvisionDeviceCreateProvision(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Wireless.ProvisionV1(request1)
+	response1, restyResp1, err := client.Wireless.Provision(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ProvisionV1", err))
+			"Failure when executing Provision", err))
 		return diags
 	}
 
@@ -222,8 +222,8 @@ func resourceWirelessProvisionDeviceCreateCreate(ctx context.Context, d *schema.
 		if response2.Status == "FAILURE" {
 			bapiError := response2.BapiError
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing ProvisionV1", err,
-				"Failure at ProvisionV1 execution", bapiError))
+				"Failure when executing Provision", err,
+				"Failure at Provision execution", bapiError))
 			return diags
 		}
 	}
@@ -231,10 +231,10 @@ func resourceWirelessProvisionDeviceCreateCreate(ctx context.Context, d *schema.
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenWirelessProvisionV1Item(response1)
+	vItem1 := flattenWirelessProvisionItem(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ProvisionV1 response",
+			"Failure when setting Provision response",
 			err))
 		return diags
 	}
@@ -255,16 +255,16 @@ func resourceWirelessProvisionDeviceCreateDelete(ctx context.Context, d *schema.
 	return diags
 }
 
-func expandRequestWirelessProvisionDeviceCreateProvisionV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessProvisionV1 {
-	request := catalystcentersdkgo.RequestWirelessProvisionV1{}
-	if v := expandRequestWirelessProvisionDeviceCreateProvisionV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestWirelessProvisionDeviceCreateProvision(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessProvision {
+	request := catalystcentersdkgo.RequestWirelessProvision{}
+	if v := expandRequestWirelessProvisionDeviceCreateProvisionItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	return &request
 }
 
-func expandRequestWirelessProvisionDeviceCreateProvisionV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemWirelessProvisionV1 {
-	request := []catalystcentersdkgo.RequestItemWirelessProvisionV1{}
+func expandRequestWirelessProvisionDeviceCreateProvisionItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemWirelessProvision {
+	request := []catalystcentersdkgo.RequestItemWirelessProvision{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -275,7 +275,7 @@ func expandRequestWirelessProvisionDeviceCreateProvisionV1ItemArray(ctx context.
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestWirelessProvisionDeviceCreateProvisionV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestWirelessProvisionDeviceCreateProvisionItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -283,8 +283,8 @@ func expandRequestWirelessProvisionDeviceCreateProvisionV1ItemArray(ctx context.
 	return &request
 }
 
-func expandRequestWirelessProvisionDeviceCreateProvisionV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemWirelessProvisionV1 {
-	request := catalystcentersdkgo.RequestItemWirelessProvisionV1{}
+func expandRequestWirelessProvisionDeviceCreateProvisionItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemWirelessProvision {
+	request := catalystcentersdkgo.RequestItemWirelessProvision{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_name")))) {
 		request.DeviceName = interfaceToString(v)
 	}
@@ -295,13 +295,13 @@ func expandRequestWirelessProvisionDeviceCreateProvisionV1Item(ctx context.Conte
 		request.ManagedApLocations = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".dynamic_interfaces")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".dynamic_interfaces")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".dynamic_interfaces")))) {
-		request.DynamicInterfaces = expandRequestWirelessProvisionDeviceCreateProvisionV1ItemDynamicInterfacesArray(ctx, key+".dynamic_interfaces", d)
+		request.DynamicInterfaces = expandRequestWirelessProvisionDeviceCreateProvisionItemDynamicInterfacesArray(ctx, key+".dynamic_interfaces", d)
 	}
 	return &request
 }
 
-func expandRequestWirelessProvisionDeviceCreateProvisionV1ItemDynamicInterfacesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemWirelessProvisionV1DynamicInterfaces {
-	request := []catalystcentersdkgo.RequestItemWirelessProvisionV1DynamicInterfaces{}
+func expandRequestWirelessProvisionDeviceCreateProvisionItemDynamicInterfacesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemWirelessProvisionDynamicInterfaces {
+	request := []catalystcentersdkgo.RequestItemWirelessProvisionDynamicInterfaces{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -312,7 +312,7 @@ func expandRequestWirelessProvisionDeviceCreateProvisionV1ItemDynamicInterfacesA
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestWirelessProvisionDeviceCreateProvisionV1ItemDynamicInterfaces(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestWirelessProvisionDeviceCreateProvisionItemDynamicInterfaces(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -320,8 +320,8 @@ func expandRequestWirelessProvisionDeviceCreateProvisionV1ItemDynamicInterfacesA
 	return &request
 }
 
-func expandRequestWirelessProvisionDeviceCreateProvisionV1ItemDynamicInterfaces(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemWirelessProvisionV1DynamicInterfaces {
-	request := catalystcentersdkgo.RequestItemWirelessProvisionV1DynamicInterfaces{}
+func expandRequestWirelessProvisionDeviceCreateProvisionItemDynamicInterfaces(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemWirelessProvisionDynamicInterfaces {
+	request := catalystcentersdkgo.RequestItemWirelessProvisionDynamicInterfaces{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".interface_ipaddress")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".interface_ipaddress")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".interface_ipaddress")))) {
 		request.InterfaceIPAddress = interfaceToString(v)
 	}
@@ -343,7 +343,7 @@ func expandRequestWirelessProvisionDeviceCreateProvisionV1ItemDynamicInterfaces(
 	return &request
 }
 
-func flattenWirelessProvisionV1Item(item *catalystcentersdkgo.ResponseWirelessProvisionV1) []map[string]interface{} {
+func flattenWirelessProvisionItem(item *catalystcentersdkgo.ResponseWirelessProvision) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

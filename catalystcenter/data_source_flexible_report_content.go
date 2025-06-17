@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -51,18 +51,27 @@ func dataSourceFlexibleReportContentRead(ctx context.Context, d *schema.Resource
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: DownloadFlexibleReportV1")
+		log.Printf("[DEBUG] Selected method: DownloadFlexibleReport")
 		vvReportID := vReportID.(string)
 		vvExecutionID := vExecutionID.(string)
 
 		// has_unknown_response: True
 
-		response1, err := client.Reports.DownloadFlexibleReportV1(vvReportID, vvExecutionID)
+		response1, err := client.Reports.DownloadFlexibleReport(vvReportID, vvExecutionID)
 
 		if err != nil || response1 == nil {
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 DownloadFlexibleReportV1", err,
-				"Failure at DownloadFlexibleReportV1, unexpected response", ""))
+				"Failure when executing 2 DownloadFlexibleReport", err,
+				"Failure at DownloadFlexibleReport, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %s", response1.String())
+
+		if err != nil || response1 == nil {
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 DownloadFlexibleReport", err,
+				"Failure at DownloadFlexibleReport, unexpected response", ""))
 			return diags
 		}
 
@@ -70,7 +79,7 @@ func dataSourceFlexibleReportContentRead(ctx context.Context, d *schema.Resource
 
 		if err := d.Set("item", response1.String()); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting DownloadFlexibleReportV1 response",
+				"Failure when setting DownloadFlexibleReport response",
 				err))
 			return diags
 		}

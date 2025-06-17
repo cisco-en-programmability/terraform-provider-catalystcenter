@@ -1,7 +1,7 @@
 
 resource "catalystcenter_sda_multicast_virtual_networks" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     fabric_id       = "string"

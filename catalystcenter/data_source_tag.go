@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -50,9 +50,10 @@ func dataSourceTag() *schema.Resource {
 				Optional:    true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter.`,
-				Type:        schema.TypeFloat,
-				Optional:    true,
+				Description: `limit query parameter. The number of tags to be retrieved. If not specified, the default is 500. The maximum allowed limit is 500.
+`,
+				Type:     schema.TypeFloat,
+				Optional: true,
 			},
 			"name": &schema.Schema{
 				Description: `name query parameter. Tag name is mandatory when filter operation is used.
@@ -294,8 +295,8 @@ func dataSourceTagRead(ctx context.Context, d *schema.ResourceData, m interface{
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTagV1")
-		queryParams1 := catalystcentersdkgo.GetTagV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetTag")
+		queryParams1 := catalystcentersdkgo.GetTagQueryParams{}
 
 		if okName {
 			queryParams1.Name = vName.(string)
@@ -331,24 +332,38 @@ func dataSourceTagRead(ctx context.Context, d *schema.ResourceData, m interface{
 			queryParams1.SystemTag = vSystemTag.(string)
 		}
 
-		response1, restyResp1, err := client.Tag.GetTagV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Tag.GetTag(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTagV1", err,
-				"Failure at GetTagV1, unexpected response", ""))
+				"Failure when executing 2 GetTag", err,
+				"Failure at GetTag, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenTagGetTagV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetTag", err,
+				"Failure at GetTag, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenTagGetTagItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTagV1 response",
+				"Failure when setting GetTag response",
 				err))
 			return diags
 		}
@@ -358,27 +373,41 @@ func dataSourceTagRead(ctx context.Context, d *schema.ResourceData, m interface{
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetTagByIDV1")
+		log.Printf("[DEBUG] Selected method: GetTagByID")
 		vvID := vID.(string)
 
-		response2, restyResp2, err := client.Tag.GetTagByIDV1(vvID)
+		// has_unknown_response: None
+
+		response2, restyResp2, err := client.Tag.GetTagByID(vvID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTagByIDV1", err,
-				"Failure at GetTagByIDV1, unexpected response", ""))
+				"Failure when executing 2 GetTagByID", err,
+				"Failure at GetTagByID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenTagGetTagByIDV1Item(response2.Response)
+		if err != nil || response2 == nil {
+			if restyResp2 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetTagByID", err,
+				"Failure at GetTagByID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
+
+		vItem2 := flattenTagGetTagByIDItem(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTagByIDV1 response",
+				"Failure when setting GetTagByID response",
 				err))
 			return diags
 		}
@@ -390,7 +419,7 @@ func dataSourceTagRead(ctx context.Context, d *schema.ResourceData, m interface{
 	return diags
 }
 
-func flattenTagGetTagV1Items(items *[]catalystcentersdkgo.ResponseTagGetTagV1Response) []map[string]interface{} {
+func flattenTagGetTagItems(items *[]catalystcentersdkgo.ResponseTagGetTagResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -399,7 +428,7 @@ func flattenTagGetTagV1Items(items *[]catalystcentersdkgo.ResponseTagGetTagV1Res
 		respItem := make(map[string]interface{})
 		respItem["system_tag"] = boolPtrToString(item.SystemTag)
 		respItem["description"] = item.Description
-		respItem["dynamic_rules"] = flattenTagGetTagV1ItemsDynamicRules(item.DynamicRules)
+		respItem["dynamic_rules"] = flattenTagGetTagItemsDynamicRules(item.DynamicRules)
 		respItem["name"] = item.Name
 		respItem["id"] = item.ID
 		respItem["instance_tenant_id"] = item.InstanceTenantID
@@ -408,7 +437,7 @@ func flattenTagGetTagV1Items(items *[]catalystcentersdkgo.ResponseTagGetTagV1Res
 	return respItems
 }
 
-func flattenTagGetTagV1ItemsDynamicRules(items *[]catalystcentersdkgo.ResponseTagGetTagV1ResponseDynamicRules) []map[string]interface{} {
+func flattenTagGetTagItemsDynamicRules(items *[]catalystcentersdkgo.ResponseTagGetTagResponseDynamicRules) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -416,19 +445,19 @@ func flattenTagGetTagV1ItemsDynamicRules(items *[]catalystcentersdkgo.ResponseTa
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["member_type"] = item.MemberType
-		respItem["rules"] = flattenTagGetTagV1ItemsDynamicRulesRules(item.Rules)
+		respItem["rules"] = flattenTagGetTagItemsDynamicRulesRules(item.Rules)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenTagGetTagV1ItemsDynamicRulesRules(item *catalystcentersdkgo.ResponseTagGetTagV1ResponseDynamicRulesRules) []map[string]interface{} {
+func flattenTagGetTagItemsDynamicRulesRules(item *catalystcentersdkgo.ResponseTagGetTagResponseDynamicRulesRules) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["values"] = item.Values
-	respItem["items"] = item.Items
+	respItem["items"] = flattenTagGetTagItemsDynamicRulesRulesItems(item.Items)
 	respItem["operation"] = item.Operation
 	respItem["name"] = item.Name
 	respItem["value"] = item.Value
@@ -439,14 +468,26 @@ func flattenTagGetTagV1ItemsDynamicRulesRules(item *catalystcentersdkgo.Response
 
 }
 
-func flattenTagGetTagByIDV1Item(item *catalystcentersdkgo.ResponseTagGetTagByIDV1Response) []map[string]interface{} {
+func flattenTagGetTagItemsDynamicRulesRulesItems(items *[]catalystcentersdkgo.ResponseTagGetTagResponseDynamicRulesRulesItems) []interface{} {
+	if items == nil {
+		return nil
+	}
+	var respItems []interface{}
+	for _, item := range *items {
+		respItem := item
+		respItems = append(respItems, responseInterfaceToString(respItem))
+	}
+	return respItems
+}
+
+func flattenTagGetTagByIDItem(item *catalystcentersdkgo.ResponseTagGetTagByIDResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["system_tag"] = boolPtrToString(item.SystemTag)
 	respItem["description"] = item.Description
-	respItem["dynamic_rules"] = flattenTagGetTagByIDV1ItemDynamicRules(item.DynamicRules)
+	respItem["dynamic_rules"] = flattenTagGetTagByIDItemDynamicRules(item.DynamicRules)
 	respItem["name"] = item.Name
 	respItem["id"] = item.ID
 	respItem["instance_tenant_id"] = item.InstanceTenantID
@@ -455,7 +496,7 @@ func flattenTagGetTagByIDV1Item(item *catalystcentersdkgo.ResponseTagGetTagByIDV
 	}
 }
 
-func flattenTagGetTagByIDV1ItemDynamicRules(items *[]catalystcentersdkgo.ResponseTagGetTagByIDV1ResponseDynamicRules) []map[string]interface{} {
+func flattenTagGetTagByIDItemDynamicRules(items *[]catalystcentersdkgo.ResponseTagGetTagByIDResponseDynamicRules) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -463,19 +504,19 @@ func flattenTagGetTagByIDV1ItemDynamicRules(items *[]catalystcentersdkgo.Respons
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["member_type"] = item.MemberType
-		respItem["rules"] = flattenTagGetTagByIDV1ItemDynamicRulesRules(item.Rules)
+		respItem["rules"] = flattenTagGetTagByIDItemDynamicRulesRules(item.Rules)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenTagGetTagByIDV1ItemDynamicRulesRules(item *catalystcentersdkgo.ResponseTagGetTagByIDV1ResponseDynamicRulesRules) []map[string]interface{} {
+func flattenTagGetTagByIDItemDynamicRulesRules(item *catalystcentersdkgo.ResponseTagGetTagByIDResponseDynamicRulesRules) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["values"] = item.Values
-	respItem["items"] = item.Items
+	respItem["items"] = flattenTagGetTagByIDItemDynamicRulesRulesItems(item.Items)
 	respItem["operation"] = item.Operation
 	respItem["name"] = item.Name
 	respItem["value"] = item.Value
@@ -484,4 +525,16 @@ func flattenTagGetTagByIDV1ItemDynamicRulesRules(item *catalystcentersdkgo.Respo
 		respItem,
 	}
 
+}
+
+func flattenTagGetTagByIDItemDynamicRulesRulesItems(items *[]catalystcentersdkgo.ResponseTagGetTagByIDResponseDynamicRulesRulesItems) []interface{} {
+	if items == nil {
+		return nil
+	}
+	var respItems []interface{}
+	for _, item := range *items {
+		respItem := item
+		respItems = append(respItems, responseInterfaceToString(respItem))
+	}
+	return respItems
 }

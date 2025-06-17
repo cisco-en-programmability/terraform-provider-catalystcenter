@@ -8,9 +8,9 @@ description: |-
   Release completely removes the subpool from the site, and from all child sites, and frees the address use from the
   global pool(s).  Subpools cannot be released when assigned addresses in use.Updates an IP address subpool, which reserves address space from a global pool (or global pools) for a particular
   site.
-  Restrictions on updating an IP address subpool: The poolType cannot be changed. The siteId cannot be changed. The
-  ipV4AddressSpace may not be removed. The globalPoolId, subnet, and prefixLength cannot be changed once it's
-  already been set. However you may edit a subpool to add an IP address space if it does not already have one.
+  Restrictions on updating an IP address subpool: The poolType cannot be changed. The siteId cannot be changed.
+  The ipV4AddressSpace may not be removed. The globalPoolId, subnet, and prefixLength cannot be changed
+  once it's already been set. However you may edit a subpool to add an IP address space if it does not already have one.
 ---
 
 # catalystcenter_ipam_site_ip_address_pools_id (Resource)
@@ -23,16 +23,16 @@ global pool(s).  Subpools cannot be released when assigned addresses in use.
 
 - Updates an IP address subpool, which reserves address space from a global pool (or global pools) for a particular
 site.
-Restrictions on updating an IP address subpool: The *poolType* cannot be changed. The *siteId* cannot be changed. The
-*ipV4AddressSpace* may not be removed. The *globalPoolId*, *subnet*, and *prefixLength* cannot be changed once it's
-already been set. However you may edit a subpool to add an IP address space if it does not already have one.
+Restrictions on updating an IP address subpool: The **poolType** cannot be changed. The **siteId** cannot be changed.
+The **ipV4AddressSpace** may not be removed. The **globalPoolId**, **subnet**, and **prefixLength** cannot be changed
+once it's already been set. However you may edit a subpool to add an IP address space if it does not already have one.
 
 ## Example Usage
 
 ```terraform
 resource "catalystcenter_ipam_site_ip_address_pools_id" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     id = "string"
@@ -85,7 +85,7 @@ output "catalystcenter_ipam_site_ip_address_pools_id_example" {
 
 Required:
 
-- `id` (String) id path parameter. The *id* of the IP address subpool to update.
+- `id` (String) id path parameter. The **id** of the IP address subpool to update.
 
 Optional:
 
@@ -93,7 +93,7 @@ Optional:
 - `ip_v6_address_space` (Block List) (see [below for nested schema](#nestedblock--parameters--ip_v6_address_space))
 - `name` (String) The name for this reserve IP pool. Only letters, numbers, '-' (hyphen), '_' (underscore), '.' (period), and '/' (forward slash) are allowed.
 - `pool_type` (String) Once created, a subpool type cannot be changed.  LAN: Assigns IP addresses to LAN interfaces of applicable VNFs and underlay LAN automation.  Management: Assigns IP addresses to management interfaces. A management network is a dedicated network connected to VNFs for VNF management.  Service: Assigns IP addresses to service interfaces. Service networks are used for communication within VNFs.  WAN: Assigns IP addresses to NFVIS for UCS-E provisioning.  Generic: used for all other network types.
-- `site_id` (String) The *id* of the site that this subpool belongs to. This must be the *id* of a non-Global site.
+- `site_id` (String) The **id** of the site that this subpool belongs to. This must be the **id** of a non-Global site.
 
 <a id="nestedblock--parameters--ip_v4_address_space"></a>
 ### Nested Schema for `parameters.ip_v4_address_space`

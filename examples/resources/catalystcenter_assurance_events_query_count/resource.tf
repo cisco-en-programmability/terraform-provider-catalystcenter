@@ -1,19 +1,19 @@
 
 resource "catalystcenter_assurance_events_query_count" "example" {
-  provider    = meraki
+  provider    = catalystcenter
   xca_lle_rid = "string"
-  parameters {
+  parameters = [{
 
     device_family = ["string"]
     end_time      = 1
-    filters {
+    filters = [{
 
       key      = "string"
       operator = "string"
       value    = "string"
-    }
+    }]
     start_time = 1
-  }
+  }]
 }
 
 output "catalystcenter_assurance_events_query_count_example" {

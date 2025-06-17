@@ -6,7 +6,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -278,7 +278,7 @@ func resourceAnalyticsEndpointsCreate(ctx context.Context, d *schema.ResourceDat
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestAnalyticsEndpointsRegisterAnEndpointV1(ctx, "parameters.0", d)
+	request1 := expandRequestAnalyticsEndpointsRegisterAnEndpoint(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vEpID, okEpID := resourceItem["ep_id"]
@@ -286,7 +286,7 @@ func resourceAnalyticsEndpointsCreate(ctx context.Context, d *schema.ResourceDat
 	vMacAdress := resourceItem["mac_address"]
 	vvMacAdress := interfaceToString(vMacAdress)
 	if okEpID && vvEpID != "" {
-		getResponse2, _, err := client.AIEndpointAnalytics.GetEndpointDetailsV1(vvEpID, nil)
+		getResponse2, _, err := client.AiEndpointAnalytics.GetEndpointDetails(vvEpID, nil)
 		if err == nil && getResponse2 != nil {
 			resourceMap := make(map[string]string)
 			resourceMap["ep_id"] = vvEpID
@@ -294,11 +294,11 @@ func resourceAnalyticsEndpointsCreate(ctx context.Context, d *schema.ResourceDat
 			return resourceAnalyticsEndpointsRead(ctx, d, m)
 		}
 	} else {
-		queryParamImport := catalystcentersdkgo.QueryTheEndpointsV1QueryParams{
+		queryParamImport := catalystcentersdkgo.QueryTheEndpointsQueryParams{
 			MacAddress: vvMacAdress,
 		}
 
-		response2, _, err := client.AIEndpointAnalytics.QueryTheEndpoints(&queryParamImport)
+		response2, _, err := client.AiEndpointAnalytics.QueryTheEndpoints(&queryParamImport)
 
 		if response2 != nil && err == nil && *response2.TotalResults > 0 {
 			items := *response2.Items
@@ -309,27 +309,27 @@ func resourceAnalyticsEndpointsCreate(ctx context.Context, d *schema.ResourceDat
 			return resourceAnalyticsEndpointsRead(ctx, d, m)
 		}
 	}
-	restyResp1, err := client.AIEndpointAnalytics.RegisterAnEndpointV1(request1)
+	restyResp1, err := client.AiEndpointAnalytics.RegisterAnEndpoint(request1)
 	if err != nil {
 		if restyResp1 != nil {
 			diags = append(diags, diagErrorWithResponse(
-				"Failure when executing RegisterAnEndpointV1", err, restyResp1.String()))
+				"Failure when executing RegisterAnEndpoint", err, restyResp1.String()))
 			return diags
 		}
 		diags = append(diags, diagError(
-			"Failure when executing RegisterAnEndpointV1", err))
+			"Failure when executing RegisterAnEndpoint", err))
 		return diags
 	}
 
 	// TODO REVIEW
-	queryParamValidate := catalystcentersdkgo.QueryTheEndpointsV1QueryParams{
+	queryParamValidate := catalystcentersdkgo.QueryTheEndpointsQueryParams{
 		MacAddress: vvMacAdress,
 	}
-	item3, _, err := client.AIEndpointAnalytics.QueryTheEndpointsV1(&queryParamValidate)
+	item3, _, err := client.AiEndpointAnalytics.QueryTheEndpoints(&queryParamValidate)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing RegisterAnEndpointV1", err,
-			"Failure at RegisterAnEndpointV1, unexpected response", ""))
+			"Failure when executing RegisterAnEndpoint", err,
+			"Failure at RegisterAnEndpoint, unexpected response", ""))
 		return diags
 	}
 	if item3 != nil && err == nil && *item3.TotalResults > 0 {
@@ -341,8 +341,8 @@ func resourceAnalyticsEndpointsCreate(ctx context.Context, d *schema.ResourceDat
 		return resourceAnalyticsEndpointsRead(ctx, d, m)
 	} else {
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing RegisterAnEndpointV1", err,
-			"Failure at RegisterAnEndpointV1, unexpected response", ""))
+			"Failure when executing RegisterAnEndpoint", err,
+			"Failure at RegisterAnEndpoint, unexpected response", ""))
 		return diags
 	}
 }
@@ -358,13 +358,13 @@ func resourceAnalyticsEndpointsRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetEndpointDetailsV1")
+		log.Printf("[DEBUG] Selected method: GetEndpointDetails")
 		vvEpID := vvID
-		queryParams1 := catalystcentersdkgo.GetEndpointDetailsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetEndpointDetailsQueryParams{}
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.AIEndpointAnalytics.GetEndpointDetailsV1(vvEpID, &queryParams1)
+		response1, restyResp1, err := client.AiEndpointAnalytics.GetEndpointDetails(vvEpID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
@@ -376,10 +376,10 @@ func resourceAnalyticsEndpointsRead(ctx context.Context, d *schema.ResourceData,
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem2 := flattenAIEndpointAnalyticsGetEndpointDetailsV1Item(response1)
+		vItem2 := flattenAiEndpointAnalyticsGetEndpointDetailsItem(response1)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetEndpointDetailsV1 response",
+				"Failure when setting GetEndpointDetails response",
 				err))
 			return diags
 		}
@@ -399,20 +399,20 @@ func resourceAnalyticsEndpointsUpdate(ctx context.Context, d *schema.ResourceDat
 
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvID)
-		request1 := expandRequestAnalyticsEndpointsUpdateARegisteredEndpointV1(ctx, "parameters.0", d)
+		request1 := expandRequestAnalyticsEndpointsUpdateARegisteredEndpoint(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-		restyResp1, err := client.AIEndpointAnalytics.UpdateARegisteredEndpointV1(vvID, request1)
+		restyResp1, err := client.AiEndpointAnalytics.UpdateARegisteredEndpoint(vvID, request1)
 		if err != nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] resty response for update operation => %v", restyResp1.String())
 				diags = append(diags, diagErrorWithAltAndResponse(
-					"Failure when executing UpdateARegisteredEndpointV1", err, restyResp1.String(),
-					"Failure at UpdateARegisteredEndpointV1, unexpected response", ""))
+					"Failure when executing UpdateARegisteredEndpoint", err, restyResp1.String(),
+					"Failure at UpdateARegisteredEndpoint, unexpected response", ""))
 				return diags
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing UpdateARegisteredEndpointV1", err,
-				"Failure at UpdateARegisteredEndpointV1, unexpected response", ""))
+				"Failure when executing UpdateARegisteredEndpoint", err,
+				"Failure at UpdateARegisteredEndpoint, unexpected response", ""))
 			return diags
 		}
 
@@ -433,18 +433,18 @@ func resourceAnalyticsEndpointsDelete(ctx context.Context, d *schema.ResourceDat
 	resourceMap := separateResourceID(resourceID)
 	vvID := resourceMap["ep_id"]
 
-	restyResp1, err := client.AIEndpointAnalytics.DeleteAnEndpointV1(vvID)
+	restyResp1, err := client.AiEndpointAnalytics.DeleteAnEndpoint(vvID)
 	if err != nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] resty response for delete operation => %v", restyResp1.String())
 			diags = append(diags, diagErrorWithAltAndResponse(
-				"Failure when executing DeleteAnEndpointV1", err, restyResp1.String(),
-				"Failure at DeleteAnEndpointV1, unexpected response", ""))
+				"Failure when executing DeleteAnEndpoint", err, restyResp1.String(),
+				"Failure at DeleteAnEndpoint, unexpected response", ""))
 			return diags
 		}
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing DeleteAnEndpointV1", err,
-			"Failure at DeleteAnEndpointV1, unexpected response", ""))
+			"Failure when executing DeleteAnEndpoint", err,
+			"Failure at DeleteAnEndpoint, unexpected response", ""))
 		return diags
 	}
 
@@ -456,8 +456,8 @@ func resourceAnalyticsEndpointsDelete(ctx context.Context, d *schema.ResourceDat
 
 	return diags
 }
-func expandRequestAnalyticsEndpointsRegisterAnEndpointV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAIEndpointAnalyticsRegisterAnEndpointV1 {
-	request := catalystcentersdkgo.RequestAIEndpointAnalyticsRegisterAnEndpointV1{}
+func expandRequestAnalyticsEndpointsRegisterAnEndpoint(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAiEndpointAnalyticsRegisterAnEndpoint {
+	request := catalystcentersdkgo.RequestAiEndpointAnalyticsRegisterAnEndpoint{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".mac_address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".mac_address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".mac_address")))) {
 		request.MacAddress = interfaceToString(v)
 	}
@@ -476,8 +476,8 @@ func expandRequestAnalyticsEndpointsRegisterAnEndpointV1(ctx context.Context, ke
 	return &request
 }
 
-func expandRequestAnalyticsEndpointsUpdateARegisteredEndpointV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAIEndpointAnalyticsUpdateARegisteredEndpointV1 {
-	request := catalystcentersdkgo.RequestAIEndpointAnalyticsUpdateARegisteredEndpointV1{}
+func expandRequestAnalyticsEndpointsUpdateARegisteredEndpoint(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAiEndpointAnalyticsUpdateARegisteredEndpoint {
+	request := catalystcentersdkgo.RequestAiEndpointAnalyticsUpdateARegisteredEndpoint{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_type")))) {
 		request.DeviceType = interfaceToString(v)
 	}

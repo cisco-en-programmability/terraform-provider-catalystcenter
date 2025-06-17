@@ -22,7 +22,7 @@ It manages create, read, update and delete operations on Device Onboarding (PnP)
 ```terraform
 resource "catalystcenter_pnp_workflow" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     id               = "string"

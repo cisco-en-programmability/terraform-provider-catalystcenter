@@ -24,7 +24,7 @@ It manages create, read, update and delete operations on SDA.
 ```terraform
 resource "catalystcenter_sda_fabric_devices_layer2_handoffs_ip_transits" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     external_connectivity_ip_pool_name = "string"
@@ -66,13 +66,6 @@ output "catalystcenter_sda_fabric_devices_layer2_handoffs_ip_transits_example" {
 
 Optional:
 
-- `payload` (Block List) Array of RequestApplicationPolicyCreateApplication (see [below for nested schema](#nestedblock--parameters--payload))
-
-<a id="nestedblock--parameters--payload"></a>
-### Nested Schema for `parameters.payload`
-
-Optional:
-
 - `external_connectivity_ip_pool_name` (String) External connectivity ip pool will be used by Catalyst Center to allocate IP address for the connection between the border node and peer.
 - `fabric_id` (String) ID of the fabric this device is assigned to.
 - `id` (String) ID of the fabric device layer 3 handoff ip transit. (updating this field is not allowed).
@@ -86,7 +79,6 @@ Optional:
 - `transit_network_id` (String) ID of the transit network of the layer 3 handoff ip transit.
 - `virtual_network_name` (String) Name of the virtual network associated with this fabric site.
 - `vlan_id` (Number) VLAN number for the Switch Virtual Interface (SVI) used to establish BGP peering with the external domain for the virtual network.  Allowed VLAN range is 2-4094 except for reserved vlans (1, 1002-1005, 2046, 4094).
-
 
 
 <a id="nestedatt--item"></a>

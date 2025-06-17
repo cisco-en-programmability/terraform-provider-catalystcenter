@@ -20,7 +20,7 @@ It manages create, read and delete operations on SDA.
 ```terraform
 resource "catalystcenter_sda_virtual_network_ip_pool" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     auto_generate_vlan_name  = "false"

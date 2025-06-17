@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -385,28 +385,28 @@ func resourceSiteHealthSummariesSummaryAnalyticsCreateCreate(ctx context.Context
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestSiteHealthSummariesSummaryAnalyticsCreateQueryAnAggregatedSummaryOfSiteHealthDataV1(ctx, "parameters.0", d)
-	queryParams1 := catalystcentersdkgo.QueryAnAggregatedSummaryOfSiteHealthDataV1QueryParams{}
+	request1 := expandRequestSiteHealthSummariesSummaryAnalyticsCreateQueryAnAggregatedSummaryOfSiteHealthData(ctx, "parameters.0", d)
+	queryParams1 := catalystcentersdkgo.QueryAnAggregatedSummaryOfSiteHealthDataQueryParams{}
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Sites.QueryAnAggregatedSummaryOfSiteHealthDataV1(request1, &queryParams1)
+	response1, restyResp1, err := client.Sites.QueryAnAggregatedSummaryOfSiteHealthData(request1, &queryParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing QueryAnAggregatedSummaryOfSiteHealthDataV1", err))
+			"Failure when executing QueryAnAggregatedSummaryOfSiteHealthData", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItem1 := flattenSitesQueryAnAggregatedSummaryOfSiteHealthDataV1Item(response1.Response)
+	vItem1 := flattenSitesQueryAnAggregatedSummaryOfSiteHealthDataItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting QueryAnAggregatedSummaryOfSiteHealthDataV1 response",
+			"Failure when setting QueryAnAggregatedSummaryOfSiteHealthData response",
 			err))
 		return diags
 	}
@@ -428,8 +428,8 @@ func resourceSiteHealthSummariesSummaryAnalyticsCreateDelete(ctx context.Context
 	return diags
 }
 
-func expandRequestSiteHealthSummariesSummaryAnalyticsCreateQueryAnAggregatedSummaryOfSiteHealthDataV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesQueryAnAggregatedSummaryOfSiteHealthDataV1 {
-	request := catalystcentersdkgo.RequestSitesQueryAnAggregatedSummaryOfSiteHealthDataV1{}
+func expandRequestSiteHealthSummariesSummaryAnalyticsCreateQueryAnAggregatedSummaryOfSiteHealthData(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesQueryAnAggregatedSummaryOfSiteHealthData {
+	request := catalystcentersdkgo.RequestSitesQueryAnAggregatedSummaryOfSiteHealthData{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -445,7 +445,7 @@ func expandRequestSiteHealthSummariesSummaryAnalyticsCreateQueryAnAggregatedSumm
 	return &request
 }
 
-func flattenSitesQueryAnAggregatedSummaryOfSiteHealthDataV1Item(item *catalystcentersdkgo.ResponseSitesQueryAnAggregatedSummaryOfSiteHealthDataV1Response) []map[string]interface{} {
+func flattenSitesQueryAnAggregatedSummaryOfSiteHealthDataItem(item *catalystcentersdkgo.ResponseSitesQueryAnAggregatedSummaryOfSiteHealthDataResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -185,7 +185,7 @@ func resourceSecurityAdvisoriesTrialsRead(ctx context.Context, d *schema.Resourc
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenComplianceGetTrialDetailsForSecurityAdvisoriesDetectionOnNetworkDevicesV1Item(response1.Response)
+		vItem1 := flattenComplianceGetTrialDetailsForSecurityAdvisoriesDetectionOnNetworkDevicesItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetTrialDetailsForSecurityAdvisoriesDetectionOnNetworkDevices response",
@@ -201,7 +201,7 @@ func resourceSecurityAdvisoriesTrialsRead(ctx context.Context, d *schema.Resourc
 
 func resourceSecurityAdvisoriesTrialsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	// NOTE: Unable to delete SecurityAdvisoriesTrials on Dna Center
+	// NOTE: Unable to delete SecurityAdvisoriesTrials on Catalyst Center
 	//       Returning empty diags to delete it on Terraform
 	return diags
 }

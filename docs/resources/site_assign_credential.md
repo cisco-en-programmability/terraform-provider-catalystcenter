@@ -3,15 +3,17 @@
 page_title: "catalystcenter_site_assign_credential Resource - terraform-provider-catalystcenter"
 subcategory: ""
 description: |-
-  It performs create operation on NetworkSettings.
+  It performs create operation on Sites.
   Assign Device Credential to a site.
 ---
 
 # catalystcenter_site_assign_credential (Resource)
 
-It performs create operation on NetworkSettings.
+It performs create operation on Sites.
 
 - Assign Device Credential to a site.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -22,7 +24,7 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_site_assign_credential" "example" {
   provider = catalystcenter
   site_id  = "string"
-  parameters {
+  parameters = [{
 
     cli_id           = "string"
     http_read        = "string"
@@ -30,7 +32,7 @@ resource "catalystcenter_site_assign_credential" "example" {
     snmp_v2_read_id  = "string"
     snmp_v2_write_id = "string"
     snmp_v3_id       = "string"
-  }
+  }]
 }
 
 output "catalystcenter_site_assign_credential_example" {

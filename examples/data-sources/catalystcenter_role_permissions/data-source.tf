@@ -1,8 +1,8 @@
 
 data "catalystcenter_role_permissions" "example" {
-    provider = catalystcenter
+  provider = catalystcenter
 }
 
 output "catalystcenter_role_permissions_example" {
-    value = data.catalystcenter_role_permissions.example.item
+  value = data.catalystcenter_role_permissions.example.item
 }

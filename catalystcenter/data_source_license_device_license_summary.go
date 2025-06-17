@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -21,7 +21,7 @@ func dataSourceLicenseDeviceLicenseSummary() *schema.Resource {
 		ReadContext: dataSourceLicenseDeviceLicenseSummaryRead,
 		Schema: map[string]*schema.Schema{
 			"device_type": &schema.Schema{
-				Description: `device_type query parameter. Type of device. The valid values are Routers, Switches and Hubs, Wireless Controller
+				Description: `device_type query parameter. Type of device
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -33,15 +33,16 @@ func dataSourceLicenseDeviceLicenseSummary() *schema.Resource {
 				Optional: true,
 			},
 			"dna_level": &schema.Schema{
-				Description: `dna_level query parameter. Device Cisco DNA license level. The valid values are Advantage, Essentials
+				Description: `dna_level query parameter. Device Cisco DNA license level
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter.`,
-				Type:        schema.TypeFloat,
-				Required:    true,
+				Description: `limit query parameter. Specifies the maximum number of device license summaries to return per page. Must be an integer between 1 and 500, inclusive.
+`,
+				Type:     schema.TypeFloat,
+				Required: true,
 			},
 			"order": &schema.Schema{
 				Description: `order query parameter. Sorting order
@@ -56,7 +57,7 @@ func dataSourceLicenseDeviceLicenseSummary() *schema.Resource {
 				Required: true,
 			},
 			"registration_status": &schema.Schema{
-				Description: `registration_status query parameter. Smart license registration status of device. The valid values are Unknown, NA, Unregistered, Registered, Registration_expired, Reservation_in_progress, Registered_slr, Registered_plr, Registered_satellite
+				Description: `registration_status query parameter. Smart license registration status of device
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -64,7 +65,7 @@ func dataSourceLicenseDeviceLicenseSummary() *schema.Resource {
 			"smart_account_id": &schema.Schema{
 				Description: `smart_account_id query parameter. Id of smart account
 `,
-				Type:     schema.TypeString,
+				Type:     schema.TypeFloat,
 				Optional: true,
 			},
 			"sort_by": &schema.Schema{
@@ -358,8 +359,8 @@ func dataSourceLicenseDeviceLicenseSummaryRead(ctx context.Context, d *schema.Re
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: DeviceLicenseSummaryV1")
-		queryParams1 := catalystcentersdkgo.DeviceLicenseSummaryV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: DeviceLicenseSummary")
+		queryParams1 := catalystcentersdkgo.DeviceLicenseSummaryQueryParams{}
 
 		queryParams1.PageNumber = vPageNumber.(float64)
 
@@ -383,30 +384,44 @@ func dataSourceLicenseDeviceLicenseSummaryRead(ctx context.Context, d *schema.Re
 			queryParams1.VirtualAccountName = vVirtualAccountName.(string)
 		}
 		if okSmartAccountID {
-			queryParams1.SmartAccountID = vSmartAccountID.(string)
+			queryParams1.SmartAccountID = vSmartAccountID.(float64)
 		}
 		if okDeviceUUID {
 			queryParams1.DeviceUUID = vDeviceUUID.(string)
 		}
 
-		response1, restyResp1, err := client.Licenses.DeviceLicenseSummaryV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Licenses.DeviceLicenseSummary(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 DeviceLicenseSummaryV1", err,
-				"Failure at DeviceLicenseSummaryV1, unexpected response", ""))
+				"Failure when executing 2 DeviceLicenseSummary", err,
+				"Failure at DeviceLicenseSummary, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenLicensesDeviceLicenseSummaryV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 DeviceLicenseSummary", err,
+				"Failure at DeviceLicenseSummary, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenLicensesDeviceLicenseSummaryItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting DeviceLicenseSummaryV1 response",
+				"Failure when setting DeviceLicenseSummary response",
 				err))
 			return diags
 		}
@@ -418,7 +433,7 @@ func dataSourceLicenseDeviceLicenseSummaryRead(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func flattenLicensesDeviceLicenseSummaryV1Items(items *[]catalystcentersdkgo.ResponseLicensesDeviceLicenseSummaryV1Response) []map[string]interface{} {
+func flattenLicensesDeviceLicenseSummaryItems(items *[]catalystcentersdkgo.ResponseLicensesDeviceLicenseSummaryResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

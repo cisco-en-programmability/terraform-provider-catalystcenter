@@ -22,7 +22,7 @@ It manages create, read, update and delete operations on ITSM Integration.
 ```terraform
 resource "catalystcenter_integration_settings_instances_itsm" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     data {

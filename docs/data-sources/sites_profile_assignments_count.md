@@ -33,7 +33,7 @@ output "catalystcenter_sites_profile_assignments_count_example" {
 
 ### Required
 
-- `site_id` (String) siteId path parameter. The *id* of the site, retrievable from */dna/intent/api/v1/sites*
+- `site_id` (String) siteId path parameter. The **id** of the site, retrievable from **/dna/intent/api/v1/sites**
 
 ### Read-Only
 

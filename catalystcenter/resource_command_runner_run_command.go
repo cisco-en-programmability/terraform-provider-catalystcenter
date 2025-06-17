@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -11,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -115,18 +116,18 @@ func resourceCommandRunnerRunCommandCreate(ctx context.Context, d *schema.Resour
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestCommandRunnerRunCommandRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationV1(ctx, "parameters.0", d)
+	request1 := expandRequestCommandRunnerRunCommandRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfiguration(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.CommandRunner.RunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationV1(request1)
+	response1, restyResp1, err := client.CommandRunner.RunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfiguration(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing RunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationV1", err))
+			"Failure when executing RunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfiguration", err))
 		return diags
 	}
 
@@ -156,7 +157,7 @@ func resourceCommandRunnerRunCommandCreate(ctx context.Context, d *schema.Resour
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
@@ -171,10 +172,10 @@ func resourceCommandRunnerRunCommandCreate(ctx context.Context, d *schema.Resour
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenCommandRunnerRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationV1Item(response1.Response)
+	vItem1 := flattenCommandRunnerRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting RunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationV1 response",
+			"Failure when setting RunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfiguration response",
 			err))
 		return diags
 	}
@@ -196,8 +197,8 @@ func resourceCommandRunnerRunCommandDelete(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func expandRequestCommandRunnerRunCommandRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestCommandRunnerRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationV1 {
-	request := catalystcentersdkgo.RequestCommandRunnerRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationV1{}
+func expandRequestCommandRunnerRunCommandRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfiguration(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestCommandRunnerRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfiguration {
+	request := catalystcentersdkgo.RequestCommandRunnerRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfiguration{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".commands")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".commands")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".commands")))) {
 		request.Commands = interfaceToSliceString(v)
 	}
@@ -216,7 +217,7 @@ func expandRequestCommandRunnerRunCommandRunReadOnlyCommandsOnDevicesToGetTheirR
 	return &request
 }
 
-func flattenCommandRunnerRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationV1Item(item *catalystcentersdkgo.ResponseCommandRunnerRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationV1Response) []map[string]interface{} {
+func flattenCommandRunnerRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationItem(item *catalystcentersdkgo.ResponseCommandRunnerRunReadOnlyCommandsOnDevicesToGetTheirRealTimeConfigurationResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

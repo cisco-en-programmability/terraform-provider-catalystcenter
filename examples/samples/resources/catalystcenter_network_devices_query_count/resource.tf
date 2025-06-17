@@ -9,7 +9,7 @@ terraform {
   }
 }
 
-resource "catalystcenter_network_devices_query_count" "example" {
+resource "catalystcenter_dna_network_devices_query_count" "example" {
   provider = catalystcenter
   parameters {
 

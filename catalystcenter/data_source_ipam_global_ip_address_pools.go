@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -22,7 +22,7 @@ their address space reserved by site-specific subpools.
 		ReadContext: dataSourceIPamGlobalIPAddressPoolsRead,
 		Schema: map[string]*schema.Schema{
 			"limit": &schema.Schema{
-				Description: `limit query parameter. The number of records to show for this page;The minimum is 1, and the maximum is 500.
+				Description: `limit query parameter. The number of records to show for this page; the minimum is 1, and the maximum is 500.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -168,8 +168,8 @@ func dataSourceIPamGlobalIPAddressPoolsRead(ctx context.Context, d *schema.Resou
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesGlobalIPAddressPoolsV1")
-		queryParams1 := catalystcentersdkgo.RetrievesGlobalIPAddressPoolsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: RetrievesGlobalIPAddressPools")
+		queryParams1 := catalystcentersdkgo.RetrievesGlobalIPAddressPoolsQueryParams{}
 
 		if okOffset {
 			queryParams1.Offset = vOffset.(float64)
@@ -186,24 +186,36 @@ func dataSourceIPamGlobalIPAddressPoolsRead(ctx context.Context, d *schema.Resou
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.NetworkSettings.RetrievesGlobalIPAddressPoolsV1(&queryParams1)
+		response1, restyResp1, err := client.NetworkSettings.RetrievesGlobalIPAddressPools(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesGlobalIPAddressPoolsV1", err,
-				"Failure at RetrievesGlobalIPAddressPoolsV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesGlobalIPAddressPools", err,
+				"Failure at RetrievesGlobalIPAddressPools, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenNetworkSettingsRetrievesGlobalIPAddressPoolsV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesGlobalIPAddressPools", err,
+				"Failure at RetrievesGlobalIPAddressPools, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenNetworkSettingsRetrievesGlobalIPAddressPoolsItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesGlobalIPAddressPoolsV1 response",
+				"Failure when setting RetrievesGlobalIPAddressPools response",
 				err))
 			return diags
 		}
@@ -215,14 +227,14 @@ func dataSourceIPamGlobalIPAddressPoolsRead(ctx context.Context, d *schema.Resou
 	return diags
 }
 
-func flattenNetworkSettingsRetrievesGlobalIPAddressPoolsV1Items(items *[]catalystcentersdkgo.ResponseNetworkSettingsRetrievesGlobalIPAddressPoolsV1Response) []map[string]interface{} {
+func flattenNetworkSettingsRetrievesGlobalIPAddressPoolsItems(items *[]catalystcentersdkgo.ResponseNetworkSettingsRetrievesGlobalIPAddressPoolsResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["address_space"] = flattenNetworkSettingsRetrievesGlobalIPAddressPoolsV1ItemsAddressSpace(item.AddressSpace)
+		respItem["address_space"] = flattenNetworkSettingsRetrievesGlobalIPAddressPoolsItemsAddressSpace(item.AddressSpace)
 		respItem["id"] = item.ID
 		respItem["name"] = item.Name
 		respItem["pool_type"] = item.PoolType
@@ -231,7 +243,7 @@ func flattenNetworkSettingsRetrievesGlobalIPAddressPoolsV1Items(items *[]catalys
 	return respItems
 }
 
-func flattenNetworkSettingsRetrievesGlobalIPAddressPoolsV1ItemsAddressSpace(item *catalystcentersdkgo.ResponseNetworkSettingsRetrievesGlobalIPAddressPoolsV1ResponseAddressSpace) []map[string]interface{} {
+func flattenNetworkSettingsRetrievesGlobalIPAddressPoolsItemsAddressSpace(item *catalystcentersdkgo.ResponseNetworkSettingsRetrievesGlobalIPAddressPoolsResponseAddressSpace) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

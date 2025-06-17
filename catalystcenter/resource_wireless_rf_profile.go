@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -546,7 +546,7 @@ func resourceWirelessRfProfile() *schema.Resource {
 							Description: `rfProfileName path parameter. RF profile name to be deleted(required) *non-custom RF profile cannot be deleted
 `,
 							Type:     schema.TypeString,
-							Required: true,
+							Optional: true,
 						},
 					},
 				},
@@ -561,13 +561,13 @@ func resourceWirelessRfProfileCreate(ctx context.Context, d *schema.ResourceData
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestWirelessRfProfileCreateOrUpdateRfProfileV1(ctx, "parameters.0", d)
+	request1 := expandRequestWirelessRfProfileCreateOrUpdateRfProfile(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vRfProfileName := resourceItem["name"]
 	vvRfProfileName := interfaceToString(vRfProfileName)
 
-	queryParams1 := catalystcentersdkgo.RetrieveRfProfilesV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.RetrieveRfProfilesQueryParams{}
 	queryParams1.RfProfileName = vvRfProfileName
 	getResponse2, err := searchWirelessRetrieveRfProfiles(m, queryParams1)
 	if err == nil && getResponse2 != nil {
@@ -639,7 +639,7 @@ func resourceWirelessRfProfileRead(ctx context.Context, d *schema.ResourceData, 
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method 1: RetrieveRfProfiles")
-		queryParams1 := catalystcentersdkgo.RetrieveRfProfilesV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrieveRfProfilesQueryParams{}
 
 		if okRfProfileName {
 			queryParams1.RfProfileName = vRfProfileName
@@ -663,14 +663,14 @@ func resourceWirelessRfProfileRead(ctx context.Context, d *schema.ResourceData, 
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessRetrieveRfProfilesV1Item(response1)
+		vItem1 := flattenWirelessRetrieveRfProfilesItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrieveRfProfiles search response",
 				err))
 			return diags
 		}
-		vParameters1 := flattenWirelessRetrieveRfProfilesV1Item(response1)
+		vParameters1 := flattenWirelessRetrieveRfProfilesItem(response1)
 		log.Printf("[DEBUG] parameters set sent => %v", responseInterfaceToString(vParameters1))
 		if err := d.Set("parameters", vParameters1); err != nil {
 			diags = append(diags, diagError(
@@ -689,7 +689,7 @@ func resourceWirelessRfProfileUpdate(ctx context.Context, d *schema.ResourceData
 	var diags diag.Diagnostics
 	if d.HasChange("parameters") {
 		// log.Printf("[DEBUG] Name used for update operation %v", queryParams1)
-		request1 := expandRequestWirelessRfProfileCreateOrUpdateRfProfileV1(ctx, "parameters.0", d)
+		request1 := expandRequestWirelessRfProfileCreateOrUpdateRfProfile(ctx, "parameters.0", d)
 		if request1 != nil {
 			log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		}
@@ -756,7 +756,7 @@ func resourceWirelessRfProfileDelete(ctx context.Context, d *schema.ResourceData
 	resourceMap := separateResourceID(resourceID)
 	vRfProfileName := resourceMap["name"]
 
-	queryParams1 := catalystcentersdkgo.RetrieveRfProfilesV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.RetrieveRfProfilesQueryParams{}
 	queryParams1.RfProfileName = vRfProfileName
 	item, err := searchWirelessRetrieveRfProfiles(m, queryParams1)
 	var vvRfProfileName string
@@ -820,8 +820,9 @@ func resourceWirelessRfProfileDelete(ctx context.Context, d *schema.ResourceData
 
 	return diags
 }
-func expandRequestWirelessRfProfileCreateOrUpdateRfProfileV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateOrUpdateRfProfileV1 {
-	request := catalystcentersdkgo.RequestWirelessCreateOrUpdateRfProfileV1{}
+
+func expandRequestWirelessRfProfileCreateOrUpdateRfProfile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateOrUpdateRfProfile {
+	request := catalystcentersdkgo.RequestWirelessCreateOrUpdateRfProfile{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -844,13 +845,13 @@ func expandRequestWirelessRfProfileCreateOrUpdateRfProfileV1(ctx context.Context
 		request.EnableBrownField = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".radio_type_a_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".radio_type_a_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".radio_type_a_properties")))) {
-		request.RadioTypeAProperties = expandRequestWirelessRfProfileCreateOrUpdateRfProfileV1RadioTypeAProperties(ctx, key+".radio_type_a_properties.0", d)
+		request.RadioTypeAProperties = expandRequestWirelessRfProfileCreateOrUpdateRfProfileRadioTypeAProperties(ctx, key+".radio_type_a_properties.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".radio_type_b_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".radio_type_b_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".radio_type_b_properties")))) {
-		request.RadioTypeBProperties = expandRequestWirelessRfProfileCreateOrUpdateRfProfileV1RadioTypeBProperties(ctx, key+".radio_type_b_properties.0", d)
+		request.RadioTypeBProperties = expandRequestWirelessRfProfileCreateOrUpdateRfProfileRadioTypeBProperties(ctx, key+".radio_type_b_properties.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".radio_type_c_properties")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".radio_type_c_properties")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".radio_type_c_properties")))) {
-		request.RadioTypeCProperties = expandRequestWirelessRfProfileCreateOrUpdateRfProfileV1RadioTypeCProperties(ctx, key+".radio_type_c_properties.0", d)
+		request.RadioTypeCProperties = expandRequestWirelessRfProfileCreateOrUpdateRfProfileRadioTypeCProperties(ctx, key+".radio_type_c_properties.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".enable_radio_type_c")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".enable_radio_type_c")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".enable_radio_type_c")))) {
 		request.EnableRadioTypeC = interfaceToBoolPtr(v)
@@ -861,8 +862,8 @@ func expandRequestWirelessRfProfileCreateOrUpdateRfProfileV1(ctx context.Context
 	return &request
 }
 
-func expandRequestWirelessRfProfileCreateOrUpdateRfProfileV1RadioTypeAProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateOrUpdateRfProfileV1RadioTypeAProperties {
-	request := catalystcentersdkgo.RequestWirelessCreateOrUpdateRfProfileV1RadioTypeAProperties{}
+func expandRequestWirelessRfProfileCreateOrUpdateRfProfileRadioTypeAProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateOrUpdateRfProfileRadioTypeAProperties {
+	request := catalystcentersdkgo.RequestWirelessCreateOrUpdateRfProfileRadioTypeAProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".parent_profile")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".parent_profile")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".parent_profile")))) {
 		request.ParentProfile = interfaceToString(v)
 	}
@@ -893,8 +894,8 @@ func expandRequestWirelessRfProfileCreateOrUpdateRfProfileV1RadioTypeAProperties
 	return &request
 }
 
-func expandRequestWirelessRfProfileCreateOrUpdateRfProfileV1RadioTypeBProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateOrUpdateRfProfileV1RadioTypeBProperties {
-	request := catalystcentersdkgo.RequestWirelessCreateOrUpdateRfProfileV1RadioTypeBProperties{}
+func expandRequestWirelessRfProfileCreateOrUpdateRfProfileRadioTypeBProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateOrUpdateRfProfileRadioTypeBProperties {
+	request := catalystcentersdkgo.RequestWirelessCreateOrUpdateRfProfileRadioTypeBProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".parent_profile")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".parent_profile")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".parent_profile")))) {
 		request.ParentProfile = interfaceToString(v)
 	}
@@ -925,8 +926,8 @@ func expandRequestWirelessRfProfileCreateOrUpdateRfProfileV1RadioTypeBProperties
 	return &request
 }
 
-func expandRequestWirelessRfProfileCreateOrUpdateRfProfileV1RadioTypeCProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateOrUpdateRfProfileV1RadioTypeCProperties {
-	request := catalystcentersdkgo.RequestWirelessCreateOrUpdateRfProfileV1RadioTypeCProperties{}
+func expandRequestWirelessRfProfileCreateOrUpdateRfProfileRadioTypeCProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateOrUpdateRfProfileRadioTypeCProperties {
+	request := catalystcentersdkgo.RequestWirelessCreateOrUpdateRfProfileRadioTypeCProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".parent_profile")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".parent_profile")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".parent_profile")))) {
 		request.ParentProfile = interfaceToString(v)
 	}
@@ -957,11 +958,11 @@ func expandRequestWirelessRfProfileCreateOrUpdateRfProfileV1RadioTypeCProperties
 	return &request
 }
 
-func searchWirelessRetrieveRfProfiles(m interface{}, queryParams catalystcentersdkgo.RetrieveRfProfilesV1QueryParams) (*catalystcentersdkgo.ResponseWirelessRetrieveRfProfilesV1, error) {
+func searchWirelessRetrieveRfProfiles(m interface{}, queryParams catalystcentersdkgo.RetrieveRfProfilesQueryParams) (*catalystcentersdkgo.ResponseWirelessRetrieveRfProfiles, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseWirelessRetrieveRfProfilesV1
-	var ite *catalystcentersdkgo.ResponseWirelessRetrieveRfProfilesV1
+	var foundItem *catalystcentersdkgo.ResponseWirelessRetrieveRfProfiles
+	var ite *catalystcentersdkgo.ResponseWirelessRetrieveRfProfiles
 	ite, _, err = client.Wireless.RetrieveRfProfiles(&queryParams)
 	if err != nil {
 		return foundItem, err
@@ -976,7 +977,7 @@ func searchWirelessRetrieveRfProfiles(m interface{}, queryParams catalystcenters
 
 	// Call get by _ method and set value to foundItem and return
 	if ite.Name == queryParams.RfProfileName {
-		var getItem *catalystcentersdkgo.ResponseWirelessRetrieveRfProfilesV1
+		var getItem *catalystcentersdkgo.ResponseWirelessRetrieveRfProfiles
 		getItem = ite
 		foundItem = getItem
 		return foundItem, err

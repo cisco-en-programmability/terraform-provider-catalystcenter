@@ -1,10 +1,10 @@
 
 resource "catalystcenter_pnp_server_profile_update" "example" {
-  provider = meraki
-  parameters {
+  provider = catalystcenter
+  parameters = [{
 
     cco_user = "string"
-    profile {
+    profile = [{
 
       address_fqdn  = "string"
       address_ip_v4 = "string"
@@ -15,10 +15,10 @@ resource "catalystcenter_pnp_server_profile_update" "example" {
       port          = 9090
       profile_id    = "string"
       proxy         = "false"
-    }
+    }]
     smart_account_id   = "string"
     virtual_account_id = "string"
-  }
+  }]
 }
 
 output "catalystcenter_pnp_server_profile_update_example" {

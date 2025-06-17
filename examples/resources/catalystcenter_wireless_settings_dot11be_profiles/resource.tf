@@ -1,7 +1,7 @@
 
 resource "catalystcenter_wireless_settings_dot11be_profiles" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     id                = "string"

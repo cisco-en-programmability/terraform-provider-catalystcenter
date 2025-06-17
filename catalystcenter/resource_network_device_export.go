@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -11,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -108,18 +109,18 @@ func resourceNetworkDeviceExportCreate(ctx context.Context, d *schema.ResourceDa
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestNetworkDeviceExportExportDeviceListV1(ctx, "parameters.0", d)
+	request1 := expandRequestNetworkDeviceExportExportDeviceList(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Devices.ExportDeviceListV1(request1)
+	response1, restyResp1, err := client.Devices.ExportDeviceList(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ExportDeviceListV1", err))
+			"Failure when executing ExportDeviceList", err))
 		return diags
 	}
 
@@ -127,7 +128,7 @@ func resourceNetworkDeviceExportCreate(ctx context.Context, d *schema.ResourceDa
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing ExportDeviceListV1", err))
+			"Failure when executing ExportDeviceList", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -154,14 +155,14 @@ func resourceNetworkDeviceExportCreate(ctx context.Context, d *schema.ResourceDa
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing ExportDeviceListV1", err1))
+				"Failure when executing ExportDeviceList", err1))
 			return diags
 		}
 	}
@@ -169,10 +170,10 @@ func resourceNetworkDeviceExportCreate(ctx context.Context, d *schema.ResourceDa
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenDevicesExportDeviceListV1Item(response1.Response)
+	vItem1 := flattenDevicesExportDeviceListItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ExportDeviceListV1 response",
+			"Failure when setting ExportDeviceList response",
 			err))
 		return diags
 	}
@@ -193,8 +194,8 @@ func resourceNetworkDeviceExportDelete(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func expandRequestNetworkDeviceExportExportDeviceListV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesExportDeviceListV1 {
-	request := catalystcentersdkgo.RequestDevicesExportDeviceListV1{}
+func expandRequestNetworkDeviceExportExportDeviceList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesExportDeviceList {
+	request := catalystcentersdkgo.RequestDevicesExportDeviceList{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_uuids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_uuids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_uuids")))) {
 		request.DeviceUUIDs = interfaceToSliceString(v)
 	}
@@ -210,7 +211,7 @@ func expandRequestNetworkDeviceExportExportDeviceListV1(ctx context.Context, key
 	return &request
 }
 
-func flattenDevicesExportDeviceListV1Item(item *catalystcentersdkgo.ResponseDevicesExportDeviceListV1Response) []map[string]interface{} {
+func flattenDevicesExportDeviceListItem(item *catalystcentersdkgo.ResponseDevicesExportDeviceListResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
