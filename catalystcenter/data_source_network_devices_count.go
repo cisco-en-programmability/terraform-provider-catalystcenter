@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -36,7 +36,7 @@ AssuranceNetworkDevices-2.0.1-resolved.yaml
 				Optional: true,
 			},
 			"fabric_site_id": &schema.Schema{
-				Description: `fabricSiteId query parameter. The fabric site Id or list to fabric site Ids to filter the data  This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*  Examples:  *?fabricSiteId=fabricSiteUuid)  ?fabricSiteId=fabricSiteUuid1&fabricSiteId=fabricSiteUuid2 (multiple fabricSiteIds requested)
+				Description: `fabricSiteId query parameter. The fabric site Id or list to fabric site Ids to filter the data  This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*  Examples:  **?fabricSiteId=fabricSiteUuid)  ?fabricSiteId=fabricSiteUuid1&fabricSiteId=fabricSiteUuid2 (multiple fabricSiteIds requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -60,21 +60,21 @@ AssuranceNetworkDevices-2.0.1-resolved.yaml
 				Optional: true,
 			},
 			"l2_vn": &schema.Schema{
-				Description: `l2Vn query parameter. The L2 Virtual Network Id or list to Virtual Network Ids to filter the data  This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*  Examples:  ?l2Vn=virtualNetworkId  ?l2Vn=virtualNetworkId1&l2Vn=virtualNetworkId2 (multiple virtualNetworkId's requested)
+				Description: `l2Vn query parameter. The L2 Virtual Network Id or list to Virtual Network Ids to filter the data  This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*  Examples:  **?l2Vn=virtualNetworkId  ?l2Vn=virtualNetworkId1&l2Vn=virtualNetworkId2 (multiple virtualNetworkId's requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"l3_vn": &schema.Schema{
-				Description: `l3Vn query parameter. The L3 Virtual Network Id or list to Virtual Network Ids to filter the data  This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*  Examples:  ?l3Vn=virtualNetworkId  ?l3Vn=virtualNetworkId1&l3Vn=virtualNetworkId2 (multiple virtualNetworkId's requested)
+				Description: `l3Vn query parameter. The L3 Virtual Network Id or list to Virtual Network Ids to filter the data  This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*  Examples:  **?l3Vn=virtualNetworkId  ?l3Vn=virtualNetworkId1&l3Vn=virtualNetworkId2 (multiple virtualNetworkId's requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"mac_address": &schema.Schema{
-				Description: `macAddress query parameter. The macAddress of the network device or client This field supports wildcard (*) character-based search. Ex: *AB:AB:AB* or AB:AB:AB* or *AB:AB:AB Examples:
-macAddress=AB:AB:AB:CD:CD:CD (single macAddress requested)
-macAddress=AB:AB:AB:CD:CD:DC&macAddress=AB:AB:AB:CD:CD:FE (multiple macAddress requested)
+				Description: `macAddress query parameter. The macAddress of the network device or client This field supports wildcard (*****) character-based search. Ex: ***AB:AB:AB*** or **AB:AB:AB*** or ***AB:AB:AB** Examples:
+**macAddress=AB:AB:AB:CD:CD:CD** (single macAddress requested)
+**macAddress=AB:AB:AB:CD:CD:DC&macAddress=AB:AB:AB:CD:CD:FE** (multiple macAddress requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -87,7 +87,7 @@ macAddress=AB:AB:AB:CD:CD:DC&macAddress=AB:AB:AB:CD:CD:FE (multiple macAddress r
 			},
 			"management_ip_address": &schema.Schema{
 				Description: `managementIpAddress query parameter. The list of entity management IP Address. It can be either Ipv4 or Ipv6 address or combination of both(Ex. "121.1.1.10")
-This field supports wildcard (*) character-based search.  Ex: *1.1* or 1.1* or *1.1
+This field supports wildcard (*****) character-based search.  Ex: ***1.1*** or **1.1*** or ***1.1**
 Examples: managementIpAddresses=121.1.1.10 managementIpAddresses=121.1.1.10&managementIpAddresses=172.20.1.10&managementIpAddresses=200:10&=managementIpAddresses172.20.3.4 (multiple entity IP Address with & separator)
 `,
 				Type:     schema.TypeString,
@@ -100,62 +100,62 @@ Examples: managementIpAddresses=121.1.1.10 managementIpAddresses=121.1.1.10&mana
 				Optional: true,
 			},
 			"serial_number": &schema.Schema{
-				Description: `serialNumber query parameter. The list of network device serial numbers. This field supports wildcard (*) character-based search.  Ex: *MS1SV* or MS1SV* or *MS1SV Examples: serialNumber=9FUFMS1SVAX serialNumber=9FUFMS1SVAX&FCW2333Q0BY&FJC240617JX(multiple Network device serial number with & separator)
+				Description: `serialNumber query parameter. The list of network device serial numbers. This field supports wildcard (*****) character-based search.  Ex: ***MS1SV*** or **MS1SV*** or ***MS1SV** Examples: serialNumber=9FUFMS1SVAX serialNumber=9FUFMS1SVAX&FCW2333Q0BY&FJC240617JX(multiple Network device serial number with & separator)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_hierarchy": &schema.Schema{
-				Description: `siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. Global/AreaName/BuildingName/FloorName)
+				Description: `siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. **Global/AreaName/BuildingName/FloorName**)
 This field supports wildcard asterisk (*) character search support. E.g. */San*, */San, /San*
 Examples:
-?siteHierarchy=Global/AreaName/BuildingName/FloorName (single siteHierarchy requested)
-?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2 (multiple siteHierarchies requested)
+**?siteHierarchy=Global/AreaName/BuildingName/FloorName** (single siteHierarchy requested)
+**?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2** (multiple siteHierarchies requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_hierarchy_id": &schema.Schema{
-				Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. globalUuid/areaUuid/buildingUuid/floorUuid)
-This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*
+				Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. **globalUuid/areaUuid/buildingUuid/floorUuid**)
+This field supports wildcard asterisk (*) character search support. E.g. ***uuid*, *uuid, uuid*
 Examples:
-?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid (single siteHierarchyId requested)
-?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2 (multiple siteHierarchyIds requested)
+**?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid **(single siteHierarchyId requested)
+**?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2** (multiple siteHierarchyIds requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_id": &schema.Schema{
-				Description: `siteId query parameter. The UUID of the site. (Ex. flooruuid)
+				Description: `siteId query parameter. The UUID of the site. (Ex. **flooruuid**)
 This field supports wildcard asterisk (*) character search support. E.g.*flooruuid*, *flooruuid, flooruuid*
 Examples:
-?siteId=id1 (single id requested)
-?siteId=id1&siteId=id2&siteId=id3 (multiple ids requested)
+**?siteId=id1** (single id requested)
+**?siteId=id1&siteId=id2&siteId=id3** (multiple ids requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"software_version": &schema.Schema{
-				Description: `softwareVersion query parameter. The list of network device software version This field supports wildcard (*) character-based search. Ex: *17.8* or *17.8 or 17.8* Examples: softwareVersion=2.3.4.0 (single network device software version ) softwareVersion=17.9.3.23&softwareVersion=17.7.1.2&softwareVersion=*.17.7 (multiple Network device software versions with & separator)
+				Description: `softwareVersion query parameter. The list of network device software version This field supports wildcard (*****) character-based search. Ex: ***17.8*** or ***17.8** or **17.8*** Examples: softwareVersion=2.3.4.0 (single network device software version ) softwareVersion=17.9.3.23&softwareVersion=17.7.1.2&softwareVersion=*.17.7 (multiple Network device software versions with & separator)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"start_time": &schema.Schema{
 				Description: `startTime query parameter. Start time from which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
-If startTime is not provided, API will default to current time.
+If **startTime** is not provided, API will default to current time.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
 			},
 			"transit_network_id": &schema.Schema{
-				Description: `transitNetworkId query parameter. The Transit Network Id or list to Transit Network Ids to filter the data  This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*  Examples:  ?transitNetworkId=transitNetworkId  ?transitNetworkId=transitNetworkuuid1&transitNetworkId=transitNetworkuuid1 (multiple transitNetworkIds requested)
+				Description: `transitNetworkId query parameter. The Transit Network Id or list to Transit Network Ids to filter the data  This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*  Examples:  **?transitNetworkId=transitNetworkId  ?transitNetworkId=transitNetworkuuid1&transitNetworkId=transitNetworkuuid1 (multiple transitNetworkIds requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"type": &schema.Schema{
-				Description: `type query parameter. The list of network device type This field supports wildcard (*) character-based search. Ex: *9407R* or *9407R or 9407R*Examples:type=SwitchesCisco Catalyst 9407R Switch (single network device types )type=Cisco Catalyst 38xx stack-able ethernet switch&type=Cisco 3945 Integrated Services Router G2 (multiple Network device types with & separator)
+				Description: `type query parameter. The list of network device type This field supports wildcard (*****) character-based search. Ex: ***9407R*** or ***9407R** or **9407R***Examples:type=SwitchesCisco Catalyst 9407R Switch (single network device types )type=Cisco Catalyst 38xx stack-able ethernet switch&type=Cisco 3945 Integrated Services Router G2 (multiple Network device types with & separator)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -206,8 +206,8 @@ func dataSourceNetworkDevicesCountRead(ctx context.Context, d *schema.ResourceDa
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetsTheTotalNetworkDeviceCountsBasedOnTheProvidedQueryParametersV1")
-		queryParams1 := catalystcentersdkgo.GetsTheTotalNetworkDeviceCountsBasedOnTheProvidedQueryParametersV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetsTheTotalNetworkDeviceCountsBasedOnTheProvidedQueryParameters")
+		queryParams1 := catalystcentersdkgo.GetsTheTotalNetworkDeviceCountsBasedOnTheProvidedQueryParametersQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -272,24 +272,36 @@ func dataSourceNetworkDevicesCountRead(ctx context.Context, d *schema.ResourceDa
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Devices.GetsTheTotalNetworkDeviceCountsBasedOnTheProvidedQueryParametersV1(&queryParams1)
+		response1, restyResp1, err := client.Devices.GetsTheTotalNetworkDeviceCountsBasedOnTheProvidedQueryParameters(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetsTheTotalNetworkDeviceCountsBasedOnTheProvidedQueryParametersV1", err,
-				"Failure at GetsTheTotalNetworkDeviceCountsBasedOnTheProvidedQueryParametersV1, unexpected response", ""))
+				"Failure when executing 2 GetsTheTotalNetworkDeviceCountsBasedOnTheProvidedQueryParameters", err,
+				"Failure at GetsTheTotalNetworkDeviceCountsBasedOnTheProvidedQueryParameters, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesGetsTheTotalNetworkDeviceCountsBasedOnTheProvidedQueryParametersV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetsTheTotalNetworkDeviceCountsBasedOnTheProvidedQueryParameters", err,
+				"Failure at GetsTheTotalNetworkDeviceCountsBasedOnTheProvidedQueryParameters, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenDevicesGetsTheTotalNetworkDeviceCountsBasedOnTheProvidedQueryParametersItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetsTheTotalNetworkDeviceCountsBasedOnTheProvidedQueryParametersV1 response",
+				"Failure when setting GetsTheTotalNetworkDeviceCountsBasedOnTheProvidedQueryParameters response",
 				err))
 			return diags
 		}
@@ -301,7 +313,7 @@ func dataSourceNetworkDevicesCountRead(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func flattenDevicesGetsTheTotalNetworkDeviceCountsBasedOnTheProvidedQueryParametersV1Item(item *catalystcentersdkgo.ResponseDevicesGetsTheTotalNetworkDeviceCountsBasedOnTheProvidedQueryParametersV1Response) []map[string]interface{} {
+func flattenDevicesGetsTheTotalNetworkDeviceCountsBasedOnTheProvidedQueryParametersItem(item *catalystcentersdkgo.ResponseDevicesGetsTheTotalNetworkDeviceCountsBasedOnTheProvidedQueryParametersResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

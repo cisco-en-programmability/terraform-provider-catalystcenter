@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -11,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -41,13 +42,13 @@ this setting for all network devices refer to [/networkDevices/resyncIntervalSet
 					Schema: map[string]*schema.Schema{
 
 						"task_id": &schema.Schema{
-							Description: `Unique identifier for the task
+							Description: `Unique identifier for the task.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
 						},
 						"url": &schema.Schema{
-							Description: `URL for the task
+							Description: `URL for the task.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -82,18 +83,18 @@ func resourceNetworkDevicesResyncIntervalSettingsCreate(ctx context.Context, d *
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestNetworkDevicesResyncIntervalSettingsUpdateGlobalResyncIntervalV1(ctx, "parameters.0", d)
+	request1 := expandRequestNetworkDevicesResyncIntervalSettingsUpdateGlobalResyncInterval(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Devices.UpdateGlobalResyncIntervalV1(request1)
+	response1, restyResp1, err := client.Devices.UpdateGlobalResyncInterval(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing UpdateGlobalResyncIntervalV1", err))
+			"Failure when executing UpdateGlobalResyncInterval", err))
 		return diags
 	}
 
@@ -101,7 +102,7 @@ func resourceNetworkDevicesResyncIntervalSettingsCreate(ctx context.Context, d *
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing UpdateGlobalResyncIntervalV1", err))
+			"Failure when executing UpdateGlobalResyncInterval", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -128,14 +129,14 @@ func resourceNetworkDevicesResyncIntervalSettingsCreate(ctx context.Context, d *
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing UpdateGlobalResyncIntervalV1", err1))
+				"Failure when executing UpdateGlobalResyncInterval", err1))
 			return diags
 		}
 	}
@@ -143,10 +144,10 @@ func resourceNetworkDevicesResyncIntervalSettingsCreate(ctx context.Context, d *
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenDevicesUpdateGlobalResyncIntervalV1Item(response1.Response)
+	vItem1 := flattenDevicesUpdateGlobalResyncIntervalItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting UpdateGlobalResyncIntervalV1 response",
+			"Failure when setting UpdateGlobalResyncInterval response",
 			err))
 		return diags
 	}
@@ -167,15 +168,15 @@ func resourceNetworkDevicesResyncIntervalSettingsDelete(ctx context.Context, d *
 	return diags
 }
 
-func expandRequestNetworkDevicesResyncIntervalSettingsUpdateGlobalResyncIntervalV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateGlobalResyncIntervalV1 {
-	request := catalystcentersdkgo.RequestDevicesUpdateGlobalResyncIntervalV1{}
+func expandRequestNetworkDevicesResyncIntervalSettingsUpdateGlobalResyncInterval(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateGlobalResyncInterval {
+	request := catalystcentersdkgo.RequestDevicesUpdateGlobalResyncInterval{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".interval")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".interval")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".interval")))) {
 		request.Interval = interfaceToIntPtr(v)
 	}
 	return &request
 }
 
-func flattenDevicesUpdateGlobalResyncIntervalV1Item(item *catalystcentersdkgo.ResponseDevicesUpdateGlobalResyncIntervalV1Response) []map[string]interface{} {
+func flattenDevicesUpdateGlobalResyncIntervalItem(item *catalystcentersdkgo.ResponseDevicesUpdateGlobalResyncIntervalResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

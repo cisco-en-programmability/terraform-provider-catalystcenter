@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -348,27 +348,27 @@ func resourcePnpVirtualAccountAddCreate(ctx context.Context, d *schema.ResourceD
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestPnpVirtualAccountAddAddVirtualAccountV1(ctx, "parameters.0", d)
+	request1 := expandRequestPnpVirtualAccountAddAddVirtualAccount(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.DeviceOnboardingPnp.AddVirtualAccountV1(request1)
+	response1, restyResp1, err := client.DeviceOnboardingPnp.AddVirtualAccount(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing AddVirtualAccountV1", err))
+			"Failure when executing AddVirtualAccount", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItem1 := flattenDeviceOnboardingPnpAddVirtualAccountV1Item(response1)
+	vItem1 := flattenDeviceOnboardingPnpAddVirtualAccountItem(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting AddVirtualAccountV1 response",
+			"Failure when setting AddVirtualAccount response",
 			err))
 		return diags
 	}
@@ -390,8 +390,8 @@ func resourcePnpVirtualAccountAddDelete(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func expandRequestPnpVirtualAccountAddAddVirtualAccountV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAddVirtualAccountV1 {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAddVirtualAccountV1{}
+func expandRequestPnpVirtualAccountAddAddVirtualAccount(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAddVirtualAccount {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAddVirtualAccount{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".auto_sync_period")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".auto_sync_period")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".auto_sync_period")))) {
 		request.AutoSyncPeriod = interfaceToIntPtr(v)
 	}
@@ -405,13 +405,13 @@ func expandRequestPnpVirtualAccountAddAddVirtualAccountV1(ctx context.Context, k
 		request.LastSync = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".profile")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".profile")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".profile")))) {
-		request.Profile = expandRequestPnpVirtualAccountAddAddVirtualAccountV1Profile(ctx, key+".profile.0", d)
+		request.Profile = expandRequestPnpVirtualAccountAddAddVirtualAccountProfile(ctx, key+".profile.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".smart_account_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".smart_account_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".smart_account_id")))) {
 		request.SmartAccountID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".sync_result")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".sync_result")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".sync_result")))) {
-		request.SyncResult = expandRequestPnpVirtualAccountAddAddVirtualAccountV1SyncResult(ctx, key+".sync_result.0", d)
+		request.SyncResult = expandRequestPnpVirtualAccountAddAddVirtualAccountSyncResult(ctx, key+".sync_result.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".sync_result_str")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".sync_result_str")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".sync_result_str")))) {
 		request.SyncResultStr = interfaceToString(v)
@@ -434,8 +434,8 @@ func expandRequestPnpVirtualAccountAddAddVirtualAccountV1(ctx context.Context, k
 	return &request
 }
 
-func expandRequestPnpVirtualAccountAddAddVirtualAccountV1Profile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAddVirtualAccountV1Profile {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAddVirtualAccountV1Profile{}
+func expandRequestPnpVirtualAccountAddAddVirtualAccountProfile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAddVirtualAccountProfile {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAddVirtualAccountProfile{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".address_fqdn")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".address_fqdn")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".address_fqdn")))) {
 		request.AddressFqdn = interfaceToString(v)
 	}
@@ -466,10 +466,10 @@ func expandRequestPnpVirtualAccountAddAddVirtualAccountV1Profile(ctx context.Con
 	return &request
 }
 
-func expandRequestPnpVirtualAccountAddAddVirtualAccountV1SyncResult(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAddVirtualAccountV1SyncResult {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAddVirtualAccountV1SyncResult{}
+func expandRequestPnpVirtualAccountAddAddVirtualAccountSyncResult(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAddVirtualAccountSyncResult {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAddVirtualAccountSyncResult{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".sync_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".sync_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".sync_list")))) {
-		request.SyncList = expandRequestPnpVirtualAccountAddAddVirtualAccountV1SyncResultSyncListArray(ctx, key+".sync_list", d)
+		request.SyncList = expandRequestPnpVirtualAccountAddAddVirtualAccountSyncResultSyncListArray(ctx, key+".sync_list", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".sync_msg")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".sync_msg")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".sync_msg")))) {
 		request.SyncMsg = interfaceToString(v)
@@ -477,8 +477,8 @@ func expandRequestPnpVirtualAccountAddAddVirtualAccountV1SyncResult(ctx context.
 	return &request
 }
 
-func expandRequestPnpVirtualAccountAddAddVirtualAccountV1SyncResultSyncListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpAddVirtualAccountV1SyncResultSyncList {
-	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpAddVirtualAccountV1SyncResultSyncList{}
+func expandRequestPnpVirtualAccountAddAddVirtualAccountSyncResultSyncListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpAddVirtualAccountSyncResultSyncList {
+	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpAddVirtualAccountSyncResultSyncList{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -489,7 +489,7 @@ func expandRequestPnpVirtualAccountAddAddVirtualAccountV1SyncResultSyncListArray
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestPnpVirtualAccountAddAddVirtualAccountV1SyncResultSyncList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestPnpVirtualAccountAddAddVirtualAccountSyncResultSyncList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -497,8 +497,8 @@ func expandRequestPnpVirtualAccountAddAddVirtualAccountV1SyncResultSyncListArray
 	return &request
 }
 
-func expandRequestPnpVirtualAccountAddAddVirtualAccountV1SyncResultSyncList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAddVirtualAccountV1SyncResultSyncList {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAddVirtualAccountV1SyncResultSyncList{}
+func expandRequestPnpVirtualAccountAddAddVirtualAccountSyncResultSyncList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAddVirtualAccountSyncResultSyncList {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAddVirtualAccountSyncResultSyncList{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_sn_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_sn_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_sn_list")))) {
 		request.DeviceSnList = interfaceToSliceString(v)
 	}
@@ -508,14 +508,14 @@ func expandRequestPnpVirtualAccountAddAddVirtualAccountV1SyncResultSyncList(ctx 
 	return &request
 }
 
-func flattenDeviceOnboardingPnpAddVirtualAccountV1Item(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpAddVirtualAccountV1) []map[string]interface{} {
+func flattenDeviceOnboardingPnpAddVirtualAccountItem(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpAddVirtualAccount) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["virtual_account_id"] = item.VirtualAccountID
 	respItem["auto_sync_period"] = item.AutoSyncPeriod
-	respItem["profile"] = flattenDeviceOnboardingPnpAddVirtualAccountV1ItemProfile(item.Profile)
+	respItem["profile"] = flattenDeviceOnboardingPnpAddVirtualAccountItemProfile(item.Profile)
 	respItem["cco_user"] = item.CcoUser
 	respItem["sync_start_time"] = item.SyncStartTime
 	respItem["last_sync"] = item.LastSync
@@ -528,7 +528,7 @@ func flattenDeviceOnboardingPnpAddVirtualAccountV1Item(item *catalystcentersdkgo
 	}
 }
 
-func flattenDeviceOnboardingPnpAddVirtualAccountV1ItemProfile(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpAddVirtualAccountV1Profile) []map[string]interface{} {
+func flattenDeviceOnboardingPnpAddVirtualAccountItemProfile(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpAddVirtualAccountProfile) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

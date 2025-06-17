@@ -20,7 +20,7 @@ IPv6 pool.
 ```terraform
 resource "catalystcenter_ipam_global_ip_address_pools" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     address_space {

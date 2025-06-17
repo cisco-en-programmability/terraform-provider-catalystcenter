@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -61,6 +61,13 @@ func dataSourceAreas() *schema.Resource {
 							Computed: true,
 						},
 
+						"site_hierarchy_id": &schema.Schema{
+							Description: `Site Hierarchical Id. Read Only. Can be used to add the access groups using the API POST:/dna/system/api/v1/accessGroups, this value should be used to populate the srcResourceId field of the request payload.
+`,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
 						"type": &schema.Schema{
 							Description: `Site Type.
 `,
@@ -82,27 +89,41 @@ func dataSourceAreasRead(ctx context.Context, d *schema.ResourceData, m interfac
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetsAnAreaV1")
+		log.Printf("[DEBUG] Selected method: GetsAnArea")
 		vvID := vID.(string)
 
-		response1, restyResp1, err := client.SiteDesign.GetsAnAreaV1(vvID)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.SiteDesign.GetsAnArea(vvID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetsAnAreaV1", err,
-				"Failure at GetsAnAreaV1, unexpected response", ""))
+				"Failure when executing 2 GetsAnArea", err,
+				"Failure at GetsAnArea, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSiteDesignGetsAnAreaV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetsAnArea", err,
+				"Failure at GetsAnArea, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSiteDesignGetsAnAreaItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetsAnAreaV1 response",
+				"Failure when setting GetsAnArea response",
 				err))
 			return diags
 		}
@@ -114,12 +135,13 @@ func dataSourceAreasRead(ctx context.Context, d *schema.ResourceData, m interfac
 	return diags
 }
 
-func flattenSiteDesignGetsAnAreaV1Item(item *catalystcentersdkgo.ResponseSiteDesignGetsAnAreaV1Response) []map[string]interface{} {
+func flattenSiteDesignGetsAnAreaItem(item *catalystcentersdkgo.ResponseSiteDesignGetsAnAreaResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["id"] = item.ID
+	respItem["site_hierarchy_id"] = item.SiteHierarchyID
 	respItem["name"] = item.Name
 	respItem["name_hierarchy"] = item.NameHierarchy
 	respItem["parent_id"] = item.ParentID

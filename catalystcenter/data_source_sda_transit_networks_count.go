@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -54,31 +54,45 @@ func dataSourceSdaTransitNetworksCountRead(ctx context.Context, d *schema.Resour
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTransitNetworksCountV1")
-		queryParams1 := catalystcentersdkgo.GetTransitNetworksCountV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetTransitNetworksCount")
+		queryParams1 := catalystcentersdkgo.GetTransitNetworksCountQueryParams{}
 
 		if okType {
 			queryParams1.Type = vType.(string)
 		}
 
-		response1, restyResp1, err := client.Sda.GetTransitNetworksCountV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sda.GetTransitNetworksCount(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTransitNetworksCountV1", err,
-				"Failure at GetTransitNetworksCountV1, unexpected response", ""))
+				"Failure when executing 2 GetTransitNetworksCount", err,
+				"Failure at GetTransitNetworksCount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetTransitNetworksCountV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetTransitNetworksCount", err,
+				"Failure at GetTransitNetworksCount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSdaGetTransitNetworksCountItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTransitNetworksCountV1 response",
+				"Failure when setting GetTransitNetworksCount response",
 				err))
 			return diags
 		}
@@ -90,7 +104,7 @@ func dataSourceSdaTransitNetworksCountRead(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func flattenSdaGetTransitNetworksCountV1Item(item *catalystcentersdkgo.ResponseSdaGetTransitNetworksCountV1Response) []map[string]interface{} {
+func flattenSdaGetTransitNetworksCountItem(item *catalystcentersdkgo.ResponseSdaGetTransitNetworksCountResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

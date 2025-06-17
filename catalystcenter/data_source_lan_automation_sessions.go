@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -64,26 +64,40 @@ func dataSourceLanAutomationSessionsRead(ctx context.Context, d *schema.Resource
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: LanAutomationActiveSessionsV1")
+		log.Printf("[DEBUG] Selected method: LanAutomationActiveSessions")
 
-		response1, restyResp1, err := client.LanAutomation.LanAutomationActiveSessionsV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.LanAutomation.LanAutomationActiveSessions()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 LanAutomationActiveSessionsV1", err,
-				"Failure at LanAutomationActiveSessionsV1, unexpected response", ""))
+				"Failure when executing 2 LanAutomationActiveSessions", err,
+				"Failure at LanAutomationActiveSessions, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenLanAutomationLanAutomationActiveSessionsV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 LanAutomationActiveSessions", err,
+				"Failure at LanAutomationActiveSessions, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenLanAutomationLanAutomationActiveSessionsItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting LanAutomationActiveSessionsV1 response",
+				"Failure when setting LanAutomationActiveSessions response",
 				err))
 			return diags
 		}
@@ -95,7 +109,7 @@ func dataSourceLanAutomationSessionsRead(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func flattenLanAutomationLanAutomationActiveSessionsV1Item(item *catalystcentersdkgo.ResponseLanAutomationLanAutomationActiveSessionsV1Response) []map[string]interface{} {
+func flattenLanAutomationLanAutomationActiveSessionsItem(item *catalystcentersdkgo.ResponseLanAutomationLanAutomationActiveSessionsResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

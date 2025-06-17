@@ -1,7 +1,7 @@
 
 resource "catalystcenter_network_devices_device_controllability_settings" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     autocorrect_telemetry_config = "false"

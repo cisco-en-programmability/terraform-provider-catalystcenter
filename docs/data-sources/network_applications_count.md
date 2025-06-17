@@ -5,9 +5,10 @@ subcategory: ""
 description: |-
   It performs read operation on Applications.
   Retrieves the number of network applications by applying basic filtering. If startTime and endTime are not provided,
-  the API defaults to the last 24 hours. siteId is mandatory. siteId must be a site UUID of a building. For detailed
-  information about the usage of the API, please refer to the Open API specification document https://github.com/cisco-en-
-  programmability/catalyst-center-api-specs/blob/main/Assurance/CECatCenter_Org-NetworkApplications-1.0.0-resolved.yaml
+  the API defaults to the last 24 hours. siteId is mandatory. siteId must be a site UUID of a building. For
+  detailed information about the usage of the API, please refer to the Open API specification document
+  https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CECatCenter_Org-
+  NetworkApplications-1.0.0-resolved.yaml
 ---
 
 # catalystcenter_network_applications_count (Data Source)
@@ -15,9 +16,10 @@ description: |-
 It performs read operation on Applications.
 
 - Retrieves the number of network applications by applying basic filtering. If startTime and endTime are not provided,
-the API defaults to the last 24 hours. siteId is mandatory. siteId must be a site UUID of a building. For detailed
-information about the usage of the API, please refer to the Open API specification document https://github.com/cisco-en-
-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-NetworkApplications-1.0.0-resolved.yaml
+the API defaults to the last 24 hours. **siteId** is mandatory. **siteId** must be a site UUID of a building. For
+detailed information about the usage of the API, please refer to the Open API specification document
+https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
+NetworkApplications-1.0.0-resolved.yaml
 
 ## Example Usage
 
@@ -43,21 +45,21 @@ output "catalystcenter_network_applications_count_example" {
 
 ### Required
 
-- `site_id` (String) siteId query parameter. The site UUID without the top level hierarchy. siteId is mandatory. siteId must be a site UUID of a building. (Ex."buildingUuid") Examples: siteId=buildingUuid (single siteId requested) siteId=buildingUuid1&siteId=buildingUuid2 (multiple siteId requested)
+- `site_id` (String) siteId query parameter. The site UUID without the top level hierarchy. **siteId** is mandatory. **siteId** must be a site UUID of a building. (Ex."buildingUuid") Examples: **siteId=buildingUuid** (single siteId requested) **siteId=buildingUuid1&siteId=buildingUuid2** (multiple siteId requested)
 - `xca_lle_rid` (String) X-CALLER-ID header parameter. Caller ID is used to trace the origin of API calls and their associated queries executed on the database. It's an optional header parameter that can be added to an API request.
 
 ### Optional
 
 - `application_name` (String) applicationName query parameter. Name of the application for which the experience data is intended.
 Examples:
-applicationName=webex (single applicationName requested)
-applicationName=webex&applicationName=teams (multiple applicationName requested)
+**applicationName=webex** (single applicationName requested)
+**applicationName=webex&applicationName=teams** (multiple applicationName requested)
 - `business_relevance` (String) businessRelevance query parameter. The application can be chosen to be categorized as business-relevant, irrelevant, or default (neutral). By doing so, the assurance application prioritizes the monitoring and analysis of business-relevant data, ensuring critical insights are captured. Applications marked as irrelevant or default are selectively excluded from certain data sets, streamlining focus on what's most important for business outcomes.
 - `end_time` (Number) endTime query parameter. End time to which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
 - `ssid` (String) ssid query parameter. In the context of a network application, SSID refers to the name of the wireless network to which the client connects.
 Examples:
-ssid=Alpha (single ssid requested)
-ssid=Alpha&ssid=Guest (multiple ssid requested)
+**ssid=Alpha** (single ssid requested)
+**ssid=Alpha&ssid=Guest** (multiple ssid requested)
 - `start_time` (Number) startTime query parameter. Start time from which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
 
 ### Read-Only

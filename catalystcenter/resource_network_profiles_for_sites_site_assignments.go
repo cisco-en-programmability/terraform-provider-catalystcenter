@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -65,7 +65,7 @@ otherwise this operation will not ulimately  unassign the profile.
 							Computed:    true,
 						},
 						"profile_id": &schema.Schema{
-							Description: `profileId path parameter. The *id* of the network profile, retrievable from *GET /intent/api/v1/networkProfilesForSites*
+							Description: `profileId path parameter. The **id** of the network profile, retrievable from **GET /intent/api/v1/networkProfilesForSites**
 `,
 							Type:     schema.TypeString,
 							Required: true,
@@ -83,14 +83,14 @@ func resourceNetworkProfilesForSitesSiteAssignmentsCreate(ctx context.Context, d
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestNetworkProfilesForSitesSiteAssignmentsAssignANetworkProfileForSitesToTheGivenSiteV1(ctx, "parameters.0", d)
+	request1 := expandRequestNetworkProfilesForSitesSiteAssignmentsAssignANetworkProfileForSitesToTheGivenSite(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vProfileID := resourceItem["profile_id"]
 	vvProfileID := interfaceToString(vProfileID)
 	vID := resourceItem["id"]
 	vvID := interfaceToString(vID)
-	queryParamImport := catalystcentersdkgo.RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToQueryParams{}
 	item2, err := searchSiteDesignRetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedTo(m, queryParamImport, vvProfileID, vvID)
 	if err == nil && item2 != nil {
 		resourceMap := make(map[string]string)
@@ -138,7 +138,7 @@ func resourceNetworkProfilesForSitesSiteAssignmentsCreate(ctx context.Context, d
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToQueryParams{}
 	item3, err := searchSiteDesignRetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedTo(m, queryParamValidate, vvProfileID, vvID)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
@@ -168,7 +168,7 @@ func resourceNetworkProfilesForSitesSiteAssignmentsRead(ctx context.Context, d *
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedTo")
 		vvProfileID := vProfileID
-		queryParams1 := catalystcentersdkgo.RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToQueryParams{}
 
 		item1, err := searchSiteDesignRetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedTo(m, queryParams1, vvProfileID, vvID)
 		if err != nil || item1 == nil {
@@ -176,12 +176,12 @@ func resourceNetworkProfilesForSitesSiteAssignmentsRead(ctx context.Context, d *
 			return diags
 		}
 
-		items := []catalystcentersdkgo.ResponseSiteDesignRetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToV1Response{
+		items := []catalystcentersdkgo.ResponseSiteDesignRetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToResponse{
 			*item1,
 		}
 
 		// Review flatten function used
-		vItem1 := flattenSiteDesignRetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToV1Items(&items)
+		vItem1 := flattenSiteDesignRetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToItems(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedTo search response",
@@ -258,8 +258,9 @@ func resourceNetworkProfilesForSitesSiteAssignmentsDelete(ctx context.Context, d
 
 	return diags
 }
-func expandRequestNetworkProfilesForSitesSiteAssignmentsAssignANetworkProfileForSitesToTheGivenSiteV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSiteDesignAssignANetworkProfileForSitesToTheGivenSiteV1 {
-	request := catalystcentersdkgo.RequestSiteDesignAssignANetworkProfileForSitesToTheGivenSiteV1{}
+
+func expandRequestNetworkProfilesForSitesSiteAssignmentsAssignANetworkProfileForSitesToTheGivenSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSiteDesignAssignANetworkProfileForSitesToTheGivenSite {
+	request := catalystcentersdkgo.RequestSiteDesignAssignANetworkProfileForSitesToTheGivenSite{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -269,10 +270,10 @@ func expandRequestNetworkProfilesForSitesSiteAssignmentsAssignANetworkProfileFor
 	return &request
 }
 
-func searchSiteDesignRetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedTo(m interface{}, queryParams catalystcentersdkgo.RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToV1QueryParams, vProfileID string, vID string) (*catalystcentersdkgo.ResponseSiteDesignRetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToV1Response, error) {
+func searchSiteDesignRetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedTo(m interface{}, queryParams catalystcentersdkgo.RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToQueryParams, vProfileID string, vID string) (*catalystcentersdkgo.ResponseSiteDesignRetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseSiteDesignRetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToV1Response
+	var foundItem *catalystcentersdkgo.ResponseSiteDesignRetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToResponse
 	// var ite *catalystcentersdkgo.ResponseSiteDesignRetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedTo
 	if vID != "" {
 		queryParams.Offset = 1

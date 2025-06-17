@@ -39,7 +39,7 @@ output "catalystcenter_sda_fabrics_vlan_to_ssids_fabric_id_example" {
 
 ### Optional
 
-- `limit` (Number) limit query parameter. The number of records to show for this page.
+- `limit` (Number) limit query parameter. The number of records to show for this page. Default is 500 if not specified. Maximum allowed limit is 500.
 - `offset` (Number) offset query parameter. The first record to show for this page; the first record is numbered 1.
 
 ### Read-Only

@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -180,27 +180,27 @@ func resourceEventWebhookCreateCreate(ctx context.Context, d *schema.ResourceDat
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestEventWebhookCreateCreateWebhookDestinationV1(ctx, "parameters.0", d)
+	request1 := expandRequestEventWebhookCreateCreateWebhookDestination(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.EventManagement.CreateWebhookDestinationV1(request1)
+	response1, restyResp1, err := client.EventManagement.CreateWebhookDestination(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing CreateWebhookDestinationV1", err))
+			"Failure when executing CreateWebhookDestination", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItem1 := flattenEventManagementCreateWebhookDestinationV1Item(response1)
+	vItem1 := flattenEventManagementCreateWebhookDestinationItem(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting CreateWebhookDestinationV1 response",
+			"Failure when setting CreateWebhookDestination response",
 			err))
 		return diags
 	}
@@ -222,8 +222,8 @@ func resourceEventWebhookCreateDelete(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func expandRequestEventWebhookCreateCreateWebhookDestinationV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementCreateWebhookDestinationV1 {
-	request := catalystcentersdkgo.RequestEventManagementCreateWebhookDestinationV1{}
+func expandRequestEventWebhookCreateCreateWebhookDestination(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementCreateWebhookDestination {
+	request := catalystcentersdkgo.RequestEventManagementCreateWebhookDestination{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".webhook_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".webhook_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".webhook_id")))) {
 		request.WebhookID = interfaceToString(v)
 	}
@@ -243,7 +243,7 @@ func expandRequestEventWebhookCreateCreateWebhookDestinationV1(ctx context.Conte
 		request.TrustCert = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".headers")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".headers")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".headers")))) {
-		request.Headers = expandRequestEventWebhookCreateCreateWebhookDestinationV1HeadersArray(ctx, key+".headers", d)
+		request.Headers = expandRequestEventWebhookCreateCreateWebhookDestinationHeadersArray(ctx, key+".headers", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".is_proxy_route")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".is_proxy_route")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".is_proxy_route")))) {
 		request.IsProxyRoute = interfaceToBoolPtr(v)
@@ -251,8 +251,8 @@ func expandRequestEventWebhookCreateCreateWebhookDestinationV1(ctx context.Conte
 	return &request
 }
 
-func expandRequestEventWebhookCreateCreateWebhookDestinationV1HeadersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestEventManagementCreateWebhookDestinationV1Headers {
-	request := []catalystcentersdkgo.RequestEventManagementCreateWebhookDestinationV1Headers{}
+func expandRequestEventWebhookCreateCreateWebhookDestinationHeadersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestEventManagementCreateWebhookDestinationHeaders {
+	request := []catalystcentersdkgo.RequestEventManagementCreateWebhookDestinationHeaders{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -263,7 +263,7 @@ func expandRequestEventWebhookCreateCreateWebhookDestinationV1HeadersArray(ctx c
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventWebhookCreateCreateWebhookDestinationV1Headers(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventWebhookCreateCreateWebhookDestinationHeaders(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -271,8 +271,8 @@ func expandRequestEventWebhookCreateCreateWebhookDestinationV1HeadersArray(ctx c
 	return &request
 }
 
-func expandRequestEventWebhookCreateCreateWebhookDestinationV1Headers(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementCreateWebhookDestinationV1Headers {
-	request := catalystcentersdkgo.RequestEventManagementCreateWebhookDestinationV1Headers{}
+func expandRequestEventWebhookCreateCreateWebhookDestinationHeaders(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementCreateWebhookDestinationHeaders {
+	request := catalystcentersdkgo.RequestEventManagementCreateWebhookDestinationHeaders{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -288,12 +288,12 @@ func expandRequestEventWebhookCreateCreateWebhookDestinationV1Headers(ctx contex
 	return &request
 }
 
-func flattenEventManagementCreateWebhookDestinationV1Item(item *catalystcentersdkgo.ResponseEventManagementCreateWebhookDestinationV1) []map[string]interface{} {
+func flattenEventManagementCreateWebhookDestinationItem(item *catalystcentersdkgo.ResponseEventManagementCreateWebhookDestination) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["error_message"] = flattenEventManagementCreateWebhookDestinationV1ItemErrorMessage(item.ErrorMessage)
+	respItem["error_message"] = flattenEventManagementCreateWebhookDestinationItemErrorMessage(item.ErrorMessage)
 	respItem["api_status"] = item.APIStatus
 	respItem["status_message"] = item.StatusMessage
 	return []map[string]interface{}{
@@ -301,7 +301,7 @@ func flattenEventManagementCreateWebhookDestinationV1Item(item *catalystcentersd
 	}
 }
 
-func flattenEventManagementCreateWebhookDestinationV1ItemErrorMessage(item *catalystcentersdkgo.ResponseEventManagementCreateWebhookDestinationV1ErrorMessage) []map[string]interface{} {
+func flattenEventManagementCreateWebhookDestinationItemErrorMessage(item *catalystcentersdkgo.ResponseEventManagementCreateWebhookDestinationErrorMessage) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

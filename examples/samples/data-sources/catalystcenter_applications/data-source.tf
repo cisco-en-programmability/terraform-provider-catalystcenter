@@ -14,7 +14,7 @@ provider "catalystcenter" {
 data "catalystcenter_applications_v2" "example" {
   provider = catalystcenter
   # limit    = 1
-   name     = "intrinsa"
+  name = "intrinsa"
   # offset   = 1
 }
 

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -53,7 +53,7 @@ filtered using the query parameters. Multiple filters can be applied.
 			},
 			"hostname": &schema.Schema{
 				Description: `hostname query parameter. The host name of the network device.
-Partial search is supported. For example, searching for switch will include edge-switch1.domain.com, switch25, etc.
+Partial search is supported. For example, searching for **switch** will include **edge-switch1.domain.com**, **switch25**, etc.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -72,7 +72,7 @@ Partial search is supported. For example, searching for switch will include edge
 			},
 			"management_address": &schema.Schema{
 				Description: `managementAddress query parameter. The management address for the network device. This is normally IP address of the device. But it could be hostname in some cases like Meraki devices.
-Partial search is supported. For example, searching for 25. would include 10.25.1.1, 25.5.10.1, 225.225.1.0, 10.10.10.125, etc.
+Partial search is supported. For example, searching for **25.** would include **10.25.1.1**, **25.5.10.1**, **225.225.1.0**, **10.10.10.125**, etc.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -225,8 +225,8 @@ func dataSourceApplicationVisibilityNetworkDevicesRead(ctx context.Context, d *s
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveTheListOfNetworkDevicesWithTheirApplicationVisibilityStatusV1")
-		queryParams1 := catalystcentersdkgo.RetrieveTheListOfNetworkDevicesWithTheirApplicationVisibilityStatusV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: RetrieveTheListOfNetworkDevicesWithTheirApplicationVisibilityStatus")
+		queryParams1 := catalystcentersdkgo.RetrieveTheListOfNetworkDevicesWithTheirApplicationVisibilityStatusQueryParams{}
 
 		if okIDs {
 			queryParams1.IDs = vIDs.(string)
@@ -276,24 +276,36 @@ func dataSourceApplicationVisibilityNetworkDevicesRead(ctx context.Context, d *s
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.ApplicationPolicy.RetrieveTheListOfNetworkDevicesWithTheirApplicationVisibilityStatusV1(&queryParams1)
+		response1, restyResp1, err := client.ApplicationPolicy.RetrieveTheListOfNetworkDevicesWithTheirApplicationVisibilityStatus(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveTheListOfNetworkDevicesWithTheirApplicationVisibilityStatusV1", err,
-				"Failure at RetrieveTheListOfNetworkDevicesWithTheirApplicationVisibilityStatusV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveTheListOfNetworkDevicesWithTheirApplicationVisibilityStatus", err,
+				"Failure at RetrieveTheListOfNetworkDevicesWithTheirApplicationVisibilityStatus, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenApplicationPolicyRetrieveTheListOfNetworkDevicesWithTheirApplicationVisibilityStatusV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveTheListOfNetworkDevicesWithTheirApplicationVisibilityStatus", err,
+				"Failure at RetrieveTheListOfNetworkDevicesWithTheirApplicationVisibilityStatus, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenApplicationPolicyRetrieveTheListOfNetworkDevicesWithTheirApplicationVisibilityStatusItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveTheListOfNetworkDevicesWithTheirApplicationVisibilityStatusV1 response",
+				"Failure when setting RetrieveTheListOfNetworkDevicesWithTheirApplicationVisibilityStatus response",
 				err))
 			return diags
 		}
@@ -305,7 +317,7 @@ func dataSourceApplicationVisibilityNetworkDevicesRead(ctx context.Context, d *s
 	return diags
 }
 
-func flattenApplicationPolicyRetrieveTheListOfNetworkDevicesWithTheirApplicationVisibilityStatusV1Items(items *[]catalystcentersdkgo.ResponseApplicationPolicyRetrieveTheListOfNetworkDevicesWithTheirApplicationVisibilityStatusV1Response) []map[string]interface{} {
+func flattenApplicationPolicyRetrieveTheListOfNetworkDevicesWithTheirApplicationVisibilityStatusItems(items *[]catalystcentersdkgo.ResponseApplicationPolicyRetrieveTheListOfNetworkDevicesWithTheirApplicationVisibilityStatusResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

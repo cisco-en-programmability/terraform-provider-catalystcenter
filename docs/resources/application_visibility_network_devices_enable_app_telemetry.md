@@ -25,7 +25,8 @@ Please note that this operation can be performed even if the feature is already 
 push the updated configurations to the network device.
 This operation pushes configuration to the network devices, and is only permitted if the provisioning settings do not
 mandate a config preview for application telemetry enablement. In cases where such settings are active, attempting to
-use this endpoint will result in *422 Unprocessable Content* error.
+use this endpoint will result in **422 Unprocessable Content** error.
+
 
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
@@ -36,15 +37,15 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_application_visibility_network_devices_enable_app_telemetry" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
-    network_devices {
+    network_devices = [{
 
       id                  = "string"
       include_guest_ssids = "false"
       include_wlan_modes  = ["string"]
-    }
-  }
+    }]
+  }]
 }
 
 output "catalystcenter_application_visibility_network_devices_enable_app_telemetry_example" {

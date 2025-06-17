@@ -5,17 +5,17 @@ subcategory: ""
 description: |-
   It performs read operation on Device Replacement.
   Fetches the status of the device replacement workflow for a given device replacement id. Invoke the API
-  /dna/intent/api/v1/networkDeviceReplacements to GET the list of all device replacements and use the id field data
-  as input to this API.
+  /dna/intent/api/v1/networkDeviceReplacements to GET the list of all device replacements and use the id field
+  data as input to this API.
 ---
 
 # catalystcenter_network_device_replacements_id (Data Source)
 
 It performs read operation on Device Replacement.
 
-- Fetches the status of the device replacement workflow for a given device replacement id. Invoke the API
-/dna/intent/api/v1/networkDeviceReplacements to GET the list of all device replacements and use the id field data
-as input to this API.
+- Fetches the status of the device replacement workflow for a given device replacement **id**. Invoke the API
+**/dna/intent/api/v1/networkDeviceReplacements** to **GET** the list of all device replacements and use the **id** field
+data as input to this API.
 
 ## Example Usage
 

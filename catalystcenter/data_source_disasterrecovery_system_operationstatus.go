@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -207,26 +207,40 @@ func dataSourceDisasterrecoverySystemOperationstatusRead(ctx context.Context, d 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: DisasterRecoveryOperationalStatusV1")
+		log.Printf("[DEBUG] Selected method: DisasterRecoveryOperationalStatus")
 
-		response1, restyResp1, err := client.DisasterRecovery.DisasterRecoveryOperationalStatusV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.DisasterRecovery.DisasterRecoveryOperationalStatus()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 DisasterRecoveryOperationalStatusV1", err,
-				"Failure at DisasterRecoveryOperationalStatusV1, unexpected response", ""))
+				"Failure when executing 2 DisasterRecoveryOperationalStatus", err,
+				"Failure at DisasterRecoveryOperationalStatus, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDisasterRecoveryDisasterRecoveryOperationalStatusV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 DisasterRecoveryOperationalStatus", err,
+				"Failure at DisasterRecoveryOperationalStatus, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenDisasterRecoveryDisasterRecoveryOperationalStatusItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting DisasterRecoveryOperationalStatusV1 response",
+				"Failure when setting DisasterRecoveryOperationalStatus response",
 				err))
 			return diags
 		}
@@ -238,7 +252,7 @@ func dataSourceDisasterrecoverySystemOperationstatusRead(ctx context.Context, d 
 	return diags
 }
 
-func flattenDisasterRecoveryDisasterRecoveryOperationalStatusV1Item(item *catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryOperationalStatusV1) []map[string]interface{} {
+func flattenDisasterRecoveryDisasterRecoveryOperationalStatusItem(item *catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryOperationalStatus) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -246,8 +260,8 @@ func flattenDisasterRecoveryDisasterRecoveryOperationalStatusV1Item(item *cataly
 	respItem["severity"] = item.Severity
 	respItem["status"] = item.Status
 	respItem["initiated_by"] = item.InitiatedBy
-	respItem["ipconfig"] = flattenDisasterRecoveryDisasterRecoveryOperationalStatusV1ItemIPconfig(item.IPconfig)
-	respItem["tasks"] = flattenDisasterRecoveryDisasterRecoveryOperationalStatusV1ItemTasks(item.Tasks)
+	respItem["ipconfig"] = flattenDisasterRecoveryDisasterRecoveryOperationalStatusItemIPconfig(item.IPconfig)
+	respItem["tasks"] = flattenDisasterRecoveryDisasterRecoveryOperationalStatusItemTasks(item.Tasks)
 	respItem["title"] = item.Title
 	respItem["site"] = item.Site
 	respItem["start_timestamp"] = item.StartTimestamp
@@ -258,7 +272,7 @@ func flattenDisasterRecoveryDisasterRecoveryOperationalStatusV1Item(item *cataly
 	}
 }
 
-func flattenDisasterRecoveryDisasterRecoveryOperationalStatusV1ItemIPconfig(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryOperationalStatusV1IPconfig) []map[string]interface{} {
+func flattenDisasterRecoveryDisasterRecoveryOperationalStatusItemIPconfig(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryOperationalStatusIPconfig) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -273,7 +287,7 @@ func flattenDisasterRecoveryDisasterRecoveryOperationalStatusV1ItemIPconfig(item
 	return respItems
 }
 
-func flattenDisasterRecoveryDisasterRecoveryOperationalStatusV1ItemTasks(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryOperationalStatusV1Tasks) []map[string]interface{} {
+func flattenDisasterRecoveryDisasterRecoveryOperationalStatusItemTasks(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryOperationalStatusTasks) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -281,7 +295,7 @@ func flattenDisasterRecoveryDisasterRecoveryOperationalStatusV1ItemTasks(items *
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["status"] = item.Status
-		respItem["ipconfig"] = flattenDisasterRecoveryDisasterRecoveryOperationalStatusV1ItemTasksIPconfig(item.IPconfig)
+		respItem["ipconfig"] = flattenDisasterRecoveryDisasterRecoveryOperationalStatusItemTasksIPconfig(item.IPconfig)
 		respItem["title"] = item.Title
 		respItem["site"] = item.Site
 		respItem["start_timestamp"] = item.StartTimestamp
@@ -292,7 +306,7 @@ func flattenDisasterRecoveryDisasterRecoveryOperationalStatusV1ItemTasks(items *
 	return respItems
 }
 
-func flattenDisasterRecoveryDisasterRecoveryOperationalStatusV1ItemTasksIPconfig(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryOperationalStatusV1TasksIPconfig) []map[string]interface{} {
+func flattenDisasterRecoveryDisasterRecoveryOperationalStatusItemTasksIPconfig(items *[]catalystcentersdkgo.ResponseDisasterRecoveryDisasterRecoveryOperationalStatusTasksIPconfig) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

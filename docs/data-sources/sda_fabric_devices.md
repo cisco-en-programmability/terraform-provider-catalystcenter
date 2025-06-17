@@ -40,7 +40,7 @@ output "catalystcenter_sda_fabric_devices_example" {
 ### Optional
 
 - `device_roles` (String) deviceRoles query parameter. Device roles of the fabric device. Allowed values are [CONTROL_PLANE_NODE, EDGE_NODE, BORDER_NODE, WIRELESS_CONTROLLER_NODE, EXTENDED_NODE].
-- `limit` (Number) limit query parameter. Maximum number of records to return.
+- `limit` (Number) limit query parameter. Maximum number of records to return. The maximum number of objects supported in a single request is 500.
 - `network_device_id` (String) networkDeviceId query parameter. Network device ID of the fabric device.
 - `offset` (Number) offset query parameter. Starting record for pagination.
 

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -82,8 +82,8 @@ func dataSourceWirelessAccesspointConfigurationCountRead(ctx context.Context, d 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAccessPointConfigurationCountV1")
-		queryParams1 := catalystcentersdkgo.GetAccessPointConfigurationCountV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetAccessPointConfigurationCount")
+		queryParams1 := catalystcentersdkgo.GetAccessPointConfigurationCountQueryParams{}
 
 		if okWlcIPAddress {
 			queryParams1.WlcIPAddress = vWlcIPAddress.(string)
@@ -103,24 +103,36 @@ func dataSourceWirelessAccesspointConfigurationCountRead(ctx context.Context, d 
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Wireless.GetAccessPointConfigurationCountV1(&queryParams1)
+		response1, restyResp1, err := client.Wireless.GetAccessPointConfigurationCount(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAccessPointConfigurationCountV1", err,
-				"Failure at GetAccessPointConfigurationCountV1, unexpected response", ""))
+				"Failure when executing 2 GetAccessPointConfigurationCount", err,
+				"Failure at GetAccessPointConfigurationCount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessGetAccessPointConfigurationCountV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetAccessPointConfigurationCount", err,
+				"Failure at GetAccessPointConfigurationCount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenWirelessGetAccessPointConfigurationCountItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAccessPointConfigurationCountV1 response",
+				"Failure when setting GetAccessPointConfigurationCount response",
 				err))
 			return diags
 		}
@@ -132,7 +144,7 @@ func dataSourceWirelessAccesspointConfigurationCountRead(ctx context.Context, d 
 	return diags
 }
 
-func flattenWirelessGetAccessPointConfigurationCountV1Item(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationCountV1Response) []map[string]interface{} {
+func flattenWirelessGetAccessPointConfigurationCountItem(item *catalystcentersdkgo.ResponseWirelessGetAccessPointConfigurationCountResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

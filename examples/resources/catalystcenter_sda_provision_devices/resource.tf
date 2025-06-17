@@ -1,7 +1,7 @@
 
 resource "catalystcenter_sda_provision_devices" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     id                = "string"

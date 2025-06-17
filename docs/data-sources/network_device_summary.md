@@ -4,14 +4,14 @@ page_title: "catalystcenter_network_device_summary Data Source - terraform-provi
 subcategory: ""
 description: |-
   It performs read operation on Devices.
-  Returns brief summary of device info such as hostname, management IP address for the given device Id
+  Returns brief summary of device info for the given device Id
 ---
 
 # catalystcenter_network_device_summary (Data Source)
 
 It performs read operation on Devices.
 
-- Returns brief summary of device info such as hostname, management IP address for the given device Id
+- Returns brief summary of device info for the given device Id
 
 ## Example Usage
 

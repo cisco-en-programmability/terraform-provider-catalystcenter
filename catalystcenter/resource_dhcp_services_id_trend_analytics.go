@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -41,7 +41,7 @@ programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": &schema.Schema{
-							Description: `id path parameter. Unique id of the DHCP Service. It is the combination of DHCP Server IP (*serverIp*) and Device UUID (*deviceId*) separated by underscore (*_*). Example: If *serverIp* is *10.76.81.33* and *deviceId* is *6bef213c-19ca-4170-8375-b694e251101c*, then the *id* would be *10.76.81.33_6bef213c-19ca-4170-8375-b694e251101c*
+							Description: `id path parameter. Unique id of the DHCP Service. It is the combination of DHCP Server IP (**serverIp**) and Device UUID (**deviceId**) separated by underscore (**_**). Example: If **serverIp** is **10.76.81.33** and **deviceId** is **6bef213c-19ca-4170-8375-b694e251101c**, then the **id** would be **10.76.81.33_6bef213c-19ca-4170-8375-b694e251101c**
 `,
 							Type:     schema.TypeString,
 							Required: true,
@@ -351,13 +351,13 @@ func resourceDhcpServicesIDTrendAnalyticsCreate(ctx context.Context, d *schema.R
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
 	vvID := vID.(string)
-	request1 := expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1(ctx, "parameters.0", d)
+	request1 := expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheService(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.GetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1HeaderParams{}
+	headerParams1 := catalystcentersdkgo.GetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceHeaderParams{}
 
 	headerParams1.XCaLLERID = vXCaLLERID.(string)
 
-	response1, restyResp1, err := client.Devices.GetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1(vvID, request1, &headerParams1)
+	response1, restyResp1, err := client.Devices.GetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheService(vvID, request1, &headerParams1)
 
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
@@ -375,7 +375,7 @@ func resourceDhcpServicesIDTrendAnalyticsCreate(ctx context.Context, d *schema.R
 
 	//Analizar verificacion.
 
-	vItems1 := flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1Items(response1.Response)
+	vItems1 := flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceItems(response1.Response)
 	if err := d.Set("items", vItems1); err != nil {
 		diags = append(diags, diagError(
 			"Failure when setting GetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheService response",
@@ -400,8 +400,8 @@ func resourceDhcpServicesIDTrendAnalyticsDelete(ctx context.Context, d *schema.R
 	return diags
 }
 
-func expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1 {
-	request := catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1{}
+func expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheService(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheService {
+	request := catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheService{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -415,22 +415,22 @@ func expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCP
 		request.GroupBy = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1FiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceFiltersArray(ctx, key+".filters", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".attributes")))) {
 		request.Attributes = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".aggregate_attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".aggregate_attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".aggregate_attributes")))) {
-		request.AggregateAttributes = expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1AggregateAttributesArray(ctx, key+".aggregate_attributes", d)
+		request.AggregateAttributes = expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceAggregateAttributesArray(ctx, key+".aggregate_attributes", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".page")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".page")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".page")))) {
-		request.Page = expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1Page(ctx, key+".page.0", d)
+		request.Page = expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServicePage(ctx, key+".page.0", d)
 	}
 	return &request
 }
 
-func expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1Filters {
-	request := []catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1Filters{}
+func expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceFilters {
+	request := []catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -441,7 +441,7 @@ func expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCP
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -449,8 +449,8 @@ func expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCP
 	return &request
 }
 
-func expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1Filters {
-	request := catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1Filters{}
+func expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceFilters {
+	request := catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -461,7 +461,7 @@ func expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCP
 		request.LogicalOperator = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".value")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".value")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".value")))) {
-		request.Value = expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1FiltersValue(ctx, key+".value.0", d)
+		request.Value = expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceFiltersValue(ctx, key+".value.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
 		request.Filters = interfaceToSliceString(v)
@@ -469,14 +469,14 @@ func expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCP
 	return &request
 }
 
-func expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1FiltersValue(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1FiltersValue {
-	var request catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1FiltersValue
+func expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceFiltersValue(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceFiltersValue {
+	var request catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceFiltersValue
 	request = d.Get(fixKeyAccess(key))
 	return &request
 }
 
-func expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1AggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1AggregateAttributes {
-	request := []catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1AggregateAttributes{}
+func expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceAggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceAggregateAttributes {
+	request := []catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceAggregateAttributes{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -487,7 +487,7 @@ func expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCP
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1AggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceAggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -495,8 +495,8 @@ func expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCP
 	return &request
 }
 
-func expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1AggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1AggregateAttributes {
-	request := catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1AggregateAttributes{}
+func expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceAggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceAggregateAttributes {
+	request := catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceAggregateAttributes{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -506,8 +506,8 @@ func expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCP
 	return &request
 }
 
-func expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1Page(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1Page {
-	request := catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1Page{}
+func expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServicePage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServicePage {
+	request := catalystcentersdkgo.RequestDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServicePage{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".limit")))) {
 		request.Limit = interfaceToIntPtr(v)
 	}
@@ -520,7 +520,7 @@ func expandRequestDhcpServicesIDTrendAnalyticsGetTrendAnalyticsDataForAGivenDHCP
 	return &request
 }
 
-func flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1Response) []map[string]interface{} {
+func flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceItems(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -528,15 +528,15 @@ func flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheSe
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["timestamp"] = item.Timestamp
-		respItem["groups"] = flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1ItemsGroups(item.Groups)
-		respItem["attributes"] = flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1ItemsAttributes(item.Attributes)
-		respItem["aggregate_attributes"] = flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1ItemsAggregateAttributes(item.AggregateAttributes)
+		respItem["groups"] = flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceItemsGroups(item.Groups)
+		respItem["attributes"] = flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceItemsAttributes(item.Attributes)
+		respItem["aggregate_attributes"] = flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceItemsAggregateAttributes(item.AggregateAttributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1ItemsGroups(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1ResponseGroups) []map[string]interface{} {
+func flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceItemsGroups(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceResponseGroups) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -544,14 +544,14 @@ func flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheSe
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["id"] = item.ID
-		respItem["attributes"] = flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1ItemsGroupsAttributes(item.Attributes)
-		respItem["aggregate_attributes"] = flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1ItemsGroupsAggregateAttributes(item.AggregateAttributes)
+		respItem["attributes"] = flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceItemsGroupsAttributes(item.Attributes)
+		respItem["aggregate_attributes"] = flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceItemsGroupsAggregateAttributes(item.AggregateAttributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1ItemsGroupsAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1ResponseGroupsAttributes) []map[string]interface{} {
+func flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceItemsGroupsAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceResponseGroupsAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -565,7 +565,7 @@ func flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheSe
 	return respItems
 }
 
-func flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1ItemsGroupsAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1ResponseGroupsAggregateAttributes) []map[string]interface{} {
+func flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceItemsGroupsAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceResponseGroupsAggregateAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -580,7 +580,7 @@ func flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheSe
 	return respItems
 }
 
-func flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1ItemsAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1ResponseAttributes) []map[string]interface{} {
+func flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceItemsAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceResponseAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -594,7 +594,7 @@ func flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheSe
 	return respItems
 }
 
-func flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1ItemsAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceV1ResponseAggregateAttributes) []map[string]interface{} {
+func flattenDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceItemsAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetTrendAnalyticsDataForAGivenDHCPServiceMatchingTheIDOfTheServiceResponseAggregateAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

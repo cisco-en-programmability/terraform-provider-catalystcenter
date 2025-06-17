@@ -4,16 +4,16 @@ page_title: "catalystcenter_wireless_profiles_id_policy_tags_policy_tag_id Data 
 subcategory: ""
 description: |-
   It performs read operation on Wireless.
-  This endpoint retrieves the details of a specific Policy Tag associated with a given Wireless Profile. This data
-  source requires the id of the Wireless Profile and the policyTagId of the Policy Tag.
+  This endpoint retrieves the details of a specific Policy Tag associated with a given Wireless Profile. This
+  data source requires the id of the Wireless Profile and the policyTagId of the Policy Tag.
 ---
 
 # catalystcenter_wireless_profiles_id_policy_tags_policy_tag_id (Data Source)
 
 It performs read operation on Wireless.
 
-- This endpoint retrieves the details of a specific Policy Tag associated with a given Wireless Profile. This data
-source requires the id of the Wireless Profile and the policyTagId of the Policy Tag.
+- This endpoint retrieves the details of a specific **Policy Tag** associated with a given **Wireless Profile**. This
+data source requires the **id** of the **Wireless Profile** and the **policyTagId** of the **Policy Tag**.
 
 ## Example Usage
 

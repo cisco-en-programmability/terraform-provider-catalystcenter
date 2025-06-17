@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -277,13 +277,13 @@ func resourceDNSServicesQueryCreate(ctx context.Context, d *schema.ResourceData,
 
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
-	request1 := expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1(ctx, "parameters.0", d)
+	request1 := expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFilters(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.RetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1HeaderParams{}
+	headerParams1 := catalystcentersdkgo.RetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersHeaderParams{}
 
 	headerParams1.XCaLLERID = vXCaLLERID.(string)
 
-	response1, restyResp1, err := client.Devices.RetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1(request1, &headerParams1)
+	response1, restyResp1, err := client.Devices.RetrievesTheListOfDNSServicesForGivenSetOfComplexFilters(request1, &headerParams1)
 
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
@@ -301,7 +301,7 @@ func resourceDNSServicesQueryCreate(ctx context.Context, d *schema.ResourceData,
 
 	//Analizar verificacion.
 
-	vItems1 := flattenDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1Items(response1.Response)
+	vItems1 := flattenDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersItems(response1.Response)
 	if err := d.Set("items", vItems1); err != nil {
 		diags = append(diags, diagError(
 			"Failure when setting RetrievesTheListOfDNSServicesForGivenSetOfComplexFilters response",
@@ -326,8 +326,8 @@ func resourceDNSServicesQueryDelete(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1 {
-	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1{}
+func expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFilters {
+	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -335,16 +335,16 @@ func expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComp
 		request.EndTime = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1FiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersFiltersArray(ctx, key+".filters", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".page")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".page")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".page")))) {
-		request.Page = expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1Page(ctx, key+".page.0", d)
+		request.Page = expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersPage(ctx, key+".page.0", d)
 	}
 	return &request
 }
 
-func expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1Filters {
-	request := []catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1Filters{}
+func expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersFilters {
+	request := []catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -355,7 +355,7 @@ func expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComp
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -363,8 +363,8 @@ func expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComp
 	return &request
 }
 
-func expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1Filters {
-	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1Filters{}
+func expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersFilters {
+	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -377,8 +377,8 @@ func expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComp
 	return &request
 }
 
-func expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1Page(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1Page {
-	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1Page{}
+func expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersPage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersPage {
+	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersPage{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".limit")))) {
 		request.Limit = interfaceToIntPtr(v)
 	}
@@ -386,13 +386,13 @@ func expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComp
 		request.Offset = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".sort_by")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".sort_by")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".sort_by")))) {
-		request.SortBy = expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1PageSortByArray(ctx, key+".sort_by", d)
+		request.SortBy = expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersPageSortByArray(ctx, key+".sort_by", d)
 	}
 	return &request
 }
 
-func expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1PageSortByArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1PageSortBy {
-	request := []catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1PageSortBy{}
+func expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersPageSortByArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersPageSortBy {
+	request := []catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersPageSortBy{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -403,7 +403,7 @@ func expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComp
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1PageSortBy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersPageSortBy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -411,8 +411,8 @@ func expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComp
 	return &request
 }
 
-func expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1PageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1PageSortBy {
-	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1PageSortBy{}
+func expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersPageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersPageSortBy {
+	request := catalystcentersdkgo.RequestDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersPageSortBy{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -422,7 +422,7 @@ func expandRequestDNSServicesQueryRetrievesTheListOfDNSServicesForGivenSetOfComp
 	return &request
 }
 
-func flattenDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1Items(items *[]catalystcentersdkgo.ResponseDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1Response) []map[string]interface{} {
+func flattenDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersItems(items *[]catalystcentersdkgo.ResponseDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -439,7 +439,7 @@ func flattenDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1Ite
 		respItem["device_site_hierarchy_id"] = item.DeviceSiteHierarchyID
 		respItem["transactions"] = item.Transactions
 		respItem["failed_transactions"] = item.FailedTransactions
-		respItem["failures"] = flattenDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1ItemsFailures(item.Failures)
+		respItem["failures"] = flattenDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersItemsFailures(item.Failures)
 		respItem["successful_transactions"] = item.SuccessfulTransactions
 		respItem["latency"] = item.Latency
 		respItem["ssid"] = item.SSID
@@ -448,7 +448,7 @@ func flattenDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1Ite
 	return respItems
 }
 
-func flattenDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1ItemsFailures(items *[]catalystcentersdkgo.ResponseDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersV1ResponseFailures) []map[string]interface{} {
+func flattenDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersItemsFailures(items *[]catalystcentersdkgo.ResponseDevicesRetrievesTheListOfDNSServicesForGivenSetOfComplexFiltersResponseFailures) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

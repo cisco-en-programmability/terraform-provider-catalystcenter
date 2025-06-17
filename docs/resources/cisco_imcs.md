@@ -14,7 +14,8 @@ description: |-
   the Cisco IMC documentation https://www.cisco.com/c/en/us/support/servers-unified-computing/ucs-c-series-integrated-
   management-controller/series.html#~tab-documents
   The Cisco IMC configuration is relevant only for Catalyst Center deployments based on UCS appliances. In cases where
-  Cisco IMC configuration is not supported by the deployment, these APIs will respond with a 404 Not Found status code.
+  Cisco IMC configuration is not supported by the deployment, these APIs will respond with a 404 Not Found status
+  code.
   When Cisco IMC configuration is supported, this API responds with the URL of a diagnostic task.
 ---
 
@@ -23,8 +24,8 @@ description: |-
 It manages create and read operations on Cisco IMC.
 
 - This resource adds a Cisco Integrated Management Controller (IMC) configuration to a Cisco Catalyst Center node,
-identified by its *nodeId*. Obtain the *nodeId* from the *id* attribute in the response of the
-*/dna/intent/api/v1/nodes-config* API.
+identified by its **nodeId**. Obtain the **nodeId** from the **id** attribute in the response of the
+**/dna/intent/api/v1/nodes-config** API.
 The Cisco IMC configuration APIs enable the management of connections between Cisco IMC and Cisco Catalyst Center. By
 providing the Cisco IMC IP address and credentials to Catalyst Center, Catalyst Center can access and report the health
 status of hardware components within the Cisco appliance.
@@ -32,7 +33,8 @@ More data about the Cisco IMC can be retrieved using the APIs exposed directly b
 the Cisco IMC documentation https://www.cisco.com/c/en/us/support/servers-unified-computing/ucs-c-series-integrated-
 management-controller/series.html#~tab-documents
 The Cisco IMC configuration is relevant only for Catalyst Center deployments based on UCS appliances. In cases where
-Cisco IMC configuration is not supported by the deployment, these APIs will respond with a *404 Not Found* status code.
+Cisco IMC configuration is not supported by the deployment, these APIs will respond with a **404 Not Found** status
+code.
 When Cisco IMC configuration is supported, this API responds with the URL of a diagnostic task.
 
 ## Example Usage
@@ -40,7 +42,7 @@ When Cisco IMC configuration is supported, this API responds with the URL of a d
 ```terraform
 resource "catalystcenter_cisco_imcs" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     ip_address = "string"
@@ -74,7 +76,7 @@ output "catalystcenter_cisco_imcs_example" {
 Optional:
 
 - `ip_address` (String) IP address of the Cisco IMC
-- `node_id` (String) The UUID that represents the Catalyst Center node. Its value can be obtained from the *id* attribute of the response of the */dna/intent/api/v1/nodes-config* API.
+- `node_id` (String) The UUID that represents the Catalyst Center node. Its value can be obtained from the **id** attribute of the response of the **/dna/intent/api/v1/nodes-config** API.
 - `password` (String, Sensitive) Password of the Cisco IMC
 - `username` (String) Username of the Cisco IMC
 

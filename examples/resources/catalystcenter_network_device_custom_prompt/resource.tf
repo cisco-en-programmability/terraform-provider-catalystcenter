@@ -1,7 +1,7 @@
 
 resource "catalystcenter_network_device_custom_prompt" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     password_prompt = "******"

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -53,26 +53,40 @@ func dataSourceTagMemberTypeRead(ctx context.Context, d *schema.ResourceData, m 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTagResourceTypesV1")
+		log.Printf("[DEBUG] Selected method: GetTagResourceTypes")
 
-		response1, restyResp1, err := client.Tag.GetTagResourceTypesV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Tag.GetTagResourceTypes()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTagResourceTypesV1", err,
-				"Failure at GetTagResourceTypesV1, unexpected response", ""))
+				"Failure when executing 2 GetTagResourceTypes", err,
+				"Failure at GetTagResourceTypes, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenTagGetTagResourceTypesV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetTagResourceTypes", err,
+				"Failure at GetTagResourceTypes, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenTagGetTagResourceTypesItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTagResourceTypesV1 response",
+				"Failure when setting GetTagResourceTypes response",
 				err))
 			return diags
 		}
@@ -84,7 +98,7 @@ func dataSourceTagMemberTypeRead(ctx context.Context, d *schema.ResourceData, m 
 	return diags
 }
 
-func flattenTagGetTagResourceTypesV1Items(items *catalystcentersdkgo.ResponseTagGetTagResourceTypesV1) []map[string]interface{} {
+func flattenTagGetTagResourceTypesItems(items *catalystcentersdkgo.ResponseTagGetTagResourceTypes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

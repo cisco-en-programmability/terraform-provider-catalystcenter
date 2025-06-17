@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -90,10 +90,10 @@ func dataSourceIcapCaptureFilesCountRead(ctx context.Context, d *schema.Resource
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesTheTotalNumberOfPacketCaptureFilesMatchingSpecifiedCriteriaV1")
+		log.Printf("[DEBUG] Selected method: RetrievesTheTotalNumberOfPacketCaptureFilesMatchingSpecifiedCriteria")
 
-		headerParams1 := catalystcentersdkgo.RetrievesTheTotalNumberOfPacketCaptureFilesMatchingSpecifiedCriteriaV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.RetrievesTheTotalNumberOfPacketCaptureFilesMatchingSpecifiedCriteriaV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.RetrievesTheTotalNumberOfPacketCaptureFilesMatchingSpecifiedCriteriaHeaderParams{}
+		queryParams1 := catalystcentersdkgo.RetrievesTheTotalNumberOfPacketCaptureFilesMatchingSpecifiedCriteriaQueryParams{}
 
 		queryParams1.Type = vType.(string)
 
@@ -113,24 +113,36 @@ func dataSourceIcapCaptureFilesCountRead(ctx context.Context, d *schema.Resource
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sensors.RetrievesTheTotalNumberOfPacketCaptureFilesMatchingSpecifiedCriteriaV1(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Sensors.RetrievesTheTotalNumberOfPacketCaptureFilesMatchingSpecifiedCriteria(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesTheTotalNumberOfPacketCaptureFilesMatchingSpecifiedCriteriaV1", err,
-				"Failure at RetrievesTheTotalNumberOfPacketCaptureFilesMatchingSpecifiedCriteriaV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesTheTotalNumberOfPacketCaptureFilesMatchingSpecifiedCriteria", err,
+				"Failure at RetrievesTheTotalNumberOfPacketCaptureFilesMatchingSpecifiedCriteria, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSensorsRetrievesTheTotalNumberOfPacketCaptureFilesMatchingSpecifiedCriteriaV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesTheTotalNumberOfPacketCaptureFilesMatchingSpecifiedCriteria", err,
+				"Failure at RetrievesTheTotalNumberOfPacketCaptureFilesMatchingSpecifiedCriteria, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSensorsRetrievesTheTotalNumberOfPacketCaptureFilesMatchingSpecifiedCriteriaItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesTheTotalNumberOfPacketCaptureFilesMatchingSpecifiedCriteriaV1 response",
+				"Failure when setting RetrievesTheTotalNumberOfPacketCaptureFilesMatchingSpecifiedCriteria response",
 				err))
 			return diags
 		}
@@ -142,7 +154,7 @@ func dataSourceIcapCaptureFilesCountRead(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func flattenSensorsRetrievesTheTotalNumberOfPacketCaptureFilesMatchingSpecifiedCriteriaV1Item(item *catalystcentersdkgo.ResponseSensorsRetrievesTheTotalNumberOfPacketCaptureFilesMatchingSpecifiedCriteriaV1Response) []map[string]interface{} {
+func flattenSensorsRetrievesTheTotalNumberOfPacketCaptureFilesMatchingSpecifiedCriteriaItem(item *catalystcentersdkgo.ResponseSensorsRetrievesTheTotalNumberOfPacketCaptureFilesMatchingSpecifiedCriteriaResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

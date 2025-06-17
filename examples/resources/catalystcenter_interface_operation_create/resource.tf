@@ -1,13 +1,13 @@
 
 resource "catalystcenter_interface_operation_create" "example" {
-  provider        = meraki
+  provider        = catalystcenter
   deployment_mode = "string"
   interface_uuid  = "string"
-  parameters {
+  parameters = [{
 
     operation = "string"
-    payload   = "------"
-  }
+    payload   = "string"
+  }]
 }
 
 output "catalystcenter_interface_operation_create_example" {

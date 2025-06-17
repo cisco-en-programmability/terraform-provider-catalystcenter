@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -11,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -85,18 +86,18 @@ func resourceDeviceReplacementDeployCreate(ctx context.Context, d *schema.Resour
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestDeviceReplacementDeployDeployDeviceReplacementWorkflowV1(ctx, "parameters.0", d)
+	request1 := expandRequestDeviceReplacementDeployDeployDeviceReplacementWorkflow(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.DeviceReplacement.DeployDeviceReplacementWorkflowV1(request1)
+	response1, restyResp1, err := client.DeviceReplacement.DeployDeviceReplacementWorkflow(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing DeployDeviceReplacementWorkflowV1", err))
+			"Failure when executing DeployDeviceReplacementWorkflow", err))
 		return diags
 	}
 
@@ -104,7 +105,7 @@ func resourceDeviceReplacementDeployCreate(ctx context.Context, d *schema.Resour
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing DeployDeviceReplacementWorkflowV1", err))
+			"Failure when executing DeployDeviceReplacementWorkflow", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -131,14 +132,14 @@ func resourceDeviceReplacementDeployCreate(ctx context.Context, d *schema.Resour
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing DeployDeviceReplacementWorkflowV1", err1))
+				"Failure when executing DeployDeviceReplacementWorkflow", err1))
 			return diags
 		}
 	}
@@ -146,10 +147,10 @@ func resourceDeviceReplacementDeployCreate(ctx context.Context, d *schema.Resour
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenDeviceReplacementDeployDeviceReplacementWorkflowV1Item(response1.Response)
+	vItem1 := flattenDeviceReplacementDeployDeviceReplacementWorkflowItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting DeployDeviceReplacementWorkflowV1 response",
+			"Failure when setting DeployDeviceReplacementWorkflow response",
 			err))
 		return diags
 	}
@@ -170,8 +171,8 @@ func resourceDeviceReplacementDeployDelete(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func expandRequestDeviceReplacementDeployDeployDeviceReplacementWorkflowV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceReplacementDeployDeviceReplacementWorkflowV1 {
-	request := catalystcentersdkgo.RequestDeviceReplacementDeployDeviceReplacementWorkflowV1{}
+func expandRequestDeviceReplacementDeployDeployDeviceReplacementWorkflow(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceReplacementDeployDeviceReplacementWorkflow {
+	request := catalystcentersdkgo.RequestDeviceReplacementDeployDeviceReplacementWorkflow{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".faulty_device_serial_number")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".faulty_device_serial_number")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".faulty_device_serial_number")))) {
 		request.FaultyDeviceSerialNumber = interfaceToString(v)
 	}
@@ -181,7 +182,7 @@ func expandRequestDeviceReplacementDeployDeployDeviceReplacementWorkflowV1(ctx c
 	return &request
 }
 
-func flattenDeviceReplacementDeployDeviceReplacementWorkflowV1Item(item *catalystcentersdkgo.ResponseDeviceReplacementDeployDeviceReplacementWorkflowV1Response) []map[string]interface{} {
+func flattenDeviceReplacementDeployDeviceReplacementWorkflowItem(item *catalystcentersdkgo.ResponseDeviceReplacementDeployDeviceReplacementWorkflowResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

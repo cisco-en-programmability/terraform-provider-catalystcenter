@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -83,28 +83,40 @@ func dataSourceLicenseLastOperationStatusRead(ctx context.Context, d *schema.Res
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: SystemLicensingLastOperationStatusV1")
+		log.Printf("[DEBUG] Selected method: SystemLicensingLastOperationStatus")
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Licenses.SystemLicensingLastOperationStatusV1()
+		response1, restyResp1, err := client.Licenses.SystemLicensingLastOperationStatus()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 SystemLicensingLastOperationStatusV1", err,
-				"Failure at SystemLicensingLastOperationStatusV1, unexpected response", ""))
+				"Failure when executing 2 SystemLicensingLastOperationStatus", err,
+				"Failure at SystemLicensingLastOperationStatus, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenLicensesSystemLicensingLastOperationStatusV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 SystemLicensingLastOperationStatus", err,
+				"Failure at SystemLicensingLastOperationStatus, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenLicensesSystemLicensingLastOperationStatusItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting SystemLicensingLastOperationStatusV1 response",
+				"Failure when setting SystemLicensingLastOperationStatus response",
 				err))
 			return diags
 		}
@@ -116,7 +128,7 @@ func dataSourceLicenseLastOperationStatusRead(ctx context.Context, d *schema.Res
 	return diags
 }
 
-func flattenLicensesSystemLicensingLastOperationStatusV1Item(item *catalystcentersdkgo.ResponseLicensesSystemLicensingLastOperationStatusV1Response) []map[string]interface{} {
+func flattenLicensesSystemLicensingLastOperationStatusItem(item *catalystcentersdkgo.ResponseLicensesSystemLicensingLastOperationStatusResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

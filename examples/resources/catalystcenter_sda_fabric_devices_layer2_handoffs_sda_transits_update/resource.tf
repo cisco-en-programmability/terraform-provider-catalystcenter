@@ -1,7 +1,7 @@
 
 resource "catalystcenter_sda_fabric_devices_layer2_handoffs_sda_transits_update" "example" {
-  provider = meraki
-  parameters {
+  provider = catalystcenter
+  parameters = [{
 
     affinity_id_decider               = 1
     affinity_id_prime                 = 1
@@ -10,7 +10,7 @@ resource "catalystcenter_sda_fabric_devices_layer2_handoffs_sda_transits_update"
     is_multicast_over_transit_enabled = "false"
     network_device_id                 = "string"
     transit_network_id                = "string"
-  }
+  }]
 }
 
 output "catalystcenter_sda_fabric_devices_layer2_handoffs_sda_transits_update_example" {

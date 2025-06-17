@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -94,6 +94,14 @@ func dataSourceSdaAuthenticationProfiles() *schema.Resource {
 
 						"is_bpdu_guard_enabled": &schema.Schema{
 							Description: `Enable/disable BPDU Guard. Only applicable when authenticationProfileName is set to "Closed Authentication".
+`,
+							// Type:        schema.TypeBool,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
+						"is_voice_vlan_enabled": &schema.Schema{
+							Description: `Enable/disable Voice Vlan.
 `,
 							// Type:        schema.TypeBool,
 							Type:     schema.TypeString,
@@ -194,8 +202,8 @@ func dataSourceSdaAuthenticationProfilesRead(ctx context.Context, d *schema.Reso
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAuthenticationProfilesV1")
-		queryParams1 := catalystcentersdkgo.GetAuthenticationProfilesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetAuthenticationProfiles")
+		queryParams1 := catalystcentersdkgo.GetAuthenticationProfilesQueryParams{}
 
 		if okFabricID {
 			queryParams1.FabricID = vFabricID.(string)
@@ -215,24 +223,36 @@ func dataSourceSdaAuthenticationProfilesRead(ctx context.Context, d *schema.Reso
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sda.GetAuthenticationProfilesV1(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetAuthenticationProfiles(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAuthenticationProfilesV1", err,
-				"Failure at GetAuthenticationProfilesV1, unexpected response", ""))
+				"Failure when executing 2 GetAuthenticationProfiles", err,
+				"Failure at GetAuthenticationProfiles, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaGetAuthenticationProfilesV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetAuthenticationProfiles", err,
+				"Failure at GetAuthenticationProfiles, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSdaGetAuthenticationProfilesItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAuthenticationProfilesV1 response",
+				"Failure when setting GetAuthenticationProfiles response",
 				err))
 			return diags
 		}
@@ -244,7 +264,7 @@ func dataSourceSdaAuthenticationProfilesRead(ctx context.Context, d *schema.Reso
 	return diags
 }
 
-func flattenSdaGetAuthenticationProfilesV1Items(items *[]catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesV1Response) []map[string]interface{} {
+func flattenSdaGetAuthenticationProfilesItems(items *[]catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -259,13 +279,14 @@ func flattenSdaGetAuthenticationProfilesV1Items(items *[]catalystcentersdkgo.Res
 		respItem["wake_on_lan"] = boolPtrToString(item.WakeOnLan)
 		respItem["number_of_hosts"] = item.NumberOfHosts
 		respItem["is_bpdu_guard_enabled"] = boolPtrToString(item.IsBpduGuardEnabled)
-		respItem["pre_auth_acl"] = flattenSdaGetAuthenticationProfilesV1ItemsPreAuthACL(item.PreAuthACL)
+		respItem["is_voice_vlan_enabled"] = boolPtrToString(item.IsVoiceVLANEnabled)
+		respItem["pre_auth_acl"] = flattenSdaGetAuthenticationProfilesItemsPreAuthACL(item.PreAuthACL)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSdaGetAuthenticationProfilesV1ItemsPreAuthACL(item *catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesV1ResponsePreAuthACL) []map[string]interface{} {
+func flattenSdaGetAuthenticationProfilesItemsPreAuthACL(item *catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesResponsePreAuthACL) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -273,7 +294,7 @@ func flattenSdaGetAuthenticationProfilesV1ItemsPreAuthACL(item *catalystcentersd
 	respItem["enabled"] = boolPtrToString(item.Enabled)
 	respItem["implicit_action"] = item.ImplicitAction
 	respItem["description"] = item.Description
-	respItem["access_contracts"] = flattenSdaGetAuthenticationProfilesV1ItemsPreAuthACLAccessContracts(item.AccessContracts)
+	respItem["access_contracts"] = flattenSdaGetAuthenticationProfilesItemsPreAuthACLAccessContracts(item.AccessContracts)
 
 	return []map[string]interface{}{
 		respItem,
@@ -281,7 +302,7 @@ func flattenSdaGetAuthenticationProfilesV1ItemsPreAuthACL(item *catalystcentersd
 
 }
 
-func flattenSdaGetAuthenticationProfilesV1ItemsPreAuthACLAccessContracts(items *[]catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesV1ResponsePreAuthACLAccessContracts) []map[string]interface{} {
+func flattenSdaGetAuthenticationProfilesItemsPreAuthACLAccessContracts(items *[]catalystcentersdkgo.ResponseSdaGetAuthenticationProfilesResponsePreAuthACLAccessContracts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

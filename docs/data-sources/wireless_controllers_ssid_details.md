@@ -41,7 +41,7 @@ output "catalystcenter_wireless_controllers_ssid_details_example" {
 ### Optional
 
 - `admin_status` (Boolean) adminStatus query parameter. Utilize this query parameter to obtain the administrative status. A 'true' value signifies that the admin status of the SSID is enabled, while a 'false' value indicates that the admin status of the SSID is disabled.
-- `limit` (Number) limit query parameter. The number of records to show for this page.
+- `limit` (Number) limit query parameter. The number of records to show for this page. Default is 500 if not specified. Maximum allowed limit is 500.
 - `managed` (Boolean) managed query parameter. If value is 'true' means SSIDs are configured through design.If the value is 'false' means out of band configuration from the Wireless Controller.
 - `offset` (Number) offset query parameter. The first record to show for this page; the first record is numbered 1.
 - `ssid_name` (String) ssidName query parameter. Employ this query parameter to obtain the details of the SSID corresponding to the provided SSID name.

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -22,24 +22,50 @@ func dataSourceSitesWirelessSettingsSSIDs() *schema.Resource {
 
 		ReadContext: dataSourceSitesWirelessSettingsSSIDsRead,
 		Schema: map[string]*schema.Schema{
+			"auth_type": &schema.Schema{
+				Description: `authType query parameter. Auth Type
+`,
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 			"id": &schema.Schema{
-				Description: `id path parameter. SSID ID.
+				Description: `id path parameter. SSID ID
+`,
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"l3auth_type": &schema.Schema{
+				Description: `l3authType query parameter. L3 Auth Type
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter.`,
-				Type:        schema.TypeFloat,
-				Optional:    true,
+				Description: `limit query parameter. The number of records to show for this page. Default is 500 if not specified. Maximum allowed limit is 500.
+`,
+				Type:     schema.TypeFloat,
+				Optional: true,
 			},
 			"offset": &schema.Schema{
-				Description: `offset query parameter.`,
-				Type:        schema.TypeFloat,
-				Optional:    true,
+				Description: `offset query parameter. The first record to show for this page; the first record is numbered 1.
+`,
+				Type:     schema.TypeFloat,
+				Optional: true,
 			},
 			"site_id": &schema.Schema{
 				Description: `siteId path parameter. Site UUID
+`,
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"ssid": &schema.Schema{
+				Description: `ssid query parameter. SSID Name
+`,
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"wlan_type": &schema.Schema{
+				Description: `wlanType query parameter. Wlan Type
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -77,7 +103,7 @@ func dataSourceSitesWirelessSettingsSSIDs() *schema.Resource {
 						},
 
 						"auth_server": &schema.Schema{
-							Description: `Authentication Server, Mandatory for Guest SSIDs with wlanType=Guest and l3AuthType=web_auth
+							Description: `For Guest SSIDs ('wlanType' is 'Guest' and 'l3AuthType' is 'web_auth'), the Authentication Server('authServer') is mandatory. Otherwise, it defaults to 'auth_external'.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -101,7 +127,7 @@ func dataSourceSitesWirelessSettingsSSIDs() *schema.Resource {
 						},
 
 						"basic_service_set_client_idle_timeout": &schema.Schema{
-							Description: `This refers to the duration of inactivity, measured in seconds, before a client connected to the Basic Service Set is considered idle and timed out
+							Description: `This refers to the duration of inactivity, measured in seconds, before a client connected to the Basic Service Set is considered idle and timed out. Default is Basic ServiceSet ClientIdle Timeout if exists else 300. If it needs to be disabled , pass 0 as its value else valid range is [15 to 100000].
 `,
 							Type:     schema.TypeInt,
 							Computed: true,
@@ -227,6 +253,20 @@ func dataSourceSitesWirelessSettingsSSIDs() *schema.Resource {
 
 						"inherited_site_name": &schema.Schema{
 							Description: `Site Name from where the SSID is inherited
+`,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
+						"inherited_site_name_hierarchy": &schema.Schema{
+							Description: `Inherited Site Name Hierarchy
+`,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
+						"inherited_site_uui_d": &schema.Schema{
+							Description: `Inherited Site UUID
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -416,6 +456,14 @@ func dataSourceSitesWirelessSettingsSSIDs() *schema.Resource {
 							Computed: true,
 						},
 
+						"is_radius_profiling_enabled": &schema.Schema{
+							Description: `'true' if Radius profiling needs to be enabled, defaults to 'false' if not specified. At least one AAA/PSN server is required to enable Radius Profiling.
+`,
+							// Type:        schema.TypeBool,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
 						"is_random_mac_filter_enabled": &schema.Schema{
 							Description: `Deny clients using randomized MAC addresses when set to true
 `,
@@ -433,7 +481,7 @@ func dataSourceSitesWirelessSettingsSSIDs() *schema.Resource {
 						},
 
 						"l3_auth_type": &schema.Schema{
-							Description: `L3 Authentication Type
+							Description: `L3 Authentication Type. When 'wlanType' is 'Enterprise', ‘l3AuthType' is optional and defaults to 'open' if not specified. If 'wlanType' is 'Guest' then 'l3AuthType' is mandatory.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -663,7 +711,7 @@ func dataSourceSitesWirelessSettingsSSIDs() *schema.Resource {
 						},
 
 						"auth_server": &schema.Schema{
-							Description: `Authentication Server, Mandatory for Guest SSIDs with wlanType=Guest and l3AuthType=web_auth
+							Description: `For Guest SSIDs ('wlanType' is 'Guest' and 'l3AuthType' is 'web_auth'), the Authentication Server('authServer') is mandatory. Otherwise, it defaults to 'auth_external'.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -687,7 +735,7 @@ func dataSourceSitesWirelessSettingsSSIDs() *schema.Resource {
 						},
 
 						"basic_service_set_client_idle_timeout": &schema.Schema{
-							Description: `This refers to the duration of inactivity, measured in seconds, before a client connected to the Basic Service Set is considered idle and timed out
+							Description: `This refers to the duration of inactivity, measured in seconds, before a client connected to the Basic Service Set is considered idle and timed out. Default is Basic ServiceSet ClientIdle Timeout if exists else 300. If it needs to be disabled , pass 0 as its value else valid range is [15 to 100000].
 `,
 							Type:     schema.TypeInt,
 							Computed: true,
@@ -813,6 +861,13 @@ func dataSourceSitesWirelessSettingsSSIDs() *schema.Resource {
 
 						"inherited_site_name": &schema.Schema{
 							Description: `Site Name from where the SSID is inherited
+`,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
+						"inherited_site_name_hierarchy": &schema.Schema{
+							Description: `Inherited Site Name Hierarchy
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -1002,6 +1057,14 @@ func dataSourceSitesWirelessSettingsSSIDs() *schema.Resource {
 							Computed: true,
 						},
 
+						"is_radius_profiling_enabled": &schema.Schema{
+							Description: `'true' if Radius profiling needs to be enabled, defaults to 'false' if not specified. At least one AAA/PSN server is required to enable Radius Profiling.
+`,
+							// Type:        schema.TypeBool,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
 						"is_random_mac_filter_enabled": &schema.Schema{
 							Description: `Deny clients using randomized MAC addresses when set to true
 `,
@@ -1019,7 +1082,7 @@ func dataSourceSitesWirelessSettingsSSIDs() *schema.Resource {
 						},
 
 						"l3_auth_type": &schema.Schema{
-							Description: `L3 Authentication Type
+							Description: `L3 Authentication Type. When 'wlanType' is 'Enterprise', ‘l3AuthType' is optional and defaults to 'open' if not specified. If 'wlanType' is 'Guest' then 'l3AuthType' is mandatory.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -1227,18 +1290,22 @@ func dataSourceSitesWirelessSettingsSSIDsRead(ctx context.Context, d *schema.Res
 	vSiteID, okSiteID := d.GetOk("site_id")
 	vLimit, okLimit := d.GetOk("limit")
 	vOffset, okOffset := d.GetOk("offset")
+	vSSID, okSSID := d.GetOk("ssid")
+	vWLANType, okWLANType := d.GetOk("wlan_type")
+	vAuthType, okAuthType := d.GetOk("auth_type")
+	vL3AuthType, okL3AuthType := d.GetOk("l3auth_type")
 	vID, okID := d.GetOk("id")
 
-	method1 := []bool{okSiteID, okLimit, okOffset}
+	method1 := []bool{okSiteID, okLimit, okOffset, okSSID, okWLANType, okAuthType, okL3AuthType}
 	log.Printf("[DEBUG] Selecting method. Method 1 %v", method1)
 	method2 := []bool{okSiteID, okID}
 	log.Printf("[DEBUG] Selecting method. Method 2 %v", method2)
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSSIDBySiteV1")
+		log.Printf("[DEBUG] Selected method: GetSSIDBySite")
 		vvSiteID := vSiteID.(string)
-		queryParams1 := catalystcentersdkgo.GetSSIDBySiteV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetSSIDBySiteQueryParams{}
 
 		if okLimit {
 			queryParams1.Limit = vLimit.(float64)
@@ -1246,25 +1313,51 @@ func dataSourceSitesWirelessSettingsSSIDsRead(ctx context.Context, d *schema.Res
 		if okOffset {
 			queryParams1.Offset = vOffset.(float64)
 		}
+		if okSSID {
+			queryParams1.SSID = vSSID.(string)
+		}
+		if okWLANType {
+			queryParams1.WLANType = vWLANType.(string)
+		}
+		if okAuthType {
+			queryParams1.AuthType = vAuthType.(string)
+		}
+		if okL3AuthType {
+			queryParams1.L3AuthType = vL3AuthType.(string)
+		}
 
-		response1, restyResp1, err := client.Wireless.GetSSIDBySiteV1(vvSiteID, &queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Wireless.GetSSIDBySite(vvSiteID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSSIDBySiteV1", err,
-				"Failure at GetSSIDBySiteV1, unexpected response", ""))
+				"Failure when executing 2 GetSSIDBySite", err,
+				"Failure at GetSSIDBySite, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenWirelessGetSSIDBySiteV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetSSIDBySite", err,
+				"Failure at GetSSIDBySite, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenWirelessGetSSIDBySiteItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSSIDBySiteV1 response",
+				"Failure when setting GetSSIDBySite response",
 				err))
 			return diags
 		}
@@ -1274,28 +1367,42 @@ func dataSourceSitesWirelessSettingsSSIDsRead(ctx context.Context, d *schema.Res
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetSSIDByIDV1")
+		log.Printf("[DEBUG] Selected method: GetSSIDByID")
 		vvSiteID := vSiteID.(string)
 		vvID := vID.(string)
 
-		response2, restyResp2, err := client.Wireless.GetSSIDByIDV1(vvSiteID, vvID)
+		// has_unknown_response: None
+
+		response2, restyResp2, err := client.Wireless.GetSSIDByID(vvSiteID, vvID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSSIDByIDV1", err,
-				"Failure at GetSSIDByIDV1, unexpected response", ""))
+				"Failure when executing 2 GetSSIDByID", err,
+				"Failure at GetSSIDByID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenWirelessGetSSIDByIDV1Item(response2.Response)
+		if err != nil || response2 == nil {
+			if restyResp2 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetSSIDByID", err,
+				"Failure at GetSSIDByID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
+
+		vItem2 := flattenWirelessGetSSIDByIDItem(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSSIDByIDV1 response",
+				"Failure when setting GetSSIDByID response",
 				err))
 			return diags
 		}
@@ -1307,7 +1414,7 @@ func dataSourceSitesWirelessSettingsSSIDsRead(ctx context.Context, d *schema.Res
 	return diags
 }
 
-func flattenWirelessGetSSIDBySiteV1Items(items *[]catalystcentersdkgo.ResponseWirelessGetSSIDBySiteV1Response) []map[string]interface{} {
+func flattenWirelessGetSSIDBySiteItems(items *[]catalystcentersdkgo.ResponseWirelessGetSSIDBySiteResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1337,7 +1444,7 @@ func flattenWirelessGetSSIDBySiteV1Items(items *[]catalystcentersdkgo.ResponseWi
 		respItem["aaa_override"] = boolPtrToString(item.AAAOverride)
 		respItem["coverage_hole_detection_enable"] = boolPtrToString(item.CoverageHoleDetectionEnable)
 		respItem["protected_management_frame"] = item.ProtectedManagementFrame
-		respItem["multi_psk_settings"] = flattenWirelessGetSSIDBySiteV1ItemsMultipSKSettings(item.MultipSKSettings)
+		respItem["multi_psk_settings"] = flattenWirelessGetSSIDBySiteItemsMultipSKSettings(item.MultipSKSettings)
 		respItem["client_rate_limit"] = item.ClientRateLimit
 		respItem["rsn_cipher_suite_gcmp256"] = boolPtrToString(item.RsnCipherSuiteGcmp256)
 		respItem["rsn_cipher_suite_ccmp256"] = boolPtrToString(item.RsnCipherSuiteCcmp256)
@@ -1386,12 +1493,14 @@ func flattenWirelessGetSSIDBySiteV1Items(items *[]catalystcentersdkgo.ResponseWi
 		respItem["id"] = item.ID
 		respItem["is_random_mac_filter_enabled"] = boolPtrToString(item.IsRandomMacFilterEnabled)
 		respItem["fast_transition_over_the_distributed_system_enable"] = boolPtrToString(item.FastTransitionOverTheDistributedSystemEnable)
+		respItem["inherited_site_name_hierarchy"] = item.InheritedSiteNameHierarchy
+		respItem["is_radius_profiling_enabled"] = boolPtrToString(item.IsRadiusProfilingEnabled)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenWirelessGetSSIDBySiteV1ItemsMultipSKSettings(items *[]catalystcentersdkgo.ResponseWirelessGetSSIDBySiteV1ResponseMultipSKSettings) []map[string]interface{} {
+func flattenWirelessGetSSIDBySiteItemsMultipSKSettings(items *[]catalystcentersdkgo.ResponseWirelessGetSSIDBySiteResponseMultipSKSettings) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1406,7 +1515,7 @@ func flattenWirelessGetSSIDBySiteV1ItemsMultipSKSettings(items *[]catalystcenter
 	return respItems
 }
 
-func flattenWirelessGetSSIDByIDV1Item(item *catalystcentersdkgo.ResponseWirelessGetSSIDByIDV1Response) []map[string]interface{} {
+func flattenWirelessGetSSIDByIDItem(item *catalystcentersdkgo.ResponseWirelessGetSSIDByIDResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1434,7 +1543,7 @@ func flattenWirelessGetSSIDByIDV1Item(item *catalystcentersdkgo.ResponseWireless
 	respItem["aaa_override"] = boolPtrToString(item.AAAOverride)
 	respItem["coverage_hole_detection_enable"] = boolPtrToString(item.CoverageHoleDetectionEnable)
 	respItem["protected_management_frame"] = item.ProtectedManagementFrame
-	respItem["multi_psk_settings"] = flattenWirelessGetSSIDByIDV1ItemMultipSKSettings(item.MultipSKSettings)
+	respItem["multi_psk_settings"] = flattenWirelessGetSSIDByIDItemMultipSKSettings(item.MultipSKSettings)
 	respItem["client_rate_limit"] = item.ClientRateLimit
 	respItem["rsn_cipher_suite_gcmp256"] = boolPtrToString(item.RsnCipherSuiteGcmp256)
 	respItem["rsn_cipher_suite_ccmp256"] = boolPtrToString(item.RsnCipherSuiteCcmp256)
@@ -1483,12 +1592,15 @@ func flattenWirelessGetSSIDByIDV1Item(item *catalystcentersdkgo.ResponseWireless
 	respItem["id"] = item.ID
 	respItem["is_random_mac_filter_enabled"] = boolPtrToString(item.IsRandomMacFilterEnabled)
 	respItem["fast_transition_over_the_distributed_system_enable"] = boolPtrToString(item.FastTransitionOverTheDistributedSystemEnable)
+	respItem["inherited_site_name_hierarchy"] = item.InheritedSiteNameHierarchy
+	respItem["inherited_site_uui_d"] = item.InheritedSiteUUID
+	respItem["is_radius_profiling_enabled"] = boolPtrToString(item.IsRadiusProfilingEnabled)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenWirelessGetSSIDByIDV1ItemMultipSKSettings(items *[]catalystcentersdkgo.ResponseWirelessGetSSIDByIDV1ResponseMultipSKSettings) []map[string]interface{} {
+func flattenWirelessGetSSIDByIDItemMultipSKSettings(items *[]catalystcentersdkgo.ResponseWirelessGetSSIDByIDResponseMultipSKSettings) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

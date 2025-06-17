@@ -21,6 +21,7 @@ data "catalystcenter_sda_port_channels" "example" {
   connected_device_type = "string"
   fabric_id             = "string"
   limit                 = 1
+  native_vlan_id        = 1.0
   network_device_id     = "string"
   offset                = 1
   port_channel_name     = "string"
@@ -38,7 +39,8 @@ output "catalystcenter_sda_port_channels_example" {
 
 - `connected_device_type` (String) connectedDeviceType query parameter. Connected device type of the port channel. The allowed values are [TRUNK, EXTENDED_NODE].
 - `fabric_id` (String) fabricId query parameter. ID of the fabric the device is assigned to.
-- `limit` (Number) limit query parameter. Maximum number of records to return.
+- `limit` (Number) limit query parameter. Maximum number of records to return. The maximum number of objects supported in a single request is 500.
+- `native_vlan_id` (Number) nativeVlanId query parameter. Native VLAN of the port channel, this option is only applicable to TRUNK connectedDeviceType.(VLAN must be between 1 and 4094. In cases value not set when connectedDeviceType is TRUNK, default value will be '1').
 - `network_device_id` (String) networkDeviceId query parameter. ID of the network device.
 - `offset` (Number) offset query parameter. Starting record for pagination.
 - `port_channel_name` (String) portChannelName query parameter. Name of the port channel.
@@ -53,11 +55,13 @@ output "catalystcenter_sda_port_channels_example" {
 
 Read-Only:
 
+- `allowed_vlan_ranges` (String)
 - `connected_device_type` (String)
 - `description` (String)
 - `fabric_id` (String)
 - `id` (String)
 - `interface_names` (List of String)
+- `native_vlan_id` (Number)
 - `network_device_id` (String)
 - `port_channel_name` (String)
 - `protocol` (String)

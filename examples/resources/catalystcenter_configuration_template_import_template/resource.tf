@@ -1,27 +1,27 @@
 
 resource "catalystcenter_configuration_template_import_template" "example" {
-  provider     = meraki
+  provider     = catalystcenter
   do_version   = "false"
   project_name = "string"
-  parameters {
+  parameters = [{
 
     author    = "string"
     composite = "false"
-    containing_templates {
+    containing_templates = [{
 
       composite   = "false"
       description = "string"
-      device_types {
+      device_types = [{
 
         product_family = "string"
         product_series = "string"
         product_type   = "string"
-      }
+      }]
       id           = "string"
       language     = "string"
       name         = "string"
       project_name = "string"
-      rollback_template_params {
+      rollback_template_params = [{
 
         binding          = "string"
         custom_order     = 1
@@ -38,28 +38,28 @@ resource "catalystcenter_configuration_template_import_template" "example" {
         param_array      = "false"
         parameter_name   = "string"
         provider         = "string"
-        range {
+        range = [{
 
           id        = "string"
           max_value = 1
           min_value = 1
-        }
+        }]
         required = "false"
-        selection {
+        selection = [{
 
           default_selected_values = ["string"]
           id                      = "string"
           selection_type          = "string"
-          selection_values        = "------"
-        }
-      }
-      tags {
+          selection_values        = "string"
+        }]
+      }]
+      tags = [{
 
         id   = "string"
         name = "string"
-      }
+      }]
       template_content = "string"
-      template_params {
+      template_params = [{
 
         binding          = "string"
         custom_order     = 1
@@ -76,32 +76,32 @@ resource "catalystcenter_configuration_template_import_template" "example" {
         param_array      = "false"
         parameter_name   = "string"
         provider         = "string"
-        range {
+        range = [{
 
           id        = "string"
           max_value = 1
           min_value = 1
-        }
+        }]
         required = "false"
-        selection {
+        selection = [{
 
           default_selected_values = ["string"]
           id                      = "string"
           selection_type          = "string"
-          selection_values        = "------"
-        }
-      }
+          selection_values        = "string"
+        }]
+      }]
       version = "string"
-    }
+    }]
     create_time         = 1
     custom_params_order = "false"
     description         = "string"
-    device_types {
+    device_types = [{
 
       product_family = "string"
       product_series = "string"
       product_type   = "string"
-    }
+    }]
     failure_policy            = "string"
     id                        = "string"
     language                  = "string"
@@ -112,7 +112,7 @@ resource "catalystcenter_configuration_template_import_template" "example" {
     project_id                = "string"
     project_name              = "string"
     rollback_template_content = "string"
-    rollback_template_params {
+    rollback_template_params = [{
 
       binding          = "string"
       custom_order     = 1
@@ -129,31 +129,31 @@ resource "catalystcenter_configuration_template_import_template" "example" {
       param_array      = "false"
       parameter_name   = "string"
       provider         = "string"
-      range {
+      range = [{
 
         id        = "string"
         max_value = 1
         min_value = 1
-      }
+      }]
       required = "false"
-      selection {
+      selection = [{
 
         default_selected_values = ["string"]
         id                      = "string"
         selection_type          = "string"
-        selection_values        = "------"
-      }
-    }
+        selection_values        = "string"
+      }]
+    }]
     software_type    = "string"
     software_variant = "string"
     software_version = "string"
-    tags {
+    tags = [{
 
       id   = "string"
       name = "string"
-    }
+    }]
     template_content = "string"
-    template_params {
+    template_params = [{
 
       binding          = "string"
       custom_order     = 1
@@ -170,30 +170,30 @@ resource "catalystcenter_configuration_template_import_template" "example" {
       param_array      = "false"
       parameter_name   = "string"
       provider         = "string"
-      range {
+      range = [{
 
         id        = "string"
         max_value = 1
         min_value = 1
-      }
+      }]
       required = "false"
-      selection {
+      selection = [{
 
         default_selected_values = ["string"]
         id                      = "string"
         selection_type          = "string"
-        selection_values        = "------"
-      }
-    }
-    validation_errors {
+        selection_values        = "string"
+      }]
+    }]
+    validation_errors = [{
 
-      rollback_template_errors = "------"
-      template_errors          = "------"
+      rollback_template_errors = "string"
+      template_errors          = "string"
       template_id              = "string"
       template_version         = "string"
-    }
+    }]
     version = "string"
-  }
+  }]
 }
 
 output "catalystcenter_configuration_template_import_template_example" {

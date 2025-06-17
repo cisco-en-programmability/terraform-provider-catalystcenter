@@ -1,8 +1,8 @@
 
 data "catalystcenter_device_interface_isis" "example" {
-    provider = catalystcenter
+  provider = catalystcenter
 }
 
 output "catalystcenter_device_interface_isis_example" {
-    value = data.catalystcenter_device_interface_isis.example.items
+  value = data.catalystcenter_device_interface_isis.example.items
 }

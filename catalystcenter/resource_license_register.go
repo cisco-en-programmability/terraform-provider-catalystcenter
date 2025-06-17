@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -79,24 +79,15 @@ func resourceLicenseRegisterCreate(ctx context.Context, d *schema.ResourceData, 
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestLicenseRegisterSystemLicensingRegistrationV1(ctx, "parameters.0", d)
+	request1 := expandRequestLicenseRegisterSystemLicensingRegistration(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Licenses.SystemLicensingRegistrationV1(request1)
+	response1, restyResp1, err := client.Licenses.SystemLicensingRegistration(request1)
 
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-
-	vItem1 := flattenLicensesSystemLicensingRegistrationV1Item(response1.Response)
-	if err := d.Set("item", vItem1); err != nil {
-		diags = append(diags, diagError(
-			"Failure when setting SystemLicensingRegistrationV1 response",
-			err))
-		return diags
-	}
-	//Analizar verificacion.
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
@@ -107,24 +98,36 @@ func resourceLicenseRegisterCreate(ctx context.Context, d *schema.ResourceData, 
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+	vItem1 := flattenLicensesSystemLicensingRegistrationItem(response1.Response)
+	if err := d.Set("item", vItem1); err != nil {
+		diags = append(diags, diagError(
+			"Failure when setting SystemLicensingRegistration response",
+			err))
+		return diags
+	}
+
 	d.SetId(getUnixTimeString())
 	return diags
+
+	//Analizar verificacion.
+
 }
 func resourceLicenseRegisterRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 	return diags
 }
 
 func resourceLicenseRegisterDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 	return diags
 }
 
-func expandRequestLicenseRegisterSystemLicensingRegistrationV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLicensesSystemLicensingRegistrationV1 {
-	request := catalystcentersdkgo.RequestLicensesSystemLicensingRegistrationV1{}
+func expandRequestLicenseRegisterSystemLicensingRegistration(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLicensesSystemLicensingRegistration {
+	request := catalystcentersdkgo.RequestLicensesSystemLicensingRegistration{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".smart_account_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".smart_account_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".smart_account_id")))) {
 		request.SmartAccountID = interfaceToString(v)
 	}
@@ -134,7 +137,7 @@ func expandRequestLicenseRegisterSystemLicensingRegistrationV1(ctx context.Conte
 	return &request
 }
 
-func flattenLicensesSystemLicensingRegistrationV1Item(item *catalystcentersdkgo.ResponseLicensesSystemLicensingRegistrationV1Response) []map[string]interface{} {
+func flattenLicensesSystemLicensingRegistrationItem(item *catalystcentersdkgo.ResponseLicensesSystemLicensingRegistrationResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

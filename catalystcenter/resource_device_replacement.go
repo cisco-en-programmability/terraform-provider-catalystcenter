@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -268,7 +268,7 @@ func resourceDeviceReplacementCreate(ctx context.Context, d *schema.ResourceData
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters.0.payload"))
-	request1 := expandRequestDeviceReplacementMarkDeviceForReplacementV1(ctx, "parameters.0", d)
+	request1 := expandRequestDeviceReplacementMarkDeviceForReplacement(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vFaultyDeviceID := resourceItem["faulty_device_id"]
@@ -280,7 +280,7 @@ func resourceDeviceReplacementCreate(ctx context.Context, d *schema.ResourceData
 	vvReplacementDeviceSerialNumber := interfaceToString(vReplacementDeviceSerialNumber)
 
 	log.Printf("[DEBUG] Selected method 1: ReturnListOfReplacementDevicesWithReplacementDetails")
-	queryParamImport := catalystcentersdkgo.ReturnListOfReplacementDevicesWithReplacementDetailsV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.ReturnListOfReplacementDevicesWithReplacementDetailsQueryParams{}
 
 	queryParamImport.FaultyDeviceSerialNumber = vvFaultyDeviceSerialNumber
 
@@ -334,7 +334,7 @@ func resourceDeviceReplacementCreate(ctx context.Context, d *schema.ResourceData
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.ReturnListOfReplacementDevicesWithReplacementDetailsV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.ReturnListOfReplacementDevicesWithReplacementDetailsQueryParams{}
 	queryParamValidate.FaultyDeviceSerialNumber = vvFaultyDeviceSerialNumber
 	queryParamValidate.ReplacementDeviceSerialNumber = vvReplacementDeviceSerialNumber
 	item3, err := searchDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetails(m, queryParamValidate, vvFaultyDeviceID)
@@ -367,7 +367,7 @@ func resourceDeviceReplacementRead(ctx context.Context, d *schema.ResourceData, 
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: ReturnListOfReplacementDevicesWithReplacementDetails")
-		queryParams1 := catalystcentersdkgo.ReturnListOfReplacementDevicesWithReplacementDetailsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.ReturnListOfReplacementDevicesWithReplacementDetailsQueryParams{}
 
 		queryParams1.ReplacementDeviceSerialNumber = vReplacementDeviceSerialNumber
 
@@ -378,11 +378,11 @@ func resourceDeviceReplacementRead(ctx context.Context, d *schema.ResourceData, 
 			d.SetId("")
 			return diags
 		}
-		items := []catalystcentersdkgo.ResponseDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetailsV1Response{
+		items := []catalystcentersdkgo.ResponseDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetailsResponse{
 			*item1,
 		}
 		// Review flatten function used
-		vItem1 := flattenDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetailsV1Items(&items)
+		vItem1 := flattenDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetailsItems(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting ReturnListOfReplacementDevicesWithReplacementDetails search response",
@@ -406,7 +406,7 @@ func resourceDeviceReplacementUpdate(ctx context.Context, d *schema.ResourceData
 	vFaultyDeviceID := resourceMap["faulty_device_id"]
 
 	log.Printf("[DEBUG] Selected method 1: ReturnListOfReplacementDevicesWithReplacementDetails")
-	queryParams1 := catalystcentersdkgo.ReturnListOfReplacementDevicesWithReplacementDetailsV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.ReturnListOfReplacementDevicesWithReplacementDetailsQueryParams{}
 
 	if vFaultyDeviceSerialNumber != "" {
 		queryParams1.FaultyDeviceSerialNumber = vFaultyDeviceSerialNumber
@@ -415,7 +415,7 @@ func resourceDeviceReplacementUpdate(ctx context.Context, d *schema.ResourceData
 		queryParams1.ReplacementDeviceSerialNumber = vReplacementDeviceSerialNumber
 	}
 	if d.HasChange("parameters") {
-		request1 := expandRequestDeviceReplacementUnmarkDeviceForReplacementV1(ctx, "parameters.0", d)
+		request1 := expandRequestDeviceReplacementUnmarkDeviceForReplacement(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		if request1 != nil && len(*request1) > 0 {
 			req := *request1
@@ -473,13 +473,14 @@ func resourceDeviceReplacementUpdate(ctx context.Context, d *schema.ResourceData
 
 func resourceDeviceReplacementDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	// NOTE: Unable to delete DeviceReplacement on Dna Center
+	// NOTE: Unable to delete DeviceReplacement on Catalyst Center
 	//       Returning empty diags to delete it on Terraform
 	return diags
 }
-func expandRequestDeviceReplacementMarkDeviceForReplacementV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceReplacementMarkDeviceForReplacementV1 {
-	request := catalystcentersdkgo.RequestDeviceReplacementMarkDeviceForReplacementV1{}
-	if v := expandRequestDeviceReplacementMarkDeviceForReplacementV1ItemArray(ctx, key+".payload", d); v != nil {
+
+func expandRequestDeviceReplacementMarkDeviceForReplacement(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceReplacementMarkDeviceForReplacement {
+	request := catalystcentersdkgo.RequestDeviceReplacementMarkDeviceForReplacement{}
+	if v := expandRequestDeviceReplacementMarkDeviceForReplacementItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -488,8 +489,8 @@ func expandRequestDeviceReplacementMarkDeviceForReplacementV1(ctx context.Contex
 	return &request
 }
 
-func expandRequestDeviceReplacementMarkDeviceForReplacementV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDeviceReplacementMarkDeviceForReplacementV1 {
-	request := []catalystcentersdkgo.RequestItemDeviceReplacementMarkDeviceForReplacementV1{}
+func expandRequestDeviceReplacementMarkDeviceForReplacementItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDeviceReplacementMarkDeviceForReplacement {
+	request := []catalystcentersdkgo.RequestItemDeviceReplacementMarkDeviceForReplacement{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -500,7 +501,7 @@ func expandRequestDeviceReplacementMarkDeviceForReplacementV1ItemArray(ctx conte
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestDeviceReplacementMarkDeviceForReplacementV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestDeviceReplacementMarkDeviceForReplacementItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -511,8 +512,8 @@ func expandRequestDeviceReplacementMarkDeviceForReplacementV1ItemArray(ctx conte
 	return &request
 }
 
-func expandRequestDeviceReplacementMarkDeviceForReplacementV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDeviceReplacementMarkDeviceForReplacementV1 {
-	request := catalystcentersdkgo.RequestItemDeviceReplacementMarkDeviceForReplacementV1{}
+func expandRequestDeviceReplacementMarkDeviceForReplacementItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDeviceReplacementMarkDeviceForReplacement {
+	request := catalystcentersdkgo.RequestItemDeviceReplacementMarkDeviceForReplacement{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".creation_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".creation_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".creation_time")))) {
 		request.CreationTime = interfaceToIntPtr(v)
 	}
@@ -561,9 +562,9 @@ func expandRequestDeviceReplacementMarkDeviceForReplacementV1Item(ctx context.Co
 	return &request
 }
 
-func expandRequestDeviceReplacementUnmarkDeviceForReplacementV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceReplacementUnmarkDeviceForReplacementV1 {
-	request := catalystcentersdkgo.RequestDeviceReplacementUnmarkDeviceForReplacementV1{}
-	if v := expandRequestDeviceReplacementUnmarkDeviceForReplacementV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestDeviceReplacementUnmarkDeviceForReplacement(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceReplacementUnmarkDeviceForReplacement {
+	request := catalystcentersdkgo.RequestDeviceReplacementUnmarkDeviceForReplacement{}
+	if v := expandRequestDeviceReplacementUnmarkDeviceForReplacementItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -572,8 +573,8 @@ func expandRequestDeviceReplacementUnmarkDeviceForReplacementV1(ctx context.Cont
 	return &request
 }
 
-func expandRequestDeviceReplacementUnmarkDeviceForReplacementV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDeviceReplacementUnmarkDeviceForReplacementV1 {
-	request := []catalystcentersdkgo.RequestItemDeviceReplacementUnmarkDeviceForReplacementV1{}
+func expandRequestDeviceReplacementUnmarkDeviceForReplacementItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDeviceReplacementUnmarkDeviceForReplacement {
+	request := []catalystcentersdkgo.RequestItemDeviceReplacementUnmarkDeviceForReplacement{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -584,7 +585,7 @@ func expandRequestDeviceReplacementUnmarkDeviceForReplacementV1ItemArray(ctx con
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestDeviceReplacementUnmarkDeviceForReplacementV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestDeviceReplacementUnmarkDeviceForReplacementItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -595,8 +596,8 @@ func expandRequestDeviceReplacementUnmarkDeviceForReplacementV1ItemArray(ctx con
 	return &request
 }
 
-func expandRequestDeviceReplacementUnmarkDeviceForReplacementV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDeviceReplacementUnmarkDeviceForReplacementV1 {
-	request := catalystcentersdkgo.RequestItemDeviceReplacementUnmarkDeviceForReplacementV1{}
+func expandRequestDeviceReplacementUnmarkDeviceForReplacementItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDeviceReplacementUnmarkDeviceForReplacement {
+	request := catalystcentersdkgo.RequestItemDeviceReplacementUnmarkDeviceForReplacement{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".creation_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".creation_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".creation_time")))) {
 		request.CreationTime = interfaceToIntPtr(v)
 	}
@@ -645,11 +646,11 @@ func expandRequestDeviceReplacementUnmarkDeviceForReplacementV1Item(ctx context.
 	return &request
 }
 
-func searchDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetails(m interface{}, queryParams catalystcentersdkgo.ReturnListOfReplacementDevicesWithReplacementDetailsV1QueryParams, vID string) (*catalystcentersdkgo.ResponseDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetailsV1Response, error) {
+func searchDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetails(m interface{}, queryParams catalystcentersdkgo.ReturnListOfReplacementDevicesWithReplacementDetailsQueryParams, vID string) (*catalystcentersdkgo.ResponseDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetailsResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetailsV1Response
-	var ite *catalystcentersdkgo.ResponseDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetailsV1
+	var foundItem *catalystcentersdkgo.ResponseDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetailsResponse
+	var ite *catalystcentersdkgo.ResponseDeviceReplacementReturnListOfReplacementDevicesWithReplacementDetails
 	if vID != "" {
 		queryParams.Offset = 1
 		nResponse, _, err := client.DeviceReplacement.ReturnListOfReplacementDevicesWithReplacementDetails(nil)

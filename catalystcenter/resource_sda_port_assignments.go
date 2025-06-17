@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -47,6 +47,12 @@ func resourceSdaPortAssignments() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 
+						"allowed_vlan_ranges": &schema.Schema{
+							Description: `Allowed VLAN of the port assignment, this option is only applicable to TRUNKING_DEVICE connectedDeviceType. (VLAN must be between 1 and 4094 (Ex 100,200,300-400) or 'all'. In cases value not set when connectedDeviceType is TRUNKING_DEVICE, default value will be 'all').
+`,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
 						"authenticate_template_name": &schema.Schema{
 							Description: `Authenticate template name of the port assignment.
 `,
@@ -89,6 +95,12 @@ func resourceSdaPortAssignments() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
+						"native_vlan_id": &schema.Schema{
+							Description: `Native VLAN of the port assignment, this option is only applicable to TRUNKING_DEVICE connectedDeviceType. (VLAN must be between 1 and 4094. In cases value not set when connectedDeviceType is TRUNKING_DEVICE, default value will be 1).
+`,
+							Type:     schema.TypeInt,
+							Computed: true,
+						},
 						"network_device_id": &schema.Schema{
 							Description: `Network device ID of the port assignment.
 `,
@@ -111,19 +123,26 @@ func resourceSdaPortAssignments() *schema.Resource {
 				},
 			},
 			"parameters": &schema.Schema{
-				Description: `Array of RequestSdaAddPortAssignmentsV1`,
+				Description: `Array of RequestSdaAddPortAssignments`,
 				Type:        schema.TypeList,
 				Optional:    true,
 				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"payload": &schema.Schema{
-							Description: `Array of RequestApplicationPolicyCreateApplication`,
+							Description: `Array of RequestSdaAddPortAssignments`,
 							Type:        schema.TypeList,
 							Optional:    true,
 							Computed:    true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"allowed_vlan_ranges": &schema.Schema{
+										Description: `Allowed VLAN of the port assignment, this option is only applicable to TRUNKING_DEVICE connectedDeviceType. (VLAN must be between 1 and 4094 (Ex 100,200,300-400) or 'all'. In cases value not set when connectedDeviceType is TRUNKING_DEVICE, default value will be 'all').
+`,
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+									},
 									"authenticate_template_name": &schema.Schema{
 										Description: `Authenticate template name of the port assignment.
 `,
@@ -173,6 +192,13 @@ func resourceSdaPortAssignments() *schema.Resource {
 										Optional: true,
 										Computed: true,
 									},
+									"native_vlan_id": &schema.Schema{
+										Description: `integer example: 1 Native VLAN of the port assignment, this option is only applicable to TRUNKING_DEVICE connectedDeviceType. (VLAN must be between 1 and 4094. In cases value not set when connectedDeviceType is TRUNKING_DEVICE, default value will be 1).
+`,
+										Type:     schema.TypeInt,
+										Optional: true,
+										Computed: true,
+									},
 									"network_device_id": &schema.Schema{
 										Description: `Network device ID of the port assignment.
 `,
@@ -204,8 +230,7 @@ func resourceSdaPortAssignments() *schema.Resource {
 								},
 							},
 						},
-					},
-				},
+					}},
 			},
 		},
 	}
@@ -217,7 +242,7 @@ func resourceSdaPortAssignmentsCreate(ctx context.Context, d *schema.ResourceDat
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters.0.payload"))
-	request1 := expandRequestSdaPortAssignmentsAddPortAssignmentsV1(ctx, "parameters.0", d)
+	request1 := expandRequestSdaPortAssignmentsAddPortAssignments(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vID := resourceItem["id"]
@@ -233,7 +258,7 @@ func resourceSdaPortAssignmentsCreate(ctx context.Context, d *schema.ResourceDat
 	vVoiceVLANName := resourceItem["voice_vlan_name"]
 	vvVoiceVLANName := interfaceToString(vVoiceVLANName)
 
-	queryParamImport := catalystcentersdkgo.GetPortAssignmentsV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetPortAssignmentsQueryParams{}
 	queryParamImport.FabricID = vvFabricID
 	queryParamImport.NetworkDeviceID = vvNetworkDeviceID
 	queryParamImport.InterfaceName = vvInterfaceName
@@ -290,7 +315,7 @@ func resourceSdaPortAssignmentsCreate(ctx context.Context, d *schema.ResourceDat
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetPortAssignmentsV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetPortAssignmentsQueryParams{}
 	queryParamValidate.FabricID = vvFabricID
 	queryParamValidate.NetworkDeviceID = vvNetworkDeviceID
 	queryParamValidate.InterfaceName = vvInterfaceName
@@ -330,7 +355,7 @@ func resourceSdaPortAssignmentsRead(ctx context.Context, d *schema.ResourceData,
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetPortAssignments")
-		queryParams1 := catalystcentersdkgo.GetPortAssignmentsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetPortAssignmentsQueryParams{}
 		queryParams1.FabricID = vvFabricID
 		queryParams1.NetworkDeviceID = vvNetworkDeviceID
 		queryParams1.InterfaceName = vvInterfaceName
@@ -347,7 +372,7 @@ func resourceSdaPortAssignmentsRead(ctx context.Context, d *schema.ResourceData,
 		}
 
 		// Review flatten function used
-		vItem1 := flattenSdaGetPortAssignmentsV1Items(response1.Response)
+		vItem1 := flattenSdaGetPortAssignmentsItems(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetPortAssignments search response",
@@ -367,7 +392,7 @@ func resourceSdaPortAssignmentsUpdate(ctx context.Context, d *schema.ResourceDat
 	resourceMap := separateResourceID(resourceID)
 	vID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestSdaPortAssignmentsUpdatePortAssignmentsV1(ctx, "parameters.0", d)
+		request1 := expandRequestSdaPortAssignmentsUpdatePortAssignments(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		if request1 != nil && len(*request1) > 0 {
 			req := *request1
@@ -482,9 +507,10 @@ func resourceSdaPortAssignmentsDelete(ctx context.Context, d *schema.ResourceDat
 
 	return diags
 }
-func expandRequestSdaPortAssignmentsAddPortAssignmentsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddPortAssignmentsV1 {
-	request := catalystcentersdkgo.RequestSdaAddPortAssignmentsV1{}
-	if v := expandRequestSdaPortAssignmentsAddPortAssignmentsV1ItemArray(ctx, key+".payload", d); v != nil {
+
+func expandRequestSdaPortAssignmentsAddPortAssignments(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddPortAssignments {
+	request := catalystcentersdkgo.RequestSdaAddPortAssignments{}
+	if v := expandRequestSdaPortAssignmentsAddPortAssignmentsItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -493,8 +519,8 @@ func expandRequestSdaPortAssignmentsAddPortAssignmentsV1(ctx context.Context, ke
 	return &request
 }
 
-func expandRequestSdaPortAssignmentsAddPortAssignmentsV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddPortAssignmentsV1 {
-	request := []catalystcentersdkgo.RequestItemSdaAddPortAssignmentsV1{}
+func expandRequestSdaPortAssignmentsAddPortAssignmentsItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddPortAssignments {
+	request := []catalystcentersdkgo.RequestItemSdaAddPortAssignments{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -505,7 +531,7 @@ func expandRequestSdaPortAssignmentsAddPortAssignmentsV1ItemArray(ctx context.Co
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaPortAssignmentsAddPortAssignmentsV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaPortAssignmentsAddPortAssignmentsItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -516,8 +542,8 @@ func expandRequestSdaPortAssignmentsAddPortAssignmentsV1ItemArray(ctx context.Co
 	return &request
 }
 
-func expandRequestSdaPortAssignmentsAddPortAssignmentsV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddPortAssignmentsV1 {
-	request := catalystcentersdkgo.RequestItemSdaAddPortAssignmentsV1{}
+func expandRequestSdaPortAssignmentsAddPortAssignmentsItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddPortAssignments {
+	request := catalystcentersdkgo.RequestItemSdaAddPortAssignments{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".fabric_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".fabric_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".fabric_id")))) {
 		request.FabricID = interfaceToString(v)
 	}
@@ -545,15 +571,21 @@ func expandRequestSdaPortAssignmentsAddPortAssignmentsV1Item(ctx context.Context
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".interface_description")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".interface_description")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".interface_description")))) {
 		request.InterfaceDescription = interfaceToString(v)
 	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".native_vlan_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".native_vlan_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".native_vlan_id")))) {
+		request.NativeVLANID = interfaceToIntPtr(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".allowed_vlan_ranges")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".allowed_vlan_ranges")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".allowed_vlan_ranges")))) {
+		request.AllowedVLANRanges = interfaceToString(v)
+	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
 	}
 	return &request
 }
 
-func expandRequestSdaPortAssignmentsUpdatePortAssignmentsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdatePortAssignmentsV1 {
-	request := catalystcentersdkgo.RequestSdaUpdatePortAssignmentsV1{}
-	if v := expandRequestSdaPortAssignmentsUpdatePortAssignmentsV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaPortAssignmentsUpdatePortAssignments(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdatePortAssignments {
+	request := catalystcentersdkgo.RequestSdaUpdatePortAssignments{}
+	if v := expandRequestSdaPortAssignmentsUpdatePortAssignmentsItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -562,8 +594,8 @@ func expandRequestSdaPortAssignmentsUpdatePortAssignmentsV1(ctx context.Context,
 	return &request
 }
 
-func expandRequestSdaPortAssignmentsUpdatePortAssignmentsV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdatePortAssignmentsV1 {
-	request := []catalystcentersdkgo.RequestItemSdaUpdatePortAssignmentsV1{}
+func expandRequestSdaPortAssignmentsUpdatePortAssignmentsItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdatePortAssignments {
+	request := []catalystcentersdkgo.RequestItemSdaUpdatePortAssignments{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -574,7 +606,7 @@ func expandRequestSdaPortAssignmentsUpdatePortAssignmentsV1ItemArray(ctx context
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaPortAssignmentsUpdatePortAssignmentsV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaPortAssignmentsUpdatePortAssignmentsItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -585,8 +617,8 @@ func expandRequestSdaPortAssignmentsUpdatePortAssignmentsV1ItemArray(ctx context
 	return &request
 }
 
-func expandRequestSdaPortAssignmentsUpdatePortAssignmentsV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdatePortAssignmentsV1 {
-	request := catalystcentersdkgo.RequestItemSdaUpdatePortAssignmentsV1{}
+func expandRequestSdaPortAssignmentsUpdatePortAssignmentsItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdatePortAssignments {
+	request := catalystcentersdkgo.RequestItemSdaUpdatePortAssignments{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -617,17 +649,23 @@ func expandRequestSdaPortAssignmentsUpdatePortAssignmentsV1Item(ctx context.Cont
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".interface_description")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".interface_description")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".interface_description")))) {
 		request.InterfaceDescription = interfaceToString(v)
 	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".native_vlan_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".native_vlan_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".native_vlan_id")))) {
+		request.NativeVLANID = interfaceToIntPtr(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".allowed_vlan_ranges")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".allowed_vlan_ranges")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".allowed_vlan_ranges")))) {
+		request.AllowedVLANRanges = interfaceToString(v)
+	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
 	}
 	return &request
 }
 
-func searchSdaGetPortAssignments(m interface{}, queryParams catalystcentersdkgo.GetPortAssignmentsV1QueryParams, vID string) (*catalystcentersdkgo.ResponseSdaGetPortAssignmentsV1Response, error) {
+func searchSdaGetPortAssignments(m interface{}, queryParams catalystcentersdkgo.GetPortAssignmentsQueryParams, vID string) (*catalystcentersdkgo.ResponseSdaGetPortAssignmentsResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseSdaGetPortAssignmentsV1Response
-	var ite *catalystcentersdkgo.ResponseSdaGetPortAssignmentsV1
+	var foundItem *catalystcentersdkgo.ResponseSdaGetPortAssignmentsResponse
+	var ite *catalystcentersdkgo.ResponseSdaGetPortAssignments
 	if vID != "" {
 		queryParams.Offset = 1
 		nResponse, _, err := client.Sda.GetPortAssignments(nil)

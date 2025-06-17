@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -54,7 +54,7 @@ func dataSourceNetworkDeviceMaintenanceSchedulesID() *schema.Resource {
 								Schema: map[string]*schema.Schema{
 
 									"end_id": &schema.Schema{
-										Description: `Activity id of end schedule of the maintenance window. To check the status of the end schedule, use GET /intent/api/v1/activities/{id}. endId remains same for every occurrence of recurrence instance.
+										Description: `Activity id of end schedule of the maintenance window. To check the status of the end schedule, use GET /dna/intent/api/v1/activities/{id}. endId remains same for every occurrence of recurrence instance.
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -91,7 +91,7 @@ func dataSourceNetworkDeviceMaintenanceSchedulesID() *schema.Resource {
 									},
 
 									"start_id": &schema.Schema{
-										Description: `Activity id of start schedule of the maintenance window. To check the status of the start schedule, use GET /intent/api/v1/activities/{id}. startId remains same for every occurrence of recurrence instance.
+										Description: `Activity id of start schedule of the maintenance window. To check the status of the start schedule, use GET /dna/intent/api/v1/activities/{id}. startId remains same for every occurrence of recurrence instance.
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -138,29 +138,41 @@ func dataSourceNetworkDeviceMaintenanceSchedulesIDRead(ctx context.Context, d *s
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesTheMaintenanceScheduleInformationV1")
+		log.Printf("[DEBUG] Selected method: RetrievesTheMaintenanceScheduleInformation")
 		vvID := vID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Devices.RetrievesTheMaintenanceScheduleInformationV1(vvID)
+		response1, restyResp1, err := client.Devices.RetrievesTheMaintenanceScheduleInformation(vvID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesTheMaintenanceScheduleInformationV1", err,
-				"Failure at RetrievesTheMaintenanceScheduleInformationV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesTheMaintenanceScheduleInformation", err,
+				"Failure at RetrievesTheMaintenanceScheduleInformation, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesRetrievesTheMaintenanceScheduleInformationV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesTheMaintenanceScheduleInformation", err,
+				"Failure at RetrievesTheMaintenanceScheduleInformation, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenDevicesRetrievesTheMaintenanceScheduleInformationItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesTheMaintenanceScheduleInformationV1 response",
+				"Failure when setting RetrievesTheMaintenanceScheduleInformation response",
 				err))
 			return diags
 		}
@@ -172,21 +184,21 @@ func dataSourceNetworkDeviceMaintenanceSchedulesIDRead(ctx context.Context, d *s
 	return diags
 }
 
-func flattenDevicesRetrievesTheMaintenanceScheduleInformationV1Item(item *catalystcentersdkgo.ResponseDevicesRetrievesTheMaintenanceScheduleInformationV1Response) []map[string]interface{} {
+func flattenDevicesRetrievesTheMaintenanceScheduleInformationItem(item *catalystcentersdkgo.ResponseDevicesRetrievesTheMaintenanceScheduleInformationResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["id"] = item.ID
 	respItem["description"] = item.Description
-	respItem["maintenance_schedule"] = flattenDevicesRetrievesTheMaintenanceScheduleInformationV1ItemMaintenanceSchedule(item.MaintenanceSchedule)
+	respItem["maintenance_schedule"] = flattenDevicesRetrievesTheMaintenanceScheduleInformationItemMaintenanceSchedule(item.MaintenanceSchedule)
 	respItem["network_device_ids"] = item.NetworkDeviceIDs
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenDevicesRetrievesTheMaintenanceScheduleInformationV1ItemMaintenanceSchedule(item *catalystcentersdkgo.ResponseDevicesRetrievesTheMaintenanceScheduleInformationV1ResponseMaintenanceSchedule) []map[string]interface{} {
+func flattenDevicesRetrievesTheMaintenanceScheduleInformationItemMaintenanceSchedule(item *catalystcentersdkgo.ResponseDevicesRetrievesTheMaintenanceScheduleInformationResponseMaintenanceSchedule) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -195,7 +207,7 @@ func flattenDevicesRetrievesTheMaintenanceScheduleInformationV1ItemMaintenanceSc
 	respItem["end_id"] = item.EndID
 	respItem["start_time"] = item.StartTime
 	respItem["end_time"] = item.EndTime
-	respItem["recurrence"] = flattenDevicesRetrievesTheMaintenanceScheduleInformationV1ItemMaintenanceScheduleRecurrence(item.Recurrence)
+	respItem["recurrence"] = flattenDevicesRetrievesTheMaintenanceScheduleInformationItemMaintenanceScheduleRecurrence(item.Recurrence)
 	respItem["status"] = item.Status
 
 	return []map[string]interface{}{
@@ -204,7 +216,7 @@ func flattenDevicesRetrievesTheMaintenanceScheduleInformationV1ItemMaintenanceSc
 
 }
 
-func flattenDevicesRetrievesTheMaintenanceScheduleInformationV1ItemMaintenanceScheduleRecurrence(item *catalystcentersdkgo.ResponseDevicesRetrievesTheMaintenanceScheduleInformationV1ResponseMaintenanceScheduleRecurrence) []map[string]interface{} {
+func flattenDevicesRetrievesTheMaintenanceScheduleInformationItemMaintenanceScheduleRecurrence(item *catalystcentersdkgo.ResponseDevicesRetrievesTheMaintenanceScheduleInformationResponseMaintenanceScheduleRecurrence) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

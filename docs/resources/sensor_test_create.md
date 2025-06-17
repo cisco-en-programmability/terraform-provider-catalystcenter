@@ -12,6 +12,8 @@ description: |-
 It performs create operation on Sensors.
 
 - Intent API to create a SENSOR test template with a new SSID, existing SSID, or both new and existing SSID
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -21,17 +23,17 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_sensor_test_create" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
-    ap_coverage {
+    ap_coverage = [{
 
       bands                 = "string"
       number_of_aps_to_test = 1
       rssi_threshold        = 1
-    }
+    }]
     connection      = "string"
     encryption_mode = "string"
-    location_info_list {
+    location_info_list = [{
 
       all_sensors            = "false"
       custom_management_vlan = "false"
@@ -40,10 +42,10 @@ resource "catalystcenter_sensor_test_create" "example" {
       mac_address_list       = ["string"]
       management_vlan        = "string"
       site_hierarchy         = "string"
-    }
+    }]
     model_version = 1
     name          = "string"
-    profiles {
+    profiles = [{
 
       auth_protocol           = "string"
       auth_type               = "string"
@@ -56,28 +58,28 @@ resource "catalystcenter_sensor_test_create" "example" {
       eap_method              = "string"
       ext_web_auth            = "false"
       ext_web_auth_access_url = "string"
-      ext_web_auth_html_tag {
+      ext_web_auth_html_tag = [{
 
         label = "string"
         tag   = "string"
         value = "string"
-      }
+      }]
       ext_web_auth_portal     = "string"
       ext_web_auth_virtual_ip = "string"
-      location_vlan_list {
+      location_vlan_list = [{
 
         location_id = "string"
         vlans       = ["string"]
-      }
+      }]
       password      = "******"
       password_type = "******"
       profile_name  = "string"
       psk           = "string"
       qos_policy    = "string"
       scep          = "false"
-      tests {
+      tests = [{
 
-        config {
+        config = [{
 
           direction        = "string"
           domains          = ["string"]
@@ -109,15 +111,15 @@ resource "catalystcenter_sensor_test_create" "example" {
           url              = "string"
           user_name        = "string"
           user_name_prompt = "string"
-        }
+        }]
         name = "string"
-      }
+      }]
       username   = "string"
       vlan       = "string"
       white_list = "false"
-    }
+    }]
     run_now = "string"
-    sensors {
+    sensors = [{
 
       all_sensor_addition       = "false"
       assigned                  = "false"
@@ -138,12 +140,12 @@ resource "catalystcenter_sensor_test_create" "example" {
       switch_serial_number      = "string"
       switch_uuid               = "string"
       target_a_ps               = ["string"]
-      test_mac_addresses        = "------"
+      test_mac_addresses        = "string"
       wired_application_message = "string"
       wired_application_status  = "string"
       xor_sensor                = "false"
-    }
-    ssids {
+    }]
+    ssids = [{
 
       auth_protocol           = "string"
       auth_type               = "string"
@@ -156,12 +158,12 @@ resource "catalystcenter_sensor_test_create" "example" {
       eap_method              = "string"
       ext_web_auth            = "false"
       ext_web_auth_access_url = "string"
-      ext_web_auth_html_tag {
+      ext_web_auth_html_tag = [{
 
         label = "string"
         tag   = "string"
         value = "string"
-      }
+      }]
       ext_web_auth_portal          = "string"
       ext_web_auth_virtual_ip      = "string"
       layer3web_auth_email_address = "string"
@@ -179,9 +181,9 @@ resource "catalystcenter_sensor_test_create" "example" {
       qos_policy                   = "string"
       scep                         = "false"
       ssid                         = "string"
-      tests {
+      tests = [{
 
-        config {
+        config = [{
 
           direction        = "string"
           domains          = ["string"]
@@ -213,20 +215,20 @@ resource "catalystcenter_sensor_test_create" "example" {
           url              = "string"
           user_name        = "string"
           user_name_prompt = "string"
-        }
+        }]
         name = "string"
-      }
-      third_party {
+      }]
+      third_party = [{
 
         selected = "false"
-      }
+      }]
       username   = "string"
       white_list = "false"
       wlan_id    = 1
       wlc        = "string"
-    }
+    }]
     version = 1
-  }
+  }]
 }
 
 output "catalystcenter_sensor_test_create_example" {

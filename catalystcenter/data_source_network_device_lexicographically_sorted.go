@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -17,8 +17,11 @@ func dataSourceNetworkDeviceLexicographicallySorted() *schema.Resource {
 
 - Returns the list of values of the first given required parameter. You can use the .* in any value to conduct a
 wildcard search. For example, to get all the devices with the management IP address starting with 10.10. , issue the
-following request: GET /dna/inten/api/v1/network-device/autocomplete?managementIpAddress=10.10..* It will return the
-device management IP addresses that match fully or partially the provided attribute. {[10.10.1.1, 10.10.20.2, …]}.
+following request: GET /dna/intent/api/v1/network-device/autocomplete?managementIpAddress=10.10..* It will return the
+device management IP addresses that match fully or partially the provided attribute. {[10.10.1.1, 10.10.20.2, …]}. The
+API returns a paginated response based on 'limit' and 'offset' parameters, allowing up to 500 records per page. 'limit'
+specifies the number of records, and 'offset' sets the starting point using 1-based indexing. For data sets over 500
+records, make multiple calls, adjusting 'limit' and 'offset' to retrieve all records incrementally.
 `,
 
 		ReadContext: dataSourceNetworkDeviceLexicographicallySortedRead,
@@ -189,8 +192,8 @@ func dataSourceNetworkDeviceLexicographicallySortedRead(ctx context.Context, d *
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceValuesThatMatchFullyOrPartiallyAnAttributeV1")
-		queryParams1 := catalystcentersdkgo.GetDeviceValuesThatMatchFullyOrPartiallyAnAttributeV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetDeviceValuesThatMatchFullyOrPartiallyAnAttribute")
+		queryParams1 := catalystcentersdkgo.GetDeviceValuesThatMatchFullyOrPartiallyAnAttributeQueryParams{}
 
 		if okVrfName {
 			queryParams1.VrfName = vVrfName.(string)
@@ -261,24 +264,36 @@ func dataSourceNetworkDeviceLexicographicallySortedRead(ctx context.Context, d *
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Devices.GetDeviceValuesThatMatchFullyOrPartiallyAnAttributeV1(&queryParams1)
+		response1, restyResp1, err := client.Devices.GetDeviceValuesThatMatchFullyOrPartiallyAnAttribute(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceValuesThatMatchFullyOrPartiallyAnAttributeV1", err,
-				"Failure at GetDeviceValuesThatMatchFullyOrPartiallyAnAttributeV1, unexpected response", ""))
+				"Failure when executing 2 GetDeviceValuesThatMatchFullyOrPartiallyAnAttribute", err,
+				"Failure at GetDeviceValuesThatMatchFullyOrPartiallyAnAttribute, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetDeviceValuesThatMatchFullyOrPartiallyAnAttributeV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetDeviceValuesThatMatchFullyOrPartiallyAnAttribute", err,
+				"Failure at GetDeviceValuesThatMatchFullyOrPartiallyAnAttribute, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDevicesGetDeviceValuesThatMatchFullyOrPartiallyAnAttributeItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceValuesThatMatchFullyOrPartiallyAnAttributeV1 response",
+				"Failure when setting GetDeviceValuesThatMatchFullyOrPartiallyAnAttribute response",
 				err))
 			return diags
 		}
@@ -290,7 +305,7 @@ func dataSourceNetworkDeviceLexicographicallySortedRead(ctx context.Context, d *
 	return diags
 }
 
-func flattenDevicesGetDeviceValuesThatMatchFullyOrPartiallyAnAttributeV1Items(items *catalystcentersdkgo.ResponseDevicesGetDeviceValuesThatMatchFullyOrPartiallyAnAttributeV1) []map[string]interface{} {
+func flattenDevicesGetDeviceValuesThatMatchFullyOrPartiallyAnAttributeItems(items *catalystcentersdkgo.ResponseDevicesGetDeviceValuesThatMatchFullyOrPartiallyAnAttribute) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

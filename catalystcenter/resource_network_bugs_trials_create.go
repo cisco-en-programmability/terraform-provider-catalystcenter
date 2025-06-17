@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -9,7 +10,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -72,23 +73,32 @@ func resourceNetworkBugsTrialsCreateCreate(ctx context.Context, d *schema.Resour
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	// has_unknown_response: None
+	response1, restyResp1, err := client.Compliance.CreatesATrialForBugsDetectionOnNetworkDevices()
 
-	response1, restyResp1, err := client.Compliance.CreatesATrialForBugsDetectionOnNetworkDevicesV1()
+	if err != nil || response1 == nil {
+		if restyResp1 != nil {
+			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+		}
+		d.SetId("")
+		return diags
+	}
 
-	vItem1 := flattenComplianceCreatesATrialForBugsDetectionOnNetworkDevicesV1Item(response1.Response)
+	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+	if response1.Response == nil {
+		diags = append(diags, diagError(
+			"Failure when executing CreatesATrialForBugsDetectionOnNetworkDevices", err))
+		return diags
+	}
+
+	vItem1 := flattenComplianceCreatesATrialForBugsDetectionOnNetworkDevicesItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting CreatesATrialForBugsDetectionOnNetworkDevicesV1 response",
+			"Failure when setting CreatesATrialForBugsDetectionOnNetworkDevices response",
 			err))
 		return diags
 	}
 
-	if response1.Response == nil {
-		diags = append(diags, diagError(
-			"Failure when executing CreatesATrialForBugsDetectionOnNetworkDevicesV1", err))
-		return diags
-	}
 	taskId := response1.Response.TaskID
 	log.Printf("[DEBUG] TASKID => %s", taskId)
 	if taskId != "" {
@@ -113,44 +123,35 @@ func resourceNetworkBugsTrialsCreateCreate(ctx context.Context, d *schema.Resour
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing CreatesATrialForBugsDetectionOnNetworkDevicesV1", err1))
+				"Failure when executing CreatesATrialForBugsDetectionOnNetworkDevices", err1))
 			return diags
 		}
 	}
 
-	if err != nil || response1 == nil {
-		if restyResp1 != nil {
-			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
-		}
-		d.SetId("")
-		return diags
-	}
-
-	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 	d.SetId(getUnixTimeString())
 	return diags
 }
 func resourceNetworkBugsTrialsCreateRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 	return diags
 }
 
 func resourceNetworkBugsTrialsCreateDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 	return diags
 }
 
-func flattenComplianceCreatesATrialForBugsDetectionOnNetworkDevicesV1Item(item *catalystcentersdkgo.ResponseComplianceCreatesATrialForBugsDetectionOnNetworkDevicesV1Response) []map[string]interface{} {
+func flattenComplianceCreatesATrialForBugsDetectionOnNetworkDevicesItem(item *catalystcentersdkgo.ResponseComplianceCreatesATrialForBugsDetectionOnNetworkDevicesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

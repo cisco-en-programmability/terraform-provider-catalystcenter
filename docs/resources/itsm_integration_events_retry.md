@@ -16,6 +16,8 @@ It performs create operation on ITSM.
 - Allows retry of multiple failed ITSM event instances. The retry request payload can be given as a list of strings:
 ["instance1","instance2","instance3",..] A minimum of one instance Id is mandatory. The list of failed event instance
 Ids can be retrieved using the 'Get Failed ITSM Events' API in the 'instanceId' attribute.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -51,7 +53,7 @@ output "catalystcenter_itsm_integration_events_retry_example" {
 
 Optional:
 
-- `payload` (List of String) Array of RequestItsmRetryIntegrationEventsV1
+- `payload` (List of String) Array of RequestItsmRetryIntegrationEvents
 
 
 <a id="nestedatt--item"></a>

@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -170,7 +170,7 @@ func resourceGlobalCredentialHTTPWriteCreate(ctx context.Context, d *schema.Reso
 	vvUsername := interfaceToString(vUsername)
 	vID := resourceItem["id"]
 	vvID := interfaceToString(vID)
-	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
 
 	queryParams1.CredentialSubType = "HTTP_WRITE"
 	item, err := searchDiscoveryGetGlobalCredentialsHttpWrite(m, queryParams1, vvUsername, vvID)
@@ -236,7 +236,7 @@ func resourceGlobalCredentialHTTPWriteRead(ctx context.Context, d *schema.Resour
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method 1: GetGlobalCredentials")
-		queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
 
 		queryParams1.CredentialSubType = vCredentialSubType
 
@@ -254,12 +254,12 @@ func resourceGlobalCredentialHTTPWriteRead(ctx context.Context, d *schema.Resour
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		//TODO FOR DNAC
+		//TODO FOR CATALYST
 
-		items := []catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response{
+		items := []catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse{
 			*response1,
 		}
-		vItem1 := flattenDiscoveryGetGlobalCredentialsV1Items(&items)
+		vItem1 := flattenDiscoveryGetGlobalCredentialsItems(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetGlobalCredentials search response",
@@ -282,7 +282,7 @@ func resourceGlobalCredentialHTTPWriteUpdate(ctx context.Context, d *schema.Reso
 	vUsername := resourceMap["username"]
 	vID := resourceMap["id"]
 
-	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
 	queryParams1.CredentialSubType = vCredentialSubType
 	response1, err := searchDiscoveryGetGlobalCredentialsHttpWrite(m, queryParams1, vUsername, vID)
 	if err != nil || response1 == nil {
@@ -354,7 +354,7 @@ func resourceGlobalCredentialHTTPWriteDelete(ctx context.Context, d *schema.Reso
 	vID := resourceMap["id"]
 	vUsername := resourceMap["username"]
 
-	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
 
 	queryParams1.CredentialSubType = "HTTP_WRITE"
 	item, err := searchDiscoveryGetGlobalCredentialsHttpWrite(m, queryParams1, vUsername, vID)
@@ -379,8 +379,8 @@ func resourceGlobalCredentialHTTPWriteDelete(ctx context.Context, d *schema.Reso
 	return diags
 }
 
-func expandRequestHTTPWriteCredentialCreateCreateHTTPWriteCredentials(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryCreateHTTPWriteCredentialsV1 {
-	request := catalystcentersdkgo.RequestDiscoveryCreateHTTPWriteCredentialsV1{}
+func expandRequestHTTPWriteCredentialCreateCreateHTTPWriteCredentials(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryCreateHTTPWriteCredentials {
+	request := catalystcentersdkgo.RequestDiscoveryCreateHTTPWriteCredentials{}
 	if v := expandRequestHTTPWriteCredentialCreateCreateHTTPWriteCredentialsItemArray(ctx, key, d); v != nil {
 		request = *v
 	}
@@ -391,8 +391,8 @@ func expandRequestHTTPWriteCredentialCreateCreateHTTPWriteCredentials(ctx contex
 	return &request
 }
 
-func expandRequestHTTPWriteCredentialCreateCreateHTTPWriteCredentialsItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDiscoveryCreateHTTPWriteCredentialsV1 {
-	request := []catalystcentersdkgo.RequestItemDiscoveryCreateHTTPWriteCredentialsV1{}
+func expandRequestHTTPWriteCredentialCreateCreateHTTPWriteCredentialsItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDiscoveryCreateHTTPWriteCredentials {
+	request := []catalystcentersdkgo.RequestItemDiscoveryCreateHTTPWriteCredentials{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -415,8 +415,8 @@ func expandRequestHTTPWriteCredentialCreateCreateHTTPWriteCredentialsItemArray(c
 	return &request
 }
 
-func expandRequestHTTPWriteCredentialCreateCreateHTTPWriteCredentialsItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDiscoveryCreateHTTPWriteCredentialsV1 {
-	request := catalystcentersdkgo.RequestItemDiscoveryCreateHTTPWriteCredentialsV1{}
+func expandRequestHTTPWriteCredentialCreateCreateHTTPWriteCredentialsItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDiscoveryCreateHTTPWriteCredentials {
+	request := catalystcentersdkgo.RequestItemDiscoveryCreateHTTPWriteCredentials{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".comments")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".comments")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".comments")))) {
 		request.Comments = interfaceToString(v)
 	}
@@ -454,8 +454,8 @@ func expandRequestHTTPWriteCredentialCreateCreateHTTPWriteCredentialsItem(ctx co
 	return &request
 }
 
-func expandRequestHTTPWriteCredentialUpdateUpdateHTTPWriteCredentials(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdateHTTPWriteCredentialsV1 {
-	request := catalystcentersdkgo.RequestDiscoveryUpdateHTTPWriteCredentialsV1{}
+func expandRequestHTTPWriteCredentialUpdateUpdateHTTPWriteCredentials(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdateHTTPWriteCredentials {
+	request := catalystcentersdkgo.RequestDiscoveryUpdateHTTPWriteCredentials{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".comments")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".comments")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".comments")))) {
 		request.Comments = interfaceToString(v)
 	}
@@ -493,11 +493,11 @@ func expandRequestHTTPWriteCredentialUpdateUpdateHTTPWriteCredentials(ctx contex
 	return &request
 }
 
-func searchDiscoveryGetGlobalCredentialsHttpWrite(m interface{}, queryParams catalystcentersdkgo.GetGlobalCredentialsV1QueryParams, vUsername string, vID string) (*catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response, error) {
+func searchDiscoveryGetGlobalCredentialsHttpWrite(m interface{}, queryParams catalystcentersdkgo.GetGlobalCredentialsQueryParams, vUsername string, vID string) (*catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response
-	var ite *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1
+	var foundItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse
+	var ite *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentials
 	queryParams.CredentialSubType = "HTTP_WRITE"
 	ite, _, err = client.Discovery.GetGlobalCredentials(&queryParams)
 	if err != nil {
@@ -511,7 +511,7 @@ func searchDiscoveryGetGlobalCredentialsHttpWrite(m interface{}, queryParams cat
 	for _, item := range *itemsCopy.Response {
 		// Call get by _ method and set value to foundItem and return
 		if item.ID == vID || item.Username == vUsername {
-			var getItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response
+			var getItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

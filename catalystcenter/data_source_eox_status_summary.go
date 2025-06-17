@@ -5,20 +5,20 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func dataSourceEoXStatusSummary() *schema.Resource {
+func dataSourceEoxStatusSummary() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on EoX.
 
 - Retrieves EoX summary for all devices in the network
 `,
 
-		ReadContext: dataSourceEoXStatusSummaryRead,
+		ReadContext: dataSourceEoxStatusSummaryRead,
 		Schema: map[string]*schema.Schema{
 
 			"item": &schema.Schema{
@@ -61,33 +61,47 @@ func dataSourceEoXStatusSummary() *schema.Resource {
 	}
 }
 
-func dataSourceEoXStatusSummaryRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceEoxStatusSummaryRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetEoXSummaryV1")
+		log.Printf("[DEBUG] Selected method: GetEoxSummary")
 
-		response1, restyResp1, err := client.EoX.GetEoXSummaryV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Eox.GetEoxSummary()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetEoXSummaryV1", err,
-				"Failure at GetEoXSummaryV1, unexpected response", ""))
+				"Failure when executing 2 GetEoxSummary", err,
+				"Failure at GetEoxSummary, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenEoXGetEoXSummaryV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetEoxSummary", err,
+				"Failure at GetEoxSummary, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenEoxGetEoxSummaryItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetEoXSummaryV1 response",
+				"Failure when setting GetEoxSummary response",
 				err))
 			return diags
 		}
@@ -99,7 +113,7 @@ func dataSourceEoXStatusSummaryRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenEoXGetEoXSummaryV1Item(item *catalystcentersdkgo.ResponseEoXGetEoXSummaryV1Response) []map[string]interface{} {
+func flattenEoxGetEoxSummaryItem(item *catalystcentersdkgo.ResponseEoxGetEoxSummaryResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

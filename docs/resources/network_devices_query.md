@@ -17,7 +17,9 @@ It performs create operation on Devices.
 - Gets the list of Network Devices based on the provided complex filters and aggregation functions. For detailed
 information about the usage of the API, please refer to the Open API specification document https://github.com/cisco-en-
 programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
-AssuranceNetworkDevices-1.0.2-resolved.yaml
+AssuranceNetworkDevices-2.0.1-resolved.yaml
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -27,31 +29,31 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_network_devices_query" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
-    aggregate_attributes {
+    aggregate_attributes = [{
 
       function = "string"
       name     = "string"
-    }
+    }]
     attributes = ["string"]
     end_time   = 1
-    filters {
+    filters = [{
 
       key      = "string"
       operator = "string"
       value    = "string"
-    }
-    page {
+    }]
+    page = [{
 
       count   = 1
       limit   = 1
       offset  = 1
       sort_by = "string"
-    }
+    }]
     start_time = 1
     views      = ["string"]
-  }
+  }]
 }
 
 output "catalystcenter_network_devices_query_example" {
@@ -311,7 +313,6 @@ Read-Only:
 - `memory_score` (Number)
 - `memory_utilization` (Number)
 - `noise_score` (Number)
-- `overall_fabric_score` (Number)
 - `overall_health_score` (Number)
 - `packet_pool` (Number)
 - `packet_pool_score` (Number)

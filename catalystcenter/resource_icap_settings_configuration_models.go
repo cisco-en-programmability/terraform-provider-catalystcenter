@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -12,7 +13,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -74,7 +75,7 @@ ICAP_APIs-1.0.0-resolved.yaml
 							ForceNew: true,
 						},
 						"payload": &schema.Schema{
-							Description: `Array of RequestSensorsCreatesAnICAPConfigurationIntentForPreviewApproveV1`,
+							Description: `Array of RequestSensorsCreatesAnICAPConfigurationIntentForPreviewApprove`,
 							Type:        schema.TypeList,
 							Optional:    true,
 							ForceNew:    true,
@@ -161,34 +162,32 @@ ICAP_APIs-1.0.0-resolved.yaml
 func resourceIcapSettingsConfigurationModelsCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
-	resourceItem := *getResourceItem(d.Get("parameters"))
-	vPreviewDescription := resourceItem["preview_description"]
-	vvPreviewDescription := interfaceToString(vPreviewDescription)
 
-	request1 := expandRequestIcapSettingsConfigurationModelsCreatesAnICapConfigurationIntentForPreviewApproveV1(ctx, "parameters.0", d)
-	queryParams1 := catalystcentersdkgo.CreatesAnICapConfigurationIntentForPreviewApproveV1QueryParams{}
-	queryParams1.PreviewDescription = vvPreviewDescription
-	// has_unknown_response: None
+	request1 := expandRequestIcapSettingsConfigurationModelsCreatesAnICapConfigurationIntentForPreviewApprove(ctx, "parameters.0", d)
+	queryParams1 := catalystcentersdkgo.CreatesAnICapConfigurationIntentForPreviewApproveQueryParams{}
 
-	response1, restyResp1, err := client.Sensors.CreatesAnICapConfigurationIntentForPreviewApproveV1(request1, &queryParams1)
+	response1, restyResp1, err := client.Sensors.CreatesAnICapConfigurationIntentForPreviewApprove(request1, &queryParams1)
 
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
 
-	vItem1 := flattenSensorsCreatesAnICapConfigurationIntentForPreviewApproveV1Item(response1.Response)
-	if err := d.Set("item", vItem1); err != nil {
-		diags = append(diags, diagError(
-			"Failure when setting CreatesAnICapConfigurationIntentForPreviewApproveV1 response",
-			err))
+	if err != nil || response1 == nil {
+		if restyResp1 != nil {
+			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+		}
+		d.SetId("")
 		return diags
 	}
 
+	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing CreatesAnICAPConfigurationIntentForPreviewApproveV1", err))
+			"Failure when executing CreatesAnICAPConfigurationIntentForPreviewApprove", err))
 		return diags
 	}
+
 	taskId := response1.Response.TaskID
 	log.Printf("[DEBUG] TASKID => %s", taskId)
 	if taskId != "" {
@@ -213,53 +212,52 @@ func resourceIcapSettingsConfigurationModelsCreate(ctx context.Context, d *schem
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing CreatesAnICAPConfigurationIntentForPreviewApproveV1", err1))
+				"Failure when executing CreatesAnICAPConfigurationIntentForPreviewApprove", err1))
 			return diags
 		}
 	}
 
-	if err != nil || response1 == nil {
-		if restyResp1 != nil {
-			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
-		}
-		d.SetId("")
+	vItem1 := flattenSensorsCreatesAnICapConfigurationIntentForPreviewApproveItem(response1.Response)
+	if err := d.Set("item", vItem1); err != nil {
+		diags = append(diags, diagError(
+			"Failure when setting CreatesAnICapConfigurationIntentForPreviewApprove response",
+			err))
 		return diags
 	}
 
-	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 	d.SetId(getUnixTimeString())
 	return diags
 }
 func resourceIcapSettingsConfigurationModelsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 	return diags
 }
 
 func resourceIcapSettingsConfigurationModelsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 	return diags
 }
 
-func expandRequestIcapSettingsConfigurationModelsCreatesAnICapConfigurationIntentForPreviewApproveV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreatesAnICapConfigurationIntentForPreviewApproveV1 {
-	request := catalystcentersdkgo.RequestSensorsCreatesAnICapConfigurationIntentForPreviewApproveV1{}
-	if v := expandRequestIcapSettingsConfigurationModelsCreatesAnICapConfigurationIntentForPreviewApproveV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestIcapSettingsConfigurationModelsCreatesAnICapConfigurationIntentForPreviewApprove(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreatesAnICapConfigurationIntentForPreviewApprove {
+	request := catalystcentersdkgo.RequestSensorsCreatesAnICapConfigurationIntentForPreviewApprove{}
+	if v := expandRequestIcapSettingsConfigurationModelsCreatesAnICapConfigurationIntentForPreviewApproveItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	return &request
 }
 
-func expandRequestIcapSettingsConfigurationModelsCreatesAnICapConfigurationIntentForPreviewApproveV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSensorsCreatesAnICapConfigurationIntentForPreviewApproveV1 {
-	request := []catalystcentersdkgo.RequestItemSensorsCreatesAnICapConfigurationIntentForPreviewApproveV1{}
+func expandRequestIcapSettingsConfigurationModelsCreatesAnICapConfigurationIntentForPreviewApproveItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSensorsCreatesAnICapConfigurationIntentForPreviewApprove {
+	request := []catalystcentersdkgo.RequestItemSensorsCreatesAnICapConfigurationIntentForPreviewApprove{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -270,7 +268,7 @@ func expandRequestIcapSettingsConfigurationModelsCreatesAnICapConfigurationInten
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestIcapSettingsConfigurationModelsCreatesAnICapConfigurationIntentForPreviewApproveV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestIcapSettingsConfigurationModelsCreatesAnICapConfigurationIntentForPreviewApproveItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -278,8 +276,8 @@ func expandRequestIcapSettingsConfigurationModelsCreatesAnICapConfigurationInten
 	return &request
 }
 
-func expandRequestIcapSettingsConfigurationModelsCreatesAnICapConfigurationIntentForPreviewApproveV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSensorsCreatesAnICapConfigurationIntentForPreviewApproveV1 {
-	request := catalystcentersdkgo.RequestItemSensorsCreatesAnICapConfigurationIntentForPreviewApproveV1{}
+func expandRequestIcapSettingsConfigurationModelsCreatesAnICapConfigurationIntentForPreviewApproveItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSensorsCreatesAnICapConfigurationIntentForPreviewApprove {
+	request := catalystcentersdkgo.RequestItemSensorsCreatesAnICapConfigurationIntentForPreviewApprove{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".capture_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".capture_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".capture_type")))) {
 		request.CaptureType = interfaceToString(v)
 	}
@@ -296,7 +294,13 @@ func expandRequestIcapSettingsConfigurationModelsCreatesAnICapConfigurationInten
 		request.APID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".slot")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".slot")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".slot")))) {
-		request.Slot = responseInterfaceToSliceFloat64(v)
+		if arr, ok := v.([]interface{}); ok {
+			slots := make([]float64, len(arr))
+			for i, val := range arr {
+				slots[i] = interfaceToFloat64(val)
+			}
+			request.Slot = &slots
+		}
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ota_band")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ota_band")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ota_band")))) {
 		request.OtaBand = interfaceToString(v)
@@ -310,7 +314,7 @@ func expandRequestIcapSettingsConfigurationModelsCreatesAnICapConfigurationInten
 	return &request
 }
 
-func flattenSensorsCreatesAnICapConfigurationIntentForPreviewApproveV1Item(item *catalystcentersdkgo.ResponseSensorsCreatesAnICapConfigurationIntentForPreviewApproveV1Response) []map[string]interface{} {
+func flattenSensorsCreatesAnICapConfigurationIntentForPreviewApproveItem(item *catalystcentersdkgo.ResponseSensorsCreatesAnICapConfigurationIntentForPreviewApproveResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

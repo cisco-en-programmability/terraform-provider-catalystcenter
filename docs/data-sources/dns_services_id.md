@@ -38,7 +38,7 @@ output "catalystcenter_dns_services_id_example" {
 
 ### Required
 
-- `id` (String) id path parameter. Unique id of the DNS Service. It is the combination of DNS Server IP (serverIp) and Device UUID (deviceId) separated by underscore (_). Example: If serverIp is 10.76.81.33 and deviceId is 6bef213c-19ca-4170-8375-b694e251101c, then the id would be 10.76.81.33_6bef213c-19ca-4170-8375-b694e251101c
+- `id` (String) id path parameter. Unique id of the DNS Service. It is the combination of DNS Server IP (**serverIp**) and Device UUID (**deviceId**) separated by underscore (**_**). Example: If **serverIp** is **10.76.81.33** and **deviceId** is **6bef213c-19ca-4170-8375-b694e251101c**, then the **id** would be **10.76.81.33_6bef213c-19ca-4170-8375-b694e251101c**
 - `xca_lle_rid` (String) X-CALLER-ID header parameter. Caller ID is used to trace the origin of API calls and their associated queries executed on the database. It's an optional header parameter that can be added to an API request.
 
 ### Optional

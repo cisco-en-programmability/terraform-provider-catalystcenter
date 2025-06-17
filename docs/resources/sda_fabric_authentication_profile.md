@@ -22,7 +22,7 @@ It manages create, read, update and delete operations on SDA.
 ```terraform
 resource "catalystcenter_sda_fabric_authentication_profile" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     authenticate_template_name    = "string"
@@ -44,7 +44,7 @@ output "catalystcenter_sda_fabric_authentication_profile_example" {
 
 ### Optional
 
-- `parameters` (Block List) Array of RequestSdaAddDefaultAuthenticationTemplateInSDAFabricV1 (see [below for nested schema](#nestedblock--parameters))
+- `parameters` (Block List) Array of RequestSdaAddDefaultAuthenticationTemplateInSDAFabric (see [below for nested schema](#nestedblock--parameters))
 
 ### Read-Only
 
@@ -57,12 +57,20 @@ output "catalystcenter_sda_fabric_authentication_profile_example" {
 
 Optional:
 
+- `payload` (Block List) Array of RequestApplicationPolicyCreateApplication (see [below for nested schema](#nestedblock--parameters--payload))
+
+<a id="nestedblock--parameters--payload"></a>
+### Nested Schema for `parameters.payload`
+
+Optional:
+
 - `authenticate_template_name` (String) Authenticate Template Name
 - `authentication_order` (String) Authentication Order
 - `dot1x_to_mab_fallback_timeout` (String) Dot1x To MabFallback Timeout( Allowed range is [3-120])
 - `number_of_hosts` (String) Number Of Hosts
 - `site_name_hierarchy` (String) Path of sda Fabric Site
 - `wake_on_lan` (String) Wake On Lan
+
 
 
 <a id="nestedatt--item"></a>

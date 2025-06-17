@@ -1,7 +1,7 @@
 
 resource "catalystcenter_analytics_cmdb_endpoints" "example" {
-  provider = meraki
-  parameters {
+  provider = catalystcenter
+  parameters = [{
 
     asset_tag             = "string"
     department            = "string"
@@ -13,7 +13,7 @@ resource "catalystcenter_analytics_cmdb_endpoints" "example" {
     model                 = "string"
     model_category        = "string"
     serial_number         = "string"
-  }
+  }]
 }
 
 output "catalystcenter_analytics_cmdb_endpoints_example" {

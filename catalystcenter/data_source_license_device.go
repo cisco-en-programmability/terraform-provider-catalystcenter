@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -69,26 +69,40 @@ func dataSourceLicenseDeviceRead(ctx context.Context, d *schema.ResourceData, m 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: SmartAccountDetailsV1")
+		log.Printf("[DEBUG] Selected method: SmartAccountDetails")
 
-		response1, restyResp1, err := client.Licenses.SmartAccountDetailsV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Licenses.SmartAccountDetails()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 SmartAccountDetailsV1", err,
-				"Failure at SmartAccountDetailsV1, unexpected response", ""))
+				"Failure when executing 2 SmartAccountDetails", err,
+				"Failure at SmartAccountDetails, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenLicensesSmartAccountDetailsV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 SmartAccountDetails", err,
+				"Failure at SmartAccountDetails, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenLicensesSmartAccountDetailsItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting SmartAccountDetailsV1 response",
+				"Failure when setting SmartAccountDetails response",
 				err))
 			return diags
 		}
@@ -100,7 +114,7 @@ func dataSourceLicenseDeviceRead(ctx context.Context, d *schema.ResourceData, m 
 	return diags
 }
 
-func flattenLicensesSmartAccountDetailsV1Items(items *[]catalystcentersdkgo.ResponseLicensesSmartAccountDetailsV1Response) []map[string]interface{} {
+func flattenLicensesSmartAccountDetailsItems(items *[]catalystcentersdkgo.ResponseLicensesSmartAccountDetailsResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -114,4 +128,18 @@ func flattenLicensesSmartAccountDetailsV1Items(items *[]catalystcentersdkgo.Resp
 		respItems = append(respItems, respItem)
 	}
 	return respItems
+}
+
+func flattenLicensesSmartAccountDetailsItem(item *catalystcentersdkgo.ResponseLicensesSmartAccountDetailsResponse) []map[string]interface{} {
+	if item == nil {
+		return nil
+	}
+	respItem := make(map[string]interface{})
+	respItem["name"] = item.Name
+	respItem["id"] = item.ID
+	respItem["domain"] = item.Domain
+	respItem["is_active_smart_account"] = boolPtrToString(item.IsActiveSmartAccount)
+	return []map[string]interface{}{
+		respItem,
+	}
 }

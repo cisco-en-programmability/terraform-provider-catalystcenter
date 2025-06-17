@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -23,7 +23,7 @@ profile.
 		ReadContext: dataSourceNetworkProfilesForSitesSiteAssignmentsRead,
 		Schema: map[string]*schema.Schema{
 			"limit": &schema.Schema{
-				Description: `limit query parameter. The number of records to show for this page.
+				Description: `limit query parameter. The number of records to show for this page;The minimum is 1, and the maximum is 500.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -35,7 +35,7 @@ profile.
 				Optional: true,
 			},
 			"profile_id": &schema.Schema{
-				Description: `profileId path parameter. The *id* of the network profile, retrievable from *GET /intent/api/v1/networkProfilesForSites*
+				Description: `profileId path parameter. The **id** of the network profile, retrievable from **GET /intent/api/v1/networkProfilesForSites**
 `,
 				Type:     schema.TypeString,
 				Required: true,
@@ -69,9 +69,9 @@ func dataSourceNetworkProfilesForSitesSiteAssignmentsRead(ctx context.Context, d
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToV1")
+		log.Printf("[DEBUG] Selected method: RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedTo")
 		vvProfileID := vProfileID.(string)
-		queryParams1 := catalystcentersdkgo.RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToQueryParams{}
 
 		if okOffset {
 			queryParams1.Offset = vOffset.(float64)
@@ -80,24 +80,38 @@ func dataSourceNetworkProfilesForSitesSiteAssignmentsRead(ctx context.Context, d
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.SiteDesign.RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToV1(vvProfileID, &queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.SiteDesign.RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedTo(vvProfileID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToV1", err,
-				"Failure at RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedTo", err,
+				"Failure at RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedTo, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSiteDesignRetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedTo", err,
+				"Failure at RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedTo, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSiteDesignRetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToV1 response",
+				"Failure when setting RetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedTo response",
 				err))
 			return diags
 		}
@@ -109,7 +123,7 @@ func dataSourceNetworkProfilesForSitesSiteAssignmentsRead(ctx context.Context, d
 	return diags
 }
 
-func flattenSiteDesignRetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToV1Items(items *[]catalystcentersdkgo.ResponseSiteDesignRetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToV1Response) []map[string]interface{} {
+func flattenSiteDesignRetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToItems(items *[]catalystcentersdkgo.ResponseSiteDesignRetrievesTheListOfSitesThatTheGivenNetworkProfileForSitesIsAssignedToResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

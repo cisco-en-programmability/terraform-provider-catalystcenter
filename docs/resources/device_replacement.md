@@ -20,7 +20,7 @@ It manages create, read and update operations on Device Replacement.
 ```terraform
 resource "catalystcenter_device_replacement" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     creation_time                    = 1

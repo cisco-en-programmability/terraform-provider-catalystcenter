@@ -1,7 +1,7 @@
 
 resource "catalystcenter_sda_port_assignment_for_user_device" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     authenticate_template_name   = "string"

@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -293,9 +293,9 @@ func resourceIcapRadiosIDStatsCreate(ctx context.Context, d *schema.ResourceData
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
 	vvID := vID.(string)
-	request1 := expandRequestIcapRadiosIDStatsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeV1(ctx, "parameters.0", d)
+	request1 := expandRequestIcapRadiosIDStatsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTime(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.RetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeV1HeaderParams{}
+	headerParams1 := catalystcentersdkgo.RetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeHeaderParams{}
 
 	headerParams1.XCaLLERID = vXCaLLERID.(string)
 
@@ -317,7 +317,7 @@ func resourceIcapRadiosIDStatsCreate(ctx context.Context, d *schema.ResourceData
 
 	//Analizar verificacion.
 
-	vItems1 := flattenSensorsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeV1Items(response1.Response)
+	vItems1 := flattenSensorsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeItems(response1.Response)
 	if err := d.Set("items", vItems1); err != nil {
 		diags = append(diags, diagError(
 			"Failure when setting RetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTime response",
@@ -342,8 +342,8 @@ func resourceIcapRadiosIDStatsDelete(ctx context.Context, d *schema.ResourceData
 	return diags
 }
 
-func expandRequestIcapRadiosIDStatsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeV1 {
-	request := catalystcentersdkgo.RequestSensorsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeV1{}
+func expandRequestIcapRadiosIDStatsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTime(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTime {
+	request := catalystcentersdkgo.RequestSensorsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTime{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -351,16 +351,16 @@ func expandRequestIcapRadiosIDStatsRetrievesSpecificRadioStatisticsOverSpecified
 		request.EndTime = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestIcapRadiosIDStatsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeV1FiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestIcapRadiosIDStatsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeFiltersArray(ctx, key+".filters", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".page")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".page")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".page")))) {
-		request.Page = expandRequestIcapRadiosIDStatsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeV1Page(ctx, key+".page.0", d)
+		request.Page = expandRequestIcapRadiosIDStatsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimePage(ctx, key+".page.0", d)
 	}
 	return &request
 }
 
-func expandRequestIcapRadiosIDStatsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeV1Filters {
-	request := []catalystcentersdkgo.RequestSensorsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeV1Filters{}
+func expandRequestIcapRadiosIDStatsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeFilters {
+	request := []catalystcentersdkgo.RequestSensorsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -371,7 +371,7 @@ func expandRequestIcapRadiosIDStatsRetrievesSpecificRadioStatisticsOverSpecified
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestIcapRadiosIDStatsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestIcapRadiosIDStatsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -379,8 +379,8 @@ func expandRequestIcapRadiosIDStatsRetrievesSpecificRadioStatisticsOverSpecified
 	return &request
 }
 
-func expandRequestIcapRadiosIDStatsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeV1Filters {
-	request := catalystcentersdkgo.RequestSensorsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeV1Filters{}
+func expandRequestIcapRadiosIDStatsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeFilters {
+	request := catalystcentersdkgo.RequestSensorsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -393,8 +393,8 @@ func expandRequestIcapRadiosIDStatsRetrievesSpecificRadioStatisticsOverSpecified
 	return &request
 }
 
-func expandRequestIcapRadiosIDStatsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeV1Page(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeV1Page {
-	request := catalystcentersdkgo.RequestSensorsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeV1Page{}
+func expandRequestIcapRadiosIDStatsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimePage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimePage {
+	request := catalystcentersdkgo.RequestSensorsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimePage{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".limit")))) {
 		request.Limit = interfaceToIntPtr(v)
 	}
@@ -407,7 +407,7 @@ func expandRequestIcapRadiosIDStatsRetrievesSpecificRadioStatisticsOverSpecified
 	return &request
 }
 
-func flattenSensorsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeV1Items(items *[]catalystcentersdkgo.ResponseSensorsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeV1Response) []map[string]interface{} {
+func flattenSensorsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeItems(items *[]catalystcentersdkgo.ResponseSensorsRetrievesSpecificRadioStatisticsOverSpecifiedPeriodOfTimeResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -1,7 +1,7 @@
 
 resource "catalystcenter_license_setting" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     auto_registration_virtual_account_id = "string"

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -106,31 +106,45 @@ func dataSourceSdaPortAssignmentForAccessPointRead(ctx context.Context, d *schem
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetPortAssignmentForAccessPointInSdaFabricV1")
-		queryParams1 := catalystcentersdkgo.GetPortAssignmentForAccessPointInSdaFabricV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetPortAssignmentForAccessPointInSdaFabric")
+		queryParams1 := catalystcentersdkgo.GetPortAssignmentForAccessPointInSdaFabricQueryParams{}
 
 		queryParams1.DeviceManagementIPAddress = vDeviceManagementIPAddress.(string)
 
 		queryParams1.InterfaceName = vInterfaceName.(string)
 
-		response1, restyResp1, err := client.Sda.GetPortAssignmentForAccessPointInSdaFabricV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sda.GetPortAssignmentForAccessPointInSdaFabric(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetPortAssignmentForAccessPointInSdaFabricV1", err,
-				"Failure at GetPortAssignmentForAccessPointInSdaFabricV1, unexpected response", ""))
+				"Failure when executing 2 GetPortAssignmentForAccessPointInSdaFabric", err,
+				"Failure at GetPortAssignmentForAccessPointInSdaFabric, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetPortAssignmentForAccessPointInSdaFabricV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetPortAssignmentForAccessPointInSdaFabric", err,
+				"Failure at GetPortAssignmentForAccessPointInSdaFabric, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSdaGetPortAssignmentForAccessPointInSdaFabricItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetPortAssignmentForAccessPointInSdaFabricV1 response",
+				"Failure when setting GetPortAssignmentForAccessPointInSdaFabric response",
 				err))
 			return diags
 		}
@@ -142,7 +156,7 @@ func dataSourceSdaPortAssignmentForAccessPointRead(ctx context.Context, d *schem
 	return diags
 }
 
-func flattenSdaGetPortAssignmentForAccessPointInSdaFabricV1Item(item *catalystcentersdkgo.ResponseSdaGetPortAssignmentForAccessPointInSdaFabricV1) []map[string]interface{} {
+func flattenSdaGetPortAssignmentForAccessPointInSdaFabricItem(item *catalystcentersdkgo.ResponseSdaGetPortAssignmentForAccessPointInSdaFabric) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -152,7 +166,7 @@ func flattenSdaGetPortAssignmentForAccessPointInSdaFabricV1Item(item *catalystce
 	respItem["site_name_hierarchy"] = item.SiteNameHierarchy
 	respItem["device_management_ip_address"] = item.DeviceManagementIPAddress
 	respItem["interface_name"] = item.InterfaceName
-	respItem["data_ip_address_pool_name"] = item.DataIPAddressPoolName
+	respItem["data_ip_address_pool_name"] = item.DataipAddressPoolName
 	respItem["voice_ip_address_pool_name"] = item.VoiceIPAddressPoolName
 	respItem["scalable_group_name"] = item.ScalableGroupName
 	respItem["authenticate_template_name"] = item.AuthenticateTemplateName

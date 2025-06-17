@@ -8,7 +8,11 @@ description: |-
   Each maintenance window is composed of a start schedule and end schedule, both of which have unique
   identifiers(startId and endId). These identifiers can be used to fetch the status of the start schedule and end
   schedule using the GET /dna/intent/api/v1/activities/{id} API. Completed maintenance schedules are automatically
-  removed from the system after two weeks.
+  removed from the system after two weeks. The API returns a paginated response based on 'limit' and 'offset' parameters,
+  allowing up to 500 records per page. 'limit' specifies the number of records, and 'offset' sets the starting point using
+  1-based indexing. Use '/dna/intent/api/v1/networkDeviceMaintenanceSchedules/count' API to get the total record count.
+  For data sets over 500 records, make multiple calls, adjusting 'limit' and 'offset' to retrieve all records
+  incrementally.
 ---
 
 # catalystcenter_network_device_maintenance_schedules (Data Source)
@@ -17,9 +21,13 @@ It performs read operation on Devices.
 
 - This data source retrieves a list of scheduled maintenance windows for network devices based on filter parameters.
 Each maintenance window is composed of a start schedule and end schedule, both of which have unique
-identifiers(startId and endId). These identifiers can be used to fetch the status of the start schedule and end
-schedule using the GET /dna/intent/api/v1/activities/{id} API. Completed maintenance schedules are automatically
-removed from the system after two weeks.
+identifiers(**startId** and **endId**). These identifiers can be used to fetch the status of the start schedule and end
+schedule using the **GET /dna/intent/api/v1/activities/{id}** API. Completed maintenance schedules are automatically
+removed from the system after two weeks. The API returns a paginated response based on 'limit' and 'offset' parameters,
+allowing up to 500 records per page. 'limit' specifies the number of records, and 'offset' sets the starting point using
+1-based indexing. Use '/dna/intent/api/v1/networkDeviceMaintenanceSchedules/count' API to get the total record count.
+For data sets over 500 records, make multiple calls, adjusting 'limit' and 'offset' to retrieve all records
+incrementally.
 
 ## Example Usage
 

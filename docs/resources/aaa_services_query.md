@@ -28,27 +28,27 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_aaa_services_query" "example" {
   provider    = catalystcenter
   xca_lle_rid = "string"
-  parameters {
+  parameters = [{
 
     end_time = 1
-    filters {
+    filters = [{
 
       key      = "string"
       operator = "string"
       value    = ["string"]
-    }
-    page {
+    }]
+    page = [{
 
       limit  = 1
       offset = 1
-      sort_by {
+      sort_by = [{
 
         name  = "string"
         order = "string"
-      }
-    }
+      }]
+    }]
     start_time = 1
-  }
+  }]
 }
 
 output "catalystcenter_aaa_services_query_example" {

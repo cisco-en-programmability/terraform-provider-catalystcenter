@@ -26,7 +26,7 @@ issueAndHealthDefinitions-1.0.0-resolved.yaml
 ```terraform
 resource "catalystcenter_health_score_definitions" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     id                             = "string"

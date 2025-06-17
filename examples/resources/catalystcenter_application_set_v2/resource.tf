@@ -1,7 +1,7 @@
 
 resource "catalystcenter_application_set_v2" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     default_business_relevance     = "string"

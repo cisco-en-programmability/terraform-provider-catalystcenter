@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -83,31 +83,45 @@ func dataSourceBusinessSdaHostonboardingSSIDIPpoolRead(ctx context.Context, d *s
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSSIDToIPPoolMappingV1")
-		queryParams1 := catalystcentersdkgo.GetSSIDToIPPoolMappingV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetSSIDToIPPoolMapping")
+		queryParams1 := catalystcentersdkgo.GetSSIDToIPPoolMappingQueryParams{}
 
 		queryParams1.VLANName = vVLANName.(string)
 
 		queryParams1.SiteNameHierarchy = vSiteNameHierarchy.(string)
 
-		response1, restyResp1, err := client.FabricWireless.GetSSIDToIPPoolMappingV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.FabricWireless.GetSSIDToIPPoolMapping(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSSIDToIPPoolMappingV1", err,
-				"Failure at GetSSIDToIPPoolMappingV1, unexpected response", ""))
+				"Failure when executing 2 GetSSIDToIPPoolMapping", err,
+				"Failure at GetSSIDToIPPoolMapping, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenFabricWirelessGetSSIDToIPPoolMappingV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetSSIDToIPPoolMapping", err,
+				"Failure at GetSSIDToIPPoolMapping, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenFabricWirelessGetSSIDToIPPoolMappingItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSSIDToIPPoolMappingV1 response",
+				"Failure when setting GetSSIDToIPPoolMapping response",
 				err))
 			return diags
 		}
@@ -119,19 +133,19 @@ func dataSourceBusinessSdaHostonboardingSSIDIPpoolRead(ctx context.Context, d *s
 	return diags
 }
 
-func flattenFabricWirelessGetSSIDToIPPoolMappingV1Item(item *catalystcentersdkgo.ResponseFabricWirelessGetSSIDToIPPoolMappingV1) []map[string]interface{} {
+func flattenFabricWirelessGetSSIDToIPPoolMappingItem(item *catalystcentersdkgo.ResponseFabricWirelessGetSSIDToIPPoolMapping) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["vlan_name"] = item.VLANName
-	respItem["ssid_details"] = flattenFabricWirelessGetSSIDToIPPoolMappingV1ItemSSIDDetails(item.SSIDDetails)
+	respItem["ssid_details"] = flattenFabricWirelessGetSSIDToIPPoolMappingItemSSIDDetails(item.SSIDDetails)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenFabricWirelessGetSSIDToIPPoolMappingV1ItemSSIDDetails(items *[]catalystcentersdkgo.ResponseFabricWirelessGetSSIDToIPPoolMappingV1SSIDDetails) []map[string]interface{} {
+func flattenFabricWirelessGetSSIDToIPPoolMappingItemSSIDDetails(items *[]catalystcentersdkgo.ResponseFabricWirelessGetSSIDToIPPoolMappingSSIDDetails) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -20,7 +20,7 @@ It manages read, update and delete operations on Wireless.
 ```terraform
 resource "catalystcenter_wireless_settings_ap_profiles_id" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     ap_power_profile_name  = "string"
@@ -31,8 +31,8 @@ resource "catalystcenter_wireless_settings_ap_profiles_id" "example" {
 
       duration {
 
-        scheduler_date       = "string"
-        scheduler_day        = "string"
+        scheduler_date       = ["string"]
+        scheduler_day        = ["string"]
         scheduler_end_time   = "string"
         scheduler_start_time = "string"
       }
@@ -139,8 +139,8 @@ Optional:
 
 Optional:
 
-- `scheduler_date` (String) Start and End date of the duration setting, applicable for MONTHLY schedulers.
-- `scheduler_day` (String) Applies every week on the selected days
+- `scheduler_date` (List of String) Start and End date of the duration setting, applicable for MONTHLY schedulers. Values must be between 1 and 31.
+- `scheduler_day` (List of String) Applies every week on the selected days. Ex: ["sunday","saturday","tuesday","wednesday","thursday","friday","monday"]
 - `scheduler_end_time` (String) End time of the duration setting.
 - `scheduler_start_time` (String) Start time of the duration setting.
 
@@ -153,7 +153,7 @@ Optional:
 
 - `auth_type` (String) Authentication type used in the AP profile. These setting are applicable during PnP claim and for day-N authentication of AP. Changing these settings will be service impacting for the PnP onboarded APs and will need a factory-reset for those APs.
 - `cdp_state` (String) Indicates if CDP is enabled on the AP. Enable CDP in order to make Cisco Access Points known to its neighboring devices and vice-versa.
-- `dot1x_password` (String) Password for 802.1X authentication. AP dot1x password length should not exceed 120.
+- `dot1x_password` (String) Password for 802.1X authentication. Length must be 8-120 characters.
 - `dot1x_username` (String) Username for 802.1X authentication. dot1xUsername must have a minimum of 1 character and a maximum of 32 characters.
 - `management_enable_password` (String) Enable password for managing the AP. Length must be 8-120 characters.
 - `management_password` (String) Management password for the AP. Length must be 8-120 characters.
@@ -225,8 +225,8 @@ Read-Only:
 
 Read-Only:
 
-- `scheduler_date` (String)
-- `scheduler_day` (String)
+- `scheduler_date` (List of String)
+- `scheduler_day` (List of String)
 - `scheduler_end_time` (String)
 - `scheduler_start_time` (String)
 

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -27,7 +27,7 @@ func dataSourceComplianceDeviceDetailsCount() *schema.Resource {
 				Optional: true,
 			},
 			"compliance_type": &schema.Schema{
-				Description: `complianceType query parameter. Specify "Compliance type(s)" separated by commas. The Compliance type can be 'APPLICATION_VISIBILITY', 'EoX', 'FABRIC', 'IMAGE', 'NETWORK_PROFILE', 'NETWORK_SETTINGS', 'PSIRT', 'RUNNING_CONFIG', 'WORKFLOW'.
+				Description: `complianceType query parameter. Specify "Compliance type(s)" separated by commas. The Compliance type can be 'APPLICATION_VISIBILITY', 'EOX', 'FABRIC', 'IMAGE', 'NETWORK_PROFILE', 'NETWORK_SETTINGS', 'PSIRT', 'RUNNING_CONFIG', 'WORKFLOW'.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -68,8 +68,8 @@ func dataSourceComplianceDeviceDetailsCountRead(ctx context.Context, d *schema.R
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetComplianceDetailCountV1")
-		queryParams1 := catalystcentersdkgo.GetComplianceDetailCountV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetComplianceDetailCount")
+		queryParams1 := catalystcentersdkgo.GetComplianceDetailCountQueryParams{}
 
 		if okComplianceType {
 			queryParams1.ComplianceType = vComplianceType.(string)
@@ -78,24 +78,38 @@ func dataSourceComplianceDeviceDetailsCountRead(ctx context.Context, d *schema.R
 			queryParams1.ComplianceStatus = vComplianceStatus.(string)
 		}
 
-		response1, restyResp1, err := client.Compliance.GetComplianceDetailCountV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Compliance.GetComplianceDetailCount(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetComplianceDetailCountV1", err,
-				"Failure at GetComplianceDetailCountV1, unexpected response", ""))
+				"Failure when executing 2 GetComplianceDetailCount", err,
+				"Failure at GetComplianceDetailCount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenComplianceGetComplianceDetailCountV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetComplianceDetailCount", err,
+				"Failure at GetComplianceDetailCount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenComplianceGetComplianceDetailCountItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetComplianceDetailCountV1 response",
+				"Failure when setting GetComplianceDetailCount response",
 				err))
 			return diags
 		}
@@ -107,7 +121,7 @@ func dataSourceComplianceDeviceDetailsCountRead(ctx context.Context, d *schema.R
 	return diags
 }
 
-func flattenComplianceGetComplianceDetailCountV1Item(item *catalystcentersdkgo.ResponseComplianceGetComplianceDetailCountV1) []map[string]interface{} {
+func flattenComplianceGetComplianceDetailCountItem(item *catalystcentersdkgo.ResponseComplianceGetComplianceDetailCount) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

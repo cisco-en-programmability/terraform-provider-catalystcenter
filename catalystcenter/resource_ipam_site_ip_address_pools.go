@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -19,8 +19,8 @@ func resourceIPamSiteIPAddressPools() *schema.Resource {
 		Description: `It manages create and read operations on Network Settings.
 
 - Reserves (creates) an IP address subpool, which reserves address space from a global pool (or global pools) for a
-particular site (and it's child sites). A subpool must be either an IPv4 or dual-stack pool, with *ipV4AddressSpace* and
-optionally *ipV6AddressSpace* properties specified.
+particular site (and it's child sites). A subpool must be either an IPv4 or dual-stack pool, with **ipV4AddressSpace**
+and optionally **ipV6AddressSpace** properties specified.
 `,
 
 		CreateContext: resourceIPamSiteIPAddressPoolsCreate,
@@ -225,7 +225,7 @@ optionally *ipV6AddressSpace* properties specified.
 							Computed: true,
 						},
 						"site_id": &schema.Schema{
-							Description: `The *id* of the site that this subpool belongs to. This must be the *id* of a non-Global site.
+							Description: `The **id** of the site that this subpool belongs to. This must be the **id** of a non-Global site.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -451,7 +451,7 @@ optionally *ipV6AddressSpace* properties specified.
 							Computed: true,
 						},
 						"site_id": &schema.Schema{
-							Description: `The *id* of the site that this subpool belongs to. This must be the *id* of a non-Global site.
+							Description: `The **id** of the site that this subpool belongs to. This must be the **id** of a non-Global site.
 `,
 							Type:     schema.TypeString,
 							Optional: true,
@@ -477,14 +477,14 @@ func resourceIPamSiteIPAddressPoolsCreate(ctx context.Context, d *schema.Resourc
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestIPamSiteIPAddressPoolsReservecreateIPAddressSubpoolsV1(ctx, "parameters.0", d)
+	request1 := expandRequestIPamSiteIPAddressPoolsReservecreateIPAddressSubpools(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	vSiteID := resourceItem["site_id"]
 	vvSiteID := vSiteID.(string)
 
-	queryParamImport := catalystcentersdkgo.RetrievesIPAddressSubpoolsV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.RetrievesIPAddressSubpoolsQueryParams{}
 	queryParamImport.SiteID = vvSiteID
-	item2, err := searchNetworkSettingsRetrievesIPAddressSubpoolsV1(m, queryParamImport, vvSiteID)
+	item2, err := searchNetworkSettingsRetrievesIPAddressSubpools(m, queryParamImport, vvSiteID)
 	if err != nil || item2 != nil {
 		resourceMap := make(map[string]string)
 		resourceItem["site_id"] = item2.SiteID
@@ -530,9 +530,9 @@ func resourceIPamSiteIPAddressPoolsCreate(ctx context.Context, d *schema.Resourc
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.RetrievesIPAddressSubpoolsV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.RetrievesIPAddressSubpoolsQueryParams{}
 	queryParamValidate.SiteID = vvSiteID
-	item3, err := searchNetworkSettingsRetrievesIPAddressSubpoolsV1(m, queryParamValidate, vvSiteID)
+	item3, err := searchNetworkSettingsRetrievesIPAddressSubpools(m, queryParamValidate, vvSiteID)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
 			"Failure when executing ReservecreateIPAddressSubpools", err,
@@ -558,7 +558,7 @@ func resourceIPamSiteIPAddressPoolsRead(ctx context.Context, d *schema.ResourceD
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: RetrievesIPAddressSubpools")
-		queryParams1 := catalystcentersdkgo.RetrievesIPAddressSubpoolsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrievesIPAddressSubpoolsQueryParams{}
 
 		response1, restyResp1, err := client.NetworkSettings.RetrievesIPAddressSubpools(&queryParams1)
 
@@ -572,13 +572,13 @@ func resourceIPamSiteIPAddressPoolsRead(ctx context.Context, d *schema.ResourceD
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		item1, err := searchNetworkSettingsRetrievesIPAddressSubpoolsV1(m, queryParams1, vvID)
+		item1, err := searchNetworkSettingsRetrievesIPAddressSubpools(m, queryParams1, vvID)
 		if err != nil || item1 == nil {
 			d.SetId("")
 			return diags
 		}
 		// Review flatten function used
-		vItem1 := flattenNetworkSettingsRetrievesIPAddressSubpoolsByIDItemV1(item1)
+		vItem1 := flattenNetworkSettingsRetrievesIPAddressSubpoolsByIDItem(item1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrievesIPAddressSubpools search response",
@@ -590,18 +590,7 @@ func resourceIPamSiteIPAddressPoolsRead(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func resourceIPamSiteIPAddressPoolsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	return resourceIPamSiteIPAddressPoolsRead(ctx, d, m)
-}
-
-func resourceIPamSiteIPAddressPoolsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	var diags diag.Diagnostics
-	// NOTE: Unable to delete IPamSiteIPAddressPools on Dna Center
-	//       Returning empty diags to delete it on Terraform
-	return diags
-}
-
-func flattenNetworkSettingsRetrievesIPAddressSubpoolsByIDItemV1(item *catalystcentersdkgo.ResponseNetworkSettingsRetrievesIPAddressSubpoolsV1Response) []map[string]interface{} {
+func flattenNetworkSettingsRetrievesIPAddressSubpoolsByIDItem(item *catalystcentersdkgo.ResponseNetworkSettingsRetrievesIPAddressSubpoolsResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -618,7 +607,7 @@ func flattenNetworkSettingsRetrievesIPAddressSubpoolsByIDItemV1(item *catalystce
 	}
 }
 
-func flattenNetworkSettingsRetrievesIPAddressSubpoolsByIDItemIPV4AddressSpace(item *catalystcentersdkgo.ResponseNetworkSettingsRetrievesIPAddressSubpoolsV1ResponseIPV4AddressSpace) []map[string]interface{} {
+func flattenNetworkSettingsRetrievesIPAddressSubpoolsByIDItemIPV4AddressSpace(item *catalystcentersdkgo.ResponseNetworkSettingsRetrievesIPAddressSubpoolsResponseIPV4AddressSpace) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -640,7 +629,7 @@ func flattenNetworkSettingsRetrievesIPAddressSubpoolsByIDItemIPV4AddressSpace(it
 	}
 }
 
-func flattenNetworkSettingsRetrievesIPAddressSubpoolsByIDItemIPV6AddressSpace(item *catalystcentersdkgo.ResponseNetworkSettingsRetrievesIPAddressSubpoolsV1ResponseIPV6AddressSpace) []map[string]interface{} {
+func flattenNetworkSettingsRetrievesIPAddressSubpoolsByIDItemIPV6AddressSpace(item *catalystcentersdkgo.ResponseNetworkSettingsRetrievesIPAddressSubpoolsResponseIPV6AddressSpace) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -661,13 +650,24 @@ func flattenNetworkSettingsRetrievesIPAddressSubpoolsByIDItemIPV6AddressSpace(it
 	}
 }
 
-func expandRequestIPamSiteIPAddressPoolsReservecreateIPAddressSubpoolsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsReservecreateIPAddressSubpoolsV1 {
-	request := catalystcentersdkgo.RequestNetworkSettingsReservecreateIPAddressSubpoolsV1{}
+func resourceIPamSiteIPAddressPoolsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	return resourceIPamSiteIPAddressPoolsRead(ctx, d, m)
+}
+
+func resourceIPamSiteIPAddressPoolsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	var diags diag.Diagnostics
+	// NOTE: Unable to delete IPamSiteIPAddressPools on Catalyst Center
+	//       Returning empty diags to delete it on Terraform
+	return diags
+}
+
+func expandRequestIPamSiteIPAddressPoolsReservecreateIPAddressSubpools(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsReservecreateIPAddressSubpools {
+	request := catalystcentersdkgo.RequestNetworkSettingsReservecreateIPAddressSubpools{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ip_v4_address_space")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ip_v4_address_space")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ip_v4_address_space")))) {
-		request.IPV4AddressSpace = expandRequestIPamSiteIPAddressPoolsReservecreateIPAddressSubpoolsV1IPV4AddressSpace(ctx, key+".ip_v4_address_space.0", d)
+		request.IPV4AddressSpace = expandRequestIPamSiteIPAddressPoolsReservecreateIPAddressSubpoolsIPV4AddressSpace(ctx, key+".ip_v4_address_space.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ip_v6_address_space")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ip_v6_address_space")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ip_v6_address_space")))) {
-		request.IPV6AddressSpace = expandRequestIPamSiteIPAddressPoolsReservecreateIPAddressSubpoolsV1IPV6AddressSpace(ctx, key+".ip_v6_address_space.0", d)
+		request.IPV6AddressSpace = expandRequestIPamSiteIPAddressPoolsReservecreateIPAddressSubpoolsIPV6AddressSpace(ctx, key+".ip_v6_address_space.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
@@ -687,8 +687,8 @@ func expandRequestIPamSiteIPAddressPoolsReservecreateIPAddressSubpoolsV1(ctx con
 	return &request
 }
 
-func expandRequestIPamSiteIPAddressPoolsReservecreateIPAddressSubpoolsV1IPV4AddressSpace(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsReservecreateIPAddressSubpoolsV1IPV4AddressSpace {
-	request := catalystcentersdkgo.RequestNetworkSettingsReservecreateIPAddressSubpoolsV1IPV4AddressSpace{}
+func expandRequestIPamSiteIPAddressPoolsReservecreateIPAddressSubpoolsIPV4AddressSpace(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsReservecreateIPAddressSubpoolsIPV4AddressSpace {
+	request := catalystcentersdkgo.RequestNetworkSettingsReservecreateIPAddressSubpoolsIPV4AddressSpace{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subnet")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subnet")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subnet")))) {
 		request.Subnet = interfaceToString(v)
 	}
@@ -728,8 +728,8 @@ func expandRequestIPamSiteIPAddressPoolsReservecreateIPAddressSubpoolsV1IPV4Addr
 	return &request
 }
 
-func expandRequestIPamSiteIPAddressPoolsReservecreateIPAddressSubpoolsV1IPV6AddressSpace(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsReservecreateIPAddressSubpoolsV1IPV6AddressSpace {
-	request := catalystcentersdkgo.RequestNetworkSettingsReservecreateIPAddressSubpoolsV1IPV6AddressSpace{}
+func expandRequestIPamSiteIPAddressPoolsReservecreateIPAddressSubpoolsIPV6AddressSpace(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsReservecreateIPAddressSubpoolsIPV6AddressSpace {
+	request := catalystcentersdkgo.RequestNetworkSettingsReservecreateIPAddressSubpoolsIPV6AddressSpace{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subnet")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subnet")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subnet")))) {
 		request.Subnet = interfaceToString(v)
 	}
@@ -769,11 +769,11 @@ func expandRequestIPamSiteIPAddressPoolsReservecreateIPAddressSubpoolsV1IPV6Addr
 	return &request
 }
 
-func searchNetworkSettingsRetrievesIPAddressSubpoolsV1(m interface{}, queryParams catalystcentersdkgo.RetrievesIPAddressSubpoolsV1QueryParams, vID string) (*catalystcentersdkgo.ResponseNetworkSettingsRetrievesIPAddressSubpoolsV1Response, error) {
+func searchNetworkSettingsRetrievesIPAddressSubpools(m interface{}, queryParams catalystcentersdkgo.RetrievesIPAddressSubpoolsQueryParams, vID string) (*catalystcentersdkgo.ResponseNetworkSettingsRetrievesIPAddressSubpoolsResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseNetworkSettingsRetrievesIPAddressSubpoolsV1Response
-	var ite *catalystcentersdkgo.ResponseNetworkSettingsRetrievesIPAddressSubpoolsV1
+	var foundItem *catalystcentersdkgo.ResponseNetworkSettingsRetrievesIPAddressSubpoolsResponse
+	var ite *catalystcentersdkgo.ResponseNetworkSettingsRetrievesIPAddressSubpools
 	if vID != "" {
 		queryParams.Offset = 1
 		nResponse, _, err := client.NetworkSettings.RetrievesIPAddressSubpools(nil)

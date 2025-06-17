@@ -24,6 +24,8 @@ AccessPoints: rfProfile.
 Sensors: sensorProfile.
 CatalystWLC/MobilityExpress/EWC: staticIP, subnetMask, gateway. vlanId and ipInterfaceName are also allowed for Catalyst
 9800 WLCs.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -33,25 +35,25 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_pnp_device_site_claim" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
-    config_info {
+    config_info = [{
 
       config_id = "string"
-      config_parameters {
+      config_parameters = [{
 
         key   = "string"
         value = "string"
-      }
-    }
+      }]
+    }]
     device_id = "string"
     gateway   = "string"
     hostname  = "string"
-    image_info {
+    image_info = [{
 
       image_id = "string"
       skip     = "false"
-    }
+    }]
     ip_interface_name = "string"
     rf_profile        = "string"
     sensor_profile    = "string"
@@ -60,7 +62,7 @@ resource "catalystcenter_pnp_device_site_claim" "example" {
     subnet_mask       = "string"
     type              = "string"
     vlan_id           = "string"
-  }
+  }]
 }
 
 output "catalystcenter_pnp_device_site_claim_example" {

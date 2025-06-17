@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -100,11 +100,11 @@ func resourceAnalyticsEndpointsAncPolicyUpdateCreate(ctx context.Context, d *sch
 	vEpID := resourceItem["ep_id"]
 
 	vvEpID := vEpID.(string)
-	request1 := expandRequestAnalyticsEndpointsAncPolicyUpdateApplyAncPolicyV1(ctx, "parameters.0", d)
+	request1 := expandRequestAnalyticsEndpointsAncPolicyUpdateApplyAncPolicy(ctx, "parameters.0", d)
 
 	// has_unknown_response: True
 
-	response1, err := client.AIEndpointAnalytics.ApplyAncPolicyV1(vvEpID, request1)
+	response1, err := client.AiEndpointAnalytics.ApplyAncPolicy(vvEpID, request1)
 
 	if err != nil || response1 == nil {
 		d.SetId("")
@@ -117,7 +117,7 @@ func resourceAnalyticsEndpointsAncPolicyUpdateCreate(ctx context.Context, d *sch
 
 	if err := d.Set("item", response1.String()); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ApplyAncPolicyV1 response",
+			"Failure when setting ApplyAncPolicy response",
 			err))
 		return diags
 	}
@@ -138,19 +138,19 @@ func resourceAnalyticsEndpointsAncPolicyUpdateDelete(ctx context.Context, d *sch
 	return diags
 }
 
-func expandRequestAnalyticsEndpointsAncPolicyUpdateApplyAncPolicyV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAIEndpointAnalyticsApplyAncPolicyV1 {
-	request := catalystcentersdkgo.RequestAIEndpointAnalyticsApplyAncPolicyV1{}
+func expandRequestAnalyticsEndpointsAncPolicyUpdateApplyAncPolicy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAiEndpointAnalyticsApplyAncPolicy {
+	request := catalystcentersdkgo.RequestAiEndpointAnalyticsApplyAncPolicy{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".anc_policy")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".anc_policy")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".anc_policy")))) {
 		request.AncPolicy = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".granular_anc_policy")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".granular_anc_policy")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".granular_anc_policy")))) {
-		request.GranularAncPolicy = expandRequestAnalyticsEndpointsAncPolicyUpdateApplyAncPolicyV1GranularAncPolicyArray(ctx, key+".granular_anc_policy", d)
+		request.GranularAncPolicy = expandRequestAnalyticsEndpointsAncPolicyUpdateApplyAncPolicyGranularAncPolicyArray(ctx, key+".granular_anc_policy", d)
 	}
 	return &request
 }
 
-func expandRequestAnalyticsEndpointsAncPolicyUpdateApplyAncPolicyV1GranularAncPolicyArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestAIEndpointAnalyticsApplyAncPolicyV1GranularAncPolicy {
-	request := []catalystcentersdkgo.RequestAIEndpointAnalyticsApplyAncPolicyV1GranularAncPolicy{}
+func expandRequestAnalyticsEndpointsAncPolicyUpdateApplyAncPolicyGranularAncPolicyArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestAiEndpointAnalyticsApplyAncPolicyGranularAncPolicy {
+	request := []catalystcentersdkgo.RequestAiEndpointAnalyticsApplyAncPolicyGranularAncPolicy{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -161,7 +161,7 @@ func expandRequestAnalyticsEndpointsAncPolicyUpdateApplyAncPolicyV1GranularAncPo
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAnalyticsEndpointsAncPolicyUpdateApplyAncPolicyV1GranularAncPolicy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAnalyticsEndpointsAncPolicyUpdateApplyAncPolicyGranularAncPolicy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -169,8 +169,8 @@ func expandRequestAnalyticsEndpointsAncPolicyUpdateApplyAncPolicyV1GranularAncPo
 	return &request
 }
 
-func expandRequestAnalyticsEndpointsAncPolicyUpdateApplyAncPolicyV1GranularAncPolicy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAIEndpointAnalyticsApplyAncPolicyV1GranularAncPolicy {
-	request := catalystcentersdkgo.RequestAIEndpointAnalyticsApplyAncPolicyV1GranularAncPolicy{}
+func expandRequestAnalyticsEndpointsAncPolicyUpdateApplyAncPolicyGranularAncPolicy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAiEndpointAnalyticsApplyAncPolicyGranularAncPolicy {
+	request := catalystcentersdkgo.RequestAiEndpointAnalyticsApplyAncPolicyGranularAncPolicy{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}

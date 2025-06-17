@@ -49,8 +49,8 @@ output "catalystcenter_device_replacement_example" {
 - `faulty_device_name` (String) faultyDeviceName query parameter. Faulty Device Name
 - `faulty_device_platform` (String) faultyDevicePlatform query parameter. Faulty Device Platform
 - `faulty_device_serial_number` (String) faultyDeviceSerialNumber query parameter. Faulty Device Serial Number
-- `limit` (Number) limit query parameter.
-- `offset` (Number) offset query parameter.
+- `limit` (Number) limit query parameter. The number of records to show for this page.
+- `offset` (Number) offset query parameter. The first record to show for this page; the first record is numbered 1.
 - `replacement_device_platform` (String) replacementDevicePlatform query parameter. Replacement Device Platform
 - `replacement_device_serial_number` (String) replacementDeviceSerialNumber query parameter. Replacement Device Serial Number
 - `replacement_status` (List of String) replacementStatus query parameter. Device Replacement status [READY-FOR-REPLACEMENT, REPLACEMENT-IN-PROGRESS, REPLACEMENT-SCHEDULED, REPLACED, ERROR, NETWORK_READINESS_REQUESTED, NETWORK_READINESS_FAILED]

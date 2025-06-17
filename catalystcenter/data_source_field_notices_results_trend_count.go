@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -53,8 +53,8 @@ func dataSourceFieldNoticesResultsTrendCountRead(ctx context.Context, d *schema.
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetCountOfFieldNoticesResultsTrendOverTimeV1")
-		queryParams1 := catalystcentersdkgo.GetCountOfFieldNoticesResultsTrendOverTimeV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetCountOfFieldNoticesResultsTrendOverTime")
+		queryParams1 := catalystcentersdkgo.GetCountOfFieldNoticesResultsTrendOverTimeQueryParams{}
 
 		if okScanTime {
 			queryParams1.ScanTime = vScanTime.(float64)
@@ -62,24 +62,36 @@ func dataSourceFieldNoticesResultsTrendCountRead(ctx context.Context, d *schema.
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Compliance.GetCountOfFieldNoticesResultsTrendOverTimeV1(&queryParams1)
+		response1, restyResp1, err := client.Compliance.GetCountOfFieldNoticesResultsTrendOverTime(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetCountOfFieldNoticesResultsTrendOverTimeV1", err,
-				"Failure at GetCountOfFieldNoticesResultsTrendOverTimeV1, unexpected response", ""))
+				"Failure when executing 2 GetCountOfFieldNoticesResultsTrendOverTime", err,
+				"Failure at GetCountOfFieldNoticesResultsTrendOverTime, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenComplianceGetCountOfFieldNoticesResultsTrendOverTimeV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetCountOfFieldNoticesResultsTrendOverTime", err,
+				"Failure at GetCountOfFieldNoticesResultsTrendOverTime, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenComplianceGetCountOfFieldNoticesResultsTrendOverTimeItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetCountOfFieldNoticesResultsTrendOverTimeV1 response",
+				"Failure when setting GetCountOfFieldNoticesResultsTrendOverTime response",
 				err))
 			return diags
 		}
@@ -91,7 +103,7 @@ func dataSourceFieldNoticesResultsTrendCountRead(ctx context.Context, d *schema.
 	return diags
 }
 
-func flattenComplianceGetCountOfFieldNoticesResultsTrendOverTimeV1Item(item *catalystcentersdkgo.ResponseComplianceGetCountOfFieldNoticesResultsTrendOverTimeV1Response) []map[string]interface{} {
+func flattenComplianceGetCountOfFieldNoticesResultsTrendOverTimeItem(item *catalystcentersdkgo.ResponseComplianceGetCountOfFieldNoticesResultsTrendOverTimeResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

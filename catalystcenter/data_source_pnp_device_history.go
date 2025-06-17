@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -176,8 +176,8 @@ func dataSourcePnpDeviceHistoryRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceHistoryV1")
-		queryParams1 := catalystcentersdkgo.GetDeviceHistoryV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetDeviceHistory")
+		queryParams1 := catalystcentersdkgo.GetDeviceHistoryQueryParams{}
 
 		queryParams1.SerialNumber = vSerialNumber.(string)
 
@@ -188,24 +188,38 @@ func dataSourcePnpDeviceHistoryRead(ctx context.Context, d *schema.ResourceData,
 			queryParams1.SortOrder = vSortOrder.(string)
 		}
 
-		response1, restyResp1, err := client.DeviceOnboardingPnp.GetDeviceHistoryV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.DeviceOnboardingPnp.GetDeviceHistory(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceHistoryV1", err,
-				"Failure at GetDeviceHistoryV1, unexpected response", ""))
+				"Failure when executing 2 GetDeviceHistory", err,
+				"Failure at GetDeviceHistory, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDeviceOnboardingPnpGetDeviceHistoryV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetDeviceHistory", err,
+				"Failure at GetDeviceHistory, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDeviceOnboardingPnpGetDeviceHistoryItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceHistoryV1 response",
+				"Failure when setting GetDeviceHistory response",
 				err))
 			return diags
 		}
@@ -217,7 +231,7 @@ func dataSourcePnpDeviceHistoryRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenDeviceOnboardingPnpGetDeviceHistoryV1Items(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceHistoryV1Response) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceHistoryItems(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceHistoryResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -226,14 +240,14 @@ func flattenDeviceOnboardingPnpGetDeviceHistoryV1Items(items *[]catalystcentersd
 		respItem := make(map[string]interface{})
 		respItem["timestamp"] = item.Timestamp
 		respItem["details"] = item.Details
-		respItem["history_task_info"] = flattenDeviceOnboardingPnpGetDeviceHistoryV1ItemsHistoryTaskInfo(item.HistoryTaskInfo)
+		respItem["history_task_info"] = flattenDeviceOnboardingPnpGetDeviceHistoryItemsHistoryTaskInfo(item.HistoryTaskInfo)
 		respItem["error_flag"] = boolPtrToString(item.ErrorFlag)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceHistoryV1ItemsHistoryTaskInfo(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceHistoryV1ResponseHistoryTaskInfo) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceHistoryItemsHistoryTaskInfo(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceHistoryResponseHistoryTaskInfo) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -241,8 +255,8 @@ func flattenDeviceOnboardingPnpGetDeviceHistoryV1ItemsHistoryTaskInfo(item *cata
 	respItem["name"] = item.Name
 	respItem["type"] = item.Type
 	respItem["time_taken"] = item.TimeTaken
-	respItem["work_item_list"] = flattenDeviceOnboardingPnpGetDeviceHistoryV1ItemsHistoryTaskInfoWorkItemList(item.WorkItemList)
-	respItem["addn_details"] = flattenDeviceOnboardingPnpGetDeviceHistoryV1ItemsHistoryTaskInfoAddnDetails(item.AddnDetails)
+	respItem["work_item_list"] = flattenDeviceOnboardingPnpGetDeviceHistoryItemsHistoryTaskInfoWorkItemList(item.WorkItemList)
+	respItem["addn_details"] = flattenDeviceOnboardingPnpGetDeviceHistoryItemsHistoryTaskInfoAddnDetails(item.AddnDetails)
 
 	return []map[string]interface{}{
 		respItem,
@@ -250,7 +264,7 @@ func flattenDeviceOnboardingPnpGetDeviceHistoryV1ItemsHistoryTaskInfo(item *cata
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceHistoryV1ItemsHistoryTaskInfoWorkItemList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceHistoryV1ResponseHistoryTaskInfoWorkItemList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceHistoryItemsHistoryTaskInfoWorkItemList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceHistoryResponseHistoryTaskInfoWorkItemList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -268,7 +282,7 @@ func flattenDeviceOnboardingPnpGetDeviceHistoryV1ItemsHistoryTaskInfoWorkItemLis
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceHistoryV1ItemsHistoryTaskInfoAddnDetails(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceHistoryV1ResponseHistoryTaskInfoAddnDetails) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceHistoryItemsHistoryTaskInfoAddnDetails(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceHistoryResponseHistoryTaskInfoAddnDetails) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -6,7 +6,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -444,61 +444,55 @@ func resourceAnalyticsProfilingRules() *schema.Resource {
 
 func resourceAnalyticsProfilingRulesCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := m.(*catalystcentersdkgo.Client)
-
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestAnalyticsProfilingRulesCreateAProfilingRuleV1(ctx, "parameters.0", d)
+	request1 := expandRequestAnalyticsProfilingRulesCreateAProfilingRule(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
-	vRuleID, okRuleID := resourceItem["rule_id"]
+	vRuleID := resourceItem["rule_id"]
 	vvRuleID := interfaceToString(vRuleID)
-	vRuleName := resourceItem["rule_name"]
-	vvRuleName := interfaceToString(vRuleName)
-	if okRuleID && vvRuleID != "" {
-		getResponse2, _, err := client.AIEndpointAnalytics.GetDetailsOfASingleProfilingRuleV1(vvRuleID)
+	if vvRuleID != "" {
+		getResponse2, _, err := client.AiEndpointAnalytics.GetDetailsOfASingleProfilingRule(vvRuleID)
 		if err == nil && getResponse2 != nil {
-
 			resourceMap := make(map[string]string)
-
 			resourceMap["rule_id"] = vvRuleID
 			d.SetId(joinResourceID(resourceMap))
 			return resourceAnalyticsProfilingRulesRead(ctx, d, m)
 		}
 	} else {
-		queryParamImport := catalystcentersdkgo.GetListOfProfilingRulesV1QueryParams{}
-
-		response2, err := searchAIEndpointAnalyticsGetListOfProfilingRulesV1(m, queryParamImport, vvRuleID, vvRuleName)
+		queryParamImport := catalystcentersdkgo.GetListOfProfilingRulesQueryParams{}
+		response2, err := searchAiEndpointAnalyticsGetListOfProfilingRules(m, queryParamImport, vvRuleID)
 		if response2 != nil && err == nil {
 			resourceMap := make(map[string]string)
-			resourceMap["rule_id"] = response2.RuleID
+			resourceMap["rule_id"] = vvRuleID
 			d.SetId(joinResourceID(resourceMap))
 			return resourceAnalyticsProfilingRulesRead(ctx, d, m)
 		}
 	}
-	resp1, restyResp1, err := client.AIEndpointAnalytics.CreateAProfilingRuleV1(request1)
+
+	resp1, restyResp1, err := client.AiEndpointAnalytics.CreateAProfilingRule(request1)
 	if err != nil || resp1 == nil {
 		if restyResp1 != nil {
 			diags = append(diags, diagErrorWithResponse(
-				"Failure when executing CreateAProfilingRuleV1", err, restyResp1.String()))
+				"Failure when executing CreateAProfilingRule", err, restyResp1.String()))
 			return diags
 		}
 		diags = append(diags, diagError(
-			"Failure when executing CreateAProfilingRuleV1", err))
+			"Failure when executing CreateAProfilingRule", err))
 		return diags
 	}
-	// TODO REVIEW
-	queryParamValidate := catalystcentersdkgo.GetListOfProfilingRulesV1QueryParams{}
-	item3, _, err := client.AIEndpointAnalytics.GetListOfProfilingRulesV1(&queryParamValidate)
+
+	queryParamValidate := catalystcentersdkgo.GetListOfProfilingRulesQueryParams{}
+	item3, _, err := client.AiEndpointAnalytics.GetListOfProfilingRules(&queryParamValidate)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing CreateAProfilingRuleV1", err,
-			"Failure at CreateAProfilingRuleV1, unexpected response", ""))
+			"Failure when executing CreateAProfilingRule", err,
+			"Failure at CreateAProfilingRule, unexpected response", ""))
 		return diags
 	}
 
 	resourceMap := make(map[string]string)
-
 	d.SetId(joinResourceID(resourceMap))
 	return resourceAnalyticsProfilingRulesRead(ctx, d, m)
 }
@@ -510,37 +504,29 @@ func resourceAnalyticsProfilingRulesRead(ctx context.Context, d *schema.Resource
 
 	resourceID := d.Id()
 	resourceMap := separateResourceID(resourceID)
+	vRuleID := resourceMap["rule_id"]
+	vvRuleID := interfaceToString(vRuleID)
 
-	vvID := resourceMap["id"]
+	response1, restyResp1, err := client.AiEndpointAnalytics.GetDetailsOfASingleProfilingRule(vvRuleID)
 
-	selectedMethod := 1
-	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDetailsOfASingleProfilingRuleV1")
-
-		// has_unknown_response: None
-
-		response1, restyResp1, err := client.AIEndpointAnalytics.GetDetailsOfASingleProfilingRuleV1(vvID)
-
-		if err != nil || response1 == nil {
-			if restyResp1 != nil {
-				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
-			}
-			d.SetId("")
-			return diags
+	if err != nil || response1 == nil {
+		if restyResp1 != nil {
+			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
-
-		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
-
-		// Review flatten function used
-		vItem1 := flattenAIEndpointAnalyticsGetDetailsOfASingleProfilingRuleV1Item(response1)
-		if err := d.Set("item", vItem1); err != nil {
-			diags = append(diags, diagError(
-				"Failure when setting GetListOfProfilingRulesV1 search response",
-				err))
-			return diags
-		}
-
+		d.SetId("")
+		return diags
 	}
+
+	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+	vItem1 := flattenAiEndpointAnalyticsGetDetailsOfASingleProfilingRuleItem(response1)
+	if err := d.Set("item", vItem1); err != nil {
+		diags = append(diags, diagError(
+			"Failure when setting GetDetailsOfASingleProfilingRule response",
+			err))
+		return diags
+	}
+
 	return diags
 }
 
@@ -548,63 +534,59 @@ func resourceAnalyticsProfilingRulesUpdate(ctx context.Context, d *schema.Resour
 	client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
+
 	resourceID := d.Id()
 	resourceMap := separateResourceID(resourceID)
+	vRuleID := resourceMap["rule_id"]
+	vvRuleID := interfaceToString(vRuleID)
 
-	vvID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		log.Printf("[DEBUG] ID used for update operation %s", vvID)
-		request1 := expandRequestAnalyticsProfilingRulesUpdateAnExistingProfilingRuleV1(ctx, "parameters.0", d)
+		log.Printf("[DEBUG] ID used for update operation %s", vvRuleID)
+		request1 := expandRequestAnalyticsProfilingRulesUpdateAnExistingProfilingRule(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-		restyResp1, err := client.AIEndpointAnalytics.UpdateAnExistingProfilingRuleV1(vvID, request1)
+		restyResp1, err := client.AiEndpointAnalytics.UpdateAnExistingProfilingRule(vvRuleID, request1)
 		if err != nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] resty response for update operation => %v", restyResp1.String())
 				diags = append(diags, diagErrorWithAltAndResponse(
-					"Failure when executing UpdateAnExistingProfilingRuleV1", err, restyResp1.String(),
-					"Failure at UpdateAnExistingProfilingRuleV1, unexpected response", ""))
+					"Failure when executing UpdateAnExistingProfilingRule", err, restyResp1.String(),
+					"Failure at UpdateAnExistingProfilingRule, unexpected response", ""))
 				return diags
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing UpdateAnExistingProfilingRuleV1", err,
-				"Failure at UpdateAnExistingProfilingRuleV1, unexpected response", ""))
+				"Failure when executing UpdateAnExistingProfilingRule", err,
+				"Failure at UpdateAnExistingProfilingRule, unexpected response", ""))
 			return diags
 		}
-
-		//TODO REVIEW
-
 	}
 
 	return resourceAnalyticsProfilingRulesRead(ctx, d, m)
 }
 
 func resourceAnalyticsProfilingRulesDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-
 	client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 
 	resourceID := d.Id()
 	resourceMap := separateResourceID(resourceID)
+	vRuleID := resourceMap["rule_id"]
+	vvRuleID := interfaceToString(vRuleID)
 
-	vvID := resourceMap["id"]
-
-	restyResp1, err := client.AIEndpointAnalytics.DeleteAnExistingProfilingRuleV1(vvID)
+	restyResp1, err := client.AiEndpointAnalytics.DeleteAnExistingProfilingRule(vvRuleID)
 	if err != nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] resty response for delete operation => %v", restyResp1.String())
 			diags = append(diags, diagErrorWithAltAndResponse(
-				"Failure when executing DeleteAnExistingProfilingRuleV1", err, restyResp1.String(),
-				"Failure at DeleteAnExistingProfilingRuleV1, unexpected response", ""))
+				"Failure when executing DeleteAnExistingProfilingRule", err, restyResp1.String(),
+				"Failure at DeleteAnExistingProfilingRule, unexpected response", ""))
 			return diags
 		}
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing DeleteAnExistingProfilingRuleV1", err,
-			"Failure at DeleteAnExistingProfilingRuleV1, unexpected response", ""))
+			"Failure when executing DeleteAnExistingProfilingRule", err,
+			"Failure at DeleteAnExistingProfilingRule, unexpected response", ""))
 		return diags
 	}
-
-	//TODO REVIEW
 
 	// d.SetId("") is automatically called assuming delete returns no errors, but
 	// it is added here for explicitness.
@@ -612,8 +594,8 @@ func resourceAnalyticsProfilingRulesDelete(ctx context.Context, d *schema.Resour
 
 	return diags
 }
-func expandRequestAnalyticsProfilingRulesCreateAProfilingRuleV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAIEndpointAnalyticsCreateAProfilingRuleV1 {
-	request := catalystcentersdkgo.RequestAIEndpointAnalyticsCreateAProfilingRuleV1{}
+func expandRequestAnalyticsProfilingRulesCreateAProfilingRule(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAiEndpointAnalyticsCreateAProfilingRule {
+	request := catalystcentersdkgo.RequestAiEndpointAnalyticsCreateAProfilingRule{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rule_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rule_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rule_id")))) {
 		request.RuleID = interfaceToString(v)
 	}
@@ -651,10 +633,10 @@ func expandRequestAnalyticsProfilingRulesCreateAProfilingRuleV1(ctx context.Cont
 		request.Rejected = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".result")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".result")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".result")))) {
-		request.Result = expandRequestAnalyticsProfilingRulesCreateAProfilingRuleV1Result(ctx, key+".result.0", d)
+		request.Result = expandRequestAnalyticsProfilingRulesCreateAProfilingRuleResult(ctx, key+".result.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".condition_groups")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".condition_groups")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".condition_groups")))) {
-		request.ConditionGroups = expandRequestAnalyticsProfilingRulesCreateAProfilingRuleV1ConditionGroups(ctx, key+".condition_groups.0", d)
+		request.ConditionGroups = expandRequestAnalyticsProfilingRulesCreateAProfilingRuleConditionGroups(ctx, key+".condition_groups.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".used_attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".used_attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".used_attributes")))) {
 		request.UsedAttributes = interfaceToSliceString(v)
@@ -665,8 +647,8 @@ func expandRequestAnalyticsProfilingRulesCreateAProfilingRuleV1(ctx context.Cont
 	return &request
 }
 
-func expandRequestAnalyticsProfilingRulesCreateAProfilingRuleV1Result(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAIEndpointAnalyticsCreateAProfilingRuleV1Result {
-	request := catalystcentersdkgo.RequestAIEndpointAnalyticsCreateAProfilingRuleV1Result{}
+func expandRequestAnalyticsProfilingRulesCreateAProfilingRuleResult(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAiEndpointAnalyticsCreateAProfilingRuleResult {
+	request := catalystcentersdkgo.RequestAiEndpointAnalyticsCreateAProfilingRuleResult{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_type")))) {
 		request.DeviceType = interfaceToSliceString(v)
 	}
@@ -685,13 +667,13 @@ func expandRequestAnalyticsProfilingRulesCreateAProfilingRuleV1Result(ctx contex
 	return &request
 }
 
-func expandRequestAnalyticsProfilingRulesCreateAProfilingRuleV1ConditionGroups(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAIEndpointAnalyticsCreateAProfilingRuleV1ConditionGroups {
-	request := catalystcentersdkgo.RequestAIEndpointAnalyticsCreateAProfilingRuleV1ConditionGroups{}
+func expandRequestAnalyticsProfilingRulesCreateAProfilingRuleConditionGroups(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAiEndpointAnalyticsCreateAProfilingRuleConditionGroups {
+	request := catalystcentersdkgo.RequestAiEndpointAnalyticsCreateAProfilingRuleConditionGroups{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".type")))) {
 		request.Type = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".condition")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".condition")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".condition")))) {
-		request.Condition = expandRequestAnalyticsProfilingRulesCreateAProfilingRuleV1ConditionGroupsCondition(ctx, key+".condition.0", d)
+		request.Condition = expandRequestAnalyticsProfilingRulesCreateAProfilingRuleConditionGroupsCondition(ctx, key+".condition.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".operator")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".operator")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".operator")))) {
 		request.Operator = interfaceToString(v)
@@ -705,8 +687,8 @@ func expandRequestAnalyticsProfilingRulesCreateAProfilingRuleV1ConditionGroups(c
 	return &request
 }
 
-func expandRequestAnalyticsProfilingRulesCreateAProfilingRuleV1ConditionGroupsCondition(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAIEndpointAnalyticsCreateAProfilingRuleV1ConditionGroupsCondition {
-	request := catalystcentersdkgo.RequestAIEndpointAnalyticsCreateAProfilingRuleV1ConditionGroupsCondition{}
+func expandRequestAnalyticsProfilingRulesCreateAProfilingRuleConditionGroupsCondition(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAiEndpointAnalyticsCreateAProfilingRuleConditionGroupsCondition {
+	request := catalystcentersdkgo.RequestAiEndpointAnalyticsCreateAProfilingRuleConditionGroupsCondition{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".attribute")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".attribute")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".attribute")))) {
 		request.Attribute = interfaceToString(v)
 	}
@@ -725,8 +707,8 @@ func expandRequestAnalyticsProfilingRulesCreateAProfilingRuleV1ConditionGroupsCo
 	return &request
 }
 
-func expandRequestAnalyticsProfilingRulesUpdateAnExistingProfilingRuleV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAIEndpointAnalyticsUpdateAnExistingProfilingRuleV1 {
-	request := catalystcentersdkgo.RequestAIEndpointAnalyticsUpdateAnExistingProfilingRuleV1{}
+func expandRequestAnalyticsProfilingRulesUpdateAnExistingProfilingRule(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAiEndpointAnalyticsUpdateAnExistingProfilingRule {
+	request := catalystcentersdkgo.RequestAiEndpointAnalyticsUpdateAnExistingProfilingRule{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rule_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rule_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rule_id")))) {
 		request.RuleID = interfaceToString(v)
 	}
@@ -764,10 +746,10 @@ func expandRequestAnalyticsProfilingRulesUpdateAnExistingProfilingRuleV1(ctx con
 		request.Rejected = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".result")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".result")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".result")))) {
-		request.Result = expandRequestAnalyticsProfilingRulesUpdateAnExistingProfilingRuleV1Result(ctx, key+".result.0", d)
+		request.Result = expandRequestAnalyticsProfilingRulesUpdateAnExistingProfilingRuleResult(ctx, key+".result.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".condition_groups")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".condition_groups")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".condition_groups")))) {
-		request.ConditionGroups = expandRequestAnalyticsProfilingRulesUpdateAnExistingProfilingRuleV1ConditionGroups(ctx, key+".condition_groups.0", d)
+		request.ConditionGroups = expandRequestAnalyticsProfilingRulesUpdateAnExistingProfilingRuleConditionGroups(ctx, key+".condition_groups.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".used_attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".used_attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".used_attributes")))) {
 		request.UsedAttributes = interfaceToSliceString(v)
@@ -778,8 +760,8 @@ func expandRequestAnalyticsProfilingRulesUpdateAnExistingProfilingRuleV1(ctx con
 	return &request
 }
 
-func expandRequestAnalyticsProfilingRulesUpdateAnExistingProfilingRuleV1Result(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAIEndpointAnalyticsUpdateAnExistingProfilingRuleV1Result {
-	request := catalystcentersdkgo.RequestAIEndpointAnalyticsUpdateAnExistingProfilingRuleV1Result{}
+func expandRequestAnalyticsProfilingRulesUpdateAnExistingProfilingRuleResult(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAiEndpointAnalyticsUpdateAnExistingProfilingRuleResult {
+	request := catalystcentersdkgo.RequestAiEndpointAnalyticsUpdateAnExistingProfilingRuleResult{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_type")))) {
 		request.DeviceType = interfaceToSliceString(v)
 	}
@@ -798,13 +780,13 @@ func expandRequestAnalyticsProfilingRulesUpdateAnExistingProfilingRuleV1Result(c
 	return &request
 }
 
-func expandRequestAnalyticsProfilingRulesUpdateAnExistingProfilingRuleV1ConditionGroups(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAIEndpointAnalyticsUpdateAnExistingProfilingRuleV1ConditionGroups {
-	request := catalystcentersdkgo.RequestAIEndpointAnalyticsUpdateAnExistingProfilingRuleV1ConditionGroups{}
+func expandRequestAnalyticsProfilingRulesUpdateAnExistingProfilingRuleConditionGroups(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAiEndpointAnalyticsUpdateAnExistingProfilingRuleConditionGroups {
+	request := catalystcentersdkgo.RequestAiEndpointAnalyticsUpdateAnExistingProfilingRuleConditionGroups{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".type")))) {
 		request.Type = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".condition")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".condition")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".condition")))) {
-		request.Condition = expandRequestAnalyticsProfilingRulesUpdateAnExistingProfilingRuleV1ConditionGroupsCondition(ctx, key+".condition.0", d)
+		request.Condition = expandRequestAnalyticsProfilingRulesUpdateAnExistingProfilingRuleConditionGroupsCondition(ctx, key+".condition.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".operator")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".operator")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".operator")))) {
 		request.Operator = interfaceToString(v)
@@ -818,8 +800,8 @@ func expandRequestAnalyticsProfilingRulesUpdateAnExistingProfilingRuleV1Conditio
 	return &request
 }
 
-func expandRequestAnalyticsProfilingRulesUpdateAnExistingProfilingRuleV1ConditionGroupsCondition(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAIEndpointAnalyticsUpdateAnExistingProfilingRuleV1ConditionGroupsCondition {
-	request := catalystcentersdkgo.RequestAIEndpointAnalyticsUpdateAnExistingProfilingRuleV1ConditionGroupsCondition{}
+func expandRequestAnalyticsProfilingRulesUpdateAnExistingProfilingRuleConditionGroupsCondition(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAiEndpointAnalyticsUpdateAnExistingProfilingRuleConditionGroupsCondition {
+	request := catalystcentersdkgo.RequestAiEndpointAnalyticsUpdateAnExistingProfilingRuleConditionGroupsCondition{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".attribute")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".attribute")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".attribute")))) {
 		request.Attribute = interfaceToString(v)
 	}
@@ -838,29 +820,32 @@ func expandRequestAnalyticsProfilingRulesUpdateAnExistingProfilingRuleV1Conditio
 	return &request
 }
 
-func searchAIEndpointAnalyticsGetListOfProfilingRulesV1(m interface{}, queryParams catalystcentersdkgo.GetListOfProfilingRulesV1QueryParams, vID string, vName string) (*catalystcentersdkgo.ResponseAIEndpointAnalyticsGetListOfProfilingRulesV1ProfilingRules, error) {
+func searchAiEndpointAnalyticsGetListOfProfilingRules(m interface{}, queryParams catalystcentersdkgo.GetListOfProfilingRulesQueryParams, vID string) (*catalystcentersdkgo.ResponseAiEndpointAnalyticsGetListOfProfilingRulesProfilingRules, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseAIEndpointAnalyticsGetListOfProfilingRulesV1ProfilingRules
-	if vName != "" || vID != "" {
-		queryParams.Offset = 1
-		nResponse, _, err := client.AIEndpointAnalytics.GetListOfProfilingRules(&queryParams)
-		maxPageSize := len(*nResponse.ProfilingRules)
-		for len(*nResponse.ProfilingRules) > 0 {
-			for _, item := range *nResponse.ProfilingRules {
-				if vName == item.RuleName || vID == item.RuleID {
-					foundItem = &item
-					return foundItem, err
-				}
-			}
-			queryParams.Limit = float64(maxPageSize)
-			queryParams.Offset += float64(maxPageSize)
-			nResponse, _, err = client.AIEndpointAnalytics.GetListOfProfilingRules(&queryParams)
-			if nResponse == nil || nResponse.ProfilingRules == nil {
-				break
-			}
-		}
-		return nil, err
+	var foundItem *catalystcentersdkgo.ResponseAiEndpointAnalyticsGetListOfProfilingRulesProfilingRules
+	var ite *catalystcentersdkgo.ResponseAiEndpointAnalyticsGetListOfProfilingRules
+
+	ite, _, err = client.AiEndpointAnalytics.GetListOfProfilingRules(&queryParams)
+	if err != nil {
+		return foundItem, err
 	}
+
+	if ite == nil {
+		return foundItem, err
+	}
+
+	items := ite.ProfilingRules
+	if items == nil {
+		return foundItem, err
+	}
+
+	for _, item := range *items {
+		if vID == item.RuleID {
+			foundItem = &item
+			return foundItem, err
+		}
+	}
+
 	return foundItem, err
 }

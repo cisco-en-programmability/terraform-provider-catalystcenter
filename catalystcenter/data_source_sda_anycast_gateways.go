@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -39,7 +39,7 @@ func dataSourceSdaAnycastGateways() *schema.Resource {
 				Optional: true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter. Maximum number of records to return.
+				Description: `limit query parameter. Maximum number of records to return. The maximum number of objects supported in a single request is 500.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -144,8 +144,24 @@ func dataSourceSdaAnycastGateways() *schema.Resource {
 							Computed: true,
 						},
 
+						"is_resource_guard_enabled": &schema.Schema{
+							Description: `Enable/disable Resource Guard (not applicable to INFRA_VN).
+`,
+							// Type:        schema.TypeBool,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
 						"is_supplicant_based_extended_node_onboarding": &schema.Schema{
 							Description: `Enable/disable Supplicant-Based Extended Node Onboarding (applicable only to INFRA_VN).
+`,
+							// Type:        schema.TypeBool,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
+						"is_wireless_flooding_enabled": &schema.Schema{
+							Description: `Enable/disable wireless flooding (not applicable to INFRA_VN).
 `,
 							// Type:        schema.TypeBool,
 							Type:     schema.TypeString,
@@ -156,6 +172,20 @@ func dataSourceSdaAnycastGateways() *schema.Resource {
 							Description: `Enable/disable fabric-enabled wireless (not applicable to INFRA_VN).
 `,
 							// Type:        schema.TypeBool,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
+						"layer2_flooding_address": &schema.Schema{
+							Description: `The flooding address to use for layer 2 flooding (not applicable to INFRA_VN).
+`,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
+						"layer2_flooding_address_assignment": &schema.Schema{
+							Description: `The source of the flooding address for layer 2 flooding (not applicable to INFRA_VN).
+`,
 							Type:     schema.TypeString,
 							Computed: true,
 						},
@@ -230,8 +260,8 @@ func dataSourceSdaAnycastGatewaysRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAnycastGatewaysV1")
-		queryParams1 := catalystcentersdkgo.GetAnycastGatewaysV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetAnycastGateways")
+		queryParams1 := catalystcentersdkgo.GetAnycastGatewaysQueryParams{}
 
 		if okID {
 			queryParams1.ID = vID.(string)
@@ -258,24 +288,38 @@ func dataSourceSdaAnycastGatewaysRead(ctx context.Context, d *schema.ResourceDat
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.Sda.GetAnycastGatewaysV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sda.GetAnycastGateways(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAnycastGatewaysV1", err,
-				"Failure at GetAnycastGatewaysV1, unexpected response", ""))
+				"Failure when executing 2 GetAnycastGateways", err,
+				"Failure at GetAnycastGateways, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaGetAnycastGatewaysV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetAnycastGateways", err,
+				"Failure at GetAnycastGateways, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSdaGetAnycastGatewaysItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAnycastGatewaysV1 response",
+				"Failure when setting GetAnycastGateways response",
 				err))
 			return diags
 		}
@@ -287,7 +331,7 @@ func dataSourceSdaAnycastGatewaysRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenSdaGetAnycastGatewaysV1Items(items *[]catalystcentersdkgo.ResponseSdaGetAnycastGatewaysV1Response) []map[string]interface{} {
+func flattenSdaGetAnycastGatewaysItems(items *[]catalystcentersdkgo.ResponseSdaGetAnycastGatewaysResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -306,7 +350,11 @@ func flattenSdaGetAnycastGatewaysV1Items(items *[]catalystcentersdkgo.ResponseSd
 		respItem["security_group_name"] = item.SecurityGroupName
 		respItem["is_critical_pool"] = boolPtrToString(item.IsCriticalPool)
 		respItem["is_layer2_flooding_enabled"] = boolPtrToString(item.IsLayer2FloodingEnabled)
+		respItem["layer2_flooding_address_assignment"] = item.Layer2FloodingAddressAssignment
+		respItem["layer2_flooding_address"] = item.Layer2FloodingAddress
 		respItem["is_wireless_pool"] = boolPtrToString(item.IsWirelessPool)
+		respItem["is_wireless_flooding_enabled"] = boolPtrToString(item.IsWirelessFloodingEnabled)
+		respItem["is_resource_guard_enabled"] = boolPtrToString(item.IsResourceGuardEnabled)
 		respItem["is_ip_directed_broadcast"] = boolPtrToString(item.IsIPDirectedBroadcast)
 		respItem["is_intra_subnet_routing_enabled"] = boolPtrToString(item.IsIntraSubnetRoutingEnabled)
 		respItem["is_multiple_ip_to_mac_addresses"] = boolPtrToString(item.IsMultipleIPToMacAddresses)

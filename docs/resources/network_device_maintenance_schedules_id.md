@@ -5,36 +5,36 @@ subcategory: ""
 description: |-
   It manages read, update and delete operations on Devices.
   API to update the maintenance schedule for the network devices. The maintenanceSchedule can be updated only if the
-  status value is UPCOMING or IN_PROGRESS. User can exit IN_PROGRESS maintenance window by setting the endTime
-  to -1. This will update the endTime to the current time and exit the maintenance window immediately. When exiting the
-  maintenance window, only the endTime will be updated while other parameters remain read-only.API to delete maintenance schedule by id. Deletion is allowed if the maintenance window is in the UPCOMING,
-  COMPLETED, or FAILED state. Deletion of maintenance schedule is not allowed if the maintenance window is currently
-  IN_PROGRESS. To delete the maintenance schedule while it is IN_PROGRESS, first exit the current maintenance window
-  using PUT /dna/intent/api/v1/networkDeviceMaintenanceSchedules/{id} API, and then proceed to delete the maintenance
-  schedule.
+  status value is UPCOMING or IN_PROGRESS. User can exit IN_PROGRESS maintenance window by setting the
+  endTime to -1. This will update the endTime to the current time and exit the maintenance window immediately. When
+  exiting the maintenance window, only the endTime will be updated while other parameters remain read-only.API to delete maintenance schedule by id. Deletion is allowed if the maintenance window is in the UPCOMING,
+  COMPLETED, or FAILED state. Deletion of maintenance schedule is not allowed if the maintenance window is
+  currently IN_PROGRESS. To delete the maintenance schedule while it is IN_PROGRESS, first exit the current
+  maintenance window using PUT /dna/intent/api/v1/networkDeviceMaintenanceSchedules/{id} API, and then proceed to
+  delete the maintenance schedule.
 ---
 
 # catalystcenter_network_device_maintenance_schedules_id (Resource)
 
 It manages read, update and delete operations on Devices.
 
-- API to update the maintenance schedule for the network devices. The *maintenanceSchedule* can be updated only if the
-*status* value is *UPCOMING* or *IN_PROGRESS*. User can exit *IN_PROGRESS* maintenance window by setting the *endTime*
-to -1. This will update the endTime to the current time and exit the maintenance window immediately. When exiting the
-maintenance window, only the endTime will be updated while other parameters remain read-only.
+- API to update the maintenance schedule for the network devices. The **maintenanceSchedule** can be updated only if the
+**status** value is **UPCOMING** or **IN_PROGRESS**. User can exit **IN_PROGRESS** maintenance window by setting the
+**endTime** to -1. This will update the endTime to the current time and exit the maintenance window immediately. When
+exiting the maintenance window, only the endTime will be updated while other parameters remain read-only.
 
-- API to delete maintenance schedule by id. Deletion is allowed if the maintenance window is in the *UPCOMING*,
-*COMPLETED*, or *FAILED* state. Deletion of maintenance schedule is not allowed if the maintenance window is currently
-*IN_PROGRESS*. To delete the maintenance schedule while it is *IN_PROGRESS*, first exit the current maintenance window
-using *PUT /dna/intent/api/v1/networkDeviceMaintenanceSchedules/{id}* API, and then proceed to delete the maintenance
-schedule.
+- API to delete maintenance schedule by id. Deletion is allowed if the maintenance window is in the **UPCOMING**,
+**COMPLETED**, or **FAILED** state. Deletion of maintenance schedule is not allowed if the maintenance window is
+currently **IN_PROGRESS**. To delete the maintenance schedule while it is **IN_PROGRESS**, first exit the current
+maintenance window using **PUT /dna/intent/api/v1/networkDeviceMaintenanceSchedules/{id}** API, and then proceed to
+delete the maintenance schedule.
 
 ## Example Usage
 
 ```terraform
 resource "catalystcenter_network_device_maintenance_schedules_id" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     description = "string"

@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -19,8 +19,8 @@ func resourceIPamGlobalIPAddressPoolsID() *schema.Resource {
 		Description: `It manages read, update and delete operations on Network Settings.
 
 - Updates a global IP address pool.
-Restrictions on updating a global IP address pool: The *poolType* cannot be changed. The *subnet* and *prefixLength*
-within *addressSpace* cannot be changed.
+Restrictions on updating a global IP address pool: The **poolType** cannot be changed. The **subnet** and
+**prefixLength** within **addressSpace** cannot be changed.
 
 - Deletes a global IP address pool.  A global IP address pool can only be deleted if there are no subpools reserving
 address space from it.
@@ -194,7 +194,7 @@ address space from it.
 							},
 						},
 						"id": &schema.Schema{
-							Description: `id path parameter. The *id* of the global IP address pool to update.
+							Description: `id path parameter. The **id** of the global IP address pool to update.
 `,
 							Type:     schema.TypeString,
 							Required: true,
@@ -259,7 +259,7 @@ func resourceIPamGlobalIPAddressPoolsIDRead(ctx context.Context, d *schema.Resou
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenNetworkSettingsRetrievesAGlobalIPAddressPoolV1Item(response1.Response)
+		vItem1 := flattenNetworkSettingsRetrievesAGlobalIPAddressPoolItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrievesAGlobalIPAddressPool response",
@@ -284,7 +284,7 @@ func resourceIPamGlobalIPAddressPoolsIDUpdate(ctx context.Context, d *schema.Res
 
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvID)
-		request1 := expandRequestIPamGlobalIPAddressPoolsIDUpdatesAGlobalIPAddressPoolV1(ctx, "parameters.0", d)
+		request1 := expandRequestIPamGlobalIPAddressPoolsIDUpdatesAGlobalIPAddressPool(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.NetworkSettings.UpdatesAGlobalIPAddressPool(vvID, request1)
 		if err != nil || response1 == nil {
@@ -394,10 +394,11 @@ func resourceIPamGlobalIPAddressPoolsIDDelete(ctx context.Context, d *schema.Res
 
 	return diags
 }
-func expandRequestIPamGlobalIPAddressPoolsIDUpdatesAGlobalIPAddressPoolV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdatesAGlobalIPAddressPoolV1 {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdatesAGlobalIPAddressPoolV1{}
+
+func expandRequestIPamGlobalIPAddressPoolsIDUpdatesAGlobalIPAddressPool(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdatesAGlobalIPAddressPool {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdatesAGlobalIPAddressPool{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".address_space")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".address_space")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".address_space")))) {
-		request.AddressSpace = expandRequestIPamGlobalIPAddressPoolsIDUpdatesAGlobalIPAddressPoolV1AddressSpace(ctx, key+".address_space.0", d)
+		request.AddressSpace = expandRequestIPamGlobalIPAddressPoolsIDUpdatesAGlobalIPAddressPoolAddressSpace(ctx, key+".address_space.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
@@ -411,8 +412,8 @@ func expandRequestIPamGlobalIPAddressPoolsIDUpdatesAGlobalIPAddressPoolV1(ctx co
 	return &request
 }
 
-func expandRequestIPamGlobalIPAddressPoolsIDUpdatesAGlobalIPAddressPoolV1AddressSpace(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdatesAGlobalIPAddressPoolV1AddressSpace {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdatesAGlobalIPAddressPoolV1AddressSpace{}
+func expandRequestIPamGlobalIPAddressPoolsIDUpdatesAGlobalIPAddressPoolAddressSpace(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdatesAGlobalIPAddressPoolAddressSpace {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdatesAGlobalIPAddressPoolAddressSpace{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subnet")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subnet")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subnet")))) {
 		request.Subnet = interfaceToString(v)
 	}

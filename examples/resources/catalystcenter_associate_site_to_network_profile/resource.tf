@@ -1,11 +1,11 @@
 
 resource "catalystcenter_associate_site_to_network_profile" "example" {
-  provider           = meraki
+  provider           = catalystcenter
   network_profile_id = "string"
   site_id            = "string"
-  parameters {
+  parameters = [{
 
-  }
+  }]
 }
 
 output "catalystcenter_associate_site_to_network_profile_example" {

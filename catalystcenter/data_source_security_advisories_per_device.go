@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -120,27 +120,41 @@ func dataSourceSecurityAdvisoriesPerDeviceRead(ctx context.Context, d *schema.Re
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAdvisoriesPerDeviceV1")
+		log.Printf("[DEBUG] Selected method: GetAdvisoriesPerDevice")
 		vvDeviceID := vDeviceID.(string)
 
-		response1, restyResp1, err := client.SecurityAdvisories.GetAdvisoriesPerDeviceV1(vvDeviceID)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.SecurityAdvisories.GetAdvisoriesPerDevice(vvDeviceID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAdvisoriesPerDeviceV1", err,
-				"Failure at GetAdvisoriesPerDeviceV1, unexpected response", ""))
+				"Failure when executing 2 GetAdvisoriesPerDevice", err,
+				"Failure at GetAdvisoriesPerDevice, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSecurityAdvisoriesGetAdvisoriesPerDeviceV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetAdvisoriesPerDevice", err,
+				"Failure at GetAdvisoriesPerDevice, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSecurityAdvisoriesGetAdvisoriesPerDeviceItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAdvisoriesPerDeviceV1 response",
+				"Failure when setting GetAdvisoriesPerDevice response",
 				err))
 			return diags
 		}
@@ -152,7 +166,7 @@ func dataSourceSecurityAdvisoriesPerDeviceRead(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func flattenSecurityAdvisoriesGetAdvisoriesPerDeviceV1Item(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoriesPerDeviceV1Response) []map[string]interface{} {
+func flattenSecurityAdvisoriesGetAdvisoriesPerDeviceItem(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoriesPerDeviceResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -166,13 +180,13 @@ func flattenSecurityAdvisoriesGetAdvisoriesPerDeviceV1Item(item *catalystcenters
 	respItem["detection_type"] = item.DetectionType
 	respItem["default_detection_type"] = item.DefaultDetectionType
 	respItem["default_config_match_pattern"] = item.DefaultConfigMatchPattern
-	respItem["fixed_versions"] = flattenSecurityAdvisoriesGetAdvisoriesPerDeviceV1ItemFixedVersions(item.FixedVersions)
+	respItem["fixed_versions"] = flattenSecurityAdvisoriesGetAdvisoriesPerDeviceItemFixedVersions(item.FixedVersions)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenSecurityAdvisoriesGetAdvisoriesPerDeviceV1ItemFixedVersions(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoriesPerDeviceV1ResponseFixedVersions) interface{} {
+func flattenSecurityAdvisoriesGetAdvisoriesPerDeviceItemFixedVersions(item *catalystcentersdkgo.ResponseSecurityAdvisoriesGetAdvisoriesPerDeviceResponseFixedVersions) interface{} {
 	if item == nil {
 		return nil
 	}

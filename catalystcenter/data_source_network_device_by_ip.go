@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -405,29 +405,41 @@ func dataSourceNetworkDeviceByIPRead(ctx context.Context, d *schema.ResourceData
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetNetworkDeviceByIPV1")
+		log.Printf("[DEBUG] Selected method: GetNetworkDeviceByIP")
 		vvIPAddress := vIPAddress.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Devices.GetNetworkDeviceByIPV1(vvIPAddress)
+		response1, restyResp1, err := client.Devices.GetNetworkDeviceByIP(vvIPAddress)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetNetworkDeviceByIPV1", err,
-				"Failure at GetNetworkDeviceByIPV1, unexpected response", ""))
+				"Failure when executing 2 GetNetworkDeviceByIP", err,
+				"Failure at GetNetworkDeviceByIP, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesGetNetworkDeviceByIPV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetNetworkDeviceByIP", err,
+				"Failure at GetNetworkDeviceByIP, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenDevicesGetNetworkDeviceByIPItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetNetworkDeviceByIPV1 response",
+				"Failure when setting GetNetworkDeviceByIP response",
 				err))
 			return diags
 		}
@@ -437,4 +449,65 @@ func dataSourceNetworkDeviceByIPRead(ctx context.Context, d *schema.ResourceData
 
 	}
 	return diags
+}
+
+func flattenDevicesGetNetworkDeviceByIPItem(item *catalystcentersdkgo.ResponseDevicesGetNetworkDeviceByIPResponse) []map[string]interface{} {
+	if item == nil {
+		return nil
+	}
+	respItem := make(map[string]interface{})
+	respItem["ap_manager_interface_ip"] = item.ApManagerInterfaceIP
+	respItem["associated_wlc_ip"] = item.AssociatedWlcIP
+	respItem["boot_date_time"] = item.BootDateTime
+	respItem["collection_interval"] = item.CollectionInterval
+	respItem["collection_status"] = item.CollectionStatus
+	respItem["error_code"] = item.ErrorCode
+	respItem["error_description"] = item.ErrorDescription
+	respItem["family"] = item.Family
+	respItem["hostname"] = item.Hostname
+	respItem["id"] = item.ID
+	respItem["instance_tenant_id"] = item.InstanceTenantID
+	respItem["instance_uuid"] = item.InstanceUUID
+	respItem["interface_count"] = item.InterfaceCount
+	respItem["inventory_status_detail"] = item.InventoryStatusDetail
+	respItem["last_update_time"] = item.LastUpdateTime
+	respItem["last_updated"] = item.LastUpdated
+	respItem["line_card_count"] = item.LineCardCount
+	respItem["line_card_id"] = item.LineCardID
+	respItem["location"] = item.Location
+	respItem["location_name"] = item.LocationName
+	respItem["mac_address"] = item.MacAddress
+	respItem["management_ip_address"] = item.ManagementIPAddress
+	respItem["memory_size"] = item.MemorySize
+	respItem["platform_id"] = item.PlatformID
+	respItem["reachability_failure_reason"] = item.ReachabilityFailureReason
+	respItem["reachability_status"] = item.ReachabilityStatus
+	respItem["role"] = item.Role
+	respItem["role_source"] = item.RoleSource
+	respItem["serial_number"] = item.SerialNumber
+	respItem["series"] = item.Series
+	respItem["snmp_contact"] = item.SNMPContact
+	respItem["snmp_location"] = item.SNMPLocation
+	respItem["software_type"] = item.SoftwareType
+	respItem["software_version"] = item.SoftwareVersion
+	respItem["tag_count"] = item.TagCount
+	respItem["tunnel_udp_port"] = item.TunnelUDPPort
+	respItem["type"] = item.Type
+	respItem["up_time"] = item.UpTime
+	respItem["waas_device_mode"] = item.WaasDeviceMode
+	respItem["dns_resolved_management_address"] = item.DNSResolvedManagementAddress
+	respItem["ap_ethernet_mac_address"] = item.ApEthernetMacAddress
+	respItem["vendor"] = item.Vendor
+	respItem["reasons_for_pending_sync_requests"] = item.ReasonsForPendingSyncRequests
+	respItem["pending_sync_requests_count"] = item.PendingSyncRequestsCount
+	respItem["reasons_for_device_resync"] = item.ReasonsForDeviceResync
+	respItem["last_device_resync_start_time"] = item.LastDeviceResyncStartTime
+	respItem["uptime_seconds"] = item.UptimeSeconds
+	respItem["managed_atleast_once"] = boolPtrToString(item.ManagedAtleastOnce)
+	respItem["device_support_level"] = item.DeviceSupportLevel
+	respItem["management_state"] = item.ManagementState
+	respItem["description"] = item.Description
+	return []map[string]interface{}{
+		respItem,
+	}
 }

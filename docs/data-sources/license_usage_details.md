@@ -4,14 +4,14 @@ page_title: "catalystcenter_license_usage_details Data Source - terraform-provid
 subcategory: ""
 description: |-
   It performs read operation on Licenses.
-  Get count of purchased and in use Cisco Catalyst and Network licenses.
+  Get count of purchased and in use Cisco DNA and Network licenses.
 ---
 
 # catalystcenter_license_usage_details (Data Source)
 
 It performs read operation on Licenses.
 
-- Get count of purchased and in use Cisco Catalyst and Network licenses.
+- Get count of purchased and in use Cisco DNA and Network licenses.
 
 ## Example Usage
 
@@ -48,10 +48,8 @@ output "catalystcenter_license_usage_details_example" {
 Read-Only:
 
 - `purchased_dna_license` (List of Object) (see [below for nested schema](#nestedobjatt--item--purchased_dna_license))
-- `purchased_ise_license` (List of Object) (see [below for nested schema](#nestedobjatt--item--purchased_ise_license))
 - `purchased_network_license` (List of Object) (see [below for nested schema](#nestedobjatt--item--purchased_network_license))
 - `used_dna_license` (List of Object) (see [below for nested schema](#nestedobjatt--item--used_dna_license))
-- `used_ise_license` (List of Object) (see [below for nested schema](#nestedobjatt--item--used_ise_license))
 - `used_network_license` (List of Object) (see [below for nested schema](#nestedobjatt--item--used_network_license))
 
 <a id="nestedobjatt--item--purchased_dna_license"></a>
@@ -64,24 +62,6 @@ Read-Only:
 
 <a id="nestedobjatt--item--purchased_dna_license--license_count_by_type"></a>
 ### Nested Schema for `item.purchased_dna_license.license_count_by_type`
-
-Read-Only:
-
-- `license_count` (Number)
-- `license_type` (String)
-
-
-
-<a id="nestedobjatt--item--purchased_ise_license"></a>
-### Nested Schema for `item.purchased_ise_license`
-
-Read-Only:
-
-- `license_count_by_type` (List of Object) (see [below for nested schema](#nestedobjatt--item--purchased_ise_license--license_count_by_type))
-- `total_license_count` (Number)
-
-<a id="nestedobjatt--item--purchased_ise_license--license_count_by_type"></a>
-### Nested Schema for `item.purchased_ise_license.license_count_by_type`
 
 Read-Only:
 
@@ -118,24 +98,6 @@ Read-Only:
 
 <a id="nestedobjatt--item--used_dna_license--license_count_by_type"></a>
 ### Nested Schema for `item.used_dna_license.license_count_by_type`
-
-Read-Only:
-
-- `license_count` (Number)
-- `license_type` (String)
-
-
-
-<a id="nestedobjatt--item--used_ise_license"></a>
-### Nested Schema for `item.used_ise_license`
-
-Read-Only:
-
-- `license_count_by_type` (List of Object) (see [below for nested schema](#nestedobjatt--item--used_ise_license--license_count_by_type))
-- `total_license_count` (Number)
-
-<a id="nestedobjatt--item--used_ise_license--license_count_by_type"></a>
-### Nested Schema for `item.used_ise_license.license_count_by_type`
 
 Read-Only:
 

@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -11,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -117,18 +118,18 @@ func resourceSecurityRogueWirelessContainmentStopCreate(ctx context.Context, d *
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestSecurityRogueWirelessContainmentStopStopWirelessRogueApContainmentV1(ctx, "parameters.0", d)
+	request1 := expandRequestSecurityRogueWirelessContainmentStopStopWirelessRogueApContainment(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Devices.StopWirelessRogueApContainmentV1(request1)
+	response1, restyResp1, err := client.Devices.StopWirelessRogueApContainment(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing StopWirelessRogueApContainmentV1", err))
+			"Failure when executing StopWirelessRogueApContainment", err))
 		return diags
 	}
 
@@ -136,7 +137,7 @@ func resourceSecurityRogueWirelessContainmentStopCreate(ctx context.Context, d *
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing StopWirelessRogueAPContainmentV1", err))
+			"Failure when executing StopWirelessRogueAPContainment", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -163,14 +164,14 @@ func resourceSecurityRogueWirelessContainmentStopCreate(ctx context.Context, d *
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing StopWirelessRogueAPContainmentV1", err1))
+				"Failure when executing StopWirelessRogueAPContainment", err1))
 			return diags
 		}
 	}
@@ -178,10 +179,10 @@ func resourceSecurityRogueWirelessContainmentStopCreate(ctx context.Context, d *
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenDevicesStopWirelessRogueApContainmentV1Item(response1.Response)
+	vItem1 := flattenDevicesStopWirelessRogueApContainmentItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting StopWirelessRogueApContainmentV1 response",
+			"Failure when setting StopWirelessRogueApContainment response",
 			err))
 		return diags
 	}
@@ -202,8 +203,8 @@ func resourceSecurityRogueWirelessContainmentStopDelete(ctx context.Context, d *
 	return diags
 }
 
-func expandRequestSecurityRogueWirelessContainmentStopStopWirelessRogueApContainmentV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesStopWirelessRogueApContainmentV1 {
-	request := catalystcentersdkgo.RequestDevicesStopWirelessRogueApContainmentV1{}
+func expandRequestSecurityRogueWirelessContainmentStopStopWirelessRogueApContainment(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesStopWirelessRogueApContainment {
+	request := catalystcentersdkgo.RequestDevicesStopWirelessRogueApContainment{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".mac_address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".mac_address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".mac_address")))) {
 		request.MacAddress = interfaceToString(v)
 	}
@@ -216,7 +217,7 @@ func expandRequestSecurityRogueWirelessContainmentStopStopWirelessRogueApContain
 	return &request
 }
 
-func flattenDevicesStopWirelessRogueApContainmentV1Item(item *catalystcentersdkgo.ResponseDevicesStopWirelessRogueApContainmentV1Response) []map[string]interface{} {
+func flattenDevicesStopWirelessRogueApContainmentItem(item *catalystcentersdkgo.ResponseDevicesStopWirelessRogueApContainmentResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

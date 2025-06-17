@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,8 +15,8 @@ func dataSourceSitesTimeZoneSettings() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Network Settings.
 
-- Retrieve time zone settings for a site; *null* values indicate that the setting will be inherited from the parent
-site; empty objects (*{}*) indicate that the setting is unset at a site.
+- Retrieve time zone settings for a site; **null** values indicate that the setting will be inherited from the parent
+site; empty objects (**{}**) indicate that the setting is unset at a site.
 `,
 
 		ReadContext: dataSourceSitesTimeZoneSettingsRead,
@@ -28,7 +28,7 @@ site; empty objects (*{}*) indicate that the setting is unset at a site.
 				Required: true,
 			},
 			"inherited": &schema.Schema{
-				Description: `_inherited query parameter. Include settings explicitly set for this site and settings inherited from sites higher in the site hierarchy; when *false*, *null* values indicate that the site inherits that setting from the parent site or a site higher in the site hierarchy.
+				Description: `_inherited query parameter. Include settings explicitly set for this site and settings inherited from sites higher in the site hierarchy; when **false**, **null** values indicate that the site inherits that setting from the parent site or a site higher in the site hierarchy.
 `,
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -85,32 +85,46 @@ func dataSourceSitesTimeZoneSettingsRead(ctx context.Context, d *schema.Resource
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveTimeZoneSettingsForASiteV1")
+		log.Printf("[DEBUG] Selected method: RetrieveTimeZoneSettingsForASite")
 		vvID := vID.(string)
-		queryParams1 := catalystcentersdkgo.RetrieveTimeZoneSettingsForASiteV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrieveTimeZoneSettingsForASiteQueryParams{}
 
 		if okInherited {
 			queryParams1.Inherited = vInherited.(bool)
 		}
 
-		response1, restyResp1, err := client.NetworkSettings.RetrieveTimeZoneSettingsForASiteV1(vvID, &queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.NetworkSettings.RetrieveTimeZoneSettingsForASite(vvID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveTimeZoneSettingsForASiteV1", err,
-				"Failure at RetrieveTimeZoneSettingsForASiteV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveTimeZoneSettingsForASite", err,
+				"Failure at RetrieveTimeZoneSettingsForASite, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenNetworkSettingsRetrieveTimeZoneSettingsForASiteV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveTimeZoneSettingsForASite", err,
+				"Failure at RetrieveTimeZoneSettingsForASite, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenNetworkSettingsRetrieveTimeZoneSettingsForASiteItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveTimeZoneSettingsForASiteV1 response",
+				"Failure when setting RetrieveTimeZoneSettingsForASite response",
 				err))
 			return diags
 		}
@@ -122,18 +136,18 @@ func dataSourceSitesTimeZoneSettingsRead(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func flattenNetworkSettingsRetrieveTimeZoneSettingsForASiteV1Item(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveTimeZoneSettingsForASiteV1Response) []map[string]interface{} {
+func flattenNetworkSettingsRetrieveTimeZoneSettingsForASiteItem(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveTimeZoneSettingsForASiteResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["time_zone"] = flattenNetworkSettingsRetrieveTimeZoneSettingsForASiteV1ItemTimeZone(item.TimeZone)
+	respItem["time_zone"] = flattenNetworkSettingsRetrieveTimeZoneSettingsForASiteItemTimeZone(item.TimeZone)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenNetworkSettingsRetrieveTimeZoneSettingsForASiteV1ItemTimeZone(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveTimeZoneSettingsForASiteV1ResponseTimeZone) []map[string]interface{} {
+func flattenNetworkSettingsRetrieveTimeZoneSettingsForASiteItemTimeZone(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveTimeZoneSettingsForASiteResponseTimeZone) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

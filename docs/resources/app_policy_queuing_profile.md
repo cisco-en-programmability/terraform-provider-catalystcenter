@@ -22,7 +22,7 @@ It manages create, read, update and delete operations on Application Policy.
 ```terraform
 resource "catalystcenter_app_policy_queuing_profile" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     clause {
@@ -64,7 +64,7 @@ output "catalystcenter_app_policy_queuing_profile_example" {
 
 ### Optional
 
-- `parameters` (Block List) Array of RequestApplicationPolicyCreateApplicationPolicyQueuingProfileV1 (see [below for nested schema](#nestedblock--parameters))
+- `parameters` (Block List) Array of RequestApplicationPolicyCreateApplicationPolicyQueuingProfile (see [below for nested schema](#nestedblock--parameters))
 
 ### Read-Only
 

@@ -9,7 +9,10 @@ description: |-
   in the IP address range 192.25.18.n, issue the following request: GET /dna/intent/api/v1/network-
   device?hostname=myhost.&managementIpAddress=192.25.18..
   If id parameter is provided with comma separated ids, it will return the list of network-devices for the given ids and
-  ignores the other request parameters. You can also specify offset & limit to get the required list.
+  ignores the other request parameters. The API returns a paginated response based on 'limit' and 'offset' parameters,
+  allowing up to 500 records per page. 'limit' specifies the number of records, and 'offset' sets the starting point using
+  1-based indexing. Use '/dna/intent/api/v1/network-device/count' to get the total record count. For data sets over 500
+  records, make multiple calls, adjusting 'limit' and 'offset' to retrieve all records incrementally.
 ---
 
 # catalystcenter_network_device_list (Data Source)
@@ -21,7 +24,10 @@ You can use the .* in any value to conduct a wildcard search. For example, to fi
 in the IP address range 192.25.18.n, issue the following request: GET /dna/intent/api/v1/network-
 device?hostname=myhost.*&managementIpAddress=192.25.18..*
 If id parameter is provided with comma separated ids, it will return the list of network-devices for the given ids and
-ignores the other request parameters. You can also specify offset & limit to get the required list.
+ignores the other request parameters. The API returns a paginated response based on 'limit' and 'offset' parameters,
+allowing up to 500 records per page. 'limit' specifies the number of records, and 'offset' sets the starting point using
+1-based indexing. Use '/dna/intent/api/v1/network-device/count' to get the total record count. For data sets over 500
+records, make multiple calls, adjusting 'limit' and 'offset' to retrieve all records incrementally.
 
 ## Example Usage
 
@@ -86,7 +92,7 @@ output "catalystcenter_network_device_list_example" {
 - `license_name` (List of String) license.name query parameter.
 - `license_status` (List of String) license.status query parameter.
 - `license_type` (List of String) license.type query parameter.
-- `limit` (Number) limit query parameter. 1 <= limit <= 500 [max. no. of devices to be returned in the result]
+- `limit` (Number) limit query parameter. The number of records to show for this page. Min: 1, Max: 500
 - `location` (List of String) location query parameter.
 - `location_name` (List of String) locationName query parameter.
 - `mac_address` (List of String) macAddress query parameter.

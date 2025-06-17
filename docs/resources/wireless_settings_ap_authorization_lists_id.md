@@ -20,7 +20,7 @@ It manages read, update and delete operations on Wireless.
 ```terraform
 resource "catalystcenter_wireless_settings_ap_authorization_lists_id" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     ap_authorization_list_name = "string"

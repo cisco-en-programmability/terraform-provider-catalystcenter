@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -1510,7 +1510,7 @@ func resourceSensorCreate(ctx context.Context, d *schema.ResourceData, m interfa
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestSensorCreateSensorTestTemplateV1(ctx, "parameters.0", d)
+	request1 := expandRequestSensorCreateSensorTestTemplate(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	vName := resourceItem["name"]
 	vvName := interfaceToString(vName)
@@ -1566,11 +1566,11 @@ func resourceSensorRead(ctx context.Context, d *schema.ResourceData, m interface
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		//TODO FOR DNAC
-		items := []catalystcentersdkgo.ResponseSensorsSensorsV1Response{
+		//TODO FOR CATALYST
+		items := []catalystcentersdkgo.ResponseSensorsSensorsResponse{
 			*response1,
 		}
-		vItem1 := flattenSensorsSensorsV1Items(&items)
+		vItem1 := flattenSensorsSensorsItems(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting Sensors search response",
@@ -1613,7 +1613,7 @@ func resourceSensorDelete(ctx context.Context, d *schema.ResourceData, m interfa
 	//var vvName string
 	// REVIEW: Add getAllItems and search function to get missing params
 
-	queryParams := catalystcentersdkgo.DeleteSensorTestV1QueryParams{
+	queryParams := catalystcentersdkgo.DeleteSensorTestQueryParams{
 		TemplateName: vName,
 	}
 	response1, restyResp1, err := client.Sensors.DeleteSensorTest(&queryParams)
@@ -1639,8 +1639,8 @@ func resourceSensorDelete(ctx context.Context, d *schema.ResourceData, m interfa
 
 	return diags
 }
-func expandRequestSensorCreateSensorTestTemplateV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1 {
-	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1{}
+func expandRequestSensorCreateSensorTestTemplate(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplate {
+	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplate{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -1654,10 +1654,10 @@ func expandRequestSensorCreateSensorTestTemplateV1(ctx context.Context, key stri
 		request.Connection = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ssids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ssids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ssids")))) {
-		request.SSIDs = expandRequestSensorCreateSensorTestTemplateV1SSIDsArray(ctx, key+".ssids", d)
+		request.SSIDs = expandRequestSensorCreateSensorTestTemplateSSIDsArray(ctx, key+".ssids", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".profiles")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".profiles")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".profiles")))) {
-		request.Profiles = expandRequestSensorCreateSensorTestTemplateV1ProfilesArray(ctx, key+".profiles", d)
+		request.Profiles = expandRequestSensorCreateSensorTestTemplateProfilesArray(ctx, key+".profiles", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".encryption_mode")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".encryption_mode")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".encryption_mode")))) {
 		request.EncryptionMode = interfaceToString(v)
@@ -1666,13 +1666,13 @@ func expandRequestSensorCreateSensorTestTemplateV1(ctx context.Context, key stri
 		request.RunNow = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".location_info_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".location_info_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".location_info_list")))) {
-		request.LocationInfoList = expandRequestSensorCreateSensorTestTemplateV1LocationInfoListArray(ctx, key+".location_info_list", d)
+		request.LocationInfoList = expandRequestSensorCreateSensorTestTemplateLocationInfoListArray(ctx, key+".location_info_list", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".sensors")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".sensors")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".sensors")))) {
-		request.Sensors = expandRequestSensorCreateSensorTestTemplateV1SensorsArray(ctx, key+".sensors", d)
+		request.Sensors = expandRequestSensorCreateSensorTestTemplateSensorsArray(ctx, key+".sensors", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ap_coverage")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ap_coverage")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ap_coverage")))) {
-		request.ApCoverage = expandRequestSensorCreateSensorTestTemplateV1ApCoverageArray(ctx, key+".ap_coverage", d)
+		request.ApCoverage = expandRequestSensorCreateSensorTestTemplateApCoverageArray(ctx, key+".ap_coverage", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -1680,8 +1680,8 @@ func expandRequestSensorCreateSensorTestTemplateV1(ctx context.Context, key stri
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1SSIDsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1SSIDs {
-	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1SSIDs{}
+func expandRequestSensorCreateSensorTestTemplateSSIDsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSSIDs {
+	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSSIDs{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1692,7 +1692,7 @@ func expandRequestSensorCreateSensorTestTemplateV1SSIDsArray(ctx context.Context
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorCreateSensorTestTemplateV1SSIDs(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorCreateSensorTestTemplateSSIDs(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1703,8 +1703,8 @@ func expandRequestSensorCreateSensorTestTemplateV1SSIDsArray(ctx context.Context
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1SSIDs(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1SSIDs {
-	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1SSIDs{}
+func expandRequestSensorCreateSensorTestTemplateSSIDs(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSSIDs {
+	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSSIDs{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".bands")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".bands")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".bands")))) {
 		request.Bands = interfaceToString(v)
 	}
@@ -1727,7 +1727,7 @@ func expandRequestSensorCreateSensorTestTemplateV1SSIDs(ctx context.Context, key
 		request.Layer3WebAuthEmailAddress = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".third_party")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".third_party")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".third_party")))) {
-		request.ThirdParty = expandRequestSensorCreateSensorTestTemplateV1SSIDsThirdParty(ctx, key+".third_party.0", d)
+		request.ThirdParty = expandRequestSensorCreateSensorTestTemplateSSIDsThirdParty(ctx, key+".third_party.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".wlan_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".wlan_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".wlan_id")))) {
 		request.WLANID = interfaceToIntPtr(v)
@@ -1802,13 +1802,13 @@ func expandRequestSensorCreateSensorTestTemplateV1SSIDs(ctx context.Context, key
 		request.ExtWebAuthAccessURL = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ext_web_auth_html_tag")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ext_web_auth_html_tag")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ext_web_auth_html_tag")))) {
-		request.ExtWebAuthHTMLTag = expandRequestSensorCreateSensorTestTemplateV1SSIDsExtWebAuthHTMLTagArray(ctx, key+".ext_web_auth_html_tag", d)
+		request.ExtWebAuthHTMLTag = expandRequestSensorCreateSensorTestTemplateSSIDsExtWebAuthHTMLTagArray(ctx, key+".ext_web_auth_html_tag", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".qos_policy")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".qos_policy")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".qos_policy")))) {
 		request.QosPolicy = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tests")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tests")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tests")))) {
-		request.Tests = expandRequestSensorCreateSensorTestTemplateV1SSIDsTestsArray(ctx, key+".tests", d)
+		request.Tests = expandRequestSensorCreateSensorTestTemplateSSIDsTestsArray(ctx, key+".tests", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -1816,8 +1816,8 @@ func expandRequestSensorCreateSensorTestTemplateV1SSIDs(ctx context.Context, key
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1SSIDsThirdParty(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1SSIDsThirdParty {
-	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1SSIDsThirdParty{}
+func expandRequestSensorCreateSensorTestTemplateSSIDsThirdParty(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSSIDsThirdParty {
+	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSSIDsThirdParty{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".selected")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".selected")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".selected")))) {
 		request.Selected = interfaceToBoolPtr(v)
 	}
@@ -1827,8 +1827,8 @@ func expandRequestSensorCreateSensorTestTemplateV1SSIDsThirdParty(ctx context.Co
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1SSIDsExtWebAuthHTMLTagArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1SSIDsExtWebAuthHTMLTag {
-	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1SSIDsExtWebAuthHTMLTag{}
+func expandRequestSensorCreateSensorTestTemplateSSIDsExtWebAuthHTMLTagArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSSIDsExtWebAuthHTMLTag {
+	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSSIDsExtWebAuthHTMLTag{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1839,7 +1839,7 @@ func expandRequestSensorCreateSensorTestTemplateV1SSIDsExtWebAuthHTMLTagArray(ct
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorCreateSensorTestTemplateV1SSIDsExtWebAuthHTMLTag(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorCreateSensorTestTemplateSSIDsExtWebAuthHTMLTag(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1850,8 +1850,8 @@ func expandRequestSensorCreateSensorTestTemplateV1SSIDsExtWebAuthHTMLTagArray(ct
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1SSIDsExtWebAuthHTMLTag(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1SSIDsExtWebAuthHTMLTag {
-	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1SSIDsExtWebAuthHTMLTag{}
+func expandRequestSensorCreateSensorTestTemplateSSIDsExtWebAuthHTMLTag(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSSIDsExtWebAuthHTMLTag {
+	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSSIDsExtWebAuthHTMLTag{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".label")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".label")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".label")))) {
 		request.Label = interfaceToString(v)
 	}
@@ -1867,8 +1867,8 @@ func expandRequestSensorCreateSensorTestTemplateV1SSIDsExtWebAuthHTMLTag(ctx con
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1SSIDsTestsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1SSIDsTests {
-	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1SSIDsTests{}
+func expandRequestSensorCreateSensorTestTemplateSSIDsTestsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSSIDsTests {
+	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSSIDsTests{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1879,7 +1879,7 @@ func expandRequestSensorCreateSensorTestTemplateV1SSIDsTestsArray(ctx context.Co
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorCreateSensorTestTemplateV1SSIDsTests(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorCreateSensorTestTemplateSSIDsTests(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1890,13 +1890,13 @@ func expandRequestSensorCreateSensorTestTemplateV1SSIDsTestsArray(ctx context.Co
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1SSIDsTests(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1SSIDsTests {
-	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1SSIDsTests{}
+func expandRequestSensorCreateSensorTestTemplateSSIDsTests(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSSIDsTests {
+	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSSIDsTests{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".config")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".config")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".config")))) {
-		request.Config = expandRequestSensorCreateSensorTestTemplateV1SSIDsTestsConfigArray(ctx, key+".config", d)
+		request.Config = expandRequestSensorCreateSensorTestTemplateSSIDsTestsConfigArray(ctx, key+".config", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -1904,8 +1904,8 @@ func expandRequestSensorCreateSensorTestTemplateV1SSIDsTests(ctx context.Context
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1SSIDsTestsConfigArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1SSIDsTestsConfig {
-	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1SSIDsTestsConfig{}
+func expandRequestSensorCreateSensorTestTemplateSSIDsTestsConfigArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSSIDsTestsConfig {
+	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSSIDsTestsConfig{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1916,7 +1916,7 @@ func expandRequestSensorCreateSensorTestTemplateV1SSIDsTestsConfigArray(ctx cont
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorCreateSensorTestTemplateV1SSIDsTestsConfig(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorCreateSensorTestTemplateSSIDsTestsConfig(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1927,8 +1927,8 @@ func expandRequestSensorCreateSensorTestTemplateV1SSIDsTestsConfigArray(ctx cont
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1SSIDsTestsConfig(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1SSIDsTestsConfig {
-	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1SSIDsTestsConfig{}
+func expandRequestSensorCreateSensorTestTemplateSSIDsTestsConfig(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSSIDsTestsConfig {
+	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSSIDsTestsConfig{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".domains")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".domains")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".domains")))) {
 		request.Domains = interfaceToSliceString(v)
 	}
@@ -2025,8 +2025,8 @@ func expandRequestSensorCreateSensorTestTemplateV1SSIDsTestsConfig(ctx context.C
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1ProfilesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1Profiles {
-	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1Profiles{}
+func expandRequestSensorCreateSensorTestTemplateProfilesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateProfiles {
+	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateProfiles{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -2037,7 +2037,7 @@ func expandRequestSensorCreateSensorTestTemplateV1ProfilesArray(ctx context.Cont
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorCreateSensorTestTemplateV1Profiles(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorCreateSensorTestTemplateProfiles(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -2048,8 +2048,8 @@ func expandRequestSensorCreateSensorTestTemplateV1ProfilesArray(ctx context.Cont
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1Profiles(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1Profiles {
-	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1Profiles{}
+func expandRequestSensorCreateSensorTestTemplateProfiles(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateProfiles {
+	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateProfiles{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".auth_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".auth_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".auth_type")))) {
 		request.AuthType = interfaceToString(v)
 	}
@@ -2105,13 +2105,13 @@ func expandRequestSensorCreateSensorTestTemplateV1Profiles(ctx context.Context, 
 		request.ExtWebAuthAccessURL = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ext_web_auth_html_tag")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ext_web_auth_html_tag")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ext_web_auth_html_tag")))) {
-		request.ExtWebAuthHTMLTag = expandRequestSensorCreateSensorTestTemplateV1ProfilesExtWebAuthHTMLTagArray(ctx, key+".ext_web_auth_html_tag", d)
+		request.ExtWebAuthHTMLTag = expandRequestSensorCreateSensorTestTemplateProfilesExtWebAuthHTMLTagArray(ctx, key+".ext_web_auth_html_tag", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".qos_policy")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".qos_policy")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".qos_policy")))) {
 		request.QosPolicy = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tests")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tests")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tests")))) {
-		request.Tests = expandRequestSensorCreateSensorTestTemplateV1ProfilesTestsArray(ctx, key+".tests", d)
+		request.Tests = expandRequestSensorCreateSensorTestTemplateProfilesTestsArray(ctx, key+".tests", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".profile_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".profile_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".profile_name")))) {
 		request.ProfileName = interfaceToString(v)
@@ -2123,7 +2123,7 @@ func expandRequestSensorCreateSensorTestTemplateV1Profiles(ctx context.Context, 
 		request.VLAN = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".location_vlan_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".location_vlan_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".location_vlan_list")))) {
-		request.LocationVLANList = expandRequestSensorCreateSensorTestTemplateV1ProfilesLocationVLANListArray(ctx, key+".location_vlan_list", d)
+		request.LocationVLANList = expandRequestSensorCreateSensorTestTemplateProfilesLocationVLANListArray(ctx, key+".location_vlan_list", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -2131,8 +2131,8 @@ func expandRequestSensorCreateSensorTestTemplateV1Profiles(ctx context.Context, 
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1ProfilesExtWebAuthHTMLTagArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1ProfilesExtWebAuthHTMLTag {
-	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1ProfilesExtWebAuthHTMLTag{}
+func expandRequestSensorCreateSensorTestTemplateProfilesExtWebAuthHTMLTagArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateProfilesExtWebAuthHTMLTag {
+	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateProfilesExtWebAuthHTMLTag{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -2143,7 +2143,7 @@ func expandRequestSensorCreateSensorTestTemplateV1ProfilesExtWebAuthHTMLTagArray
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorCreateSensorTestTemplateV1ProfilesExtWebAuthHTMLTag(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorCreateSensorTestTemplateProfilesExtWebAuthHTMLTag(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -2154,8 +2154,8 @@ func expandRequestSensorCreateSensorTestTemplateV1ProfilesExtWebAuthHTMLTagArray
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1ProfilesExtWebAuthHTMLTag(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1ProfilesExtWebAuthHTMLTag {
-	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1ProfilesExtWebAuthHTMLTag{}
+func expandRequestSensorCreateSensorTestTemplateProfilesExtWebAuthHTMLTag(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateProfilesExtWebAuthHTMLTag {
+	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateProfilesExtWebAuthHTMLTag{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".label")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".label")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".label")))) {
 		request.Label = interfaceToString(v)
 	}
@@ -2171,8 +2171,8 @@ func expandRequestSensorCreateSensorTestTemplateV1ProfilesExtWebAuthHTMLTag(ctx 
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1ProfilesTestsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1ProfilesTests {
-	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1ProfilesTests{}
+func expandRequestSensorCreateSensorTestTemplateProfilesTestsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateProfilesTests {
+	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateProfilesTests{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -2183,7 +2183,7 @@ func expandRequestSensorCreateSensorTestTemplateV1ProfilesTestsArray(ctx context
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorCreateSensorTestTemplateV1ProfilesTests(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorCreateSensorTestTemplateProfilesTests(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -2194,13 +2194,13 @@ func expandRequestSensorCreateSensorTestTemplateV1ProfilesTestsArray(ctx context
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1ProfilesTests(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1ProfilesTests {
-	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1ProfilesTests{}
+func expandRequestSensorCreateSensorTestTemplateProfilesTests(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateProfilesTests {
+	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateProfilesTests{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".config")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".config")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".config")))) {
-		request.Config = expandRequestSensorCreateSensorTestTemplateV1ProfilesTestsConfigArray(ctx, key+".config", d)
+		request.Config = expandRequestSensorCreateSensorTestTemplateProfilesTestsConfigArray(ctx, key+".config", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -2208,8 +2208,8 @@ func expandRequestSensorCreateSensorTestTemplateV1ProfilesTests(ctx context.Cont
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1ProfilesTestsConfigArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1ProfilesTestsConfig {
-	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1ProfilesTestsConfig{}
+func expandRequestSensorCreateSensorTestTemplateProfilesTestsConfigArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateProfilesTestsConfig {
+	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateProfilesTestsConfig{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -2220,7 +2220,7 @@ func expandRequestSensorCreateSensorTestTemplateV1ProfilesTestsConfigArray(ctx c
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorCreateSensorTestTemplateV1ProfilesTestsConfig(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorCreateSensorTestTemplateProfilesTestsConfig(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -2231,8 +2231,8 @@ func expandRequestSensorCreateSensorTestTemplateV1ProfilesTestsConfigArray(ctx c
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1ProfilesTestsConfig(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1ProfilesTestsConfig {
-	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1ProfilesTestsConfig{}
+func expandRequestSensorCreateSensorTestTemplateProfilesTestsConfig(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateProfilesTestsConfig {
+	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateProfilesTestsConfig{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".domains")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".domains")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".domains")))) {
 		request.Domains = interfaceToSliceString(v)
 	}
@@ -2329,8 +2329,8 @@ func expandRequestSensorCreateSensorTestTemplateV1ProfilesTestsConfig(ctx contex
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1ProfilesLocationVLANListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1ProfilesLocationVLANList {
-	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1ProfilesLocationVLANList{}
+func expandRequestSensorCreateSensorTestTemplateProfilesLocationVLANListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateProfilesLocationVLANList {
+	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateProfilesLocationVLANList{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -2341,7 +2341,7 @@ func expandRequestSensorCreateSensorTestTemplateV1ProfilesLocationVLANListArray(
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorCreateSensorTestTemplateV1ProfilesLocationVLANList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorCreateSensorTestTemplateProfilesLocationVLANList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -2352,8 +2352,8 @@ func expandRequestSensorCreateSensorTestTemplateV1ProfilesLocationVLANListArray(
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1ProfilesLocationVLANList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1ProfilesLocationVLANList {
-	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1ProfilesLocationVLANList{}
+func expandRequestSensorCreateSensorTestTemplateProfilesLocationVLANList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateProfilesLocationVLANList {
+	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateProfilesLocationVLANList{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".location_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".location_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".location_id")))) {
 		request.LocationID = interfaceToString(v)
 	}
@@ -2366,8 +2366,8 @@ func expandRequestSensorCreateSensorTestTemplateV1ProfilesLocationVLANList(ctx c
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1LocationInfoListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1LocationInfoList {
-	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1LocationInfoList{}
+func expandRequestSensorCreateSensorTestTemplateLocationInfoListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateLocationInfoList {
+	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateLocationInfoList{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -2378,7 +2378,7 @@ func expandRequestSensorCreateSensorTestTemplateV1LocationInfoListArray(ctx cont
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorCreateSensorTestTemplateV1LocationInfoList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorCreateSensorTestTemplateLocationInfoList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -2389,8 +2389,8 @@ func expandRequestSensorCreateSensorTestTemplateV1LocationInfoListArray(ctx cont
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1LocationInfoList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1LocationInfoList {
-	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1LocationInfoList{}
+func expandRequestSensorCreateSensorTestTemplateLocationInfoList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateLocationInfoList {
+	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateLocationInfoList{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".location_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".location_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".location_id")))) {
 		request.LocationID = interfaceToString(v)
 	}
@@ -2418,8 +2418,8 @@ func expandRequestSensorCreateSensorTestTemplateV1LocationInfoList(ctx context.C
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1SensorsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1Sensors {
-	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1Sensors{}
+func expandRequestSensorCreateSensorTestTemplateSensorsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSensors {
+	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSensors{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -2430,7 +2430,7 @@ func expandRequestSensorCreateSensorTestTemplateV1SensorsArray(ctx context.Conte
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorCreateSensorTestTemplateV1Sensors(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorCreateSensorTestTemplateSensors(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -2441,8 +2441,8 @@ func expandRequestSensorCreateSensorTestTemplateV1SensorsArray(ctx context.Conte
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1Sensors(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1Sensors {
-	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1Sensors{}
+func expandRequestSensorCreateSensorTestTemplateSensors(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSensors {
+	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSensors{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -2501,7 +2501,7 @@ func expandRequestSensorCreateSensorTestTemplateV1Sensors(ctx context.Context, k
 		request.SensorType = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".test_mac_addresses")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".test_mac_addresses")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".test_mac_addresses")))) {
-		request.TestMacAddresses = expandRequestSensorCreateSensorTestTemplateV1SensorsTestMacAddresses(ctx, key+".test_mac_addresses.0", d)
+		request.TestMacAddresses = expandRequestSensorCreateSensorTestTemplateSensorsTestMacAddresses(ctx, key+".test_mac_addresses.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
@@ -2510,7 +2510,7 @@ func expandRequestSensorCreateSensorTestTemplateV1Sensors(ctx context.Context, k
 		request.ServicePolicy = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".i_perf_info")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".i_perf_info")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".i_perf_info")))) {
-		request.IPerfInfo = expandRequestSensorCreateSensorTestTemplateV1SensorsIPerfInfo(ctx, key+".i_perf_info.0", d)
+		request.IPerfInfo = expandRequestSensorCreateSensorTestTemplateSensorsIPerfInfo(ctx, key+".i_perf_info.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -2518,8 +2518,8 @@ func expandRequestSensorCreateSensorTestTemplateV1Sensors(ctx context.Context, k
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1SensorsTestMacAddresses(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1SensorsTestMacAddresses {
-	var request catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1SensorsTestMacAddresses
+func expandRequestSensorCreateSensorTestTemplateSensorsTestMacAddresses(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSensorsTestMacAddresses {
+	var request catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSensorsTestMacAddresses
 	request = d.Get(fixKeyAccess(key))
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -2527,8 +2527,8 @@ func expandRequestSensorCreateSensorTestTemplateV1SensorsTestMacAddresses(ctx co
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1SensorsIPerfInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1SensorsIPerfInfo {
-	var request catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1SensorsIPerfInfo
+func expandRequestSensorCreateSensorTestTemplateSensorsIPerfInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSensorsIPerfInfo {
+	var request catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateSensorsIPerfInfo
 	request = d.Get(fixKeyAccess(key))
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -2536,8 +2536,8 @@ func expandRequestSensorCreateSensorTestTemplateV1SensorsIPerfInfo(ctx context.C
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1ApCoverageArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1ApCoverage {
-	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1ApCoverage{}
+func expandRequestSensorCreateSensorTestTemplateApCoverageArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateApCoverage {
+	request := []catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateApCoverage{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -2548,7 +2548,7 @@ func expandRequestSensorCreateSensorTestTemplateV1ApCoverageArray(ctx context.Co
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSensorCreateSensorTestTemplateV1ApCoverage(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSensorCreateSensorTestTemplateApCoverage(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -2559,8 +2559,8 @@ func expandRequestSensorCreateSensorTestTemplateV1ApCoverageArray(ctx context.Co
 	return &request
 }
 
-func expandRequestSensorCreateSensorTestTemplateV1ApCoverage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1ApCoverage {
-	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateV1ApCoverage{}
+func expandRequestSensorCreateSensorTestTemplateApCoverage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateApCoverage {
+	request := catalystcentersdkgo.RequestSensorsCreateSensorTestTemplateApCoverage{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".bands")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".bands")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".bands")))) {
 		request.Bands = interfaceToString(v)
 	}
@@ -2576,11 +2576,11 @@ func expandRequestSensorCreateSensorTestTemplateV1ApCoverage(ctx context.Context
 	return &request
 }
 
-func searchSensorsSensors(m interface{}, vName string) (*catalystcentersdkgo.ResponseSensorsSensorsV1Response, error) {
+func searchSensorsSensors(m interface{}, vName string) (*catalystcentersdkgo.ResponseSensorsSensorsResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseSensorsSensorsV1Response
-	var ite *catalystcentersdkgo.ResponseSensorsSensorsV1
+	var foundItem *catalystcentersdkgo.ResponseSensorsSensorsResponse
+	var ite *catalystcentersdkgo.ResponseSensorsSensors
 	ite, _, err = client.Sensors.Sensors(nil)
 	if err != nil {
 		return foundItem, err
@@ -2593,7 +2593,7 @@ func searchSensorsSensors(m interface{}, vName string) (*catalystcentersdkgo.Res
 	for _, item := range itemsCopy {
 		// Call get by _ method and set value to foundItem and return
 		if item.Name == vName {
-			var getItem *catalystcentersdkgo.ResponseSensorsSensorsV1Response
+			var getItem *catalystcentersdkgo.ResponseSensorsSensorsResponse
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

@@ -24,7 +24,7 @@ should be provided.
 ```terraform
 resource "catalystcenter_wireless_profile" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     profile_details {
@@ -105,7 +105,7 @@ Optional:
 Optional:
 
 - `enable_flex_connect` (String) true if flex connect is enabled else false
-- `local_to_vlan` (Number) Local To Vlan Id
+- `local_to_vlan` (Number) Local to VLAN ID. Required if enableFlexConnect is true.
 
 
 
@@ -136,10 +136,12 @@ Read-Only:
 - `flex_connect` (List of Object) (see [below for nested schema](#nestedobjatt--item--profile_details--ssid_details--flex_connect))
 - `interface_name` (String)
 - `name` (String)
+- `policy_profile_name` (String)
 - `type` (String)
+- `wlan_profile_name` (String)
 
 <a id="nestedobjatt--item--profile_details--ssid_details--flex_connect"></a>
-### Nested Schema for `item.profile_details.ssid_details.type`
+### Nested Schema for `item.profile_details.ssid_details.wlan_profile_name`
 
 Read-Only:
 

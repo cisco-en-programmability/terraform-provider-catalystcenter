@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -18,6 +18,7 @@ func dataSourceCustomIssueDefinitions() *schema.Resource {
 - Retrieve the existing syslog-based custom issue definitions. The supported filters are id, name, profileId,
 definition enable status, priority, severity, facility and mnemonic. The issue definition configurations may vary across
 profiles, hence specifying the profile Id in the query parameter is important and the default profile is global.
+
 
   The assurance profile definitions can be obtain via the API endpoint: /api/v1/siteprofile?namespace=assurance. For
 detailed information about the usage of the API, please refer to the Open API specification document
@@ -396,8 +397,8 @@ func dataSourceCustomIssueDefinitionsRead(ctx context.Context, d *schema.Resourc
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1")
-		queryParams1 := catalystcentersdkgo.GetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetAllTheCustomIssueDefinitionsBasedOnTheGivenFilters")
+		queryParams1 := catalystcentersdkgo.GetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersQueryParams{}
 
 		if okID {
 			queryParams1.ID = vID.(string)
@@ -438,24 +439,36 @@ func dataSourceCustomIssueDefinitionsRead(ctx context.Context, d *schema.Resourc
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Issues.GetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1(&queryParams1)
+		response1, restyResp1, err := client.Issues.GetAllTheCustomIssueDefinitionsBasedOnTheGivenFilters(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1", err,
-				"Failure at GetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1, unexpected response", ""))
+				"Failure when executing 2 GetAllTheCustomIssueDefinitionsBasedOnTheGivenFilters", err,
+				"Failure at GetAllTheCustomIssueDefinitionsBasedOnTheGivenFilters, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetAllTheCustomIssueDefinitionsBasedOnTheGivenFilters", err,
+				"Failure at GetAllTheCustomIssueDefinitionsBasedOnTheGivenFilters, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1 response",
+				"Failure when setting GetAllTheCustomIssueDefinitionsBasedOnTheGivenFilters response",
 				err))
 			return diags
 		}
@@ -465,10 +478,10 @@ func dataSourceCustomIssueDefinitionsRead(ctx context.Context, d *schema.Resourc
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1")
+		log.Printf("[DEBUG] Selected method: GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionID")
 		vvID := vID.(string)
 
-		headerParams2 := catalystcentersdkgo.GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1HeaderParams{}
+		headerParams2 := catalystcentersdkgo.GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDHeaderParams{}
 
 		if okXCaLLERID {
 			headerParams2.XCaLLERID = vXCaLLERID.(string)
@@ -476,24 +489,36 @@ func dataSourceCustomIssueDefinitionsRead(ctx context.Context, d *schema.Resourc
 
 		// has_unknown_response: None
 
-		response2, restyResp2, err := client.Issues.GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1(vvID, &headerParams2)
+		response2, restyResp2, err := client.Issues.GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionID(vvID, &headerParams2)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1", err,
-				"Failure at GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1, unexpected response", ""))
+				"Failure when executing 2 GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionID", err,
+				"Failure at GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1Item(response2.Response)
+		if err != nil || response2 == nil {
+			if restyResp2 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionID", err,
+				"Failure at GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
+
+		vItem2 := flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDItem(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1 response",
+				"Failure when setting GetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionID response",
 				err))
 			return diags
 		}
@@ -505,7 +530,7 @@ func dataSourceCustomIssueDefinitionsRead(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func flattenIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1Items(items *[]catalystcentersdkgo.ResponseIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1Response) []map[string]interface{} {
+func flattenIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersItems(items *[]catalystcentersdkgo.ResponseIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -517,7 +542,7 @@ func flattenIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1Items(i
 		respItem["description"] = item.Description
 		respItem["profile_id"] = item.ProfileID
 		respItem["trigger_id"] = item.TriggerID
-		respItem["rules"] = flattenIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1ItemsRules(item.Rules)
+		respItem["rules"] = flattenIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersItemsRules(item.Rules)
 		respItem["is_enabled"] = boolPtrToString(item.IsEnabled)
 		respItem["priority"] = item.Priority
 		respItem["is_deletable"] = boolPtrToString(item.IsDeletable)
@@ -529,7 +554,7 @@ func flattenIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1Items(i
 	return respItems
 }
 
-func flattenIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1ItemsRules(items *[]catalystcentersdkgo.ResponseIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1ResponseRules) []map[string]interface{} {
+func flattenIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersItemsRules(items *[]catalystcentersdkgo.ResponseIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersResponseRules) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -548,7 +573,7 @@ func flattenIssuesGetAllTheCustomIssueDefinitionsBasedOnTheGivenFiltersV1ItemsRu
 	return respItems
 }
 
-func flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1Item(item *catalystcentersdkgo.ResponseIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1Response) []map[string]interface{} {
+func flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDItem(item *catalystcentersdkgo.ResponseIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -558,7 +583,7 @@ func flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV
 	respItem["description"] = item.Description
 	respItem["profile_id"] = item.ProfileID
 	respItem["trigger_id"] = item.TriggerID
-	respItem["rules"] = flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1ItemRules(item.Rules)
+	respItem["rules"] = flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDItemRules(item.Rules)
 	respItem["is_enabled"] = boolPtrToString(item.IsEnabled)
 	respItem["priority"] = item.Priority
 	respItem["is_deletable"] = boolPtrToString(item.IsDeletable)
@@ -570,7 +595,7 @@ func flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV
 	}
 }
 
-func flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1ItemRules(items *[]catalystcentersdkgo.ResponseIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDV1ResponseRules) []map[string]interface{} {
+func flattenIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDItemRules(items *[]catalystcentersdkgo.ResponseIssuesGetTheCustomIssueDefinitionForTheGivenCustomIssueDefinitionIDResponseRules) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

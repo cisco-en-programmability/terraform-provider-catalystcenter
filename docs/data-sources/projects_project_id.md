@@ -31,7 +31,7 @@ output "catalystcenter_projects_project_id_example" {
 
 ### Required
 
-- `project_id` (String) projectId path parameter. The id of the project to get, retrieveable from GET /dna/intent/api/v1/projects
+- `project_id` (String) projectId path parameter. The id of the project to get, retrieveable from **GET /dna/intent/api/v1/projects**
 
 ### Read-Only
 

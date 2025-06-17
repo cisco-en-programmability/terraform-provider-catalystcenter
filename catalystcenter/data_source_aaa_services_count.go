@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -25,44 +25,45 @@ specs/blob/main/Assurance/CE_Cat_Center_Org-AAAServices-1.0.0-resolved.yaml
 			"device_id": &schema.Schema{
 				Description: `deviceId query parameter. The device UUID.
 
+
  Examples:
- deviceId=6bef213c-19ca-4170-8375-b694e251101c (single deviceId is requested)
- deviceId=6bef213c-19ca-4170-8375-b694e251101c&deviceId=32219612-819e-4b5e-a96b-cf22aca13dd9 (multiple networkDeviceIds with & separator)
+ **deviceId=6bef213c-19ca-4170-8375-b694e251101c** (single deviceId is requested)
+ **deviceId=6bef213c-19ca-4170-8375-b694e251101c&deviceId=32219612-819e-4b5e-a96b-cf22aca13dd9 (multiple networkDeviceIds with & separator)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"device_name": &schema.Schema{
-				Description: `deviceName query parameter. Name of the device. This parameter supports wildcard (*) character -based search. Example: wnbu-sjc* or *wnbu-sjc* or *wnbu-sjc Examples: deviceName=wnbu-sjc24.cisco.com (single device name is requested) deviceName=wnbu-sjc24.cisco.com&deviceName=wnbu-sjc22.cisco.com (multiple device names are requested)
+				Description: `deviceName query parameter. Name of the device. This parameter supports wildcard (*****) character -based search. Example: **wnbu-sjc*** or ***wnbu-sjc*** or ***wnbu-sjc** Examples: deviceName=wnbu-sjc24.cisco.com (single device name is requested) deviceName=wnbu-sjc24.cisco.com&deviceName=wnbu-sjc22.cisco.com (multiple device names are requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"device_site_hierarchy": &schema.Schema{
-				Description: `deviceSiteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. Global/AreaName/BuildingName/FloorName)
-This field supports wildcard asterisk (*) character search support. E.g. */San*, */San, /San*
+				Description: `deviceSiteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. **Global/AreaName/BuildingName/FloorName**)
+This field supports wildcard asterisk (*****) character search support. E.g. ***/San*, */San, /San***
 Examples:
-?siteHierarchy=Global/AreaName/BuildingName/FloorName (single siteHierarchy requested)
-?deviceSiteHierarchy=Global/AreaName/BuildingName/FloorName&deviceSiteHierarchy=Global/AreaName2/BuildingName2/FloorName2 (multiple siteHierarchies requested)
+**?siteHierarchy=Global/AreaName/BuildingName/FloorName** (single siteHierarchy requested)
+**?deviceSiteHierarchy=Global/AreaName/BuildingName/FloorName&deviceSiteHierarchy=Global/AreaName2/BuildingName2/FloorName2** (multiple siteHierarchies requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"device_site_hierarchy_id": &schema.Schema{
-				Description: `deviceSiteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. globalUuid/areaUuid/buildingUuid/floorUuid)
-This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*
+				Description: `deviceSiteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. **globalUuid/areaUuid/buildingUuid/floorUuid**)
+This field supports wildcard asterisk (*****) character search support. E.g. ***uuid*, *uuid, uuid***
 Examples:
-?deviceSiteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid (single siteHierarchyId requested)
-?deviceSiteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&deviceSiteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2 (multiple siteHierarchyIds requested)
+**?deviceSiteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid **(single siteHierarchyId requested)
+**?deviceSiteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&deviceSiteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2** (multiple siteHierarchyIds requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"device_site_id": &schema.Schema{
-				Description: `deviceSiteId query parameter. The UUID of the site. (Ex. flooruuid)
+				Description: `deviceSiteId query parameter. The UUID of the site. (Ex. **flooruuid**)
 Examples:
-?deviceSiteIds=id1 (single id requested)
-?deviceSiteIds=id1&deviceSiteIds=id2&siteId=id3 (multiple ids requested)
+**?deviceSiteIds=id1** (single id requested)
+**?deviceSiteIds=id1&deviceSiteIds=id2&siteId=id3** (multiple ids requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -74,7 +75,7 @@ Examples:
 				Optional: true,
 			},
 			"server_ip": &schema.Schema{
-				Description: `serverIp query parameter. IP Address of the AAA Server. This parameter supports wildcard (*) character -based search. Example: 10.76.81.* or *56.78* or *50.28 Examples: serverIp=10.42.3.31 (single IP Address is requested) serverIp=10.42.3.31&serverIp=name2&fabricVnName=name3 (multiple IP Addresses are requested)
+				Description: `serverIp query parameter. IP Address of the AAA Server. This parameter supports wildcard (*****) character -based search. Example: **10.76.81.*** or ***56.78*** or ***50.28** Examples: serverIp=10.42.3.31 (single IP Address is requested) serverIp=10.42.3.31&serverIp=name2&fabricVnName=name3 (multiple IP Addresses are requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -126,10 +127,10 @@ func dataSourceAAAServicesCountRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesTheTotalNumberOfAAAServicesForGivenParametersV1")
+		log.Printf("[DEBUG] Selected method: RetrievesTheTotalNumberOfAAAServicesForGivenParameters")
 
-		headerParams1 := catalystcentersdkgo.RetrievesTheTotalNumberOfAAAServicesForGivenParametersV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.RetrievesTheTotalNumberOfAAAServicesForGivenParametersV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.RetrievesTheTotalNumberOfAAAServicesForGivenParametersHeaderParams{}
+		queryParams1 := catalystcentersdkgo.RetrievesTheTotalNumberOfAAAServicesForGivenParametersQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -159,24 +160,36 @@ func dataSourceAAAServicesCountRead(ctx context.Context, d *schema.ResourceData,
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Devices.RetrievesTheTotalNumberOfAAAServicesForGivenParametersV1(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Devices.RetrievesTheTotalNumberOfAAAServicesForGivenParameters(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesTheTotalNumberOfAAAServicesForGivenParametersV1", err,
-				"Failure at RetrievesTheTotalNumberOfAAAServicesForGivenParametersV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesTheTotalNumberOfAAAServicesForGivenParameters", err,
+				"Failure at RetrievesTheTotalNumberOfAAAServicesForGivenParameters, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesRetrievesTheTotalNumberOfAAAServicesForGivenParametersV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesTheTotalNumberOfAAAServicesForGivenParameters", err,
+				"Failure at RetrievesTheTotalNumberOfAAAServicesForGivenParameters, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenDevicesRetrievesTheTotalNumberOfAAAServicesForGivenParametersItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesTheTotalNumberOfAAAServicesForGivenParametersV1 response",
+				"Failure when setting RetrievesTheTotalNumberOfAAAServicesForGivenParameters response",
 				err))
 			return diags
 		}
@@ -188,7 +201,7 @@ func dataSourceAAAServicesCountRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenDevicesRetrievesTheTotalNumberOfAAAServicesForGivenParametersV1Item(item *catalystcentersdkgo.ResponseDevicesRetrievesTheTotalNumberOfAAAServicesForGivenParametersV1Response) []map[string]interface{} {
+func flattenDevicesRetrievesTheTotalNumberOfAAAServicesForGivenParametersItem(item *catalystcentersdkgo.ResponseDevicesRetrievesTheTotalNumberOfAAAServicesForGivenParametersResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

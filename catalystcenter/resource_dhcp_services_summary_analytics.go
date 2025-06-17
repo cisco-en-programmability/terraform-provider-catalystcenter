@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -375,9 +375,9 @@ func resourceDhcpServicesSummaryAnalyticsCreate(ctx context.Context, d *schema.R
 
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
-	request1 := expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1(ctx, "parameters.0", d)
+	request1 := expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFilters(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.GetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1HeaderParams{}
+	headerParams1 := catalystcentersdkgo.GetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersHeaderParams{}
 
 	headerParams1.XCaLLERID = vXCaLLERID.(string)
 
@@ -399,7 +399,7 @@ func resourceDhcpServicesSummaryAnalyticsCreate(ctx context.Context, d *schema.R
 
 	//Analizar verificacion.
 
-	vItem1 := flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1Item(response1.Response)
+	vItem1 := flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
 			"Failure when setting GetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFilters response",
@@ -424,8 +424,8 @@ func resourceDhcpServicesSummaryAnalyticsDelete(ctx context.Context, d *schema.R
 	return diags
 }
 
-func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1 {
-	request := catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1{}
+func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFilters {
+	request := catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -436,22 +436,22 @@ func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServi
 		request.GroupBy = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1FiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFiltersArray(ctx, key+".filters", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".attributes")))) {
 		request.Attributes = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".aggregate_attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".aggregate_attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".aggregate_attributes")))) {
-		request.AggregateAttributes = expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1AggregateAttributesArray(ctx, key+".aggregate_attributes", d)
+		request.AggregateAttributes = expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersAggregateAttributesArray(ctx, key+".aggregate_attributes", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".page")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".page")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".page")))) {
-		request.Page = expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1Page(ctx, key+".page.0", d)
+		request.Page = expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersPage(ctx, key+".page.0", d)
 	}
 	return &request
 }
 
-func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1Filters {
-	request := []catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1Filters{}
+func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFilters {
+	request := []catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -462,7 +462,7 @@ func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServi
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -470,8 +470,8 @@ func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServi
 	return &request
 }
 
-func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1Filters {
-	request := catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1Filters{}
+func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFilters {
+	request := catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -482,22 +482,22 @@ func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServi
 		request.LogicalOperator = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".value")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".value")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".value")))) {
-		request.Value = expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1FiltersValue(ctx, key+".value.0", d)
+		request.Value = expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFiltersValue(ctx, key+".value.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1FiltersFiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFiltersFiltersArray(ctx, key+".filters", d)
 	}
 	return &request
 }
 
-func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1FiltersValue(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1FiltersValue {
-	var request catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1FiltersValue
+func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFiltersValue(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFiltersValue {
+	var request catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFiltersValue
 	request = d.Get(fixKeyAccess(key))
 	return &request
 }
 
-func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1FiltersFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1FiltersFilters {
-	request := []catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1FiltersFilters{}
+func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFiltersFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFiltersFilters {
+	request := []catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFiltersFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -508,7 +508,7 @@ func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServi
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1FiltersFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFiltersFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -516,8 +516,8 @@ func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServi
 	return &request
 }
 
-func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1FiltersFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1FiltersFilters {
-	request := catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1FiltersFilters{}
+func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFiltersFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFiltersFilters {
+	request := catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFiltersFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -528,7 +528,7 @@ func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServi
 		request.LogicalOperator = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".value")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".value")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".value")))) {
-		request.Value = expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1FiltersFiltersValue(ctx, key+".value.0", d)
+		request.Value = expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFiltersFiltersValue(ctx, key+".value.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
 		request.Filters = interfaceToSliceString(v)
@@ -536,14 +536,14 @@ func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServi
 	return &request
 }
 
-func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1FiltersFiltersValue(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1FiltersFiltersValue {
-	var request catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1FiltersFiltersValue
+func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFiltersFiltersValue(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFiltersFiltersValue {
+	var request catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersFiltersFiltersValue
 	request = d.Get(fixKeyAccess(key))
 	return &request
 }
 
-func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1AggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1AggregateAttributes {
-	request := []catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1AggregateAttributes{}
+func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersAggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersAggregateAttributes {
+	request := []catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersAggregateAttributes{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -554,7 +554,7 @@ func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServi
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1AggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersAggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -562,8 +562,8 @@ func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServi
 	return &request
 }
 
-func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1AggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1AggregateAttributes {
-	request := catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1AggregateAttributes{}
+func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersAggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersAggregateAttributes {
+	request := catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersAggregateAttributes{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -573,8 +573,8 @@ func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServi
 	return &request
 }
 
-func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1Page(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1Page {
-	request := catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1Page{}
+func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersPage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersPage {
+	request := catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersPage{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".limit")))) {
 		request.Limit = interfaceToIntPtr(v)
 	}
@@ -582,13 +582,13 @@ func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServi
 		request.Offset = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".sort_by")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".sort_by")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".sort_by")))) {
-		request.SortBy = expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1PageSortByArray(ctx, key+".sort_by", d)
+		request.SortBy = expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersPageSortByArray(ctx, key+".sort_by", d)
 	}
 	return &request
 }
 
-func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1PageSortByArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1PageSortBy {
-	request := []catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1PageSortBy{}
+func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersPageSortByArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersPageSortBy {
+	request := []catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersPageSortBy{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -599,7 +599,7 @@ func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServi
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1PageSortBy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersPageSortBy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -607,8 +607,8 @@ func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServi
 	return &request
 }
 
-func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1PageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1PageSortBy {
-	request := catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1PageSortBy{}
+func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersPageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersPageSortBy {
+	request := catalystcentersdkgo.RequestDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersPageSortBy{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -621,20 +621,20 @@ func expandRequestDhcpServicesSummaryAnalyticsGetSummaryAnalyticsDataOfDHCPServi
 	return &request
 }
 
-func flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1Item(item *catalystcentersdkgo.ResponseDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1Response) []map[string]interface{} {
+func flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersItem(item *catalystcentersdkgo.ResponseDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["groups"] = flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1ItemGroups(item.Groups)
-	respItem["attributes"] = flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1ItemAttributes(item.Attributes)
-	respItem["aggregate_attributes"] = flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1ItemAggregateAttributes(item.AggregateAttributes)
+	respItem["groups"] = flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersItemGroups(item.Groups)
+	respItem["attributes"] = flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersItemAttributes(item.Attributes)
+	respItem["aggregate_attributes"] = flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersItemAggregateAttributes(item.AggregateAttributes)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1ItemGroups(items *[]catalystcentersdkgo.ResponseDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1ResponseGroups) []map[string]interface{} {
+func flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersItemGroups(items *[]catalystcentersdkgo.ResponseDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersResponseGroups) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -642,14 +642,14 @@ func flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFilt
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["id"] = item.ID
-		respItem["attributes"] = flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1ItemGroupsAttributes(item.Attributes)
-		respItem["aggregate_attributes"] = flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1ItemGroupsAggregateAttributes(item.AggregateAttributes)
+		respItem["attributes"] = flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersItemGroupsAttributes(item.Attributes)
+		respItem["aggregate_attributes"] = flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersItemGroupsAggregateAttributes(item.AggregateAttributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1ItemGroupsAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1ResponseGroupsAttributes) []map[string]interface{} {
+func flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersItemGroupsAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersResponseGroupsAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -663,7 +663,7 @@ func flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFilt
 	return respItems
 }
 
-func flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1ItemGroupsAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1ResponseGroupsAggregateAttributes) []map[string]interface{} {
+func flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersItemGroupsAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersResponseGroupsAggregateAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -678,7 +678,7 @@ func flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFilt
 	return respItems
 }
 
-func flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1ItemAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1ResponseAttributes) []map[string]interface{} {
+func flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersItemAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersResponseAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -692,7 +692,7 @@ func flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFilt
 	return respItems
 }
 
-func flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1ItemAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersV1ResponseAggregateAttributes) []map[string]interface{} {
+func flattenDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersItemAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetSummaryAnalyticsDataOfDHCPServicesForGivenSetOfComplexFiltersResponseAggregateAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

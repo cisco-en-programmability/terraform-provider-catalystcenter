@@ -24,9 +24,10 @@ It manages create, read, update and delete operations on SDA.
 ```terraform
 resource "catalystcenter_sda_port_assignments" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
+    allowed_vlan_ranges        = "string"
     authenticate_template_name = "string"
     connected_device_type      = "string"
     data_vlan_name             = "string"
@@ -34,6 +35,7 @@ resource "catalystcenter_sda_port_assignments" "example" {
     id                         = "string"
     interface_description      = "string"
     interface_name             = "string"
+    native_vlan_id             = 1
     network_device_id          = "string"
     scalable_group_name        = "string"
     security_group_name        = "string"
@@ -51,7 +53,7 @@ output "catalystcenter_sda_port_assignments_example" {
 
 ### Optional
 
-- `parameters` (Block List) Array of RequestSdaAddPortAssignmentsV1 (see [below for nested schema](#nestedblock--parameters))
+- `parameters` (Block List) Array of RequestSdaAddPortAssignments (see [below for nested schema](#nestedblock--parameters))
 
 ### Read-Only
 
@@ -64,13 +66,14 @@ output "catalystcenter_sda_port_assignments_example" {
 
 Optional:
 
-- `payload` (Block List) Array of RequestApplicationPolicyCreateApplication (see [below for nested schema](#nestedblock--parameters--payload))
+- `payload` (Block List) Array of RequestSdaAddPortAssignments (see [below for nested schema](#nestedblock--parameters--payload))
 
 <a id="nestedblock--parameters--payload"></a>
 ### Nested Schema for `parameters.payload`
 
 Optional:
 
+- `allowed_vlan_ranges` (String) Allowed VLAN of the port assignment, this option is only applicable to TRUNKING_DEVICE connectedDeviceType. (VLAN must be between 1 and 4094 (Ex 100,200,300-400) or 'all'. In cases value not set when connectedDeviceType is TRUNKING_DEVICE, default value will be 'all').
 - `authenticate_template_name` (String) Authenticate template name of the port assignment.
 - `connected_device_type` (String) Connected device type of the port assignment.
 - `data_vlan_name` (String) Data VLAN name of the port assignment.
@@ -78,6 +81,7 @@ Optional:
 - `id` (String) ID of the port assignment.
 - `interface_description` (String) Interface description of the port assignment.
 - `interface_name` (String) Interface name of the port assignment.
+- `native_vlan_id` (Number) integer example: 1 Native VLAN of the port assignment, this option is only applicable to TRUNKING_DEVICE connectedDeviceType. (VLAN must be between 1 and 4094. In cases value not set when connectedDeviceType is TRUNKING_DEVICE, default value will be 1).
 - `network_device_id` (String) Network device ID of the port assignment.
 - `scalable_group_name` (String) Scalable group name of the port assignment.
 - `security_group_name` (String) Security group name of the port assignment.
@@ -90,6 +94,7 @@ Optional:
 
 Read-Only:
 
+- `allowed_vlan_ranges` (String)
 - `authenticate_template_name` (String)
 - `connected_device_type` (String)
 - `data_vlan_name` (String)
@@ -97,6 +102,7 @@ Read-Only:
 - `id` (String)
 - `interface_description` (String)
 - `interface_name` (String)
+- `native_vlan_id` (Number)
 - `network_device_id` (String)
 - `security_group_name` (String)
 - `voice_vlan_name` (String)

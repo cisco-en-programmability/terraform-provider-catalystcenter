@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -140,27 +140,41 @@ func dataSourceFlexibleReportExecutionsRead(ctx context.Context, d *schema.Resou
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetExecutionIDByReportIDV1")
+		log.Printf("[DEBUG] Selected method: GetExecutionIDByReportID")
 		vvReportID := vReportID.(string)
 
-		response1, restyResp1, err := client.Reports.GetExecutionIDByReportIDV1(vvReportID)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Reports.GetExecutionIDByReportID(vvReportID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetExecutionIDByReportIDV1", err,
-				"Failure at GetExecutionIDByReportIDV1, unexpected response", ""))
+				"Failure when executing 2 GetExecutionIDByReportID", err,
+				"Failure at GetExecutionIDByReportID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenReportsGetExecutionIDByReportIDV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetExecutionIDByReportID", err,
+				"Failure at GetExecutionIDByReportID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenReportsGetExecutionIDByReportIDItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetExecutionIDByReportIDV1 response",
+				"Failure when setting GetExecutionIDByReportID response",
 				err))
 			return diags
 		}
@@ -172,14 +186,14 @@ func dataSourceFlexibleReportExecutionsRead(ctx context.Context, d *schema.Resou
 	return diags
 }
 
-func flattenReportsGetExecutionIDByReportIDV1Item(item *catalystcentersdkgo.ResponseReportsGetExecutionIDByReportIDV1) []map[string]interface{} {
+func flattenReportsGetExecutionIDByReportIDItem(item *catalystcentersdkgo.ResponseReportsGetExecutionIDByReportID) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["report_id"] = item.ReportID
 	respItem["report_name"] = item.ReportName
-	respItem["executions"] = flattenReportsGetExecutionIDByReportIDV1ItemExecutions(item.Executions)
+	respItem["executions"] = flattenReportsGetExecutionIDByReportIDItemExecutions(item.Executions)
 	respItem["execution_count"] = item.ExecutionCount
 	respItem["report_was_executed"] = boolPtrToString(item.ReportWasExecuted)
 	return []map[string]interface{}{
@@ -187,7 +201,7 @@ func flattenReportsGetExecutionIDByReportIDV1Item(item *catalystcentersdkgo.Resp
 	}
 }
 
-func flattenReportsGetExecutionIDByReportIDV1ItemExecutions(items *[]catalystcentersdkgo.ResponseReportsGetExecutionIDByReportIDV1Executions) []map[string]interface{} {
+func flattenReportsGetExecutionIDByReportIDItemExecutions(items *[]catalystcentersdkgo.ResponseReportsGetExecutionIDByReportIDExecutions) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -200,13 +214,13 @@ func flattenReportsGetExecutionIDByReportIDV1ItemExecutions(items *[]catalystcen
 		respItem["process_status"] = item.ProcessStatus
 		respItem["request_status"] = item.RequestStatus
 		respItem["errors"] = item.Errors
-		respItem["warnings"] = flattenReportsGetExecutionIDByReportIDV1ItemExecutionsWarnings(item.Warnings)
+		respItem["warnings"] = flattenReportsGetExecutionIDByReportIDItemExecutionsWarnings(item.Warnings)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenReportsGetExecutionIDByReportIDV1ItemExecutionsWarnings(items *[]catalystcentersdkgo.ResponseReportsGetExecutionIDByReportIDV1ExecutionsWarnings) []interface{} {
+func flattenReportsGetExecutionIDByReportIDItemExecutionsWarnings(items *[]catalystcentersdkgo.ResponseReportsGetExecutionIDByReportIDExecutionsWarnings) []interface{} {
 	if items == nil {
 		return nil
 	}

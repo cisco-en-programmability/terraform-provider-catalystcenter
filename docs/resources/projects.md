@@ -18,7 +18,7 @@ It manages create and read operations on Configuration Templates.
 ```terraform
 resource "catalystcenter_projects" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     description = "string"

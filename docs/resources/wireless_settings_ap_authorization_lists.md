@@ -18,7 +18,7 @@ It manages create and read operations on Wireless.
 ```terraform
 resource "catalystcenter_wireless_settings_ap_authorization_lists" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     ap_authorization_list_name = "string"

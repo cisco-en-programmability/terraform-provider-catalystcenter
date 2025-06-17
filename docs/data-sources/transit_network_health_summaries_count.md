@@ -19,10 +19,10 @@ description: |-
 It performs read operation on SDA.
 
 - Get a count of transit networks. Use available query parameters to get the count of a subset of transit networks.
-This data source provides the latest health data until the given endTime. If data is not ready for the provided
-endTime, the request will fail with error code 400 Bad Request, and the error message will indicate the recommended
+This data source provides the latest health data until the given **endTime**. If data is not ready for the provided
+endTime, the request will fail with error code **400 Bad Request**, and the error message will indicate the recommended
 endTime to use to retrieve a complete data set. This behavior may occur if the provided endTime=currentTime, since we
-are not a real time system. When endTime is not provided, the API returns the latest data.
+are not a real time system. When **endTime** is not provided, the API returns the latest data.
 For detailed information about the usage of the API, please refer to the Open API specification document
 https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 transitNetworkHealthSummaries-1.0.1-resolved.yaml
@@ -39,7 +39,7 @@ data "catalystcenter_transit_network_health_summaries_count" "example" {
 }
 
 output "catalystcenter_transit_network_health_summaries_count_example" {
-  value = data.catalystcenter_transit_network_health_summaries_count.example.items
+  value = data.catalystcenter_transit_network_health_summaries_count.example.item
 }
 ```
 
@@ -58,13 +58,11 @@ output "catalystcenter_transit_network_health_summaries_count_example" {
 
 ### Read-Only
 
-- `items` (List of Object) (see [below for nested schema](#nestedatt--items))
+- `item` (List of Object) (see [below for nested schema](#nestedatt--item))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--item"></a>
+### Nested Schema for `item`
 
 Read-Only:
 
-- `detail` (String)
-- `error_code` (Number)
-- `message` (String)
+- `count` (Number)

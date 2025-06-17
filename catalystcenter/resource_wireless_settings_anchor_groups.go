@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -208,10 +208,10 @@ func resourceWirelessSettingsAnchorGroupsCreate(ctx context.Context, d *schema.R
 
 	var diags diag.Diagnostics
 
-	request1 := expandRequestWirelessSettingsAnchorGroupsCreateAnchorGroupV1(ctx, "parameters.0", d)
+	request1 := expandRequestWirelessSettingsAnchorGroupsCreateAnchorGroup(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
-	item2, _, err := client.Wireless.GetAnchorGroups()
+	item2, _, err := client.Wireless.GetAnchorGroups(nil)
 	if err != nil || item2 != nil {
 		resourceMap := make(map[string]string)
 		d.SetId(joinResourceID(resourceMap))
@@ -256,13 +256,13 @@ func resourceWirelessSettingsAnchorGroupsCreate(ctx context.Context, d *schema.R
 			return diags
 		}
 	}
-	item3, _, err := client.Wireless.GetAnchorGroups()
+	item3, _, err := client.Wireless.GetAnchorGroups(nil)
 	if err != nil || item3 != nil {
 		resourceMap := make(map[string]string)
 		d.SetId(joinResourceID(resourceMap))
 		return resourceWirelessSettingsAnchorGroupsRead(ctx, d, m)
 	}
-	item4, _, err := client.Wireless.GetAnchorGroups()
+	item4, _, err := client.Wireless.GetAnchorGroups(nil)
 	if err != nil || item4 == nil {
 		diags = append(diags, diagErrorWithAlt(
 			"Failure when executing CreateAnchorGroup", err,
@@ -285,7 +285,7 @@ func resourceWirelessSettingsAnchorGroupsRead(ctx context.Context, d *schema.Res
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetAnchorGroups")
 
-		response1, restyResp1, err := client.Wireless.GetAnchorGroups()
+		response1, restyResp1, err := client.Wireless.GetAnchorGroups(nil)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
@@ -297,7 +297,7 @@ func resourceWirelessSettingsAnchorGroupsRead(ctx context.Context, d *schema.Res
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessGetAnchorGroupsV1Item(response1)
+		vItem1 := flattenWirelessGetAnchorGroupsItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetAnchorGroups response",
@@ -317,17 +317,18 @@ func resourceWirelessSettingsAnchorGroupsUpdate(ctx context.Context, d *schema.R
 
 func resourceWirelessSettingsAnchorGroupsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	// NOTE: Unable to delete WirelessSettingsAnchorGroups on Dna Center
+	// NOTE: Unable to delete WirelessSettingsAnchorGroups on Catalyst Center
 	//       Returning empty diags to delete it on Terraform
 	return diags
 }
-func expandRequestWirelessSettingsAnchorGroupsCreateAnchorGroupV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateAnchorGroupV1 {
-	request := catalystcentersdkgo.RequestWirelessCreateAnchorGroupV1{}
+
+func expandRequestWirelessSettingsAnchorGroupsCreateAnchorGroup(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateAnchorGroup {
+	request := catalystcentersdkgo.RequestWirelessCreateAnchorGroup{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".anchor_group_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".anchor_group_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".anchor_group_name")))) {
 		request.AnchorGroupName = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".mobility_anchors")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".mobility_anchors")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".mobility_anchors")))) {
-		request.MobilityAnchors = expandRequestWirelessSettingsAnchorGroupsCreateAnchorGroupV1MobilityAnchorsArray(ctx, key+".mobility_anchors", d)
+		request.MobilityAnchors = expandRequestWirelessSettingsAnchorGroupsCreateAnchorGroupMobilityAnchorsArray(ctx, key+".mobility_anchors", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -335,8 +336,8 @@ func expandRequestWirelessSettingsAnchorGroupsCreateAnchorGroupV1(ctx context.Co
 	return &request
 }
 
-func expandRequestWirelessSettingsAnchorGroupsCreateAnchorGroupV1MobilityAnchorsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessCreateAnchorGroupV1MobilityAnchors {
-	request := []catalystcentersdkgo.RequestWirelessCreateAnchorGroupV1MobilityAnchors{}
+func expandRequestWirelessSettingsAnchorGroupsCreateAnchorGroupMobilityAnchorsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestWirelessCreateAnchorGroupMobilityAnchors {
+	request := []catalystcentersdkgo.RequestWirelessCreateAnchorGroupMobilityAnchors{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -347,7 +348,7 @@ func expandRequestWirelessSettingsAnchorGroupsCreateAnchorGroupV1MobilityAnchors
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestWirelessSettingsAnchorGroupsCreateAnchorGroupV1MobilityAnchors(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestWirelessSettingsAnchorGroupsCreateAnchorGroupMobilityAnchors(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -358,8 +359,8 @@ func expandRequestWirelessSettingsAnchorGroupsCreateAnchorGroupV1MobilityAnchors
 	return &request
 }
 
-func expandRequestWirelessSettingsAnchorGroupsCreateAnchorGroupV1MobilityAnchors(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateAnchorGroupV1MobilityAnchors {
-	request := catalystcentersdkgo.RequestWirelessCreateAnchorGroupV1MobilityAnchors{}
+func expandRequestWirelessSettingsAnchorGroupsCreateAnchorGroupMobilityAnchors(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateAnchorGroupMobilityAnchors {
+	request := catalystcentersdkgo.RequestWirelessCreateAnchorGroupMobilityAnchors{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_name")))) {
 		request.DeviceName = interfaceToString(v)
 	}

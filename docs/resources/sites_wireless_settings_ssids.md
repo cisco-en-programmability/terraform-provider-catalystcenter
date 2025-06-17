@@ -4,8 +4,8 @@ page_title: "catalystcenter_sites_wireless_settings_ssids Resource - terraform-p
 subcategory: ""
 description: |-
   It manages create, read, update and delete operations on Wireless.
-  This resource allows the user to create an SSID (Service Set Identifier) at the Global siteThis resource allows the user to update an SSID (Service Set Identifier) at the given siteThis resource allows the user to delete an SSID (Service Set Identifier) at the global level, if the SSID is not
-  mapped to any Wireless Profile
+  This resource allows the user to create an SSID (Service Set Identifier) at the Global siteThis resource allows the user to update an SSID (Service Set Identifier) at the given siteThis resource allows the user to delete an SSID (Service Set Identifier) at the global level , if the SSID is not
+  mapped to any Wireless Profile, Or remove override from given site Id .
 ---
 
 # catalystcenter_sites_wireless_settings_ssids (Resource)
@@ -16,15 +16,15 @@ It manages create, read, update and delete operations on Wireless.
 
 - This resource allows the user to update an SSID (Service Set Identifier) at the given site
 
-- This resource allows the user to delete an SSID (Service Set Identifier) at the global level, if the SSID is not
-mapped to any Wireless Profile
+- This resource allows the user to delete an SSID (Service Set Identifier) at the global level , if the SSID is not
+mapped to any Wireless Profile, Or remove override from given site Id .
 
 ## Example Usage
 
 ```terraform
 resource "catalystcenter_sites_wireless_settings_ssids" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     aaa_override                                       = "false"
@@ -71,6 +71,7 @@ resource "catalystcenter_sites_wireless_settings_ssids" "example" {
     is_hex                                             = "false"
     is_mac_filtering_enabled                           = "false"
     is_posturing_enabled                               = "false"
+    is_radius_profiling_enabled                        = "false"
     is_random_mac_filter_enabled                       = "false"
     l3_auth_type                                       = "string"
     management_frame_protection_clientprotection       = "string"
@@ -84,6 +85,7 @@ resource "catalystcenter_sites_wireless_settings_ssids" "example" {
     neighbor_list_enable       = "false"
     open_ssid                  = "string"
     passphrase                 = "string"
+    policy_profile_name        = "string"
     profile_name               = "string"
     protected_management_frame = "string"
     rsn_cipher_suite_ccmp128   = "false"
@@ -126,7 +128,7 @@ output "catalystcenter_sites_wireless_settings_ssids_example" {
 
 Required:
 
-- `id` (String) id path parameter. SSID ID. Inputs containing special characters should be encoded
+- `id` (String) id path parameter. SSID ID
 - `site_id` (String) siteId path parameter. Site UUID of Global site
 
 Optional:
@@ -134,15 +136,15 @@ Optional:
 - `aaa_override` (String) Activate the AAA Override feature when set to true
 - `acct_servers` (List of String) List of Accounting server IpAddresses
 - `acl_name` (String) Pre-Auth Access Control List (ACL) Name
-- `auth_server` (String) Authentication Server, Mandatory for Guest SSIDs with wlanType=Guest and l3AuthType=web_auth
+- `auth_server` (String) For Guest SSIDs ('wlanType' is 'Guest' and 'l3AuthType' is 'web_auth'), the Authentication Server('authServer') is mandatory. Otherwise, it defaults to 'auth_external'.
 - `auth_servers` (List of String) List of Authentication/Authorization server IpAddresses
-- `auth_type` (String) L2 Authentication Type (If authType is not open , then atleast one RSN Cipher Suite and corresponding valid AKM must be enabled)
-- `basic_service_set_client_idle_timeout` (Number) This refers to the duration of inactivity, measured in seconds, before a client connected to the Basic Service Set is considered idle and timed out
+- `auth_type` (String) L2 Authentication Type (If authType is not open , then atleast one RSN Cipher Suite and corresponding valid AKM must be enabled). Default is L2 Authentication Type if exists else None.
+- `basic_service_set_client_idle_timeout` (Number) This refers to the duration of inactivity, measured in seconds, before a client connected to the Basic Service Set is considered idle and timed out. Default is Basic ServiceSet ClientIdle Timeout if exists else 300. If it needs to be disabled , pass 0 as its value else valid range is [15 to 100000].
 - `basic_service_set_max_idle_enable` (String) Activate the maximum idle feature for the Basic Service Set
-- `cckm_tsf_tolerance` (Number) Cckm TImestamp Tolerance(in milliseconds)
+- `cckm_tsf_tolerance` (Number) he default value is the Cckm Timestamp Tolerance (in milliseconds, if specified); otherwise, it is 0.
 - `client_exclusion_enable` (String) Activate the feature that allows for the exclusion of clients
-- `client_exclusion_timeout` (Number) This refers to the length of time, in seconds, a client is excluded or blocked from accessing the network after a specified number of unsuccessful attempts
-- `client_rate_limit` (Number) This pertains to the maximum data transfer rate, specified in bits per second, that a client is permitted to achieve
+- `client_exclusion_timeout` (Number) This refers to the length of time, in seconds, a client is excluded or blocked from accessing the network after a specified number of unsuccessful attempts. Default is Client Exclusion Timeout if exists else 180.
+- `client_rate_limit` (Number) This pertains to the maximum data transfer rate, specified in bits per second, that a client is permitted to achieve. It should be in mutliples of 500 . Default is Client Rate Limit if exists else 0.
 - `coverage_hole_detection_enable` (String) Activate Coverage Hole Detection feature when set to true
 - `directed_multicast_service_enable` (String) The Directed Multicast Service feature becomes operational when it is set to true
 - `egress_qos` (String) Egress QOS
@@ -174,28 +176,30 @@ Optional:
 - `is_hex` (String) True if passphrase is in Hex format, else False.
 - `is_mac_filtering_enabled` (String) When set to true, MAC Filtering will be activated, allowing control over network access based on the MAC address of the device
 - `is_posturing_enabled` (String) Applicable only for Enterprise SSIDs. When set to True, Posturing will enabled. Required to be set to True if ACL needs to be mapped for Enterprise SSID.
+- `is_radius_profiling_enabled` (String) 'true' if Radius profiling needs to be enabled, defaults to 'false' if not specified. At least one AAA/PSN server is required to enable Radius Profiling.
 - `is_random_mac_filter_enabled` (String) Deny clients using randomized MAC addresses when set to true
-- `l3_auth_type` (String) L3 Authentication Type
-- `management_frame_protection_clientprotection` (String) Management Frame Protection Client
+- `l3_auth_type` (String) L3 Authentication Type. When 'wlanType' is 'Enterprise', ‘l3AuthType' is optional and defaults to 'open' if not specified. If 'wlanType' is 'Guest' then 'l3AuthType' is mandatory.
+- `management_frame_protection_clientprotection` (String) Default is Management Frame Protection Client if exists else Optional.
 - `multi_psk_settings` (Block List) (see [below for nested schema](#nestedblock--parameters--multi_psk_settings))
 - `nas_options` (List of String) Pre-Defined NAS Options : AP ETH Mac Address, AP IP address, AP Location , AP MAC Address, AP Name, AP Policy Tag, AP Site Tag, SSID, System IP Address, System MAC Address, System Name.
 - `neighbor_list_enable` (String) The Neighbor List feature is enabled when it is set to true
 - `open_ssid` (String) Open SSID which is already created in the design and not associated to any other OPEN-SECURED SSID
 - `passphrase` (String) Passphrase (Only applicable for SSID with PERSONAL security level). Passphrase needs to be between 8 and 63 characters for ASCII type. HEX passphrase needs to be 64 characters
-- `profile_name` (String) WLAN Profile Name, if not passed autogenerated profile name will be assigned. The same wlanProfileName will also be used for policyProfileName
+- `policy_profile_name` (String) Policy Profile Name. If 'policyProfileName' is not provided, the value of 'profileName' will be assigned to it. If 'profileName' is also not provided, an autogenerated name will be used. Autogenerated name is generated by appending ‘ssid’ field’s value with ‘_profile’ (Example : If ‘ssid’ = ‘ExampleSsid’, then autogenerated name will be ‘ExampleSsid_profile’).
+- `profile_name` (String) WLAN Profile Name, if not passed autogenerated profile name will be assigned.
 - `protected_management_frame` (String) (REQUIRED is applicable for authType WPA3_PERSONAL, WPA3_ENTERPRISE, OPEN_SECURED) and (OPTIONAL/REQUIRED is applicable for authType WPA2_WPA3_PERSONAL and WPA2_WPA3_ENTERPRISE)
 - `rsn_cipher_suite_ccmp128` (String) When set to true, the Robust Security Network (RSN) Cipher Suite CCMP128 encryption protocol is activated
 - `rsn_cipher_suite_ccmp256` (String) When set to true, the Robust Security Network (RSN) Cipher Suite CCMP256 encryption protocol is activated
 - `rsn_cipher_suite_gcmp128` (String) When set to true, the Robust Security Network (RSN) Cipher Suite GCMP128 encryption protocol is activated
 - `rsn_cipher_suite_gcmp256` (String) When set to true, the Robust Security Network (RSN) Cipher Suite GCMP256 encryption protocol is activated
-- `session_time_out` (Number) This denotes the allotted time span, expressed in seconds, before a session is automatically terminated due to inactivity
+- `session_time_out` (Number) This denotes the allotted time span, expressed in seconds, before a session is automatically terminated due to inactivity. Default sessionTimeOut is 1800.
 - `session_time_out_enable` (String) Turn on the feature that imposes a time limit on user sessions
 - `sleeping_client_enable` (String) When set to true, this will activate the timeout settings that apply to clients in sleep mode
-- `sleeping_client_timeout` (Number) This refers to the amount of time, measured in minutes, before a sleeping (inactive) client is timed out of the network
+- `sleeping_client_timeout` (Number) This refers to the amount of time, measured in minutes, before a sleeping (inactive) client is timed out of the network. Default is Sleeping Client Timeout if exists else 720.
 - `ssid` (String) Name of the SSID
 - `ssid_radio_type` (String) Radio Policy Enum (default: Triple band operation(2.4GHz, 5GHz and 6GHz))
 - `web_passthrough` (String) When set to true, the Web-Passthrough feature will be activated for the Guest SSID, allowing guests to bypass certain login requirements
-- `wlan_band_select_enable` (String) Band select is allowed only when band options selected contains at least 2.4 GHz and 5 GHz band
+- `wlan_band_select_enable` (String) Band select is allowed only when band options selected contains at least 2.4 GHz and 5 GHz band else false.
 - `wlan_type` (String) Wlan Type
 
 <a id="nestedblock--parameters--multi_psk_settings"></a>
@@ -204,7 +208,7 @@ Optional:
 Optional:
 
 - `passphrase` (String) Passphrase needs to be between 8 and 63 characters for ASCII type. HEX passphrase needs to be 64 characters
-- `passphrase_type` (String) Passphrase Type
+- `passphrase_type` (String) Passphrase Type(default: ASCII)
 - `priority` (Number) Priority
 
 
@@ -238,6 +242,8 @@ Read-Only:
 - `ingress_qos` (String)
 - `inherited_site_id` (String)
 - `inherited_site_name` (String)
+- `inherited_site_name_hierarchy` (String)
+- `inherited_site_uui_d` (String)
 - `is_ap_beacon_protection_enabled` (String)
 - `is_auth_key8021x` (String)
 - `is_auth_key8021x_plus_ft` (String)
@@ -261,6 +267,7 @@ Read-Only:
 - `is_hex` (String)
 - `is_mac_filtering_enabled` (String)
 - `is_posturing_enabled` (String)
+- `is_radius_profiling_enabled` (String)
 - `is_random_mac_filter_enabled` (String)
 - `is_sensor_pnp` (String)
 - `l3_auth_type` (String)

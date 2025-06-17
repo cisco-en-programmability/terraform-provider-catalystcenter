@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -29,40 +29,40 @@ programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 				Optional: true,
 			},
 			"site_hierarchy": &schema.Schema{
-				Description: `siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. Global/AreaName/BuildingName/FloorName)
-This field supports wildcard asterisk (*) character search support. E.g. */San*, */San, /San*
+				Description: `siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. **Global/AreaName/BuildingName/FloorName**)
+This field supports wildcard asterisk (*****) character search support. E.g. ***/San*, */San, /San***
 Examples:
-?siteHierarchy=Global/AreaName/BuildingName/FloorName (single siteHierarchy requested)
-?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2 (multiple siteHierarchies requested)
+**?siteHierarchy=Global/AreaName/BuildingName/FloorName** (single siteHierarchy requested)
+**?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2** (multiple siteHierarchies requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_hierarchy_id": &schema.Schema{
-				Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. globalUuid/areaUuid/buildingUuid/floorUuid)
-This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*
+				Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. **globalUuid/areaUuid/buildingUuid/floorUuid**)
+This field supports wildcard asterisk (*****) character search support. E.g. ***uuid*, *uuid, uuid***
 Examples:
-?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid (single siteHierarchyId requested)
-?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2 (multiple siteHierarchyIds requested)
+**?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid **(single siteHierarchyId requested)
+**?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2** (multiple siteHierarchyIds requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_id": &schema.Schema{
-				Description: `siteId query parameter. The UUID of the site. (Ex. flooruuid)
+				Description: `siteId query parameter. The UUID of the site. (Ex. **flooruuid**)
 Examples:
-?siteId=id1 (single id requested)
-?siteId=id1&siteId=id2&siteId=id3 (multiple ids requested)
+**?siteId=id1** (single id requested)
+**?siteId=id1&siteId=id2&siteId=id3** (multiple ids requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_type": &schema.Schema{
 				Description: `siteType query parameter. The type of the site. A site can be an area, building, or floor.
-Default when not provided will be [floor,building,area]
+Default when not provided will be **[floor,building,area]**
 Examples:
-?siteType=area (single siteType requested)
-?siteType=area&siteType=building&siteType=floor (multiple siteTypes requested)
+**?siteType=area** (single siteType requested)
+**?siteType=area&siteType=building&siteType=floor** (multiple siteTypes requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -112,10 +112,10 @@ func dataSourceSiteKpiSummariesCountRead(ctx context.Context, d *schema.Resource
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfQueryParametersV1")
+		log.Printf("[DEBUG] Selected method: GetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfQueryParameters")
 
-		headerParams1 := catalystcentersdkgo.GetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfQueryParametersV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.GetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfQueryParametersV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.GetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfQueryParametersHeaderParams{}
+		queryParams1 := catalystcentersdkgo.GetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfQueryParametersQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -139,24 +139,36 @@ func dataSourceSiteKpiSummariesCountRead(ctx context.Context, d *schema.Resource
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sites.GetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfQueryParametersV1(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Sites.GetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfQueryParameters(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfQueryParametersV1", err,
-				"Failure at GetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfQueryParametersV1, unexpected response", ""))
+				"Failure when executing 2 GetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfQueryParameters", err,
+				"Failure at GetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfQueryParameters, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfQueryParametersV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfQueryParameters", err,
+				"Failure at GetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfQueryParameters, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfQueryParametersItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfQueryParametersV1 response",
+				"Failure when setting GetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfQueryParameters response",
 				err))
 			return diags
 		}
@@ -168,7 +180,7 @@ func dataSourceSiteKpiSummariesCountRead(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func flattenSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfQueryParametersV1Item(item *catalystcentersdkgo.ResponseSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfQueryParametersV1Response) []map[string]interface{} {
+func flattenSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfQueryParametersItem(item *catalystcentersdkgo.ResponseSitesGetTheTotalNumberOfSiteAnalyticsRecordsAvailableForForGivenSetOfQueryParametersResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

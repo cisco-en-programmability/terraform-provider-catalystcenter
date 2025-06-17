@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -89,8 +89,8 @@ func dataSourceIcapSettingsCountRead(ctx context.Context, d *schema.ResourceData
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesTheCountOfDeployedICapConfigurationsWhileSupportingBasicFilteringV1")
-		queryParams1 := catalystcentersdkgo.RetrievesTheCountOfDeployedICapConfigurationsWhileSupportingBasicFilteringV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: RetrievesTheCountOfDeployedICapConfigurationsWhileSupportingBasicFiltering")
+		queryParams1 := catalystcentersdkgo.RetrievesTheCountOfDeployedICapConfigurationsWhileSupportingBasicFilteringQueryParams{}
 
 		if okCaptureType {
 			queryParams1.CaptureType = vCaptureType.(string)
@@ -109,24 +109,36 @@ func dataSourceIcapSettingsCountRead(ctx context.Context, d *schema.ResourceData
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sensors.RetrievesTheCountOfDeployedICapConfigurationsWhileSupportingBasicFilteringV1(&queryParams1)
+		response1, restyResp1, err := client.Sensors.RetrievesTheCountOfDeployedICapConfigurationsWhileSupportingBasicFiltering(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesTheCountOfDeployedICapConfigurationsWhileSupportingBasicFilteringV1", err,
-				"Failure at RetrievesTheCountOfDeployedICapConfigurationsWhileSupportingBasicFilteringV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesTheCountOfDeployedICapConfigurationsWhileSupportingBasicFiltering", err,
+				"Failure at RetrievesTheCountOfDeployedICapConfigurationsWhileSupportingBasicFiltering, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSensorsRetrievesTheCountOfDeployedICapConfigurationsWhileSupportingBasicFilteringV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesTheCountOfDeployedICapConfigurationsWhileSupportingBasicFiltering", err,
+				"Failure at RetrievesTheCountOfDeployedICapConfigurationsWhileSupportingBasicFiltering, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSensorsRetrievesTheCountOfDeployedICapConfigurationsWhileSupportingBasicFilteringItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesTheCountOfDeployedICapConfigurationsWhileSupportingBasicFilteringV1 response",
+				"Failure when setting RetrievesTheCountOfDeployedICapConfigurationsWhileSupportingBasicFiltering response",
 				err))
 			return diags
 		}
@@ -138,7 +150,7 @@ func dataSourceIcapSettingsCountRead(ctx context.Context, d *schema.ResourceData
 	return diags
 }
 
-func flattenSensorsRetrievesTheCountOfDeployedICapConfigurationsWhileSupportingBasicFilteringV1Item(item *catalystcentersdkgo.ResponseSensorsRetrievesTheCountOfDeployedICapConfigurationsWhileSupportingBasicFilteringV1) []map[string]interface{} {
+func flattenSensorsRetrievesTheCountOfDeployedICapConfigurationsWhileSupportingBasicFilteringItem(item *catalystcentersdkgo.ResponseSensorsRetrievesTheCountOfDeployedICapConfigurationsWhileSupportingBasicFiltering) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

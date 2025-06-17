@@ -12,15 +12,15 @@ description: |-
 
 It manages read and update operations on Network Settings.
 
-- Set DNS settings for a site; *null* values indicate that the setting will be inherited from the parent site; empty
-objects (*{}*) indicate that the settings is unset.
+- Set DNS settings for a site; **null** values indicate that the setting will be inherited from the parent site; empty
+objects (**{}**) indicate that the settings is unset.
 
 ## Example Usage
 
 ```terraform
 resource "catalystcenter_sites_dns_settings" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     dns {

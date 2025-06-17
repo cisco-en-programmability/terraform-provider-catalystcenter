@@ -22,7 +22,7 @@ an inventory sync.
 ```terraform
 resource "catalystcenter_network_device_list" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     cli_transport           = "string"
@@ -86,13 +86,13 @@ Optional:
 - `compute_device` (String) Compute Device or not. Options are true / false.
 - `enable_password` (String) CLI enable password of the device. Required if device is configured to use enable password.
 - `extended_discovery_info` (String) This field holds that info as whether to add device with canned data or not. Supported values: DISCOVER_WITH_CANNED_DATA.
-- `http_password` (String) HTTP password of the device / API key for Meraki Dashboard. Required if type is MERAKI_DASHBOARD or COMPUTE_DEVICE.
+- `http_password` (String) HTTP password of the device / API key for catalystcenter Dashboard. Required if type is catalystcenter_DASHBOARD or COMPUTE_DEVICE.
 - `http_port` (String) HTTP port of the device. Required if type is COMPUTE_DEVICE.
 - `http_secure` (String) Flag to select HTTP / HTTPS protocol. Options are true / false. true for HTTPS and false for HTTP. Default is true.
 - `http_user_name` (String) HTTP Username of the device. Required if type is COMPUTE_DEVICE.
 - `ip_address` (List of String) IP Address of the device. Required if type is NETWORK_DEVICE, COMPUTE_DEVICE or THIRD_PARTY_DEVICE.
-- `meraki_org_id` (List of String) Selected Meraki organization for which the devices needs to be imported. Required if type is MERAKI_DASHBOARD.
-- `netconf_port` (String) Netconf Port of the device. cliTransport must be 'ssh' if netconf is provided.
+- `meraki_org_id` (List of String) Selected catalystcenter organization for which the devices needs to be imported. Required if type is catalystcenter_DASHBOARD.
+- `netconf_port` (String) Netconf Port of the device. cliTransport must be 'ssh' if netconf is provided. Netconf port is required for eWLC.
 - `password` (String, Sensitive) CLI Password of the device. Required if type is NETWORK_DEVICE.
 - `serial_number` (String) Serial Number of the Device. Required if extendedDiscoveryInfo is 'DISCOVER_WITH_CANNED_DATA'.
 - `snmp_auth_passphrase` (String) SNMPv3 auth passphrase of the device. Required if snmpMode is authNoPriv or authPriv.

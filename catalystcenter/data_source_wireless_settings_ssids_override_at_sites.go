@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -98,8 +98,8 @@ func dataSourceWirelessSettingsSSIDsOverrideAtSitesRead(ctx context.Context, d *
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveSitesWithOverriddenSSIDsV1")
-		queryParams1 := catalystcentersdkgo.RetrieveSitesWithOverriddenSSIDsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: RetrieveSitesWithOverriddenSSIDs")
+		queryParams1 := catalystcentersdkgo.RetrieveSitesWithOverriddenSSIDsQueryParams{}
 
 		if okSiteID {
 			queryParams1.SiteID = vSiteID.(string)
@@ -113,24 +113,36 @@ func dataSourceWirelessSettingsSSIDsOverrideAtSitesRead(ctx context.Context, d *
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Wireless.RetrieveSitesWithOverriddenSSIDsV1(&queryParams1)
+		response1, restyResp1, err := client.Wireless.RetrieveSitesWithOverriddenSSIDs(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveSitesWithOverriddenSSIDsV1", err,
-				"Failure at RetrieveSitesWithOverriddenSSIDsV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveSitesWithOverriddenSSIDs", err,
+				"Failure at RetrieveSitesWithOverriddenSSIDs, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenWirelessRetrieveSitesWithOverriddenSSIDsV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveSitesWithOverriddenSSIDs", err,
+				"Failure at RetrieveSitesWithOverriddenSSIDs, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenWirelessRetrieveSitesWithOverriddenSSIDsItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveSitesWithOverriddenSSIDsV1 response",
+				"Failure when setting RetrieveSitesWithOverriddenSSIDs response",
 				err))
 			return diags
 		}
@@ -142,7 +154,7 @@ func dataSourceWirelessSettingsSSIDsOverrideAtSitesRead(ctx context.Context, d *
 	return diags
 }
 
-func flattenWirelessRetrieveSitesWithOverriddenSSIDsV1Items(items *[]catalystcentersdkgo.ResponseWirelessRetrieveSitesWithOverriddenSSIDsV1Response) []map[string]interface{} {
+func flattenWirelessRetrieveSitesWithOverriddenSSIDsItems(items *[]catalystcentersdkgo.ResponseWirelessRetrieveSitesWithOverriddenSSIDsResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -151,13 +163,13 @@ func flattenWirelessRetrieveSitesWithOverriddenSSIDsV1Items(items *[]catalystcen
 		respItem := make(map[string]interface{})
 		respItem["site_id"] = item.SiteID
 		respItem["site_name_hierarchy"] = item.SiteNameHierarchy
-		respItem["ssids"] = flattenWirelessRetrieveSitesWithOverriddenSSIDsV1ItemsSSIDs(item.SSIDs)
+		respItem["ssids"] = flattenWirelessRetrieveSitesWithOverriddenSSIDsItemsSSIDs(item.SSIDs)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenWirelessRetrieveSitesWithOverriddenSSIDsV1ItemsSSIDs(items *[]catalystcentersdkgo.ResponseWirelessRetrieveSitesWithOverriddenSSIDsV1ResponseSSIDs) []map[string]interface{} {
+func flattenWirelessRetrieveSitesWithOverriddenSSIDsItemsSSIDs(items *[]catalystcentersdkgo.ResponseWirelessRetrieveSitesWithOverriddenSSIDsResponseSSIDs) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

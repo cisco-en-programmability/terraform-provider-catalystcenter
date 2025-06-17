@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -127,29 +127,41 @@ func dataSourceWirelessSettingsAnchorGroupsIDRead(ctx context.Context, d *schema
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAnchorGroupByIDV1")
+		log.Printf("[DEBUG] Selected method: GetAnchorGroupByID")
 		vvID := vID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Wireless.GetAnchorGroupByIDV1(vvID)
+		response1, restyResp1, err := client.Wireless.GetAnchorGroupByID(vvID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAnchorGroupByIDV1", err,
-				"Failure at GetAnchorGroupByIDV1, unexpected response", ""))
+				"Failure when executing 2 GetAnchorGroupByID", err,
+				"Failure at GetAnchorGroupByID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessGetAnchorGroupByIDV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetAnchorGroupByID", err,
+				"Failure at GetAnchorGroupByID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenWirelessGetAnchorGroupByIDItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAnchorGroupByIDV1 response",
+				"Failure when setting GetAnchorGroupByID response",
 				err))
 			return diags
 		}
@@ -161,20 +173,20 @@ func dataSourceWirelessSettingsAnchorGroupsIDRead(ctx context.Context, d *schema
 	return diags
 }
 
-func flattenWirelessGetAnchorGroupByIDV1Item(item *catalystcentersdkgo.ResponseWirelessGetAnchorGroupByIDV1) []map[string]interface{} {
+func flattenWirelessGetAnchorGroupByIDItem(item *catalystcentersdkgo.ResponseWirelessGetAnchorGroupByID) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["id"] = item.ID
 	respItem["anchor_group_name"] = item.AnchorGroupName
-	respItem["mobility_anchors"] = flattenWirelessGetAnchorGroupByIDV1ItemMobilityAnchors(item.MobilityAnchors)
+	respItem["mobility_anchors"] = flattenWirelessGetAnchorGroupByIDItemMobilityAnchors(item.MobilityAnchors)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenWirelessGetAnchorGroupByIDV1ItemMobilityAnchors(items *[]catalystcentersdkgo.ResponseWirelessGetAnchorGroupByIDV1MobilityAnchors) []map[string]interface{} {
+func flattenWirelessGetAnchorGroupByIDItemMobilityAnchors(items *[]catalystcentersdkgo.ResponseWirelessGetAnchorGroupByIDMobilityAnchors) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

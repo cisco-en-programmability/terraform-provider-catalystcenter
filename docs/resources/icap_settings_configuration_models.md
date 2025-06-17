@@ -23,6 +23,7 @@ For detailed information about the usage of the API, please refer to the Open AP
 https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 ICAP_APIs-1.0.0-resolved.yaml
 
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -33,7 +34,7 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_icap_settings_configuration_models" "example" {
   provider            = catalystcenter
   preview_description = "string"
-  parameters {
+  parameters = [{
 
     apid              = "string"
     capture_type      = "string"
@@ -44,7 +45,7 @@ resource "catalystcenter_icap_settings_configuration_models" "example" {
     ota_channel_width = 1
     slot              = []
     wlc_id            = "string"
-  }
+  }]
 }
 
 output "catalystcenter_icap_settings_configuration_models_example" {
@@ -70,7 +71,7 @@ output "catalystcenter_icap_settings_configuration_models_example" {
 
 Optional:
 
-- `payload` (Block List) Array of RequestSensorsCreatesAnICAPConfigurationIntentForPreviewApproveV1 (see [below for nested schema](#nestedblock--parameters--payload))
+- `payload` (Block List) Array of RequestSensorsCreatesAnICAPConfigurationIntentForPreviewApprove (see [below for nested schema](#nestedblock--parameters--payload))
 - `preview_description` (String) previewDescription query parameter. The ICAP intent's preview-deploy description string
 
 <a id="nestedblock--parameters--payload"></a>

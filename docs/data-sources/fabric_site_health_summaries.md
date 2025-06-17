@@ -19,10 +19,10 @@ description: |-
 It performs read operation on SDA.
 
 - Get a paginated list of Fabric sites Networks with health summary.
-This data source provides the latest health data until the given endTime. If data is not ready for the provided
-endTime, the request will fail with error code 400 Bad Request, and the error message will indicate the recommended
+This data source provides the latest health data until the given **endTime**. If data is not ready for the provided
+endTime, the request will fail with error code **400 Bad Request**, and the error message will indicate the recommended
 endTime to use to retrieve a complete data set. This behavior may occur if the provided endTime=currentTime, since we
-are not a real time system. When endTime is not provided, the API returns the latest data.
+are not a real time system. When **endTime** is not provided, the API returns the latest data.
 For detailed information about the usage of the API, please refer to the Open API specification document
 https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 fabricSiteHealthSummaries-1.0.1-resolved.yaml
@@ -31,17 +31,19 @@ fabricSiteHealthSummaries-1.0.1-resolved.yaml
 
 ```terraform
 data "catalystcenter_fabric_site_health_summaries" "example" {
-  provider    = catalystcenter
-  attribute   = "string"
-  end_time    = 1609459200
-  id          = "string"
-  limit       = 1
-  offset      = 1
-  order       = "string"
-  sort_by     = "string"
-  start_time  = 1609459200
-  view        = "string"
-  xca_lle_rid = "string"
+  provider          = catalystcenter
+  attribute         = "string"
+  end_time          = 1609459200
+  id                = "string"
+  limit             = 1
+  offset            = 1
+  order             = "string"
+  site_hierarchy    = "string"
+  site_hierarchy_id = "string"
+  sort_by           = "string"
+  start_time        = 1609459200
+  view              = "string"
+  xca_lle_rid       = "string"
 }
 
 output "catalystcenter_fabric_site_health_summaries_example" {
@@ -58,15 +60,17 @@ output "catalystcenter_fabric_site_health_summaries_example" {
 
 ### Optional
 
-- `attribute` (String) attribute query parameter. The list of FabricSite health attributes. Please refer to fabricSiteAttributes section in the Open API specification document mentioned in the description.
+- `attribute` (String) attribute query parameter. The list of FabricSite health attributes. Please refer to ******fabricSiteAttributes****** section in the Open API specification document mentioned in the description.
 - `end_time` (Number) endTime query parameter. End time to which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
 - `id` (String) id query parameter. The list of entity Uuids. (Ex."6bef213c-19ca-4170-8375-b694e251101c") Examples: id=6bef213c-19ca-4170-8375-b694e251101c (single entity uuid requested) id=6bef213c-19ca-4170-8375-b694e251101c&id=32219612-819e-4b5e-a96b-cf22aca13dd9&id=2541e9a7-b80d-4955-8aa2-79b233318ba0 (multiple entity uuid with '&' separator)
 - `limit` (Number) limit query parameter. Maximum number of records to return
 - `offset` (Number) offset query parameter. Specifies the starting point within all records returned by the API. It's one based offset. The starting value is 1.
 - `order` (String) order query parameter. The sort order of the field ascending or descending.
+- `site_hierarchy` (String) siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. **Global/AreaName/BuildingName/FloorName**)          This field supports wildcard asterisk (*****) character search support. E.g. ***/San*, */San, /San***          Examples:          **?siteHierarchy=Global/AreaName/BuildingName/FloorName** (single siteHierarchy requested)          **?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2** (multiple siteHierarchies requested)
+- `site_hierarchy_id` (String) siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. **globalUuid/areaUuid/buildingUuid/floorUuid**)          This field supports wildcard asterisk (*****) character search support. E.g. ***uuid*, *uuid, uuid***          Examples:          **?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid **(single siteHierarchyId requested)          **?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2** (multiple siteHierarchyIds requested)
 - `sort_by` (String) sortBy query parameter. A field within the response to sort by.
 - `start_time` (Number) startTime query parameter. Start time from which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
-- `view` (String) view query parameter. The specific summary view being requested. A maximum of 3 views can be queried at a time per request.  Please refer to fabricSiteViews section in the Open API specification document mentioned in the description.
+- `view` (String) view query parameter. The specific summary view being requested. A maximum of 3 views can be queried at a time per request.  Please refer to ******fabricSiteViews****** section in the Open API specification document mentioned in the description.
 
 ### Read-Only
 
@@ -91,7 +95,7 @@ Read-Only:
 - `bgp_bgp_site_total_health_device_count` (Number)
 - `bgp_evpn_fair_health_device_count` (Number)
 - `bgp_evpn_good_health_device_count` (Number)
-- `bgp_evpn_good_health_percentage` (String)
+- `bgp_evpn_good_health_percentage` (Number)
 - `bgp_evpn_total_health_device_count` (Number)
 - `bgp_evpnpoor_health_device_count` (Number)
 - `bgp_peer_infra_vn_fair_health_device_count` (Number)
@@ -142,7 +146,7 @@ Read-Only:
 - `network_protocol` (String)
 - `peer_score_fair_health_device_count` (Number)
 - `peer_score_good_health_device_count` (Number)
-- `peer_score_good_health_percentage` (String)
+- `peer_score_good_health_percentage` (Number)
 - `peer_score_poor_health_device_count` (Number)
 - `peer_score_total_health_device_count` (Number)
 - `poor_health_device_count` (Number)
@@ -157,3 +161,4 @@ Read-Only:
 - `pubsub_infra_vn_poor_health_device_count` (Number)
 - `pubsub_infra_vn_total_health_device_count` (Number)
 - `total_device_count` (Number)
+- `total_health_device_count` (Number)

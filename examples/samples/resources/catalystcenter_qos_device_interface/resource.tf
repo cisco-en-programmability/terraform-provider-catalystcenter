@@ -15,8 +15,8 @@ provider "catalystcenter" {
 resource "catalystcenter_qos_device_interface" "example" {
   provider = catalystcenter
   parameters {
-
-    excluded_interfaces = ["a"]
+    payload {
+    
     #id                  = "string"
     name              = "test"
     network_device_id = "3eb928b8-2414-4121-ac35-1247e5d666a4"
@@ -29,6 +29,7 @@ resource "catalystcenter_qos_device_interface" "example" {
       #label                 = "string"
       role = "DMVPN_SPOKE"
       #upload_bw             = 1
+    }
     }
   }
 }

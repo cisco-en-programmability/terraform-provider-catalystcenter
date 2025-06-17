@@ -24,7 +24,7 @@ data "catalystcenter_wireless_controllers_primary_managed_ap_locations" "example
 }
 
 output "catalystcenter_wireless_controllers_primary_managed_ap_locations_example" {
-  value = data.catalystcenter_wireless_controllers_primary_managed_ap_locations.example.items
+  value = data.catalystcenter_wireless_controllers_primary_managed_ap_locations.example.item
 }
 ```
 
@@ -37,23 +37,23 @@ output "catalystcenter_wireless_controllers_primary_managed_ap_locations_example
 
 ### Optional
 
-- `limit` (Number) limit query parameter. The number of records to show for this page.
+- `limit` (Number) limit query parameter. The number of records to show for this page. Default is 500 if not specified. Maximum allowed limit is 500.
 - `offset` (Number) offset query parameter. The first record to show for this page; the first record is numbered 1.
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `items` (List of Object) (see [below for nested schema](#nestedatt--items))
+- `item` (List of Object) (see [below for nested schema](#nestedatt--item))
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--item"></a>
+### Nested Schema for `item`
 
 Read-Only:
 
-- `managed_ap_locations` (List of Object) (see [below for nested schema](#nestedobjatt--items--managed_ap_locations))
+- `managed_ap_locations` (List of Object) (see [below for nested schema](#nestedobjatt--item--managed_ap_locations))
 
-<a id="nestedobjatt--items--managed_ap_locations"></a>
-### Nested Schema for `items.managed_ap_locations`
+<a id="nestedobjatt--item--managed_ap_locations"></a>
+### Nested Schema for `item.managed_ap_locations`
 
 Read-Only:
 

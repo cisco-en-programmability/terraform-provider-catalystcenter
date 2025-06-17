@@ -17,11 +17,7 @@ provider "catalystcenter" {
 resource "catalystcenter_pnp_global_settings" "example" {
   provider = catalystcenter
   parameters {
-    aaa_credentials {
 
-      password = "a"
-      username = "string"
-    }
     /*
     id = "string"
 

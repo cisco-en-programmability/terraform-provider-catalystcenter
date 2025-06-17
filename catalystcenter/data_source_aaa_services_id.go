@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -29,7 +29,7 @@ specs/blob/main/Assurance/CE_Cat_Center_Org-AAAServices-1.0.0-resolved.yaml
 				Optional: true,
 			},
 			"id": &schema.Schema{
-				Description: `id path parameter. Unique id of the AAA Service. It is the combination of AAA Server IP (serverIp) and Device UUID (deviceId) separated by underscore (_). Example: If serverIp is 10.76.81.33 and deviceId is 6bef213c-19ca-4170-8375-b694e251101c, then the id would be 10.76.81.33_6bef213c-19ca-4170-8375-b694e251101c
+				Description: `id path parameter. Unique id of the AAA Service. It is the combination of AAA Server IP (**serverIp**) and Device UUID (**deviceId**) separated by underscore (**_**). Example: If **serverIp** is **10.76.81.33** and **deviceId** is **6bef213c-19ca-4170-8375-b694e251101c**, then the **id** would be **10.76.81.33_6bef213c-19ca-4170-8375-b694e251101c**
 `,
 				Type:     schema.TypeString,
 				Required: true,
@@ -190,11 +190,11 @@ func dataSourceAAAServicesIDRead(ctx context.Context, d *schema.ResourceData, m 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesTheDetailsOfASpecificAAAServiceMatchingTheIDOfTheServiceV1")
+		log.Printf("[DEBUG] Selected method: RetrievesTheDetailsOfASpecificAAAServiceMatchingTheIDOfTheService")
 		vvID := vID.(string)
 
-		headerParams1 := catalystcentersdkgo.RetrievesTheDetailsOfASpecificAAAServiceMatchingTheIDOfTheServiceV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.RetrievesTheDetailsOfASpecificAAAServiceMatchingTheIDOfTheServiceV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.RetrievesTheDetailsOfASpecificAAAServiceMatchingTheIDOfTheServiceHeaderParams{}
+		queryParams1 := catalystcentersdkgo.RetrievesTheDetailsOfASpecificAAAServiceMatchingTheIDOfTheServiceQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -206,24 +206,36 @@ func dataSourceAAAServicesIDRead(ctx context.Context, d *schema.ResourceData, m 
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Devices.RetrievesTheDetailsOfASpecificAAAServiceMatchingTheIDOfTheServiceV1(vvID, &headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Devices.RetrievesTheDetailsOfASpecificAAAServiceMatchingTheIDOfTheService(vvID, &headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesTheDetailsOfASpecificAAAServiceMatchingTheIDOfTheServiceV1", err,
-				"Failure at RetrievesTheDetailsOfASpecificAAAServiceMatchingTheIDOfTheServiceV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesTheDetailsOfASpecificAAAServiceMatchingTheIDOfTheService", err,
+				"Failure at RetrievesTheDetailsOfASpecificAAAServiceMatchingTheIDOfTheService, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesRetrievesTheDetailsOfASpecificAAAServiceMatchingTheIDOfTheServiceV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesTheDetailsOfASpecificAAAServiceMatchingTheIDOfTheService", err,
+				"Failure at RetrievesTheDetailsOfASpecificAAAServiceMatchingTheIDOfTheService, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenDevicesRetrievesTheDetailsOfASpecificAAAServiceMatchingTheIDOfTheServiceItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesTheDetailsOfASpecificAAAServiceMatchingTheIDOfTheServiceV1 response",
+				"Failure when setting RetrievesTheDetailsOfASpecificAAAServiceMatchingTheIDOfTheService response",
 				err))
 			return diags
 		}
@@ -235,7 +247,7 @@ func dataSourceAAAServicesIDRead(ctx context.Context, d *schema.ResourceData, m 
 	return diags
 }
 
-func flattenDevicesRetrievesTheDetailsOfASpecificAAAServiceMatchingTheIDOfTheServiceV1Item(item *catalystcentersdkgo.ResponseDevicesRetrievesTheDetailsOfASpecificAAAServiceMatchingTheIDOfTheServiceV1Response) []map[string]interface{} {
+func flattenDevicesRetrievesTheDetailsOfASpecificAAAServiceMatchingTheIDOfTheServiceItem(item *catalystcentersdkgo.ResponseDevicesRetrievesTheDetailsOfASpecificAAAServiceMatchingTheIDOfTheServiceResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

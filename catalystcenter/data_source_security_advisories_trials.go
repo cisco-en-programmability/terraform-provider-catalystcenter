@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -97,28 +97,40 @@ func dataSourceSecurityAdvisoriesTrialsRead(ctx context.Context, d *schema.Resou
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTrialDetailsForSecurityAdvisoriesDetectionOnNetworkDevicesV1")
+		log.Printf("[DEBUG] Selected method: GetTrialDetailsForSecurityAdvisoriesDetectionOnNetworkDevices")
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Compliance.GetTrialDetailsForSecurityAdvisoriesDetectionOnNetworkDevicesV1()
+		response1, restyResp1, err := client.Compliance.GetTrialDetailsForSecurityAdvisoriesDetectionOnNetworkDevices()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTrialDetailsForSecurityAdvisoriesDetectionOnNetworkDevicesV1", err,
-				"Failure at GetTrialDetailsForSecurityAdvisoriesDetectionOnNetworkDevicesV1, unexpected response", ""))
+				"Failure when executing 2 GetTrialDetailsForSecurityAdvisoriesDetectionOnNetworkDevices", err,
+				"Failure at GetTrialDetailsForSecurityAdvisoriesDetectionOnNetworkDevices, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenComplianceGetTrialDetailsForSecurityAdvisoriesDetectionOnNetworkDevicesV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetTrialDetailsForSecurityAdvisoriesDetectionOnNetworkDevices", err,
+				"Failure at GetTrialDetailsForSecurityAdvisoriesDetectionOnNetworkDevices, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenComplianceGetTrialDetailsForSecurityAdvisoriesDetectionOnNetworkDevicesItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTrialDetailsForSecurityAdvisoriesDetectionOnNetworkDevicesV1 response",
+				"Failure when setting GetTrialDetailsForSecurityAdvisoriesDetectionOnNetworkDevices response",
 				err))
 			return diags
 		}
@@ -130,7 +142,7 @@ func dataSourceSecurityAdvisoriesTrialsRead(ctx context.Context, d *schema.Resou
 	return diags
 }
 
-func flattenComplianceGetTrialDetailsForSecurityAdvisoriesDetectionOnNetworkDevicesV1Item(item *catalystcentersdkgo.ResponseComplianceGetTrialDetailsForSecurityAdvisoriesDetectionOnNetworkDevicesV1Response) []map[string]interface{} {
+func flattenComplianceGetTrialDetailsForSecurityAdvisoriesDetectionOnNetworkDevicesItem(item *catalystcentersdkgo.ResponseComplianceGetTrialDetailsForSecurityAdvisoriesDetectionOnNetworkDevicesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

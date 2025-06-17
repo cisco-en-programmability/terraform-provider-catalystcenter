@@ -33,7 +33,7 @@ output "catalystcenter_ipam_global_ip_address_pools_id_example" {
 
 ### Required
 
-- `id` (String) id path parameter. The id of the global IP address pool to retrieve.
+- `id` (String) id path parameter. The **id** of the global IP address pool to retrieve.
 
 ### Read-Only
 

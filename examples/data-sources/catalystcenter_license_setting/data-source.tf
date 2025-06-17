@@ -1,8 +1,8 @@
 
 data "catalystcenter_license_setting" "example" {
-    provider = catalystcenter
+  provider = catalystcenter
 }
 
 output "catalystcenter_license_setting_example" {
-    value = data.catalystcenter_license_setting.example.item
+  value = data.catalystcenter_license_setting.example.item
 }

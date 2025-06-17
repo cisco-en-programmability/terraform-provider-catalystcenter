@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -213,7 +213,7 @@ func resourceApplicationSetV2Create(ctx context.Context, d *schema.ResourceData,
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestApplicationPolicyApplicationSetCreateApplicationSetsV2(ctx, "parameters.0", d)
+	request1 := expandRequestApplicationSetV2CreateApplicationSetsV2(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vName := resourceItem["name"]
@@ -229,7 +229,7 @@ func resourceApplicationSetV2Create(ctx context.Context, d *schema.ResourceData,
 		return resourceApplicationSetsRead(ctx, d, m)
 	}
 
-	resp1, restyResp1, err := client.ApplicationPolicy.CreateApplicationSets(request1)
+	resp1, restyResp1, err := client.ApplicationPolicy.CreateApplicationSetsV2(request1)
 	if err != nil || resp1 == nil {
 		if restyResp1 != nil {
 			diags = append(diags, diagErrorWithResponse(
@@ -336,7 +336,7 @@ func resourceApplicationSetV2Delete(ctx context.Context, d *schema.ResourceData,
 	vvID := resourceMap["id"]
 
 	response1, restyResp1, err := client.ApplicationPolicy.DeleteApplicationSet(
-		&catalystcentersdkgo.DeleteApplicationSetV1QueryParams{
+		&catalystcentersdkgo.DeleteApplicationSetQueryParams{
 			ID: vvID,
 		})
 	if err != nil || response1 == nil {
@@ -388,9 +388,10 @@ func resourceApplicationSetV2Delete(ctx context.Context, d *schema.ResourceData,
 
 	return diags
 }
-func expandRequestApplicationPolicyApplicationSetCreateApplicationSetsV2(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyCreateApplicationSetsV2 {
+
+func expandRequestApplicationSetV2CreateApplicationSetsV2(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyCreateApplicationSetsV2 {
 	request := catalystcentersdkgo.RequestApplicationPolicyCreateApplicationSetsV2{}
-	if v := expandRequestApplicationPolicyApplicationSetCreateApplicationSetsV2ItemArray(ctx, key+".payload", d); v != nil {
+	if v := expandRequestApplicationSetV2CreateApplicationSetsV2ItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -399,7 +400,7 @@ func expandRequestApplicationPolicyApplicationSetCreateApplicationSetsV2(ctx con
 	return &request
 }
 
-func expandRequestApplicationPolicyApplicationSetCreateApplicationSetsV2ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationSetsV2 {
+func expandRequestApplicationSetV2CreateApplicationSetsV2ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationSetsV2 {
 	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationSetsV2{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
@@ -411,7 +412,7 @@ func expandRequestApplicationPolicyApplicationSetCreateApplicationSetsV2ItemArra
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestApplicationPolicyApplicationSetCreateApplicationSetsV2Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestApplicationSetV2CreateApplicationSetsV2Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -422,7 +423,7 @@ func expandRequestApplicationPolicyApplicationSetCreateApplicationSetsV2ItemArra
 	return &request
 }
 
-func expandRequestApplicationPolicyApplicationSetCreateApplicationSetsV2Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationSetsV2 {
+func expandRequestApplicationSetV2CreateApplicationSetsV2Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationSetsV2 {
 	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationSetsV2{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)

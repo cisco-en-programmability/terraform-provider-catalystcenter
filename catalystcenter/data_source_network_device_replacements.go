@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -291,8 +291,8 @@ func dataSourceNetworkDeviceReplacementsRead(ctx context.Context, d *schema.Reso
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveTheStatusOfAllTheDeviceReplacementWorkflowsV1")
-		queryParams1 := catalystcentersdkgo.RetrieveTheStatusOfAllTheDeviceReplacementWorkflowsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: RetrieveTheStatusOfAllTheDeviceReplacementWorkflows")
+		queryParams1 := catalystcentersdkgo.RetrieveTheStatusOfAllTheDeviceReplacementWorkflowsQueryParams{}
 
 		if okFamily {
 			queryParams1.Family = vFamily.(string)
@@ -330,24 +330,36 @@ func dataSourceNetworkDeviceReplacementsRead(ctx context.Context, d *schema.Reso
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.DeviceReplacement.RetrieveTheStatusOfAllTheDeviceReplacementWorkflowsV1(&queryParams1)
+		response1, restyResp1, err := client.DeviceReplacement.RetrieveTheStatusOfAllTheDeviceReplacementWorkflows(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveTheStatusOfAllTheDeviceReplacementWorkflowsV1", err,
-				"Failure at RetrieveTheStatusOfAllTheDeviceReplacementWorkflowsV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveTheStatusOfAllTheDeviceReplacementWorkflows", err,
+				"Failure at RetrieveTheStatusOfAllTheDeviceReplacementWorkflows, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDeviceReplacementRetrieveTheStatusOfAllTheDeviceReplacementWorkflowsV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveTheStatusOfAllTheDeviceReplacementWorkflows", err,
+				"Failure at RetrieveTheStatusOfAllTheDeviceReplacementWorkflows, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDeviceReplacementRetrieveTheStatusOfAllTheDeviceReplacementWorkflowsItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveTheStatusOfAllTheDeviceReplacementWorkflowsV1 response",
+				"Failure when setting RetrieveTheStatusOfAllTheDeviceReplacementWorkflows response",
 				err))
 			return diags
 		}
@@ -359,7 +371,7 @@ func dataSourceNetworkDeviceReplacementsRead(ctx context.Context, d *schema.Reso
 	return diags
 }
 
-func flattenDeviceReplacementRetrieveTheStatusOfAllTheDeviceReplacementWorkflowsV1Items(items *[]catalystcentersdkgo.ResponseDeviceReplacementRetrieveTheStatusOfAllTheDeviceReplacementWorkflowsV1Response) []map[string]interface{} {
+func flattenDeviceReplacementRetrieveTheStatusOfAllTheDeviceReplacementWorkflowsItems(items *[]catalystcentersdkgo.ResponseDeviceReplacementRetrieveTheStatusOfAllTheDeviceReplacementWorkflowsResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -378,13 +390,13 @@ func flattenDeviceReplacementRetrieveTheStatusOfAllTheDeviceReplacementWorkflows
 		respItem["replacement_device_serial_number"] = item.ReplacementDeviceSerialNumber
 		respItem["replacement_status"] = item.ReplacementStatus
 		respItem["replacement_time"] = item.ReplacementTime
-		respItem["workflow"] = flattenDeviceReplacementRetrieveTheStatusOfAllTheDeviceReplacementWorkflowsV1ItemsWorkflow(item.Workflow)
+		respItem["workflow"] = flattenDeviceReplacementRetrieveTheStatusOfAllTheDeviceReplacementWorkflowsItemsWorkflow(item.Workflow)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDeviceReplacementRetrieveTheStatusOfAllTheDeviceReplacementWorkflowsV1ItemsWorkflow(item *catalystcentersdkgo.ResponseDeviceReplacementRetrieveTheStatusOfAllTheDeviceReplacementWorkflowsV1ResponseWorkflow) []map[string]interface{} {
+func flattenDeviceReplacementRetrieveTheStatusOfAllTheDeviceReplacementWorkflowsItemsWorkflow(item *catalystcentersdkgo.ResponseDeviceReplacementRetrieveTheStatusOfAllTheDeviceReplacementWorkflowsResponseWorkflow) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -394,7 +406,7 @@ func flattenDeviceReplacementRetrieveTheStatusOfAllTheDeviceReplacementWorkflows
 	respItem["workflow_status"] = item.WorkflowStatus
 	respItem["start_time"] = item.StartTime
 	respItem["end_time"] = item.EndTime
-	respItem["steps"] = flattenDeviceReplacementRetrieveTheStatusOfAllTheDeviceReplacementWorkflowsV1ItemsWorkflowSteps(item.Steps)
+	respItem["steps"] = flattenDeviceReplacementRetrieveTheStatusOfAllTheDeviceReplacementWorkflowsItemsWorkflowSteps(item.Steps)
 
 	return []map[string]interface{}{
 		respItem,
@@ -402,7 +414,7 @@ func flattenDeviceReplacementRetrieveTheStatusOfAllTheDeviceReplacementWorkflows
 
 }
 
-func flattenDeviceReplacementRetrieveTheStatusOfAllTheDeviceReplacementWorkflowsV1ItemsWorkflowSteps(items *[]catalystcentersdkgo.ResponseDeviceReplacementRetrieveTheStatusOfAllTheDeviceReplacementWorkflowsV1ResponseWorkflowSteps) []map[string]interface{} {
+func flattenDeviceReplacementRetrieveTheStatusOfAllTheDeviceReplacementWorkflowsItemsWorkflowSteps(items *[]catalystcentersdkgo.ResponseDeviceReplacementRetrieveTheStatusOfAllTheDeviceReplacementWorkflowsResponseWorkflowSteps) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

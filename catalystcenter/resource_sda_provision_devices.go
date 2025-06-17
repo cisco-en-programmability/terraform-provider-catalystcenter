@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -120,7 +120,7 @@ func resourceSdaProvisionDevicesCreate(ctx context.Context, d *schema.ResourceDa
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestSdaProvisionDevicesProvisionDevicesV1(ctx, "parameters.0", d)
+	request1 := expandRequestSdaProvisionDevicesProvisionDevices(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vID := resourceItem["id"]
@@ -129,7 +129,7 @@ func resourceSdaProvisionDevicesCreate(ctx context.Context, d *schema.ResourceDa
 	vvNetworkDeviceID := interfaceToString(vNetworkID)
 	vSiteID := resourceItem["site_id"]
 	vvSiteID := interfaceToString(vSiteID)
-	queryParamImport := catalystcentersdkgo.GetProvisionedDevicesV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetProvisionedDevicesQueryParams{}
 	queryParamImport.NetworkDeviceID = vvNetworkDeviceID
 	queryParamImport.SiteID = vvSiteID
 	item2, err := searchSdaGetProvisionedDevices(m, queryParamImport, vvID)
@@ -180,7 +180,7 @@ func resourceSdaProvisionDevicesCreate(ctx context.Context, d *schema.ResourceDa
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetProvisionedDevicesV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetProvisionedDevicesQueryParams{}
 	queryParamValidate.NetworkDeviceID = vvNetworkDeviceID
 	queryParamValidate.SiteID = vvSiteID
 	item3, err := searchSdaGetProvisionedDevices(m, queryParamValidate, vvID)
@@ -213,7 +213,7 @@ func resourceSdaProvisionDevicesRead(ctx context.Context, d *schema.ResourceData
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetProvisionedDevices")
-		queryParams1 := catalystcentersdkgo.GetProvisionedDevicesV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetProvisionedDevicesQueryParams{}
 		queryParams1.NetworkDeviceID = vvNetworkDeviceID
 		queryParams1.SiteID = vvSiteID
 		item1, err := searchSdaGetProvisionedDevices(m, queryParams1, vvID)
@@ -222,11 +222,11 @@ func resourceSdaProvisionDevicesRead(ctx context.Context, d *schema.ResourceData
 			return diags
 		}
 		// Review flatten function used
-		items := []catalystcentersdkgo.ResponseSdaGetProvisionedDevicesV1Response{
+		items := []catalystcentersdkgo.ResponseSdaGetProvisionedDevicesResponse{
 			*item1,
 		}
 
-		vItem1 := flattenSdaGetProvisionedDevicesV1Items(&items)
+		vItem1 := flattenSdaGetProvisionedDevicesItems(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetProvisionedDevices search response",
@@ -247,7 +247,7 @@ func resourceSdaProvisionDevicesUpdate(ctx context.Context, d *schema.ResourceDa
 
 	vID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestSdaProvisionDevicesReProvisionDevicesV1(ctx, "parameters.0", d)
+		request1 := expandRequestSdaProvisionDevicesReProvisionDevices(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		if request1 != nil && len(*request1) > 0 {
 			req := *request1
@@ -313,7 +313,7 @@ func resourceSdaProvisionDevicesDelete(ctx context.Context, d *schema.ResourceDa
 	resourceMap := separateResourceID(resourceID)
 
 	vvID := resourceMap["id"]
-	response1, restyResp1, err := client.Sda.DeleteProvisionedDeviceByID(vvID)
+	response1, restyResp1, err := client.Sda.DeleteProvisionedDeviceByID(vvID, nil)
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] resty response for delete operation => %v", restyResp1.String())
@@ -363,9 +363,10 @@ func resourceSdaProvisionDevicesDelete(ctx context.Context, d *schema.ResourceDa
 
 	return diags
 }
-func expandRequestSdaProvisionDevicesProvisionDevicesV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaProvisionDevicesV1 {
-	request := catalystcentersdkgo.RequestSdaProvisionDevicesV1{}
-	if v := expandRequestSdaProvisionDevicesProvisionDevicesV1ItemArray(ctx, key+".payload", d); v != nil {
+
+func expandRequestSdaProvisionDevicesProvisionDevices(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaProvisionDevices {
+	request := catalystcentersdkgo.RequestSdaProvisionDevices{}
+	if v := expandRequestSdaProvisionDevicesProvisionDevicesItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -374,8 +375,8 @@ func expandRequestSdaProvisionDevicesProvisionDevicesV1(ctx context.Context, key
 	return &request
 }
 
-func expandRequestSdaProvisionDevicesProvisionDevicesV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaProvisionDevicesV1 {
-	request := []catalystcentersdkgo.RequestItemSdaProvisionDevicesV1{}
+func expandRequestSdaProvisionDevicesProvisionDevicesItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaProvisionDevices {
+	request := []catalystcentersdkgo.RequestItemSdaProvisionDevices{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -386,7 +387,7 @@ func expandRequestSdaProvisionDevicesProvisionDevicesV1ItemArray(ctx context.Con
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaProvisionDevicesProvisionDevicesV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaProvisionDevicesProvisionDevicesItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -397,8 +398,8 @@ func expandRequestSdaProvisionDevicesProvisionDevicesV1ItemArray(ctx context.Con
 	return &request
 }
 
-func expandRequestSdaProvisionDevicesProvisionDevicesV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaProvisionDevicesV1 {
-	request := catalystcentersdkgo.RequestItemSdaProvisionDevicesV1{}
+func expandRequestSdaProvisionDevicesProvisionDevicesItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaProvisionDevices {
+	request := catalystcentersdkgo.RequestItemSdaProvisionDevices{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".site_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".site_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".site_id")))) {
 		request.SiteID = interfaceToString(v)
 	}
@@ -411,9 +412,9 @@ func expandRequestSdaProvisionDevicesProvisionDevicesV1Item(ctx context.Context,
 	return &request
 }
 
-func expandRequestSdaProvisionDevicesReProvisionDevicesV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaReProvisionDevicesV1 {
-	request := catalystcentersdkgo.RequestSdaReProvisionDevicesV1{}
-	if v := expandRequestSdaProvisionDevicesReProvisionDevicesV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaProvisionDevicesReProvisionDevices(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaReProvisionDevices {
+	request := catalystcentersdkgo.RequestSdaReProvisionDevices{}
+	if v := expandRequestSdaProvisionDevicesReProvisionDevicesItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -422,8 +423,8 @@ func expandRequestSdaProvisionDevicesReProvisionDevicesV1(ctx context.Context, k
 	return &request
 }
 
-func expandRequestSdaProvisionDevicesReProvisionDevicesV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaReProvisionDevicesV1 {
-	request := []catalystcentersdkgo.RequestItemSdaReProvisionDevicesV1{}
+func expandRequestSdaProvisionDevicesReProvisionDevicesItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaReProvisionDevices {
+	request := []catalystcentersdkgo.RequestItemSdaReProvisionDevices{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -434,7 +435,7 @@ func expandRequestSdaProvisionDevicesReProvisionDevicesV1ItemArray(ctx context.C
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaProvisionDevicesReProvisionDevicesV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaProvisionDevicesReProvisionDevicesItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -445,8 +446,8 @@ func expandRequestSdaProvisionDevicesReProvisionDevicesV1ItemArray(ctx context.C
 	return &request
 }
 
-func expandRequestSdaProvisionDevicesReProvisionDevicesV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaReProvisionDevicesV1 {
-	request := catalystcentersdkgo.RequestItemSdaReProvisionDevicesV1{}
+func expandRequestSdaProvisionDevicesReProvisionDevicesItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaReProvisionDevices {
+	request := catalystcentersdkgo.RequestItemSdaReProvisionDevices{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -462,11 +463,11 @@ func expandRequestSdaProvisionDevicesReProvisionDevicesV1Item(ctx context.Contex
 	return &request
 }
 
-func searchSdaGetProvisionedDevices(m interface{}, queryParams catalystcentersdkgo.GetProvisionedDevicesV1QueryParams, vID string) (*catalystcentersdkgo.ResponseSdaGetProvisionedDevicesV1Response, error) {
+func searchSdaGetProvisionedDevices(m interface{}, queryParams catalystcentersdkgo.GetProvisionedDevicesQueryParams, vID string) (*catalystcentersdkgo.ResponseSdaGetProvisionedDevicesResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseSdaGetProvisionedDevicesV1Response
-	var ite *catalystcentersdkgo.ResponseSdaGetProvisionedDevicesV1
+	var foundItem *catalystcentersdkgo.ResponseSdaGetProvisionedDevicesResponse
+	var ite *catalystcentersdkgo.ResponseSdaGetProvisionedDevices
 	if vID != "" {
 		queryParams.Offset = 1
 		nResponse, _, err := client.Sda.GetProvisionedDevices(nil)

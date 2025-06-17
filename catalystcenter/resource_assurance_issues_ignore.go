@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -19,8 +19,10 @@ func resourceAssuranceIssuesIgnore() *schema.Resource {
 		Description: `It performs create operation on Issues.
 
 - Ignores the given list of issues. The response contains the list of issues which were successfully ignored as well as
-the issues which are failed to ignore. For detailed information about the usage of the API, please refer to the Open API
-specification document https://github.com/cisco-en-programmability/catalyst-center-api-
+the issues which are failed to ignore. After this API returns success response, it may take few seconds for the issue
+status to be updated if the system is heavily loaded. Please use **GET /dna/data/api/v1/assuranceIssues/{id}** API to
+fetch the details of a particular issue and verify **updatedTime**. For detailed information about the usage of the API,
+please refer to the Open API specification document https://github.com/cisco-en-programmability/catalyst-center-api-
 specs/blob/main/Assurance/CE_Cat_Center_Org-IssuesLifecycle-1.0.0-resolved.yaml
 `,
 
@@ -72,6 +74,13 @@ specs/blob/main/Assurance/CE_Cat_Center_Org-IssuesLifecycle-1.0.0-resolved.yaml
 							Required: true,
 							ForceNew: true,
 						},
+						"ignore_hours": &schema.Schema{
+							Description: `Ignore Hours`,
+							Type:        schema.TypeInt,
+							Optional:    true,
+							ForceNew:    true,
+							Computed:    true,
+						},
 						"issue_ids": &schema.Schema{
 							Description: `Issue Ids`,
 							Type:        schema.TypeList,
@@ -97,34 +106,34 @@ func resourceAssuranceIssuesIgnoreCreate(ctx context.Context, d *schema.Resource
 
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
-	request1 := expandRequestAssuranceIssuesIgnoreIgnoreTheGivenListOfIssuesV1(ctx, "parameters.0", d)
+	request1 := expandRequestAssuranceIssuesIgnoreIgnoreTheGivenListOfIssues(ctx, "parameters.0", d)
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
 
-	headerParams1 := catalystcentersdkgo.IgnoreTheGivenListOfIssuesV1HeaderParams{}
+	headerParams1 := catalystcentersdkgo.IgnoreTheGivenListOfIssuesHeaderParams{}
 
 	headerParams1.XCaLLERID = vXCaLLERID.(string)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Issues.IgnoreTheGivenListOfIssuesV1(request1, &headerParams1)
+	response1, restyResp1, err := client.Issues.IgnoreTheGivenListOfIssues(request1, &headerParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing IgnoreTheGivenListOfIssuesV1", err))
+			"Failure when executing IgnoreTheGivenListOfIssues", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItem1 := flattenIssuesIgnoreTheGivenListOfIssuesV1Item(response1.Response)
+	vItem1 := flattenIssuesIgnoreTheGivenListOfIssuesItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting IgnoreTheGivenListOfIssuesV1 response",
+			"Failure when setting IgnoreTheGivenListOfIssues response",
 			err))
 		return diags
 	}
@@ -148,15 +157,18 @@ func resourceAssuranceIssuesIgnoreDelete(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func expandRequestAssuranceIssuesIgnoreIgnoreTheGivenListOfIssuesV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesIgnoreTheGivenListOfIssuesV1 {
-	request := catalystcentersdkgo.RequestIssuesIgnoreTheGivenListOfIssuesV1{}
+func expandRequestAssuranceIssuesIgnoreIgnoreTheGivenListOfIssues(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesIgnoreTheGivenListOfIssues {
+	request := catalystcentersdkgo.RequestIssuesIgnoreTheGivenListOfIssues{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".issue_ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".issue_ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".issue_ids")))) {
 		request.IssueIDs = interfaceToSliceString(v)
+	}
+	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ignore_hours")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ignore_hours")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ignore_hours")))) {
+		request.IgnoreHours = interfaceToIntPtr(v)
 	}
 	return &request
 }
 
-func flattenIssuesIgnoreTheGivenListOfIssuesV1Item(item *catalystcentersdkgo.ResponseIssuesIgnoreTheGivenListOfIssuesV1Response) []map[string]interface{} {
+func flattenIssuesIgnoreTheGivenListOfIssuesItem(item *catalystcentersdkgo.ResponseIssuesIgnoreTheGivenListOfIssuesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

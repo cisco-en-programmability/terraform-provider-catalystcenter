@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -12,7 +13,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -64,7 +65,7 @@ func resourceSdaMulticastV1Update() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"payload": &schema.Schema{
-							Description: `Array of RequestSdaUpdateMulticastV1`,
+							Description: `Array of RequestSdaUpdateMulticast`,
 							Type:        schema.TypeList,
 							Optional:    true,
 							ForceNew:    true,
@@ -102,18 +103,19 @@ func resourceSdaMulticastV1UpdateCreate(ctx context.Context, d *schema.ResourceD
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestSdaMulticastV1UpdateUpdateMulticastV1(ctx, "parameters.0", d)
+	request1 := expandRequestSdaMulticastV1UpdateUpdateMulticast(ctx, "parameters.0", d)
 
-	// has_unknown_response: None
+	response1, restyResp1, err := client.Sda.UpdateMulticast(request1)
 
-	response1, restyResp1, err := client.Sda.UpdateMulticastV1(request1)
+	if request1 != nil {
+		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
+	}
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
-		diags = append(diags, diagError(
-			"Failure when executing UpdateMulticastV1", err))
+		d.SetId("")
 		return diags
 	}
 
@@ -121,9 +123,10 @@ func resourceSdaMulticastV1UpdateCreate(ctx context.Context, d *schema.ResourceD
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing UpdateMulticastV1", err))
+			"Failure when executing UpdateMulticast", err))
 		return diags
 	}
+
 	taskId := response1.Response.TaskID
 	log.Printf("[DEBUG] TASKID => %s", taskId)
 	if taskId != "" {
@@ -148,25 +151,22 @@ func resourceSdaMulticastV1UpdateCreate(ctx context.Context, d *schema.ResourceD
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing UpdateMulticastV1", err1))
+				"Failure when executing UpdateMulticast", err1))
 			return diags
 		}
 	}
 
-	if request1 != nil {
-		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-	}
-	vItem1 := flattenSdaUpdateMulticastV1Item(response1.Response)
+	vItem1 := flattenSdaUpdateMulticastItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting UpdateMulticastV1 response",
+			"Failure when setting UpdateMulticast response",
 			err))
 		return diags
 	}
@@ -187,16 +187,16 @@ func resourceSdaMulticastV1UpdateDelete(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func expandRequestSdaMulticastV1UpdateUpdateMulticastV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateMulticastV1 {
-	request := catalystcentersdkgo.RequestSdaUpdateMulticastV1{}
-	if v := expandRequestSdaMulticastV1UpdateUpdateMulticastV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaMulticastV1UpdateUpdateMulticast(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateMulticast {
+	request := catalystcentersdkgo.RequestSdaUpdateMulticast{}
+	if v := expandRequestSdaMulticastV1UpdateUpdateMulticastItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	return &request
 }
 
-func expandRequestSdaMulticastV1UpdateUpdateMulticastV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateMulticastV1 {
-	request := []catalystcentersdkgo.RequestItemSdaUpdateMulticastV1{}
+func expandRequestSdaMulticastV1UpdateUpdateMulticastItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateMulticast {
+	request := []catalystcentersdkgo.RequestItemSdaUpdateMulticast{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -207,7 +207,7 @@ func expandRequestSdaMulticastV1UpdateUpdateMulticastV1ItemArray(ctx context.Con
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaMulticastV1UpdateUpdateMulticastV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaMulticastV1UpdateUpdateMulticastItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -215,8 +215,8 @@ func expandRequestSdaMulticastV1UpdateUpdateMulticastV1ItemArray(ctx context.Con
 	return &request
 }
 
-func expandRequestSdaMulticastV1UpdateUpdateMulticastV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateMulticastV1 {
-	request := catalystcentersdkgo.RequestItemSdaUpdateMulticastV1{}
+func expandRequestSdaMulticastV1UpdateUpdateMulticastItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateMulticast {
+	request := catalystcentersdkgo.RequestItemSdaUpdateMulticast{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".fabric_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".fabric_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".fabric_id")))) {
 		request.FabricID = interfaceToString(v)
 	}
@@ -226,7 +226,7 @@ func expandRequestSdaMulticastV1UpdateUpdateMulticastV1Item(ctx context.Context,
 	return &request
 }
 
-func flattenSdaUpdateMulticastV1Item(item *catalystcentersdkgo.ResponseSdaUpdateMulticastV1Response) []map[string]interface{} {
+func flattenSdaUpdateMulticastItem(item *catalystcentersdkgo.ResponseSdaUpdateMulticastResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

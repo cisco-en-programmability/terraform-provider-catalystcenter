@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -11,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -107,19 +108,19 @@ func resourceInterfaceOperationCreateCreate(ctx context.Context, d *schema.Resou
 	vInterfaceUUID := resourceItem["interface_uuid"]
 
 	vvInterfaceUUID := vInterfaceUUID.(string)
-	request1 := expandRequestInterfaceOperationCreateClearMacAddressTableV1(ctx, "parameters.0", d)
-	queryParams1 := catalystcentersdkgo.ClearMacAddressTableV1QueryParams{}
+	request1 := expandRequestInterfaceOperationCreateClearMacAddressTable(ctx, "parameters.0", d)
+	queryParams1 := catalystcentersdkgo.ClearMacAddressTableQueryParams{}
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Devices.ClearMacAddressTableV1(vvInterfaceUUID, request1, &queryParams1)
+	response1, restyResp1, err := client.Devices.ClearMacAddressTable(vvInterfaceUUID, request1, &queryParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ClearMacAddressTableV1", err))
+			"Failure when executing ClearMacAddressTable", err))
 		return diags
 	}
 
@@ -127,7 +128,7 @@ func resourceInterfaceOperationCreateCreate(ctx context.Context, d *schema.Resou
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing ClearMacAddressTableV1", err))
+			"Failure when executing ClearMacAddressTable", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -154,14 +155,14 @@ func resourceInterfaceOperationCreateCreate(ctx context.Context, d *schema.Resou
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing ClearMacAddressTableV1", err1))
+				"Failure when executing ClearMacAddressTable", err1))
 			return diags
 		}
 	}
@@ -169,10 +170,10 @@ func resourceInterfaceOperationCreateCreate(ctx context.Context, d *schema.Resou
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenDevicesClearMacAddressTableV1Item(response1.Response)
+	vItem1 := flattenDevicesClearMacAddressTableItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ClearMacAddressTableV1 response",
+			"Failure when setting ClearMacAddressTable response",
 			err))
 		return diags
 	}
@@ -193,24 +194,24 @@ func resourceInterfaceOperationCreateDelete(ctx context.Context, d *schema.Resou
 	return diags
 }
 
-func expandRequestInterfaceOperationCreateClearMacAddressTableV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesClearMacAddressTableV1 {
-	request := catalystcentersdkgo.RequestDevicesClearMacAddressTableV1{}
+func expandRequestInterfaceOperationCreateClearMacAddressTable(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesClearMacAddressTable {
+	request := catalystcentersdkgo.RequestDevicesClearMacAddressTable{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".operation")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".operation")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".operation")))) {
 		request.Operation = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".payload")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".payload")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".payload")))) {
-		request.Payload = expandRequestInterfaceOperationCreateClearMacAddressTableV1Payload(ctx, key+".payload.0", d)
+		request.Payload = expandRequestInterfaceOperationCreateClearMacAddressTablePayload(ctx, key+".payload.0", d)
 	}
 	return &request
 }
 
-func expandRequestInterfaceOperationCreateClearMacAddressTableV1Payload(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesClearMacAddressTableV1Payload {
-	var request catalystcentersdkgo.RequestDevicesClearMacAddressTableV1Payload
+func expandRequestInterfaceOperationCreateClearMacAddressTablePayload(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesClearMacAddressTablePayload {
+	var request catalystcentersdkgo.RequestDevicesClearMacAddressTablePayload
 	request = d.Get(fixKeyAccess(key))
 	return &request
 }
 
-func flattenDevicesClearMacAddressTableV1Item(item *catalystcentersdkgo.ResponseDevicesClearMacAddressTableV1Response) []map[string]interface{} {
+func flattenDevicesClearMacAddressTableItem(item *catalystcentersdkgo.ResponseDevicesClearMacAddressTableResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

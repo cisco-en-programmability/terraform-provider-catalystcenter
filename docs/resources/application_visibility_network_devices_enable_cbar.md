@@ -24,8 +24,9 @@ modes (wireless) to be excluded from CBAR enablement.
 Please note that this operation can be performed even if the feature is already enabled on the network device. It would
 push the updated configurations to the network device.
 This operation is only permitted if the provisioning settings do not mandate a configuration preview for CBAR
-enablement. In cases where such settings are active, attempting to use this endpoint will result in *422 Unprocessable
-Content* error.
+enablement. In cases where such settings are active, attempting to use this endpoint will result in **422 Unprocessable
+Content** error.
+
 
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
@@ -36,15 +37,15 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_application_visibility_network_devices_enable_cbar" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
-    network_devices {
+    network_devices = [{
 
       exclude_interface_ids = ["string"]
       exclude_wlan_modes    = ["string"]
       id                    = "string"
-    }
-  }
+    }]
+  }]
 }
 
 output "catalystcenter_application_visibility_network_devices_enable_cbar_example" {

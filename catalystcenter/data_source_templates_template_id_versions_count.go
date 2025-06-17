@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -27,7 +27,7 @@ func dataSourceTemplatesTemplateIDVersionsCount() *schema.Resource {
 				Optional: true,
 			},
 			"template_id": &schema.Schema{
-				Description: `templateId path parameter. The id of the template to get versions of, retrieveable from GET /dna/intent/api/v1/templates
+				Description: `templateId path parameter. The id of the template to get versions of, retrieveable from **GET /dna/intent/api/v1/templates**
 `,
 				Type:     schema.TypeString,
 				Required: true,
@@ -68,9 +68,9 @@ func dataSourceTemplatesTemplateIDVersionsCountRead(ctx context.Context, d *sche
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTemplateVersionsCountV1")
+		log.Printf("[DEBUG] Selected method: GetTemplateVersionsCount")
 		vvTemplateID := vTemplateID.(string)
-		queryParams1 := catalystcentersdkgo.GetTemplateVersionsCountV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetTemplateVersionsCountQueryParams{}
 
 		if okVersionNumber {
 			queryParams1.VersionNumber = vVersionNumber.(int)
@@ -81,24 +81,36 @@ func dataSourceTemplatesTemplateIDVersionsCountRead(ctx context.Context, d *sche
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.ConfigurationTemplates.GetTemplateVersionsCountV1(vvTemplateID, &queryParams1)
+		response1, restyResp1, err := client.ConfigurationTemplates.GetTemplateVersionsCount(vvTemplateID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTemplateVersionsCountV1", err,
-				"Failure at GetTemplateVersionsCountV1, unexpected response", ""))
+				"Failure when executing 2 GetTemplateVersionsCount", err,
+				"Failure at GetTemplateVersionsCount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenConfigurationTemplatesGetTemplateVersionsCountV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetTemplateVersionsCount", err,
+				"Failure at GetTemplateVersionsCount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenConfigurationTemplatesGetTemplateVersionsCountItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTemplateVersionsCountV1 response",
+				"Failure when setting GetTemplateVersionsCount response",
 				err))
 			return diags
 		}
@@ -110,7 +122,7 @@ func dataSourceTemplatesTemplateIDVersionsCountRead(ctx context.Context, d *sche
 	return diags
 }
 
-func flattenConfigurationTemplatesGetTemplateVersionsCountV1Item(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetTemplateVersionsCountV1Response) []map[string]interface{} {
+func flattenConfigurationTemplatesGetTemplateVersionsCountItem(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetTemplateVersionsCountResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

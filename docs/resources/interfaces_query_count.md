@@ -7,7 +7,7 @@ description: |-
   Gets the total number of interfaces across the Network devices based on the provided complex filters and aggregation
   functions. For detailed information about the usage of the API, please refer to the Open API specification document
   https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CECatCenter_Org-
-  interfaces-1.0.2-resolved.yaml
+  interfaces-2.0.0-resolved.yaml
 ---
 
 # catalystcenter_interfaces_query_count (Resource)
@@ -17,7 +17,9 @@ It performs create operation on Devices.
 - Gets the total number of interfaces across the Network devices based on the provided complex filters and aggregation
 functions. For detailed information about the usage of the API, please refer to the Open API specification document
 https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
-interfaces-1.0.2-resolved.yaml
+interfaces-2.0.0-resolved.yaml
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -27,36 +29,36 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_interfaces_query_count" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
-    aggregate_attributes {
+    aggregate_attributes = [{
 
       function = "string"
       name     = "string"
-    }
+    }]
     attributes = ["string"]
     end_time   = 1
-    filters {
+    filters = [{
 
       filters          = ["string"]
       key              = "string"
       logical_operator = "string"
       operator         = "string"
-      value            = "------"
-    }
-    page {
+      value            = "string"
+    }]
+    page = [{
 
       limit  = 1
       offset = 1
-      sort_by {
+      sort_by = [{
 
         name  = "string"
         order = "string"
-      }
-    }
+      }]
+    }]
     start_time = 1
     views      = ["string"]
-  }
+  }]
 }
 
 output "catalystcenter_interfaces_query_count_example" {

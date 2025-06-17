@@ -4,16 +4,16 @@ page_title: "catalystcenter_global_pool Resource - terraform-provider-catalystce
 subcategory: ""
 description: |-
   It manages create, read, update and delete operations on Network Settings.
-  API to update global poolAPI to create global pool.API to delete global IP pool.
+  API to update global pool. There is a limit of updating 25 global pools per request.API to create global pool. There is a limit of creating 25 global pools per request.API to delete global IP pool.
 ---
 
 # catalystcenter_global_pool (Resource)
 
 It manages create, read, update and delete operations on Network Settings.
 
-- API to update global pool
+- API to update global pool. There is a limit of updating 25 global pools per request.
 
-- API to create global pool.
+- API to create global pool. There is a limit of creating 25 global pools per request.
 
 - API to delete global IP pool.
 
@@ -22,7 +22,7 @@ It manages create, read, update and delete operations on Network Settings.
 ```terraform
 resource "catalystcenter_global_pool" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     id = "string"

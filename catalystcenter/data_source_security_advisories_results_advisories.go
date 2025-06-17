@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -167,8 +167,8 @@ func dataSourceSecurityAdvisoriesResultsAdvisoriesRead(ctx context.Context, d *s
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSecurityAdvisoriesAffectingTheNetworkDevicesV1")
-		queryParams1 := catalystcentersdkgo.GetSecurityAdvisoriesAffectingTheNetworkDevicesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetSecurityAdvisoriesAffectingTheNetworkDevices")
+		queryParams1 := catalystcentersdkgo.GetSecurityAdvisoriesAffectingTheNetworkDevicesQueryParams{}
 
 		if okID {
 			queryParams1.ID = vID.(string)
@@ -197,24 +197,36 @@ func dataSourceSecurityAdvisoriesResultsAdvisoriesRead(ctx context.Context, d *s
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Compliance.GetSecurityAdvisoriesAffectingTheNetworkDevicesV1(&queryParams1)
+		response1, restyResp1, err := client.Compliance.GetSecurityAdvisoriesAffectingTheNetworkDevices(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSecurityAdvisoriesAffectingTheNetworkDevicesV1", err,
-				"Failure at GetSecurityAdvisoriesAffectingTheNetworkDevicesV1, unexpected response", ""))
+				"Failure when executing 2 GetSecurityAdvisoriesAffectingTheNetworkDevices", err,
+				"Failure at GetSecurityAdvisoriesAffectingTheNetworkDevices, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenComplianceGetSecurityAdvisoriesAffectingTheNetworkDevicesV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetSecurityAdvisoriesAffectingTheNetworkDevices", err,
+				"Failure at GetSecurityAdvisoriesAffectingTheNetworkDevices, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenComplianceGetSecurityAdvisoriesAffectingTheNetworkDevicesItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSecurityAdvisoriesAffectingTheNetworkDevicesV1 response",
+				"Failure when setting GetSecurityAdvisoriesAffectingTheNetworkDevices response",
 				err))
 			return diags
 		}
@@ -226,7 +238,7 @@ func dataSourceSecurityAdvisoriesResultsAdvisoriesRead(ctx context.Context, d *s
 	return diags
 }
 
-func flattenComplianceGetSecurityAdvisoriesAffectingTheNetworkDevicesV1Items(items *[]catalystcentersdkgo.ResponseComplianceGetSecurityAdvisoriesAffectingTheNetworkDevicesV1Response) []map[string]interface{} {
+func flattenComplianceGetSecurityAdvisoriesAffectingTheNetworkDevicesItems(items *[]catalystcentersdkgo.ResponseComplianceGetSecurityAdvisoriesAffectingTheNetworkDevicesResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -239,13 +251,13 @@ func flattenComplianceGetSecurityAdvisoriesAffectingTheNetworkDevicesV1Items(ite
 		respItem["publication_url"] = item.PublicationURL
 		respItem["cvss_base_score"] = item.CvssBaseScore
 		respItem["security_impact_rating"] = item.SecurityImpactRating
-		respItem["first_fixed_versions_list"] = flattenComplianceGetSecurityAdvisoriesAffectingTheNetworkDevicesV1ItemsFirstFixedVersionsList(item.FirstFixedVersionsList)
+		respItem["first_fixed_versions_list"] = flattenComplianceGetSecurityAdvisoriesAffectingTheNetworkDevicesItemsFirstFixedVersionsList(item.FirstFixedVersionsList)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenComplianceGetSecurityAdvisoriesAffectingTheNetworkDevicesV1ItemsFirstFixedVersionsList(items *[]catalystcentersdkgo.ResponseComplianceGetSecurityAdvisoriesAffectingTheNetworkDevicesV1ResponseFirstFixedVersionsList) []map[string]interface{} {
+func flattenComplianceGetSecurityAdvisoriesAffectingTheNetworkDevicesItemsFirstFixedVersionsList(items *[]catalystcentersdkgo.ResponseComplianceGetSecurityAdvisoriesAffectingTheNetworkDevicesResponseFirstFixedVersionsList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

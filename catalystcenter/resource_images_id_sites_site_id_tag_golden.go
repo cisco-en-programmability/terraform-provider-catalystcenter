@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -11,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -26,6 +27,7 @@ func resourceImagesIDSitesSiteIDTagGolden() *schema.Resource {
 tagging the golden image:
 1) The golden tagging of SMU, PISRT_SMU, APSP, and APDP image type depends on the golden tagged applied on the base
 image. If any discrepancies are identified in the request payload, the golden tagging process will fail. For example:
+
 
     a) If the base image is tagged with Device Role: ACCESS, then add-ons can only be done ACCESS role only and the same
 is applied if any device tag is used. Any other request will fail.
@@ -73,14 +75,14 @@ is applied if any device tag is used. Any other request will fail.
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": &schema.Schema{
-							Description: `id path parameter. Software image identifier is used for golden tagging or intent to tag it. The value of id can be obtained from the response of the API /dna/intent/api/v1/images?imported=true&isAddonImages=false for the base image and /dna/images/{id}/addonImages where id will be the software image identifier of the base image.
+							Description: `id path parameter. Software image identifier is used for golden tagging or intent to tag it. The value of **id** can be obtained from the response of the API **/dna/intent/api/v1/images?imported=true&isAddonImages=false** for the base image and **/dna/images/{id}/addonImages** where **id** will be the software image identifier of the base image.
 `,
 							Type:     schema.TypeString,
 							Required: true,
 							ForceNew: true,
 						},
 						"site_id": &schema.Schema{
-							Description: `siteId path parameter. Site identifier for tagged image or intent to tag it. The default value is global site id. See [https://developer.cisco.com/docs/dna-center](#!get-site) for siteId
+							Description: `siteId path parameter. Site identifier for tagged image or intent to tag it. The default value is global site id. See [https://developer.cisco.com/docs/dna-center](#!get-site) for **siteId**
 `,
 							Type:     schema.TypeString,
 							Required: true,
@@ -109,7 +111,7 @@ is applied if any device tag is used. Any other request will fail.
 							},
 						},
 						"product_name_ordinal": &schema.Schema{
-							Description: `The product name ordinal is a unique value for each network device product. productNameOrdinal can be obtained from the response of API /dna/intent/api/v1/siteWiseProductNames?siteId=<siteId>
+							Description: `The product name ordinal is a unique value for each network device product. **productNameOrdinal** can be obtained from the response of API **/dna/intent/api/v1/siteWiseProductNames?siteId=<siteId>**
 `,
 							Type:     schema.TypeFloat,
 							Optional: true,
@@ -117,7 +119,7 @@ is applied if any device tag is used. Any other request will fail.
 							Computed: true,
 						},
 						"supervisor_product_name_ordinal": &schema.Schema{
-							Description: `The supervisor engine module ordinal is a unique value for each supervisor module. supervisorProductNameOrdinal can be obtained from the response of API /dna/intent/api/v1/siteWiseProductNames?siteId=<siteId>
+							Description: `The supervisor engine module ordinal is a unique value for each supervisor module. **supervisorProductNameOrdinal** can be obtained from the response of API **/dna/intent/api/v1/siteWiseProductNames?siteId=<siteId>**
 `,
 							Type:     schema.TypeFloat,
 							Optional: true,
@@ -138,32 +140,31 @@ func resourceImagesIDSitesSiteIDTagGoldenCreate(ctx context.Context, d *schema.R
 	resourceItem := *getResourceItem(d.Get("parameters"))
 
 	vID := resourceItem["id"]
-
 	vSiteID := resourceItem["site_id"]
 
 	vvID := vID.(string)
 	vvSiteID := vSiteID.(string)
-	request1 := expandRequestImagesIDSitesSiteIDTagGoldenTaggingGoldenImageV1(ctx, "parameters.0", d)
+	request1 := expandRequestImagesIDSitesSiteIDTagGoldenTaggingGoldenImage(ctx, "parameters.0", d)
 
-	// has_unknown_response: None
-
-	response1, restyResp1, err := client.SoftwareImageManagementSwim.TaggingGoldenImageV1(vvID, vvSiteID, request1)
+	response1, restyResp1, err := client.SoftwareImageManagementSwim.TaggingGoldenImage(vvID, vvSiteID, request1)
 
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
 
-	vItem1 := flattenSoftwareImageManagementSwimTaggingGoldenImageV1Item(response1.Response)
-	if err := d.Set("item", vItem1); err != nil {
-		diags = append(diags, diagError(
-			"Failure when setting TaggingGoldenImageV1 response",
-			err))
+	if err != nil || response1 == nil {
+		if restyResp1 != nil {
+			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+		}
+		d.SetId("")
 		return diags
 	}
 
+	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing TaggingGoldenImageV1", err))
+			"Failure when executing TaggingGoldenImage", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -190,46 +191,44 @@ func resourceImagesIDSitesSiteIDTagGoldenCreate(ctx context.Context, d *schema.R
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing TaggingGoldenImageV1", err1))
+				"Failure when executing TaggingGoldenImage", err1))
 			return diags
 		}
 	}
 
-	if err != nil || response1 == nil {
-		if restyResp1 != nil {
-			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
-		}
-		d.SetId("")
+	vItem1 := flattenSoftwareImageManagementSwimTaggingGoldenImageItem(response1.Response)
+	if err := d.Set("item", vItem1); err != nil {
+		diags = append(diags, diagError(
+			"Failure when setting TaggingGoldenImage response",
+			err))
 		return diags
 	}
-
-	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
 	d.SetId(getUnixTimeString())
 	return diags
 }
 func resourceImagesIDSitesSiteIDTagGoldenRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 	return diags
 }
 
 func resourceImagesIDSitesSiteIDTagGoldenDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 	return diags
 }
 
-func expandRequestImagesIDSitesSiteIDTagGoldenTaggingGoldenImageV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSoftwareImageManagementSwimTaggingGoldenImageV1 {
-	request := catalystcentersdkgo.RequestSoftwareImageManagementSwimTaggingGoldenImageV1{}
+func expandRequestImagesIDSitesSiteIDTagGoldenTaggingGoldenImage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSoftwareImageManagementSwimTaggingGoldenImage {
+	request := catalystcentersdkgo.RequestSoftwareImageManagementSwimTaggingGoldenImage{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".product_name_ordinal")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".product_name_ordinal")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".product_name_ordinal")))) {
 		request.ProductNameOrdinal = interfaceToFloat64Ptr(v)
 	}
@@ -245,7 +244,7 @@ func expandRequestImagesIDSitesSiteIDTagGoldenTaggingGoldenImageV1(ctx context.C
 	return &request
 }
 
-func flattenSoftwareImageManagementSwimTaggingGoldenImageV1Item(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimTaggingGoldenImageV1Response) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimTaggingGoldenImageItem(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimTaggingGoldenImageResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

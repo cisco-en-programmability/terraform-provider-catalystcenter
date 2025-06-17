@@ -64,10 +64,10 @@ output "catalystcenter_pnp_device_example" {
 - `hostname` (String) hostname query parameter. Device Hostname
 - `id` (String) id path parameter.
 - `last_contact` (Boolean) lastContact query parameter. Device Has Contacted lastContact > 0
-- `limit` (Number) limit query parameter. Limits number of results
+- `limit` (Number) limit query parameter. The number of records to show for this page. The minimum and maximum values are 0 and 500, respectively
 - `mac_address` (String) macAddress query parameter. Device Mac Address
 - `name` (List of String) name query parameter. Device Name
-- `offset` (Number) offset query parameter. Index of first result
+- `offset` (Number) offset query parameter. The first record to show for this page; the first record is numbered 0. The Minimum value is 0
 - `onb_state` (List of String) onbState query parameter. Device Onboarding State
 - `pid` (List of String) pid query parameter. Device ProductId
 - `serial_number` (List of String) serialNumber query parameter. Device Serial Number

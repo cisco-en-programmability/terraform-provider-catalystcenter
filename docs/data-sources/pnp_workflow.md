@@ -50,9 +50,9 @@ output "catalystcenter_pnp_workflow_example" {
 ### Optional
 
 - `id` (String) id path parameter.
-- `limit` (Number) limit query parameter. Limits number of results
+- `limit` (Number) limit query parameter. The number of records to show for this page. The minimum and maximum values are 0 and 500, respectively
 - `name` (List of String) name query parameter. Workflow Name
-- `offset` (Number) offset query parameter. Index of first result
+- `offset` (Number) offset query parameter. The first record to show for this page; the first record is numbered 0. The Minimum value is 0
 - `sort` (List of String) sort query parameter. Comma seperated lost of fields to sort on
 - `sort_order` (String) sortOrder query parameter. Sort Order Ascending (asc) or Descending (des)
 - `type` (List of String) type query parameter. Workflow Type

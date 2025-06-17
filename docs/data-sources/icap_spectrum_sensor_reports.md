@@ -48,7 +48,7 @@ output "catalystcenter_icap_spectrum_sensor_reports_example" {
 ### Optional
 
 - `data_type` (Number) dataType query parameter. Data type reported by the sensor
-|Data Type | Description | | --| --| | 0 | Duty Cycle | | 1| Max Power | | 2 | Average Power | | 3 | Max Power in dBm with adjusted base of +48 | | 4 | Average Power in dBm with adjusted base of +48 |
+|Data Type | Description | | --| --| | **0** | Duty Cycle | | **1** | Max Power | | **2** | Average Power | | **3** | Max Power in dBm with adjusted base of +48 | | **4** | Average Power in dBm with adjusted base of +48 |
 - `end_time` (Number) endTime query parameter. End time to which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
 - `limit` (Number) limit query parameter. Maximum number of records to return
 - `offset` (Number) offset query parameter. Specifies the starting point within all records returned by the API. It's one based offset. The starting value is 1.

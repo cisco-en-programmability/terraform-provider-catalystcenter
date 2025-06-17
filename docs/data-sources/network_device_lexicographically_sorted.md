@@ -6,8 +6,11 @@ description: |-
   It performs read operation on Devices.
   Returns the list of values of the first given required parameter. You can use the .* in any value to conduct a
   wildcard search. For example, to get all the devices with the management IP address starting with 10.10. , issue the
-  following request: GET /dna/inten/api/v1/network-device/autocomplete?managementIpAddress=10.10..* It will return the
-  device management IP addresses that match fully or partially the provided attribute. {[10.10.1.1, 10.10.20.2, …]}.
+  following request: GET /dna/intent/api/v1/network-device/autocomplete?managementIpAddress=10.10..* It will return the
+  device management IP addresses that match fully or partially the provided attribute. {[10.10.1.1, 10.10.20.2, …]}. The
+  API returns a paginated response based on 'limit' and 'offset' parameters, allowing up to 500 records per page. 'limit'
+  specifies the number of records, and 'offset' sets the starting point using 1-based indexing. For data sets over 500
+  records, make multiple calls, adjusting 'limit' and 'offset' to retrieve all records incrementally.
 ---
 
 # catalystcenter_network_device_lexicographically_sorted (Data Source)
@@ -16,8 +19,11 @@ It performs read operation on Devices.
 
 - Returns the list of values of the first given required parameter. You can use the .* in any value to conduct a
 wildcard search. For example, to get all the devices with the management IP address starting with 10.10. , issue the
-following request: GET /dna/inten/api/v1/network-device/autocomplete?managementIpAddress=10.10..* It will return the
-device management IP addresses that match fully or partially the provided attribute. {[10.10.1.1, 10.10.20.2, …]}.
+following request: GET /dna/intent/api/v1/network-device/autocomplete?managementIpAddress=10.10..* It will return the
+device management IP addresses that match fully or partially the provided attribute. {[10.10.1.1, 10.10.20.2, …]}. The
+API returns a paginated response based on 'limit' and 'offset' parameters, allowing up to 500 records per page. 'limit'
+specifies the number of records, and 'offset' sets the starting point using 1-based indexing. For data sets over 500
+records, make multiple calls, adjusting 'limit' and 'offset' to retrieve all records incrementally.
 
 ## Example Usage
 
@@ -49,7 +55,7 @@ data "catalystcenter_network_device_lexicographically_sorted" "example" {
 }
 
 output "catalystcenter_network_device_lexicographically_sorted_example" {
-  value = data.catalystcenter_network_device_lexicographically_sorted.example.item
+  value = data.catalystcenter_network_device_lexicographically_sorted.example.items
 }
 ```
 

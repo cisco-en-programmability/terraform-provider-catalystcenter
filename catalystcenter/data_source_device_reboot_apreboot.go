@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -76,31 +76,45 @@ func dataSourceDeviceRebootAprebootRead(ctx context.Context, d *schema.ResourceD
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAccessPointRebootTaskResultV1")
-		queryParams1 := catalystcentersdkgo.GetAccessPointRebootTaskResultV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetAccessPointRebootTaskResult")
+		queryParams1 := catalystcentersdkgo.GetAccessPointRebootTaskResultQueryParams{}
 
 		if okParentTaskID {
 			queryParams1.ParentTaskID = vParentTaskID.(string)
 		}
 
-		response1, restyResp1, err := client.Wireless.GetAccessPointRebootTaskResultV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Wireless.GetAccessPointRebootTaskResult(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAccessPointRebootTaskResultV1", err,
-				"Failure at GetAccessPointRebootTaskResultV1, unexpected response", ""))
+				"Failure when executing 2 GetAccessPointRebootTaskResult", err,
+				"Failure at GetAccessPointRebootTaskResult, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenWirelessGetAccessPointRebootTaskResultV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetAccessPointRebootTaskResult", err,
+				"Failure at GetAccessPointRebootTaskResult, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenWirelessGetAccessPointRebootTaskResultItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAccessPointRebootTaskResultV1 response",
+				"Failure when setting GetAccessPointRebootTaskResult response",
 				err))
 			return diags
 		}
@@ -112,7 +126,7 @@ func dataSourceDeviceRebootAprebootRead(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func flattenWirelessGetAccessPointRebootTaskResultV1Items(items *catalystcentersdkgo.ResponseWirelessGetAccessPointRebootTaskResultV1) []map[string]interface{} {
+func flattenWirelessGetAccessPointRebootTaskResultItems(items *catalystcentersdkgo.ResponseWirelessGetAccessPointRebootTaskResult) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -120,13 +134,13 @@ func flattenWirelessGetAccessPointRebootTaskResultV1Items(items *catalystcenters
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["wlc_ip"] = item.WlcIP
-		respItem["ap_list"] = flattenWirelessGetAccessPointRebootTaskResultV1ItemsApList(item.ApList)
+		respItem["ap_list"] = flattenWirelessGetAccessPointRebootTaskResultItemsApList(item.ApList)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenWirelessGetAccessPointRebootTaskResultV1ItemsApList(items *[]catalystcentersdkgo.ResponseItemWirelessGetAccessPointRebootTaskResultV1ApList) []map[string]interface{} {
+func flattenWirelessGetAccessPointRebootTaskResultItemsApList(items *[]catalystcentersdkgo.ResponseItemWirelessGetAccessPointRebootTaskResultApList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -135,13 +149,13 @@ func flattenWirelessGetAccessPointRebootTaskResultV1ItemsApList(items *[]catalys
 		respItem := make(map[string]interface{})
 		respItem["ap_name"] = item.ApName
 		respItem["reboot_status"] = item.RebootStatus
-		respItem["failure_reason"] = flattenWirelessGetAccessPointRebootTaskResultV1ItemsApListFailureReason(item.FailureReason)
+		respItem["failure_reason"] = flattenWirelessGetAccessPointRebootTaskResultItemsApListFailureReason(item.FailureReason)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenWirelessGetAccessPointRebootTaskResultV1ItemsApListFailureReason(item *catalystcentersdkgo.ResponseItemWirelessGetAccessPointRebootTaskResultV1ApListFailureReason) interface{} {
+func flattenWirelessGetAccessPointRebootTaskResultItemsApListFailureReason(item *catalystcentersdkgo.ResponseItemWirelessGetAccessPointRebootTaskResultApListFailureReason) interface{} {
 	if item == nil {
 		return nil
 	}

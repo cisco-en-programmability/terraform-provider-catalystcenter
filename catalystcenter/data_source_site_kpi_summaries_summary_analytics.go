@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -77,10 +77,10 @@ func dataSourceSiteKpiSummariesSummaryAnalyticsRead(ctx context.Context, d *sche
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSiteAnalyticsSummaryDataForTheGivenTaskIDV1")
+		log.Printf("[DEBUG] Selected method: GetSiteAnalyticsSummaryDataForTheGivenTaskID")
 
-		headerParams1 := catalystcentersdkgo.GetSiteAnalyticsSummaryDataForTheGivenTaskIDV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.GetSiteAnalyticsSummaryDataForTheGivenTaskIDV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.GetSiteAnalyticsSummaryDataForTheGivenTaskIDHeaderParams{}
+		queryParams1 := catalystcentersdkgo.GetSiteAnalyticsSummaryDataForTheGivenTaskIDQueryParams{}
 
 		queryParams1.TaskID = vTaskID.(string)
 
@@ -88,24 +88,36 @@ func dataSourceSiteKpiSummariesSummaryAnalyticsRead(ctx context.Context, d *sche
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sites.GetSiteAnalyticsSummaryDataForTheGivenTaskIDV1(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Sites.GetSiteAnalyticsSummaryDataForTheGivenTaskID(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSiteAnalyticsSummaryDataForTheGivenTaskIDV1", err,
-				"Failure at GetSiteAnalyticsSummaryDataForTheGivenTaskIDV1, unexpected response", ""))
+				"Failure when executing 2 GetSiteAnalyticsSummaryDataForTheGivenTaskID", err,
+				"Failure at GetSiteAnalyticsSummaryDataForTheGivenTaskID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSitesGetSiteAnalyticsSummaryDataForTheGivenTaskIDV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetSiteAnalyticsSummaryDataForTheGivenTaskID", err,
+				"Failure at GetSiteAnalyticsSummaryDataForTheGivenTaskID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSitesGetSiteAnalyticsSummaryDataForTheGivenTaskIDItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSiteAnalyticsSummaryDataForTheGivenTaskIDV1 response",
+				"Failure when setting GetSiteAnalyticsSummaryDataForTheGivenTaskID response",
 				err))
 			return diags
 		}
@@ -117,18 +129,18 @@ func dataSourceSiteKpiSummariesSummaryAnalyticsRead(ctx context.Context, d *sche
 	return diags
 }
 
-func flattenSitesGetSiteAnalyticsSummaryDataForTheGivenTaskIDV1Item(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsSummaryDataForTheGivenTaskIDV1Response) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsSummaryDataForTheGivenTaskIDItem(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsSummaryDataForTheGivenTaskIDResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["attributes"] = flattenSitesGetSiteAnalyticsSummaryDataForTheGivenTaskIDV1ItemAttributes(item.Attributes)
+	respItem["attributes"] = flattenSitesGetSiteAnalyticsSummaryDataForTheGivenTaskIDItemAttributes(item.Attributes)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenSitesGetSiteAnalyticsSummaryDataForTheGivenTaskIDV1ItemAttributes(items *[]catalystcentersdkgo.ResponseSitesGetSiteAnalyticsSummaryDataForTheGivenTaskIDV1ResponseAttributes) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsSummaryDataForTheGivenTaskIDItemAttributes(items *[]catalystcentersdkgo.ResponseSitesGetSiteAnalyticsSummaryDataForTheGivenTaskIDResponseAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -21,7 +21,7 @@ func dataSourceSdaFabricsVLANToSSIDs() *schema.Resource {
 		ReadContext: dataSourceSdaFabricsVLANToSSIDsRead,
 		Schema: map[string]*schema.Schema{
 			"limit": &schema.Schema{
-				Description: `limit query parameter. Return only this many IP Pool to SSID Mapping
+				Description: `limit query parameter. Return only this many IP Pool to SSID Mapping. Default is 500 if not specified. Maximum allowed limit is 500.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -98,8 +98,8 @@ func dataSourceSdaFabricsVLANToSSIDsRead(ctx context.Context, d *schema.Resource
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: ReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingV1")
-		queryParams1 := catalystcentersdkgo.ReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: ReturnsAllTheFabricSitesThatHaveVLANToSSIDMapping")
+		queryParams1 := catalystcentersdkgo.ReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingQueryParams{}
 
 		if okLimit {
 			queryParams1.Limit = vLimit.(float64)
@@ -108,24 +108,38 @@ func dataSourceSdaFabricsVLANToSSIDsRead(ctx context.Context, d *schema.Resource
 			queryParams1.Offset = vOffset.(float64)
 		}
 
-		response1, restyResp1, err := client.FabricWireless.ReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.FabricWireless.ReturnsAllTheFabricSitesThatHaveVLANToSSIDMapping(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 ReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingV1", err,
-				"Failure at ReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingV1, unexpected response", ""))
+				"Failure when executing 2 ReturnsAllTheFabricSitesThatHaveVLANToSSIDMapping", err,
+				"Failure at ReturnsAllTheFabricSitesThatHaveVLANToSSIDMapping, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenFabricWirelessReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 ReturnsAllTheFabricSitesThatHaveVLANToSSIDMapping", err,
+				"Failure at ReturnsAllTheFabricSitesThatHaveVLANToSSIDMapping, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenFabricWirelessReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting ReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingV1 response",
+				"Failure when setting ReturnsAllTheFabricSitesThatHaveVLANToSSIDMapping response",
 				err))
 			return diags
 		}
@@ -137,7 +151,7 @@ func dataSourceSdaFabricsVLANToSSIDsRead(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func flattenFabricWirelessReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingV1Items(items *[]catalystcentersdkgo.ResponseFabricWirelessReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingV1Response) []map[string]interface{} {
+func flattenFabricWirelessReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingItems(items *[]catalystcentersdkgo.ResponseFabricWirelessReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -145,13 +159,13 @@ func flattenFabricWirelessReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingV1Ite
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["fabric_id"] = item.FabricID
-		respItem["vlan_details"] = flattenFabricWirelessReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingV1ItemsVLANDetails(item.VLANDetails)
+		respItem["vlan_details"] = flattenFabricWirelessReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingItemsVLANDetails(item.VLANDetails)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenFabricWirelessReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingV1ItemsVLANDetails(items *[]catalystcentersdkgo.ResponseFabricWirelessReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingV1ResponseVLANDetails) []map[string]interface{} {
+func flattenFabricWirelessReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingItemsVLANDetails(items *[]catalystcentersdkgo.ResponseFabricWirelessReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingResponseVLANDetails) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -159,13 +173,13 @@ func flattenFabricWirelessReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingV1Ite
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["vlan_name"] = item.VLANName
-		respItem["ssid_details"] = flattenFabricWirelessReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingV1ItemsVLANDetailsSSIDDetails(item.SSIDDetails)
+		respItem["ssid_details"] = flattenFabricWirelessReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingItemsVLANDetailsSSIDDetails(item.SSIDDetails)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenFabricWirelessReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingV1ItemsVLANDetailsSSIDDetails(items *[]catalystcentersdkgo.ResponseFabricWirelessReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingV1ResponseVLANDetailsSSIDDetails) []map[string]interface{} {
+func flattenFabricWirelessReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingItemsVLANDetailsSSIDDetails(items *[]catalystcentersdkgo.ResponseFabricWirelessReturnsAllTheFabricSitesThatHaveVLANToSSIDMappingResponseVLANDetailsSSIDDetails) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

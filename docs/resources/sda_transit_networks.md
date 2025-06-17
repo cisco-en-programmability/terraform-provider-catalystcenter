@@ -20,7 +20,7 @@ It manages create, read, update and delete operations on SDA.
 ```terraform
 resource "catalystcenter_sda_transit_networks" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     id = "string"
@@ -35,7 +35,8 @@ resource "catalystcenter_sda_transit_networks" "example" {
       control_plane_network_device_ids  = ["string"]
       is_multicast_over_transit_enabled = "false"
     }
-    type = "string"
+    site_id = "string"
+    type    = "string"
   }
 }
 
@@ -73,6 +74,7 @@ Optional:
 - `ip_transit_settings` (Block List) (see [below for nested schema](#nestedblock--parameters--payload--ip_transit_settings))
 - `name` (String) Name of the transit network.
 - `sda_transit_settings` (Block List) (see [below for nested schema](#nestedblock--parameters--payload--sda_transit_settings))
+- `site_id` (String) ID of the site of this transit network. The transit network will be anchored at this Site. Only Fabric Sites within this Site location can associate their borders with this transit network. Additionally, the Transit Control Plane Devices must be located within the transit network's Site.
 - `type` (String) Type of the transit network.
 
 <a id="nestedblock--parameters--payload--ip_transit_settings"></a>
@@ -104,6 +106,7 @@ Read-Only:
 - `ip_transit_settings` (List of Object) (see [below for nested schema](#nestedobjatt--item--ip_transit_settings))
 - `name` (String)
 - `sda_transit_settings` (List of Object) (see [below for nested schema](#nestedobjatt--item--sda_transit_settings))
+- `site_id` (String)
 - `type` (String)
 
 <a id="nestedobjatt--item--ip_transit_settings"></a>

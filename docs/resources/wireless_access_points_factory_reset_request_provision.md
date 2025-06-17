@@ -16,6 +16,8 @@ It performs create operation on Wireless.
 - This data source action is used to factory reset Access Points. It is supported for maximum 100 Access Points per
 request. Factory reset clears all configurations from the Access Points. After factory reset the Access Point may become
 unreachable from the currently associated Wireless Controller and may or may not join back the same controller.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -25,11 +27,11 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_wireless_access_points_factory_reset_request_provision" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
     ap_mac_addresses     = ["string"]
     keep_static_ipconfig = "false"
-  }
+  }]
 }
 
 output "catalystcenter_wireless_access_points_factory_reset_request_provision_example" {

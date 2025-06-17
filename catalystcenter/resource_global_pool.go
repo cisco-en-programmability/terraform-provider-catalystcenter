@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -18,9 +18,9 @@ func resourceGlobalPool() *schema.Resource {
 	return &schema.Resource{
 		Description: `It manages create, read, update and delete operations on Network Settings.
 
-- API to update global pool
+- API to update global pool. There is a limit of updating 25 global pools per request.
 
-- API to create global pool.
+- API to create global pool. There is a limit of creating 25 global pools per request.
 
 - API to delete global IP pool.
 `,
@@ -302,7 +302,7 @@ func resourceGlobalPoolCreate(ctx context.Context, d *schema.ResourceData, m int
 
 	var diags diag.Diagnostics
 
-	request1 := expandRequestGlobalPoolCreateGlobalPoolV1(ctx, "parameters.0", d)
+	request1 := expandRequestGlobalPoolCreateGlobalPool(ctx, "parameters.0", d)
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
@@ -323,7 +323,7 @@ func resourceGlobalPoolCreate(ctx context.Context, d *schema.ResourceData, m int
 			}
 		}
 	}
-	queryParams1 := catalystcentersdkgo.GetGlobalPoolV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.GetGlobalPoolQueryParams{}
 
 	response1, err := searchNetworkSettingsGetGlobalPool(m, queryParams1, vvID, vvIpPoolName)
 	if response1 != nil {
@@ -403,7 +403,7 @@ func resourceGlobalPoolRead(ctx context.Context, d *schema.ResourceData, m inter
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method 1: GetGlobalPool")
-		queryParams1 := catalystcentersdkgo.GetGlobalPoolV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetGlobalPoolQueryParams{}
 
 		response1, err := searchNetworkSettingsGetGlobalPool(m, queryParams1, vID, vIpPoolName)
 		if err != nil || response1 == nil || len(*response1) <= 0 {
@@ -413,7 +413,7 @@ func resourceGlobalPoolRead(ctx context.Context, d *schema.ResourceData, m inter
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenNetworkSettingsGetGlobalPoolV1Items(response1)
+		vItem1 := flattenNetworkSettingsGetGlobalPoolItems(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetGlobalPool search response",
@@ -436,7 +436,7 @@ func resourceGlobalPoolUpdate(ctx context.Context, d *schema.ResourceData, m int
 	vIpPoolName := resourceMap["ip_pool_name"]
 	vID := resourceMap["id"]
 
-	queryParams1 := catalystcentersdkgo.GetGlobalPoolV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.GetGlobalPoolQueryParams{}
 	item, err := searchNetworkSettingsGetGlobalPool(m, queryParams1, vID, vIpPoolName)
 	if err != nil || item == nil || len(*item) <= 0 {
 		diags = append(diags, diagErrorWithAlt(
@@ -447,7 +447,7 @@ func resourceGlobalPoolUpdate(ctx context.Context, d *schema.ResourceData, m int
 
 	// NOTE: Consider adding getAllItems and search function to get missing params
 	if d.HasChange("parameters") {
-		request1 := expandRequestGlobalPoolUpdateGlobalPoolV1(ctx, "parameters.0", d)
+		request1 := expandRequestGlobalPoolUpdateGlobalPool(ctx, "parameters.0", d)
 		if request1 != nil {
 			log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		}
@@ -525,7 +525,7 @@ func resourceGlobalPoolDelete(ctx context.Context, d *schema.ResourceData, m int
 	vIpPoolName := resourceMap["ip_pool_name"]
 	vID := resourceMap["id"]
 
-	queryParams1 := catalystcentersdkgo.GetGlobalPoolV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.GetGlobalPoolQueryParams{}
 	item, err := searchNetworkSettingsGetGlobalPool(m, queryParams1, vID, vIpPoolName)
 	if err != nil {
 		return diags
@@ -593,10 +593,11 @@ func resourceGlobalPoolDelete(ctx context.Context, d *schema.ResourceData, m int
 
 	return diags
 }
-func expandRequestGlobalPoolCreateGlobalPoolV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateGlobalPoolV1 {
-	request := catalystcentersdkgo.RequestNetworkSettingsCreateGlobalPoolV1{}
+
+func expandRequestGlobalPoolCreateGlobalPool(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateGlobalPool {
+	request := catalystcentersdkgo.RequestNetworkSettingsCreateGlobalPool{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".settings")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".settings")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".settings")))) {
-		request.Settings = expandRequestGlobalPoolCreateGlobalPoolV1Settings(ctx, key+".settings.0", d)
+		request.Settings = expandRequestGlobalPoolCreateGlobalPoolSettings(ctx, key+".settings.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -604,10 +605,10 @@ func expandRequestGlobalPoolCreateGlobalPoolV1(ctx context.Context, key string, 
 	return &request
 }
 
-func expandRequestGlobalPoolCreateGlobalPoolV1Settings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateGlobalPoolV1Settings {
-	request := catalystcentersdkgo.RequestNetworkSettingsCreateGlobalPoolV1Settings{}
+func expandRequestGlobalPoolCreateGlobalPoolSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateGlobalPoolSettings {
+	request := catalystcentersdkgo.RequestNetworkSettingsCreateGlobalPoolSettings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ippool")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ippool")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ippool")))) {
-		request.IPpool = expandRequestGlobalPoolCreateGlobalPoolV1SettingsIPpoolArray(ctx, key+".ippool", d)
+		request.IPpool = expandRequestGlobalPoolCreateGlobalPoolSettingsIPpoolArray(ctx, key+".ippool", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -615,8 +616,8 @@ func expandRequestGlobalPoolCreateGlobalPoolV1Settings(ctx context.Context, key 
 	return &request
 }
 
-func expandRequestGlobalPoolCreateGlobalPoolV1SettingsIPpoolArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestNetworkSettingsCreateGlobalPoolV1SettingsIPpool {
-	request := []catalystcentersdkgo.RequestNetworkSettingsCreateGlobalPoolV1SettingsIPpool{}
+func expandRequestGlobalPoolCreateGlobalPoolSettingsIPpoolArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestNetworkSettingsCreateGlobalPoolSettingsIPpool {
+	request := []catalystcentersdkgo.RequestNetworkSettingsCreateGlobalPoolSettingsIPpool{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -627,7 +628,7 @@ func expandRequestGlobalPoolCreateGlobalPoolV1SettingsIPpoolArray(ctx context.Co
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestGlobalPoolCreateGlobalPoolV1SettingsIPpool(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestGlobalPoolCreateGlobalPoolSettingsIPpool(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -638,8 +639,8 @@ func expandRequestGlobalPoolCreateGlobalPoolV1SettingsIPpoolArray(ctx context.Co
 	return &request
 }
 
-func expandRequestGlobalPoolCreateGlobalPoolV1SettingsIPpool(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateGlobalPoolV1SettingsIPpool {
-	request := catalystcentersdkgo.RequestNetworkSettingsCreateGlobalPoolV1SettingsIPpool{}
+func expandRequestGlobalPoolCreateGlobalPoolSettingsIPpool(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateGlobalPoolSettingsIPpool {
+	request := catalystcentersdkgo.RequestNetworkSettingsCreateGlobalPoolSettingsIPpool{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ip_pool_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ip_pool_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ip_pool_name")))) {
 		request.IPPoolName = interfaceToString(v)
 	}
@@ -667,19 +668,19 @@ func expandRequestGlobalPoolCreateGlobalPoolV1SettingsIPpool(ctx context.Context
 	return &request
 }
 
-func expandRequestGlobalPoolUpdateGlobalPoolV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateGlobalPoolV1 {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateGlobalPoolV1{}
-	request.Settings = expandRequestGlobalPoolUpdateGlobalPoolV1Settings(ctx, key, d)
+func expandRequestGlobalPoolUpdateGlobalPool(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateGlobalPool {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateGlobalPool{}
+	request.Settings = expandRequestGlobalPoolUpdateGlobalPoolSettings(ctx, key, d)
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
 	}
 	return &request
 }
 
-func expandRequestGlobalPoolUpdateGlobalPoolV1Settings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateGlobalPoolV1Settings {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateGlobalPoolV1Settings{}
+func expandRequestGlobalPoolUpdateGlobalPoolSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateGlobalPoolSettings {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateGlobalPoolSettings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ippool")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ippool")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ippool")))) {
-		request.IPpool = expandRequestGlobalPoolUpdateGlobalPoolV1SettingsIPpoolArray(ctx, key+".ippool", d)
+		request.IPpool = expandRequestGlobalPoolUpdateGlobalPoolSettingsIPpoolArray(ctx, key+".ippool", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -687,8 +688,8 @@ func expandRequestGlobalPoolUpdateGlobalPoolV1Settings(ctx context.Context, key 
 	return &request
 }
 
-func expandRequestGlobalPoolUpdateGlobalPoolV1SettingsIPpoolArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestNetworkSettingsUpdateGlobalPoolV1SettingsIPpool {
-	request := []catalystcentersdkgo.RequestNetworkSettingsUpdateGlobalPoolV1SettingsIPpool{}
+func expandRequestGlobalPoolUpdateGlobalPoolSettingsIPpoolArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestNetworkSettingsUpdateGlobalPoolSettingsIPpool {
+	request := []catalystcentersdkgo.RequestNetworkSettingsUpdateGlobalPoolSettingsIPpool{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -699,7 +700,7 @@ func expandRequestGlobalPoolUpdateGlobalPoolV1SettingsIPpoolArray(ctx context.Co
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestGlobalPoolUpdateGlobalPoolV1SettingsIPpool(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestGlobalPoolUpdateGlobalPoolSettingsIPpool(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -710,8 +711,8 @@ func expandRequestGlobalPoolUpdateGlobalPoolV1SettingsIPpoolArray(ctx context.Co
 	return &request
 }
 
-func expandRequestGlobalPoolUpdateGlobalPoolV1SettingsIPpool(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateGlobalPoolV1SettingsIPpool {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdateGlobalPoolV1SettingsIPpool{}
+func expandRequestGlobalPoolUpdateGlobalPoolSettingsIPpool(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdateGlobalPoolSettingsIPpool {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdateGlobalPoolSettingsIPpool{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ip_pool_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ip_pool_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ip_pool_name")))) {
 		request.IPPoolName = interfaceToString(v)
 	}
@@ -733,10 +734,10 @@ func expandRequestGlobalPoolUpdateGlobalPoolV1SettingsIPpool(ctx context.Context
 	return &request
 }
 
-func searchNetworkSettingsGetGlobalPool(m interface{}, queryParams catalystcentersdkgo.GetGlobalPoolV1QueryParams, vID string, vIPPoolName string) (*[]catalystcentersdkgo.ResponseNetworkSettingsGetGlobalPoolV1Response, error) {
+func searchNetworkSettingsGetGlobalPool(m interface{}, queryParams catalystcentersdkgo.GetGlobalPoolQueryParams, vID string, vIPPoolName string) (*[]catalystcentersdkgo.ResponseNetworkSettingsGetGlobalPoolResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItems []catalystcentersdkgo.ResponseNetworkSettingsGetGlobalPoolV1Response
+	var foundItems []catalystcentersdkgo.ResponseNetworkSettingsGetGlobalPoolResponse
 	offset := 1
 	queryParams.Offset = float64(offset)
 

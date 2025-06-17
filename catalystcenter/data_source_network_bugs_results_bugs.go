@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -159,8 +159,8 @@ func dataSourceNetworkBugsResultsBugsRead(ctx context.Context, d *schema.Resourc
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetNetworkBugsV1")
-		queryParams1 := catalystcentersdkgo.GetNetworkBugsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetNetworkBugs")
+		queryParams1 := catalystcentersdkgo.GetNetworkBugsQueryParams{}
 
 		if okID {
 			queryParams1.ID = vID.(string)
@@ -186,24 +186,36 @@ func dataSourceNetworkBugsResultsBugsRead(ctx context.Context, d *schema.Resourc
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Compliance.GetNetworkBugsV1(&queryParams1)
+		response1, restyResp1, err := client.Compliance.GetNetworkBugs(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetNetworkBugsV1", err,
-				"Failure at GetNetworkBugsV1, unexpected response", ""))
+				"Failure when executing 2 GetNetworkBugs", err,
+				"Failure at GetNetworkBugs, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenComplianceGetNetworkBugsV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetNetworkBugs", err,
+				"Failure at GetNetworkBugs, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenComplianceGetNetworkBugsItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetNetworkBugsV1 response",
+				"Failure when setting GetNetworkBugs response",
 				err))
 			return diags
 		}
@@ -215,7 +227,7 @@ func dataSourceNetworkBugsResultsBugsRead(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func flattenComplianceGetNetworkBugsV1Items(items *[]catalystcentersdkgo.ResponseComplianceGetNetworkBugsV1Response) []map[string]interface{} {
+func flattenComplianceGetNetworkBugsItems(items *[]catalystcentersdkgo.ResponseComplianceGetNetworkBugsResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

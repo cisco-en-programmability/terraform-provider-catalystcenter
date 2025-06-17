@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -21,7 +21,7 @@ func dataSourceTemplatesTemplateIDNetworkProfilesForSitesCount() *schema.Resourc
 		ReadContext: dataSourceTemplatesTemplateIDNetworkProfilesForSitesCountRead,
 		Schema: map[string]*schema.Schema{
 			"template_id": &schema.Schema{
-				Description: `templateId path parameter. The id of the template, retrievable from GET /intent/api/v1/templates
+				Description: `templateId path parameter. The **id** of the template, retrievable from **GET /intent/api/v1/templates**
 `,
 				Type:     schema.TypeString,
 				Required: true,
@@ -54,29 +54,41 @@ func dataSourceTemplatesTemplateIDNetworkProfilesForSitesCountRead(ctx context.C
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveCountOfNetworkProfilesAttachedToACLITemplateV1")
+		log.Printf("[DEBUG] Selected method: RetrieveCountOfNetworkProfilesAttachedToACLITemplate")
 		vvTemplateID := vTemplateID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.ConfigurationTemplates.RetrieveCountOfNetworkProfilesAttachedToACLITemplateV1(vvTemplateID)
+		response1, restyResp1, err := client.ConfigurationTemplates.RetrieveCountOfNetworkProfilesAttachedToACLITemplate(vvTemplateID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveCountOfNetworkProfilesAttachedToACLITemplateV1", err,
-				"Failure at RetrieveCountOfNetworkProfilesAttachedToACLITemplateV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveCountOfNetworkProfilesAttachedToACLITemplate", err,
+				"Failure at RetrieveCountOfNetworkProfilesAttachedToACLITemplate, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenConfigurationTemplatesRetrieveCountOfNetworkProfilesAttachedToACLITemplateV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveCountOfNetworkProfilesAttachedToACLITemplate", err,
+				"Failure at RetrieveCountOfNetworkProfilesAttachedToACLITemplate, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenConfigurationTemplatesRetrieveCountOfNetworkProfilesAttachedToACLITemplateItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveCountOfNetworkProfilesAttachedToACLITemplateV1 response",
+				"Failure when setting RetrieveCountOfNetworkProfilesAttachedToACLITemplate response",
 				err))
 			return diags
 		}
@@ -88,7 +100,7 @@ func dataSourceTemplatesTemplateIDNetworkProfilesForSitesCountRead(ctx context.C
 	return diags
 }
 
-func flattenConfigurationTemplatesRetrieveCountOfNetworkProfilesAttachedToACLITemplateV1Item(item *catalystcentersdkgo.ResponseConfigurationTemplatesRetrieveCountOfNetworkProfilesAttachedToACLITemplateV1Response) []map[string]interface{} {
+func flattenConfigurationTemplatesRetrieveCountOfNetworkProfilesAttachedToACLITemplateItem(item *catalystcentersdkgo.ResponseConfigurationTemplatesRetrieveCountOfNetworkProfilesAttachedToACLITemplateResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

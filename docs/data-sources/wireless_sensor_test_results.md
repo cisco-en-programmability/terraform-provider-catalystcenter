@@ -69,7 +69,7 @@ Read-Only:
 Read-Only:
 
 - `app_con_nec_tiv_ity` (List of Object) (see [below for nested schema](#nestedobjatt--item--summary--app_con_nec_tiv_ity))
-- `ema_il` (List of Object) (see [below for nested schema](#nestedobjatt--item--summary--ema_il))
+- `email` (List of Object) (see [below for nested schema](#nestedobjatt--item--summary--email))
 - `net_wor_kse_rvi_ces` (List of Object) (see [below for nested schema](#nestedobjatt--item--summary--net_wor_kse_rvi_ces))
 - `onb_oar_din_g` (List of Object) (see [below for nested schema](#nestedobjatt--item--summary--onb_oar_din_g))
 - `per_for_man_ce` (List of Object) (see [below for nested schema](#nestedobjatt--item--summary--per_for_man_ce))
@@ -113,15 +113,15 @@ Read-Only:
 
 
 
-<a id="nestedobjatt--item--summary--ema_il"></a>
-### Nested Schema for `item.summary.ema_il`
+<a id="nestedobjatt--item--summary--email"></a>
+### Nested Schema for `item.summary.email`
 
 Read-Only:
 
-- `mai_lse_rve_r` (List of Object) (see [below for nested schema](#nestedobjatt--item--summary--ema_il--mai_lse_rve_r))
+- `mail_server` (List of Object) (see [below for nested schema](#nestedobjatt--item--summary--email--mail_server))
 
-<a id="nestedobjatt--item--summary--ema_il--mai_lse_rve_r"></a>
-### Nested Schema for `item.summary.ema_il.mai_lse_rve_r`
+<a id="nestedobjatt--item--summary--email--mail_server"></a>
+### Nested Schema for `item.summary.email.mail_server`
 
 Read-Only:
 

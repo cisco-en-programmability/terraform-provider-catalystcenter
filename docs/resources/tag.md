@@ -22,7 +22,7 @@ It manages create, read, update and delete operations on Tag.
 ```terraform
 resource "catalystcenter_tag" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     description = "string"

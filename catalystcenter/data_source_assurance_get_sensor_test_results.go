@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -428,8 +428,8 @@ func dataSourceAssuranceGetSensorTestResultsRead(ctx context.Context, d *schema.
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: SensorTestResultsV1")
-		queryParams1 := catalystcentersdkgo.SensorTestResultsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: SensorTestResults")
+		queryParams1 := catalystcentersdkgo.SensorTestResultsQueryParams{}
 
 		if okSiteID {
 			queryParams1.SiteID = vSiteID.(string)
@@ -444,24 +444,38 @@ func dataSourceAssuranceGetSensorTestResultsRead(ctx context.Context, d *schema.
 			queryParams1.TestFailureBy = vTestFailureBy.(string)
 		}
 
-		response1, restyResp1, err := client.Wireless.SensorTestResultsV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Wireless.SensorTestResults(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 SensorTestResultsV1", err,
-				"Failure at SensorTestResultsV1, unexpected response", ""))
+				"Failure when executing 2 SensorTestResults", err,
+				"Failure at SensorTestResults, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessSensorTestResultsV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 SensorTestResults", err,
+				"Failure at SensorTestResults, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenWirelessSensorTestResultsItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting SensorTestResultsV1 response",
+				"Failure when setting SensorTestResults response",
 				err))
 			return diags
 		}
@@ -471,4 +485,31 @@ func dataSourceAssuranceGetSensorTestResultsRead(ctx context.Context, d *schema.
 
 	}
 	return diags
+}
+
+func flattenWirelessSensorTestResultsItemSummaryEMAiL(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsResponseSummaryEMAiL) []map[string]interface{} {
+	if item == nil {
+		return nil
+	}
+	respItem := make(map[string]interface{})
+	respItem["mai_lse_rve_r"] = flattenWirelessSensorTestResultsItemSummaryEMAiLMAiLSERVER(item.MAiLSERVER)
+
+	return []map[string]interface{}{
+		respItem,
+	}
+
+}
+
+func flattenWirelessSensorTestResultsItemSummaryEMAiLMAiLSERVER(item *catalystcentersdkgo.ResponseWirelessSensorTestResultsResponseSummaryEMAiLMAiLSERVER) []map[string]interface{} {
+	if item == nil {
+		return nil
+	}
+	respItem := make(map[string]interface{})
+	respItem["pass_count"] = item.PassCount
+	respItem["fail_count"] = item.FailCount
+
+	return []map[string]interface{}{
+		respItem,
+	}
+
 }

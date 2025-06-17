@@ -13,6 +13,7 @@ It performs create operation on Devices.
 
 - API to fetch the count of network devices for the given filter query.
 
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -22,19 +23,19 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_intent_network_devices_query_count" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
-    filter {
+    filter = [{
 
-      filters {
+      filters = [{
 
         key      = "string"
         operator = "string"
-        value    = "------"
-      }
+        value    = "string"
+      }]
       logical_operator = "string"
-    }
-  }
+    }]
+  }]
 }
 
 output "catalystcenter_intent_network_devices_query_count_example" {
@@ -77,7 +78,7 @@ Optional:
 
 - `key` (String) The key to filter by
 - `operator` (String) The operator to use for filtering the values
-- `value` (String) Value to filter by. For in operator, the value should be a list of values.
+- `value` (String) Value to filter by. For **in** operator, the value should be a list of values.
 
 
 

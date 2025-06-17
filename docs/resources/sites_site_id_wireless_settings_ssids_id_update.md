@@ -13,6 +13,7 @@ It performs create operation on Wireless.
 
 - This data source action allows to either update SSID at global 'siteId' or override SSID at given non-global 'siteId'
 
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -24,7 +25,7 @@ resource "catalystcenter_sites_site_id_wireless_settings_ssids_id_update" "examp
   provider = catalystcenter
   id       = "string"
   site_id  = "string"
-  parameters {
+  parameters = [{
 
     aaa_override                                       = "false"
     acct_servers                                       = ["string"]
@@ -73,16 +74,17 @@ resource "catalystcenter_sites_site_id_wireless_settings_ssids_id_update" "examp
     is_random_mac_filter_enabled                       = "false"
     l3_auth_type                                       = "string"
     management_frame_protection_clientprotection       = "string"
-    multi_psk_settings {
+    multi_psk_settings = [{
 
       passphrase      = "string"
       passphrase_type = "string"
       priority        = 1
-    }
+    }]
     nas_options                = ["string"]
     neighbor_list_enable       = "false"
     open_ssid                  = "string"
     passphrase                 = "string"
+    policy_profile_name        = "string"
     profile_name               = "string"
     protected_management_frame = "string"
     rsn_cipher_suite_ccmp128   = "false"
@@ -98,7 +100,7 @@ resource "catalystcenter_sites_site_id_wireless_settings_ssids_id_update" "examp
     web_passthrough            = "false"
     wlan_band_select_enable    = "false"
     wlan_type                  = "string"
-  }
+  }]
 }
 
 output "catalystcenter_sites_site_id_wireless_settings_ssids_id_update_example" {
@@ -132,10 +134,10 @@ Optional:
 - `aaa_override` (String) Activate the AAA Override feature when set to true
 - `acct_servers` (List of String) List of Accounting server IpAddresses
 - `acl_name` (String) Pre-Auth Access Control List (ACL) Name
-- `auth_server` (String) Authentication Server, Mandatory for Guest SSIDs with wlanType=Guest and l3AuthType=web_auth
+- `auth_server` (String) For Guest SSIDs ('wlanType' is 'Guest' and 'l3AuthType' is 'web_auth'), the Authentication Server('authServer') is mandatory. Otherwise, it defaults to 'auth_external'.
 - `auth_servers` (List of String) List of Authentication/Authorization server IpAddresses
 - `auth_type` (String) L2 Authentication Type (If authType is not open , then atleast one RSN Cipher Suite and corresponding valid AKM must be enabled)
-- `basic_service_set_client_idle_timeout` (Number) This refers to the duration of inactivity, measured in seconds, before a client connected to the Basic Service Set is considered idle and timed out
+- `basic_service_set_client_idle_timeout` (Number) This refers to the duration of inactivity, measured in seconds, before a client connected to the Basic Service Set is considered idle and timed out. Default is Basic ServiceSet ClientIdle Timeout if exists else 300. If it needs to be disabled , pass 0 as its value else valid range is [15 to 100000].
 - `basic_service_set_max_idle_enable` (String) Activate the maximum idle feature for the Basic Service Set
 - `cckm_tsf_tolerance` (Number) The default value is the Cckm Timestamp Tolerance (in milliseconds, if specified); otherwise, it is 0.
 - `client_exclusion_enable` (String) Activate the feature that allows for the exclusion of clients
@@ -172,16 +174,17 @@ Optional:
 - `is_hex` (String) True if passphrase is in Hex format, else False.
 - `is_mac_filtering_enabled` (String) When set to true, MAC Filtering will be activated, allowing control over network access based on the MAC address of the device
 - `is_posturing_enabled` (String) Applicable only for Enterprise SSIDs. When set to True, Posturing will enabled. Required to be set to True if ACL needs to be mapped for Enterprise SSID.
-- `is_radius_profiling_enabled` (String) Enable Radius Profiling. At least one AAA/PSN server is required to enable Radius Profiling on WLAN.
+- `is_radius_profiling_enabled` (String) 'true' if Radius profiling needs to be enabled, defaults to 'false' if not specified. At least one AAA/PSN server is required to enable Radius Profiling.
 - `is_random_mac_filter_enabled` (String) Deny clients using randomized MAC addresses when set to true
-- `l3_auth_type` (String) L3 Authentication Type
+- `l3_auth_type` (String) L3 Authentication Type. When 'wlanType' is 'Enterprise', ‘l3AuthType' is optional and defaults to 'open' if not specified. If 'wlanType' is 'Guest' then 'l3AuthType' is mandatory.
 - `management_frame_protection_clientprotection` (String) Management Frame Protection Client
 - `multi_psk_settings` (Block List) (see [below for nested schema](#nestedblock--parameters--multi_psk_settings))
 - `nas_options` (List of String) Pre-Defined NAS Options : AP ETH Mac Address, AP IP address, AP Location , AP MAC Address, AP Name, AP Policy Tag, AP Site Tag, SSID, System IP Address, System MAC Address, System Name.
 - `neighbor_list_enable` (String) The Neighbor List feature is enabled when it is set to true
 - `open_ssid` (String) Open SSID which is already created in the design and not associated to any other OPEN-SECURED SSID
 - `passphrase` (String) Passphrase (Only applicable for SSID with PERSONAL security level). Passphrase needs to be between 8 and 63 characters for ASCII type. HEX passphrase needs to be 64 characters
-- `profile_name` (String) WLAN Profile Name, if not passed autogenerated profile name will be assigned. The same wlanProfileName will also be used for policyProfileName
+- `policy_profile_name` (String) Policy Profile Name.
+- `profile_name` (String) WLAN Profile Name, if not passed autogenerated profile name will be assigned.
 - `protected_management_frame` (String) (REQUIRED is applicable for authType WPA3_PERSONAL, WPA3_ENTERPRISE, OPEN_SECURED) and (OPTIONAL/REQUIRED is applicable for authType WPA2_WPA3_PERSONAL and WPA2_WPA3_ENTERPRISE)
 - `rsn_cipher_suite_ccmp128` (String) When set to true, the Robust Security Network (RSN) Cipher Suite CCMP128 encryption protocol is activated
 - `rsn_cipher_suite_ccmp256` (String) When set to true, the Robust Security Network (RSN) Cipher Suite CCMP256 encryption protocol is activated

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -67,26 +67,40 @@ func dataSourceMapsSupportedAccessPointsRead(ctx context.Context, d *schema.Reso
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: MapsSupportedAccessPointsV1")
+		log.Printf("[DEBUG] Selected method: MapsSupportedAccessPoints")
 
-		response1, restyResp1, err := client.Sites.MapsSupportedAccessPointsV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sites.MapsSupportedAccessPoints()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 MapsSupportedAccessPointsV1", err,
-				"Failure at MapsSupportedAccessPointsV1, unexpected response", ""))
+				"Failure when executing 2 MapsSupportedAccessPoints", err,
+				"Failure at MapsSupportedAccessPoints, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSitesMapsSupportedAccessPointsV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 MapsSupportedAccessPoints", err,
+				"Failure at MapsSupportedAccessPoints, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSitesMapsSupportedAccessPointsItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting MapsSupportedAccessPointsV1 response",
+				"Failure when setting MapsSupportedAccessPoints response",
 				err))
 			return diags
 		}
@@ -98,21 +112,21 @@ func dataSourceMapsSupportedAccessPointsRead(ctx context.Context, d *schema.Reso
 	return diags
 }
 
-func flattenSitesMapsSupportedAccessPointsV1Items(items *catalystcentersdkgo.ResponseSitesMapsSupportedAccessPointsV1) []map[string]interface{} {
+func flattenSitesMapsSupportedAccessPointsItems(items *catalystcentersdkgo.ResponseSitesMapsSupportedAccessPoints) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["antenna_patterns"] = flattenSitesMapsSupportedAccessPointsV1ItemsAntennaPatterns(item.AntennaPatterns)
+		respItem["antenna_patterns"] = flattenSitesMapsSupportedAccessPointsItemsAntennaPatterns(item.AntennaPatterns)
 		respItem["ap_type"] = item.ApType
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSitesMapsSupportedAccessPointsV1ItemsAntennaPatterns(items *[]catalystcentersdkgo.ResponseItemSitesMapsSupportedAccessPointsV1AntennaPatterns) []map[string]interface{} {
+func flattenSitesMapsSupportedAccessPointsItemsAntennaPatterns(items *[]catalystcentersdkgo.ResponseItemSitesMapsSupportedAccessPointsAntennaPatterns) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

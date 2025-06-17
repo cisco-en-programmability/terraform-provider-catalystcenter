@@ -37,7 +37,7 @@ output "catalystcenter_client_enrichment_details_example" {
 
 - `entity_type` (String) entity_type header parameter. Client enrichment details can be fetched based on either User ID or Client MAC address. This parameter value must either be network_user_id/mac_address
 - `entity_value` (String) entity_value header parameter. Contains the actual value for the entity type that has been defined
-- `issue_category` (String) issueCategory header parameter. The category of the Catalyst event based on which the underlying issues need to be fetched
+- `issue_category` (String) issueCategory header parameter. The category of the DNA event based on which the underlying issues need to be fetched
 
 ### Read-Only
 

@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -9,7 +10,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -22,7 +23,7 @@ func resourceImagesCcoSync() *schema.Resource {
 
 - Initiating the synchronization of the software images from Cisco.com. The latest and suggested images will be
 retrieved, along with the corresponding product name and PIDs for imported and retrieved images from Cisco.com. Once the
-task is completed, the API /intent/api/v1/images?imported=false will display all the images fetched from Cisco.com.
+task is completed, the API **/intent/api/v1/images?imported=false** will display all the images fetched from Cisco.com.
 `,
 
 		CreateContext: resourceImagesCcoSyncCreate,
@@ -72,23 +73,24 @@ func resourceImagesCcoSyncCreate(ctx context.Context, d *schema.ResourceData, m 
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	// has_unknown_response: None
+	response1, restyResp1, err := client.SoftwareImageManagementSwim.InitiatesSyncOfSoftwareImagesFromCiscoCom()
 
-	response1, restyResp1, err := client.SoftwareImageManagementSwim.InitiatesSyncOfSoftwareImagesFromCiscoComV1()
-
-	vItem1 := flattenSoftwareImageManagementSwimInitiatesSyncOfSoftwareImagesFromCiscoComV1Item(response1.Response)
-	if err := d.Set("item", vItem1); err != nil {
-		diags = append(diags, diagError(
-			"Failure when setting InitiatesSyncOfSoftwareImagesFromCiscoComV1 response",
-			err))
+	if err != nil || response1 == nil {
+		if restyResp1 != nil {
+			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+		}
+		d.SetId("")
 		return diags
 	}
+
+	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing InitiatesSyncOfSoftwareImagesFromCiscoComV1", err))
+			"Failure when executing InitiatesSyncOfSoftwareImagesFromCiscoCom", err))
 		return diags
 	}
+
 	taskId := response1.Response.TaskID
 	log.Printf("[DEBUG] TASKID => %s", taskId)
 	if taskId != "" {
@@ -113,44 +115,43 @@ func resourceImagesCcoSyncCreate(ctx context.Context, d *schema.ResourceData, m 
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing InitiatesSyncOfSoftwareImagesFromCiscoComV1", err1))
+				"Failure when executing InitiatesSyncOfSoftwareImagesFromCiscoCom", err1))
 			return diags
 		}
 	}
 
-	if err != nil || response1 == nil {
-		if restyResp1 != nil {
-			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
-		}
-		d.SetId("")
+	vItem1 := flattenSoftwareImageManagementSwimInitiatesSyncOfSoftwareImagesFromCiscoComItem(response1.Response)
+	if err := d.Set("item", vItem1); err != nil {
+		diags = append(diags, diagError(
+			"Failure when setting InitiatesSyncOfSoftwareImagesFromCiscoCom response",
+			err))
 		return diags
 	}
 
-	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 	d.SetId(getUnixTimeString())
 	return diags
 }
 func resourceImagesCcoSyncRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 	return diags
 }
 
 func resourceImagesCcoSyncDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 	return diags
 }
 
-func flattenSoftwareImageManagementSwimInitiatesSyncOfSoftwareImagesFromCiscoComV1Item(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimInitiatesSyncOfSoftwareImagesFromCiscoComV1Response) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimInitiatesSyncOfSoftwareImagesFromCiscoComItem(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimInitiatesSyncOfSoftwareImagesFromCiscoComResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

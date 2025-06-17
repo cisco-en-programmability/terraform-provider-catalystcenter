@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -427,7 +427,7 @@ func resourcePnpWorkflowCreate(ctx context.Context, d *schema.ResourceData, m in
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestPnpWorkflowAddAWorkflowV1(ctx, "parameters.0", d)
+	request1 := expandRequestPnpWorkflowAddAWorkflow(ctx, "parameters.0", d)
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
@@ -447,7 +447,7 @@ func resourcePnpWorkflowCreate(ctx context.Context, d *schema.ResourceData, m in
 		}
 	}
 	if okName && vvName != "" {
-		queryParams1 := catalystcentersdkgo.GetWorkflowsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetWorkflowsQueryParams{}
 		queryParams1.Name = append(queryParams1.Name, vvName)
 		getResponse2, err := searchDeviceOnboardingPnpGetWorkflows(m, queryParams1)
 		if err == nil && getResponse2 != nil {
@@ -488,7 +488,7 @@ func resourcePnpWorkflowRead(ctx context.Context, d *schema.ResourceData, m inte
 
 	if okName && vName != "" {
 		log.Printf("[DEBUG] Selected method 1: GetWorkflows")
-		queryParams1 := catalystcentersdkgo.GetWorkflowsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetWorkflowsQueryParams{}
 
 		if okName {
 			queryParams1.Name = append(queryParams1.Name, vName)
@@ -525,7 +525,7 @@ func resourcePnpWorkflowRead(ctx context.Context, d *schema.ResourceData, m inte
 			return diags
 		}
 
-		vItem1 := flattenDeviceOnboardingPnpGetWorkflowByIDV1Item(response2)
+		vItem1 := flattenDeviceOnboardingPnpGetWorkflowByIDItem(response2)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetWorkflows search response",
@@ -557,7 +557,7 @@ func resourcePnpWorkflowRead(ctx context.Context, d *schema.ResourceData, m inte
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenDeviceOnboardingPnpGetWorkflowByIDV1Item(response2)
+		vItem2 := flattenDeviceOnboardingPnpGetWorkflowByIDItem(response2)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetWorkflowByID response",
@@ -584,7 +584,7 @@ func resourcePnpWorkflowUpdate(ctx context.Context, d *schema.ResourceData, m in
 	vvID := ""
 	if vName != "" {
 		log.Printf("[DEBUG] Selected method 1: GetWorkflows")
-		queryParams1 := catalystcentersdkgo.GetWorkflowsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetWorkflowsQueryParams{}
 
 		queryParams1.Name = append(queryParams1.Name, vName)
 
@@ -615,7 +615,7 @@ func resourcePnpWorkflowUpdate(ctx context.Context, d *schema.ResourceData, m in
 
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvID)
-		request1 := expandRequestPnpWorkflowUpdateWorkflowV1(ctx, "parameters.0", d)
+		request1 := expandRequestPnpWorkflowUpdateWorkflow(ctx, "parameters.0", d)
 		if request1 != nil {
 			log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		}
@@ -662,7 +662,7 @@ func resourcePnpWorkflowDelete(ctx context.Context, d *schema.ResourceData, m in
 			return diags
 		}
 	} else if vName != "" {
-		queryParams1 := catalystcentersdkgo.GetWorkflowsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetWorkflowsQueryParams{}
 		queryParams1.Name = append(queryParams1.Name, vName)
 
 		response1, err := searchDeviceOnboardingPnpGetWorkflows(m, queryParams1)
@@ -694,8 +694,9 @@ func resourcePnpWorkflowDelete(ctx context.Context, d *schema.ResourceData, m in
 
 	return diags
 }
-func expandRequestPnpWorkflowAddAWorkflowV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAddAWorkflowV1 {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAddAWorkflowV1{}
+
+func expandRequestPnpWorkflowAddAWorkflow(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAddAWorkflow {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAddAWorkflow{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.TypeID = interfaceToString(v)
 	}
@@ -739,7 +740,7 @@ func expandRequestPnpWorkflowAddAWorkflowV1(ctx context.Context, key string, d *
 		request.State = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tasks")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tasks")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tasks")))) {
-		request.Tasks = expandRequestPnpWorkflowAddAWorkflowV1TasksArray(ctx, key+".tasks", d)
+		request.Tasks = expandRequestPnpWorkflowAddAWorkflowTasksArray(ctx, key+".tasks", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tenant_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tenant_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tenant_id")))) {
 		request.TenantID = interfaceToString(v)
@@ -759,8 +760,8 @@ func expandRequestPnpWorkflowAddAWorkflowV1(ctx context.Context, key string, d *
 	return &request
 }
 
-func expandRequestPnpWorkflowAddAWorkflowV1TasksArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpAddAWorkflowV1Tasks {
-	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpAddAWorkflowV1Tasks{}
+func expandRequestPnpWorkflowAddAWorkflowTasksArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpAddAWorkflowTasks {
+	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpAddAWorkflowTasks{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -771,7 +772,7 @@ func expandRequestPnpWorkflowAddAWorkflowV1TasksArray(ctx context.Context, key s
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestPnpWorkflowAddAWorkflowV1Tasks(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestPnpWorkflowAddAWorkflowTasks(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -782,8 +783,8 @@ func expandRequestPnpWorkflowAddAWorkflowV1TasksArray(ctx context.Context, key s
 	return &request
 }
 
-func expandRequestPnpWorkflowAddAWorkflowV1Tasks(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAddAWorkflowV1Tasks {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAddAWorkflowV1Tasks{}
+func expandRequestPnpWorkflowAddAWorkflowTasks(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAddAWorkflowTasks {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAddAWorkflowTasks{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".curr_work_item_idx")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".curr_work_item_idx")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".curr_work_item_idx")))) {
 		request.CurrWorkItemIDx = interfaceToIntPtr(v)
 	}
@@ -809,7 +810,7 @@ func expandRequestPnpWorkflowAddAWorkflowV1Tasks(ctx context.Context, key string
 		request.Type = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".work_item_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".work_item_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".work_item_list")))) {
-		request.WorkItemList = expandRequestPnpWorkflowAddAWorkflowV1TasksWorkItemListArray(ctx, key+".work_item_list", d)
+		request.WorkItemList = expandRequestPnpWorkflowAddAWorkflowTasksWorkItemListArray(ctx, key+".work_item_list", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -817,8 +818,8 @@ func expandRequestPnpWorkflowAddAWorkflowV1Tasks(ctx context.Context, key string
 	return &request
 }
 
-func expandRequestPnpWorkflowAddAWorkflowV1TasksWorkItemListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpAddAWorkflowV1TasksWorkItemList {
-	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpAddAWorkflowV1TasksWorkItemList{}
+func expandRequestPnpWorkflowAddAWorkflowTasksWorkItemListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpAddAWorkflowTasksWorkItemList {
+	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpAddAWorkflowTasksWorkItemList{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -829,7 +830,7 @@ func expandRequestPnpWorkflowAddAWorkflowV1TasksWorkItemListArray(ctx context.Co
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestPnpWorkflowAddAWorkflowV1TasksWorkItemList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestPnpWorkflowAddAWorkflowTasksWorkItemList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -840,8 +841,8 @@ func expandRequestPnpWorkflowAddAWorkflowV1TasksWorkItemListArray(ctx context.Co
 	return &request
 }
 
-func expandRequestPnpWorkflowAddAWorkflowV1TasksWorkItemList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAddAWorkflowV1TasksWorkItemList {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAddAWorkflowV1TasksWorkItemList{}
+func expandRequestPnpWorkflowAddAWorkflowTasksWorkItemList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpAddAWorkflowTasksWorkItemList {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpAddAWorkflowTasksWorkItemList{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".command")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".command")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".command")))) {
 		request.Command = interfaceToString(v)
 	}
@@ -866,8 +867,8 @@ func expandRequestPnpWorkflowAddAWorkflowV1TasksWorkItemList(ctx context.Context
 	return &request
 }
 
-func expandRequestPnpWorkflowUpdateWorkflowV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateWorkflowV1 {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateWorkflowV1{}
+func expandRequestPnpWorkflowUpdateWorkflow(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateWorkflow {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateWorkflow{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.TypeID = interfaceToString(v)
 	}
@@ -911,7 +912,7 @@ func expandRequestPnpWorkflowUpdateWorkflowV1(ctx context.Context, key string, d
 		request.State = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tasks")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tasks")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tasks")))) {
-		request.Tasks = expandRequestPnpWorkflowUpdateWorkflowV1TasksArray(ctx, key+".tasks", d)
+		request.Tasks = expandRequestPnpWorkflowUpdateWorkflowTasksArray(ctx, key+".tasks", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tenant_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tenant_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tenant_id")))) {
 		request.TenantID = interfaceToString(v)
@@ -931,8 +932,8 @@ func expandRequestPnpWorkflowUpdateWorkflowV1(ctx context.Context, key string, d
 	return &request
 }
 
-func expandRequestPnpWorkflowUpdateWorkflowV1TasksArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateWorkflowV1Tasks {
-	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateWorkflowV1Tasks{}
+func expandRequestPnpWorkflowUpdateWorkflowTasksArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateWorkflowTasks {
+	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateWorkflowTasks{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -943,7 +944,7 @@ func expandRequestPnpWorkflowUpdateWorkflowV1TasksArray(ctx context.Context, key
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestPnpWorkflowUpdateWorkflowV1Tasks(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestPnpWorkflowUpdateWorkflowTasks(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -954,8 +955,8 @@ func expandRequestPnpWorkflowUpdateWorkflowV1TasksArray(ctx context.Context, key
 	return &request
 }
 
-func expandRequestPnpWorkflowUpdateWorkflowV1Tasks(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateWorkflowV1Tasks {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateWorkflowV1Tasks{}
+func expandRequestPnpWorkflowUpdateWorkflowTasks(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateWorkflowTasks {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateWorkflowTasks{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".curr_work_item_idx")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".curr_work_item_idx")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".curr_work_item_idx")))) {
 		request.CurrWorkItemIDx = interfaceToIntPtr(v)
 	}
@@ -981,7 +982,7 @@ func expandRequestPnpWorkflowUpdateWorkflowV1Tasks(ctx context.Context, key stri
 		request.Type = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".work_item_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".work_item_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".work_item_list")))) {
-		request.WorkItemList = expandRequestPnpWorkflowUpdateWorkflowV1TasksWorkItemListArray(ctx, key+".work_item_list", d)
+		request.WorkItemList = expandRequestPnpWorkflowUpdateWorkflowTasksWorkItemListArray(ctx, key+".work_item_list", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -989,8 +990,8 @@ func expandRequestPnpWorkflowUpdateWorkflowV1Tasks(ctx context.Context, key stri
 	return &request
 }
 
-func expandRequestPnpWorkflowUpdateWorkflowV1TasksWorkItemListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateWorkflowV1TasksWorkItemList {
-	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateWorkflowV1TasksWorkItemList{}
+func expandRequestPnpWorkflowUpdateWorkflowTasksWorkItemListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateWorkflowTasksWorkItemList {
+	request := []catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateWorkflowTasksWorkItemList{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1001,7 +1002,7 @@ func expandRequestPnpWorkflowUpdateWorkflowV1TasksWorkItemListArray(ctx context.
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestPnpWorkflowUpdateWorkflowV1TasksWorkItemList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestPnpWorkflowUpdateWorkflowTasksWorkItemList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1012,8 +1013,8 @@ func expandRequestPnpWorkflowUpdateWorkflowV1TasksWorkItemListArray(ctx context.
 	return &request
 }
 
-func expandRequestPnpWorkflowUpdateWorkflowV1TasksWorkItemList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateWorkflowV1TasksWorkItemList {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateWorkflowV1TasksWorkItemList{}
+func expandRequestPnpWorkflowUpdateWorkflowTasksWorkItemList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateWorkflowTasksWorkItemList {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUpdateWorkflowTasksWorkItemList{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".command")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".command")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".command")))) {
 		request.Command = interfaceToString(v)
 	}
@@ -1038,11 +1039,11 @@ func expandRequestPnpWorkflowUpdateWorkflowV1TasksWorkItemList(ctx context.Conte
 	return &request
 }
 
-func searchDeviceOnboardingPnpGetWorkflows(m interface{}, queryParams catalystcentersdkgo.GetWorkflowsV1QueryParams) (*catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetWorkflowsV1, error) {
+func searchDeviceOnboardingPnpGetWorkflows(m interface{}, queryParams catalystcentersdkgo.GetWorkflowsQueryParams) (*catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetWorkflows, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetWorkflowsV1
-	var ite *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetWorkflowsV1
+	var foundItem *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetWorkflows
+	var ite *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetWorkflows
 	ite, _, err = client.DeviceOnboardingPnp.GetWorkflows(&queryParams)
 	if err != nil {
 		return foundItem, err
@@ -1058,7 +1059,7 @@ func searchDeviceOnboardingPnpGetWorkflows(m interface{}, queryParams catalystce
 	for _, item := range itemsCopy {
 		// Call get by _ method and set value to foundItem and return
 		if item.Name == queryParams.Name[0] {
-			var getItem *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetWorkflowsV1
+			var getItem *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetWorkflows
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

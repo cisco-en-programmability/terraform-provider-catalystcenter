@@ -1,7 +1,7 @@
 
 resource "catalystcenter_event_snmp_config_update" "example" {
-  provider = meraki
-  parameters {
+  provider = catalystcenter
+  parameters = [{
 
     auth_password     = "string"
     community         = "string"
@@ -16,7 +16,7 @@ resource "catalystcenter_event_snmp_config_update" "example" {
     snmp_privacy_type = "string"
     snmp_version      = "string"
     user_name         = "string"
-  }
+  }]
 }
 
 output "catalystcenter_event_snmp_config_update_example" {

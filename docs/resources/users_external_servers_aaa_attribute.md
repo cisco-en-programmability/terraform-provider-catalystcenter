@@ -28,8 +28,7 @@ and for RADIUS servers it will be "Cisco-AVPair".
 ```terraform
 resource "catalystcenter_users_external_servers_aaa_attribute" "example" {
   provider = catalystcenter
-
-
+ 
   parameters {
 
     attribute_name = "string"

@@ -1,7 +1,7 @@
 
 resource "catalystcenter_sda_fabric_devices_layer2_handoffs_ip_transits" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     external_connectivity_ip_pool_name = "string"

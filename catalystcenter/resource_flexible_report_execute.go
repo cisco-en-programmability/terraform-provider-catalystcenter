@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -114,14 +114,14 @@ func resourceFlexibleReportExecuteCreate(ctx context.Context, d *schema.Resource
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Reports.ExecutingTheFlexibleReportV1(vvReportID)
+	response1, restyResp1, err := client.Reports.ExecutingTheFlexibleReport(vvReportID)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ExecutingTheFlexibleReportV1", err))
+			"Failure when executing ExecutingTheFlexibleReport", err))
 		return diags
 	}
 
@@ -157,15 +157,15 @@ func resourceFlexibleReportExecuteCreate(ctx context.Context, d *schema.Resource
 		if response2.Status == "FAILURE" {
 			bapiError := response2.BapiError
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing ExecutingTheFlexibleReportV1", err,
-				"Failure at ExecutingTheFlexibleReportV1 execution", bapiError))
+				"Failure when executing ExecutingTheFlexibleReport", err,
+				"Failure at ExecutingTheFlexibleReport execution", bapiError))
 			return diags
 		}
 	}
-	vItem1 := flattenReportsExecutingTheFlexibleReportV1Item(response1)
+	vItem1 := flattenReportsExecutingTheFlexibleReportItem(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ExecutingTheFlexibleReportV1 response",
+			"Failure when setting ExecutingTheFlexibleReport response",
 			err))
 		return diags
 	}
@@ -187,7 +187,7 @@ func resourceFlexibleReportExecuteDelete(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func flattenReportsExecutingTheFlexibleReportV1Item(item *catalystcentersdkgo.ResponseReportsExecutingTheFlexibleReportV1) []map[string]interface{} {
+func flattenReportsExecutingTheFlexibleReportItem(item *catalystcentersdkgo.ResponseReportsExecutingTheFlexibleReport) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -197,13 +197,13 @@ func flattenReportsExecutingTheFlexibleReportV1Item(item *catalystcentersdkgo.Re
 	respItem["end_time"] = item.EndTime
 	respItem["request_status"] = item.RequestStatus
 	respItem["errors"] = item.Errors
-	respItem["warnings"] = flattenReportsExecutingTheFlexibleReportV1ItemWarnings(item.Warnings)
+	respItem["warnings"] = flattenReportsExecutingTheFlexibleReportItemWarnings(item.Warnings)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenReportsExecutingTheFlexibleReportV1ItemWarnings(items *[]catalystcentersdkgo.ResponseReportsExecutingTheFlexibleReportV1Warnings) []interface{} {
+func flattenReportsExecutingTheFlexibleReportItemWarnings(items *[]catalystcentersdkgo.ResponseReportsExecutingTheFlexibleReportWarnings) []interface{} {
 	if items == nil {
 		return nil
 	}

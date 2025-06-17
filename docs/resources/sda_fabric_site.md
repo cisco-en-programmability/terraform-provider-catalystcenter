@@ -20,7 +20,7 @@ It manages create, read and delete operations on SDA.
 ```terraform
 resource "catalystcenter_sda_fabric_site" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     fabric_name         = "string"

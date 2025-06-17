@@ -4,14 +4,18 @@ page_title: "catalystcenter_wireless_access_points_provision Resource - terrafor
 subcategory: ""
 description: |-
   It performs create operation on Wireless.
-  This data source action is used to provision access points
+  This data source action is used to provision Access Points. Prerequisite: Access Point has to be assigned to the site
+  using the API /dna/intent/api/v1/networkDevices/assignToSite/apply.
 ---
 
 # catalystcenter_wireless_access_points_provision (Resource)
 
 It performs create operation on Wireless.
 
-- This data source action is used to provision access points
+- This data source action is used to provision Access Points. Prerequisite: Access Point has to be assigned to the site
+using the API /dna/intent/api/v1/networkDevices/assignToSite/apply.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -21,17 +25,18 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_wireless_access_points_provision" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
     ap_zone_name = "string"
-    network_devices {
+    network_devices = [{
 
-      device_id = "string"
-      mesh_role = "string"
-    }
+      beam_state = "string"
+      device_id  = "string"
+      mesh_role  = "string"
+    }]
     rf_profile_name = "string"
     site_id         = "string"
-  }
+  }]
 }
 
 output "catalystcenter_wireless_access_points_provision_example" {
@@ -67,6 +72,7 @@ Optional:
 
 Optional:
 
+- `beam_state` (String) Beam State (Applicable only for CW9179F AP models)
 - `device_id` (String) Network device ID of access points
 - `mesh_role` (String) Mesh Role (Applicable only when AP is in Bridge Mode)
 

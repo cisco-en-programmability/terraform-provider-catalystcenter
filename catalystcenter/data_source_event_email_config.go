@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -157,26 +157,40 @@ func dataSourceEventEmailConfigRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetEmailDestinationV1")
+		log.Printf("[DEBUG] Selected method: GetEmailDestination")
 
-		response1, restyResp1, err := client.EventManagement.GetEmailDestinationV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.EventManagement.GetEmailDestination()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetEmailDestinationV1", err,
-				"Failure at GetEmailDestinationV1, unexpected response", ""))
+				"Failure when executing 2 GetEmailDestination", err,
+				"Failure at GetEmailDestination, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenEventManagementGetEmailDestinationV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetEmailDestination", err,
+				"Failure at GetEmailDestination, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenEventManagementGetEmailDestinationItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetEmailDestinationV1 response",
+				"Failure when setting GetEmailDestination response",
 				err))
 			return diags
 		}
@@ -188,7 +202,7 @@ func dataSourceEventEmailConfigRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenEventManagementGetEmailDestinationV1Items(items *catalystcentersdkgo.ResponseEventManagementGetEmailDestinationV1) []map[string]interface{} {
+func flattenEventManagementGetEmailDestinationItems(items *catalystcentersdkgo.ResponseEventManagementGetEmailDestination) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -196,8 +210,8 @@ func flattenEventManagementGetEmailDestinationV1Items(items *catalystcentersdkgo
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["email_config_id"] = item.EmailConfigID
-		respItem["primary_smt_p_config"] = flattenEventManagementGetEmailDestinationV1ItemsPrimarySmtpConfig(item.PrimarySmtpConfig)
-		respItem["secondary_smt_p_config"] = flattenEventManagementGetEmailDestinationV1ItemsSecondarySmtpConfig(item.SecondarySmtpConfig)
+		respItem["primary_smt_p_config"] = flattenEventManagementGetEmailDestinationItemsPrimarySmtpConfig(item.PrimarySmtpConfig)
+		respItem["secondary_smt_p_config"] = flattenEventManagementGetEmailDestinationItemsSecondarySmtpConfig(item.SecondarySmtpConfig)
 		respItem["from_email"] = item.FromEmail
 		respItem["to_email"] = item.ToEmail
 		respItem["subject"] = item.Subject
@@ -208,7 +222,7 @@ func flattenEventManagementGetEmailDestinationV1Items(items *catalystcentersdkgo
 	return respItems
 }
 
-func flattenEventManagementGetEmailDestinationV1ItemsPrimarySmtpConfig(item *catalystcentersdkgo.ResponseItemEventManagementGetEmailDestinationV1PrimarySmtpConfig) []map[string]interface{} {
+func flattenEventManagementGetEmailDestinationItemsPrimarySmtpConfig(item *catalystcentersdkgo.ResponseItemEventManagementGetEmailDestinationPrimarySmtpConfig) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -225,7 +239,7 @@ func flattenEventManagementGetEmailDestinationV1ItemsPrimarySmtpConfig(item *cat
 
 }
 
-func flattenEventManagementGetEmailDestinationV1ItemsSecondarySmtpConfig(item *catalystcentersdkgo.ResponseItemEventManagementGetEmailDestinationV1SecondarySmtpConfig) []map[string]interface{} {
+func flattenEventManagementGetEmailDestinationItemsSecondarySmtpConfig(item *catalystcentersdkgo.ResponseItemEventManagementGetEmailDestinationSecondarySmtpConfig) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

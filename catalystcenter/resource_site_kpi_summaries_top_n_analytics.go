@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -120,15 +120,6 @@ center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-SiteKpiSummaries-1.0.0-re
 								Type: schema.TypeString,
 							},
 						},
-						"task_id": &schema.Schema{
-							Description: `task id`,
-							Type:        schema.TypeString,
-							Required:    true,
-						}, "xca_lle_rid": &schema.Schema{
-							Description: `xca lle rid`,
-							Type:        schema.TypeString,
-							Required:    true,
-						},
 						"start_time": &schema.Schema{
 							Description: `Start Time`,
 							Type:        schema.TypeInt,
@@ -154,18 +145,18 @@ func resourceSiteKpiSummariesTopNAnalyticsCreate(ctx context.Context, d *schema.
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestSiteKpiSummariesTopNAnalyticsSubmitRequestForTopNEntitiesRelatedToSiteAnalyticsV1(ctx, "parameters.0", d)
+	request1 := expandRequestSiteKpiSummariesTopNAnalyticsSubmitRequestForTopNEntitiesRelatedToSiteAnalytics(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vTaskID := resourceItem["task_id"]
 	vvTaskID := interfaceToString(vTaskID)
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 	vvXCaLLERID := interfaceToString(vXCaLLERID)
-	queryParamImport := catalystcentersdkgo.GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDQueryParams{}
 	queryParamImport.TaskID = vvTaskID
-	headerParams1 := catalystcentersdkgo.GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1HeaderParams{}
+	headerParams1 := catalystcentersdkgo.GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDHeaderParams{}
 	headerParams1.XCaLLERID = vvXCaLLERID
-	item2, err := searchSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1(m, queryParamImport, headerParams1)
+	item2, err := searchSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskID(m, queryParamImport, headerParams1)
 	if err != nil || item2 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["task_id"] = vvTaskID
@@ -212,9 +203,9 @@ func resourceSiteKpiSummariesTopNAnalyticsCreate(ctx context.Context, d *schema.
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDQueryParams{}
 	queryParamValidate.TaskID = vvTaskID
-	item3, err := searchSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1(m, queryParamValidate, headerParams1)
+	item3, err := searchSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskID(m, queryParamValidate, headerParams1)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
 			"Failure when executing SubmitRequestForTopNEntitiesRelatedToSiteAnalytics", err,
@@ -245,8 +236,8 @@ func resourceSiteKpiSummariesTopNAnalyticsRead(ctx context.Context, d *schema.Re
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskID")
 
-		headerParams1 := catalystcentersdkgo.GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDHeaderParams{}
+		queryParams1 := catalystcentersdkgo.GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDQueryParams{}
 
 		queryParams1.TaskID = vTaskID
 
@@ -264,7 +255,7 @@ func resourceSiteKpiSummariesTopNAnalyticsRead(ctx context.Context, d *schema.Re
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		item1, err := searchSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1(m, queryParams1, headerParams1)
+		item1, err := searchSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskID(m, queryParams1, headerParams1)
 		if err != nil || item1 == nil {
 			d.SetId("")
 			return diags
@@ -282,7 +273,7 @@ func resourceSiteKpiSummariesTopNAnalyticsRead(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func flattenSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDByIDItem(item *catalystcentersdkgo.ResponseSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1Response) []map[string]interface{} {
+func flattenSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDByIDItem(item *catalystcentersdkgo.ResponseSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -293,7 +284,7 @@ func flattenSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDByIDItem(
 		respItem,
 	}
 }
-func flattenSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDByIDItemAttributes(items *[]catalystcentersdkgo.ResponseSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1ResponseAttributes) []map[string]interface{} {
+func flattenSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDByIDItemAttributes(items *[]catalystcentersdkgo.ResponseSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDResponseAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -313,12 +304,13 @@ func resourceSiteKpiSummariesTopNAnalyticsUpdate(ctx context.Context, d *schema.
 
 func resourceSiteKpiSummariesTopNAnalyticsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	// NOTE: Unable to delete SiteKpiSummariesTopNAnalytics on Dna Center
+	// NOTE: Unable to delete SiteKpiSummariesTopNAnalytics on Catalyst Center
 	//       Returning empty diags to delete it on Terraform
 	return diags
 }
-func expandRequestSiteKpiSummariesTopNAnalyticsSubmitRequestForTopNEntitiesRelatedToSiteAnalyticsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesSubmitRequestForTopNEntitiesRelatedToSiteAnalyticsV1 {
-	request := catalystcentersdkgo.RequestSitesSubmitRequestForTopNEntitiesRelatedToSiteAnalyticsV1{}
+
+func expandRequestSiteKpiSummariesTopNAnalyticsSubmitRequestForTopNEntitiesRelatedToSiteAnalytics(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesSubmitRequestForTopNEntitiesRelatedToSiteAnalytics {
+	request := catalystcentersdkgo.RequestSitesSubmitRequestForTopNEntitiesRelatedToSiteAnalytics{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -332,7 +324,7 @@ func expandRequestSiteKpiSummariesTopNAnalyticsSubmitRequestForTopNEntitiesRelat
 		request.GroupBy = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestSiteKpiSummariesTopNAnalyticsSubmitRequestForTopNEntitiesRelatedToSiteAnalyticsV1FiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestSiteKpiSummariesTopNAnalyticsSubmitRequestForTopNEntitiesRelatedToSiteAnalyticsFiltersArray(ctx, key+".filters", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -340,8 +332,8 @@ func expandRequestSiteKpiSummariesTopNAnalyticsSubmitRequestForTopNEntitiesRelat
 	return &request
 }
 
-func expandRequestSiteKpiSummariesTopNAnalyticsSubmitRequestForTopNEntitiesRelatedToSiteAnalyticsV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSitesSubmitRequestForTopNEntitiesRelatedToSiteAnalyticsV1Filters {
-	request := []catalystcentersdkgo.RequestSitesSubmitRequestForTopNEntitiesRelatedToSiteAnalyticsV1Filters{}
+func expandRequestSiteKpiSummariesTopNAnalyticsSubmitRequestForTopNEntitiesRelatedToSiteAnalyticsFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSitesSubmitRequestForTopNEntitiesRelatedToSiteAnalyticsFilters {
+	request := []catalystcentersdkgo.RequestSitesSubmitRequestForTopNEntitiesRelatedToSiteAnalyticsFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -352,7 +344,7 @@ func expandRequestSiteKpiSummariesTopNAnalyticsSubmitRequestForTopNEntitiesRelat
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSiteKpiSummariesTopNAnalyticsSubmitRequestForTopNEntitiesRelatedToSiteAnalyticsV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSiteKpiSummariesTopNAnalyticsSubmitRequestForTopNEntitiesRelatedToSiteAnalyticsFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -363,8 +355,8 @@ func expandRequestSiteKpiSummariesTopNAnalyticsSubmitRequestForTopNEntitiesRelat
 	return &request
 }
 
-func expandRequestSiteKpiSummariesTopNAnalyticsSubmitRequestForTopNEntitiesRelatedToSiteAnalyticsV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesSubmitRequestForTopNEntitiesRelatedToSiteAnalyticsV1Filters {
-	request := catalystcentersdkgo.RequestSitesSubmitRequestForTopNEntitiesRelatedToSiteAnalyticsV1Filters{}
+func expandRequestSiteKpiSummariesTopNAnalyticsSubmitRequestForTopNEntitiesRelatedToSiteAnalyticsFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesSubmitRequestForTopNEntitiesRelatedToSiteAnalyticsFilters {
+	request := catalystcentersdkgo.RequestSitesSubmitRequestForTopNEntitiesRelatedToSiteAnalyticsFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -380,11 +372,11 @@ func expandRequestSiteKpiSummariesTopNAnalyticsSubmitRequestForTopNEntitiesRelat
 	return &request
 }
 
-func searchSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1(m interface{}, queryParams catalystcentersdkgo.GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1QueryParams, header catalystcentersdkgo.GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1HeaderParams) (*catalystcentersdkgo.ResponseSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1Response, error) {
+func searchSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskID(m interface{}, queryParams catalystcentersdkgo.GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDQueryParams, header catalystcentersdkgo.GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDHeaderParams) (*catalystcentersdkgo.ResponseSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1Response
-	var ite *catalystcentersdkgo.ResponseSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1
+	var foundItem *catalystcentersdkgo.ResponseSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDResponse
+	var ite *catalystcentersdkgo.ResponseSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskID
 	ite, _, err = client.Sites.GetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskID(&header, &queryParams)
 	if err != nil || ite == nil {
 		return foundItem, err
@@ -395,7 +387,7 @@ func searchSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1(m inter
 	for _, item := range itemsCopy {
 		// Call get by _ method and set value to foundItem and return
 		if item.ID == queryParams.TaskID {
-			var getItem *catalystcentersdkgo.ResponseSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDV1Response
+			var getItem *catalystcentersdkgo.ResponseSitesGetTopNEntitiesRelatedToSiteAnalyticsForTheGivenTaskIDResponse
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

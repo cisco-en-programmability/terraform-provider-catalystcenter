@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -11,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -26,7 +27,7 @@ func resourceApplicationVisibilityNetworkDevicesDisableCbar() *schema.Resource {
 include the list of network devices where it has to be disabled.
 This operation pushes configuration to the network devices, and is only permitted if the provisioning settings do not
 mandate a config preview for CBAR disablement. In cases where such settings are active, attempting to use this endpoint
-will result in *422 Unprocessable Content* error.
+will result in **422 Unprocessable Content** error.
 `,
 
 		CreateContext: resourceApplicationVisibilityNetworkDevicesDisableCbarCreate,
@@ -86,7 +87,7 @@ func resourceApplicationVisibilityNetworkDevicesDisableCbarCreate(ctx context.Co
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestApplicationVisibilityNetworkDevicesDisableCbarDisableCBARFeatureOnMultipleNetworkDevicesV1(ctx, "parameters.0", d)
+	request1 := expandRequestApplicationVisibilityNetworkDevicesDisableCbarDisableCBARFeatureOnMultipleNetworkDevices(ctx, "parameters.0", d)
 
 	response1, restyResp1, err := client.ApplicationPolicy.DisableCBARFeatureOnMultipleNetworkDevices(request1)
 
@@ -133,7 +134,7 @@ func resourceApplicationVisibilityNetworkDevicesDisableCbarCreate(ctx context.Co
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
@@ -145,7 +146,7 @@ func resourceApplicationVisibilityNetworkDevicesDisableCbarCreate(ctx context.Co
 		}
 	}
 
-	vItem1 := flattenApplicationPolicyDisableCBARFeatureOnMultipleNetworkDevicesV1Item(response1.Response)
+	vItem1 := flattenApplicationPolicyDisableCBARFeatureOnMultipleNetworkDevicesItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
 			"Failure when setting DisableCBARFeatureOnMultipleNetworkDevices response",
@@ -170,15 +171,15 @@ func resourceApplicationVisibilityNetworkDevicesDisableCbarDelete(ctx context.Co
 	return diags
 }
 
-func expandRequestApplicationVisibilityNetworkDevicesDisableCbarDisableCBARFeatureOnMultipleNetworkDevicesV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyDisableCBARFeatureOnMultipleNetworkDevicesV1 {
-	request := catalystcentersdkgo.RequestApplicationPolicyDisableCBARFeatureOnMultipleNetworkDevicesV1{}
+func expandRequestApplicationVisibilityNetworkDevicesDisableCbarDisableCBARFeatureOnMultipleNetworkDevices(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyDisableCBARFeatureOnMultipleNetworkDevices {
+	request := catalystcentersdkgo.RequestApplicationPolicyDisableCBARFeatureOnMultipleNetworkDevices{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".network_device_ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".network_device_ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".network_device_ids")))) {
 		request.NetworkDeviceIDs = interfaceToSliceString(v)
 	}
 	return &request
 }
 
-func flattenApplicationPolicyDisableCBARFeatureOnMultipleNetworkDevicesV1Item(item *catalystcentersdkgo.ResponseApplicationPolicyDisableCBARFeatureOnMultipleNetworkDevicesV1Response) []map[string]interface{} {
+func flattenApplicationPolicyDisableCBARFeatureOnMultipleNetworkDevicesItem(item *catalystcentersdkgo.ResponseApplicationPolicyDisableCBARFeatureOnMultipleNetworkDevicesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

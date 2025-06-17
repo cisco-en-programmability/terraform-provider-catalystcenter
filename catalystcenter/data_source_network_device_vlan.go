@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -109,32 +109,46 @@ func dataSourceNetworkDeviceVLANRead(ctx context.Context, d *schema.ResourceData
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceInterfaceVLANsV1")
+		log.Printf("[DEBUG] Selected method: GetDeviceInterfaceVLANs")
 		vvID := vID.(string)
-		queryParams1 := catalystcentersdkgo.GetDeviceInterfaceVLANsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetDeviceInterfaceVLANsQueryParams{}
 
 		if okInterfaceType {
 			queryParams1.InterfaceType = vInterfaceType.(string)
 		}
 
-		response1, restyResp1, err := client.Devices.GetDeviceInterfaceVLANsV1(vvID, &queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Devices.GetDeviceInterfaceVLANs(vvID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceInterfaceVLANsV1", err,
-				"Failure at GetDeviceInterfaceVLANsV1, unexpected response", ""))
+				"Failure when executing 2 GetDeviceInterfaceVLANs", err,
+				"Failure at GetDeviceInterfaceVLANs, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetDeviceInterfaceVLANsV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetDeviceInterfaceVLANs", err,
+				"Failure at GetDeviceInterfaceVLANs, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDevicesGetDeviceInterfaceVLANsItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceInterfaceVLANsV1 response",
+				"Failure when setting GetDeviceInterfaceVLANs response",
 				err))
 			return diags
 		}
@@ -146,7 +160,7 @@ func dataSourceNetworkDeviceVLANRead(ctx context.Context, d *schema.ResourceData
 	return diags
 }
 
-func flattenDevicesGetDeviceInterfaceVLANsV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetDeviceInterfaceVLANsV1Response) []map[string]interface{} {
+func flattenDevicesGetDeviceInterfaceVLANsItems(items *[]catalystcentersdkgo.ResponseDevicesGetDeviceInterfaceVLANsResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

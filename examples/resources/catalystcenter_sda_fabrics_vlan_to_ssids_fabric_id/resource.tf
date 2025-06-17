@@ -1,7 +1,7 @@
 
 resource "catalystcenter_sda_fabrics_vlan_to_ssids_fabric_id" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     fabric_id = "string"

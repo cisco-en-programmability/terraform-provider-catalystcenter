@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -3965,8 +3965,8 @@ func dataSourcePathTraceRead(ctx context.Context, d *schema.ResourceData, m inte
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesAllPreviousPathtracesSummaryV1")
-		queryParams1 := catalystcentersdkgo.RetrievesAllPreviousPathtracesSummaryV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: RetrievesAllPreviousPathtracesSummary")
+		queryParams1 := catalystcentersdkgo.RetrievesAllPreviousPathtracesSummaryQueryParams{}
 
 		if okPeriodicRefresh {
 			queryParams1.PeriodicRefresh = vPeriodicRefresh.(bool)
@@ -4014,24 +4014,38 @@ func dataSourcePathTraceRead(ctx context.Context, d *schema.ResourceData, m inte
 			queryParams1.SortBy = vSortBy.(string)
 		}
 
-		response1, restyResp1, err := client.PathTrace.RetrievesAllPreviousPathtracesSummaryV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.PathTrace.RetrievesAllPreviousPathtracesSummary(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesAllPreviousPathtracesSummaryV1", err,
-				"Failure at RetrievesAllPreviousPathtracesSummaryV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesAllPreviousPathtracesSummary", err,
+				"Failure at RetrievesAllPreviousPathtracesSummary, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenPathTraceRetrievesAllPreviousPathtracesSummaryV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesAllPreviousPathtracesSummary", err,
+				"Failure at RetrievesAllPreviousPathtracesSummary, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenPathTraceRetrievesAllPreviousPathtracesSummaryItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesAllPreviousPathtracesSummaryV1 response",
+				"Failure when setting RetrievesAllPreviousPathtracesSummary response",
 				err))
 			return diags
 		}
@@ -4041,27 +4055,41 @@ func dataSourcePathTraceRead(ctx context.Context, d *schema.ResourceData, m inte
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: RetrievesPreviousPathtraceV1")
+		log.Printf("[DEBUG] Selected method: RetrievesPreviousPathtrace")
 		vvFlowAnalysisID := vFlowAnalysisID.(string)
 
-		response2, restyResp2, err := client.PathTrace.RetrievesPreviousPathtraceV1(vvFlowAnalysisID)
+		// has_unknown_response: None
+
+		response2, restyResp2, err := client.PathTrace.RetrievesPreviousPathtrace(vvFlowAnalysisID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesPreviousPathtraceV1", err,
-				"Failure at RetrievesPreviousPathtraceV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesPreviousPathtrace", err,
+				"Failure at RetrievesPreviousPathtrace, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenPathTraceRetrievesPreviousPathtraceV1Item(response2.Response)
+		if err != nil || response2 == nil {
+			if restyResp2 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesPreviousPathtrace", err,
+				"Failure at RetrievesPreviousPathtrace, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
+
+		vItem2 := flattenPathTraceRetrievesPreviousPathtraceItem(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesPreviousPathtraceV1 response",
+				"Failure when setting RetrievesPreviousPathtrace response",
 				err))
 			return diags
 		}
@@ -4073,7 +4101,7 @@ func dataSourcePathTraceRead(ctx context.Context, d *schema.ResourceData, m inte
 	return diags
 }
 
-func flattenPathTraceRetrievesAllPreviousPathtracesSummaryV1Items(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesAllPreviousPathtracesSummaryV1Response) []map[string]interface{} {
+func flattenPathTraceRetrievesAllPreviousPathtracesSummaryItems(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesAllPreviousPathtracesSummaryResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4099,23 +4127,23 @@ func flattenPathTraceRetrievesAllPreviousPathtracesSummaryV1Items(items *[]catal
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1Item(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1Response) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItem(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["detailed_status"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemDetailedStatus(item.DetailedStatus)
+	respItem["detailed_status"] = flattenPathTraceRetrievesPreviousPathtraceItemDetailedStatus(item.DetailedStatus)
 	respItem["last_update"] = item.LastUpdate
-	respItem["network_elements"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElements(item.NetworkElements)
-	respItem["network_elements_info"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfo(item.NetworkElementsInfo)
+	respItem["network_elements"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElements(item.NetworkElements)
+	respItem["network_elements_info"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfo(item.NetworkElementsInfo)
 	respItem["properties"] = item.Properties
-	respItem["request"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemRequest(item.Request)
+	respItem["request"] = flattenPathTraceRetrievesPreviousPathtraceItemRequest(item.Request)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemDetailedStatus(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseDetailedStatus) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemDetailedStatus(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseDetailedStatus) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4129,30 +4157,30 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemDetailedStatus(item *cataly
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElements(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElements) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElements(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElements) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["accuracy_list"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsAccuracyList(item.AccuracyList)
-		respItem["detailed_status"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsDetailedStatus(item.DetailedStatus)
-		respItem["device_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsDeviceStatistics(item.DeviceStatistics)
+		respItem["accuracy_list"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsAccuracyList(item.AccuracyList)
+		respItem["detailed_status"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsDetailedStatus(item.DetailedStatus)
+		respItem["device_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsDeviceStatistics(item.DeviceStatistics)
 		respItem["device_stats_collection"] = item.DeviceStatsCollection
 		respItem["device_stats_collection_failure_reason"] = item.DeviceStatsCollectionFailureReason
-		respItem["egress_physical_interface"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysicalInterface(item.EgressPhysicalInterface)
-		respItem["egress_virtual_interface"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtualInterface(item.EgressVirtualInterface)
-		respItem["flex_connect"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnect(item.FlexConnect)
+		respItem["egress_physical_interface"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressPhysicalInterface(item.EgressPhysicalInterface)
+		respItem["egress_virtual_interface"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressVirtualInterface(item.EgressVirtualInterface)
+		respItem["flex_connect"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsFlexConnect(item.FlexConnect)
 		respItem["id"] = item.ID
-		respItem["ingress_physical_interface"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysicalInterface(item.IngressPhysicalInterface)
-		respItem["ingress_virtual_interface"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtualInterface(item.IngressVirtualInterface)
+		respItem["ingress_physical_interface"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressPhysicalInterface(item.IngressPhysicalInterface)
+		respItem["ingress_virtual_interface"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressVirtualInterface(item.IngressVirtualInterface)
 		respItem["ip"] = item.IP
 		respItem["link_information_source"] = item.LinkInformationSource
 		respItem["name"] = item.Name
 		respItem["perf_mon_collection"] = item.PerfMonCollection
 		respItem["perf_mon_collection_failure_reason"] = item.PerfMonCollectionFailureReason
-		respItem["perf_mon_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsPerfMonStatistics(item.PerfMonStatistics)
+		respItem["perf_mon_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsPerfMonStatistics(item.PerfMonStatistics)
 		respItem["role"] = item.Role
 		respItem["ssid"] = item.SSID
 		respItem["tunnels"] = item.Tunnels
@@ -4163,7 +4191,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElements(items *[]ca
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsAccuracyList(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsAccuracyList) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsAccuracyList(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsAccuracyList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4177,7 +4205,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsAccuracyList
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsDetailedStatus(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsDetailedStatus) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsDetailedStatus(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsDetailedStatus) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4191,13 +4219,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsDetailedStat
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsDeviceStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsDeviceStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsDeviceStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsDeviceStatistics) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["cpu_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsDeviceStatisticsCPUStatistics(item.CPUStatistics)
-	respItem["memory_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsDeviceStatisticsMemoryStatistics(item.MemoryStatistics)
+	respItem["cpu_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsDeviceStatisticsCPUStatistics(item.CPUStatistics)
+	respItem["memory_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsDeviceStatisticsMemoryStatistics(item.MemoryStatistics)
 
 	return []map[string]interface{}{
 		respItem,
@@ -4205,7 +4233,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsDeviceStatis
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsDeviceStatisticsCPUStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsDeviceStatisticsCPUStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsDeviceStatisticsCPUStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsDeviceStatisticsCPUStatistics) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4221,7 +4249,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsDeviceStatis
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsDeviceStatisticsMemoryStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsDeviceStatisticsMemoryStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsDeviceStatisticsMemoryStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsDeviceStatisticsMemoryStatistics) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4236,19 +4264,19 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsDeviceStatis
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysicalInterface(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsEgressPhysicalInterface) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressPhysicalInterface(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsEgressPhysicalInterface) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysicalInterfaceACLAnalysis(item.ACLAnalysis)
+	respItem["acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressPhysicalInterfaceACLAnalysis(item.ACLAnalysis)
 	respItem["id"] = item.ID
-	respItem["interface_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysicalInterfaceInterfaceStatistics(item.InterfaceStatistics)
+	respItem["interface_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressPhysicalInterfaceInterfaceStatistics(item.InterfaceStatistics)
 	respItem["interface_stats_collection"] = item.InterfaceStatsCollection
 	respItem["interface_stats_collection_failure_reason"] = item.InterfaceStatsCollectionFailureReason
 	respItem["name"] = item.Name
-	respItem["path_overlay_info"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysicalInterfacePathOverlayInfo(item.PathOverlayInfo)
-	respItem["qos_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysicalInterfaceQosStatistics(item.QosStatistics)
+	respItem["path_overlay_info"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressPhysicalInterfacePathOverlayInfo(item.PathOverlayInfo)
+	respItem["qos_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressPhysicalInterfaceQosStatistics(item.QosStatistics)
 	respItem["qos_stats_collection"] = item.QosStatsCollection
 	respItem["qos_stats_collection_failure_reason"] = item.QosStatsCollectionFailureReason
 	respItem["used_vlan"] = item.UsedVLAN
@@ -4260,13 +4288,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysic
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysicalInterfaceACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsEgressPhysicalInterfaceACLAnalysis) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressPhysicalInterfaceACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsEgressPhysicalInterfaceACLAnalysis) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["acl_name"] = item.ACLName
-	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysicalInterfaceACLAnalysisMatchingAces(item.MatchingAces)
+	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressPhysicalInterfaceACLAnalysisMatchingAces(item.MatchingAces)
 	respItem["result"] = item.Result
 
 	return []map[string]interface{}{
@@ -4275,7 +4303,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysic
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysicalInterfaceACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsEgressPhysicalInterfaceACLAnalysisMatchingAces) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressPhysicalInterfaceACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsEgressPhysicalInterfaceACLAnalysisMatchingAces) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4283,28 +4311,28 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysic
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["ace"] = item.Ace
-		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
+		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
 		respItem["result"] = item.Result
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsEgressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsEgressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
+		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
 		respItem["protocol"] = item.Protocol
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsEgressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsEgressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4318,7 +4346,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysic
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysicalInterfaceInterfaceStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsEgressPhysicalInterfaceInterfaceStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressPhysicalInterfaceInterfaceStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsEgressPhysicalInterfaceInterfaceStatistics) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4344,7 +4372,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysic
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysicalInterfacePathOverlayInfo(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsEgressPhysicalInterfacePathOverlayInfo) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressPhysicalInterfacePathOverlayInfo(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsEgressPhysicalInterfacePathOverlayInfo) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4358,13 +4386,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysic
 		respItem["protocol"] = item.Protocol
 		respItem["source_ip"] = item.SourceIP
 		respItem["source_port"] = item.SourcePort
-		respItem["vxlan_info"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysicalInterfacePathOverlayInfoVxlanInfo(item.VxlanInfo)
+		respItem["vxlan_info"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressPhysicalInterfacePathOverlayInfoVxlanInfo(item.VxlanInfo)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysicalInterfacePathOverlayInfoVxlanInfo(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsEgressPhysicalInterfacePathOverlayInfoVxlanInfo) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressPhysicalInterfacePathOverlayInfoVxlanInfo(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsEgressPhysicalInterfacePathOverlayInfoVxlanInfo) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4378,7 +4406,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysic
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysicalInterfaceQosStatistics(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsEgressPhysicalInterfaceQosStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressPhysicalInterfaceQosStatistics(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsEgressPhysicalInterfaceQosStatistics) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4400,19 +4428,19 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressPhysic
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtualInterface(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsEgressVirtualInterface) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressVirtualInterface(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsEgressVirtualInterface) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtualInterfaceACLAnalysis(item.ACLAnalysis)
+	respItem["acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressVirtualInterfaceACLAnalysis(item.ACLAnalysis)
 	respItem["id"] = item.ID
-	respItem["interface_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtualInterfaceInterfaceStatistics(item.InterfaceStatistics)
+	respItem["interface_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressVirtualInterfaceInterfaceStatistics(item.InterfaceStatistics)
 	respItem["interface_stats_collection"] = item.InterfaceStatsCollection
 	respItem["interface_stats_collection_failure_reason"] = item.InterfaceStatsCollectionFailureReason
 	respItem["name"] = item.Name
-	respItem["path_overlay_info"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtualInterfacePathOverlayInfo(item.PathOverlayInfo)
-	respItem["qos_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtualInterfaceQosStatistics(item.QosStatistics)
+	respItem["path_overlay_info"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressVirtualInterfacePathOverlayInfo(item.PathOverlayInfo)
+	respItem["qos_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressVirtualInterfaceQosStatistics(item.QosStatistics)
 	respItem["qos_stats_collection"] = item.QosStatsCollection
 	respItem["qos_stats_collection_failure_reason"] = item.QosStatsCollectionFailureReason
 	respItem["used_vlan"] = item.UsedVLAN
@@ -4424,13 +4452,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtua
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtualInterfaceACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsEgressVirtualInterfaceACLAnalysis) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressVirtualInterfaceACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsEgressVirtualInterfaceACLAnalysis) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["acl_name"] = item.ACLName
-	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtualInterfaceACLAnalysisMatchingAces(item.MatchingAces)
+	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressVirtualInterfaceACLAnalysisMatchingAces(item.MatchingAces)
 	respItem["result"] = item.Result
 
 	return []map[string]interface{}{
@@ -4439,7 +4467,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtua
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtualInterfaceACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsEgressVirtualInterfaceACLAnalysisMatchingAces) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressVirtualInterfaceACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsEgressVirtualInterfaceACLAnalysisMatchingAces) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4447,28 +4475,28 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtua
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["ace"] = item.Ace
-		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
+		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
 		respItem["result"] = item.Result
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsEgressVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsEgressVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
+		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
 		respItem["protocol"] = item.Protocol
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsEgressVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsEgressVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4482,7 +4510,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtua
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtualInterfaceInterfaceStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsEgressVirtualInterfaceInterfaceStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressVirtualInterfaceInterfaceStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsEgressVirtualInterfaceInterfaceStatistics) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4508,7 +4536,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtua
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtualInterfacePathOverlayInfo(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsEgressVirtualInterfacePathOverlayInfo) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressVirtualInterfacePathOverlayInfo(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsEgressVirtualInterfacePathOverlayInfo) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4522,13 +4550,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtua
 		respItem["protocol"] = item.Protocol
 		respItem["source_ip"] = item.SourceIP
 		respItem["source_port"] = item.SourcePort
-		respItem["vxlan_info"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtualInterfacePathOverlayInfoVxlanInfo(item.VxlanInfo)
+		respItem["vxlan_info"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressVirtualInterfacePathOverlayInfoVxlanInfo(item.VxlanInfo)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtualInterfacePathOverlayInfoVxlanInfo(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsEgressVirtualInterfacePathOverlayInfoVxlanInfo) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressVirtualInterfacePathOverlayInfoVxlanInfo(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsEgressVirtualInterfacePathOverlayInfoVxlanInfo) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4542,7 +4570,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtua
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtualInterfaceQosStatistics(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsEgressVirtualInterfaceQosStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsEgressVirtualInterfaceQosStatistics(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsEgressVirtualInterfaceQosStatistics) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4564,15 +4592,15 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsEgressVirtua
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnect(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsFlexConnect) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsFlexConnect(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsFlexConnect) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["authentication"] = item.Authentication
 	respItem["data_switching"] = item.DataSwitching
-	respItem["egress_acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnectEgressACLAnalysis(item.EgressACLAnalysis)
-	respItem["ingress_acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnectIngressACLAnalysis(item.IngressACLAnalysis)
+	respItem["egress_acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsFlexConnectEgressACLAnalysis(item.EgressACLAnalysis)
+	respItem["ingress_acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsFlexConnectIngressACLAnalysis(item.IngressACLAnalysis)
 	respItem["wireless_lan_controller_id"] = item.WirelessLanControllerID
 	respItem["wireless_lan_controller_name"] = item.WirelessLanControllerName
 
@@ -4582,13 +4610,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnect(
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnectEgressACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsFlexConnectEgressACLAnalysis) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsFlexConnectEgressACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsFlexConnectEgressACLAnalysis) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["acl_name"] = item.ACLName
-	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnectEgressACLAnalysisMatchingAces(item.MatchingAces)
+	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsFlexConnectEgressACLAnalysisMatchingAces(item.MatchingAces)
 	respItem["result"] = item.Result
 
 	return []map[string]interface{}{
@@ -4597,7 +4625,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnectE
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnectEgressACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsFlexConnectEgressACLAnalysisMatchingAces) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsFlexConnectEgressACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsFlexConnectEgressACLAnalysisMatchingAces) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4605,28 +4633,28 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnectE
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["ace"] = item.Ace
-		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnectEgressACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
+		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsFlexConnectEgressACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
 		respItem["result"] = item.Result
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnectEgressACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsFlexConnectEgressACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsFlexConnectEgressACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsFlexConnectEgressACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnectEgressACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
+		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsFlexConnectEgressACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
 		respItem["protocol"] = item.Protocol
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnectEgressACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsFlexConnectEgressACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsFlexConnectEgressACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsFlexConnectEgressACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4640,13 +4668,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnectE
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnectIngressACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsFlexConnectIngressACLAnalysis) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsFlexConnectIngressACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsFlexConnectIngressACLAnalysis) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["acl_name"] = item.ACLName
-	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnectIngressACLAnalysisMatchingAces(item.MatchingAces)
+	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsFlexConnectIngressACLAnalysisMatchingAces(item.MatchingAces)
 	respItem["result"] = item.Result
 
 	return []map[string]interface{}{
@@ -4655,7 +4683,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnectI
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnectIngressACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsFlexConnectIngressACLAnalysisMatchingAces) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsFlexConnectIngressACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsFlexConnectIngressACLAnalysisMatchingAces) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4663,28 +4691,28 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnectI
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["ace"] = item.Ace
-		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnectIngressACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
+		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsFlexConnectIngressACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
 		respItem["result"] = item.Result
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnectIngressACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsFlexConnectIngressACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsFlexConnectIngressACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsFlexConnectIngressACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnectIngressACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
+		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsFlexConnectIngressACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
 		respItem["protocol"] = item.Protocol
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnectIngressACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsFlexConnectIngressACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsFlexConnectIngressACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsFlexConnectIngressACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4698,19 +4726,19 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsFlexConnectI
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysicalInterface(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsIngressPhysicalInterface) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressPhysicalInterface(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsIngressPhysicalInterface) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysicalInterfaceACLAnalysis(item.ACLAnalysis)
+	respItem["acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressPhysicalInterfaceACLAnalysis(item.ACLAnalysis)
 	respItem["id"] = item.ID
-	respItem["interface_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysicalInterfaceInterfaceStatistics(item.InterfaceStatistics)
+	respItem["interface_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressPhysicalInterfaceInterfaceStatistics(item.InterfaceStatistics)
 	respItem["interface_stats_collection"] = item.InterfaceStatsCollection
 	respItem["interface_stats_collection_failure_reason"] = item.InterfaceStatsCollectionFailureReason
 	respItem["name"] = item.Name
-	respItem["path_overlay_info"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysicalInterfacePathOverlayInfo(item.PathOverlayInfo)
-	respItem["qos_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysicalInterfaceQosStatistics(item.QosStatistics)
+	respItem["path_overlay_info"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressPhysicalInterfacePathOverlayInfo(item.PathOverlayInfo)
+	respItem["qos_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressPhysicalInterfaceQosStatistics(item.QosStatistics)
 	respItem["qos_stats_collection"] = item.QosStatsCollection
 	respItem["qos_stats_collection_failure_reason"] = item.QosStatsCollectionFailureReason
 	respItem["used_vlan"] = item.UsedVLAN
@@ -4722,13 +4750,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysi
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysicalInterfaceACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsIngressPhysicalInterfaceACLAnalysis) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressPhysicalInterfaceACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsIngressPhysicalInterfaceACLAnalysis) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["acl_name"] = item.ACLName
-	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysicalInterfaceACLAnalysisMatchingAces(item.MatchingAces)
+	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressPhysicalInterfaceACLAnalysisMatchingAces(item.MatchingAces)
 	respItem["result"] = item.Result
 
 	return []map[string]interface{}{
@@ -4737,7 +4765,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysi
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysicalInterfaceACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsIngressPhysicalInterfaceACLAnalysisMatchingAces) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressPhysicalInterfaceACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsIngressPhysicalInterfaceACLAnalysisMatchingAces) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4745,28 +4773,28 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysi
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["ace"] = item.Ace
-		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
+		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
 		respItem["result"] = item.Result
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsIngressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsIngressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
+		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
 		respItem["protocol"] = item.Protocol
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsIngressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsIngressPhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4780,7 +4808,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysi
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysicalInterfaceInterfaceStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsIngressPhysicalInterfaceInterfaceStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressPhysicalInterfaceInterfaceStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsIngressPhysicalInterfaceInterfaceStatistics) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4806,7 +4834,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysi
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysicalInterfacePathOverlayInfo(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsIngressPhysicalInterfacePathOverlayInfo) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressPhysicalInterfacePathOverlayInfo(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsIngressPhysicalInterfacePathOverlayInfo) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4820,13 +4848,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysi
 		respItem["protocol"] = item.Protocol
 		respItem["source_ip"] = item.SourceIP
 		respItem["source_port"] = item.SourcePort
-		respItem["vxlan_info"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysicalInterfacePathOverlayInfoVxlanInfo(item.VxlanInfo)
+		respItem["vxlan_info"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressPhysicalInterfacePathOverlayInfoVxlanInfo(item.VxlanInfo)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysicalInterfacePathOverlayInfoVxlanInfo(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsIngressPhysicalInterfacePathOverlayInfoVxlanInfo) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressPhysicalInterfacePathOverlayInfoVxlanInfo(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsIngressPhysicalInterfacePathOverlayInfoVxlanInfo) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4840,7 +4868,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysi
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysicalInterfaceQosStatistics(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsIngressPhysicalInterfaceQosStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressPhysicalInterfaceQosStatistics(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsIngressPhysicalInterfaceQosStatistics) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4862,19 +4890,19 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressPhysi
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtualInterface(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsIngressVirtualInterface) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressVirtualInterface(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsIngressVirtualInterface) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtualInterfaceACLAnalysis(item.ACLAnalysis)
+	respItem["acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressVirtualInterfaceACLAnalysis(item.ACLAnalysis)
 	respItem["id"] = item.ID
-	respItem["interface_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtualInterfaceInterfaceStatistics(item.InterfaceStatistics)
+	respItem["interface_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressVirtualInterfaceInterfaceStatistics(item.InterfaceStatistics)
 	respItem["interface_stats_collection"] = item.InterfaceStatsCollection
 	respItem["interface_stats_collection_failure_reason"] = item.InterfaceStatsCollectionFailureReason
 	respItem["name"] = item.Name
-	respItem["path_overlay_info"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtualInterfacePathOverlayInfo(item.PathOverlayInfo)
-	respItem["qos_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtualInterfaceQosStatistics(item.QosStatistics)
+	respItem["path_overlay_info"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressVirtualInterfacePathOverlayInfo(item.PathOverlayInfo)
+	respItem["qos_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressVirtualInterfaceQosStatistics(item.QosStatistics)
 	respItem["qos_stats_collection"] = item.QosStatsCollection
 	respItem["qos_stats_collection_failure_reason"] = item.QosStatsCollectionFailureReason
 	respItem["used_vlan"] = item.UsedVLAN
@@ -4886,13 +4914,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtu
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtualInterfaceACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsIngressVirtualInterfaceACLAnalysis) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressVirtualInterfaceACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsIngressVirtualInterfaceACLAnalysis) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["acl_name"] = item.ACLName
-	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtualInterfaceACLAnalysisMatchingAces(item.MatchingAces)
+	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressVirtualInterfaceACLAnalysisMatchingAces(item.MatchingAces)
 	respItem["result"] = item.Result
 
 	return []map[string]interface{}{
@@ -4901,7 +4929,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtu
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtualInterfaceACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsIngressVirtualInterfaceACLAnalysisMatchingAces) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressVirtualInterfaceACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsIngressVirtualInterfaceACLAnalysisMatchingAces) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4909,28 +4937,28 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtu
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["ace"] = item.Ace
-		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
+		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
 		respItem["result"] = item.Result
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsIngressVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsIngressVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
+		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
 		respItem["protocol"] = item.Protocol
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsIngressVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsIngressVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4944,7 +4972,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtu
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtualInterfaceInterfaceStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsIngressVirtualInterfaceInterfaceStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressVirtualInterfaceInterfaceStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsIngressVirtualInterfaceInterfaceStatistics) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4970,7 +4998,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtu
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtualInterfacePathOverlayInfo(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsIngressVirtualInterfacePathOverlayInfo) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressVirtualInterfacePathOverlayInfo(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsIngressVirtualInterfacePathOverlayInfo) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4984,13 +5012,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtu
 		respItem["protocol"] = item.Protocol
 		respItem["source_ip"] = item.SourceIP
 		respItem["source_port"] = item.SourcePort
-		respItem["vxlan_info"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtualInterfacePathOverlayInfoVxlanInfo(item.VxlanInfo)
+		respItem["vxlan_info"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressVirtualInterfacePathOverlayInfoVxlanInfo(item.VxlanInfo)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtualInterfacePathOverlayInfoVxlanInfo(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsIngressVirtualInterfacePathOverlayInfoVxlanInfo) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressVirtualInterfacePathOverlayInfoVxlanInfo(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsIngressVirtualInterfacePathOverlayInfoVxlanInfo) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -5004,7 +5032,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtu
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtualInterfaceQosStatistics(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsIngressVirtualInterfaceQosStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsIngressVirtualInterfaceQosStatistics(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsIngressVirtualInterfaceQosStatistics) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5026,7 +5054,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsIngressVirtu
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsPerfMonStatistics(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsPerfMonStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsPerfMonStatistics(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsPerfMonStatistics) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5056,28 +5084,28 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsPerfMonStati
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfo(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfo) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfo(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfo) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["accuracy_list"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoAccuracyList(item.AccuracyList)
-		respItem["detailed_status"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoDetailedStatus(item.DetailedStatus)
-		respItem["device_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoDeviceStatistics(item.DeviceStatistics)
+		respItem["accuracy_list"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoAccuracyList(item.AccuracyList)
+		respItem["detailed_status"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoDetailedStatus(item.DetailedStatus)
+		respItem["device_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoDeviceStatistics(item.DeviceStatistics)
 		respItem["device_stats_collection"] = item.DeviceStatsCollection
 		respItem["device_stats_collection_failure_reason"] = item.DeviceStatsCollectionFailureReason
-		respItem["egress_interface"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterface(item.EgressInterface)
-		respItem["flex_connect"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConnect(item.FlexConnect)
+		respItem["egress_interface"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterface(item.EgressInterface)
+		respItem["flex_connect"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoFlexConnect(item.FlexConnect)
 		respItem["id"] = item.ID
-		respItem["ingress_interface"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterface(item.IngressInterface)
+		respItem["ingress_interface"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterface(item.IngressInterface)
 		respItem["ip"] = item.IP
 		respItem["link_information_source"] = item.LinkInformationSource
 		respItem["name"] = item.Name
 		respItem["perf_mon_collection"] = item.PerfMonCollection
 		respItem["perf_mon_collection_failure_reason"] = item.PerfMonCollectionFailureReason
-		respItem["perf_monitor_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoPerfMonitorStatistics(item.PerfMonitorStatistics)
+		respItem["perf_monitor_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoPerfMonitorStatistics(item.PerfMonitorStatistics)
 		respItem["role"] = item.Role
 		respItem["ssid"] = item.SSID
 		respItem["tunnels"] = item.Tunnels
@@ -5088,7 +5116,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfo(items *
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoAccuracyList(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoAccuracyList) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoAccuracyList(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoAccuracyList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5102,7 +5130,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoAccuracy
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoDetailedStatus(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoDetailedStatus) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoDetailedStatus(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoDetailedStatus) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -5116,13 +5144,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoDetailed
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoDeviceStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoDeviceStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoDeviceStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoDeviceStatistics) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["cpu_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoDeviceStatisticsCPUStatistics(item.CPUStatistics)
-	respItem["memory_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoDeviceStatisticsMemoryStatistics(item.MemoryStatistics)
+	respItem["cpu_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoDeviceStatisticsCPUStatistics(item.CPUStatistics)
+	respItem["memory_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoDeviceStatisticsMemoryStatistics(item.MemoryStatistics)
 
 	return []map[string]interface{}{
 		respItem,
@@ -5130,7 +5158,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoDeviceSt
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoDeviceStatisticsCPUStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoDeviceStatisticsCPUStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoDeviceStatisticsCPUStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoDeviceStatisticsCPUStatistics) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -5146,7 +5174,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoDeviceSt
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoDeviceStatisticsMemoryStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoDeviceStatisticsMemoryStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoDeviceStatisticsMemoryStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoDeviceStatisticsMemoryStatistics) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -5161,13 +5189,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoDeviceSt
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterface(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoEgressInterface) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterface(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoEgressInterface) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["physical_interface"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfacePhysicalInterface(item.PhysicalInterface)
-	respItem["virtual_interface"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfaceVirtualInterface(item.VirtualInterface)
+	respItem["physical_interface"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfacePhysicalInterface(item.PhysicalInterface)
+	respItem["virtual_interface"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfaceVirtualInterface(item.VirtualInterface)
 
 	return []map[string]interface{}{
 		respItem,
@@ -5175,19 +5203,19 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressIn
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfacePhysicalInterface(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoEgressInterfacePhysicalInterface) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfacePhysicalInterface(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoEgressInterfacePhysicalInterface) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysis(item.ACLAnalysis)
+	respItem["acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysis(item.ACLAnalysis)
 	respItem["id"] = item.ID
-	respItem["interface_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfacePhysicalInterfaceInterfaceStatistics(item.InterfaceStatistics)
+	respItem["interface_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfacePhysicalInterfaceInterfaceStatistics(item.InterfaceStatistics)
 	respItem["interface_stats_collection"] = item.InterfaceStatsCollection
 	respItem["interface_stats_collection_failure_reason"] = item.InterfaceStatsCollectionFailureReason
 	respItem["name"] = item.Name
-	respItem["path_overlay_info"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfacePhysicalInterfacePathOverlayInfo(item.PathOverlayInfo)
-	respItem["qos_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfacePhysicalInterfaceQosStatistics(item.QosStatistics)
+	respItem["path_overlay_info"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfacePhysicalInterfacePathOverlayInfo(item.PathOverlayInfo)
+	respItem["qos_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfacePhysicalInterfaceQosStatistics(item.QosStatistics)
 	respItem["qos_stats_collection"] = item.QosStatsCollection
 	respItem["qos_stats_collection_failure_reason"] = item.QosStatsCollectionFailureReason
 	respItem["used_vlan"] = item.UsedVLAN
@@ -5199,13 +5227,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressIn
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysis) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysis) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["acl_name"] = item.ACLName
-	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysisMatchingAces(item.MatchingAces)
+	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysisMatchingAces(item.MatchingAces)
 	respItem["result"] = item.Result
 
 	return []map[string]interface{}{
@@ -5214,7 +5242,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressIn
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysisMatchingAces) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysisMatchingAces) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5222,28 +5250,28 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressIn
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["ace"] = item.Ace
-		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
+		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
 		respItem["result"] = item.Result
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
+		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
 		respItem["protocol"] = item.Protocol
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoEgressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5257,7 +5285,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressIn
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfacePhysicalInterfaceInterfaceStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoEgressInterfacePhysicalInterfaceInterfaceStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfacePhysicalInterfaceInterfaceStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoEgressInterfacePhysicalInterfaceInterfaceStatistics) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -5283,7 +5311,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressIn
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfacePhysicalInterfacePathOverlayInfo(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoEgressInterfacePhysicalInterfacePathOverlayInfo) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfacePhysicalInterfacePathOverlayInfo(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoEgressInterfacePhysicalInterfacePathOverlayInfo) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5297,13 +5325,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressIn
 		respItem["protocol"] = item.Protocol
 		respItem["source_ip"] = item.SourceIP
 		respItem["source_port"] = item.SourcePort
-		respItem["vxlan_info"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfacePhysicalInterfacePathOverlayInfoVxlanInfo(item.VxlanInfo)
+		respItem["vxlan_info"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfacePhysicalInterfacePathOverlayInfoVxlanInfo(item.VxlanInfo)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfacePhysicalInterfacePathOverlayInfoVxlanInfo(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoEgressInterfacePhysicalInterfacePathOverlayInfoVxlanInfo) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfacePhysicalInterfacePathOverlayInfoVxlanInfo(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoEgressInterfacePhysicalInterfacePathOverlayInfoVxlanInfo) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -5317,7 +5345,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressIn
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfacePhysicalInterfaceQosStatistics(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoEgressInterfacePhysicalInterfaceQosStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfacePhysicalInterfaceQosStatistics(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoEgressInterfacePhysicalInterfaceQosStatistics) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5339,21 +5367,21 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressIn
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfaceVirtualInterface(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoEgressInterfaceVirtualInterface) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfaceVirtualInterface(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoEgressInterfaceVirtualInterface) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysis(item.ACLAnalysis)
+		respItem["acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysis(item.ACLAnalysis)
 		respItem["id"] = item.ID
-		respItem["interface_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfaceVirtualInterfaceInterfaceStatistics(item.InterfaceStatistics)
+		respItem["interface_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfaceVirtualInterfaceInterfaceStatistics(item.InterfaceStatistics)
 		respItem["interface_stats_collection"] = item.InterfaceStatsCollection
 		respItem["interface_stats_collection_failure_reason"] = item.InterfaceStatsCollectionFailureReason
 		respItem["name"] = item.Name
-		respItem["path_overlay_info"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfaceVirtualInterfacePathOverlayInfo(item.PathOverlayInfo)
-		respItem["qos_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfaceVirtualInterfaceQosStatistics(item.QosStatistics)
+		respItem["path_overlay_info"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfaceVirtualInterfacePathOverlayInfo(item.PathOverlayInfo)
+		respItem["qos_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfaceVirtualInterfaceQosStatistics(item.QosStatistics)
 		respItem["qos_stats_collection"] = item.QosStatsCollection
 		respItem["qos_stats_collection_failure_reason"] = item.QosStatsCollectionFailureReason
 		respItem["used_vlan"] = item.UsedVLAN
@@ -5363,13 +5391,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressIn
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysis) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysis) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["acl_name"] = item.ACLName
-	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysisMatchingAces(item.MatchingAces)
+	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysisMatchingAces(item.MatchingAces)
 	respItem["result"] = item.Result
 
 	return []map[string]interface{}{
@@ -5378,7 +5406,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressIn
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysisMatchingAces) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysisMatchingAces) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5386,28 +5414,28 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressIn
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["ace"] = item.Ace
-		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
+		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
 		respItem["result"] = item.Result
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
+		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
 		respItem["protocol"] = item.Protocol
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoEgressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5421,7 +5449,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressIn
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfaceVirtualInterfaceInterfaceStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoEgressInterfaceVirtualInterfaceInterfaceStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfaceVirtualInterfaceInterfaceStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoEgressInterfaceVirtualInterfaceInterfaceStatistics) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -5447,7 +5475,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressIn
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfaceVirtualInterfacePathOverlayInfo(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoEgressInterfaceVirtualInterfacePathOverlayInfo) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfaceVirtualInterfacePathOverlayInfo(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoEgressInterfaceVirtualInterfacePathOverlayInfo) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5461,13 +5489,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressIn
 		respItem["protocol"] = item.Protocol
 		respItem["source_ip"] = item.SourceIP
 		respItem["source_port"] = item.SourcePort
-		respItem["vxlan_info"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfaceVirtualInterfacePathOverlayInfoVxlanInfo(item.VxlanInfo)
+		respItem["vxlan_info"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfaceVirtualInterfacePathOverlayInfoVxlanInfo(item.VxlanInfo)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfaceVirtualInterfacePathOverlayInfoVxlanInfo(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoEgressInterfaceVirtualInterfacePathOverlayInfoVxlanInfo) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfaceVirtualInterfacePathOverlayInfoVxlanInfo(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoEgressInterfaceVirtualInterfacePathOverlayInfoVxlanInfo) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -5481,7 +5509,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressIn
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressInterfaceVirtualInterfaceQosStatistics(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoEgressInterfaceVirtualInterfaceQosStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoEgressInterfaceVirtualInterfaceQosStatistics(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoEgressInterfaceVirtualInterfaceQosStatistics) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5503,15 +5531,15 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoEgressIn
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConnect(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoFlexConnect) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoFlexConnect(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoFlexConnect) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["authentication"] = item.Authentication
 	respItem["data_switching"] = item.DataSwitching
-	respItem["egress_acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConnectEgressACLAnalysis(item.EgressACLAnalysis)
-	respItem["ingress_acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConnectIngressACLAnalysis(item.IngressACLAnalysis)
+	respItem["egress_acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoFlexConnectEgressACLAnalysis(item.EgressACLAnalysis)
+	respItem["ingress_acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoFlexConnectIngressACLAnalysis(item.IngressACLAnalysis)
 	respItem["wireless_lan_controller_id"] = item.WirelessLanControllerID
 	respItem["wireless_lan_controller_name"] = item.WirelessLanControllerName
 
@@ -5521,13 +5549,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConn
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConnectEgressACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoFlexConnectEgressACLAnalysis) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoFlexConnectEgressACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoFlexConnectEgressACLAnalysis) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["acl_name"] = item.ACLName
-	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConnectEgressACLAnalysisMatchingAces(item.MatchingAces)
+	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoFlexConnectEgressACLAnalysisMatchingAces(item.MatchingAces)
 	respItem["result"] = item.Result
 
 	return []map[string]interface{}{
@@ -5536,7 +5564,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConn
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConnectEgressACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoFlexConnectEgressACLAnalysisMatchingAces) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoFlexConnectEgressACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoFlexConnectEgressACLAnalysisMatchingAces) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5544,28 +5572,28 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConn
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["ace"] = item.Ace
-		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConnectEgressACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
+		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoFlexConnectEgressACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
 		respItem["result"] = item.Result
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConnectEgressACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoFlexConnectEgressACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoFlexConnectEgressACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoFlexConnectEgressACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConnectEgressACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
+		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoFlexConnectEgressACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
 		respItem["protocol"] = item.Protocol
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConnectEgressACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoFlexConnectEgressACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoFlexConnectEgressACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoFlexConnectEgressACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5579,13 +5607,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConn
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConnectIngressACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoFlexConnectIngressACLAnalysis) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoFlexConnectIngressACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoFlexConnectIngressACLAnalysis) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["acl_name"] = item.ACLName
-	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConnectIngressACLAnalysisMatchingAces(item.MatchingAces)
+	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoFlexConnectIngressACLAnalysisMatchingAces(item.MatchingAces)
 	respItem["result"] = item.Result
 
 	return []map[string]interface{}{
@@ -5594,7 +5622,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConn
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConnectIngressACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoFlexConnectIngressACLAnalysisMatchingAces) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoFlexConnectIngressACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoFlexConnectIngressACLAnalysisMatchingAces) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5602,28 +5630,28 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConn
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["ace"] = item.Ace
-		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConnectIngressACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
+		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoFlexConnectIngressACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
 		respItem["result"] = item.Result
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConnectIngressACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoFlexConnectIngressACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoFlexConnectIngressACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoFlexConnectIngressACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConnectIngressACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
+		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoFlexConnectIngressACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
 		respItem["protocol"] = item.Protocol
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConnectIngressACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoFlexConnectIngressACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoFlexConnectIngressACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoFlexConnectIngressACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5637,13 +5665,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoFlexConn
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterface(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoIngressInterface) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterface(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoIngressInterface) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["physical_interface"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfacePhysicalInterface(item.PhysicalInterface)
-	respItem["virtual_interface"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfaceVirtualInterface(item.VirtualInterface)
+	respItem["physical_interface"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfacePhysicalInterface(item.PhysicalInterface)
+	respItem["virtual_interface"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfaceVirtualInterface(item.VirtualInterface)
 
 	return []map[string]interface{}{
 		respItem,
@@ -5651,19 +5679,19 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressI
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfacePhysicalInterface(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoIngressInterfacePhysicalInterface) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfacePhysicalInterface(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoIngressInterfacePhysicalInterface) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysis(item.ACLAnalysis)
+	respItem["acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysis(item.ACLAnalysis)
 	respItem["id"] = item.ID
-	respItem["interface_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfacePhysicalInterfaceInterfaceStatistics(item.InterfaceStatistics)
+	respItem["interface_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfacePhysicalInterfaceInterfaceStatistics(item.InterfaceStatistics)
 	respItem["interface_stats_collection"] = item.InterfaceStatsCollection
 	respItem["interface_stats_collection_failure_reason"] = item.InterfaceStatsCollectionFailureReason
 	respItem["name"] = item.Name
-	respItem["path_overlay_info"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfacePhysicalInterfacePathOverlayInfo(item.PathOverlayInfo)
-	respItem["qos_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfacePhysicalInterfaceQosStatistics(item.QosStatistics)
+	respItem["path_overlay_info"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfacePhysicalInterfacePathOverlayInfo(item.PathOverlayInfo)
+	respItem["qos_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfacePhysicalInterfaceQosStatistics(item.QosStatistics)
 	respItem["qos_stats_collection"] = item.QosStatsCollection
 	respItem["qos_stats_collection_failure_reason"] = item.QosStatsCollectionFailureReason
 	respItem["used_vlan"] = item.UsedVLAN
@@ -5675,13 +5703,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressI
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysis) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysis) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["acl_name"] = item.ACLName
-	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysisMatchingAces(item.MatchingAces)
+	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysisMatchingAces(item.MatchingAces)
 	respItem["result"] = item.Result
 
 	return []map[string]interface{}{
@@ -5690,7 +5718,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressI
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysisMatchingAces) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysisMatchingAces) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5698,28 +5726,28 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressI
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["ace"] = item.Ace
-		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
+		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
 		respItem["result"] = item.Result
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
+		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
 		respItem["protocol"] = item.Protocol
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoIngressInterfacePhysicalInterfaceACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5733,7 +5761,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressI
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfacePhysicalInterfaceInterfaceStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoIngressInterfacePhysicalInterfaceInterfaceStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfacePhysicalInterfaceInterfaceStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoIngressInterfacePhysicalInterfaceInterfaceStatistics) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -5759,7 +5787,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressI
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfacePhysicalInterfacePathOverlayInfo(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoIngressInterfacePhysicalInterfacePathOverlayInfo) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfacePhysicalInterfacePathOverlayInfo(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoIngressInterfacePhysicalInterfacePathOverlayInfo) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5773,13 +5801,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressI
 		respItem["protocol"] = item.Protocol
 		respItem["source_ip"] = item.SourceIP
 		respItem["source_port"] = item.SourcePort
-		respItem["vxlan_info"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfacePhysicalInterfacePathOverlayInfoVxlanInfo(item.VxlanInfo)
+		respItem["vxlan_info"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfacePhysicalInterfacePathOverlayInfoVxlanInfo(item.VxlanInfo)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfacePhysicalInterfacePathOverlayInfoVxlanInfo(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoIngressInterfacePhysicalInterfacePathOverlayInfoVxlanInfo) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfacePhysicalInterfacePathOverlayInfoVxlanInfo(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoIngressInterfacePhysicalInterfacePathOverlayInfoVxlanInfo) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -5793,7 +5821,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressI
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfacePhysicalInterfaceQosStatistics(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoIngressInterfacePhysicalInterfaceQosStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfacePhysicalInterfaceQosStatistics(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoIngressInterfacePhysicalInterfaceQosStatistics) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5815,21 +5843,21 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressI
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfaceVirtualInterface(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoIngressInterfaceVirtualInterface) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfaceVirtualInterface(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoIngressInterfaceVirtualInterface) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysis(item.ACLAnalysis)
+		respItem["acl_analysis"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysis(item.ACLAnalysis)
 		respItem["id"] = item.ID
-		respItem["interface_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfaceVirtualInterfaceInterfaceStatistics(item.InterfaceStatistics)
+		respItem["interface_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfaceVirtualInterfaceInterfaceStatistics(item.InterfaceStatistics)
 		respItem["interface_stats_collection"] = item.InterfaceStatsCollection
 		respItem["interface_stats_collection_failure_reason"] = item.InterfaceStatsCollectionFailureReason
 		respItem["name"] = item.Name
-		respItem["path_overlay_info"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfaceVirtualInterfacePathOverlayInfo(item.PathOverlayInfo)
-		respItem["qos_statistics"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfaceVirtualInterfaceQosStatistics(item.QosStatistics)
+		respItem["path_overlay_info"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfaceVirtualInterfacePathOverlayInfo(item.PathOverlayInfo)
+		respItem["qos_statistics"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfaceVirtualInterfaceQosStatistics(item.QosStatistics)
 		respItem["qos_stats_collection"] = item.QosStatsCollection
 		respItem["qos_stats_collection_failure_reason"] = item.QosStatsCollectionFailureReason
 		respItem["used_vlan"] = item.UsedVLAN
@@ -5839,13 +5867,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressI
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysis) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysis(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysis) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["acl_name"] = item.ACLName
-	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysisMatchingAces(item.MatchingAces)
+	respItem["matching_aces"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysisMatchingAces(item.MatchingAces)
 	respItem["result"] = item.Result
 
 	return []map[string]interface{}{
@@ -5854,7 +5882,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressI
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysisMatchingAces) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysisMatchingAces(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysisMatchingAces) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5862,28 +5890,28 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressI
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["ace"] = item.Ace
-		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
+		respItem["matching_ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts(item.MatchingPorts)
 		respItem["result"] = item.Result
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
+		respItem["ports"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(item.Ports)
 		respItem["protocol"] = item.Protocol
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoIngressInterfaceVirtualInterfaceACLAnalysisMatchingAcesMatchingPortsPorts) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5897,7 +5925,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressI
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfaceVirtualInterfaceInterfaceStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoIngressInterfaceVirtualInterfaceInterfaceStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfaceVirtualInterfaceInterfaceStatistics(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoIngressInterfaceVirtualInterfaceInterfaceStatistics) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -5923,7 +5951,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressI
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfaceVirtualInterfacePathOverlayInfo(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoIngressInterfaceVirtualInterfacePathOverlayInfo) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfaceVirtualInterfacePathOverlayInfo(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoIngressInterfaceVirtualInterfacePathOverlayInfo) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5937,13 +5965,13 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressI
 		respItem["protocol"] = item.Protocol
 		respItem["source_ip"] = item.SourceIP
 		respItem["source_port"] = item.SourcePort
-		respItem["vxlan_info"] = flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfaceVirtualInterfacePathOverlayInfoVxlanInfo(item.VxlanInfo)
+		respItem["vxlan_info"] = flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfaceVirtualInterfacePathOverlayInfoVxlanInfo(item.VxlanInfo)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfaceVirtualInterfacePathOverlayInfoVxlanInfo(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoIngressInterfaceVirtualInterfacePathOverlayInfoVxlanInfo) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfaceVirtualInterfacePathOverlayInfoVxlanInfo(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoIngressInterfaceVirtualInterfacePathOverlayInfoVxlanInfo) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -5957,7 +5985,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressI
 
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressInterfaceVirtualInterfaceQosStatistics(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoIngressInterfaceVirtualInterfaceQosStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoIngressInterfaceVirtualInterfaceQosStatistics(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoIngressInterfaceVirtualInterfaceQosStatistics) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5979,7 +6007,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoIngressI
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoPerfMonitorStatistics(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseNetworkElementsInfoPerfMonitorStatistics) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemNetworkElementsInfoPerfMonitorStatistics(items *[]catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseNetworkElementsInfoPerfMonitorStatistics) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -6009,7 +6037,7 @@ func flattenPathTraceRetrievesPreviousPathtraceV1ItemNetworkElementsInfoPerfMoni
 	return respItems
 }
 
-func flattenPathTraceRetrievesPreviousPathtraceV1ItemRequest(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceV1ResponseRequest) []map[string]interface{} {
+func flattenPathTraceRetrievesPreviousPathtraceItemRequest(item *catalystcentersdkgo.ResponsePathTraceRetrievesPreviousPathtraceResponseRequest) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

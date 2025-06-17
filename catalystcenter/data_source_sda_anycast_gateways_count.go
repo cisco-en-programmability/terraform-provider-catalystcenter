@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -82,8 +82,8 @@ func dataSourceSdaAnycastGatewaysCountRead(ctx context.Context, d *schema.Resour
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAnycastGatewayCountV1")
-		queryParams1 := catalystcentersdkgo.GetAnycastGatewayCountV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetAnycastGatewayCount")
+		queryParams1 := catalystcentersdkgo.GetAnycastGatewayCountQueryParams{}
 
 		if okFabricID {
 			queryParams1.FabricID = vFabricID.(string)
@@ -101,24 +101,38 @@ func dataSourceSdaAnycastGatewaysCountRead(ctx context.Context, d *schema.Resour
 			queryParams1.VLANID = vVLANID.(float64)
 		}
 
-		response1, restyResp1, err := client.Sda.GetAnycastGatewayCountV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sda.GetAnycastGatewayCount(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAnycastGatewayCountV1", err,
-				"Failure at GetAnycastGatewayCountV1, unexpected response", ""))
+				"Failure when executing 2 GetAnycastGatewayCount", err,
+				"Failure at GetAnycastGatewayCount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetAnycastGatewayCountV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetAnycastGatewayCount", err,
+				"Failure at GetAnycastGatewayCount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSdaGetAnycastGatewayCountItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAnycastGatewayCountV1 response",
+				"Failure when setting GetAnycastGatewayCount response",
 				err))
 			return diags
 		}
@@ -130,7 +144,7 @@ func dataSourceSdaAnycastGatewaysCountRead(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func flattenSdaGetAnycastGatewayCountV1Item(item *catalystcentersdkgo.ResponseSdaGetAnycastGatewayCountV1Response) []map[string]interface{} {
+func flattenSdaGetAnycastGatewayCountItem(item *catalystcentersdkgo.ResponseSdaGetAnycastGatewayCountResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

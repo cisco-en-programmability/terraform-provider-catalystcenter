@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -196,27 +196,41 @@ func dataSourceConfigurationTemplateDeployStatusRead(ctx context.Context, d *sch
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: StatusOfTemplateDeploymentV1")
+		log.Printf("[DEBUG] Selected method: StatusOfTemplateDeployment")
 		vvDeploymentID := vDeploymentID.(string)
 
-		response1, restyResp1, err := client.ConfigurationTemplates.StatusOfTemplateDeploymentV1(vvDeploymentID)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.ConfigurationTemplates.StatusOfTemplateDeployment(vvDeploymentID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 StatusOfTemplateDeploymentV1", err,
-				"Failure at StatusOfTemplateDeploymentV1, unexpected response", ""))
+				"Failure when executing 2 StatusOfTemplateDeployment", err,
+				"Failure at StatusOfTemplateDeployment, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenConfigurationTemplatesStatusOfTemplateDeploymentV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 StatusOfTemplateDeployment", err,
+				"Failure at StatusOfTemplateDeployment, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenConfigurationTemplatesStatusOfTemplateDeploymentItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting StatusOfTemplateDeploymentV1 response",
+				"Failure when setting StatusOfTemplateDeployment response",
 				err))
 			return diags
 		}
@@ -228,14 +242,14 @@ func dataSourceConfigurationTemplateDeployStatusRead(ctx context.Context, d *sch
 	return diags
 }
 
-func flattenConfigurationTemplatesStatusOfTemplateDeploymentV1Item(item *catalystcentersdkgo.ResponseConfigurationTemplatesStatusOfTemplateDeploymentV1) []map[string]interface{} {
+func flattenConfigurationTemplatesStatusOfTemplateDeploymentItem(item *catalystcentersdkgo.ResponseConfigurationTemplatesStatusOfTemplateDeployment) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["deployment_id"] = item.DeploymentID
 	respItem["deployment_name"] = item.DeploymentName
-	respItem["devices"] = flattenConfigurationTemplatesStatusOfTemplateDeploymentV1ItemDevices(item.Devices)
+	respItem["devices"] = flattenConfigurationTemplatesStatusOfTemplateDeploymentItemDevices(item.Devices)
 	respItem["duration"] = item.Duration
 	respItem["end_time"] = item.EndTime
 	respItem["project_name"] = item.ProjectName
@@ -249,7 +263,7 @@ func flattenConfigurationTemplatesStatusOfTemplateDeploymentV1Item(item *catalys
 	}
 }
 
-func flattenConfigurationTemplatesStatusOfTemplateDeploymentV1ItemDevices(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesStatusOfTemplateDeploymentV1Devices) []map[string]interface{} {
+func flattenConfigurationTemplatesStatusOfTemplateDeploymentItemDevices(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesStatusOfTemplateDeploymentDevices) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

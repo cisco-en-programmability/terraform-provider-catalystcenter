@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -98,7 +98,7 @@ func resourceDeviceRebootAprebootCreate(ctx context.Context, d *schema.ResourceD
 	var diags diag.Diagnostics
 
 	// resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestDeviceRebootAprebootRebootAccessPointsV1(ctx, "parameters.0", d)
+	request1 := expandRequestDeviceRebootAprebootRebootAccessPoints(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	// vApMacAdresses := resourceItem["ap_mac_addresses"]
@@ -161,7 +161,7 @@ func resourceDeviceRebootAprebootRead(ctx context.Context, d *schema.ResourceDat
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetAccessPointRebootTaskResult")
-		queryParams1 := catalystcentersdkgo.GetAccessPointRebootTaskResultV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetAccessPointRebootTaskResultQueryParams{}
 		queryParams1.ParentTaskID = vParentTaskID
 		response1, _, err := client.Wireless.GetAccessPointRebootTaskResult(&queryParams1)
 
@@ -170,7 +170,7 @@ func resourceDeviceRebootAprebootRead(ctx context.Context, d *schema.ResourceDat
 			return diags
 		}
 		// Review flatten function used
-		vItem1 := flattenWirelessGetAccessPointRebootTaskResultV1Items(response1)
+		vItem1 := flattenWirelessGetAccessPointRebootTaskResultItems(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetAccessPointRebootTaskResult search response",
@@ -201,8 +201,9 @@ func resourceDeviceRebootAprebootDelete(ctx context.Context, d *schema.ResourceD
 
 	return diags
 }
-func expandRequestDeviceRebootAprebootRebootAccessPointsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessRebootAccessPointsV1 {
-	request := catalystcentersdkgo.RequestWirelessRebootAccessPointsV1{}
+
+func expandRequestDeviceRebootAprebootRebootAccessPoints(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessRebootAccessPoints {
+	request := catalystcentersdkgo.RequestWirelessRebootAccessPoints{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ap_mac_addresses")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ap_mac_addresses")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ap_mac_addresses")))) {
 		request.ApMacAddresses = interfaceToSliceString(v)
 	}

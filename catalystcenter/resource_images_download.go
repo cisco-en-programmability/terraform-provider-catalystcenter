@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -9,7 +10,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -20,8 +21,8 @@ func resourceImagesDownload() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs create operation on Software Image Management (SWIM).
 
-- Initiates download of the software image from Cisco.com on the disk for the given *id*. Refer to
-*/dna/intent/api/v1/images* for obtaining *id*.
+- Initiates download of the software image from Cisco.com on the disk for the given **id**. Refer to
+**/dna/intent/api/v1/images** for obtaining **id**.
 `,
 
 		CreateContext: resourceImagesDownloadCreate,
@@ -62,7 +63,7 @@ func resourceImagesDownload() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": &schema.Schema{
-							Description: `id path parameter. Software image identifier. Check API */dna/intent/api/v1/images* for *id* from response.
+							Description: `id path parameter. Software image identifier. Check API **/dna/intent/api/v1/images** for **id** from response.
 `,
 							Type:     schema.TypeString,
 							Required: true,
@@ -87,14 +88,14 @@ func resourceImagesDownloadCreate(ctx context.Context, d *schema.ResourceData, m
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.SoftwareImageManagementSwim.DownloadTheSoftwareImageV1(vvID)
+	response1, restyResp1, err := client.SoftwareImageManagementSwim.DownloadTheSoftwareImage(vvID)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing DownloadTheSoftwareImageV1", err))
+			"Failure when executing DownloadTheSoftwareImage", err))
 		return diags
 	}
 
@@ -102,7 +103,7 @@ func resourceImagesDownloadCreate(ctx context.Context, d *schema.ResourceData, m
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing DownloadTheSoftwareImageV1", err))
+			"Failure when executing DownloadTheSoftwareImage", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -129,21 +130,21 @@ func resourceImagesDownloadCreate(ctx context.Context, d *schema.ResourceData, m
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing DownloadTheSoftwareImageV1", err1))
+				"Failure when executing DownloadTheSoftwareImage", err1))
 			return diags
 		}
 	}
-	vItem1 := flattenSoftwareImageManagementSwimDownloadTheSoftwareImageV1Item(response1.Response)
+	vItem1 := flattenSoftwareImageManagementSwimDownloadTheSoftwareImageItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting DownloadTheSoftwareImageV1 response",
+			"Failure when setting DownloadTheSoftwareImage response",
 			err))
 		return diags
 	}
@@ -164,7 +165,7 @@ func resourceImagesDownloadDelete(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func flattenSoftwareImageManagementSwimDownloadTheSoftwareImageV1Item(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimDownloadTheSoftwareImageV1Response) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimDownloadTheSoftwareImageItem(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimDownloadTheSoftwareImageResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

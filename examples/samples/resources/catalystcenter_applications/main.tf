@@ -13,7 +13,7 @@ provider "catalystcenter" {
   debug = "true"
 }
 
-resource "catalystcenter_applications_v2" "example" {
+resource "catalystcenter_applications" "example" {
   provider = catalystcenter
   parameters {
     payload {

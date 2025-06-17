@@ -14,6 +14,8 @@ It performs create operation on Network Settings.
 
 - API to create a network for DHCP,  Syslog, SNMP, NTP, Network AAA, Client and EndPoint AAA, and/or DNS center server
 settings.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -24,57 +26,57 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_network_create" "example" {
   provider = catalystcenter
   site_id  = "string"
-  parameters {
+  parameters = [{
 
-    settings {
+    settings = [{
 
-      client_and_endpoint_aaa {
+      client_and_endpoint_aaa = [{
 
         ip_address    = "string"
         network       = "string"
         protocol      = "string"
         servers       = "string"
         shared_secret = "string"
-      }
+      }]
       dhcp_server = ["string"]
-      dns_server {
+      dns_server = [{
 
         domain_name          = "string"
         primary_ip_address   = "string"
         secondary_ip_address = "string"
-      }
-      message_of_theday {
+      }]
+      message_of_theday = [{
 
         banner_message         = "string"
         retain_existing_banner = "string"
-      }
-      netflowcollector {
+      }]
+      netflowcollector = [{
 
         ip_address = "string"
         port       = 9090
-      }
-      network_aaa {
+      }]
+      network_aaa = [{
 
         ip_address    = "string"
         network       = "string"
         protocol      = "string"
         servers       = "string"
         shared_secret = "string"
-      }
+      }]
       ntp_server = ["string"]
-      snmp_server {
+      snmp_server = [{
 
         configure_dnac_ip = "false"
         ip_addresses      = ["string"]
-      }
-      syslog_server {
+      }]
+      syslog_server = [{
 
         configure_dnac_ip = "false"
         ip_addresses      = ["string"]
-      }
+      }]
       timezone = "string"
-    }
-  }
+    }]
+  }]
 }
 
 output "catalystcenter_network_create_example" {
@@ -179,7 +181,7 @@ Optional:
 
 Optional:
 
-- `configure_dnac_ip` (String) Configuration CatalystC IP for SNMP Server (eg: true)
+- `configure_dnac_ip` (String) Configuration CATALYST IP for SNMP Server (eg: true)
 - `ip_addresses` (List of String) IP Address for SNMP Server (eg: 4.4.4.1)
 
 
@@ -188,7 +190,7 @@ Optional:
 
 Optional:
 
-- `configure_dnac_ip` (String) Configuration CatalystC IP for syslog server (eg: true)
+- `configure_dnac_ip` (String) Configuration CATALYST IP for syslog server (eg: true)
 - `ip_addresses` (List of String) IP Address for syslog server (eg: 4.4.4.4)
 
 

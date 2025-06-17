@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -21,7 +21,7 @@ func dataSourceWirelessControllersSecondaryManagedApLocations() *schema.Resource
 		ReadContext: dataSourceWirelessControllersSecondaryManagedApLocationsRead,
 		Schema: map[string]*schema.Schema{
 			"limit": &schema.Schema{
-				Description: `limit query parameter. The number of records to show for this page.
+				Description: `limit query parameter. The number of records to show for this page. Default is 500 if not specified. Maximum allowed limit is 500.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -39,7 +39,7 @@ func dataSourceWirelessControllersSecondaryManagedApLocations() *schema.Resource
 				Optional: true,
 			},
 
-			"items": &schema.Schema{
+			"item": &schema.Schema{
 				Type:     schema.TypeList,
 				Computed: true,
 				Elem: &schema.Resource{
@@ -84,9 +84,9 @@ func dataSourceWirelessControllersSecondaryManagedApLocationsRead(ctx context.Co
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSecondaryManagedApLocationsForSpecificWirelessControllerV1")
+		log.Printf("[DEBUG] Selected method: GetSecondaryManagedApLocationsForSpecificWirelessController")
 		vvNetworkDeviceID := vNetworkDeviceID.(string)
-		queryParams1 := catalystcentersdkgo.GetSecondaryManagedApLocationsForSpecificWirelessControllerV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetSecondaryManagedApLocationsForSpecificWirelessControllerQueryParams{}
 
 		if okLimit {
 			queryParams1.Limit = vLimit.(float64)
@@ -95,24 +95,38 @@ func dataSourceWirelessControllersSecondaryManagedApLocationsRead(ctx context.Co
 			queryParams1.Offset = vOffset.(float64)
 		}
 
-		response1, restyResp1, err := client.Wireless.GetSecondaryManagedApLocationsForSpecificWirelessControllerV1(vvNetworkDeviceID, &queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Wireless.GetSecondaryManagedApLocationsForSpecificWirelessController(vvNetworkDeviceID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSecondaryManagedApLocationsForSpecificWirelessControllerV1", err,
-				"Failure at GetSecondaryManagedApLocationsForSpecificWirelessControllerV1, unexpected response", ""))
+				"Failure when executing 2 GetSecondaryManagedApLocationsForSpecificWirelessController", err,
+				"Failure at GetSecondaryManagedApLocationsForSpecificWirelessController, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerV1Items(response1.Response)
-		if err := d.Set("items", vItems1); err != nil {
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetSecondaryManagedApLocationsForSpecificWirelessController", err,
+				"Failure at GetSecondaryManagedApLocationsForSpecificWirelessController, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerItem(response1.Response)
+		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSecondaryManagedApLocationsForSpecificWirelessControllerV1 response",
+				"Failure when setting GetSecondaryManagedApLocationsForSpecificWirelessController response",
 				err))
 			return diags
 		}
@@ -124,20 +138,18 @@ func dataSourceWirelessControllersSecondaryManagedApLocationsRead(ctx context.Co
 	return diags
 }
 
-func flattenWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerV1Items(items *[]catalystcentersdkgo.ResponseWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerV1Response) []map[string]interface{} {
-	if items == nil {
+func flattenWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerItem(item *catalystcentersdkgo.ResponseWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerResponse) []map[string]interface{} {
+	if item == nil {
 		return nil
 	}
-	var respItems []map[string]interface{}
-	for _, item := range *items {
-		respItem := make(map[string]interface{})
-		respItem["managed_ap_locations"] = flattenWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerV1ItemsManagedApLocations(item.ManagedApLocations)
-		respItems = append(respItems, respItem)
+	respItem := make(map[string]interface{})
+	respItem["managed_ap_locations"] = flattenWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerItemManagedApLocations(item.ManagedApLocations)
+	return []map[string]interface{}{
+		respItem,
 	}
-	return respItems
 }
 
-func flattenWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerV1ItemsManagedApLocations(items *[]catalystcentersdkgo.ResponseWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerV1ResponseManagedApLocations) []map[string]interface{} {
+func flattenWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerItemManagedApLocations(items *[]catalystcentersdkgo.ResponseWirelessGetSecondaryManagedApLocationsForSpecificWirelessControllerResponseManagedApLocations) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

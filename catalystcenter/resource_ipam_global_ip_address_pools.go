@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -215,14 +215,14 @@ func resourceIPamGlobalIPAddressPoolsCreate(ctx context.Context, d *schema.Resou
 
 	var diags diag.Diagnostics
 
-	request1 := expandRequestIPamGlobalIPAddressPoolsCreateAGlobalIPAddressPoolV1(ctx, "parameters.0", d)
+	request1 := expandRequestIPamGlobalIPAddressPoolsCreateAGlobalIPAddressPool(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	resourceItem := *getResourceItem(d.Get("parameters"))
 	vName := resourceItem["name"]
 	vvName := interfaceToString(vName)
 
-	queryParamImport := catalystcentersdkgo.RetrievesGlobalIPAddressPoolsV1QueryParams{}
-	item2, err := searchNetworkSettingsRetrievesGlobalIPAddressPoolsV1(m, queryParamImport, "", vvName)
+	queryParamImport := catalystcentersdkgo.RetrievesGlobalIPAddressPoolsQueryParams{}
+	item2, err := searchNetworkSettingsRetrievesGlobalIPAddressPools(m, queryParamImport, "", vvName)
 	if err != nil || item2 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["name"] = item2.Name
@@ -268,8 +268,8 @@ func resourceIPamGlobalIPAddressPoolsCreate(ctx context.Context, d *schema.Resou
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.RetrievesGlobalIPAddressPoolsV1QueryParams{}
-	item3, err := searchNetworkSettingsRetrievesGlobalIPAddressPoolsV1(m, queryParamValidate, "", vvName)
+	queryParamValidate := catalystcentersdkgo.RetrievesGlobalIPAddressPoolsQueryParams{}
+	item3, err := searchNetworkSettingsRetrievesGlobalIPAddressPools(m, queryParamValidate, "", vvName)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
 			"Failure when executing CreateAGlobalIPAddressPool", err,
@@ -295,7 +295,7 @@ func resourceIPamGlobalIPAddressPoolsRead(ctx context.Context, d *schema.Resourc
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: RetrievesGlobalIPAddressPools")
-		queryParams1 := catalystcentersdkgo.RetrievesGlobalIPAddressPoolsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrievesGlobalIPAddressPoolsQueryParams{}
 
 		response1, restyResp1, err := client.NetworkSettings.RetrievesGlobalIPAddressPools(&queryParams1)
 
@@ -309,13 +309,13 @@ func resourceIPamGlobalIPAddressPoolsRead(ctx context.Context, d *schema.Resourc
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		item1, err := searchNetworkSettingsRetrievesGlobalIPAddressPoolsV1(m, queryParams1, "", vname)
+		item1, err := searchNetworkSettingsRetrievesGlobalIPAddressPools(m, queryParams1, "", vname)
 		if err != nil || item1 == nil {
 			d.SetId("")
 			return diags
 		}
 		// Review flatten function used
-		vItem1 := flattenNetworkSettingsRetrievesGlobalIPAddressPoolsByIDV1Item(item1)
+		vItem1 := flattenNetworkSettingsRetrievesGlobalIPAddressPoolsByIDItem(item1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrievesGlobalIPAddressPools search response",
@@ -333,14 +333,15 @@ func resourceIPamGlobalIPAddressPoolsUpdate(ctx context.Context, d *schema.Resou
 
 func resourceIPamGlobalIPAddressPoolsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	// NOTE: Unable to delete IPamGlobalIPAddressPools on Dna Center
+	// NOTE: Unable to delete IPamGlobalIPAddressPools on Catalyst Center
 	//       Returning empty diags to delete it on Terraform
 	return diags
 }
-func expandRequestIPamGlobalIPAddressPoolsCreateAGlobalIPAddressPoolV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateAGlobalIPAddressPoolV1 {
-	request := catalystcentersdkgo.RequestNetworkSettingsCreateAGlobalIPAddressPoolV1{}
+
+func expandRequestIPamGlobalIPAddressPoolsCreateAGlobalIPAddressPool(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateAGlobalIPAddressPool {
+	request := catalystcentersdkgo.RequestNetworkSettingsCreateAGlobalIPAddressPool{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".address_space")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".address_space")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".address_space")))) {
-		request.AddressSpace = expandRequestIPamGlobalIPAddressPoolsCreateAGlobalIPAddressPoolV1AddressSpace(ctx, key+".address_space.0", d)
+		request.AddressSpace = expandRequestIPamGlobalIPAddressPoolsCreateAGlobalIPAddressPoolAddressSpace(ctx, key+".address_space.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
@@ -354,8 +355,8 @@ func expandRequestIPamGlobalIPAddressPoolsCreateAGlobalIPAddressPoolV1(ctx conte
 	return &request
 }
 
-func expandRequestIPamGlobalIPAddressPoolsCreateAGlobalIPAddressPoolV1AddressSpace(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateAGlobalIPAddressPoolV1AddressSpace {
-	request := catalystcentersdkgo.RequestNetworkSettingsCreateAGlobalIPAddressPoolV1AddressSpace{}
+func expandRequestIPamGlobalIPAddressPoolsCreateAGlobalIPAddressPoolAddressSpace(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateAGlobalIPAddressPoolAddressSpace {
+	request := catalystcentersdkgo.RequestNetworkSettingsCreateAGlobalIPAddressPoolAddressSpace{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subnet")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subnet")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subnet")))) {
 		request.Subnet = interfaceToString(v)
 	}
@@ -377,11 +378,11 @@ func expandRequestIPamGlobalIPAddressPoolsCreateAGlobalIPAddressPoolV1AddressSpa
 	return &request
 }
 
-func searchNetworkSettingsRetrievesGlobalIPAddressPoolsV1(m interface{}, queryParams catalystcentersdkgo.RetrievesGlobalIPAddressPoolsV1QueryParams, vID string, name string) (*catalystcentersdkgo.ResponseNetworkSettingsRetrievesGlobalIPAddressPoolsV1Response, error) {
+func searchNetworkSettingsRetrievesGlobalIPAddressPools(m interface{}, queryParams catalystcentersdkgo.RetrievesGlobalIPAddressPoolsQueryParams, vID string, name string) (*catalystcentersdkgo.ResponseNetworkSettingsRetrievesGlobalIPAddressPoolsResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseNetworkSettingsRetrievesGlobalIPAddressPoolsV1Response
-	var ite *catalystcentersdkgo.ResponseNetworkSettingsRetrievesGlobalIPAddressPoolsV1
+	var foundItem *catalystcentersdkgo.ResponseNetworkSettingsRetrievesGlobalIPAddressPoolsResponse
+	var ite *catalystcentersdkgo.ResponseNetworkSettingsRetrievesGlobalIPAddressPools
 	if vID != "" {
 		queryParams.Offset = 1
 		nResponse, _, err := client.NetworkSettings.RetrievesGlobalIPAddressPools(nil)
@@ -419,7 +420,7 @@ func searchNetworkSettingsRetrievesGlobalIPAddressPoolsV1(m interface{}, queryPa
 	return foundItem, err
 }
 
-func flattenNetworkSettingsRetrievesGlobalIPAddressPoolsByIDV1Item(item *catalystcentersdkgo.ResponseNetworkSettingsRetrievesGlobalIPAddressPoolsV1Response) []map[string]interface{} {
+func flattenNetworkSettingsRetrievesGlobalIPAddressPoolsByIDItem(item *catalystcentersdkgo.ResponseNetworkSettingsRetrievesGlobalIPAddressPoolsResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -433,7 +434,7 @@ func flattenNetworkSettingsRetrievesGlobalIPAddressPoolsByIDV1Item(item *catalys
 	}
 }
 
-func flattenNetworkSettingsRetrievesGlobalIPAddressPoolsByIDItemAddressSpace(item *catalystcentersdkgo.ResponseNetworkSettingsRetrievesGlobalIPAddressPoolsV1ResponseAddressSpace) []map[string]interface{} {
+func flattenNetworkSettingsRetrievesGlobalIPAddressPoolsByIDItemAddressSpace(item *catalystcentersdkgo.ResponseNetworkSettingsRetrievesGlobalIPAddressPoolsResponseAddressSpace) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

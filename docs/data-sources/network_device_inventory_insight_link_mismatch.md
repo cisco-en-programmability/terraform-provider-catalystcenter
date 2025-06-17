@@ -41,7 +41,7 @@ output "catalystcenter_network_device_inventory_insight_link_mismatch_example" {
 
 ### Optional
 
-- `limit` (Number) limit query parameter. Default value is 500
+- `limit` (Number) limit query parameter. The number of records to show for this page. Min: 1, Max: 500
 - `offset` (Number) offset query parameter. Row Number.  Default value is 1
 - `order` (String) order query parameter. Order.  Value can be asc or desc.  Default value is asc
 - `sort_by` (String) sortBy query parameter. Sort By

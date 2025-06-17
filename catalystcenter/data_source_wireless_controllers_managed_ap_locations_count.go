@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -69,27 +69,41 @@ func dataSourceWirelessControllersManagedApLocationsCountRead(ctx context.Contex
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetManagedApLocationsCountForSpecificWirelessControllerV1")
+		log.Printf("[DEBUG] Selected method: GetManagedApLocationsCountForSpecificWirelessController")
 		vvNetworkDeviceID := vNetworkDeviceID.(string)
 
-		response1, restyResp1, err := client.Wireless.GetManagedApLocationsCountForSpecificWirelessControllerV1(vvNetworkDeviceID)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Wireless.GetManagedApLocationsCountForSpecificWirelessController(vvNetworkDeviceID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetManagedApLocationsCountForSpecificWirelessControllerV1", err,
-				"Failure at GetManagedApLocationsCountForSpecificWirelessControllerV1, unexpected response", ""))
+				"Failure when executing 2 GetManagedApLocationsCountForSpecificWirelessController", err,
+				"Failure at GetManagedApLocationsCountForSpecificWirelessController, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessGetManagedApLocationsCountForSpecificWirelessControllerV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetManagedApLocationsCountForSpecificWirelessController", err,
+				"Failure at GetManagedApLocationsCountForSpecificWirelessController, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenWirelessGetManagedApLocationsCountForSpecificWirelessControllerItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetManagedApLocationsCountForSpecificWirelessControllerV1 response",
+				"Failure when setting GetManagedApLocationsCountForSpecificWirelessController response",
 				err))
 			return diags
 		}
@@ -101,7 +115,7 @@ func dataSourceWirelessControllersManagedApLocationsCountRead(ctx context.Contex
 	return diags
 }
 
-func flattenWirelessGetManagedApLocationsCountForSpecificWirelessControllerV1Item(item *catalystcentersdkgo.ResponseWirelessGetManagedApLocationsCountForSpecificWirelessControllerV1Response) []map[string]interface{} {
+func flattenWirelessGetManagedApLocationsCountForSpecificWirelessControllerItem(item *catalystcentersdkgo.ResponseWirelessGetManagedApLocationsCountForSpecificWirelessControllerResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -3,13 +3,13 @@
 page_title: "catalystcenter_sda_port_channels Resource - terraform-provider-catalystcenter"
 subcategory: ""
 description: |-
-  It manages create, read, update and delete operations on SDA.
+  It manages create, read, update and delete operations on Sda.
   Adds port channels based on user input.Updates port channels based on user input.Deletes port channels based on user input.Deletes a port channel based on id.
 ---
 
 # catalystcenter_sda_port_channels (Resource)
 
-It manages create, read, update and delete operations on SDA.
+It manages create, read, update and delete operations on Sda.
 
 - Adds port channels based on user input.
 
@@ -24,14 +24,16 @@ It manages create, read, update and delete operations on SDA.
 ```terraform
 resource "catalystcenter_sda_port_channels" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
+    allowed_vlan_ranges   = "string"
     connected_device_type = "string"
     description           = "string"
     fabric_id             = "string"
     id                    = "string"
     interface_names       = ["string"]
+    native_vlan_id        = 1
     network_device_id     = "string"
     port_channel_name     = "string"
     protocol              = "string"
@@ -68,11 +70,13 @@ Optional:
 
 Optional:
 
+- `allowed_vlan_ranges` (String) Allowed VLAN of the port channel, this option is only applicable to TRUNK connectedDeviceType. (VLAN must be between 1 and 4094 (Ex 100,200,300-400) or 'all'. In cases value not set when connectedDeviceType is TRUNK, default value will be 'all').
 - `connected_device_type` (String) Connected device type of the port channel.
 - `description` (String) Description of the port channel.
 - `fabric_id` (String) ID of the fabric the device is assigned to.
 - `id` (String) ID of the port channel (updating this field is not allowed).
 - `interface_names` (List of String) Interface names for this port channel (Maximum 16 ports for LACP protocol, Maximum 8 ports for PAGP and ON protocol).
+- `native_vlan_id` (Number) Native VLAN of the port channel, this option is only applicable to TRUNK connectedDeviceType. (VLAN must be between 1 and 4094. In cases value not set when connectedDeviceType is TRUNK, default value will be 1).
 - `network_device_id` (String) ID of the network device.
 - `port_channel_name` (String) Name of the port channel (updating this field is not allowed).
 - `protocol` (String) Protocol of the port channel (only PAGP is allowed if connectedDeviceType is EXTENDED_NODE).
@@ -84,11 +88,13 @@ Optional:
 
 Read-Only:
 
+- `allowed_vlan_ranges` (String)
 - `connected_device_type` (String)
 - `description` (String)
 - `fabric_id` (String)
 - `id` (String)
 - `interface_names` (List of String)
+- `native_vlan_id` (Number)
 - `network_device_id` (String)
 - `port_channel_name` (String)
 - `protocol` (String)

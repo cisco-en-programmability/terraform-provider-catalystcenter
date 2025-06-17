@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -18,11 +18,11 @@ func dataSourceTransitNetworkHealthSummariesIDTrendAnalytics() *schema.Resource 
 - Get health time series for a specific Transit Network by providing the unique Transit Network id in the url path. The
 data will be grouped based on the specified trend time interval. If startTime and endTime are not provided, the API
 defaults to the last 24 hours.
-By default: the number of records returned will be 500. the records will be sorted in time ascending (asc) order
-This data source provides the latest health data until the given endTime. If data is not ready for the provided
-endTime, the request will fail with error code 400 Bad Request, and the error message will indicate the recommended
+By default: the number of records returned will be 500. the records will be sorted in time ascending (**asc**) order
+This data source provides the latest health data until the given **endTime**. If data is not ready for the provided
+endTime, the request will fail with error code **400 Bad Request**, and the error message will indicate the recommended
 endTime to use to retrieve a complete data set. This behavior may occur if the provided endTime=currentTime, since we
-are not a real time system. When endTime is not provided, the API returns the latest data.
+are not a real time system. When **endTime** is not provided, the API returns the latest data.
 For detailed information about the usage of the API, please refer to the Open API specification document
 https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 transitNetworkHealthSummaries-1.0.1-resolved.yaml
@@ -140,11 +140,11 @@ func dataSourceTransitNetworkHealthSummariesIDTrendAnalyticsRead(ctx context.Con
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: TheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRangeV1")
+		log.Printf("[DEBUG] Selected method: TheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRange")
 		vvID := vID.(string)
 
-		headerParams1 := catalystcentersdkgo.TheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRangeV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.TheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRangeV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.TheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRangeHeaderParams{}
+		queryParams1 := catalystcentersdkgo.TheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRangeQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -170,24 +170,36 @@ func dataSourceTransitNetworkHealthSummariesIDTrendAnalyticsRead(ctx context.Con
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sda.TheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRangeV1(vvID, &headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Sda.TheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRange(vvID, &headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 TheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRangeV1", err,
-				"Failure at TheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRangeV1, unexpected response", ""))
+				"Failure when executing 2 TheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRange", err,
+				"Failure at TheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRange, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaTheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRangeV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 TheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRange", err,
+				"Failure at TheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRange, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSdaTheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRangeItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting TheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRangeV1 response",
+				"Failure when setting TheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRange response",
 				err))
 			return diags
 		}
@@ -199,7 +211,7 @@ func dataSourceTransitNetworkHealthSummariesIDTrendAnalyticsRead(ctx context.Con
 	return diags
 }
 
-func flattenSdaTheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRangeV1Items(items *[]catalystcentersdkgo.ResponseSdaTheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRangeV1Response) []map[string]interface{} {
+func flattenSdaTheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRangeItems(items *[]catalystcentersdkgo.ResponseSdaTheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRangeResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -207,13 +219,13 @@ func flattenSdaTheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRangeV1I
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["timestamp"] = item.Timestamp
-		respItem["attributes"] = flattenSdaTheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRangeV1ItemsAttributes(item.Attributes)
+		respItem["attributes"] = flattenSdaTheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRangeItemsAttributes(item.Attributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSdaTheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRangeV1ItemsAttributes(items *[]catalystcentersdkgo.ResponseSdaTheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRangeV1ResponseAttributes) []map[string]interface{} {
+func flattenSdaTheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRangeItemsAttributes(items *[]catalystcentersdkgo.ResponseSdaTheTrendAnalyticsDataForATransitNetworkInTheSpecifiedTimeRangeResponseAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

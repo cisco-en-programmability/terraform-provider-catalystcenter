@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -11,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -26,7 +27,7 @@ func resourceApplicationVisibilityNetworkDevicesDisableAppTelemetry() *schema.Re
 payload should include the list of network devices where it has to be disabled.
 This operation pushes configuration to the network devices, and is only permitted if the provisioning settings do not
 mandate a config preview for application telemetry disablement. In cases where such settings are active, attempting to
-use this endpoint will result in *422 Unprocessable Content* error.
+use this endpoint will result in **422 Unprocessable Content** error.
 `,
 
 		CreateContext: resourceApplicationVisibilityNetworkDevicesDisableAppTelemetryCreate,
@@ -86,9 +87,9 @@ func resourceApplicationVisibilityNetworkDevicesDisableAppTelemetryCreate(ctx co
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestApplicationVisibilityNetworkDevicesDisableAppTelemetryDisableApplicationTelemetryFeatureOnMultipleNetworkDevicesV1(ctx, "parameters.0", d)
+	request1 := expandRequestApplicationVisibilityNetworkDevicesDisableAppTelemetryDisableApplicationTelemetryFeatureOnMultipleNetworkDevices(ctx, "parameters.0", d)
 
-	response1, restyResp1, err := client.ApplicationPolicy.DisableApplicationTelemetryFeatureOnMultipleNetworkDevicesV1(request1)
+	response1, restyResp1, err := client.ApplicationPolicy.DisableApplicationTelemetryFeatureOnMultipleNetworkDevices(request1)
 
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
@@ -133,7 +134,7 @@ func resourceApplicationVisibilityNetworkDevicesDisableAppTelemetryCreate(ctx co
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
@@ -145,7 +146,7 @@ func resourceApplicationVisibilityNetworkDevicesDisableAppTelemetryCreate(ctx co
 		}
 	}
 
-	vItem1 := flattenApplicationPolicyDisableApplicationTelemetryFeatureOnMultipleNetworkDevicesV1Item(response1.Response)
+	vItem1 := flattenApplicationPolicyDisableApplicationTelemetryFeatureOnMultipleNetworkDevicesItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
 			"Failure when setting DisableApplicationTelemetryFeatureOnMultipleNetworkDevices response",
@@ -170,15 +171,15 @@ func resourceApplicationVisibilityNetworkDevicesDisableAppTelemetryDelete(ctx co
 	return diags
 }
 
-func expandRequestApplicationVisibilityNetworkDevicesDisableAppTelemetryDisableApplicationTelemetryFeatureOnMultipleNetworkDevicesV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyDisableApplicationTelemetryFeatureOnMultipleNetworkDevicesV1 {
-	request := catalystcentersdkgo.RequestApplicationPolicyDisableApplicationTelemetryFeatureOnMultipleNetworkDevicesV1{}
+func expandRequestApplicationVisibilityNetworkDevicesDisableAppTelemetryDisableApplicationTelemetryFeatureOnMultipleNetworkDevices(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyDisableApplicationTelemetryFeatureOnMultipleNetworkDevices {
+	request := catalystcentersdkgo.RequestApplicationPolicyDisableApplicationTelemetryFeatureOnMultipleNetworkDevices{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".network_device_ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".network_device_ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".network_device_ids")))) {
 		request.NetworkDeviceIDs = interfaceToSliceString(v)
 	}
 	return &request
 }
 
-func flattenApplicationPolicyDisableApplicationTelemetryFeatureOnMultipleNetworkDevicesV1Item(item *catalystcentersdkgo.ResponseApplicationPolicyDisableApplicationTelemetryFeatureOnMultipleNetworkDevicesV1Response) []map[string]interface{} {
+func flattenApplicationPolicyDisableApplicationTelemetryFeatureOnMultipleNetworkDevicesItem(item *catalystcentersdkgo.ResponseApplicationPolicyDisableApplicationTelemetryFeatureOnMultipleNetworkDevicesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

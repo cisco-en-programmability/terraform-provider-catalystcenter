@@ -4,18 +4,20 @@ page_title: "catalystcenter_wireless_controllers_assign_managed_ap_locations Res
 subcategory: ""
 description: |-
   It performs create operation on Wireless.
-  This data source action allows user to assign Managed AP Locations for WLC by device ID. The payload should always be
-  a complete list. The Managed AP Locations included in the payload will be fully processed for both addition and
-  deletion.
+  This data source action allows user to assign Managed AP Locations for IOS-XE Wireless supported devices by device ID.
+  The payload should always be a complete list. The Managed AP Locations included in the payload will be fully processed
+  for both addition and deletion.
 ---
 
 # catalystcenter_wireless_controllers_assign_managed_ap_locations (Resource)
 
 It performs create operation on Wireless.
 
-- This data source action allows user to assign Managed AP Locations for WLC by device ID. The payload should always be
-a complete list. The Managed AP Locations included in the payload will be fully processed for both addition and
-deletion.
+- This data source action allows user to assign Managed AP Locations for IOS-XE Wireless supported devices by device ID.
+The payload should always be a complete list. The Managed AP Locations included in the payload will be fully processed
+for both addition and deletion.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -26,11 +28,11 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_wireless_controllers_assign_managed_ap_locations" "example" {
   provider  = catalystcenter
   device_id = "string"
-  parameters {
+  parameters = [{
 
     primary_managed_aplocations_site_ids   = ["string"]
     secondary_managed_aplocations_site_ids = ["string"]
-  }
+  }]
 }
 
 output "catalystcenter_wireless_controllers_assign_managed_ap_locations_example" {

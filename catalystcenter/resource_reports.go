@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -336,7 +336,7 @@ required to configure a report.
 							Description: `reportId path parameter. reportId of report
 `,
 							Type:     schema.TypeString,
-							Required: true,
+							Optional: true,
 						},
 						"schedule": &schema.Schema{
 							Type:     schema.TypeString, //TEST,
@@ -498,7 +498,7 @@ func resourceReportsCreate(ctx context.Context, d *schema.ResourceData, m interf
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestReportsCreateOrScheduleAReportV1(ctx, "parameters.0", d)
+	request1 := expandRequestReportsCreateOrScheduleAReport(ctx, "parameters.0", d)
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
@@ -577,7 +577,7 @@ func resourceReportsRead(ctx context.Context, d *schema.ResourceData, m interfac
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenReportsGetAScheduledReportV1Item(response1)
+		vItem1 := flattenReportsGetAScheduledReportItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetAScheduledReport response",
@@ -616,7 +616,7 @@ func resourceReportsRead(ctx context.Context, d *schema.ResourceData, m interfac
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenReportsGetAScheduledReportV1Item(response2)
+		vItem2 := flattenReportsGetAScheduledReportItem(response2)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetAScheduledReport response",
@@ -689,22 +689,23 @@ func resourceReportsDelete(ctx context.Context, d *schema.ResourceData, m interf
 
 	return diags
 }
-func expandRequestReportsCreateOrScheduleAReportV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1 {
-	request := catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1{}
+
+func expandRequestReportsCreateOrScheduleAReport(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestReportsCreateOrScheduleAReport {
+	request := catalystcentersdkgo.RequestReportsCreateOrScheduleAReport{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tags")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tags")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tags")))) {
 		request.Tags = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".deliveries")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".deliveries")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".deliveries")))) {
-		request.Deliveries = expandRequestReportsCreateOrScheduleAReportV1DeliveriesArray(ctx, key+".deliveries", d)
+		request.Deliveries = expandRequestReportsCreateOrScheduleAReportDeliveriesArray(ctx, key+".deliveries", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".schedule")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".schedule")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".schedule")))) {
-		request.Schedule = expandRequestReportsCreateOrScheduleAReportV1Schedule(ctx, key+".schedule.0", d)
+		request.Schedule = expandRequestReportsCreateOrScheduleAReportSchedule(ctx, key+".schedule.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".view")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".view")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".view")))) {
-		request.View = expandRequestReportsCreateOrScheduleAReportV1View(ctx, key+".view.0", d)
+		request.View = expandRequestReportsCreateOrScheduleAReportView(ctx, key+".view.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".view_group_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".view_group_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".view_group_id")))) {
 		request.ViewGroupID = interfaceToString(v)
@@ -721,8 +722,8 @@ func expandRequestReportsCreateOrScheduleAReportV1(ctx context.Context, key stri
 	return &request
 }
 
-func expandRequestReportsCreateOrScheduleAReportV1DeliveriesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1Deliveries {
-	request := []catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1Deliveries{}
+func expandRequestReportsCreateOrScheduleAReportDeliveriesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestReportsCreateOrScheduleAReportDeliveries {
+	request := []catalystcentersdkgo.RequestReportsCreateOrScheduleAReportDeliveries{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -733,7 +734,7 @@ func expandRequestReportsCreateOrScheduleAReportV1DeliveriesArray(ctx context.Co
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestReportsCreateOrScheduleAReportV1Deliveries(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestReportsCreateOrScheduleAReportDeliveries(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -744,8 +745,8 @@ func expandRequestReportsCreateOrScheduleAReportV1DeliveriesArray(ctx context.Co
 	return &request
 }
 
-func expandRequestReportsCreateOrScheduleAReportV1Deliveries(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1Deliveries {
-	var request catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1Deliveries
+func expandRequestReportsCreateOrScheduleAReportDeliveries(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestReportsCreateOrScheduleAReportDeliveries {
+	var request catalystcentersdkgo.RequestReportsCreateOrScheduleAReportDeliveries
 	request = d.Get(fixKeyAccess(key))
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -753,8 +754,8 @@ func expandRequestReportsCreateOrScheduleAReportV1Deliveries(ctx context.Context
 	return &request
 }
 
-func expandRequestReportsCreateOrScheduleAReportV1Schedule(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1Schedule {
-	var request catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1Schedule
+func expandRequestReportsCreateOrScheduleAReportSchedule(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestReportsCreateOrScheduleAReportSchedule {
+	var request catalystcentersdkgo.RequestReportsCreateOrScheduleAReportSchedule
 	request = d.Get(fixKeyAccess(key))
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -762,16 +763,16 @@ func expandRequestReportsCreateOrScheduleAReportV1Schedule(ctx context.Context, 
 	return &request
 }
 
-func expandRequestReportsCreateOrScheduleAReportV1View(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1View {
-	request := catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1View{}
+func expandRequestReportsCreateOrScheduleAReportView(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestReportsCreateOrScheduleAReportView {
+	request := catalystcentersdkgo.RequestReportsCreateOrScheduleAReportView{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".field_groups")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".field_groups")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".field_groups")))) {
-		request.FieldGroups = expandRequestReportsCreateOrScheduleAReportV1ViewFieldGroupsArray(ctx, key+".field_groups", d)
+		request.FieldGroups = expandRequestReportsCreateOrScheduleAReportViewFieldGroupsArray(ctx, key+".field_groups", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestReportsCreateOrScheduleAReportV1ViewFiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestReportsCreateOrScheduleAReportViewFiltersArray(ctx, key+".filters", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".format")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".format")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".format")))) {
-		request.Format = expandRequestReportsCreateOrScheduleAReportV1ViewFormat(ctx, key+".format.0", d)
+		request.Format = expandRequestReportsCreateOrScheduleAReportViewFormat(ctx, key+".format.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
@@ -785,8 +786,8 @@ func expandRequestReportsCreateOrScheduleAReportV1View(ctx context.Context, key 
 	return &request
 }
 
-func expandRequestReportsCreateOrScheduleAReportV1ViewFieldGroupsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1ViewFieldGroups {
-	request := []catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1ViewFieldGroups{}
+func expandRequestReportsCreateOrScheduleAReportViewFieldGroupsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestReportsCreateOrScheduleAReportViewFieldGroups {
+	request := []catalystcentersdkgo.RequestReportsCreateOrScheduleAReportViewFieldGroups{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -797,7 +798,7 @@ func expandRequestReportsCreateOrScheduleAReportV1ViewFieldGroupsArray(ctx conte
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestReportsCreateOrScheduleAReportV1ViewFieldGroups(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestReportsCreateOrScheduleAReportViewFieldGroups(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -808,8 +809,8 @@ func expandRequestReportsCreateOrScheduleAReportV1ViewFieldGroupsArray(ctx conte
 	return &request
 }
 
-func expandRequestReportsCreateOrScheduleAReportV1ViewFieldGroups(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1ViewFieldGroups {
-	request := catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1ViewFieldGroups{}
+func expandRequestReportsCreateOrScheduleAReportViewFieldGroups(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestReportsCreateOrScheduleAReportViewFieldGroups {
+	request := catalystcentersdkgo.RequestReportsCreateOrScheduleAReportViewFieldGroups{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".field_group_display_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".field_group_display_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".field_group_display_name")))) {
 		request.FieldGroupDisplayName = interfaceToString(v)
 	}
@@ -817,7 +818,7 @@ func expandRequestReportsCreateOrScheduleAReportV1ViewFieldGroups(ctx context.Co
 		request.FieldGroupName = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".fields")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".fields")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".fields")))) {
-		request.Fields = expandRequestReportsCreateOrScheduleAReportV1ViewFieldGroupsFieldsArray(ctx, key+".fields", d)
+		request.Fields = expandRequestReportsCreateOrScheduleAReportViewFieldGroupsFieldsArray(ctx, key+".fields", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -825,8 +826,8 @@ func expandRequestReportsCreateOrScheduleAReportV1ViewFieldGroups(ctx context.Co
 	return &request
 }
 
-func expandRequestReportsCreateOrScheduleAReportV1ViewFieldGroupsFieldsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1ViewFieldGroupsFields {
-	request := []catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1ViewFieldGroupsFields{}
+func expandRequestReportsCreateOrScheduleAReportViewFieldGroupsFieldsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestReportsCreateOrScheduleAReportViewFieldGroupsFields {
+	request := []catalystcentersdkgo.RequestReportsCreateOrScheduleAReportViewFieldGroupsFields{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -837,7 +838,7 @@ func expandRequestReportsCreateOrScheduleAReportV1ViewFieldGroupsFieldsArray(ctx
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestReportsCreateOrScheduleAReportV1ViewFieldGroupsFields(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestReportsCreateOrScheduleAReportViewFieldGroupsFields(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -848,8 +849,8 @@ func expandRequestReportsCreateOrScheduleAReportV1ViewFieldGroupsFieldsArray(ctx
 	return &request
 }
 
-func expandRequestReportsCreateOrScheduleAReportV1ViewFieldGroupsFields(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1ViewFieldGroupsFields {
-	request := catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1ViewFieldGroupsFields{}
+func expandRequestReportsCreateOrScheduleAReportViewFieldGroupsFields(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestReportsCreateOrScheduleAReportViewFieldGroupsFields {
+	request := catalystcentersdkgo.RequestReportsCreateOrScheduleAReportViewFieldGroupsFields{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".display_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".display_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".display_name")))) {
 		request.DisplayName = interfaceToString(v)
 	}
@@ -862,8 +863,8 @@ func expandRequestReportsCreateOrScheduleAReportV1ViewFieldGroupsFields(ctx cont
 	return &request
 }
 
-func expandRequestReportsCreateOrScheduleAReportV1ViewFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1ViewFilters {
-	request := []catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1ViewFilters{}
+func expandRequestReportsCreateOrScheduleAReportViewFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestReportsCreateOrScheduleAReportViewFilters {
+	request := []catalystcentersdkgo.RequestReportsCreateOrScheduleAReportViewFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -874,7 +875,7 @@ func expandRequestReportsCreateOrScheduleAReportV1ViewFiltersArray(ctx context.C
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestReportsCreateOrScheduleAReportV1ViewFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestReportsCreateOrScheduleAReportViewFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -885,8 +886,8 @@ func expandRequestReportsCreateOrScheduleAReportV1ViewFiltersArray(ctx context.C
 	return &request
 }
 
-func expandRequestReportsCreateOrScheduleAReportV1ViewFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1ViewFilters {
-	request := catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1ViewFilters{}
+func expandRequestReportsCreateOrScheduleAReportViewFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestReportsCreateOrScheduleAReportViewFilters {
+	request := catalystcentersdkgo.RequestReportsCreateOrScheduleAReportViewFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".display_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".display_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".display_name")))) {
 		request.DisplayName = interfaceToString(v)
 	}
@@ -897,7 +898,7 @@ func expandRequestReportsCreateOrScheduleAReportV1ViewFilters(ctx context.Contex
 		request.Type = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".value")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".value")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".value")))) {
-		request.Value = expandRequestReportsCreateOrScheduleAReportV1ViewFiltersValue(ctx, key+".value.0", d)
+		request.Value = expandRequestReportsCreateOrScheduleAReportViewFiltersValue(ctx, key+".value.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -905,8 +906,8 @@ func expandRequestReportsCreateOrScheduleAReportV1ViewFilters(ctx context.Contex
 	return &request
 }
 
-func expandRequestReportsCreateOrScheduleAReportV1ViewFiltersValue(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1ViewFiltersValue {
-	var request catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1ViewFiltersValue
+func expandRequestReportsCreateOrScheduleAReportViewFiltersValue(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestReportsCreateOrScheduleAReportViewFiltersValue {
+	var request catalystcentersdkgo.RequestReportsCreateOrScheduleAReportViewFiltersValue
 	request = d.Get(fixKeyAccess(key))
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -914,8 +915,8 @@ func expandRequestReportsCreateOrScheduleAReportV1ViewFiltersValue(ctx context.C
 	return &request
 }
 
-func expandRequestReportsCreateOrScheduleAReportV1ViewFormat(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1ViewFormat {
-	request := catalystcentersdkgo.RequestReportsCreateOrScheduleAReportV1ViewFormat{}
+func expandRequestReportsCreateOrScheduleAReportViewFormat(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestReportsCreateOrScheduleAReportViewFormat {
+	request := catalystcentersdkgo.RequestReportsCreateOrScheduleAReportViewFormat{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".format_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".format_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".format_type")))) {
 		request.FormatType = interfaceToString(v)
 	}
@@ -928,11 +929,11 @@ func expandRequestReportsCreateOrScheduleAReportV1ViewFormat(ctx context.Context
 	return &request
 }
 
-func searchReportsGetListOfScheduledReports(m interface{}, queryParams *catalystcentersdkgo.GetListOfScheduledReportsV1QueryParams, vName string) (*catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReportsV1, error) {
+func searchReportsGetListOfScheduledReports(m interface{}, queryParams *catalystcentersdkgo.GetListOfScheduledReportsQueryParams, vName string) (*catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReports, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReportsV1
-	var ite *catalystcentersdkgo.ResponseReportsGetListOfScheduledReportsV1
+	var foundItem *catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReports
+	var ite *catalystcentersdkgo.ResponseReportsGetListOfScheduledReports
 	ite, _, err = client.Reports.GetListOfScheduledReports(nil)
 	if err != nil {
 		return foundItem, err
@@ -946,7 +947,7 @@ func searchReportsGetListOfScheduledReports(m interface{}, queryParams *catalyst
 	for _, item := range itemsCopy {
 		// Call get by _ method and set value to foundItem and return
 		if item.Name == vName {
-			var getItem *catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReportsV1
+			var getItem *catalystcentersdkgo.ResponseItemReportsGetListOfScheduledReports
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

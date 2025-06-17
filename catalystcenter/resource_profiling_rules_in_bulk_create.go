@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -17,7 +17,7 @@ import (
 // resourceAction
 func resourceProfilingRulesInBulkCreate() *schema.Resource {
 	return &schema.Resource{
-		Description: `It performs create operation on AIEndpointAnalytics.
+		Description: `It performs create operation on AiEndpointAnalytics.
 
 - This data source action imports the given list of profiling rules. For each record, 1) If 'ruleType' for a record is
 not 'Custom Rule', then it is rejected. 2) If 'ruleId' is provided in the input record,
@@ -302,11 +302,11 @@ func resourceProfilingRulesInBulkCreateCreate(ctx context.Context, d *schema.Res
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkV1(ctx, "parameters.0", d)
+	request1 := expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulk(ctx, "parameters.0", d)
 
 	// has_unknown_response: True
 
-	response1, err := client.AIEndpointAnalytics.ImportProfilingRulesInBulkV1(request1)
+	response1, err := client.AiEndpointAnalytics.ImportProfilingRulesInBulk(request1)
 
 	if err != nil || response1 == nil {
 		d.SetId("")
@@ -319,7 +319,7 @@ func resourceProfilingRulesInBulkCreateCreate(ctx context.Context, d *schema.Res
 
 	if err := d.Set("item", response1.String()); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ImportProfilingRulesInBulkV1 response",
+			"Failure when setting ImportProfilingRulesInBulk response",
 			err))
 		return diags
 	}
@@ -340,16 +340,16 @@ func resourceProfilingRulesInBulkCreateDelete(ctx context.Context, d *schema.Res
 	return diags
 }
 
-func expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAIEndpointAnalyticsImportProfilingRulesInBulkV1 {
-	request := catalystcentersdkgo.RequestAIEndpointAnalyticsImportProfilingRulesInBulkV1{}
+func expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulk(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAiEndpointAnalyticsImportProfilingRulesInBulk {
+	request := catalystcentersdkgo.RequestAiEndpointAnalyticsImportProfilingRulesInBulk{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".profiling_rules")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".profiling_rules")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".profiling_rules")))) {
-		request.ProfilingRules = expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkV1ProfilingRulesArray(ctx, key+".profiling_rules", d)
+		request.ProfilingRules = expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkProfilingRulesArray(ctx, key+".profiling_rules", d)
 	}
 	return &request
 }
 
-func expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkV1ProfilingRulesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestAIEndpointAnalyticsImportProfilingRulesInBulkV1ProfilingRules {
-	request := []catalystcentersdkgo.RequestAIEndpointAnalyticsImportProfilingRulesInBulkV1ProfilingRules{}
+func expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkProfilingRulesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestAiEndpointAnalyticsImportProfilingRulesInBulkProfilingRules {
+	request := []catalystcentersdkgo.RequestAiEndpointAnalyticsImportProfilingRulesInBulkProfilingRules{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -360,7 +360,7 @@ func expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkV1Profilin
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkV1ProfilingRules(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkProfilingRules(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -368,8 +368,8 @@ func expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkV1Profilin
 	return &request
 }
 
-func expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkV1ProfilingRules(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAIEndpointAnalyticsImportProfilingRulesInBulkV1ProfilingRules {
-	request := catalystcentersdkgo.RequestAIEndpointAnalyticsImportProfilingRulesInBulkV1ProfilingRules{}
+func expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkProfilingRules(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAiEndpointAnalyticsImportProfilingRulesInBulkProfilingRules {
+	request := catalystcentersdkgo.RequestAiEndpointAnalyticsImportProfilingRulesInBulkProfilingRules{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rule_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rule_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rule_id")))) {
 		request.RuleID = interfaceToString(v)
 	}
@@ -407,10 +407,10 @@ func expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkV1Profilin
 		request.Rejected = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".result")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".result")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".result")))) {
-		request.Result = expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkV1ProfilingRulesResult(ctx, key+".result.0", d)
+		request.Result = expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkProfilingRulesResult(ctx, key+".result.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".condition_groups")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".condition_groups")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".condition_groups")))) {
-		request.ConditionGroups = expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkV1ProfilingRulesConditionGroups(ctx, key+".condition_groups.0", d)
+		request.ConditionGroups = expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkProfilingRulesConditionGroups(ctx, key+".condition_groups.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".used_attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".used_attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".used_attributes")))) {
 		request.UsedAttributes = interfaceToSliceString(v)
@@ -418,8 +418,8 @@ func expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkV1Profilin
 	return &request
 }
 
-func expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkV1ProfilingRulesResult(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAIEndpointAnalyticsImportProfilingRulesInBulkV1ProfilingRulesResult {
-	request := catalystcentersdkgo.RequestAIEndpointAnalyticsImportProfilingRulesInBulkV1ProfilingRulesResult{}
+func expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkProfilingRulesResult(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAiEndpointAnalyticsImportProfilingRulesInBulkProfilingRulesResult {
+	request := catalystcentersdkgo.RequestAiEndpointAnalyticsImportProfilingRulesInBulkProfilingRulesResult{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_type")))) {
 		request.DeviceType = interfaceToSliceString(v)
 	}
@@ -435,13 +435,13 @@ func expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkV1Profilin
 	return &request
 }
 
-func expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkV1ProfilingRulesConditionGroups(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAIEndpointAnalyticsImportProfilingRulesInBulkV1ProfilingRulesConditionGroups {
-	request := catalystcentersdkgo.RequestAIEndpointAnalyticsImportProfilingRulesInBulkV1ProfilingRulesConditionGroups{}
+func expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkProfilingRulesConditionGroups(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAiEndpointAnalyticsImportProfilingRulesInBulkProfilingRulesConditionGroups {
+	request := catalystcentersdkgo.RequestAiEndpointAnalyticsImportProfilingRulesInBulkProfilingRulesConditionGroups{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".type")))) {
 		request.Type = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".condition")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".condition")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".condition")))) {
-		request.Condition = expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkV1ProfilingRulesConditionGroupsCondition(ctx, key+".condition.0", d)
+		request.Condition = expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkProfilingRulesConditionGroupsCondition(ctx, key+".condition.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".operator")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".operator")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".operator")))) {
 		request.Operator = interfaceToString(v)
@@ -452,8 +452,8 @@ func expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkV1Profilin
 	return &request
 }
 
-func expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkV1ProfilingRulesConditionGroupsCondition(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAIEndpointAnalyticsImportProfilingRulesInBulkV1ProfilingRulesConditionGroupsCondition {
-	request := catalystcentersdkgo.RequestAIEndpointAnalyticsImportProfilingRulesInBulkV1ProfilingRulesConditionGroupsCondition{}
+func expandRequestProfilingRulesInBulkCreateImportProfilingRulesInBulkProfilingRulesConditionGroupsCondition(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestAiEndpointAnalyticsImportProfilingRulesInBulkProfilingRulesConditionGroupsCondition {
+	request := catalystcentersdkgo.RequestAiEndpointAnalyticsImportProfilingRulesInBulkProfilingRulesConditionGroupsCondition{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".attribute")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".attribute")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".attribute")))) {
 		request.Attribute = interfaceToString(v)
 	}

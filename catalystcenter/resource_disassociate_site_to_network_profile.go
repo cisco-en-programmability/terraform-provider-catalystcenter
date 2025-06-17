@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -9,7 +10,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -94,14 +95,14 @@ func resourceDisassociateSiteToNetworkProfileCreate(ctx context.Context, d *sche
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.SiteDesign.DisassociateV1(vvNetworkProfileID, vvSiteID)
+	response1, restyResp1, err := client.SiteDesign.Disassociate(vvNetworkProfileID, vvSiteID)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing DisassociateV1", err))
+			"Failure when executing Disassociate", err))
 		return diags
 	}
 
@@ -109,7 +110,7 @@ func resourceDisassociateSiteToNetworkProfileCreate(ctx context.Context, d *sche
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing DisassociateV1", err))
+			"Failure when executing Disassociate", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -136,21 +137,21 @@ func resourceDisassociateSiteToNetworkProfileCreate(ctx context.Context, d *sche
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing DisassociateV1", err1))
+				"Failure when executing Disassociate", err1))
 			return diags
 		}
 	}
-	vItem1 := flattenSiteDesignDisassociateV1Item(response1.Response)
+	vItem1 := flattenSiteDesignDisassociateItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting DisassociateV1 response",
+			"Failure when setting Disassociate response",
 			err))
 		return diags
 	}
@@ -171,7 +172,7 @@ func resourceDisassociateSiteToNetworkProfileDelete(ctx context.Context, d *sche
 	return diags
 }
 
-func flattenSiteDesignDisassociateV1Item(item *catalystcentersdkgo.ResponseSiteDesignDisassociateV1Response) []map[string]interface{} {
+func flattenSiteDesignDisassociateItem(item *catalystcentersdkgo.ResponseSiteDesignDisassociateResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

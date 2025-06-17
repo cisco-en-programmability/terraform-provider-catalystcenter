@@ -13,6 +13,7 @@ It performs create operation on SDA.
 
 - Applies pending fabric events based on user input.
 
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -22,11 +23,11 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_sda_pending_fabric_events_apply" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
     fabric_id = "string"
     id        = "string"
-  }
+  }]
 }
 
 output "catalystcenter_sda_pending_fabric_events_apply_example" {
@@ -52,7 +53,7 @@ output "catalystcenter_sda_pending_fabric_events_apply_example" {
 
 Optional:
 
-- `payload` (Block List) Array of RequestSdaApplyPendingFabricEventsV1 (see [below for nested schema](#nestedblock--parameters--payload))
+- `payload` (Block List) Array of RequestSdaApplyPendingFabricEvents (see [below for nested schema](#nestedblock--parameters--payload))
 
 <a id="nestedblock--parameters--payload"></a>
 ### Nested Schema for `parameters.payload`

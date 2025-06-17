@@ -18,7 +18,7 @@ It manages create and read operations on Configuration Templates.
 ```terraform
 resource "catalystcenter_templates_template_id_network_profiles_for_sites" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     profile_id  = "string"
@@ -41,7 +41,7 @@ output "catalystcenter_templates_template_id_network_profiles_for_sites_example"
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `item` (String)
+- `item` (List of Object) (see [below for nested schema](#nestedatt--item))
 - `last_updated` (String)
 
 <a id="nestedblock--parameters"></a>
@@ -49,11 +49,19 @@ output "catalystcenter_templates_template_id_network_profiles_for_sites_example"
 
 Required:
 
-- `template_id` (String) templateId path parameter. The id of the template, retrievable from GET /intent/api/v1/templates
+- `template_id` (String) templateId path parameter. The **id** of the template, retrievable from **GET /intent/api/v1/templates**
 
 Optional:
 
-- `profile_id` (String) The id of the network profile, retrievable from /intent/api/v1/networkProfilesForSites
+- `profile_id` (String) The id of the network profile, retrievable from **/intent/api/v1/networkProfilesForSites**
+
+
+<a id="nestedatt--item"></a>
+### Nested Schema for `item`
+
+Read-Only:
+
+- `object` (String)
 
 ## Import
 

@@ -22,7 +22,7 @@ It manages create, read, update and delete operations on AI Endpoint Analytics.
 ```terraform
 resource "catalystcenter_analytics_profiling_rules" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     cluster_id = "string"

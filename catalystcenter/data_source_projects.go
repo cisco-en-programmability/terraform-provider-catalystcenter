@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -89,8 +89,8 @@ func dataSourceProjectsRead(ctx context.Context, d *schema.ResourceData, m inter
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTemplateProjectsV1")
-		queryParams1 := catalystcentersdkgo.GetTemplateProjectsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetTemplateProjects")
+		queryParams1 := catalystcentersdkgo.GetTemplateProjectsQueryParams{}
 
 		if okName {
 			queryParams1.Name = vName.(string)
@@ -104,24 +104,36 @@ func dataSourceProjectsRead(ctx context.Context, d *schema.ResourceData, m inter
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.ConfigurationTemplates.GetTemplateProjectsV1(&queryParams1)
+		response1, restyResp1, err := client.ConfigurationTemplates.GetTemplateProjects(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTemplateProjectsV1", err,
-				"Failure at GetTemplateProjectsV1, unexpected response", ""))
+				"Failure when executing 2 GetTemplateProjects", err,
+				"Failure at GetTemplateProjects, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenConfigurationTemplatesGetTemplateProjectsV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetTemplateProjects", err,
+				"Failure at GetTemplateProjects, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenConfigurationTemplatesGetTemplateProjectsItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTemplateProjectsV1 response",
+				"Failure when setting GetTemplateProjects response",
 				err))
 			return diags
 		}
@@ -133,7 +145,7 @@ func dataSourceProjectsRead(ctx context.Context, d *schema.ResourceData, m inter
 	return diags
 }
 
-func flattenConfigurationTemplatesGetTemplateProjectsV1Items(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetTemplateProjectsV1Response) []map[string]interface{} {
+func flattenConfigurationTemplatesGetTemplateProjectsItems(items *[]catalystcentersdkgo.ResponseConfigurationTemplatesGetTemplateProjectsResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

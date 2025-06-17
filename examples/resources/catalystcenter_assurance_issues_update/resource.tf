@@ -1,13 +1,13 @@
 
 resource "catalystcenter_assurance_issues_update" "example" {
-  provider        = meraki
+  provider        = catalystcenter
   accept_language = "string"
   id              = "string"
   xca_lle_rid     = "string"
-  parameters {
+  parameters = [{
 
     notes = "string"
-  }
+  }]
 }
 
 output "catalystcenter_assurance_issues_update_example" {

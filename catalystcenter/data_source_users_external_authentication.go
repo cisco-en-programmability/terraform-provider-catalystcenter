@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -57,26 +57,40 @@ func dataSourceUsersExternalAuthenticationRead(ctx context.Context, d *schema.Re
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetExternalAuthenticationSettingAPIV1")
+		log.Printf("[DEBUG] Selected method: GetExternalAuthenticationSettingAPI")
 
-		response1, restyResp1, err := client.UserandRoles.GetExternalAuthenticationSettingAPIV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.UserandRoles.GetExternalAuthenticationSettingAPI()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetExternalAuthenticationSettingAPIV1", err,
-				"Failure at GetExternalAuthenticationSettingAPIV1, unexpected response", ""))
+				"Failure when executing 2 GetExternalAuthenticationSettingAPI", err,
+				"Failure at GetExternalAuthenticationSettingAPI, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenUserandRolesGetExternalAuthenticationSettingAPIV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetExternalAuthenticationSettingAPI", err,
+				"Failure at GetExternalAuthenticationSettingAPI, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenUserandRolesGetExternalAuthenticationSettingAPIItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetExternalAuthenticationSettingAPIV1 response",
+				"Failure when setting GetExternalAuthenticationSettingAPI response",
 				err))
 			return diags
 		}
@@ -88,18 +102,18 @@ func dataSourceUsersExternalAuthenticationRead(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func flattenUserandRolesGetExternalAuthenticationSettingAPIV1Item(item *catalystcentersdkgo.ResponseUserandRolesGetExternalAuthenticationSettingAPIV1Response) []map[string]interface{} {
+func flattenUserandRolesGetExternalAuthenticationSettingAPIItem(item *catalystcentersdkgo.ResponseUserandRolesGetExternalAuthenticationSettingAPIResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["external_authentication_flag"] = flattenUserandRolesGetExternalAuthenticationSettingAPIV1ItemExternalAuthenticationFlag(item.ExternalAuthenticationFlag)
+	respItem["external_authentication_flag"] = flattenUserandRolesGetExternalAuthenticationSettingAPIItemExternalAuthenticationFlag(item.ExternalAuthenticationFlag)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenUserandRolesGetExternalAuthenticationSettingAPIV1ItemExternalAuthenticationFlag(items *[]catalystcentersdkgo.ResponseUserandRolesGetExternalAuthenticationSettingAPIV1ResponseExternalAuthenticationFlag) []map[string]interface{} {
+func flattenUserandRolesGetExternalAuthenticationSettingAPIItemExternalAuthenticationFlag(items *[]catalystcentersdkgo.ResponseUserandRolesGetExternalAuthenticationSettingAPIResponseExternalAuthenticationFlag) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

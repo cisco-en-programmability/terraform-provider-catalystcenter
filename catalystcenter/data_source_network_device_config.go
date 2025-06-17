@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -128,26 +128,40 @@ func dataSourceNetworkDeviceConfigRead(ctx context.Context, d *schema.ResourceDa
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceConfigForAllDevicesV1")
+		log.Printf("[DEBUG] Selected method: GetDeviceConfigForAllDevices")
 
-		response1, restyResp1, err := client.Devices.GetDeviceConfigForAllDevicesV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Devices.GetDeviceConfigForAllDevices()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceConfigForAllDevicesV1", err,
-				"Failure at GetDeviceConfigForAllDevicesV1, unexpected response", ""))
+				"Failure when executing 2 GetDeviceConfigForAllDevices", err,
+				"Failure at GetDeviceConfigForAllDevices, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetDeviceConfigForAllDevicesV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetDeviceConfigForAllDevices", err,
+				"Failure at GetDeviceConfigForAllDevices, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDevicesGetDeviceConfigForAllDevicesItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceConfigForAllDevicesV1 response",
+				"Failure when setting GetDeviceConfigForAllDevices response",
 				err))
 			return diags
 		}
@@ -157,27 +171,41 @@ func dataSourceNetworkDeviceConfigRead(ctx context.Context, d *schema.ResourceDa
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetDeviceConfigByIDV1")
+		log.Printf("[DEBUG] Selected method: GetDeviceConfigByID")
 		vvNetworkDeviceID := vNetworkDeviceID.(string)
 
-		response2, restyResp2, err := client.Devices.GetDeviceConfigByIDV1(vvNetworkDeviceID)
+		// has_unknown_response: None
+
+		response2, restyResp2, err := client.Devices.GetDeviceConfigByID(vvNetworkDeviceID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceConfigByIDV1", err,
-				"Failure at GetDeviceConfigByIDV1, unexpected response", ""))
+				"Failure when executing 2 GetDeviceConfigByID", err,
+				"Failure at GetDeviceConfigByID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenDevicesGetDeviceConfigByIDV1Item(response2)
+		if err != nil || response2 == nil {
+			if restyResp2 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetDeviceConfigByID", err,
+				"Failure at GetDeviceConfigByID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
+
+		vItem2 := flattenDevicesGetDeviceConfigByIDItem(response2)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceConfigByIDV1 response",
+				"Failure when setting GetDeviceConfigByID response",
 				err))
 			return diags
 		}
@@ -189,14 +217,14 @@ func dataSourceNetworkDeviceConfigRead(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func flattenDevicesGetDeviceConfigForAllDevicesV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetDeviceConfigForAllDevicesV1Response) []map[string]interface{} {
+func flattenDevicesGetDeviceConfigForAllDevicesItems(items *[]catalystcentersdkgo.ResponseDevicesGetDeviceConfigForAllDevicesResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["attribute_info"] = flattenDevicesGetDeviceConfigForAllDevicesV1ItemsAttributeInfo(item.AttributeInfo)
+		respItem["attribute_info"] = flattenDevicesGetDeviceConfigForAllDevicesItemsAttributeInfo(item.AttributeInfo)
 		respItem["cdp_neighbors"] = item.CdpNeighbors
 		respItem["health_monitor"] = item.HealthMonitor
 		respItem["id"] = item.ID
@@ -212,7 +240,7 @@ func flattenDevicesGetDeviceConfigForAllDevicesV1Items(items *[]catalystcentersd
 	return respItems
 }
 
-func flattenDevicesGetDeviceConfigForAllDevicesV1ItemsAttributeInfo(item *catalystcentersdkgo.ResponseDevicesGetDeviceConfigForAllDevicesV1ResponseAttributeInfo) interface{} {
+func flattenDevicesGetDeviceConfigForAllDevicesItemsAttributeInfo(item *catalystcentersdkgo.ResponseDevicesGetDeviceConfigForAllDevicesResponseAttributeInfo) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -222,7 +250,7 @@ func flattenDevicesGetDeviceConfigForAllDevicesV1ItemsAttributeInfo(item *cataly
 
 }
 
-func flattenDevicesGetDeviceConfigByIDV1Item(item *catalystcentersdkgo.ResponseDevicesGetDeviceConfigByIDV1) []map[string]interface{} {
+func flattenDevicesGetDeviceConfigByIDItem(item *catalystcentersdkgo.ResponseDevicesGetDeviceConfigByID) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

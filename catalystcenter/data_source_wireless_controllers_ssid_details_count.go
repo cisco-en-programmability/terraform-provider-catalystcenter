@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,7 +15,7 @@ func dataSourceWirelessControllersSSIDDetailsCount() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Wireless.
 
-- Retrieves the count of SSIDs associated with the specific Wireless Controller.
+- Retrieves the count of SSIDs associated with the specific wireless controller.
 `,
 
 		ReadContext: dataSourceWirelessControllersSSIDDetailsCountRead,
@@ -68,9 +68,9 @@ func dataSourceWirelessControllersSSIDDetailsCountRead(ctx context.Context, d *s
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSSIDCountForSpecificWirelessControllerV1")
+		log.Printf("[DEBUG] Selected method: GetSSIDCountForSpecificWirelessController")
 		vvNetworkDeviceID := vNetworkDeviceID.(string)
-		queryParams1 := catalystcentersdkgo.GetSSIDCountForSpecificWirelessControllerV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetSSIDCountForSpecificWirelessControllerQueryParams{}
 
 		if okAdminStatus {
 			queryParams1.AdminStatus = vAdminStatus.(bool)
@@ -79,24 +79,38 @@ func dataSourceWirelessControllersSSIDDetailsCountRead(ctx context.Context, d *s
 			queryParams1.Managed = vManaged.(bool)
 		}
 
-		response1, restyResp1, err := client.Wireless.GetSSIDCountForSpecificWirelessControllerV1(vvNetworkDeviceID, &queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Wireless.GetSSIDCountForSpecificWirelessController(vvNetworkDeviceID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSSIDCountForSpecificWirelessControllerV1", err,
-				"Failure at GetSSIDCountForSpecificWirelessControllerV1, unexpected response", ""))
+				"Failure when executing 2 GetSSIDCountForSpecificWirelessController", err,
+				"Failure at GetSSIDCountForSpecificWirelessController, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessGetSSIDCountForSpecificWirelessControllerV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetSSIDCountForSpecificWirelessController", err,
+				"Failure at GetSSIDCountForSpecificWirelessController, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenWirelessGetSSIDCountForSpecificWirelessControllerItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSSIDCountForSpecificWirelessControllerV1 response",
+				"Failure when setting GetSSIDCountForSpecificWirelessController response",
 				err))
 			return diags
 		}
@@ -108,7 +122,7 @@ func dataSourceWirelessControllersSSIDDetailsCountRead(ctx context.Context, d *s
 	return diags
 }
 
-func flattenWirelessGetSSIDCountForSpecificWirelessControllerV1Item(item *catalystcentersdkgo.ResponseWirelessGetSSIDCountForSpecificWirelessControllerV1Response) []map[string]interface{} {
+func flattenWirelessGetSSIDCountForSpecificWirelessControllerItem(item *catalystcentersdkgo.ResponseWirelessGetSSIDCountForSpecificWirelessControllerResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

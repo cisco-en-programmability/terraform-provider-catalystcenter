@@ -1,7 +1,7 @@
 
 resource "catalystcenter_sda_fabric_devices" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     border_device_settings {

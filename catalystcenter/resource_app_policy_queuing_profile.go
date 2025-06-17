@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -459,7 +459,7 @@ func resourceAppPolicyQueuingProfile() *schema.Resource {
 				},
 			},
 			"parameters": &schema.Schema{
-				Description: `Array of RequestApplicationPolicyCreateApplicationPolicyQueuingProfileV1`,
+				Description: `Array of RequestApplicationPolicyCreateApplicationPolicyQueuingProfile`,
 				Type:        schema.TypeList,
 				Optional:    true,
 				Computed:    true,
@@ -628,16 +628,16 @@ func resourceAppPolicyQueuingProfileCreate(ctx context.Context, d *schema.Resour
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters.0.payload"))
-	request1 := expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1(ctx, "parameters.0", d)
+	request1 := expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfile(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vID := resourceItem["id"]
 	vvID := interfaceToString(vID)
 	vName := resourceItem["name"]
 	vvName := interfaceToString(vName)
-	queryParamImport := catalystcentersdkgo.GetApplicationPolicyQueuingProfileV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetApplicationPolicyQueuingProfileQueryParams{}
 	queryParamImport.Name = vvName
-	item2, err := searchApplicationPolicyGetApplicationPolicyQueuingProfileV1(m, queryParamImport, vvID)
+	item2, err := searchApplicationPolicyGetApplicationPolicyQueuingProfile(m, queryParamImport, vvID)
 	if err == nil && item2 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["name"] = vvName
@@ -645,20 +645,20 @@ func resourceAppPolicyQueuingProfileCreate(ctx context.Context, d *schema.Resour
 		d.SetId(joinResourceID(resourceMap))
 		return resourceAppPolicyQueuingProfileRead(ctx, d, m)
 	}
-	resp1, restyResp1, err := client.ApplicationPolicy.CreateApplicationPolicyQueuingProfileV1(request1)
+	resp1, restyResp1, err := client.ApplicationPolicy.CreateApplicationPolicyQueuingProfile(request1)
 	if err != nil || resp1 == nil {
 		if restyResp1 != nil {
 			diags = append(diags, diagErrorWithResponse(
-				"Failure when executing CreateApplicationPolicyQueuingProfileV1", err, restyResp1.String()))
+				"Failure when executing CreateApplicationPolicyQueuingProfile", err, restyResp1.String()))
 			return diags
 		}
 		diags = append(diags, diagError(
-			"Failure when executing CreateApplicationPolicyQueuingProfileV1", err))
+			"Failure when executing CreateApplicationPolicyQueuingProfile", err))
 		return diags
 	}
 	if resp1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing CreateApplicationPolicyQueuingProfileV1", err))
+			"Failure when executing CreateApplicationPolicyQueuingProfile", err))
 		return diags
 	}
 	taskId := resp1.Response.TaskID
@@ -680,17 +680,17 @@ func resourceAppPolicyQueuingProfileCreate(ctx context.Context, d *schema.Resour
 			errorMsg := response2.Response.Progress + "Failure Reason: " + response2.Response.FailureReason
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing CreateApplicationPolicyQueuingProfileV1", err1))
+				"Failure when executing CreateApplicationPolicyQueuingProfile", err1))
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetApplicationPolicyQueuingProfileV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetApplicationPolicyQueuingProfileQueryParams{}
 	queryParamValidate.Name = vvName
-	item3, err := searchApplicationPolicyGetApplicationPolicyQueuingProfileV1(m, queryParamValidate, vvID)
+	item3, err := searchApplicationPolicyGetApplicationPolicyQueuingProfile(m, queryParamValidate, vvID)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing CreateApplicationPolicyQueuingProfileV1", err,
-			"Failure at CreateApplicationPolicyQueuingProfileV1, unexpected response", ""))
+			"Failure when executing CreateApplicationPolicyQueuingProfile", err,
+			"Failure at CreateApplicationPolicyQueuingProfile, unexpected response", ""))
 		return diags
 	}
 
@@ -711,22 +711,22 @@ func resourceAppPolicyQueuingProfileRead(ctx context.Context, d *schema.Resource
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetApplicationPolicyQueuingProfileV1")
-		queryParams1 := catalystcentersdkgo.GetApplicationPolicyQueuingProfileV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetApplicationPolicyQueuingProfile")
+		queryParams1 := catalystcentersdkgo.GetApplicationPolicyQueuingProfileQueryParams{}
 		queryParams1.Name = vvName
-		item1, err := searchApplicationPolicyGetApplicationPolicyQueuingProfileV1(m, queryParams1, vvID)
+		item1, err := searchApplicationPolicyGetApplicationPolicyQueuingProfile(m, queryParams1, vvID)
 		if err != nil || item1 == nil {
 			d.SetId("")
 			return diags
 		}
 		// Review flatten function used
-		items := []catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileV1Response{
+		items := []catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileResponse{
 			*item1,
 		}
-		vItem1 := flattenApplicationPolicyGetApplicationPolicyQueuingProfileV1Items(&items)
+		vItem1 := flattenApplicationPolicyGetApplicationPolicyQueuingProfileItems(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetApplicationPolicyQueuingProfileV1 search response",
+				"Failure when setting GetApplicationPolicyQueuingProfile search response",
 				err))
 			return diags
 		}
@@ -743,7 +743,7 @@ func resourceAppPolicyQueuingProfileUpdate(ctx context.Context, d *schema.Resour
 	resourceMap := separateResourceID(resourceID)
 	vID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1(ctx, "parameters.0", d)
+		request1 := expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfile(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		if request1 != nil && len(*request1) > 0 {
 			req := *request1
@@ -858,9 +858,10 @@ func resourceAppPolicyQueuingProfileDelete(ctx context.Context, d *schema.Resour
 
 	return diags
 }
-func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyCreateApplicationPolicyQueuingProfileV1 {
-	request := catalystcentersdkgo.RequestApplicationPolicyCreateApplicationPolicyQueuingProfileV1{}
-	if v := expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1ItemArray(ctx, key+".payload", d); v != nil {
+
+func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyCreateApplicationPolicyQueuingProfile {
+	request := catalystcentersdkgo.RequestApplicationPolicyCreateApplicationPolicyQueuingProfile{}
+	if v := expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -869,8 +870,8 @@ func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1
 	return &request
 }
 
-func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileV1 {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileV1{}
+func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfile {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfile{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -881,7 +882,7 @@ func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -892,8 +893,8 @@ func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1
 	return &request
 }
 
-func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileV1 {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileV1{}
+func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfile {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfile{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".description")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".description")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".description")))) {
 		request.Description = interfaceToString(v)
 	}
@@ -901,7 +902,7 @@ func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1
 		request.Name = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".clause")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".clause")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".clause")))) {
-		request.Clause = expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1ItemClauseArray(ctx, key+".clause", d)
+		request.Clause = expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileItemClauseArray(ctx, key+".clause", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -909,8 +910,8 @@ func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1
 	return &request
 }
 
-func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1ItemClauseArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileV1Clause {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileV1Clause{}
+func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileItemClauseArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileClause {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileClause{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -921,7 +922,7 @@ func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1ItemClause(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileItemClause(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -932,8 +933,8 @@ func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1
 	return &request
 }
 
-func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1ItemClause(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileV1Clause {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileV1Clause{}
+func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileItemClause(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileClause {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileClause{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".type")))) {
 		request.Type = interfaceToString(v)
 	}
@@ -941,10 +942,10 @@ func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1
 		request.IsCommonBetweenAllInterfaceSpeeds = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".interface_speed_bandwidth_clauses")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".interface_speed_bandwidth_clauses")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".interface_speed_bandwidth_clauses")))) {
-		request.InterfaceSpeedBandwidthClauses = expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1ItemClauseInterfaceSpeedBandwidthClausesArray(ctx, key+".interface_speed_bandwidth_clauses", d)
+		request.InterfaceSpeedBandwidthClauses = expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileItemClauseInterfaceSpeedBandwidthClausesArray(ctx, key+".interface_speed_bandwidth_clauses", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tc_dscp_settings")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tc_dscp_settings")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tc_dscp_settings")))) {
-		request.TcDscpSettings = expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1ItemClauseTcDscpSettingsArray(ctx, key+".tc_dscp_settings", d)
+		request.TcDscpSettings = expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileItemClauseTcDscpSettingsArray(ctx, key+".tc_dscp_settings", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -952,8 +953,8 @@ func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1
 	return &request
 }
 
-func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1ItemClauseInterfaceSpeedBandwidthClausesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileV1ClauseInterfaceSpeedBandwidthClauses {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileV1ClauseInterfaceSpeedBandwidthClauses{}
+func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileItemClauseInterfaceSpeedBandwidthClausesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileClauseInterfaceSpeedBandwidthClauses {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileClauseInterfaceSpeedBandwidthClauses{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -964,7 +965,7 @@ func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1ItemClauseInterfaceSpeedBandwidthClauses(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileItemClauseInterfaceSpeedBandwidthClauses(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -975,13 +976,13 @@ func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1
 	return &request
 }
 
-func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1ItemClauseInterfaceSpeedBandwidthClauses(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileV1ClauseInterfaceSpeedBandwidthClauses {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileV1ClauseInterfaceSpeedBandwidthClauses{}
+func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileItemClauseInterfaceSpeedBandwidthClauses(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileClauseInterfaceSpeedBandwidthClauses {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileClauseInterfaceSpeedBandwidthClauses{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".interface_speed")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".interface_speed")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".interface_speed")))) {
 		request.InterfaceSpeed = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tc_bandwidth_settings")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tc_bandwidth_settings")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tc_bandwidth_settings")))) {
-		request.TcBandwidthSettings = expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1ItemClauseInterfaceSpeedBandwidthClausesTcBandwidthSettingsArray(ctx, key+".tc_bandwidth_settings", d)
+		request.TcBandwidthSettings = expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileItemClauseInterfaceSpeedBandwidthClausesTcBandwidthSettingsArray(ctx, key+".tc_bandwidth_settings", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -989,8 +990,8 @@ func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1
 	return &request
 }
 
-func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1ItemClauseInterfaceSpeedBandwidthClausesTcBandwidthSettingsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileV1ClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileV1ClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings{}
+func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileItemClauseInterfaceSpeedBandwidthClausesTcBandwidthSettingsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1001,7 +1002,7 @@ func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1ItemClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileItemClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1012,8 +1013,8 @@ func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1
 	return &request
 }
 
-func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1ItemClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileV1ClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileV1ClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings{}
+func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileItemClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".bandwidth_percentage")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".bandwidth_percentage")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".bandwidth_percentage")))) {
 		request.BandwidthPercentage = interfaceToIntPtr(v)
 	}
@@ -1026,8 +1027,8 @@ func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1
 	return &request
 }
 
-func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1ItemClauseTcDscpSettingsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileV1ClauseTcDscpSettings {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileV1ClauseTcDscpSettings{}
+func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileItemClauseTcDscpSettingsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileClauseTcDscpSettings {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileClauseTcDscpSettings{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1038,7 +1039,7 @@ func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1ItemClauseTcDscpSettings(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileItemClauseTcDscpSettings(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1049,8 +1050,8 @@ func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1
 	return &request
 }
 
-func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1ItemClauseTcDscpSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileV1ClauseTcDscpSettings {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileV1ClauseTcDscpSettings{}
+func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileItemClauseTcDscpSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileClauseTcDscpSettings {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyCreateApplicationPolicyQueuingProfileClauseTcDscpSettings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".dscp")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".dscp")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".dscp")))) {
 		request.Dscp = interfaceToString(v)
 	}
@@ -1063,9 +1064,9 @@ func expandRequestAppPolicyQueuingProfileCreateApplicationPolicyQueuingProfileV1
 	return &request
 }
 
-func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyUpdateApplicationPolicyQueuingProfileV1 {
-	request := catalystcentersdkgo.RequestApplicationPolicyUpdateApplicationPolicyQueuingProfileV1{}
-	if v := expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyUpdateApplicationPolicyQueuingProfile {
+	request := catalystcentersdkgo.RequestApplicationPolicyUpdateApplicationPolicyQueuingProfile{}
+	if v := expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -1074,8 +1075,8 @@ func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1
 	return &request
 }
 
-func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileV1 {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileV1{}
+func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfile {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfile{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1086,7 +1087,7 @@ func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1097,8 +1098,8 @@ func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1
 	return &request
 }
 
-func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileV1 {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileV1{}
+func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfile {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfile{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -1109,7 +1110,7 @@ func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1
 		request.Name = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".clause")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".clause")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".clause")))) {
-		request.Clause = expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1ItemClauseArray(ctx, key+".clause", d)
+		request.Clause = expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileItemClauseArray(ctx, key+".clause", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -1117,8 +1118,8 @@ func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1
 	return &request
 }
 
-func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1ItemClauseArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileV1Clause {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileV1Clause{}
+func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileItemClauseArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileClause {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileClause{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1129,7 +1130,7 @@ func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1ItemClause(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileItemClause(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1140,8 +1141,8 @@ func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1
 	return &request
 }
 
-func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1ItemClause(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileV1Clause {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileV1Clause{}
+func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileItemClause(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileClause {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileClause{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".instance_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".instance_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".instance_id")))) {
 		request.InstanceID = interfaceToIntPtr(v)
 	}
@@ -1152,10 +1153,10 @@ func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1
 		request.IsCommonBetweenAllInterfaceSpeeds = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".interface_speed_bandwidth_clauses")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".interface_speed_bandwidth_clauses")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".interface_speed_bandwidth_clauses")))) {
-		request.InterfaceSpeedBandwidthClauses = expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1ItemClauseInterfaceSpeedBandwidthClausesArray(ctx, key+".interface_speed_bandwidth_clauses", d)
+		request.InterfaceSpeedBandwidthClauses = expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileItemClauseInterfaceSpeedBandwidthClausesArray(ctx, key+".interface_speed_bandwidth_clauses", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tc_dscp_settings")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tc_dscp_settings")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tc_dscp_settings")))) {
-		request.TcDscpSettings = expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1ItemClauseTcDscpSettingsArray(ctx, key+".tc_dscp_settings", d)
+		request.TcDscpSettings = expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileItemClauseTcDscpSettingsArray(ctx, key+".tc_dscp_settings", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -1163,8 +1164,8 @@ func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1
 	return &request
 }
 
-func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1ItemClauseInterfaceSpeedBandwidthClausesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileV1ClauseInterfaceSpeedBandwidthClauses {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileV1ClauseInterfaceSpeedBandwidthClauses{}
+func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileItemClauseInterfaceSpeedBandwidthClausesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileClauseInterfaceSpeedBandwidthClauses {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileClauseInterfaceSpeedBandwidthClauses{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1175,7 +1176,7 @@ func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1ItemClauseInterfaceSpeedBandwidthClauses(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileItemClauseInterfaceSpeedBandwidthClauses(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1186,8 +1187,8 @@ func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1
 	return &request
 }
 
-func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1ItemClauseInterfaceSpeedBandwidthClauses(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileV1ClauseInterfaceSpeedBandwidthClauses {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileV1ClauseInterfaceSpeedBandwidthClauses{}
+func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileItemClauseInterfaceSpeedBandwidthClauses(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileClauseInterfaceSpeedBandwidthClauses {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileClauseInterfaceSpeedBandwidthClauses{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".instance_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".instance_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".instance_id")))) {
 		request.InstanceID = interfaceToIntPtr(v)
 	}
@@ -1195,7 +1196,7 @@ func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1
 		request.InterfaceSpeed = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tc_bandwidth_settings")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tc_bandwidth_settings")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tc_bandwidth_settings")))) {
-		request.TcBandwidthSettings = expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1ItemClauseInterfaceSpeedBandwidthClausesTcBandwidthSettingsArray(ctx, key+".tc_bandwidth_settings", d)
+		request.TcBandwidthSettings = expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileItemClauseInterfaceSpeedBandwidthClausesTcBandwidthSettingsArray(ctx, key+".tc_bandwidth_settings", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -1203,8 +1204,8 @@ func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1
 	return &request
 }
 
-func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1ItemClauseInterfaceSpeedBandwidthClausesTcBandwidthSettingsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileV1ClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileV1ClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings{}
+func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileItemClauseInterfaceSpeedBandwidthClausesTcBandwidthSettingsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1215,7 +1216,7 @@ func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1ItemClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileItemClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1226,8 +1227,8 @@ func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1
 	return &request
 }
 
-func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1ItemClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileV1ClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileV1ClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings{}
+func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileItemClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileClauseInterfaceSpeedBandwidthClausesTcBandwidthSettings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".instance_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".instance_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".instance_id")))) {
 		request.InstanceID = interfaceToIntPtr(v)
 	}
@@ -1243,8 +1244,8 @@ func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1
 	return &request
 }
 
-func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1ItemClauseTcDscpSettingsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileV1ClauseTcDscpSettings {
-	request := []catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileV1ClauseTcDscpSettings{}
+func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileItemClauseTcDscpSettingsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileClauseTcDscpSettings {
+	request := []catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileClauseTcDscpSettings{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1255,7 +1256,7 @@ func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1ItemClauseTcDscpSettings(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileItemClauseTcDscpSettings(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1266,8 +1267,8 @@ func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1
 	return &request
 }
 
-func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1ItemClauseTcDscpSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileV1ClauseTcDscpSettings {
-	request := catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileV1ClauseTcDscpSettings{}
+func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileItemClauseTcDscpSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileClauseTcDscpSettings {
+	request := catalystcentersdkgo.RequestItemApplicationPolicyUpdateApplicationPolicyQueuingProfileClauseTcDscpSettings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".instance_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".instance_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".instance_id")))) {
 		request.InstanceID = interfaceToIntPtr(v)
 	}
@@ -1283,12 +1284,12 @@ func expandRequestAppPolicyQueuingProfileUpdateApplicationPolicyQueuingProfileV1
 	return &request
 }
 
-func searchApplicationPolicyGetApplicationPolicyQueuingProfileV1(m interface{}, queryParams catalystcentersdkgo.GetApplicationPolicyQueuingProfileV1QueryParams, vID string) (*catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileV1Response, error) {
+func searchApplicationPolicyGetApplicationPolicyQueuingProfile(m interface{}, queryParams catalystcentersdkgo.GetApplicationPolicyQueuingProfileQueryParams, vID string) (*catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileV1Response
-	var ite *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileV1
-	ite, _, err = client.ApplicationPolicy.GetApplicationPolicyQueuingProfileV1(&queryParams)
+	var foundItem *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileResponse
+	var ite *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfile
+	ite, _, err = client.ApplicationPolicy.GetApplicationPolicyQueuingProfile(&queryParams)
 	if err != nil || ite == nil {
 		return foundItem, err
 
@@ -1298,7 +1299,7 @@ func searchApplicationPolicyGetApplicationPolicyQueuingProfileV1(m interface{}, 
 	for _, item := range itemsCopy {
 		// Call get by _ method and set value to foundItem and return
 		if item.Name == queryParams.Name {
-			var getItem *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileV1Response
+			var getItem *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationPolicyQueuingProfileResponse
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

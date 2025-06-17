@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -267,7 +267,7 @@ func resourceSdaFabricDevicesCreate(ctx context.Context, d *schema.ResourceData,
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters.0.payload"))
-	request1 := expandRequestSdaFabricDevicesAddFabricDevicesV1(ctx, "parameters.0", d)
+	request1 := expandRequestSdaFabricDevicesAddFabricDevices(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vID := resourceItem["id"]
@@ -276,7 +276,7 @@ func resourceSdaFabricDevicesCreate(ctx context.Context, d *schema.ResourceData,
 	vvNetworkDevice := interfaceToString(vNetworkDevice)
 	vFabricID := resourceItem["fabric_id"]
 	vvFabricID := interfaceToString(vFabricID)
-	queryParamImport := catalystcentersdkgo.GetFabricDevicesV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetFabricDevicesQueryParams{}
 	queryParamImport.FabricID = vvFabricID
 	queryParamImport.NetworkDeviceID = vvNetworkDevice
 	item2, err := searchSdaGetFabricDevices(m, queryParamImport, vvID)
@@ -327,7 +327,7 @@ func resourceSdaFabricDevicesCreate(ctx context.Context, d *schema.ResourceData,
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetFabricDevicesV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetFabricDevicesQueryParams{}
 	queryParamValidate.FabricID = vvFabricID
 	item3, err := searchSdaGetFabricDevices(m, queryParamValidate, vvID)
 	if err != nil || item3 == nil {
@@ -359,7 +359,7 @@ func resourceSdaFabricDevicesRead(ctx context.Context, d *schema.ResourceData, m
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetFabricDevices")
-		queryParams1 := catalystcentersdkgo.GetFabricDevicesV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetFabricDevicesQueryParams{}
 
 		queryParams1.FabricID = vFabricID
 		queryParams1.NetworkDeviceID = vNetworkDevice
@@ -370,11 +370,11 @@ func resourceSdaFabricDevicesRead(ctx context.Context, d *schema.ResourceData, m
 			return diags
 		}
 
-		items := []catalystcentersdkgo.ResponseSdaGetFabricDevicesV1Response{
+		items := []catalystcentersdkgo.ResponseSdaGetFabricDevicesResponse{
 			*item1,
 		}
 		// Review flatten function used
-		vItem1 := flattenSdaGetFabricDevicesV1Items(&items)
+		vItem1 := flattenSdaGetFabricDevicesItems(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetFabricDevices search response",
@@ -395,7 +395,7 @@ func resourceSdaFabricDevicesUpdate(ctx context.Context, d *schema.ResourceData,
 
 	vID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestSdaFabricDevicesUpdateFabricDevicesV1(ctx, "parameters.0", d)
+		request1 := expandRequestSdaFabricDevicesUpdateFabricDevices(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		if request1 != nil && len(*request1) > 0 {
 			req := *request1
@@ -512,9 +512,10 @@ func resourceSdaFabricDevicesDelete(ctx context.Context, d *schema.ResourceData,
 
 	return diags
 }
-func expandRequestSdaFabricDevicesAddFabricDevicesV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddFabricDevicesV1 {
-	request := catalystcentersdkgo.RequestSdaAddFabricDevicesV1{}
-	if v := expandRequestSdaFabricDevicesAddFabricDevicesV1ItemArray(ctx, key+".payload", d); v != nil {
+
+func expandRequestSdaFabricDevicesAddFabricDevices(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddFabricDevices {
+	request := catalystcentersdkgo.RequestSdaAddFabricDevices{}
+	if v := expandRequestSdaFabricDevicesAddFabricDevicesItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -523,8 +524,8 @@ func expandRequestSdaFabricDevicesAddFabricDevicesV1(ctx context.Context, key st
 	return &request
 }
 
-func expandRequestSdaFabricDevicesAddFabricDevicesV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddFabricDevicesV1 {
-	request := []catalystcentersdkgo.RequestItemSdaAddFabricDevicesV1{}
+func expandRequestSdaFabricDevicesAddFabricDevicesItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddFabricDevices {
+	request := []catalystcentersdkgo.RequestItemSdaAddFabricDevices{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -535,7 +536,7 @@ func expandRequestSdaFabricDevicesAddFabricDevicesV1ItemArray(ctx context.Contex
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaFabricDevicesAddFabricDevicesV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaFabricDevicesAddFabricDevicesItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -546,8 +547,8 @@ func expandRequestSdaFabricDevicesAddFabricDevicesV1ItemArray(ctx context.Contex
 	return &request
 }
 
-func expandRequestSdaFabricDevicesAddFabricDevicesV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddFabricDevicesV1 {
-	request := catalystcentersdkgo.RequestItemSdaAddFabricDevicesV1{}
+func expandRequestSdaFabricDevicesAddFabricDevicesItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddFabricDevices {
+	request := catalystcentersdkgo.RequestItemSdaAddFabricDevices{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".network_device_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".network_device_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".network_device_id")))) {
 		request.NetworkDeviceID = interfaceToString(v)
 	}
@@ -558,7 +559,7 @@ func expandRequestSdaFabricDevicesAddFabricDevicesV1Item(ctx context.Context, ke
 		request.DeviceRoles = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".border_device_settings")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".border_device_settings")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".border_device_settings")))) {
-		request.BorderDeviceSettings = expandRequestSdaFabricDevicesAddFabricDevicesV1ItemBorderDeviceSettings(ctx, key+".border_device_settings.0", d)
+		request.BorderDeviceSettings = expandRequestSdaFabricDevicesAddFabricDevicesItemBorderDeviceSettings(ctx, key+".border_device_settings.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -566,13 +567,13 @@ func expandRequestSdaFabricDevicesAddFabricDevicesV1Item(ctx context.Context, ke
 	return &request
 }
 
-func expandRequestSdaFabricDevicesAddFabricDevicesV1ItemBorderDeviceSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddFabricDevicesV1BorderDeviceSettings {
-	request := catalystcentersdkgo.RequestItemSdaAddFabricDevicesV1BorderDeviceSettings{}
+func expandRequestSdaFabricDevicesAddFabricDevicesItemBorderDeviceSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddFabricDevicesBorderDeviceSettings {
+	request := catalystcentersdkgo.RequestItemSdaAddFabricDevicesBorderDeviceSettings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".border_types")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".border_types")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".border_types")))) {
 		request.BorderTypes = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".layer3_settings")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".layer3_settings")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".layer3_settings")))) {
-		request.Layer3Settings = expandRequestSdaFabricDevicesAddFabricDevicesV1ItemBorderDeviceSettingsLayer3Settings(ctx, key+".layer3_settings.0", d)
+		request.Layer3Settings = expandRequestSdaFabricDevicesAddFabricDevicesItemBorderDeviceSettingsLayer3Settings(ctx, key+".layer3_settings.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -580,8 +581,8 @@ func expandRequestSdaFabricDevicesAddFabricDevicesV1ItemBorderDeviceSettings(ctx
 	return &request
 }
 
-func expandRequestSdaFabricDevicesAddFabricDevicesV1ItemBorderDeviceSettingsLayer3Settings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddFabricDevicesV1BorderDeviceSettingsLayer3Settings {
-	request := catalystcentersdkgo.RequestItemSdaAddFabricDevicesV1BorderDeviceSettingsLayer3Settings{}
+func expandRequestSdaFabricDevicesAddFabricDevicesItemBorderDeviceSettingsLayer3Settings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddFabricDevicesBorderDeviceSettingsLayer3Settings {
+	request := catalystcentersdkgo.RequestItemSdaAddFabricDevicesBorderDeviceSettingsLayer3Settings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".local_autonomous_system_number")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".local_autonomous_system_number")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".local_autonomous_system_number")))) {
 		request.LocalAutonomousSystemNumber = interfaceToString(v)
 	}
@@ -603,9 +604,9 @@ func expandRequestSdaFabricDevicesAddFabricDevicesV1ItemBorderDeviceSettingsLaye
 	return &request
 }
 
-func expandRequestSdaFabricDevicesUpdateFabricDevicesV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateFabricDevicesV1 {
-	request := catalystcentersdkgo.RequestSdaUpdateFabricDevicesV1{}
-	if v := expandRequestSdaFabricDevicesUpdateFabricDevicesV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaFabricDevicesUpdateFabricDevices(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateFabricDevices {
+	request := catalystcentersdkgo.RequestSdaUpdateFabricDevices{}
+	if v := expandRequestSdaFabricDevicesUpdateFabricDevicesItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -614,8 +615,8 @@ func expandRequestSdaFabricDevicesUpdateFabricDevicesV1(ctx context.Context, key
 	return &request
 }
 
-func expandRequestSdaFabricDevicesUpdateFabricDevicesV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateFabricDevicesV1 {
-	request := []catalystcentersdkgo.RequestItemSdaUpdateFabricDevicesV1{}
+func expandRequestSdaFabricDevicesUpdateFabricDevicesItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateFabricDevices {
+	request := []catalystcentersdkgo.RequestItemSdaUpdateFabricDevices{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -626,7 +627,7 @@ func expandRequestSdaFabricDevicesUpdateFabricDevicesV1ItemArray(ctx context.Con
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaFabricDevicesUpdateFabricDevicesV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaFabricDevicesUpdateFabricDevicesItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -637,8 +638,8 @@ func expandRequestSdaFabricDevicesUpdateFabricDevicesV1ItemArray(ctx context.Con
 	return &request
 }
 
-func expandRequestSdaFabricDevicesUpdateFabricDevicesV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateFabricDevicesV1 {
-	request := catalystcentersdkgo.RequestItemSdaUpdateFabricDevicesV1{}
+func expandRequestSdaFabricDevicesUpdateFabricDevicesItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateFabricDevices {
+	request := catalystcentersdkgo.RequestItemSdaUpdateFabricDevices{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -652,7 +653,7 @@ func expandRequestSdaFabricDevicesUpdateFabricDevicesV1Item(ctx context.Context,
 		request.DeviceRoles = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".border_device_settings")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".border_device_settings")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".border_device_settings")))) {
-		request.BorderDeviceSettings = expandRequestSdaFabricDevicesUpdateFabricDevicesV1ItemBorderDeviceSettings(ctx, key+".border_device_settings.0", d)
+		request.BorderDeviceSettings = expandRequestSdaFabricDevicesUpdateFabricDevicesItemBorderDeviceSettings(ctx, key+".border_device_settings.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -660,13 +661,13 @@ func expandRequestSdaFabricDevicesUpdateFabricDevicesV1Item(ctx context.Context,
 	return &request
 }
 
-func expandRequestSdaFabricDevicesUpdateFabricDevicesV1ItemBorderDeviceSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateFabricDevicesV1BorderDeviceSettings {
-	request := catalystcentersdkgo.RequestItemSdaUpdateFabricDevicesV1BorderDeviceSettings{}
+func expandRequestSdaFabricDevicesUpdateFabricDevicesItemBorderDeviceSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateFabricDevicesBorderDeviceSettings {
+	request := catalystcentersdkgo.RequestItemSdaUpdateFabricDevicesBorderDeviceSettings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".border_types")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".border_types")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".border_types")))) {
 		request.BorderTypes = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".layer3_settings")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".layer3_settings")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".layer3_settings")))) {
-		request.Layer3Settings = expandRequestSdaFabricDevicesUpdateFabricDevicesV1ItemBorderDeviceSettingsLayer3Settings(ctx, key+".layer3_settings.0", d)
+		request.Layer3Settings = expandRequestSdaFabricDevicesUpdateFabricDevicesItemBorderDeviceSettingsLayer3Settings(ctx, key+".layer3_settings.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -674,8 +675,8 @@ func expandRequestSdaFabricDevicesUpdateFabricDevicesV1ItemBorderDeviceSettings(
 	return &request
 }
 
-func expandRequestSdaFabricDevicesUpdateFabricDevicesV1ItemBorderDeviceSettingsLayer3Settings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateFabricDevicesV1BorderDeviceSettingsLayer3Settings {
-	request := catalystcentersdkgo.RequestItemSdaUpdateFabricDevicesV1BorderDeviceSettingsLayer3Settings{}
+func expandRequestSdaFabricDevicesUpdateFabricDevicesItemBorderDeviceSettingsLayer3Settings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateFabricDevicesBorderDeviceSettingsLayer3Settings {
+	request := catalystcentersdkgo.RequestItemSdaUpdateFabricDevicesBorderDeviceSettingsLayer3Settings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".local_autonomous_system_number")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".local_autonomous_system_number")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".local_autonomous_system_number")))) {
 		request.LocalAutonomousSystemNumber = interfaceToString(v)
 	}
@@ -697,11 +698,11 @@ func expandRequestSdaFabricDevicesUpdateFabricDevicesV1ItemBorderDeviceSettingsL
 	return &request
 }
 
-func searchSdaGetFabricDevices(m interface{}, queryParams catalystcentersdkgo.GetFabricDevicesV1QueryParams, vID string) (*catalystcentersdkgo.ResponseSdaGetFabricDevicesV1Response, error) {
+func searchSdaGetFabricDevices(m interface{}, queryParams catalystcentersdkgo.GetFabricDevicesQueryParams, vID string) (*catalystcentersdkgo.ResponseSdaGetFabricDevicesResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseSdaGetFabricDevicesV1Response
-	var ite *catalystcentersdkgo.ResponseSdaGetFabricDevicesV1
+	var foundItem *catalystcentersdkgo.ResponseSdaGetFabricDevicesResponse
+	var ite *catalystcentersdkgo.ResponseSdaGetFabricDevices
 
 	ite, _, err = client.Sda.GetFabricDevices(&queryParams)
 	if err != nil || ite == nil {

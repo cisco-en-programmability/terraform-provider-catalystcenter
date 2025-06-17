@@ -33,7 +33,7 @@ output "catalystcenter_ipam_site_ip_address_pools_id_example" {
 
 ### Required
 
-- `id` (String) id path parameter. The id of the IP address subpool to retrieve.
+- `id` (String) id path parameter. The **id** of the IP address subpool to retrieve.
 
 ### Read-Only
 

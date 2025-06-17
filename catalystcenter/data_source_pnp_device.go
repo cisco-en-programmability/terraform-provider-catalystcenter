@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -41,9 +41,9 @@ supports Pagination and Sorting.
 				Optional: true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter. Limits number of results
+				Description: `limit query parameter. The number of records to show for this page. The minimum and maximum values are 0 and 500, respectively
 `,
-				Type:     schema.TypeInt,
+				Type:     schema.TypeFloat,
 				Optional: true,
 			},
 			"mac_address": &schema.Schema{
@@ -62,9 +62,9 @@ supports Pagination and Sorting.
 				},
 			},
 			"offset": &schema.Schema{
-				Description: `offset query parameter. Index of first result
+				Description: `offset query parameter. The first record to show for this page; the first record is numbered 0. The Minimum value is 0
 `,
-				Type:     schema.TypeInt,
+				Type:     schema.TypeFloat,
 				Optional: true,
 			},
 			"onb_state": &schema.Schema{
@@ -3544,14 +3544,14 @@ func dataSourcePnpDeviceRead(ctx context.Context, d *schema.ResourceData, m inte
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceListSiteManagementV1")
-		queryParams1 := catalystcentersdkgo.GetDeviceListSiteManagementV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetDeviceListSiteManagement")
+		queryParams1 := catalystcentersdkgo.GetDeviceListSiteManagementQueryParams{}
 
 		if okLimit {
-			queryParams1.Limit = vLimit.(float64)
+			queryParams1.Limit = vLimit.(int)
 		}
 		if okOffset {
-			queryParams1.Offset = vOffset.(float64)
+			queryParams1.Offset = vOffset.(int)
 		}
 		if okSort {
 			queryParams1.Sort = interfaceToSliceString(vSort)
@@ -3602,24 +3602,38 @@ func dataSourcePnpDeviceRead(ctx context.Context, d *schema.ResourceData, m inte
 			queryParams1.SiteName = vSiteName.(string)
 		}
 
-		response1, restyResp1, err := client.DeviceOnboardingPnp.GetDeviceListSiteManagementV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.DeviceOnboardingPnp.GetDeviceListSiteManagement(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceListSiteManagementV1", err,
-				"Failure at GetDeviceListSiteManagementV1, unexpected response", ""))
+				"Failure when executing 2 GetDeviceListSiteManagement", err,
+				"Failure at GetDeviceListSiteManagement, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetDeviceListSiteManagement", err,
+				"Failure at GetDeviceListSiteManagement, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDeviceOnboardingPnpGetDeviceListSiteManagementItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceListSiteManagementV1 response",
+				"Failure when setting GetDeviceListSiteManagement response",
 				err))
 			return diags
 		}
@@ -3629,27 +3643,41 @@ func dataSourcePnpDeviceRead(ctx context.Context, d *schema.ResourceData, m inte
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetDeviceByIDV1")
+		log.Printf("[DEBUG] Selected method: GetDeviceByID")
 		vvID := vID.(string)
 
-		response2, restyResp2, err := client.DeviceOnboardingPnp.GetDeviceByIDV1(vvID)
+		// has_unknown_response: None
+
+		response2, restyResp2, err := client.DeviceOnboardingPnp.GetDeviceByID(vvID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceByIDV1", err,
-				"Failure at GetDeviceByIDV1, unexpected response", ""))
+				"Failure when executing 2 GetDeviceByID", err,
+				"Failure at GetDeviceByID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenDeviceOnboardingPnpGetDeviceByIDV1Item(response2)
+		if err != nil || response2 == nil {
+			if restyResp2 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetDeviceByID", err,
+				"Failure at GetDeviceByID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
+
+		vItem2 := flattenDeviceOnboardingPnpGetDeviceByIDItem(response2)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceByIDV1 response",
+				"Failure when setting GetDeviceByID response",
 				err))
 			return diags
 		}
@@ -3661,21 +3689,21 @@ func dataSourcePnpDeviceRead(ctx context.Context, d *schema.ResourceData, m inte
 	return diags
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1Items(items *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceListSiteManagementV1) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItems(items *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceListSiteManagement) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["device_info"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfo(item.DeviceInfo)
-		respItem["system_reset_workflow"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsSystemResetWorkflow(item.SystemResetWorkflow)
-		respItem["system_workflow"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsSystemWorkflow(item.SystemWorkflow)
-		respItem["workflow"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsWorkflow(item.Workflow)
-		respItem["run_summary_list"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsRunSummaryList(item.RunSummaryList)
-		respItem["workflow_parameters"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsWorkflowParameters(item.WorkflowParameters)
-		respItem["day_zero_config"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDayZeroConfig(item.DayZeroConfig)
-		respItem["day_zero_config_preview"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDayZeroConfigPreview(item.DayZeroConfigPreview)
+		respItem["device_info"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfo(item.DeviceInfo)
+		respItem["system_reset_workflow"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsSystemResetWorkflow(item.SystemResetWorkflow)
+		respItem["system_workflow"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsSystemWorkflow(item.SystemWorkflow)
+		respItem["workflow"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsWorkflow(item.Workflow)
+		respItem["run_summary_list"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsRunSummaryList(item.RunSummaryList)
+		respItem["workflow_parameters"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsWorkflowParameters(item.WorkflowParameters)
+		respItem["day_zero_config"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDayZeroConfig(item.DayZeroConfig)
+		respItem["day_zero_config_preview"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDayZeroConfigPreview(item.DayZeroConfigPreview)
 		respItem["version"] = item.Version
 		respItem["tenant_id"] = item.TenantID
 		respItems = append(respItems, respItem)
@@ -3683,7 +3711,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1Items(items *catalys
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfo(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1DeviceInfo) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfo(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementDeviceInfo) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -3693,7 +3721,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfo(item
 	respItem["stack"] = boolPtrToString(item.Stack)
 	respItem["mode"] = item.Mode
 	respItem["state"] = item.State
-	respItem["location"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoLocation(item.Location)
+	respItem["location"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoLocation(item.Location)
 	respItem["description"] = item.Description
 	respItem["onb_state"] = item.OnbState
 	respItem["authenticated_mic_number"] = item.AuthenticatedMicNumber
@@ -3714,25 +3742,25 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfo(item
 	respItem["device_type"] = item.DeviceType
 	respItem["agent_type"] = item.AgentType
 	respItem["image_version"] = item.ImageVersion
-	respItem["file_system_list"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoFileSystemList(item.FileSystemList)
-	respItem["pnp_profile_list"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPnpProfileList(item.PnpProfileList)
+	respItem["file_system_list"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoFileSystemList(item.FileSystemList)
+	respItem["pnp_profile_list"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoPnpProfileList(item.PnpProfileList)
 	respItem["image_file"] = item.ImageFile
-	respItem["http_headers"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoHTTPHeaders(item.HTTPHeaders)
-	respItem["neighbor_links"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoNeighborLinks(item.NeighborLinks)
+	respItem["http_headers"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoHTTPHeaders(item.HTTPHeaders)
+	respItem["neighbor_links"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoNeighborLinks(item.NeighborLinks)
 	respItem["last_sync_time"] = item.LastSyncTime
-	respItem["ip_interfaces"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoIPInterfaces(item.IPInterfaces)
+	respItem["ip_interfaces"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoIPInterfaces(item.IPInterfaces)
 	respItem["hostname"] = item.Hostname
 	respItem["auth_status"] = item.AuthStatus
-	respItem["stack_info"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoStackInfo(item.StackInfo)
+	respItem["stack_info"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoStackInfo(item.StackInfo)
 	respItem["reload_requested"] = boolPtrToString(item.ReloadRequested)
 	respItem["added_on"] = item.AddedOn
 	respItem["site_id"] = item.SiteID
-	respItem["aaa_credentials"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoAAACredentials(item.AAACredentials)
+	respItem["aaa_credentials"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoAAACredentials(item.AAACredentials)
 	respItem["user_mic_numbers"] = item.UserMicNumbers
 	respItem["user_sudi_serial_nos"] = item.UserSudiSerialNos
 	respItem["addn_mac_addrs"] = item.AddnMacAddrs
-	respItem["pre_workflow_cli_ouputs"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPreWorkflowCliOuputs(item.PreWorkflowCliOuputs)
-	respItem["tags"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoTags(item.Tags)
+	respItem["pre_workflow_cli_ouputs"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoPreWorkflowCliOuputs(item.PreWorkflowCliOuputs)
+	respItem["tags"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoTags(item.Tags)
 	respItem["sudi_required"] = boolPtrToString(item.SudiRequired)
 	respItem["smart_account_id"] = item.SmartAccountID
 	respItem["virtual_account_id"] = item.VirtualAccountID
@@ -3746,7 +3774,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfo(item
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoLocation(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1DeviceInfoLocation) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoLocation(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementDeviceInfoLocation) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -3763,7 +3791,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoLocat
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoFileSystemList(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1DeviceInfoFileSystemList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoFileSystemList(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementDeviceInfoFileSystemList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -3781,7 +3809,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoFileS
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPnpProfileList(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1DeviceInfoPnpProfileList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoPnpProfileList(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementDeviceInfoPnpProfileList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -3791,22 +3819,22 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPnpPr
 		respItem["profile_name"] = item.ProfileName
 		respItem["discovery_created"] = boolPtrToString(item.DiscoveryCreated)
 		respItem["created_by"] = item.CreatedBy
-		respItem["primary_endpoint"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPnpProfileListPrimaryEndpoint(item.PrimaryEndpoint)
-		respItem["secondary_endpoint"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPnpProfileListSecondaryEndpoint(item.SecondaryEndpoint)
+		respItem["primary_endpoint"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoPnpProfileListPrimaryEndpoint(item.PrimaryEndpoint)
+		respItem["secondary_endpoint"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoPnpProfileListSecondaryEndpoint(item.SecondaryEndpoint)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPnpProfileListPrimaryEndpoint(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1DeviceInfoPnpProfileListPrimaryEndpoint) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoPnpProfileListPrimaryEndpoint(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementDeviceInfoPnpProfileListPrimaryEndpoint) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["port"] = item.Port
 	respItem["protocol"] = item.Protocol
-	respItem["ipv4_address"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPnpProfileListPrimaryEndpointIPv4Address(item.IPv4Address)
-	respItem["ipv6_address"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPnpProfileListPrimaryEndpointIPv6Address(item.IPv6Address)
+	respItem["ipv4_address"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoPnpProfileListPrimaryEndpointIPv4Address(item.IPv4Address)
+	respItem["ipv6_address"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoPnpProfileListPrimaryEndpointIPv6Address(item.IPv6Address)
 	respItem["fqdn"] = item.Fqdn
 	respItem["certificate"] = item.Certificate
 
@@ -3816,7 +3844,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPnpPr
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPnpProfileListPrimaryEndpointIPv4Address(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1DeviceInfoPnpProfileListPrimaryEndpointIPv4Address) interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoPnpProfileListPrimaryEndpointIPv4Address(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementDeviceInfoPnpProfileListPrimaryEndpointIPv4Address) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -3826,7 +3854,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPnpPr
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPnpProfileListPrimaryEndpointIPv6Address(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1DeviceInfoPnpProfileListPrimaryEndpointIPv6Address) interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoPnpProfileListPrimaryEndpointIPv6Address(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementDeviceInfoPnpProfileListPrimaryEndpointIPv6Address) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -3836,15 +3864,15 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPnpPr
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPnpProfileListSecondaryEndpoint(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1DeviceInfoPnpProfileListSecondaryEndpoint) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoPnpProfileListSecondaryEndpoint(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementDeviceInfoPnpProfileListSecondaryEndpoint) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["port"] = item.Port
 	respItem["protocol"] = item.Protocol
-	respItem["ipv4_address"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPnpProfileListSecondaryEndpointIPv4Address(item.IPv4Address)
-	respItem["ipv6_address"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPnpProfileListSecondaryEndpointIPv6Address(item.IPv6Address)
+	respItem["ipv4_address"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoPnpProfileListSecondaryEndpointIPv4Address(item.IPv4Address)
+	respItem["ipv6_address"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoPnpProfileListSecondaryEndpointIPv6Address(item.IPv6Address)
 	respItem["fqdn"] = item.Fqdn
 	respItem["certificate"] = item.Certificate
 
@@ -3854,7 +3882,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPnpPr
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPnpProfileListSecondaryEndpointIPv4Address(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1DeviceInfoPnpProfileListSecondaryEndpointIPv4Address) interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoPnpProfileListSecondaryEndpointIPv4Address(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementDeviceInfoPnpProfileListSecondaryEndpointIPv4Address) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -3864,7 +3892,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPnpPr
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPnpProfileListSecondaryEndpointIPv6Address(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1DeviceInfoPnpProfileListSecondaryEndpointIPv6Address) interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoPnpProfileListSecondaryEndpointIPv6Address(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementDeviceInfoPnpProfileListSecondaryEndpointIPv6Address) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -3874,7 +3902,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPnpPr
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoHTTPHeaders(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1DeviceInfoHTTPHeaders) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoHTTPHeaders(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementDeviceInfoHTTPHeaders) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -3888,7 +3916,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoHTTPH
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoNeighborLinks(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1DeviceInfoNeighborLinks) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoNeighborLinks(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementDeviceInfoNeighborLinks) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -3909,7 +3937,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoNeigh
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoIPInterfaces(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1DeviceInfoIPInterfaces) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoIPInterfaces(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementDeviceInfoIPInterfaces) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -3918,15 +3946,15 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoIPInt
 		respItem := make(map[string]interface{})
 		respItem["status"] = item.Status
 		respItem["mac_address"] = item.MacAddress
-		respItem["ipv4_address"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoIPInterfacesIPv4Address(item.IPv4Address)
-		respItem["ipv6_address_list"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoIPInterfacesIPv6AddressList(item.IPv6AddressList)
+		respItem["ipv4_address"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoIPInterfacesIPv4Address(item.IPv4Address)
+		respItem["ipv6_address_list"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoIPInterfacesIPv6AddressList(item.IPv6AddressList)
 		respItem["name"] = item.Name
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoIPInterfacesIPv4Address(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1DeviceInfoIPInterfacesIPv4Address) interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoIPInterfacesIPv4Address(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementDeviceInfoIPInterfacesIPv4Address) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -3936,7 +3964,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoIPInt
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoIPInterfacesIPv6AddressList(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1DeviceInfoIPInterfacesIPv6AddressList) []interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoIPInterfacesIPv6AddressList(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementDeviceInfoIPInterfacesIPv6AddressList) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -3948,14 +3976,14 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoIPInt
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoStackInfo(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1DeviceInfoStackInfo) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoStackInfo(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementDeviceInfoStackInfo) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["supports_stack_workflows"] = boolPtrToString(item.SupportsStackWorkflows)
 	respItem["is_full_ring"] = boolPtrToString(item.IsFullRing)
-	respItem["stack_member_list"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoStackInfoStackMemberList(item.StackMemberList)
+	respItem["stack_member_list"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoStackInfoStackMemberList(item.StackMemberList)
 	respItem["stack_ring_protocol"] = item.StackRingProtocol
 	respItem["valid_license_levels"] = item.ValidLicenseLevels
 	respItem["total_member_count"] = item.TotalMemberCount
@@ -3966,7 +3994,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoStack
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoStackInfoStackMemberList(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1DeviceInfoStackInfoStackMemberList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoStackInfoStackMemberList(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementDeviceInfoStackInfoStackMemberList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -3990,7 +4018,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoStack
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoAAACredentials(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1DeviceInfoAAACredentials) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoAAACredentials(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementDeviceInfoAAACredentials) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4004,7 +4032,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoAAACr
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPreWorkflowCliOuputs(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1DeviceInfoPreWorkflowCliOuputs) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoPreWorkflowCliOuputs(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementDeviceInfoPreWorkflowCliOuputs) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4018,7 +4046,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoPreWo
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoTags(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1DeviceInfoTags) interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDeviceInfoTags(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementDeviceInfoTags) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4028,7 +4056,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDeviceInfoTags(
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsSystemResetWorkflow(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1SystemResetWorkflow) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsSystemResetWorkflow(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementSystemResetWorkflow) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4041,7 +4069,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsSystemResetWork
 	respItem["image_id"] = item.ImageID
 	respItem["curr_task_idx"] = item.CurrTaskIDx
 	respItem["added_on"] = item.AddedOn
-	respItem["tasks"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsSystemResetWorkflowTasks(item.Tasks)
+	respItem["tasks"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsSystemResetWorkflowTasks(item.Tasks)
 	respItem["add_to_inventory"] = boolPtrToString(item.AddToInventory)
 	respItem["instance_type"] = item.InstanceType
 	respItem["end_time"] = item.EndTime
@@ -4059,7 +4087,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsSystemResetWork
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsSystemResetWorkflowTasks(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1SystemResetWorkflowTasks) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsSystemResetWorkflowTasks(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementSystemResetWorkflowTasks) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4072,7 +4100,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsSystemResetWork
 		respItem["task_seq_no"] = item.TaskSeqNo
 		respItem["end_time"] = item.EndTime
 		respItem["start_time"] = item.StartTime
-		respItem["work_item_list"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsSystemResetWorkflowTasksWorkItemList(item.WorkItemList)
+		respItem["work_item_list"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsSystemResetWorkflowTasksWorkItemList(item.WorkItemList)
 		respItem["time_taken"] = item.TimeTaken
 		respItem["name"] = item.Name
 		respItems = append(respItems, respItem)
@@ -4080,7 +4108,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsSystemResetWork
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsSystemResetWorkflowTasksWorkItemList(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1SystemResetWorkflowTasksWorkItemList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsSystemResetWorkflowTasksWorkItemList(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementSystemResetWorkflowTasksWorkItemList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4098,7 +4126,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsSystemResetWork
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsSystemWorkflow(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1SystemWorkflow) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsSystemWorkflow(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementSystemWorkflow) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4111,7 +4139,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsSystemWorkflow(
 	respItem["image_id"] = item.ImageID
 	respItem["curr_task_idx"] = item.CurrTaskIDx
 	respItem["added_on"] = item.AddedOn
-	respItem["tasks"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsSystemWorkflowTasks(item.Tasks)
+	respItem["tasks"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsSystemWorkflowTasks(item.Tasks)
 	respItem["add_to_inventory"] = boolPtrToString(item.AddToInventory)
 	respItem["instance_type"] = item.InstanceType
 	respItem["end_time"] = item.EndTime
@@ -4129,7 +4157,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsSystemWorkflow(
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsSystemWorkflowTasks(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1SystemWorkflowTasks) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsSystemWorkflowTasks(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementSystemWorkflowTasks) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4142,7 +4170,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsSystemWorkflowT
 		respItem["task_seq_no"] = item.TaskSeqNo
 		respItem["end_time"] = item.EndTime
 		respItem["start_time"] = item.StartTime
-		respItem["work_item_list"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsSystemWorkflowTasksWorkItemList(item.WorkItemList)
+		respItem["work_item_list"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsSystemWorkflowTasksWorkItemList(item.WorkItemList)
 		respItem["time_taken"] = item.TimeTaken
 		respItem["name"] = item.Name
 		respItems = append(respItems, respItem)
@@ -4150,7 +4178,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsSystemWorkflowT
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsSystemWorkflowTasksWorkItemList(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1SystemWorkflowTasksWorkItemList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsSystemWorkflowTasksWorkItemList(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementSystemWorkflowTasksWorkItemList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4168,7 +4196,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsSystemWorkflowT
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsWorkflow(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1Workflow) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsWorkflow(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementWorkflow) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4181,7 +4209,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsWorkflow(item *
 	respItem["image_id"] = item.ImageID
 	respItem["curr_task_idx"] = item.CurrTaskIDx
 	respItem["added_on"] = item.AddedOn
-	respItem["tasks"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsWorkflowTasks(item.Tasks)
+	respItem["tasks"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsWorkflowTasks(item.Tasks)
 	respItem["add_to_inventory"] = boolPtrToString(item.AddToInventory)
 	respItem["instance_type"] = item.InstanceType
 	respItem["end_time"] = item.EndTime
@@ -4199,7 +4227,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsWorkflow(item *
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsWorkflowTasks(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1WorkflowTasks) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsWorkflowTasks(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementWorkflowTasks) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4212,7 +4240,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsWorkflowTasks(i
 		respItem["task_seq_no"] = item.TaskSeqNo
 		respItem["end_time"] = item.EndTime
 		respItem["start_time"] = item.StartTime
-		respItem["work_item_list"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsWorkflowTasksWorkItemList(item.WorkItemList)
+		respItem["work_item_list"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsWorkflowTasksWorkItemList(item.WorkItemList)
 		respItem["time_taken"] = item.TimeTaken
 		respItem["name"] = item.Name
 		respItems = append(respItems, respItem)
@@ -4220,7 +4248,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsWorkflowTasks(i
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsWorkflowTasksWorkItemList(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1WorkflowTasksWorkItemList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsWorkflowTasksWorkItemList(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementWorkflowTasksWorkItemList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4238,7 +4266,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsWorkflowTasksWo
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsRunSummaryList(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1RunSummaryList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsRunSummaryList(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementRunSummaryList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4246,7 +4274,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsRunSummaryList(
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["details"] = item.Details
-		respItem["history_task_info"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsRunSummaryListHistoryTaskInfo(item.HistoryTaskInfo)
+		respItem["history_task_info"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsRunSummaryListHistoryTaskInfo(item.HistoryTaskInfo)
 		respItem["error_flag"] = boolPtrToString(item.ErrorFlag)
 		respItem["timestamp"] = item.Timestamp
 		respItems = append(respItems, respItem)
@@ -4254,15 +4282,15 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsRunSummaryList(
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsRunSummaryListHistoryTaskInfo(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1RunSummaryListHistoryTaskInfo) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsRunSummaryListHistoryTaskInfo(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementRunSummaryListHistoryTaskInfo) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["type"] = item.Type
-	respItem["work_item_list"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsRunSummaryListHistoryTaskInfoWorkItemList(item.WorkItemList)
+	respItem["work_item_list"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsRunSummaryListHistoryTaskInfoWorkItemList(item.WorkItemList)
 	respItem["time_taken"] = item.TimeTaken
-	respItem["addn_details"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsRunSummaryListHistoryTaskInfoAddnDetails(item.AddnDetails)
+	respItem["addn_details"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsRunSummaryListHistoryTaskInfoAddnDetails(item.AddnDetails)
 	respItem["name"] = item.Name
 
 	return []map[string]interface{}{
@@ -4271,7 +4299,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsRunSummaryListH
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsRunSummaryListHistoryTaskInfoWorkItemList(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1RunSummaryListHistoryTaskInfoWorkItemList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsRunSummaryListHistoryTaskInfoWorkItemList(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementRunSummaryListHistoryTaskInfoWorkItemList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4289,7 +4317,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsRunSummaryListH
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsRunSummaryListHistoryTaskInfoAddnDetails(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1RunSummaryListHistoryTaskInfoAddnDetails) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsRunSummaryListHistoryTaskInfoAddnDetails(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementRunSummaryListHistoryTaskInfoAddnDetails) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4303,7 +4331,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsRunSummaryListH
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsWorkflowParameters(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1WorkflowParameters) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsWorkflowParameters(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementWorkflowParameters) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4311,7 +4339,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsWorkflowParamet
 	respItem["top_of_stack_serial_number"] = item.TopOfStackSerialNumber
 	respItem["license_level"] = item.LicenseLevel
 	respItem["license_type"] = item.LicenseType
-	respItem["config_list"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsWorkflowParametersConfigList(item.ConfigList)
+	respItem["config_list"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsWorkflowParametersConfigList(item.ConfigList)
 
 	return []map[string]interface{}{
 		respItem,
@@ -4319,21 +4347,21 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsWorkflowParamet
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsWorkflowParametersConfigList(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1WorkflowParametersConfigList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsWorkflowParametersConfigList(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementWorkflowParametersConfigList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["config_parameters"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsWorkflowParametersConfigListConfigParameters(item.ConfigParameters)
+		respItem["config_parameters"] = flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsWorkflowParametersConfigListConfigParameters(item.ConfigParameters)
 		respItem["config_id"] = item.ConfigID
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsWorkflowParametersConfigListConfigParameters(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1WorkflowParametersConfigListConfigParameters) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsWorkflowParametersConfigListConfigParameters(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementWorkflowParametersConfigListConfigParameters) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4347,7 +4375,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsWorkflowParamet
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDayZeroConfig(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1DayZeroConfig) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDayZeroConfig(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementDayZeroConfig) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4360,7 +4388,7 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDayZeroConfig(i
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDayZeroConfigPreview(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementV1DayZeroConfigPreview) interface{} {
+func flattenDeviceOnboardingPnpGetDeviceListSiteManagementItemsDayZeroConfigPreview(item *catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetDeviceListSiteManagementDayZeroConfigPreview) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4370,20 +4398,20 @@ func flattenDeviceOnboardingPnpGetDeviceListSiteManagementV1ItemsDayZeroConfigPr
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1Item(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItem(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByID) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["type_id"] = item.TypeID
-	respItem["device_info"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfo(item.DeviceInfo)
-	respItem["system_reset_workflow"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemSystemResetWorkflow(item.SystemResetWorkflow)
-	respItem["system_workflow"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemSystemWorkflow(item.SystemWorkflow)
-	respItem["workflow"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemWorkflow(item.Workflow)
-	respItem["run_summary_list"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemRunSummaryList(item.RunSummaryList)
-	respItem["workflow_parameters"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemWorkflowParameters(item.WorkflowParameters)
-	respItem["day_zero_config"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDayZeroConfig(item.DayZeroConfig)
-	respItem["day_zero_config_preview"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDayZeroConfigPreview(item.DayZeroConfigPreview)
+	respItem["device_info"] = flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfo(item.DeviceInfo)
+	respItem["system_reset_workflow"] = flattenDeviceOnboardingPnpGetDeviceByIDItemSystemResetWorkflow(item.SystemResetWorkflow)
+	respItem["system_workflow"] = flattenDeviceOnboardingPnpGetDeviceByIDItemSystemWorkflow(item.SystemWorkflow)
+	respItem["workflow"] = flattenDeviceOnboardingPnpGetDeviceByIDItemWorkflow(item.Workflow)
+	respItem["run_summary_list"] = flattenDeviceOnboardingPnpGetDeviceByIDItemRunSummaryList(item.RunSummaryList)
+	respItem["workflow_parameters"] = flattenDeviceOnboardingPnpGetDeviceByIDItemWorkflowParameters(item.WorkflowParameters)
+	respItem["day_zero_config"] = flattenDeviceOnboardingPnpGetDeviceByIDItemDayZeroConfig(item.DayZeroConfig)
+	respItem["day_zero_config_preview"] = flattenDeviceOnboardingPnpGetDeviceByIDItemDayZeroConfigPreview(item.DayZeroConfigPreview)
 	respItem["version"] = item.Version
 	respItem["tenant_id"] = item.TenantID
 	return []map[string]interface{}{
@@ -4391,7 +4419,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1Item(item *catalystcentersdkgo.Res
 	}
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfo(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1DeviceInfo) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfo(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDDeviceInfo) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4401,7 +4429,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfo(item *catalystcente
 	respItem["stack"] = boolPtrToString(item.Stack)
 	respItem["mode"] = item.Mode
 	respItem["state"] = item.State
-	respItem["location"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoLocation(item.Location)
+	respItem["location"] = flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoLocation(item.Location)
 	respItem["description"] = item.Description
 	respItem["onb_state"] = item.OnbState
 	respItem["authenticated_mic_number"] = item.AuthenticatedMicNumber
@@ -4422,25 +4450,25 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfo(item *catalystcente
 	respItem["device_type"] = item.DeviceType
 	respItem["agent_type"] = item.AgentType
 	respItem["image_version"] = item.ImageVersion
-	respItem["file_system_list"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoFileSystemList(item.FileSystemList)
-	respItem["pnp_profile_list"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPnpProfileList(item.PnpProfileList)
+	respItem["file_system_list"] = flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoFileSystemList(item.FileSystemList)
+	respItem["pnp_profile_list"] = flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoPnpProfileList(item.PnpProfileList)
 	respItem["image_file"] = item.ImageFile
-	respItem["http_headers"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoHTTPHeaders(item.HTTPHeaders)
-	respItem["neighbor_links"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoNeighborLinks(item.NeighborLinks)
+	respItem["http_headers"] = flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoHTTPHeaders(item.HTTPHeaders)
+	respItem["neighbor_links"] = flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoNeighborLinks(item.NeighborLinks)
 	respItem["last_sync_time"] = item.LastSyncTime
-	respItem["ip_interfaces"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoIPInterfaces(item.IPInterfaces)
+	respItem["ip_interfaces"] = flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoIPInterfaces(item.IPInterfaces)
 	respItem["hostname"] = item.Hostname
 	respItem["auth_status"] = item.AuthStatus
-	respItem["stack_info"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoStackInfo(item.StackInfo)
+	respItem["stack_info"] = flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoStackInfo(item.StackInfo)
 	respItem["reload_requested"] = boolPtrToString(item.ReloadRequested)
 	respItem["added_on"] = item.AddedOn
 	respItem["site_id"] = item.SiteID
-	respItem["aaa_credentials"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoAAACredentials(item.AAACredentials)
+	respItem["aaa_credentials"] = flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoAAACredentials(item.AAACredentials)
 	respItem["user_mic_numbers"] = item.UserMicNumbers
 	respItem["user_sudi_serial_nos"] = item.UserSudiSerialNos
 	respItem["addn_mac_addrs"] = item.AddnMacAddrs
-	respItem["pre_workflow_cli_ouputs"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPreWorkflowCliOuputs(item.PreWorkflowCliOuputs)
-	respItem["tags"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoTags(item.Tags)
+	respItem["pre_workflow_cli_ouputs"] = flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoPreWorkflowCliOuputs(item.PreWorkflowCliOuputs)
+	respItem["tags"] = flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoTags(item.Tags)
 	respItem["sudi_required"] = boolPtrToString(item.SudiRequired)
 	respItem["smart_account_id"] = item.SmartAccountID
 	respItem["virtual_account_id"] = item.VirtualAccountID
@@ -4454,7 +4482,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfo(item *catalystcente
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoLocation(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1DeviceInfoLocation) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoLocation(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDDeviceInfoLocation) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4471,7 +4499,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoLocation(item *catal
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoFileSystemList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1DeviceInfoFileSystemList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoFileSystemList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDDeviceInfoFileSystemList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4489,7 +4517,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoFileSystemList(items
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPnpProfileList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1DeviceInfoPnpProfileList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoPnpProfileList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDDeviceInfoPnpProfileList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4499,22 +4527,22 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPnpProfileList(items
 		respItem["profile_name"] = item.ProfileName
 		respItem["discovery_created"] = boolPtrToString(item.DiscoveryCreated)
 		respItem["created_by"] = item.CreatedBy
-		respItem["primary_endpoint"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPnpProfileListPrimaryEndpoint(item.PrimaryEndpoint)
-		respItem["secondary_endpoint"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPnpProfileListSecondaryEndpoint(item.SecondaryEndpoint)
+		respItem["primary_endpoint"] = flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoPnpProfileListPrimaryEndpoint(item.PrimaryEndpoint)
+		respItem["secondary_endpoint"] = flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoPnpProfileListSecondaryEndpoint(item.SecondaryEndpoint)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPnpProfileListPrimaryEndpoint(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1DeviceInfoPnpProfileListPrimaryEndpoint) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoPnpProfileListPrimaryEndpoint(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDDeviceInfoPnpProfileListPrimaryEndpoint) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["port"] = item.Port
 	respItem["protocol"] = item.Protocol
-	respItem["ipv4_address"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPnpProfileListPrimaryEndpointIPv4Address(item.IPv4Address)
-	respItem["ipv6_address"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPnpProfileListPrimaryEndpointIPv6Address(item.IPv6Address)
+	respItem["ipv4_address"] = flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoPnpProfileListPrimaryEndpointIPv4Address(item.IPv4Address)
+	respItem["ipv6_address"] = flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoPnpProfileListPrimaryEndpointIPv6Address(item.IPv6Address)
 	respItem["fqdn"] = item.Fqdn
 	respItem["certificate"] = item.Certificate
 
@@ -4524,7 +4552,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPnpProfileListPrimar
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPnpProfileListPrimaryEndpointIPv4Address(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1DeviceInfoPnpProfileListPrimaryEndpointIPv4Address) interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoPnpProfileListPrimaryEndpointIPv4Address(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDDeviceInfoPnpProfileListPrimaryEndpointIPv4Address) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4534,7 +4562,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPnpProfileListPrimar
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPnpProfileListPrimaryEndpointIPv6Address(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1DeviceInfoPnpProfileListPrimaryEndpointIPv6Address) interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoPnpProfileListPrimaryEndpointIPv6Address(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDDeviceInfoPnpProfileListPrimaryEndpointIPv6Address) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4544,15 +4572,15 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPnpProfileListPrimar
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPnpProfileListSecondaryEndpoint(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1DeviceInfoPnpProfileListSecondaryEndpoint) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoPnpProfileListSecondaryEndpoint(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDDeviceInfoPnpProfileListSecondaryEndpoint) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["port"] = item.Port
 	respItem["protocol"] = item.Protocol
-	respItem["ipv4_address"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPnpProfileListSecondaryEndpointIPv4Address(item.IPv4Address)
-	respItem["ipv6_address"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPnpProfileListSecondaryEndpointIPv6Address(item.IPv6Address)
+	respItem["ipv4_address"] = flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoPnpProfileListSecondaryEndpointIPv4Address(item.IPv4Address)
+	respItem["ipv6_address"] = flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoPnpProfileListSecondaryEndpointIPv6Address(item.IPv6Address)
 	respItem["fqdn"] = item.Fqdn
 	respItem["certificate"] = item.Certificate
 
@@ -4562,7 +4590,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPnpProfileListSecond
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPnpProfileListSecondaryEndpointIPv4Address(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1DeviceInfoPnpProfileListSecondaryEndpointIPv4Address) interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoPnpProfileListSecondaryEndpointIPv4Address(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDDeviceInfoPnpProfileListSecondaryEndpointIPv4Address) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4572,7 +4600,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPnpProfileListSecond
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPnpProfileListSecondaryEndpointIPv6Address(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1DeviceInfoPnpProfileListSecondaryEndpointIPv6Address) interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoPnpProfileListSecondaryEndpointIPv6Address(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDDeviceInfoPnpProfileListSecondaryEndpointIPv6Address) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4582,7 +4610,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPnpProfileListSecond
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoHTTPHeaders(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1DeviceInfoHTTPHeaders) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoHTTPHeaders(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDDeviceInfoHTTPHeaders) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4596,7 +4624,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoHTTPHeaders(items *[
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoNeighborLinks(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1DeviceInfoNeighborLinks) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoNeighborLinks(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDDeviceInfoNeighborLinks) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4617,7 +4645,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoNeighborLinks(items 
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoIPInterfaces(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1DeviceInfoIPInterfaces) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoIPInterfaces(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDDeviceInfoIPInterfaces) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4626,15 +4654,15 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoIPInterfaces(items *
 		respItem := make(map[string]interface{})
 		respItem["status"] = item.Status
 		respItem["mac_address"] = item.MacAddress
-		respItem["ipv4_address"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoIPInterfacesIPv4Address(item.IPv4Address)
-		respItem["ipv6_address_list"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoIPInterfacesIPv6AddressList(item.IPv6AddressList)
+		respItem["ipv4_address"] = flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoIPInterfacesIPv4Address(item.IPv4Address)
+		respItem["ipv6_address_list"] = flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoIPInterfacesIPv6AddressList(item.IPv6AddressList)
 		respItem["name"] = item.Name
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoIPInterfacesIPv4Address(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1DeviceInfoIPInterfacesIPv4Address) interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoIPInterfacesIPv4Address(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDDeviceInfoIPInterfacesIPv4Address) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4644,7 +4672,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoIPInterfacesIPv4Addr
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoIPInterfacesIPv6AddressList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1DeviceInfoIPInterfacesIPv6AddressList) []interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoIPInterfacesIPv6AddressList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDDeviceInfoIPInterfacesIPv6AddressList) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4656,14 +4684,14 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoIPInterfacesIPv6Addr
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoStackInfo(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1DeviceInfoStackInfo) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoStackInfo(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDDeviceInfoStackInfo) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["supports_stack_workflows"] = boolPtrToString(item.SupportsStackWorkflows)
 	respItem["is_full_ring"] = boolPtrToString(item.IsFullRing)
-	respItem["stack_member_list"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoStackInfoStackMemberList(item.StackMemberList)
+	respItem["stack_member_list"] = flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoStackInfoStackMemberList(item.StackMemberList)
 	respItem["stack_ring_protocol"] = item.StackRingProtocol
 	respItem["valid_license_levels"] = item.ValidLicenseLevels
 	respItem["total_member_count"] = item.TotalMemberCount
@@ -4674,7 +4702,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoStackInfo(item *cata
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoStackInfoStackMemberList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1DeviceInfoStackInfoStackMemberList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoStackInfoStackMemberList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDDeviceInfoStackInfoStackMemberList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4698,7 +4726,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoStackInfoStackMember
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoAAACredentials(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1DeviceInfoAAACredentials) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoAAACredentials(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDDeviceInfoAAACredentials) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4712,7 +4740,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoAAACredentials(item 
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPreWorkflowCliOuputs(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1DeviceInfoPreWorkflowCliOuputs) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoPreWorkflowCliOuputs(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDDeviceInfoPreWorkflowCliOuputs) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4726,7 +4754,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoPreWorkflowCliOuputs
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoTags(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1DeviceInfoTags) interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemDeviceInfoTags(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDDeviceInfoTags) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4736,7 +4764,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDeviceInfoTags(item *catalystc
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemSystemResetWorkflow(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1SystemResetWorkflow) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemSystemResetWorkflow(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDSystemResetWorkflow) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4749,7 +4777,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemSystemResetWorkflow(item *cata
 	respItem["image_id"] = item.ImageID
 	respItem["curr_task_idx"] = item.CurrTaskIDx
 	respItem["added_on"] = item.AddedOn
-	respItem["tasks"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemSystemResetWorkflowTasks(item.Tasks)
+	respItem["tasks"] = flattenDeviceOnboardingPnpGetDeviceByIDItemSystemResetWorkflowTasks(item.Tasks)
 	respItem["add_to_inventory"] = boolPtrToString(item.AddToInventory)
 	respItem["instance_type"] = item.InstanceType
 	respItem["end_time"] = item.EndTime
@@ -4767,7 +4795,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemSystemResetWorkflow(item *cata
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemSystemResetWorkflowTasks(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1SystemResetWorkflowTasks) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemSystemResetWorkflowTasks(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDSystemResetWorkflowTasks) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4780,7 +4808,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemSystemResetWorkflowTasks(items
 		respItem["task_seq_no"] = item.TaskSeqNo
 		respItem["end_time"] = item.EndTime
 		respItem["start_time"] = item.StartTime
-		respItem["work_item_list"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemSystemResetWorkflowTasksWorkItemList(item.WorkItemList)
+		respItem["work_item_list"] = flattenDeviceOnboardingPnpGetDeviceByIDItemSystemResetWorkflowTasksWorkItemList(item.WorkItemList)
 		respItem["time_taken"] = item.TimeTaken
 		respItem["name"] = item.Name
 		respItems = append(respItems, respItem)
@@ -4788,7 +4816,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemSystemResetWorkflowTasks(items
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemSystemResetWorkflowTasksWorkItemList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1SystemResetWorkflowTasksWorkItemList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemSystemResetWorkflowTasksWorkItemList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDSystemResetWorkflowTasksWorkItemList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4806,7 +4834,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemSystemResetWorkflowTasksWorkIt
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemSystemWorkflow(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1SystemWorkflow) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemSystemWorkflow(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDSystemWorkflow) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4819,7 +4847,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemSystemWorkflow(item *catalystc
 	respItem["image_id"] = item.ImageID
 	respItem["curr_task_idx"] = item.CurrTaskIDx
 	respItem["added_on"] = item.AddedOn
-	respItem["tasks"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemSystemWorkflowTasks(item.Tasks)
+	respItem["tasks"] = flattenDeviceOnboardingPnpGetDeviceByIDItemSystemWorkflowTasks(item.Tasks)
 	respItem["add_to_inventory"] = boolPtrToString(item.AddToInventory)
 	respItem["instance_type"] = item.InstanceType
 	respItem["end_time"] = item.EndTime
@@ -4837,7 +4865,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemSystemWorkflow(item *catalystc
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemSystemWorkflowTasks(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1SystemWorkflowTasks) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemSystemWorkflowTasks(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDSystemWorkflowTasks) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4850,7 +4878,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemSystemWorkflowTasks(items *[]c
 		respItem["task_seq_no"] = item.TaskSeqNo
 		respItem["end_time"] = item.EndTime
 		respItem["start_time"] = item.StartTime
-		respItem["work_item_list"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemSystemWorkflowTasksWorkItemList(item.WorkItemList)
+		respItem["work_item_list"] = flattenDeviceOnboardingPnpGetDeviceByIDItemSystemWorkflowTasksWorkItemList(item.WorkItemList)
 		respItem["time_taken"] = item.TimeTaken
 		respItem["name"] = item.Name
 		respItems = append(respItems, respItem)
@@ -4858,7 +4886,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemSystemWorkflowTasks(items *[]c
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemSystemWorkflowTasksWorkItemList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1SystemWorkflowTasksWorkItemList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemSystemWorkflowTasksWorkItemList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDSystemWorkflowTasksWorkItemList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4876,7 +4904,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemSystemWorkflowTasksWorkItemLis
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemWorkflow(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1Workflow) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemWorkflow(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDWorkflow) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -4889,7 +4917,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemWorkflow(item *catalystcenters
 	respItem["image_id"] = item.ImageID
 	respItem["curr_task_idx"] = item.CurrTaskIDx
 	respItem["added_on"] = item.AddedOn
-	respItem["tasks"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemWorkflowTasks(item.Tasks)
+	respItem["tasks"] = flattenDeviceOnboardingPnpGetDeviceByIDItemWorkflowTasks(item.Tasks)
 	respItem["add_to_inventory"] = boolPtrToString(item.AddToInventory)
 	respItem["instance_type"] = item.InstanceType
 	respItem["end_time"] = item.EndTime
@@ -4907,7 +4935,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemWorkflow(item *catalystcenters
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemWorkflowTasks(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1WorkflowTasks) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemWorkflowTasks(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDWorkflowTasks) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4920,7 +4948,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemWorkflowTasks(items *[]catalys
 		respItem["task_seq_no"] = item.TaskSeqNo
 		respItem["end_time"] = item.EndTime
 		respItem["start_time"] = item.StartTime
-		respItem["work_item_list"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemWorkflowTasksWorkItemList(item.WorkItemList)
+		respItem["work_item_list"] = flattenDeviceOnboardingPnpGetDeviceByIDItemWorkflowTasksWorkItemList(item.WorkItemList)
 		respItem["time_taken"] = item.TimeTaken
 		respItem["name"] = item.Name
 		respItems = append(respItems, respItem)
@@ -4928,7 +4956,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemWorkflowTasks(items *[]catalys
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemWorkflowTasksWorkItemList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1WorkflowTasksWorkItemList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemWorkflowTasksWorkItemList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDWorkflowTasksWorkItemList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4946,7 +4974,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemWorkflowTasksWorkItemList(item
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemRunSummaryList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1RunSummaryList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemRunSummaryList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDRunSummaryList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4954,7 +4982,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemRunSummaryList(items *[]cataly
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["details"] = item.Details
-		respItem["history_task_info"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemRunSummaryListHistoryTaskInfo(item.HistoryTaskInfo)
+		respItem["history_task_info"] = flattenDeviceOnboardingPnpGetDeviceByIDItemRunSummaryListHistoryTaskInfo(item.HistoryTaskInfo)
 		respItem["error_flag"] = boolPtrToString(item.ErrorFlag)
 		respItem["timestamp"] = item.Timestamp
 		respItems = append(respItems, respItem)
@@ -4962,15 +4990,15 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemRunSummaryList(items *[]cataly
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemRunSummaryListHistoryTaskInfo(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1RunSummaryListHistoryTaskInfo) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemRunSummaryListHistoryTaskInfo(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDRunSummaryListHistoryTaskInfo) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["type"] = item.Type
-	respItem["work_item_list"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemRunSummaryListHistoryTaskInfoWorkItemList(item.WorkItemList)
+	respItem["work_item_list"] = flattenDeviceOnboardingPnpGetDeviceByIDItemRunSummaryListHistoryTaskInfoWorkItemList(item.WorkItemList)
 	respItem["time_taken"] = item.TimeTaken
-	respItem["addn_details"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemRunSummaryListHistoryTaskInfoAddnDetails(item.AddnDetails)
+	respItem["addn_details"] = flattenDeviceOnboardingPnpGetDeviceByIDItemRunSummaryListHistoryTaskInfoAddnDetails(item.AddnDetails)
 	respItem["name"] = item.Name
 
 	return []map[string]interface{}{
@@ -4979,7 +5007,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemRunSummaryListHistoryTaskInfo(
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemRunSummaryListHistoryTaskInfoWorkItemList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1RunSummaryListHistoryTaskInfoWorkItemList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemRunSummaryListHistoryTaskInfoWorkItemList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDRunSummaryListHistoryTaskInfoWorkItemList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -4997,7 +5025,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemRunSummaryListHistoryTaskInfoW
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemRunSummaryListHistoryTaskInfoAddnDetails(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1RunSummaryListHistoryTaskInfoAddnDetails) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemRunSummaryListHistoryTaskInfoAddnDetails(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDRunSummaryListHistoryTaskInfoAddnDetails) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5011,7 +5039,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemRunSummaryListHistoryTaskInfoA
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemWorkflowParameters(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1WorkflowParameters) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemWorkflowParameters(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDWorkflowParameters) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -5019,7 +5047,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemWorkflowParameters(item *catal
 	respItem["top_of_stack_serial_number"] = item.TopOfStackSerialNumber
 	respItem["license_level"] = item.LicenseLevel
 	respItem["license_type"] = item.LicenseType
-	respItem["config_list"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemWorkflowParametersConfigList(item.ConfigList)
+	respItem["config_list"] = flattenDeviceOnboardingPnpGetDeviceByIDItemWorkflowParametersConfigList(item.ConfigList)
 
 	return []map[string]interface{}{
 		respItem,
@@ -5027,21 +5055,21 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemWorkflowParameters(item *catal
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemWorkflowParametersConfigList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1WorkflowParametersConfigList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemWorkflowParametersConfigList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDWorkflowParametersConfigList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["config_parameters"] = flattenDeviceOnboardingPnpGetDeviceByIDV1ItemWorkflowParametersConfigListConfigParameters(item.ConfigParameters)
+		respItem["config_parameters"] = flattenDeviceOnboardingPnpGetDeviceByIDItemWorkflowParametersConfigListConfigParameters(item.ConfigParameters)
 		respItem["config_id"] = item.ConfigID
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemWorkflowParametersConfigListConfigParameters(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1WorkflowParametersConfigListConfigParameters) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemWorkflowParametersConfigListConfigParameters(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDWorkflowParametersConfigListConfigParameters) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -5055,7 +5083,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemWorkflowParametersConfigListCo
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDayZeroConfig(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1DayZeroConfig) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemDayZeroConfig(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDDayZeroConfig) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -5068,7 +5096,7 @@ func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDayZeroConfig(item *catalystce
 
 }
 
-func flattenDeviceOnboardingPnpGetDeviceByIDV1ItemDayZeroConfigPreview(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDV1DayZeroConfigPreview) interface{} {
+func flattenDeviceOnboardingPnpGetDeviceByIDItemDayZeroConfigPreview(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceByIDDayZeroConfigPreview) interface{} {
 	if item == nil {
 		return nil
 	}

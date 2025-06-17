@@ -11,12 +11,12 @@ description: |-
 
 It performs create operation on Configuration Archive.
 
-- Download the masked (sanitized) device configuration by providing the file id.
+- Download the masked (sanitized) device configuration by providing the file **id**.
+
 
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
-
 
 ## Example Usage
 
@@ -24,9 +24,9 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_network_device_config_files_id_download_masked" "example" {
   provider = catalystcenter
   id       = "string"
-  parameters {
+  parameters = [{
 
-  }
+  }]
 }
 
 output "catalystcenter_network_device_config_files_id_download_masked_example" {
@@ -44,7 +44,6 @@ output "catalystcenter_network_device_config_files_id_download_masked_example" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `item` (List of Map of String)
 - `last_updated` (String)
 
 <a id="nestedblock--parameters"></a>
@@ -52,4 +51,4 @@ output "catalystcenter_network_device_config_files_id_download_masked_example" {
 
 Required:
 
-- `id` (String) id path parameter. The value of id can be obtained from the response of API /dna/intent/api/v1/networkDeviceConfigFiles
+- `id` (String) id path parameter. The value of **id** can be obtained from the response of API **/dna/intent/api/v1/networkDeviceConfigFiles**

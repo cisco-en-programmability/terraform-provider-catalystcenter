@@ -1,7 +1,7 @@
 
 resource "catalystcenter_security_threats_rogue_allowed_list" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     category    = 1

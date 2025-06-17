@@ -20,7 +20,7 @@ It manages create, read and delete operations on SDA.
 ```terraform
 resource "catalystcenter_sda_multicast" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     multicast_method = "string"

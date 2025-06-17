@@ -19,7 +19,7 @@ It performs read operation on Network Settings.
 data "catalystcenter_reserve_ip_subpool" "example" {
   provider                = catalystcenter
   group_name              = "string"
-  ignore_inherited_groups = "string"
+  ignore_inherited_groups = "false"
   limit                   = 1
   offset                  = 1
   pool_usage              = "string"
@@ -37,7 +37,7 @@ output "catalystcenter_reserve_ip_subpool_example" {
 ### Optional
 
 - `group_name` (String) groupName query parameter. Name of the group
-- `ignore_inherited_groups` (String) ignoreInheritedGroups query parameter. Ignores pools inherited from parent site. Either siteId or ignoreInheritedGroups must be passed. They can also be used together.
+- `ignore_inherited_groups` (Boolean) ignoreInheritedGroups query parameter. Ignores pools inherited from parent site. Either siteId or ignoreInheritedGroups must be passed. They can also be used together.
 - `limit` (Number) limit query parameter. Number of reserve pools to be retrieved. Default is 25 if not specified. Maximum allowed limit is 500.
 - `offset` (Number) offset query parameter. offset/starting row. Indexed from 1.
 - `pool_usage` (String) poolUsage query parameter. Can take values empty, partially-full or empty-partially-full

@@ -12,7 +12,7 @@ description: |-
 
 It performs read operation on Software Image Management (SWIM).
 
-- Provides network device product names for a site. The default value of *siteId* is global. The response will include
+- Provides network device product names for a site. The default value of **siteId** is global. The response will include
 the network device count and image summary.
 
 ## Example Usage

@@ -1,7 +1,7 @@
 
 resource "catalystcenter_analytics_profiling_rules" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     cluster_id = "string"

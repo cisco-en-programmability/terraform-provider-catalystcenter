@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -27,7 +27,7 @@ func dataSourceNetworkDeviceInventoryInsightLinkMismatch() *schema.Resource {
 				Required: true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter. Default value is 500
+				Description: `limit query parameter. The number of records to show for this page. Min: 1, Max: 500
 `,
 				Type:     schema.TypeInt,
 				Optional: true,
@@ -298,9 +298,9 @@ func dataSourceNetworkDeviceInventoryInsightLinkMismatchRead(ctx context.Context
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: InventoryInsightDeviceLinkMismatchAPIV1")
+		log.Printf("[DEBUG] Selected method: InventoryInsightDeviceLinkMismatchAPI")
 		vvSiteID := vSiteID.(string)
-		queryParams1 := catalystcentersdkgo.InventoryInsightDeviceLinkMismatchAPIV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.InventoryInsightDeviceLinkMismatchAPIQueryParams{}
 
 		if okOffset {
 			queryParams1.Offset = vOffset.(int)
@@ -317,24 +317,38 @@ func dataSourceNetworkDeviceInventoryInsightLinkMismatchRead(ctx context.Context
 			queryParams1.Order = vOrder.(string)
 		}
 
-		response1, restyResp1, err := client.Devices.InventoryInsightDeviceLinkMismatchAPIV1(vvSiteID, &queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Devices.InventoryInsightDeviceLinkMismatchAPI(vvSiteID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 InventoryInsightDeviceLinkMismatchAPIV1", err,
-				"Failure at InventoryInsightDeviceLinkMismatchAPIV1, unexpected response", ""))
+				"Failure when executing 2 InventoryInsightDeviceLinkMismatchAPI", err,
+				"Failure at InventoryInsightDeviceLinkMismatchAPI, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesInventoryInsightDeviceLinkMismatchAPIV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 InventoryInsightDeviceLinkMismatchAPI", err,
+				"Failure at InventoryInsightDeviceLinkMismatchAPI, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDevicesInventoryInsightDeviceLinkMismatchAPIItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting InventoryInsightDeviceLinkMismatchAPIV1 response",
+				"Failure when setting InventoryInsightDeviceLinkMismatchAPI response",
 				err))
 			return diags
 		}
@@ -346,7 +360,7 @@ func dataSourceNetworkDeviceInventoryInsightLinkMismatchRead(ctx context.Context
 	return diags
 }
 
-func flattenDevicesInventoryInsightDeviceLinkMismatchAPIV1Items(items *[]catalystcentersdkgo.ResponseDevicesInventoryInsightDeviceLinkMismatchAPIV1Response) []map[string]interface{} {
+func flattenDevicesInventoryInsightDeviceLinkMismatchAPIItems(items *[]catalystcentersdkgo.ResponseDevicesInventoryInsightDeviceLinkMismatchAPIResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

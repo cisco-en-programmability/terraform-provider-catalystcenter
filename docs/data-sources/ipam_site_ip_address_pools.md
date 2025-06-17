@@ -35,10 +35,10 @@ output "catalystcenter_ipam_site_ip_address_pools_example" {
 
 ### Optional
 
-- `limit` (Number) limit query parameter. The number of records to show for this page;The minimum is 1, and the maximum is 500.
+- `limit` (Number) limit query parameter. The number of records to show for this page; the minimum is 1, and the maximum is 500.
 - `offset` (Number) offset query parameter. The first record to show for this page; the first record is numbered 1.
 - `order` (String) order query parameter. Whether ascending or descending order should be used to sort the response.
-- `site_id` (String) siteId query parameter. The id of the site for which to retrieve IP address subpools. Only subpools whose siteId exactly matches will be fetched, parent or child site matches will not be included.
+- `site_id` (String) siteId query parameter. The **id** of the site for which to retrieve IP address subpools. Only subpools whose **siteId** exactly matches will be fetched, parent or child site matches will not be included.
 - `sort_by` (String) sortBy query parameter. A property within the response to sort by.
 
 ### Read-Only

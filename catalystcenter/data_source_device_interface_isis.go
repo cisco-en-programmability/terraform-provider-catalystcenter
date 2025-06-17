@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -343,26 +343,40 @@ func dataSourceDeviceInterfaceIsisRead(ctx context.Context, d *schema.ResourceDa
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetIsisInterfacesV1")
+		log.Printf("[DEBUG] Selected method: GetIsisInterfaces")
 
-		response1, restyResp1, err := client.Devices.GetIsisInterfacesV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Devices.GetIsisInterfaces()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetIsisInterfacesV1", err,
-				"Failure at GetIsisInterfacesV1, unexpected response", ""))
+				"Failure when executing 2 GetIsisInterfaces", err,
+				"Failure at GetIsisInterfaces, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetIsisInterfacesV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetIsisInterfaces", err,
+				"Failure at GetIsisInterfaces, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDevicesGetIsisInterfacesItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetIsisInterfacesV1 response",
+				"Failure when setting GetIsisInterfaces response",
 				err))
 			return diags
 		}
@@ -374,14 +388,14 @@ func dataSourceDeviceInterfaceIsisRead(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func flattenDevicesGetIsisInterfacesV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetIsisInterfacesV1Response) []map[string]interface{} {
+func flattenDevicesGetIsisInterfacesItems(items *[]catalystcentersdkgo.ResponseDevicesGetIsisInterfacesResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["addresses"] = flattenDevicesGetIsisInterfacesV1ItemsAddresses(item.Addresses)
+		respItem["addresses"] = flattenDevicesGetIsisInterfacesItemsAddresses(item.Addresses)
 		respItem["admin_status"] = item.AdminStatus
 		respItem["class_name"] = item.ClassName
 		respItem["description"] = item.Description
@@ -421,27 +435,27 @@ func flattenDevicesGetIsisInterfacesV1Items(items *[]catalystcentersdkgo.Respons
 	return respItems
 }
 
-func flattenDevicesGetIsisInterfacesV1ItemsAddresses(items *[]catalystcentersdkgo.ResponseDevicesGetIsisInterfacesV1ResponseAddresses) []map[string]interface{} {
+func flattenDevicesGetIsisInterfacesItemsAddresses(items *[]catalystcentersdkgo.ResponseDevicesGetIsisInterfacesResponseAddresses) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["address"] = flattenDevicesGetIsisInterfacesV1ItemsAddressesAddress(item.Address)
+		respItem["address"] = flattenDevicesGetIsisInterfacesItemsAddressesAddress(item.Address)
 		respItem["type"] = item.Type
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesGetIsisInterfacesV1ItemsAddressesAddress(item *catalystcentersdkgo.ResponseDevicesGetIsisInterfacesV1ResponseAddressesAddress) []map[string]interface{} {
+func flattenDevicesGetIsisInterfacesItemsAddressesAddress(item *catalystcentersdkgo.ResponseDevicesGetIsisInterfacesResponseAddressesAddress) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["ip_address"] = flattenDevicesGetIsisInterfacesV1ItemsAddressesAddressIPAddress(item.IPAddress)
-	respItem["ip_mask"] = flattenDevicesGetIsisInterfacesV1ItemsAddressesAddressIPMask(item.IPMask)
+	respItem["ip_address"] = flattenDevicesGetIsisInterfacesItemsAddressesAddressIPAddress(item.IPAddress)
+	respItem["ip_mask"] = flattenDevicesGetIsisInterfacesItemsAddressesAddressIPMask(item.IPMask)
 	respItem["is_inverse_mask"] = boolPtrToString(item.IsInverseMask)
 
 	return []map[string]interface{}{
@@ -450,7 +464,7 @@ func flattenDevicesGetIsisInterfacesV1ItemsAddressesAddress(item *catalystcenter
 
 }
 
-func flattenDevicesGetIsisInterfacesV1ItemsAddressesAddressIPAddress(item *catalystcentersdkgo.ResponseDevicesGetIsisInterfacesV1ResponseAddressesAddressIPAddress) []map[string]interface{} {
+func flattenDevicesGetIsisInterfacesItemsAddressesAddressIPAddress(item *catalystcentersdkgo.ResponseDevicesGetIsisInterfacesResponseAddressesAddressIPAddress) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -463,7 +477,7 @@ func flattenDevicesGetIsisInterfacesV1ItemsAddressesAddressIPAddress(item *catal
 
 }
 
-func flattenDevicesGetIsisInterfacesV1ItemsAddressesAddressIPMask(item *catalystcentersdkgo.ResponseDevicesGetIsisInterfacesV1ResponseAddressesAddressIPMask) []map[string]interface{} {
+func flattenDevicesGetIsisInterfacesItemsAddressesAddressIPMask(item *catalystcentersdkgo.ResponseDevicesGetIsisInterfacesResponseAddressesAddressIPMask) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

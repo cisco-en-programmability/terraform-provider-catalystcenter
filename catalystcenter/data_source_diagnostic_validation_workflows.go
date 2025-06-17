@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -16,7 +16,7 @@ func dataSourceDiagnosticValidationWorkflows() *schema.Resource {
 		Description: `It performs read operation on Health and Performance.
 
 - Retrieves the workflows that have been successfully submitted and are currently available. This is sorted by
-*submitTime*
+**submitTime**
 
 - Retrieves workflow details for a workflow id
 `,
@@ -36,7 +36,7 @@ func dataSourceDiagnosticValidationWorkflows() *schema.Resource {
 				Optional: true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter. The number of records to show for this page.
+				Description: `limit query parameter. Specifies the maximum number of workflows to return per page. Must be an integer between 1 and 500, inclusive.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -48,7 +48,7 @@ func dataSourceDiagnosticValidationWorkflows() *schema.Resource {
 				Optional: true,
 			},
 			"run_status": &schema.Schema{
-				Description: `runStatus query parameter. Execution status of the workflow. If the workflow is successfully submitted, runStatus is *PENDING*. If the workflow execution has started, runStatus is *IN_PROGRESS*. If the workflow executed is completed with all validations executed, runStatus is *COMPLETED*. If the workflow execution fails while running validations, runStatus is *FAILED*.
+				Description: `runStatus query parameter. Execution status of the workflow. If the workflow is successfully submitted, runStatus is **PENDING**. If the workflow execution has started, runStatus is **IN_PROGRESS**. If the workflow executed is completed with all validations executed, runStatus is **COMPLETED**. If the workflow execution fails while running validations, runStatus is **FAILED**.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -95,7 +95,7 @@ func dataSourceDiagnosticValidationWorkflows() *schema.Resource {
 						},
 
 						"run_status": &schema.Schema{
-							Description: `Execution status of the workflow. If the workflow is successfully submitted, runStatus will return *PENDING*. If the workflow execution has started, runStatus will return *IN_PROGRESS*. If the workflow executed is completed with all validations executed, runStatus will return *COMPLETED*. If the workflow execution fails while running validations, runStatus will return *FAILED*.
+							Description: `Execution status of the workflow. If the workflow is successfully submitted, runStatus will return **PENDING**. If the workflow execution has started, runStatus will return **IN_PROGRESS**. If the workflow executed is completed with all validations executed, runStatus will return **COMPLETED**. If the workflow execution fails while running validations, runStatus will return **FAILED**.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -183,7 +183,7 @@ func dataSourceDiagnosticValidationWorkflows() *schema.Resource {
 									},
 
 									"validation_status": &schema.Schema{
-										Description: `Overall result of the validation set execution. If any of the contained validation execution status is *CRITICAL*, this is marked as *CRITICAL*. Else, if any of the contained validation execution status is *WARNING*, this is marked as *WARNING*. Else, this is marked as *INFORMATION*. This is empty when the workflow is in progress.
+										Description: `Overall result of the validation set execution. If any of the contained validation execution status is **CRITICAL**, this is marked as **CRITICAL**. Else, if any of the contained validation execution status is **WARNING**, this is marked as **WARNING**. Else, this is marked as **INFORMATION**. This is empty when the workflow is in progress.
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -200,7 +200,7 @@ func dataSourceDiagnosticValidationWorkflows() *schema.Resource {
 						},
 
 						"validation_status": &schema.Schema{
-							Description: `Overall result of the execution of all the validations. If any of the contained validation execution status is *CRITICAL*, this is marked as *CRITICAL*. Else, if any of the contained validation execution status is *WARNING*, this is marked as *WARNING*. Else, this is marked as *INFORMATION*.
+							Description: `Overall result of the execution of all the validations. If any of the contained validation execution status is **CRITICAL**, this is marked as **CRITICAL**. Else, if any of the contained validation execution status is **WARNING**, this is marked as **WARNING**. Else, this is marked as **INFORMATION**.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -244,7 +244,7 @@ func dataSourceDiagnosticValidationWorkflows() *schema.Resource {
 						},
 
 						"run_status": &schema.Schema{
-							Description: `Execution status of the workflow. If the workflow is successfully submitted, runStatus will return *PENDING*. If the workflow execution has started, runStatus will return *IN_PROGRESS*. If the workflow executed is completed with all validations executed, runStatus will return *COMPLETED*. If the workflow execution fails while running validations, runStatus will return *FAILED*.
+							Description: `Execution status of the workflow. If the workflow is successfully submitted, runStatus will return **PENDING**. If the workflow execution has started, runStatus will return **IN_PROGRESS**. If the workflow executed is completed with all validations executed, runStatus will return **COMPLETED**. If the workflow execution fails while running validations, runStatus will return **FAILED**.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -305,8 +305,8 @@ func dataSourceDiagnosticValidationWorkflowsRead(ctx context.Context, d *schema.
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesTheListOfValidationWorkflowsV1")
-		queryParams1 := catalystcentersdkgo.RetrievesTheListOfValidationWorkflowsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: RetrievesTheListOfValidationWorkflows")
+		queryParams1 := catalystcentersdkgo.RetrievesTheListOfValidationWorkflowsQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -324,24 +324,38 @@ func dataSourceDiagnosticValidationWorkflowsRead(ctx context.Context, d *schema.
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.HealthAndPerformance.RetrievesTheListOfValidationWorkflowsV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.HealthAndPerformance.RetrievesTheListOfValidationWorkflows(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesTheListOfValidationWorkflowsV1", err,
-				"Failure at RetrievesTheListOfValidationWorkflowsV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesTheListOfValidationWorkflows", err,
+				"Failure at RetrievesTheListOfValidationWorkflows, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenHealthAndPerformanceRetrievesTheListOfValidationWorkflowsV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesTheListOfValidationWorkflows", err,
+				"Failure at RetrievesTheListOfValidationWorkflows, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenHealthAndPerformanceRetrievesTheListOfValidationWorkflowsItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesTheListOfValidationWorkflowsV1 response",
+				"Failure when setting RetrievesTheListOfValidationWorkflows response",
 				err))
 			return diags
 		}
@@ -351,27 +365,41 @@ func dataSourceDiagnosticValidationWorkflowsRead(ctx context.Context, d *schema.
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: RetrievesValidationWorkflowDetailsV1")
+		log.Printf("[DEBUG] Selected method: RetrievesValidationWorkflowDetails")
 		vvID := vID.(string)
 
-		response2, restyResp2, err := client.HealthAndPerformance.RetrievesValidationWorkflowDetailsV1(vvID)
+		// has_unknown_response: None
+
+		response2, restyResp2, err := client.HealthAndPerformance.RetrievesValidationWorkflowDetails(vvID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesValidationWorkflowDetailsV1", err,
-				"Failure at RetrievesValidationWorkflowDetailsV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesValidationWorkflowDetails", err,
+				"Failure at RetrievesValidationWorkflowDetails, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenHealthAndPerformanceRetrievesValidationWorkflowDetailsV1Item(response2.Response)
+		if err != nil || response2 == nil {
+			if restyResp2 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesValidationWorkflowDetails", err,
+				"Failure at RetrievesValidationWorkflowDetails, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
+
+		vItem2 := flattenHealthAndPerformanceRetrievesValidationWorkflowDetailsItem(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesValidationWorkflowDetailsV1 response",
+				"Failure when setting RetrievesValidationWorkflowDetails response",
 				err))
 			return diags
 		}
@@ -383,7 +411,7 @@ func dataSourceDiagnosticValidationWorkflowsRead(ctx context.Context, d *schema.
 	return diags
 }
 
-func flattenHealthAndPerformanceRetrievesTheListOfValidationWorkflowsV1Items(items *[]catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesTheListOfValidationWorkflowsV1Response) []map[string]interface{} {
+func flattenHealthAndPerformanceRetrievesTheListOfValidationWorkflowsItems(items *[]catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesTheListOfValidationWorkflowsResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -404,7 +432,7 @@ func flattenHealthAndPerformanceRetrievesTheListOfValidationWorkflowsV1Items(ite
 	return respItems
 }
 
-func flattenHealthAndPerformanceRetrievesValidationWorkflowDetailsV1Item(item *catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesValidationWorkflowDetailsV1Response) []map[string]interface{} {
+func flattenHealthAndPerformanceRetrievesValidationWorkflowDetailsItem(item *catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesValidationWorkflowDetailsResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -416,14 +444,14 @@ func flattenHealthAndPerformanceRetrievesValidationWorkflowDetailsV1Item(item *c
 	respItem["submit_time"] = item.SubmitTime
 	respItem["validation_set_ids"] = item.ValidationSetIDs
 	respItem["release_version"] = item.ReleaseVersion
-	respItem["validation_sets_run_details"] = flattenHealthAndPerformanceRetrievesValidationWorkflowDetailsV1ItemValidationSetsRunDetails(item.ValidationSetsRunDetails)
+	respItem["validation_sets_run_details"] = flattenHealthAndPerformanceRetrievesValidationWorkflowDetailsItemValidationSetsRunDetails(item.ValidationSetsRunDetails)
 	respItem["validation_status"] = item.ValidationStatus
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenHealthAndPerformanceRetrievesValidationWorkflowDetailsV1ItemValidationSetsRunDetails(items *[]catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesValidationWorkflowDetailsV1ResponseValidationSetsRunDetails) []map[string]interface{} {
+func flattenHealthAndPerformanceRetrievesValidationWorkflowDetailsItemValidationSetsRunDetails(items *[]catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesValidationWorkflowDetailsResponseValidationSetsRunDetails) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -435,13 +463,13 @@ func flattenHealthAndPerformanceRetrievesValidationWorkflowDetailsV1ItemValidati
 		respItem["end_time"] = item.EndTime
 		respItem["validation_status"] = item.ValidationStatus
 		respItem["version"] = item.Version
-		respItem["validation_run_details"] = flattenHealthAndPerformanceRetrievesValidationWorkflowDetailsV1ItemValidationSetsRunDetailsValidationRunDetails(item.ValidationRunDetails)
+		respItem["validation_run_details"] = flattenHealthAndPerformanceRetrievesValidationWorkflowDetailsItemValidationSetsRunDetailsValidationRunDetails(item.ValidationRunDetails)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenHealthAndPerformanceRetrievesValidationWorkflowDetailsV1ItemValidationSetsRunDetailsValidationRunDetails(items *[]catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesValidationWorkflowDetailsV1ResponseValidationSetsRunDetailsValidationRunDetails) []map[string]interface{} {
+func flattenHealthAndPerformanceRetrievesValidationWorkflowDetailsItemValidationSetsRunDetailsValidationRunDetails(items *[]catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesValidationWorkflowDetailsResponseValidationSetsRunDetailsValidationRunDetails) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

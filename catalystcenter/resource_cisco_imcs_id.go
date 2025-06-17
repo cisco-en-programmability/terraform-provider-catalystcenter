@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -27,7 +27,8 @@ More data about the Cisco IMC can be retrieved using the APIs exposed directly b
 the Cisco IMC documentation https://www.cisco.com/c/en/us/support/servers-unified-computing/ucs-c-series-integrated-
 management-controller/series.html#~tab-documents
 The Cisco IMC configuration is relevant only for Catalyst Center deployments based on UCS appliances. In cases where
-Cisco IMC configuration is not supported by the deployment, these APIs will respond with a *404 Not Found* status code.
+Cisco IMC configuration is not supported by the deployment, these APIs will respond with a **404 Not Found** status
+code.
 
 - This resource updates the Cisco Integrated Management Controller (IMC) configuration for a Catalyst Center node,
 identified by the specified ID.
@@ -38,7 +39,8 @@ More data about the Cisco IMC can be retrieved using the APIs exposed directly b
 the Cisco IMC documentation https://www.cisco.com/c/en/us/support/servers-unified-computing/ucs-c-series-integrated-
 management-controller/series.html#~tab-documents
 The Cisco IMC configuration is relevant only for Catalyst Center deployments based on UCS appliances. In cases where
-Cisco IMC configuration is not supported by the deployment, these APIs will respond with a *404 Not Found* status code.
+Cisco IMC configuration is not supported by the deployment, these APIs will respond with a **404 Not Found** status
+code.
 When Cisco IMC configuration is supported, this API responds with the URL of a diagnostic task.
 `,
 
@@ -74,7 +76,7 @@ When Cisco IMC configuration is supported, this API responds with the URL of a d
 							Computed: true,
 						},
 						"node_id": &schema.Schema{
-							Description: `The UUID that represents the Catalyst Center node. Its value can be obtained from the *id* attribute of the response of the */dna/intent/api/v1/nodes-config* API.
+							Description: `The UUID that represents the Catalyst Center node. Its value can be obtained from the **id** attribute of the response of the **/dna/intent/api/v1/nodes-config** API.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -169,7 +171,7 @@ func resourceCiscoImcsIDRead(ctx context.Context, d *schema.ResourceData, m inte
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenCiscoIMCRetrievesTheCiscoIMCConfigurationForACatalystCenterNodeV1Item(response1.Response)
+		vItem1 := flattenCiscoIMCRetrievesTheCiscoIMCConfigurationForACatalystCenterNodeItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrievesTheCiscoIMCConfigurationForACatalystCenterNode response",
@@ -193,7 +195,7 @@ func resourceCiscoImcsIDUpdate(ctx context.Context, d *schema.ResourceData, m in
 	vvID := resourceMap["id"]
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvID)
-		request1 := expandRequestCiscoImcsIDUpdatesTheCiscoIMCConfigurationForACatalystCenterNodeV1(ctx, "parameters.0", d)
+		request1 := expandRequestCiscoImcsIDUpdatesTheCiscoIMCConfigurationForACatalystCenterNode(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.CiscoIMC.UpdatesTheCiscoIMCConfigurationForACatalystCenterNode(vvID, request1)
 		if err != nil || response1 == nil {
@@ -276,8 +278,9 @@ func resourceCiscoImcsIDDelete(ctx context.Context, d *schema.ResourceData, m in
 
 	return diags
 }
-func expandRequestCiscoImcsIDUpdatesTheCiscoIMCConfigurationForACatalystCenterNodeV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestCiscoIMCUpdatesTheCiscoIMCConfigurationForACatalystCenterNodeV1 {
-	request := catalystcentersdkgo.RequestCiscoIMCUpdatesTheCiscoIMCConfigurationForACatalystCenterNodeV1{}
+
+func expandRequestCiscoImcsIDUpdatesTheCiscoIMCConfigurationForACatalystCenterNode(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestCiscoIMCUpdatesTheCiscoIMCConfigurationForACatalystCenterNode {
+	request := catalystcentersdkgo.RequestCiscoIMCUpdatesTheCiscoIMCConfigurationForACatalystCenterNode{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ip_address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ip_address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ip_address")))) {
 		request.IPAddress = interfaceToString(v)
 	}

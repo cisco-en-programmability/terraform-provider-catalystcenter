@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -127,29 +127,29 @@ func resourceSdaFabricControlPlaneDeviceCreate(ctx context.Context, d *schema.Re
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestSdaFabricControlPlaneDeviceAddControlPlaneDeviceInSdaFabricV1(ctx, "parameters.0", d)
+	request1 := expandRequestSdaFabricControlPlaneDeviceAddControlPlaneDeviceInSdaFabric(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vDeviceManagementIPAddress := resourceItem["device_management_ip_address"]
 	vvDeviceManagementIPAddress := interfaceToString(vDeviceManagementIPAddress)
-	queryParamImport := catalystcentersdkgo.GetControlPlaneDeviceFromSdaFabricV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetControlPlaneDeviceFromSdaFabricQueryParams{}
 	queryParamImport.DeviceManagementIPAddress = vvDeviceManagementIPAddress
-	item2, _, err := client.Sda.GetControlPlaneDeviceFromSdaFabricV1(&queryParamImport)
+	item2, _, err := client.Sda.GetControlPlaneDeviceFromSdaFabric(&queryParamImport)
 	if err != nil || item2 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["device_management_ip_address"] = item2.DeviceManagementIPAddress
 		d.SetId(joinResourceID(resourceMap))
 		return resourceSdaFabricControlPlaneDeviceRead(ctx, d, m)
 	}
-	resp1, restyResp1, err := client.Sda.AddControlPlaneDeviceInSdaFabricV1(request1)
+	resp1, restyResp1, err := client.Sda.AddControlPlaneDeviceInSdaFabric(request1)
 	if err != nil || resp1 == nil {
 		if restyResp1 != nil {
 			diags = append(diags, diagErrorWithResponse(
-				"Failure when executing AddControlPlaneDeviceInSdaFabricV1", err, restyResp1.String()))
+				"Failure when executing AddControlPlaneDeviceInSdaFabric", err, restyResp1.String()))
 			return diags
 		}
 		diags = append(diags, diagError(
-			"Failure when executing AddControlPlaneDeviceInSdaFabricV1", err))
+			"Failure when executing AddControlPlaneDeviceInSdaFabric", err))
 		return diags
 	}
 	executionId := resp1.ExecutionID
@@ -182,17 +182,17 @@ func resourceSdaFabricControlPlaneDeviceCreate(ctx context.Context, d *schema.Re
 		if response2.Status == "FAILURE" {
 			log.Printf("[DEBUG] Error %s", response2.BapiError)
 			diags = append(diags, diagError(
-				"Failure when executing AddControlPlaneDeviceInSdaFabricV1", err))
+				"Failure when executing AddControlPlaneDeviceInSdaFabric", err))
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetControlPlaneDeviceFromSdaFabricV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetControlPlaneDeviceFromSdaFabricQueryParams{}
 	queryParamValidate.DeviceManagementIPAddress = vvDeviceManagementIPAddress
-	item3, _, err := client.Sda.GetControlPlaneDeviceFromSdaFabricV1(&queryParamValidate)
+	item3, _, err := client.Sda.GetControlPlaneDeviceFromSdaFabric(&queryParamValidate)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing AddControlPlaneDeviceInSdaFabricV1", err,
-			"Failure at AddControlPlaneDeviceInSdaFabricV1, unexpected response", ""))
+			"Failure when executing AddControlPlaneDeviceInSdaFabric", err,
+			"Failure at AddControlPlaneDeviceInSdaFabric, unexpected response", ""))
 		return diags
 	}
 
@@ -215,14 +215,14 @@ func resourceSdaFabricControlPlaneDeviceRead(ctx context.Context, d *schema.Reso
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetControlPlaneDeviceFromSdaFabricV1")
-		queryParams1 := catalystcentersdkgo.GetControlPlaneDeviceFromSdaFabricV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetControlPlaneDeviceFromSdaFabric")
+		queryParams1 := catalystcentersdkgo.GetControlPlaneDeviceFromSdaFabricQueryParams{}
 
 		queryParams1.DeviceManagementIPAddress = vDeviceManagementIPAddress
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sda.GetControlPlaneDeviceFromSdaFabricV1(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetControlPlaneDeviceFromSdaFabric(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
@@ -234,10 +234,10 @@ func resourceSdaFabricControlPlaneDeviceRead(ctx context.Context, d *schema.Reso
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetControlPlaneDeviceFromSdaFabricV1Item(response1)
+		vItem1 := flattenSdaGetControlPlaneDeviceFromSdaFabricItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetControlPlaneDeviceFromSdaFabricV1 response",
+				"Failure when setting GetControlPlaneDeviceFromSdaFabric response",
 				err))
 			return diags
 		}
@@ -261,23 +261,23 @@ func resourceSdaFabricControlPlaneDeviceDelete(ctx context.Context, d *schema.Re
 	resourceID := d.Id()
 	resourceMap := separateResourceID(resourceID)
 
-	queryParamDelete := catalystcentersdkgo.DeleteControlPlaneDeviceInSdaFabricV1QueryParams{}
+	queryParamDelete := catalystcentersdkgo.DeleteControlPlaneDeviceInSdaFabricQueryParams{}
 
 	vvDeviceManagementIPAddress := resourceMap["device_management_ip_address"]
 	queryParamDelete.DeviceManagementIPAddress = vvDeviceManagementIPAddress
 
-	response1, restyResp1, err := client.Sda.DeleteControlPlaneDeviceInSdaFabricV1(&queryParamDelete)
+	response1, restyResp1, err := client.Sda.DeleteControlPlaneDeviceInSdaFabric(&queryParamDelete)
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] resty response for delete operation => %v", restyResp1.String())
 			diags = append(diags, diagErrorWithAltAndResponse(
-				"Failure when executing DeleteControlPlaneDeviceInSdaFabricV1", err, restyResp1.String(),
-				"Failure at DeleteControlPlaneDeviceInSdaFabricV1, unexpected response", ""))
+				"Failure when executing DeleteControlPlaneDeviceInSdaFabric", err, restyResp1.String(),
+				"Failure at DeleteControlPlaneDeviceInSdaFabric, unexpected response", ""))
 			return diags
 		}
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing DeleteControlPlaneDeviceInSdaFabricV1", err,
-			"Failure at DeleteControlPlaneDeviceInSdaFabricV1, unexpected response", ""))
+			"Failure when executing DeleteControlPlaneDeviceInSdaFabric", err,
+			"Failure at DeleteControlPlaneDeviceInSdaFabric, unexpected response", ""))
 		return diags
 	}
 
@@ -311,7 +311,7 @@ func resourceSdaFabricControlPlaneDeviceDelete(ctx context.Context, d *schema.Re
 		if response2.Status == "FAILURE" {
 			log.Printf("[DEBUG] Error %s", response2.BapiError)
 			diags = append(diags, diagError(
-				"Failure when executing DeleteControlPlaneDeviceInSdaFabricV1", err))
+				"Failure when executing DeleteControlPlaneDeviceInSdaFabric", err))
 			return diags
 		}
 	}
@@ -322,8 +322,9 @@ func resourceSdaFabricControlPlaneDeviceDelete(ctx context.Context, d *schema.Re
 
 	return diags
 }
-func expandRequestSdaFabricControlPlaneDeviceAddControlPlaneDeviceInSdaFabricV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddControlPlaneDeviceInSdaFabricV1 {
-	request := catalystcentersdkgo.RequestSdaAddControlPlaneDeviceInSdaFabricV1{}
+
+func expandRequestSdaFabricControlPlaneDeviceAddControlPlaneDeviceInSdaFabric(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddControlPlaneDeviceInSdaFabric {
+	request := catalystcentersdkgo.RequestSdaAddControlPlaneDeviceInSdaFabric{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_management_ip_address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_management_ip_address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_management_ip_address")))) {
 		request.DeviceManagementIPAddress = interfaceToString(v)
 	}

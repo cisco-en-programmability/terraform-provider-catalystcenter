@@ -1,7 +1,7 @@
 
 resource "catalystcenter_pnp_global_settings" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     accept_eula = "string"

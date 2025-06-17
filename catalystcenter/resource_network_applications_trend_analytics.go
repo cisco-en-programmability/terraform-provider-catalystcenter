@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -22,10 +22,10 @@ func resourceNetworkApplicationsTrendAnalytics() *schema.Resource {
 - Retrieves the trend analytics of applications experience data for the specified time range. The data will be grouped
 based on the given trend time interval. This data source action facilitates obtaining consolidated insights into the
 performance and status of the network applications over the specified start and end time. If startTime and endTime are
-not provided, the API defaults to the last 24 hours. *siteId* and *trendInterval* are mandatory. *siteId* must be a site
-UUID of a building. For detailed information about the usage of the API, please refer to the Open API specification
-document https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
-NetworkApplications-1.0.0-resolved.yaml
+not provided, the API defaults to the last 24 hours. **siteId** and **trendInterval** are mandatory. **siteId** must be
+a site UUID of a building. For detailed information about the usage of the API, please refer to the Open API
+specification document https://github.com/cisco-en-programmability/catalyst-center-api-
+specs/blob/main/Assurance/CE_Cat_Center_Org-NetworkApplications-1.0.0-resolved.yaml
 `,
 
 		CreateContext: resourceNetworkApplicationsTrendAnalyticsCreate,
@@ -338,9 +338,9 @@ func resourceNetworkApplicationsTrendAnalyticsCreate(ctx context.Context, d *sch
 
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
-	request1 := expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1(ctx, "parameters.0", d)
+	request1 := expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplications(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.RetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1HeaderParams{}
+	headerParams1 := catalystcentersdkgo.RetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsHeaderParams{}
 
 	headerParams1.XCaLLERID = vXCaLLERID.(string)
 
@@ -362,7 +362,7 @@ func resourceNetworkApplicationsTrendAnalyticsCreate(ctx context.Context, d *sch
 
 	//Analizar verificacion.
 
-	vItems1 := flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1Items(response1.Response)
+	vItems1 := flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsItems(response1.Response)
 	if err := d.Set("items", vItems1); err != nil {
 		diags = append(diags, diagError(
 			"Failure when setting RetrievesTheTrendAnalyticsDataRelatedToNetworkApplications response",
@@ -387,8 +387,8 @@ func resourceNetworkApplicationsTrendAnalyticsDelete(ctx context.Context, d *sch
 	return diags
 }
 
-func expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1 {
-	request := catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1{}
+func expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplications(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplications {
+	request := catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplications{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -408,19 +408,19 @@ func expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDat
 		request.Attributes = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1FiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsFiltersArray(ctx, key+".filters", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".aggregate_attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".aggregate_attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".aggregate_attributes")))) {
-		request.AggregateAttributes = expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1AggregateAttributesArray(ctx, key+".aggregate_attributes", d)
+		request.AggregateAttributes = expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsAggregateAttributesArray(ctx, key+".aggregate_attributes", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".page")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".page")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".page")))) {
-		request.Page = expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1Page(ctx, key+".page.0", d)
+		request.Page = expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsPage(ctx, key+".page.0", d)
 	}
 	return &request
 }
 
-func expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1Filters {
-	request := []catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1Filters{}
+func expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsFilters {
+	request := []catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -431,7 +431,7 @@ func expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDat
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -439,8 +439,8 @@ func expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDat
 	return &request
 }
 
-func expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1Filters {
-	request := catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1Filters{}
+func expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsFilters {
+	request := catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -453,8 +453,8 @@ func expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDat
 	return &request
 }
 
-func expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1AggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1AggregateAttributes {
-	request := []catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1AggregateAttributes{}
+func expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsAggregateAttributesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsAggregateAttributes {
+	request := []catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsAggregateAttributes{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -465,7 +465,7 @@ func expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDat
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1AggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsAggregateAttributes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -473,8 +473,8 @@ func expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDat
 	return &request
 }
 
-func expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1AggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1AggregateAttributes {
-	request := catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1AggregateAttributes{}
+func expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsAggregateAttributes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsAggregateAttributes {
+	request := catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsAggregateAttributes{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -484,8 +484,8 @@ func expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDat
 	return &request
 }
 
-func expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1Page(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1Page {
-	request := catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1Page{}
+func expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsPage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsPage {
+	request := catalystcentersdkgo.RequestApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsPage{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".limit")))) {
 		request.Limit = interfaceToIntPtr(v)
 	}
@@ -498,7 +498,7 @@ func expandRequestNetworkApplicationsTrendAnalyticsRetrievesTheTrendAnalyticsDat
 	return &request
 }
 
-func flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1Items(items *[]catalystcentersdkgo.ResponseApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1Response) []map[string]interface{} {
+func flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsItems(items *[]catalystcentersdkgo.ResponseApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -506,15 +506,15 @@ func flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicatio
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["timestamp"] = item.Timestamp
-		respItem["attributes"] = flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1ItemsAttributes(item.Attributes)
-		respItem["aggregate_attributes"] = flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1ItemsAggregateAttributes(item.AggregateAttributes)
-		respItem["groups"] = flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1ItemsGroups(item.Groups)
+		respItem["attributes"] = flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsItemsAttributes(item.Attributes)
+		respItem["aggregate_attributes"] = flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsItemsAggregateAttributes(item.AggregateAttributes)
+		respItem["groups"] = flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsItemsGroups(item.Groups)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1ItemsAttributes(items *[]catalystcentersdkgo.ResponseApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1ResponseAttributes) []map[string]interface{} {
+func flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsItemsAttributes(items *[]catalystcentersdkgo.ResponseApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsResponseAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -528,7 +528,7 @@ func flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicatio
 	return respItems
 }
 
-func flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1ItemsAggregateAttributes(items *[]catalystcentersdkgo.ResponseApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1ResponseAggregateAttributes) []map[string]interface{} {
+func flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsItemsAggregateAttributes(items *[]catalystcentersdkgo.ResponseApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsResponseAggregateAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -543,7 +543,7 @@ func flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicatio
 	return respItems
 }
 
-func flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1ItemsGroups(items *[]catalystcentersdkgo.ResponseApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1ResponseGroups) []map[string]interface{} {
+func flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsItemsGroups(items *[]catalystcentersdkgo.ResponseApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsResponseGroups) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -551,14 +551,14 @@ func flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicatio
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["id"] = item.ID
-		respItem["attributes"] = flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1ItemsGroupsAttributes(item.Attributes)
-		respItem["aggregate_attributes"] = flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1ItemsGroupsAggregateAttributes(item.AggregateAttributes)
+		respItem["attributes"] = flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsItemsGroupsAttributes(item.Attributes)
+		respItem["aggregate_attributes"] = flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsItemsGroupsAggregateAttributes(item.AggregateAttributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1ItemsGroupsAttributes(items *[]catalystcentersdkgo.ResponseApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1ResponseGroupsAttributes) []map[string]interface{} {
+func flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsItemsGroupsAttributes(items *[]catalystcentersdkgo.ResponseApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsResponseGroupsAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -572,7 +572,7 @@ func flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicatio
 	return respItems
 }
 
-func flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1ItemsGroupsAggregateAttributes(items *[]catalystcentersdkgo.ResponseApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsV1ResponseGroupsAggregateAttributes) []map[string]interface{} {
+func flattenApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsItemsGroupsAggregateAttributes(items *[]catalystcentersdkgo.ResponseApplicationsRetrievesTheTrendAnalyticsDataRelatedToNetworkApplicationsResponseGroupsAggregateAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

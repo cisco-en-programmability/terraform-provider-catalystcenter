@@ -24,7 +24,7 @@ specs/blob/main/Assurance/CE_Cat_Center_Org-issueAndHealthDefinitions-1.0.0-reso
 ```terraform
 resource "catalystcenter_system_issue_definitions" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     id                              = "string"

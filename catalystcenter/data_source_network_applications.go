@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -16,8 +16,8 @@ func dataSourceNetworkApplications() *schema.Resource {
 		Description: `It performs read operation on Applications.
 
 - Retrieves the list of network applications along with experience and health metrics. If startTime and endTime are not
-provided, the API defaults to the last 24 hours. siteId is mandatory. siteId must be a site UUID of a building. For
-detailed information about the usage of the API, please refer to the Open API specification document
+provided, the API defaults to the last 24 hours. **siteId** is mandatory. **siteId** must be a site UUID of a building.
+For detailed information about the usage of the API, please refer to the Open API specification document
 https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 NetworkApplications-1.0.0-resolved.yaml
 `,
@@ -27,14 +27,14 @@ NetworkApplications-1.0.0-resolved.yaml
 			"application_name": &schema.Schema{
 				Description: `applicationName query parameter. Name of the application for which the experience data is intended.
 Examples:
-applicationName=webex (single applicationName requested)
-applicationName=webex&applicationName=teams (multiple applicationName requested)
+**applicationName=webex** (single applicationName requested)
+**applicationName=webex&applicationName=teams** (multiple applicationName requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"attribute": &schema.Schema{
-				Description: `attribute query parameter. List of attributes related to resource that can be requested to only be part of the response along with the required attributes. Supported attributes are applicationName, siteId, exporterIpAddress, exporterNetworkDeviceId, healthScore, businessRelevance, usage, throughput, packetLossPercent, networkLatency, applicationServerLatency, clientNetworkLatency, serverNetworkLatency, trafficClass, jitter, ssid Examples: attribute=healthScore (single attribute requested) attribute=healthScore&attribute=ssid&attribute=jitter (multiple attribute requested)
+				Description: `attribute query parameter. List of attributes related to resource that can be requested to only be part of the response along with the required attributes. Supported attributes are applicationName, siteId, exporterIpAddress, exporterNetworkDeviceId, healthScore, businessRelevance, usage, throughput, packetLossPercent, networkLatency, applicationServerLatency, clientNetworkLatency, serverNetworkLatency, trafficClass, jitter, ssid Examples: **attribute=healthScore** (single attribute requested) **attribute=healthScore&attribute=ssid&attribute=jitter** (multiple attribute requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -70,7 +70,7 @@ applicationName=webex&applicationName=teams (multiple applicationName requested)
 				Optional: true,
 			},
 			"site_id": &schema.Schema{
-				Description: `siteId query parameter. The site UUID without the top level hierarchy. siteId is mandatory. siteId must be a site UUID of a building. (Ex."buildingUuid") Examples: siteId=buildingUuid (single siteId requested) siteId=buildingUuid1&siteId=buildingUuid2 (multiple siteId requested)
+				Description: `siteId query parameter. The site UUID without the top level hierarchy. **siteId** is mandatory. **siteId** must be a site UUID of a building. (Ex."buildingUuid") Examples: **siteId=buildingUuid** (single siteId requested) **siteId=buildingUuid1&siteId=buildingUuid2** (multiple siteId requested)
 `,
 				Type:     schema.TypeString,
 				Required: true,
@@ -84,8 +84,8 @@ applicationName=webex&applicationName=teams (multiple applicationName requested)
 			"ssid": &schema.Schema{
 				Description: `ssid query parameter. In the context of a network application, SSID refers to the name of the wireless network to which the client connects.
 Examples:
-ssid=Alpha (single ssid requested)
-ssid=Alpha&ssid=Guest (multiple ssid requested)
+**ssid=Alpha** (single ssid requested)
+**ssid=Alpha&ssid=Guest** (multiple ssid requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -236,10 +236,10 @@ func dataSourceNetworkApplicationsRead(ctx context.Context, d *schema.ResourceDa
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesTheListOfNetworkApplicationsAlongWithExperienceAndHealthMetricsV1")
+		log.Printf("[DEBUG] Selected method: RetrievesTheListOfNetworkApplicationsAlongWithExperienceAndHealthMetrics")
 
-		headerParams1 := catalystcentersdkgo.RetrievesTheListOfNetworkApplicationsAlongWithExperienceAndHealthMetricsV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.RetrievesTheListOfNetworkApplicationsAlongWithExperienceAndHealthMetricsV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.RetrievesTheListOfNetworkApplicationsAlongWithExperienceAndHealthMetricsHeaderParams{}
+		queryParams1 := catalystcentersdkgo.RetrievesTheListOfNetworkApplicationsAlongWithExperienceAndHealthMetricsQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -277,24 +277,36 @@ func dataSourceNetworkApplicationsRead(ctx context.Context, d *schema.ResourceDa
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Applications.RetrievesTheListOfNetworkApplicationsAlongWithExperienceAndHealthMetricsV1(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Applications.RetrievesTheListOfNetworkApplicationsAlongWithExperienceAndHealthMetrics(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesTheListOfNetworkApplicationsAlongWithExperienceAndHealthMetricsV1", err,
-				"Failure at RetrievesTheListOfNetworkApplicationsAlongWithExperienceAndHealthMetricsV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesTheListOfNetworkApplicationsAlongWithExperienceAndHealthMetrics", err,
+				"Failure at RetrievesTheListOfNetworkApplicationsAlongWithExperienceAndHealthMetrics, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenApplicationsRetrievesTheListOfNetworkApplicationsAlongWithExperienceAndHealthMetricsV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesTheListOfNetworkApplicationsAlongWithExperienceAndHealthMetrics", err,
+				"Failure at RetrievesTheListOfNetworkApplicationsAlongWithExperienceAndHealthMetrics, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenApplicationsRetrievesTheListOfNetworkApplicationsAlongWithExperienceAndHealthMetricsItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesTheListOfNetworkApplicationsAlongWithExperienceAndHealthMetricsV1 response",
+				"Failure when setting RetrievesTheListOfNetworkApplicationsAlongWithExperienceAndHealthMetrics response",
 				err))
 			return diags
 		}
@@ -306,7 +318,7 @@ func dataSourceNetworkApplicationsRead(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func flattenApplicationsRetrievesTheListOfNetworkApplicationsAlongWithExperienceAndHealthMetricsV1Items(items *[]catalystcentersdkgo.ResponseApplicationsRetrievesTheListOfNetworkApplicationsAlongWithExperienceAndHealthMetricsV1Response) []map[string]interface{} {
+func flattenApplicationsRetrievesTheListOfNetworkApplicationsAlongWithExperienceAndHealthMetricsItems(items *[]catalystcentersdkgo.ResponseApplicationsRetrievesTheListOfNetworkApplicationsAlongWithExperienceAndHealthMetricsResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

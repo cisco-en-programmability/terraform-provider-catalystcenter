@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -114,27 +114,41 @@ func dataSourceInterfaceRead(ctx context.Context, d *schema.ResourceData, m inte
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: LegitOperationsForInterfaceV1")
+		log.Printf("[DEBUG] Selected method: LegitOperationsForInterface")
 		vvInterfaceUUID := vInterfaceUUID.(string)
 
-		response1, restyResp1, err := client.Devices.LegitOperationsForInterfaceV1(vvInterfaceUUID)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Devices.LegitOperationsForInterface(vvInterfaceUUID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 LegitOperationsForInterfaceV1", err,
-				"Failure at LegitOperationsForInterfaceV1, unexpected response", ""))
+				"Failure when executing 2 LegitOperationsForInterface", err,
+				"Failure at LegitOperationsForInterface, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesLegitOperationsForInterfaceV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 LegitOperationsForInterface", err,
+				"Failure at LegitOperationsForInterface, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenDevicesLegitOperationsForInterfaceItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting LegitOperationsForInterfaceV1 response",
+				"Failure when setting LegitOperationsForInterface response",
 				err))
 			return diags
 		}
@@ -146,20 +160,20 @@ func dataSourceInterfaceRead(ctx context.Context, d *schema.ResourceData, m inte
 	return diags
 }
 
-func flattenDevicesLegitOperationsForInterfaceV1Item(item *catalystcentersdkgo.ResponseDevicesLegitOperationsForInterfaceV1Response) []map[string]interface{} {
+func flattenDevicesLegitOperationsForInterfaceItem(item *catalystcentersdkgo.ResponseDevicesLegitOperationsForInterfaceResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["interface_uuid"] = item.InterfaceUUID
-	respItem["properties"] = flattenDevicesLegitOperationsForInterfaceV1ItemProperties(item.Properties)
-	respItem["operations"] = flattenDevicesLegitOperationsForInterfaceV1ItemOperations(item.Operations)
+	respItem["properties"] = flattenDevicesLegitOperationsForInterfaceItemProperties(item.Properties)
+	respItem["operations"] = flattenDevicesLegitOperationsForInterfaceItemOperations(item.Operations)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenDevicesLegitOperationsForInterfaceV1ItemProperties(items *[]catalystcentersdkgo.ResponseDevicesLegitOperationsForInterfaceV1ResponseProperties) []map[string]interface{} {
+func flattenDevicesLegitOperationsForInterfaceItemProperties(items *[]catalystcentersdkgo.ResponseDevicesLegitOperationsForInterfaceResponseProperties) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -174,7 +188,7 @@ func flattenDevicesLegitOperationsForInterfaceV1ItemProperties(items *[]catalyst
 	return respItems
 }
 
-func flattenDevicesLegitOperationsForInterfaceV1ItemOperations(items *[]catalystcentersdkgo.ResponseDevicesLegitOperationsForInterfaceV1ResponseOperations) []map[string]interface{} {
+func flattenDevicesLegitOperationsForInterfaceItemOperations(items *[]catalystcentersdkgo.ResponseDevicesLegitOperationsForInterfaceResponseOperations) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

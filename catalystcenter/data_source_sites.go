@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -21,9 +21,9 @@ func dataSourceSites() *schema.Resource {
 		ReadContext: dataSourceSitesRead,
 		Schema: map[string]*schema.Schema{
 			"limit": &schema.Schema{
-				Description: `limit query parameter. The number of records to show for this page.
+				Description: `limit query parameter. The number of records to show for this page;The minimum is 1, and the maximum is 500.
 `,
-				Type:     schema.TypeInt,
+				Type:     schema.TypeFloat,
 				Optional: true,
 			},
 			"name": &schema.Schema{
@@ -41,7 +41,7 @@ func dataSourceSites() *schema.Resource {
 			"offset": &schema.Schema{
 				Description: `offset query parameter. The first record to show for this page; the first record is numbered 1.
 `,
-				Type:     schema.TypeInt,
+				Type:     schema.TypeFloat,
 				Optional: true,
 			},
 			"type": &schema.Schema{
@@ -147,6 +147,13 @@ func dataSourceSites() *schema.Resource {
 							Computed: true,
 						},
 
+						"site_hierarchy_id": &schema.Schema{
+							Description: `Site Hierarchical Id. Read only. Can be used to add the access groups using the API POST:/dna/system/api/v1/accessGroups, this value should be used to populate the srcResourceId field of the request payload.
+`,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
 						"type": &schema.Schema{
 							Description: `Type`,
 							Type:        schema.TypeString,
@@ -186,8 +193,8 @@ func dataSourceSitesRead(ctx context.Context, d *schema.ResourceData, m interfac
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSitesV1")
-		queryParams1 := catalystcentersdkgo.GetSitesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetSites")
+		queryParams1 := catalystcentersdkgo.GetSitesQueryParams{}
 
 		if okName {
 			queryParams1.Name = vName.(string)
@@ -208,24 +215,38 @@ func dataSourceSitesRead(ctx context.Context, d *schema.ResourceData, m interfac
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.SiteDesign.GetSitesV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.SiteDesign.GetSites(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSitesV1", err,
-				"Failure at GetSitesV1, unexpected response", ""))
+				"Failure when executing 2 GetSites", err,
+				"Failure at GetSites, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSiteDesignGetSitesV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetSites", err,
+				"Failure at GetSites, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSiteDesignGetSitesItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSitesV1 response",
+				"Failure when setting GetSites response",
 				err))
 			return diags
 		}
@@ -237,7 +258,7 @@ func dataSourceSitesRead(ctx context.Context, d *schema.ResourceData, m interfac
 	return diags
 }
 
-func flattenSiteDesignGetSitesV1Items(items *[]catalystcentersdkgo.ResponseSiteDesignGetSitesV1Response) []map[string]interface{} {
+func flattenSiteDesignGetSitesItems(items *[]catalystcentersdkgo.ResponseSiteDesignGetSitesResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -259,6 +280,7 @@ func flattenSiteDesignGetSitesV1Items(items *[]catalystcentersdkgo.ResponseSiteD
 		respItem["type"] = item.Type
 		respItem["id"] = item.ID
 		respItem["parent_id"] = item.ParentID
+		respItem["site_hierarchy_id"] = item.SiteHierarchyID
 		respItems = append(respItems, respItem)
 	}
 	return respItems

@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -9,7 +10,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -78,29 +79,40 @@ not supported, the NetworkBugsDevice scanStatus will be Failed with appropriate 
 func resourceNetworkBugsTriggerScanCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
-	resourceItem := *getResourceItem(d.Get("parameters"))
-	vFailedDevicesOnly := resourceItem["failed_devices_only"]
-	vvFailedDevicesOnly := interfaceToBool(vFailedDevicesOnly)
 
-	queryParams1 := catalystcentersdkgo.TriggersABugsScanForTheSupportedNetworkDevicesV1QueryParams{}
-	queryParams1.FailedDevicesOnly = vvFailedDevicesOnly
-	// has_unknown_response: None
+	queryParams1 := catalystcentersdkgo.TriggersABugsScanForTheSupportedNetworkDevicesQueryParams{}
 
-	response1, restyResp1, err := client.Compliance.TriggersABugsScanForTheSupportedNetworkDevicesV1(&queryParams1)
+	vFailedDevicesOnly, okFailedDevicesOnly := d.GetOk("parameters.0.failed_devices_only")
+	if okFailedDevicesOnly {
+		queryParams1.FailedDevicesOnly = vFailedDevicesOnly.(bool)
+	}
 
-	vItem1 := flattenComplianceTriggersABugsScanForTheSupportedNetworkDevicesV1Item(response1.Response)
+	response1, restyResp1, err := client.Compliance.TriggersABugsScanForTheSupportedNetworkDevices(&queryParams1)
+
+	if err != nil || response1 == nil {
+		if restyResp1 != nil {
+			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+		}
+		d.SetId("")
+		return diags
+	}
+
+	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+	if response1.Response == nil {
+		diags = append(diags, diagError(
+			"Failure when executing TriggersABugsScanForTheSupportedNetworkDevices", err))
+		return diags
+	}
+
+	vItem1 := flattenComplianceTriggersABugsScanForTheSupportedNetworkDevicesItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting TriggersABugsScanForTheSupportedNetworkDevicesV1 response",
+			"Failure when setting TriggersABugsScanForTheSupportedNetworkDevices response",
 			err))
 		return diags
 	}
 
-	if response1.Response == nil {
-		diags = append(diags, diagError(
-			"Failure when executing TriggersABugsScanForTheSupportedNetworkDevicesV1", err))
-		return diags
-	}
 	taskId := response1.Response.TaskID
 	log.Printf("[DEBUG] TASKID => %s", taskId)
 	if taskId != "" {
@@ -125,44 +137,35 @@ func resourceNetworkBugsTriggerScanCreate(ctx context.Context, d *schema.Resourc
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing TriggersABugsScanForTheSupportedNetworkDevicesV1", err1))
+				"Failure when executing TriggersABugsScanForTheSupportedNetworkDevices", err1))
 			return diags
 		}
 	}
 
-	if err != nil || response1 == nil {
-		if restyResp1 != nil {
-			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
-		}
-		d.SetId("")
-		return diags
-	}
-
-	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 	d.SetId(getUnixTimeString())
 	return diags
 }
 func resourceNetworkBugsTriggerScanRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 	return diags
 }
 
 func resourceNetworkBugsTriggerScanDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 	return diags
 }
 
-func flattenComplianceTriggersABugsScanForTheSupportedNetworkDevicesV1Item(item *catalystcentersdkgo.ResponseComplianceTriggersABugsScanForTheSupportedNetworkDevicesV1Response) []map[string]interface{} {
+func flattenComplianceTriggersABugsScanForTheSupportedNetworkDevicesItem(item *catalystcentersdkgo.ResponseComplianceTriggersABugsScanForTheSupportedNetworkDevicesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

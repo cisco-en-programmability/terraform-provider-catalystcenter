@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -47,6 +47,13 @@ func dataSourceBuildings() *schema.Resource {
 							Computed: true,
 						},
 
+						"id": &schema.Schema{
+							Description: `Building Id. Read only
+`,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
 						"latitude": &schema.Schema{
 							Description: `Building Latitude. Example: 37.403712
 `,
@@ -68,8 +75,22 @@ func dataSourceBuildings() *schema.Resource {
 							Computed: true,
 						},
 
+						"name_hierarchy": &schema.Schema{
+							Description: `Building hierarchical name. Read only
+`,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
 						"parent_id": &schema.Schema{
 							Description: `Parent Id
+`,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
+						"site_hierarchy_id": &schema.Schema{
+							Description: `Site Hierarchical Id. Read only. Can be used to add the access groups using the API POST:/dna/system/api/v1/accessGroups, this value should be used to populate the srcResourceId field of the request payload.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -99,7 +120,21 @@ func dataSourceBuildingsRead(ctx context.Context, d *schema.ResourceData, m inte
 		log.Printf("[DEBUG] Selected method: GetsABuildingV2")
 		vvID := vID.(string)
 
+		// has_unknown_response: None
+
 		response1, restyResp1, err := client.SiteDesign.GetsABuildingV2(vvID)
+
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetsABuildingV2", err,
+				"Failure at GetsABuildingV2, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
@@ -140,6 +175,9 @@ func flattenSiteDesignGetsABuildingV2Item(item *catalystcentersdkgo.ResponseSite
 	respItem["address"] = item.Address
 	respItem["country"] = item.Country
 	respItem["type"] = item.Type
+	respItem["id"] = item.ID
+	respItem["name_hierarchy"] = item.NameHierarchy
+	respItem["site_hierarchy_id"] = item.SiteHierarchyID
 	return []map[string]interface{}{
 		respItem,
 	}

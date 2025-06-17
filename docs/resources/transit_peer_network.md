@@ -20,7 +20,7 @@ It manages create, read and delete operations on SDA.
 ```terraform
 resource "catalystcenter_transit_peer_network" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     ip_transit_settings {

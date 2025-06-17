@@ -12,6 +12,8 @@ description: |-
 It performs create operation on Application Policy.
 
 - Create/Update/Delete application policy
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -21,105 +23,105 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_app_policy_intent_create" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
-    create_list {
+    create_list = [{
 
-      advanced_policy_scope {
+      advanced_policy_scope = [{
 
-        advanced_policy_scope_element {
+        advanced_policy_scope_element = [{
 
           group_id = ["string"]
           ssid     = ["string"]
-        }
+        }]
         name = "string"
-      }
-      consumer {
+      }]
+      consumer = [{
 
-        scalable_group {
+        scalable_group = [{
 
           id_ref = "string"
-        }
-      }
-      contract {
+        }]
+      }]
+      contract = [{
 
         id_ref = "string"
-      }
+      }]
       delete_policy_status = "string"
-      exclusive_contract {
+      exclusive_contract = [{
 
-        clause {
+        clause = [{
 
           device_removal_behavior = "string"
           host_tracking_enabled   = "false"
           relevance_level         = "string"
           type                    = "string"
-        }
-      }
+        }]
+      }]
       name         = "string"
       policy_scope = "string"
       priority     = "string"
-      producer {
+      producer = [{
 
-        scalable_group {
+        scalable_group = [{
 
           id_ref = "string"
-        }
-      }
-    }
+        }]
+      }]
+    }]
     delete_list = ["string"]
-    update_list {
+    update_list = [{
 
-      advanced_policy_scope {
+      advanced_policy_scope = [{
 
-        advanced_policy_scope_element {
+        advanced_policy_scope_element = [{
 
           group_id = ["string"]
           id       = "string"
           ssid     = ["string"]
-        }
+        }]
         id   = "string"
         name = "string"
-      }
-      consumer {
+      }]
+      consumer = [{
 
         id = "string"
-        scalable_group {
+        scalable_group = [{
 
           id_ref = "string"
-        }
-      }
-      contract {
+        }]
+      }]
+      contract = [{
 
         id_ref = "string"
-      }
+      }]
       delete_policy_status = "string"
-      exclusive_contract {
+      exclusive_contract = [{
 
-        clause {
+        clause = [{
 
           device_removal_behavior = "string"
           host_tracking_enabled   = "false"
           id                      = "string"
           relevance_level         = "string"
           type                    = "string"
-        }
+        }]
         id = "string"
-      }
+      }]
       id           = "string"
       name         = "string"
       policy_scope = "string"
       priority     = "string"
-      producer {
+      producer = [{
 
         id = "string"
-        scalable_group {
+        scalable_group = [{
 
           id_ref = "string"
-        }
-      }
-    }
-  }
+        }]
+      }]
+    }]
+  }]
 }
 
 output "catalystcenter_app_policy_intent_create_example" {

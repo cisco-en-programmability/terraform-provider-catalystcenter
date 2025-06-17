@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -62,10 +62,10 @@ func dataSourceAssuranceTasksCountRead(ctx context.Context, d *schema.ResourceDa
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveACountOfTheNumberOfAssuranceTasksThatCurrentlyExistV1")
+		log.Printf("[DEBUG] Selected method: RetrieveACountOfTheNumberOfAssuranceTasksThatCurrentlyExist")
 
-		headerParams1 := catalystcentersdkgo.RetrieveACountOfTheNumberOfAssuranceTasksThatCurrentlyExistV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.RetrieveACountOfTheNumberOfAssuranceTasksThatCurrentlyExistV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.RetrieveACountOfTheNumberOfAssuranceTasksThatCurrentlyExistHeaderParams{}
+		queryParams1 := catalystcentersdkgo.RetrieveACountOfTheNumberOfAssuranceTasksThatCurrentlyExistQueryParams{}
 
 		if okStatus {
 			queryParams1.Status = vStatus.(string)
@@ -74,24 +74,36 @@ func dataSourceAssuranceTasksCountRead(ctx context.Context, d *schema.ResourceDa
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Task.RetrieveACountOfTheNumberOfAssuranceTasksThatCurrentlyExistV1(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Task.RetrieveACountOfTheNumberOfAssuranceTasksThatCurrentlyExist(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveACountOfTheNumberOfAssuranceTasksThatCurrentlyExistV1", err,
-				"Failure at RetrieveACountOfTheNumberOfAssuranceTasksThatCurrentlyExistV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveACountOfTheNumberOfAssuranceTasksThatCurrentlyExist", err,
+				"Failure at RetrieveACountOfTheNumberOfAssuranceTasksThatCurrentlyExist, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenTaskRetrieveACountOfTheNumberOfAssuranceTasksThatCurrentlyExistV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveACountOfTheNumberOfAssuranceTasksThatCurrentlyExist", err,
+				"Failure at RetrieveACountOfTheNumberOfAssuranceTasksThatCurrentlyExist, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenTaskRetrieveACountOfTheNumberOfAssuranceTasksThatCurrentlyExistItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveACountOfTheNumberOfAssuranceTasksThatCurrentlyExistV1 response",
+				"Failure when setting RetrieveACountOfTheNumberOfAssuranceTasksThatCurrentlyExist response",
 				err))
 			return diags
 		}
@@ -103,7 +115,7 @@ func dataSourceAssuranceTasksCountRead(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func flattenTaskRetrieveACountOfTheNumberOfAssuranceTasksThatCurrentlyExistV1Item(item *catalystcentersdkgo.ResponseTaskRetrieveACountOfTheNumberOfAssuranceTasksThatCurrentlyExistV1Response) []map[string]interface{} {
+func flattenTaskRetrieveACountOfTheNumberOfAssuranceTasksThatCurrentlyExistItem(item *catalystcentersdkgo.ResponseTaskRetrieveACountOfTheNumberOfAssuranceTasksThatCurrentlyExistResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

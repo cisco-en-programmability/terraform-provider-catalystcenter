@@ -4,14 +4,18 @@ page_title: "catalystcenter_wireless_accesspoint_configuration_summary Data Sour
 subcategory: ""
 description: |-
   It performs read operation on Wireless.
-  Users can query the access point configuration information per device using the ethernet MAC address
+  Users can query access point configuration information for a specific device by using the Ethernet MAC address as a
+  'key' filter. If no key is specified, all access point details will be retrieved based on the combination of filters
+  provided.
 ---
 
 # catalystcenter_wireless_accesspoint_configuration_summary (Data Source)
 
 It performs read operation on Wireless.
 
-- Users can query the access point configuration information per device using the ethernet MAC address
+- Users can query access point configuration information for a specific device by using the Ethernet MAC address as a
+'key' filter. If no key is specified, all access point details will be retrieved based on the combination of filters
+provided.
 
 ## Example Usage
 
@@ -61,49 +65,25 @@ Read-Only:
 - `ap_height` (Number)
 - `ap_mode` (String)
 - `ap_name` (String)
-- `auth_entity_class` (String)
-- `auth_entity_id` (String)
-- `change_log_list` (String)
-- `creation_order_index` (Number)
-- `deploy_pending` (String)
-- `display_name` (String)
 - `eth_mac` (String)
 - `failover_priority` (String)
-- `instance_created_on` (String)
-- `instance_id` (Number)
-- `instance_origin` (String)
-- `instance_tenant_id` (String)
-- `instance_updated_on` (String)
-- `instance_uuid` (String)
-- `instance_version` (Number)
-- `internal_key` (List of Object) (see [below for nested schema](#nestedobjatt--item--internal_key))
-- `is_being_changed` (String)
-- `lazy_loaded_entities` (String)
 - `led_brightness_level` (Number)
 - `led_status` (String)
 - `location` (String)
 - `mac_address` (String)
+- `management_ip_address` (String)
 - `mesh_dtos` (List of String)
-- `ordered_list_oeassoc_name` (String)
-- `ordered_list_oeindex` (Number)
+- `model` (String)
 - `primary_controller_name` (String)
 - `primary_ip_address` (String)
+- `provisioning_status` (String)
 - `radio_dtos` (List of Object) (see [below for nested schema](#nestedobjatt--item--radio_dtos))
+- `reachability_status` (String)
 - `secondary_controller_name` (String)
 - `secondary_ip_address` (String)
 - `tertiary_controller_name` (String)
 - `tertiary_ip_address` (String)
-
-<a id="nestedobjatt--item--internal_key"></a>
-### Nested Schema for `item.internal_key`
-
-Read-Only:
-
-- `id` (Number)
-- `long_type` (String)
-- `type` (String)
-- `url` (String)
-
+- `wlc_ip_address` (String)
 
 <a id="nestedobjatt--item--radio_dtos"></a>
 ### Nested Schema for `item.radio_dtos`
@@ -115,43 +95,16 @@ Read-Only:
 - `antenna_elev_angle` (Number)
 - `antenna_gain` (Number)
 - `antenna_pattern_name` (String)
-- `auth_entity_class` (String)
-- `auth_entity_id` (String)
-- `change_log_list` (String)
 - `channel_assignment_mode` (String)
 - `channel_number` (Number)
 - `channel_width` (String)
 - `clean_air_si` (String)
-- `creation_order_index` (Number)
-- `deploy_pending` (String)
-- `display_name` (String)
+- `dual_radio_mode` (String)
 - `if_type` (Number)
 - `if_type_value` (String)
-- `instance_created_on` (String)
-- `instance_id` (Number)
-- `instance_origin` (String)
-- `instance_tenant_id` (String)
-- `instance_updated_on` (String)
-- `instance_uuid` (String)
-- `instance_version` (Number)
-- `internal_key` (List of Object) (see [below for nested schema](#nestedobjatt--item--radio_dtos--internal_key))
-- `is_being_changed` (String)
-- `lazy_loaded_entities` (String)
 - `mac_address` (String)
-- `ordered_list_oeassoc_name` (String)
-- `ordered_list_oeindex` (Number)
 - `power_assignment_mode` (String)
 - `powerlevel` (Number)
 - `radio_band` (String)
 - `radio_role_assignment` (String)
 - `slot_id` (Number)
-
-<a id="nestedobjatt--item--radio_dtos--internal_key"></a>
-### Nested Schema for `item.radio_dtos.internal_key`
-
-Read-Only:
-
-- `id` (Number)
-- `long_type` (String)
-- `type` (String)
-- `url` (String)

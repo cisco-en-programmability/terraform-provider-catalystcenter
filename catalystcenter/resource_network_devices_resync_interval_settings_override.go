@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -9,7 +10,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -39,13 +40,13 @@ set.
 					Schema: map[string]*schema.Schema{
 
 						"task_id": &schema.Schema{
-							Description: `Unique identifier for the task
+							Description: `Unique identifier for the task.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
 						},
 						"url": &schema.Schema{
-							Description: `URL for the task
+							Description: `URL for the task.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -73,14 +74,14 @@ func resourceNetworkDevicesResyncIntervalSettingsOverrideCreate(ctx context.Cont
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Devices.OverrideResyncIntervalV1()
+	response1, restyResp1, err := client.Devices.OverrideResyncInterval()
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing OverrideResyncIntervalV1", err))
+			"Failure when executing OverrideResyncInterval", err))
 		return diags
 	}
 
@@ -88,7 +89,7 @@ func resourceNetworkDevicesResyncIntervalSettingsOverrideCreate(ctx context.Cont
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing OverrideResyncIntervalV1", err))
+			"Failure when executing OverrideResyncInterval", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -115,21 +116,21 @@ func resourceNetworkDevicesResyncIntervalSettingsOverrideCreate(ctx context.Cont
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing OverrideResyncIntervalV1", err1))
+				"Failure when executing OverrideResyncInterval", err1))
 			return diags
 		}
 	}
-	vItem1 := flattenDevicesOverrideResyncIntervalV1Item(response1.Response)
+	vItem1 := flattenDevicesOverrideResyncIntervalItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting OverrideResyncIntervalV1 response",
+			"Failure when setting OverrideResyncInterval response",
 			err))
 		return diags
 	}
@@ -150,7 +151,7 @@ func resourceNetworkDevicesResyncIntervalSettingsOverrideDelete(ctx context.Cont
 	return diags
 }
 
-func flattenDevicesOverrideResyncIntervalV1Item(item *catalystcentersdkgo.ResponseDevicesOverrideResyncIntervalV1Response) []map[string]interface{} {
+func flattenDevicesOverrideResyncIntervalItem(item *catalystcentersdkgo.ResponseDevicesOverrideResyncIntervalResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

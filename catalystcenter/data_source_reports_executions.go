@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -240,27 +240,41 @@ func dataSourceReportsExecutionsRead(ctx context.Context, d *schema.ResourceData
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAllExecutionDetailsForAGivenReportV1")
+		log.Printf("[DEBUG] Selected method: GetAllExecutionDetailsForAGivenReport")
 		vvReportID := vReportID.(string)
 
-		response1, restyResp1, err := client.Reports.GetAllExecutionDetailsForAGivenReportV1(vvReportID)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Reports.GetAllExecutionDetailsForAGivenReport(vvReportID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAllExecutionDetailsForAGivenReportV1", err,
-				"Failure at GetAllExecutionDetailsForAGivenReportV1, unexpected response", ""))
+				"Failure when executing 2 GetAllExecutionDetailsForAGivenReport", err,
+				"Failure at GetAllExecutionDetailsForAGivenReport, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenReportsGetAllExecutionDetailsForAGivenReportV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetAllExecutionDetailsForAGivenReport", err,
+				"Failure at GetAllExecutionDetailsForAGivenReport, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenReportsGetAllExecutionDetailsForAGivenReportItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAllExecutionDetailsForAGivenReportV1 response",
+				"Failure when setting GetAllExecutionDetailsForAGivenReport response",
 				err))
 			return diags
 		}
@@ -272,21 +286,21 @@ func dataSourceReportsExecutionsRead(ctx context.Context, d *schema.ResourceData
 	return diags
 }
 
-func flattenReportsGetAllExecutionDetailsForAGivenReportV1Item(item *catalystcentersdkgo.ResponseReportsGetAllExecutionDetailsForAGivenReportV1) []map[string]interface{} {
+func flattenReportsGetAllExecutionDetailsForAGivenReportItem(item *catalystcentersdkgo.ResponseReportsGetAllExecutionDetailsForAGivenReport) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["tags"] = item.Tags
 	respItem["data_category"] = item.DataCategory
-	respItem["deliveries"] = flattenReportsGetAllExecutionDetailsForAGivenReportV1ItemDeliveries(item.Deliveries)
+	respItem["deliveries"] = flattenReportsGetAllExecutionDetailsForAGivenReportItemDeliveries(item.Deliveries)
 	respItem["execution_count"] = item.ExecutionCount
-	respItem["executions"] = flattenReportsGetAllExecutionDetailsForAGivenReportV1ItemExecutions(item.Executions)
+	respItem["executions"] = flattenReportsGetAllExecutionDetailsForAGivenReportItemExecutions(item.Executions)
 	respItem["name"] = item.Name
 	respItem["report_id"] = item.ReportID
 	respItem["report_was_executed"] = boolPtrToString(item.ReportWasExecuted)
-	respItem["schedule"] = flattenReportsGetAllExecutionDetailsForAGivenReportV1ItemSchedule(item.Schedule)
-	respItem["view"] = flattenReportsGetAllExecutionDetailsForAGivenReportV1ItemView(item.View)
+	respItem["schedule"] = flattenReportsGetAllExecutionDetailsForAGivenReportItemSchedule(item.Schedule)
+	respItem["view"] = flattenReportsGetAllExecutionDetailsForAGivenReportItemView(item.View)
 	respItem["view_group_id"] = item.ViewGroupID
 	respItem["view_group_version"] = item.ViewGroupVersion
 	return []map[string]interface{}{
@@ -294,7 +308,7 @@ func flattenReportsGetAllExecutionDetailsForAGivenReportV1Item(item *catalystcen
 	}
 }
 
-func flattenReportsGetAllExecutionDetailsForAGivenReportV1ItemDeliveries(items *[]catalystcentersdkgo.ResponseReportsGetAllExecutionDetailsForAGivenReportV1Deliveries) []interface{} {
+func flattenReportsGetAllExecutionDetailsForAGivenReportItemDeliveries(items *[]catalystcentersdkgo.ResponseReportsGetAllExecutionDetailsForAGivenReportDeliveries) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -306,7 +320,7 @@ func flattenReportsGetAllExecutionDetailsForAGivenReportV1ItemDeliveries(items *
 	return respItems
 }
 
-func flattenReportsGetAllExecutionDetailsForAGivenReportV1ItemExecutions(items *[]catalystcentersdkgo.ResponseReportsGetAllExecutionDetailsForAGivenReportV1Executions) []map[string]interface{} {
+func flattenReportsGetAllExecutionDetailsForAGivenReportItemExecutions(items *[]catalystcentersdkgo.ResponseReportsGetAllExecutionDetailsForAGivenReportExecutions) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -325,7 +339,7 @@ func flattenReportsGetAllExecutionDetailsForAGivenReportV1ItemExecutions(items *
 	return respItems
 }
 
-func flattenReportsGetAllExecutionDetailsForAGivenReportV1ItemSchedule(item *catalystcentersdkgo.ResponseReportsGetAllExecutionDetailsForAGivenReportV1Schedule) interface{} {
+func flattenReportsGetAllExecutionDetailsForAGivenReportItemSchedule(item *catalystcentersdkgo.ResponseReportsGetAllExecutionDetailsForAGivenReportSchedule) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -335,14 +349,14 @@ func flattenReportsGetAllExecutionDetailsForAGivenReportV1ItemSchedule(item *cat
 
 }
 
-func flattenReportsGetAllExecutionDetailsForAGivenReportV1ItemView(item *catalystcentersdkgo.ResponseReportsGetAllExecutionDetailsForAGivenReportV1View) []map[string]interface{} {
+func flattenReportsGetAllExecutionDetailsForAGivenReportItemView(item *catalystcentersdkgo.ResponseReportsGetAllExecutionDetailsForAGivenReportView) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["field_groups"] = flattenReportsGetAllExecutionDetailsForAGivenReportV1ItemViewFieldGroups(item.FieldGroups)
-	respItem["filters"] = flattenReportsGetAllExecutionDetailsForAGivenReportV1ItemViewFilters(item.Filters)
-	respItem["format"] = flattenReportsGetAllExecutionDetailsForAGivenReportV1ItemViewFormat(item.Format)
+	respItem["field_groups"] = flattenReportsGetAllExecutionDetailsForAGivenReportItemViewFieldGroups(item.FieldGroups)
+	respItem["filters"] = flattenReportsGetAllExecutionDetailsForAGivenReportItemViewFilters(item.Filters)
+	respItem["format"] = flattenReportsGetAllExecutionDetailsForAGivenReportItemViewFormat(item.Format)
 	respItem["name"] = item.Name
 	respItem["view_id"] = item.ViewID
 	respItem["description"] = item.Description
@@ -354,7 +368,7 @@ func flattenReportsGetAllExecutionDetailsForAGivenReportV1ItemView(item *catalys
 
 }
 
-func flattenReportsGetAllExecutionDetailsForAGivenReportV1ItemViewFieldGroups(items *[]catalystcentersdkgo.ResponseReportsGetAllExecutionDetailsForAGivenReportV1ViewFieldGroups) []interface{} {
+func flattenReportsGetAllExecutionDetailsForAGivenReportItemViewFieldGroups(items *[]catalystcentersdkgo.ResponseReportsGetAllExecutionDetailsForAGivenReportViewFieldGroups) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -366,7 +380,7 @@ func flattenReportsGetAllExecutionDetailsForAGivenReportV1ItemViewFieldGroups(it
 	return respItems
 }
 
-func flattenReportsGetAllExecutionDetailsForAGivenReportV1ItemViewFilters(items *[]catalystcentersdkgo.ResponseReportsGetAllExecutionDetailsForAGivenReportV1ViewFilters) []interface{} {
+func flattenReportsGetAllExecutionDetailsForAGivenReportItemViewFilters(items *[]catalystcentersdkgo.ResponseReportsGetAllExecutionDetailsForAGivenReportViewFilters) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -378,7 +392,7 @@ func flattenReportsGetAllExecutionDetailsForAGivenReportV1ItemViewFilters(items 
 	return respItems
 }
 
-func flattenReportsGetAllExecutionDetailsForAGivenReportV1ItemViewFormat(item *catalystcentersdkgo.ResponseReportsGetAllExecutionDetailsForAGivenReportV1ViewFormat) interface{} {
+func flattenReportsGetAllExecutionDetailsForAGivenReportItemViewFormat(item *catalystcentersdkgo.ResponseReportsGetAllExecutionDetailsForAGivenReportViewFormat) interface{} {
 	if item == nil {
 		return nil
 	}

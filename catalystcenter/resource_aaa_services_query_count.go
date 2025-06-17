@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -125,9 +125,9 @@ func resourceAAAServicesQueryCountCreate(ctx context.Context, d *schema.Resource
 
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
-	request1 := expandRequestAAAServicesQueryCountRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersV1(ctx, "parameters.0", d)
+	request1 := expandRequestAAAServicesQueryCountRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFilters(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.RetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersV1HeaderParams{}
+	headerParams1 := catalystcentersdkgo.RetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersHeaderParams{}
 
 	headerParams1.XCaLLERID = vXCaLLERID.(string)
 
@@ -149,7 +149,7 @@ func resourceAAAServicesQueryCountCreate(ctx context.Context, d *schema.Resource
 
 	//Analizar verificacion.
 
-	vItem1 := flattenDevicesRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersV1Item(response1.Response)
+	vItem1 := flattenDevicesRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
 			"Failure when setting RetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFilters response",
@@ -174,8 +174,8 @@ func resourceAAAServicesQueryCountDelete(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func expandRequestAAAServicesQueryCountRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersV1 {
-	request := catalystcentersdkgo.RequestDevicesRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersV1{}
+func expandRequestAAAServicesQueryCountRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFilters {
+	request := catalystcentersdkgo.RequestDevicesRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -183,13 +183,13 @@ func expandRequestAAAServicesQueryCountRetrievesTheTotalNumberOfAAAServicesForGi
 		request.EndTime = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestAAAServicesQueryCountRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersV1FiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestAAAServicesQueryCountRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersFiltersArray(ctx, key+".filters", d)
 	}
 	return &request
 }
 
-func expandRequestAAAServicesQueryCountRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersV1Filters {
-	request := []catalystcentersdkgo.RequestDevicesRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersV1Filters{}
+func expandRequestAAAServicesQueryCountRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersFilters {
+	request := []catalystcentersdkgo.RequestDevicesRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -200,7 +200,7 @@ func expandRequestAAAServicesQueryCountRetrievesTheTotalNumberOfAAAServicesForGi
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAAAServicesQueryCountRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAAAServicesQueryCountRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -208,8 +208,8 @@ func expandRequestAAAServicesQueryCountRetrievesTheTotalNumberOfAAAServicesForGi
 	return &request
 }
 
-func expandRequestAAAServicesQueryCountRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersV1Filters {
-	request := catalystcentersdkgo.RequestDevicesRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersV1Filters{}
+func expandRequestAAAServicesQueryCountRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersFilters {
+	request := catalystcentersdkgo.RequestDevicesRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -222,7 +222,7 @@ func expandRequestAAAServicesQueryCountRetrievesTheTotalNumberOfAAAServicesForGi
 	return &request
 }
 
-func flattenDevicesRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersV1Item(item *catalystcentersdkgo.ResponseDevicesRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersV1Response) []map[string]interface{} {
+func flattenDevicesRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersItem(item *catalystcentersdkgo.ResponseDevicesRetrievesTheTotalNumberOfAAAServicesForGivenSetOfComplexFiltersResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

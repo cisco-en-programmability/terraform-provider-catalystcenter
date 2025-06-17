@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -104,33 +104,45 @@ func dataSourceIcapCaptureFilesIDRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesDetailsOfASpecificICapPacketCaptureFileV1")
+		log.Printf("[DEBUG] Selected method: RetrievesDetailsOfASpecificICapPacketCaptureFile")
 		vvID := vID.(string)
 
-		headerParams1 := catalystcentersdkgo.RetrievesDetailsOfASpecificICapPacketCaptureFileV1HeaderParams{}
+		headerParams1 := catalystcentersdkgo.RetrievesDetailsOfASpecificICapPacketCaptureFileHeaderParams{}
 
 		headerParams1.XCaLLERID = vXCaLLERID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sensors.RetrievesDetailsOfASpecificICapPacketCaptureFileV1(vvID, &headerParams1)
+		response1, restyResp1, err := client.Sensors.RetrievesDetailsOfASpecificICapPacketCaptureFile(vvID, &headerParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesDetailsOfASpecificICapPacketCaptureFileV1", err,
-				"Failure at RetrievesDetailsOfASpecificICapPacketCaptureFileV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesDetailsOfASpecificICapPacketCaptureFile", err,
+				"Failure at RetrievesDetailsOfASpecificICapPacketCaptureFile, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSensorsRetrievesDetailsOfASpecificICapPacketCaptureFileV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesDetailsOfASpecificICapPacketCaptureFile", err,
+				"Failure at RetrievesDetailsOfASpecificICapPacketCaptureFile, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSensorsRetrievesDetailsOfASpecificICapPacketCaptureFileItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesDetailsOfASpecificICapPacketCaptureFileV1 response",
+				"Failure when setting RetrievesDetailsOfASpecificICapPacketCaptureFile response",
 				err))
 			return diags
 		}
@@ -142,7 +154,7 @@ func dataSourceIcapCaptureFilesIDRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenSensorsRetrievesDetailsOfASpecificICapPacketCaptureFileV1Item(item *catalystcentersdkgo.ResponseSensorsRetrievesDetailsOfASpecificICapPacketCaptureFileV1Response) []map[string]interface{} {
+func flattenSensorsRetrievesDetailsOfASpecificICapPacketCaptureFileItem(item *catalystcentersdkgo.ResponseSensorsRetrievesDetailsOfASpecificICapPacketCaptureFileResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

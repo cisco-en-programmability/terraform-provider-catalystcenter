@@ -1,7 +1,7 @@
 
 resource "catalystcenter_network_device" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     id = "string"

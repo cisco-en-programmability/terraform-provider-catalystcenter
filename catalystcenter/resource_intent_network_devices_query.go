@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -20,7 +20,11 @@ func resourceIntentNetworkDevicesQuery() *schema.Resource {
 		Description: `It performs create operation on Devices.
 
 - Returns the list of network devices, determined by the filters. It is possible to filter the network devices based on
-various parameters, such as device type, device role, software version, etc.
+various parameters, such as device type, device role, software version, etc. The API returns a paginated response based
+on 'limit' and 'offset' parameters, allowing up to 500 records per page. 'limit' specifies the number of records, and
+'offset' sets the starting point using 1-based indexing. Use '/dna/intent/api/v1/networkDevices/query/count' API to get
+the total record count. For data sets over 500 records, make multiple calls, adjusting 'limit' and 'offset' to retrieve
+all records incrementally.
 `,
 
 		CreateContext: resourceIntentNetworkDevicesQueryCreate,
@@ -72,7 +76,7 @@ various parameters, such as device type, device role, software version, etc.
 													Computed: true,
 												},
 												"value": &schema.Schema{
-													Description: `Value to filter by. For in operator, the value should be a list of values.
+													Description: `Value to filter by. For **in** operator, the value should be a list of values.
 `,
 													Type:     schema.TypeString, //TEST,
 													Optional: true,
@@ -471,25 +475,15 @@ func resourceIntentNetworkDevicesQueryCreate(ctx context.Context, d *schema.Reso
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersV1(ctx, "parameters.0", d)
+	request1 := expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFilters(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Devices.QueryNetworkDevicesWithFiltersV1(request1)
+	response1, restyResp1, err := client.Devices.QueryNetworkDevicesWithFilters(request1)
 
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-
-	vItems1 := flattenDevicesQueryNetworkDevicesWithFiltersV1Items(response1.Response)
-	if err := d.Set("items", vItems1); err != nil {
-		diags = append(diags, diagError(
-			"Failure when setting QueryNetworkDevicesWithFiltersV1 response",
-			err))
-		return diags
-	}
-
-	//Analizar verificacion.
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
@@ -500,49 +494,61 @@ func resourceIntentNetworkDevicesQueryCreate(ctx context.Context, d *schema.Reso
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+	vItems1 := flattenDevicesQueryNetworkDevicesWithFiltersItems(response1.Response)
+	if err := d.Set("items", vItems1); err != nil {
+		diags = append(diags, diagError(
+			"Failure when setting QueryNetworkDevicesWithFilters response",
+			err))
+		return diags
+	}
+
 	d.SetId(getUnixTimeString())
 	return diags
+
+	//Analizar verificacion.
+
 }
 func resourceIntentNetworkDevicesQueryRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 	return diags
 }
 
 func resourceIntentNetworkDevicesQueryDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 	return diags
 }
 
-func expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersV1 {
-	request := catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersV1{}
+func expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFilters {
+	request := catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filter")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filter")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filter")))) {
-		request.Filter = expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersV1Filter(ctx, key+".filter.0", d)
+		request.Filter = expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersFilter(ctx, key+".filter.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".views")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".views")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".views")))) {
 		request.Views = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".page")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".page")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".page")))) {
-		request.Page = expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersV1Page(ctx, key+".page.0", d)
+		request.Page = expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersPage(ctx, key+".page.0", d)
 	}
 	return &request
 }
 
-func expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersV1Filter(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersV1Filter {
-	request := catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersV1Filter{}
+func expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersFilter(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersFilter {
+	request := catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersFilter{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".logical_operator")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".logical_operator")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".logical_operator")))) {
 		request.LogicalOperator = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersV1FilterFiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersFilterFiltersArray(ctx, key+".filters", d)
 	}
 	return &request
 }
 
-func expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersV1FilterFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersV1FilterFilters {
-	request := []catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersV1FilterFilters{}
+func expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersFilterFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersFilterFilters {
+	request := []catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersFilterFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -553,7 +559,7 @@ func expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersV1Filte
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersV1FilterFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersFilterFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -561,8 +567,8 @@ func expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersV1Filte
 	return &request
 }
 
-func expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersV1FilterFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersV1FilterFilters {
-	request := catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersV1FilterFilters{}
+func expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersFilterFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersFilterFilters {
+	request := catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersFilterFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -570,21 +576,21 @@ func expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersV1Filte
 		request.Operator = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".value")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".value")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".value")))) {
-		request.Value = expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersV1FilterFiltersValue(ctx, key+".value.0", d)
+		request.Value = expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersFilterFiltersValue(ctx, key+".value.0", d)
 	}
 	return &request
 }
 
-func expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersV1FilterFiltersValue(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersV1FilterFiltersValue {
-	var request catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersV1FilterFiltersValue
+func expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersFilterFiltersValue(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersFilterFiltersValue {
+	var request catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersFilterFiltersValue
 	request = d.Get(fixKeyAccess(key))
 	return &request
 }
 
-func expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersV1Page(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersV1Page {
-	request := catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersV1Page{}
+func expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersPage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersPage {
+	request := catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersPage{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".sort_by")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".sort_by")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".sort_by")))) {
-		request.SortBy = expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersV1PageSortBy(ctx, key+".sort_by.0", d)
+		request.SortBy = expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersPageSortBy(ctx, key+".sort_by.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".limit")))) {
 		request.Limit = interfaceToIntPtr(v)
@@ -595,8 +601,8 @@ func expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersV1Page(
 	return &request
 }
 
-func expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersV1PageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersV1PageSortBy {
-	request := catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersV1PageSortBy{}
+func expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersPageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersPageSortBy {
+	request := catalystcentersdkgo.RequestDevicesQueryNetworkDevicesWithFiltersPageSortBy{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -606,7 +612,7 @@ func expandRequestIntentNetworkDevicesQueryQueryNetworkDevicesWithFiltersV1PageS
 	return &request
 }
 
-func flattenDevicesQueryNetworkDevicesWithFiltersV1Items(items *[]catalystcentersdkgo.ResponseDevicesQueryNetworkDevicesWithFiltersV1Response) []map[string]interface{} {
+func flattenDevicesQueryNetworkDevicesWithFiltersItems(items *[]catalystcentersdkgo.ResponseDevicesQueryNetworkDevicesWithFiltersResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -651,13 +657,13 @@ func flattenDevicesQueryNetworkDevicesWithFiltersV1Items(items *[]catalystcenter
 		respItem["resync_interval_minutes"] = item.ResyncIntervalMinutes
 		respItem["error_code"] = item.ErrorCode
 		respItem["error_description"] = item.ErrorDescription
-		respItem["user_defined_fields"] = flattenDevicesQueryNetworkDevicesWithFiltersV1ItemsUserDefinedFields(item.UserDefinedFields)
+		respItem["user_defined_fields"] = flattenDevicesQueryNetworkDevicesWithFiltersItemsUserDefinedFields(item.UserDefinedFields)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesQueryNetworkDevicesWithFiltersV1ItemsUserDefinedFields(item *catalystcentersdkgo.ResponseDevicesQueryNetworkDevicesWithFiltersV1ResponseUserDefinedFields) interface{} {
+func flattenDevicesQueryNetworkDevicesWithFiltersItemsUserDefinedFields(item *catalystcentersdkgo.ResponseDevicesQueryNetworkDevicesWithFiltersResponseUserDefinedFields) interface{} {
 	if item == nil {
 		return nil
 	}

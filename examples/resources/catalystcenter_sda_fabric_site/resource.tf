@@ -1,7 +1,7 @@
 
 resource "catalystcenter_sda_fabric_site" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     fabric_name         = "string"

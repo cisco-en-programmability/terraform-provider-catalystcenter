@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -92,8 +92,8 @@ func dataSourceNetworkDeviceModuleCountRead(ctx context.Context, d *schema.Resou
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetModuleCountV1")
-		queryParams1 := catalystcentersdkgo.GetModuleCountV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetModuleCount")
+		queryParams1 := catalystcentersdkgo.GetModuleCountQueryParams{}
 
 		queryParams1.DeviceID = vDeviceID.(string)
 
@@ -110,24 +110,38 @@ func dataSourceNetworkDeviceModuleCountRead(ctx context.Context, d *schema.Resou
 			queryParams1.OperationalStateCodeList = interfaceToSliceString(vOperationalStateCodeList)
 		}
 
-		response1, restyResp1, err := client.Devices.GetModuleCountV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Devices.GetModuleCount(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetModuleCountV1", err,
-				"Failure at GetModuleCountV1, unexpected response", ""))
+				"Failure when executing 2 GetModuleCount", err,
+				"Failure at GetModuleCount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesGetModuleCountV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetModuleCount", err,
+				"Failure at GetModuleCount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenDevicesGetModuleCountItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetModuleCountV1 response",
+				"Failure when setting GetModuleCount response",
 				err))
 			return diags
 		}
@@ -139,7 +153,7 @@ func dataSourceNetworkDeviceModuleCountRead(ctx context.Context, d *schema.Resou
 	return diags
 }
 
-func flattenDevicesGetModuleCountV1Item(item *catalystcentersdkgo.ResponseDevicesGetModuleCountV1) []map[string]interface{} {
+func flattenDevicesGetModuleCountItem(item *catalystcentersdkgo.ResponseDevicesGetModuleCount) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

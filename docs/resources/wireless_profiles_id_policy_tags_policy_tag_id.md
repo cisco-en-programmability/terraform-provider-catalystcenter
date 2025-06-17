@@ -5,34 +5,34 @@ subcategory: ""
 description: |-
   It manages read, update and delete operations on Wireless.
   This endpoint allows for the deletion of a specific Policy Tag associated with a given Wireless Profile. This
-  resource requires the id of the Wireless Profile and the policyTagId of the Policy Tag to be provided as path
-  parameters.This endpoint allows updating the details of a specific Policy Tag associated with a given Wireless Profile. The
-  id of the Wireless Profile and the policyTagId of the Policy Tag must be provided as path parameters, and the
-  request body should contain the updated details of the Policy Tag. The policyTagName cannot be modified through this
-  endpoint. Note: When updating a Policy Tag, if the same set of AP Zones (apZones) is used for the same site or its
-  parent site, the existing Policy Tag will be overridden by the new one.
+  resource requires the id of the Wireless Profile and the policyTagId of the Policy Tag to be provided as
+  path parameters.This endpoint allows updating the details of a specific Policy Tag associated with a given Wireless Profile.
+  The id of the Wireless Profile and the policyTagId of the Policy Tag must be provided as path parameters,
+  and the request body should contain the updated details of the Policy Tag. The policyTagName cannot be modified
+  through this endpoint. Note: When updating a Policy Tag, if the same set of AP Zones (apZones) is used for the same site
+  or its parent site, the existing Policy Tag will be overridden by the new one.
 ---
 
 # catalystcenter_wireless_profiles_id_policy_tags_policy_tag_id (Resource)
 
 It manages read, update and delete operations on Wireless.
 
-- This endpoint allows for the deletion of a specific *Policy Tag* associated with a given *Wireless Profile*. This
-resource requires the *id* of the *Wireless Profile* and the *policyTagId* of the *Policy Tag* to be provided as path
-parameters.
+- This endpoint allows for the deletion of a specific **Policy Tag** associated with a given **Wireless Profile**. This
+resource requires the **id** of the **Wireless Profile** and the **policyTagId** of the **Policy Tag** to be provided as
+path parameters.
 
-- This endpoint allows updating the details of a specific *Policy Tag* associated with a given *Wireless Profile*. The
-*id* of the *Wireless Profile* and the *policyTagId* of the Policy Tag must be provided as path parameters, and the
-request body should contain the updated details of the *Policy Tag*. The *policyTagName* cannot be modified through this
-endpoint. Note: When updating a Policy Tag, if the same set of AP Zones (apZones) is used for the same site or its
-parent site, the existing Policy Tag will be overridden by the new one.
+- This endpoint allows updating the details of a specific **Policy Tag** associated with a given **Wireless Profile**.
+The **id** of the **Wireless Profile** and the **policyTagId** of the Policy Tag must be provided as path parameters,
+and the request body should contain the updated details of the **Policy Tag**. The **policyTagName** cannot be modified
+through this endpoint. Note: When updating a Policy Tag, if the same set of AP Zones (apZones) is used for the same site
+or its parent site, the existing Policy Tag will be overridden by the new one.
 
 ## Example Usage
 
 ```terraform
 resource "catalystcenter_wireless_profiles_id_policy_tags_policy_tag_id" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     ap_zones        = ["string"]

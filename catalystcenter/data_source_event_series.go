@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -256,8 +256,8 @@ func dataSourceEventSeriesRead(ctx context.Context, d *schema.ResourceData, m in
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetNotificationsV1")
-		queryParams1 := catalystcentersdkgo.GetNotificationsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetNotifications")
+		queryParams1 := catalystcentersdkgo.GetNotificationsQueryParams{}
 
 		if okEventIDs {
 			queryParams1.EventIDs = vEventIDs.(string)
@@ -308,24 +308,38 @@ func dataSourceEventSeriesRead(ctx context.Context, d *schema.ResourceData, m in
 			queryParams1.SiteID = vSiteID.(string)
 		}
 
-		response1, restyResp1, err := client.EventManagement.GetNotificationsV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.EventManagement.GetNotifications(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetNotificationsV1", err,
-				"Failure at GetNotificationsV1, unexpected response", ""))
+				"Failure when executing 2 GetNotifications", err,
+				"Failure at GetNotifications, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenEventManagementGetNotificationsV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetNotifications", err,
+				"Failure at GetNotifications, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenEventManagementGetNotificationsItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetNotificationsV1 response",
+				"Failure when setting GetNotifications response",
 				err))
 			return diags
 		}
@@ -337,7 +351,7 @@ func dataSourceEventSeriesRead(ctx context.Context, d *schema.ResourceData, m in
 	return diags
 }
 
-func flattenEventManagementGetNotificationsV1Items(items *catalystcentersdkgo.ResponseEventManagementGetNotificationsV1) []map[string]interface{} {
+func flattenEventManagementGetNotificationsItems(items *catalystcentersdkgo.ResponseEventManagementGetNotifications) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -359,13 +373,13 @@ func flattenEventManagementGetNotificationsV1Items(items *catalystcentersdkgo.Re
 		respItem["timestamp"] = item.Timestamp
 		respItem["details"] = item.Details
 		respItem["event_hierarchy"] = item.EventHierarchy
-		respItem["network"] = flattenEventManagementGetNotificationsV1ItemsNetwork(item.Network)
+		respItem["network"] = flattenEventManagementGetNotificationsItemsNetwork(item.Network)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenEventManagementGetNotificationsV1ItemsNetwork(item *catalystcentersdkgo.ResponseItemEventManagementGetNotificationsV1Network) []map[string]interface{} {
+func flattenEventManagementGetNotificationsItemsNetwork(item *catalystcentersdkgo.ResponseItemEventManagementGetNotificationsNetwork) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

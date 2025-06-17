@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -333,26 +333,40 @@ func dataSourcePnpGlobalSettingsRead(ctx context.Context, d *schema.ResourceData
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetPnpGlobalSettingsV1")
+		log.Printf("[DEBUG] Selected method: GetPnpGlobalSettings")
 
-		response1, restyResp1, err := client.DeviceOnboardingPnp.GetPnpGlobalSettingsV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.DeviceOnboardingPnp.GetPnpGlobalSettings()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetPnpGlobalSettingsV1", err,
-				"Failure at GetPnpGlobalSettingsV1, unexpected response", ""))
+				"Failure when executing 2 GetPnpGlobalSettings", err,
+				"Failure at GetPnpGlobalSettings, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetPnpGlobalSettings", err,
+				"Failure at GetPnpGlobalSettings, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenDeviceOnboardingPnpGetPnpGlobalSettingsItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetPnpGlobalSettingsV1 response",
+				"Failure when setting GetPnpGlobalSettings response",
 				err))
 			return diags
 		}
@@ -364,16 +378,16 @@ func dataSourcePnpGlobalSettingsRead(ctx context.Context, d *schema.ResourceData
 	return diags
 }
 
-func flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1Item(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetPnpGlobalSettingsV1) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetPnpGlobalSettingsItem(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetPnpGlobalSettings) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["sava_mapping_list"] = flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1ItemSavaMappingList(item.SavaMappingList)
-	respItem["task_time_outs"] = flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1ItemTaskTimeOuts(item.TaskTimeOuts)
+	respItem["sava_mapping_list"] = flattenDeviceOnboardingPnpGetPnpGlobalSettingsItemSavaMappingList(item.SavaMappingList)
+	respItem["task_time_outs"] = flattenDeviceOnboardingPnpGetPnpGlobalSettingsItemTaskTimeOuts(item.TaskTimeOuts)
 	respItem["tenant_id"] = item.TenantID
-	respItem["aaa_credentials"] = flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1ItemAAACredentials(item.AAACredentials)
-	respItem["default_profile"] = flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1ItemDefaultProfile(item.DefaultProfile)
+	respItem["aaa_credentials"] = flattenDeviceOnboardingPnpGetPnpGlobalSettingsItemAAACredentials(item.AAACredentials)
+	respItem["default_profile"] = flattenDeviceOnboardingPnpGetPnpGlobalSettingsItemDefaultProfile(item.DefaultProfile)
 	respItem["accept_eula"] = boolPtrToString(item.AcceptEula)
 	respItem["id"] = item.ID
 	respItem["version"] = item.Version
@@ -382,7 +396,7 @@ func flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1Item(item *catalystcentersd
 	}
 }
 
-func flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1ItemSavaMappingList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetPnpGlobalSettingsV1SavaMappingList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetPnpGlobalSettingsItemSavaMappingList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetPnpGlobalSettingsSavaMappingList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -391,10 +405,10 @@ func flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1ItemSavaMappingList(items *
 		respItem := make(map[string]interface{})
 		respItem["sync_status"] = item.SyncStatus
 		respItem["sync_start_time"] = item.SyncStartTime
-		respItem["sync_result"] = flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1ItemSavaMappingListSyncResult(item.SyncResult)
+		respItem["sync_result"] = flattenDeviceOnboardingPnpGetPnpGlobalSettingsItemSavaMappingListSyncResult(item.SyncResult)
 		respItem["last_sync"] = item.LastSync
 		respItem["tenant_id"] = item.TenantID
-		respItem["profile"] = flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1ItemSavaMappingListProfile(item.Profile)
+		respItem["profile"] = flattenDeviceOnboardingPnpGetPnpGlobalSettingsItemSavaMappingListProfile(item.Profile)
 		respItem["token"] = item.Token
 		respItem["expiry"] = item.Expiry
 		respItem["cco_user"] = item.CcoUser
@@ -407,12 +421,12 @@ func flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1ItemSavaMappingList(items *
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1ItemSavaMappingListSyncResult(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetPnpGlobalSettingsV1SavaMappingListSyncResult) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetPnpGlobalSettingsItemSavaMappingListSyncResult(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetPnpGlobalSettingsSavaMappingListSyncResult) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["sync_list"] = flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1ItemSavaMappingListSyncResultSyncList(item.SyncList)
+	respItem["sync_list"] = flattenDeviceOnboardingPnpGetPnpGlobalSettingsItemSavaMappingListSyncResultSyncList(item.SyncList)
 	respItem["sync_msg"] = item.SyncMsg
 
 	return []map[string]interface{}{
@@ -421,7 +435,7 @@ func flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1ItemSavaMappingListSyncResu
 
 }
 
-func flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1ItemSavaMappingListSyncResultSyncList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetPnpGlobalSettingsV1SavaMappingListSyncResultSyncList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetPnpGlobalSettingsItemSavaMappingListSyncResultSyncList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetPnpGlobalSettingsSavaMappingListSyncResultSyncList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -435,7 +449,7 @@ func flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1ItemSavaMappingListSyncResu
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1ItemSavaMappingListProfile(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetPnpGlobalSettingsV1SavaMappingListProfile) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetPnpGlobalSettingsItemSavaMappingListProfile(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetPnpGlobalSettingsSavaMappingListProfile) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -455,7 +469,7 @@ func flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1ItemSavaMappingListProfile(
 
 }
 
-func flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1ItemTaskTimeOuts(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetPnpGlobalSettingsV1TaskTimeOuts) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetPnpGlobalSettingsItemTaskTimeOuts(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetPnpGlobalSettingsTaskTimeOuts) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -470,7 +484,7 @@ func flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1ItemTaskTimeOuts(item *cata
 
 }
 
-func flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1ItemAAACredentials(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetPnpGlobalSettingsV1AAACredentials) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetPnpGlobalSettingsItemAAACredentials(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetPnpGlobalSettingsAAACredentials) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -484,7 +498,7 @@ func flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1ItemAAACredentials(item *ca
 
 }
 
-func flattenDeviceOnboardingPnpGetPnpGlobalSettingsV1ItemDefaultProfile(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetPnpGlobalSettingsV1DefaultProfile) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetPnpGlobalSettingsItemDefaultProfile(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetPnpGlobalSettingsDefaultProfile) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

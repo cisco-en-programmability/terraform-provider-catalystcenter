@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -195,8 +195,8 @@ func dataSourceAnalyticsEndpointsCountRead(ctx context.Context, d *schema.Resour
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: FetchTheCountOfEndpointsV1")
-		queryParams1 := catalystcentersdkgo.FetchTheCountOfEndpointsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: FetchTheCountOfEndpoints")
+		queryParams1 := catalystcentersdkgo.FetchTheCountOfEndpointsQueryParams{}
 
 		if okProfilingStatus {
 			queryParams1.ProfilingStatus = vProfilingStatus.(string)
@@ -262,24 +262,38 @@ func dataSourceAnalyticsEndpointsCountRead(ctx context.Context, d *schema.Resour
 			queryParams1.AncPolicy = vAncPolicy.(string)
 		}
 
-		response1, restyResp1, err := client.AIEndpointAnalytics.FetchTheCountOfEndpointsV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.AiEndpointAnalytics.FetchTheCountOfEndpoints(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 FetchTheCountOfEndpointsV1", err,
-				"Failure at FetchTheCountOfEndpointsV1, unexpected response", ""))
+				"Failure when executing 2 FetchTheCountOfEndpoints", err,
+				"Failure at FetchTheCountOfEndpoints, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenAIEndpointAnalyticsFetchTheCountOfEndpointsV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 FetchTheCountOfEndpoints", err,
+				"Failure at FetchTheCountOfEndpoints, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenAiEndpointAnalyticsFetchTheCountOfEndpointsItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting FetchTheCountOfEndpointsV1 response",
+				"Failure when setting FetchTheCountOfEndpoints response",
 				err))
 			return diags
 		}
@@ -291,7 +305,7 @@ func dataSourceAnalyticsEndpointsCountRead(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func flattenAIEndpointAnalyticsFetchTheCountOfEndpointsV1Item(item *catalystcentersdkgo.ResponseAIEndpointAnalyticsFetchTheCountOfEndpointsV1) []map[string]interface{} {
+func flattenAiEndpointAnalyticsFetchTheCountOfEndpointsItem(item *catalystcentersdkgo.ResponseAiEndpointAnalyticsFetchTheCountOfEndpoints) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

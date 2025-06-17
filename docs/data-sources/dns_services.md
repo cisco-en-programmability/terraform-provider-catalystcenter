@@ -52,28 +52,29 @@ output "catalystcenter_dns_services_example" {
 
 - `device_id` (String) deviceId query parameter. The device UUID.
 
+
  Examples:
- deviceId=6bef213c-19ca-4170-8375-b694e251101c (single deviceId is requested)
- deviceId=6bef213c-19ca-4170-8375-b694e251101c&deviceId=32219612-819e-4b5e-a96b-cf22aca13dd9 (multiple networkDeviceIds with & separator)
-- `device_site_hierarchy_id` (String) deviceSiteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. globalUuid/areaUuid/buildingUuid/floorUuid)
-This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*
+ **deviceId=6bef213c-19ca-4170-8375-b694e251101c** (single deviceId is requested)
+ **deviceId=6bef213c-19ca-4170-8375-b694e251101c&deviceId=32219612-819e-4b5e-a96b-cf22aca13dd9 (multiple networkDeviceIds with & separator)
+- `device_site_hierarchy_id` (String) deviceSiteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. **globalUuid/areaUuid/buildingUuid/floorUuid**)
+This field supports wildcard asterisk (*****) character search support. E.g. ***uuid*, *uuid, uuid***
 Examples:
-?deviceSiteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid (single siteHierarchyId requested)
-?deviceSiteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&deviceSiteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2 (multiple siteHierarchyIds requested)
-- `device_site_id` (String) deviceSiteId query parameter. The UUID of the site. (Ex. flooruuid)
+**?deviceSiteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid **(single siteHierarchyId requested)
+**?deviceSiteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&deviceSiteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2** (multiple siteHierarchyIds requested)
+- `device_site_id` (String) deviceSiteId query parameter. The UUID of the site. (Ex. **flooruuid**)
 Examples:
-?deviceSiteIds=id1 (single id requested)
-?deviceSiteIds=id1&deviceSiteIds=id2&siteId=id3 (multiple ids requested)
+**?deviceSiteIds=id1** (single id requested)
+**?deviceSiteIds=id1&deviceSiteIds=id2&siteId=id3** (multiple ids requested)
 - `end_time` (Number) endTime query parameter. End time to which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
 - `limit` (Number) limit query parameter. Maximum number of records to return
 - `offset` (Number) offset query parameter. Specifies the starting point within all records returned by the API. It's one based offset. The starting value is 1.
 - `order` (String) order query parameter. The sort order of the field ascending or descending.
-- `server_ip` (String) serverIp query parameter. IP Address of the DNS Server. This parameter supports wildcard (*) character -based search. Example: 10.76.81.* or *56.78* or *50.28 Examples: serverIp=10.42.3.31 (single IP Address is requested) serverIp=10.42.3.31&serverIp=name2&fabricVnName=name3 (multiple IP Addresses are requested)
+- `server_ip` (String) serverIp query parameter. IP Address of the DNS Server. This parameter supports wildcard (*****) character -based search. Example: **10.76.81.*** or ***56.78*** or ***50.28** Examples: serverIp=10.42.3.31 (single IP Address is requested) serverIp=10.42.3.31&serverIp=name2&fabricVnName=name3 (multiple IP Addresses are requested)
 - `sort_by` (String) sortBy query parameter. Field name on which sorting needs to be done
-- `ssid` (String) ssid query parameter. SSID is the name of wireless network to which client connects to. It is also referred to as WLAN ID Wireless Local Area Network Identifier. This field supports wildcard (*) character-based search. If the field contains the (*) character, please use the /query API for search. Ex: *Alpha* or Alpha* or *Alpha
+- `ssid` (String) ssid query parameter. SSID is the name of wireless network to which client connects to. It is also referred to as WLAN ID Wireless Local Area Network Identifier. This field supports wildcard (*****) character-based search. If the field contains the (*****) character, please use the /query API for search. Ex: ***Alpha*** or **Alpha*** or ***Alpha**
 Examples:
-ssid=Alpha (single ssid requested)
-ssid=Alpha&ssid=Guest (multiple ssid requested)
+**ssid=Alpha** (single ssid requested)
+**ssid=Alpha&ssid=Guest** (multiple ssid requested)
 - `start_time` (Number) startTime query parameter. Start time from which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
 
 ### Read-Only

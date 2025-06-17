@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -84,31 +84,45 @@ func dataSourceAnalyticsDictionariesRead(ctx context.Context, d *schema.Resource
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAIEndpointAnalyticsAttributeDictionariesV1")
-		queryParams1 := catalystcentersdkgo.GetAIEndpointAnalyticsAttributeDictionariesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetAiEndpointAnalyticsAttributeDictionaries")
+		queryParams1 := catalystcentersdkgo.GetAiEndpointAnalyticsAttributeDictionariesQueryParams{}
 
 		if okIncludeAttributes {
 			queryParams1.IncludeAttributes = vIncludeAttributes.(bool)
 		}
 
-		response1, restyResp1, err := client.AIEndpointAnalytics.GetAIEndpointAnalyticsAttributeDictionariesV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.AiEndpointAnalytics.GetAiEndpointAnalyticsAttributeDictionaries(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAIEndpointAnalyticsAttributeDictionariesV1", err,
-				"Failure at GetAIEndpointAnalyticsAttributeDictionariesV1, unexpected response", ""))
+				"Failure when executing 2 GetAiEndpointAnalyticsAttributeDictionaries", err,
+				"Failure at GetAiEndpointAnalyticsAttributeDictionaries, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenAIEndpointAnalyticsGetAIEndpointAnalyticsAttributeDictionariesV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetAiEndpointAnalyticsAttributeDictionaries", err,
+				"Failure at GetAiEndpointAnalyticsAttributeDictionaries, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenAiEndpointAnalyticsGetAiEndpointAnalyticsAttributeDictionariesItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAIEndpointAnalyticsAttributeDictionariesV1 response",
+				"Failure when setting GetAiEndpointAnalyticsAttributeDictionaries response",
 				err))
 			return diags
 		}
@@ -120,7 +134,7 @@ func dataSourceAnalyticsDictionariesRead(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func flattenAIEndpointAnalyticsGetAIEndpointAnalyticsAttributeDictionariesV1Items(items *catalystcentersdkgo.ResponseAIEndpointAnalyticsGetAIEndpointAnalyticsAttributeDictionariesV1) []map[string]interface{} {
+func flattenAiEndpointAnalyticsGetAiEndpointAnalyticsAttributeDictionariesItems(items *catalystcentersdkgo.ResponseAiEndpointAnalyticsGetAiEndpointAnalyticsAttributeDictionaries) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -129,13 +143,13 @@ func flattenAIEndpointAnalyticsGetAIEndpointAnalyticsAttributeDictionariesV1Item
 		respItem := make(map[string]interface{})
 		respItem["name"] = item.Name
 		respItem["description"] = item.Description
-		respItem["attributes"] = flattenAIEndpointAnalyticsGetAIEndpointAnalyticsAttributeDictionariesV1ItemsAttributes(item.Attributes)
+		respItem["attributes"] = flattenAiEndpointAnalyticsGetAiEndpointAnalyticsAttributeDictionariesItemsAttributes(item.Attributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenAIEndpointAnalyticsGetAIEndpointAnalyticsAttributeDictionariesV1ItemsAttributes(items *[]catalystcentersdkgo.ResponseItemAIEndpointAnalyticsGetAIEndpointAnalyticsAttributeDictionariesV1Attributes) []map[string]interface{} {
+func flattenAiEndpointAnalyticsGetAiEndpointAnalyticsAttributeDictionariesItemsAttributes(items *[]catalystcentersdkgo.ResponseItemAiEndpointAnalyticsGetAiEndpointAnalyticsAttributeDictionariesAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

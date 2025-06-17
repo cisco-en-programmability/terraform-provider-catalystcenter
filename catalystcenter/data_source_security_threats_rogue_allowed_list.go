@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -72,8 +72,8 @@ func dataSourceSecurityThreatsRogueAllowedListRead(ctx context.Context, d *schem
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAllowedMacAddressV1")
-		queryParams1 := catalystcentersdkgo.GetAllowedMacAddressV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetAllowedMacAddress")
+		queryParams1 := catalystcentersdkgo.GetAllowedMacAddressQueryParams{}
 
 		if okOffset {
 			queryParams1.Offset = vOffset.(float64)
@@ -82,24 +82,38 @@ func dataSourceSecurityThreatsRogueAllowedListRead(ctx context.Context, d *schem
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.Devices.GetAllowedMacAddressV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Devices.GetAllowedMacAddress(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAllowedMacAddressV1", err,
-				"Failure at GetAllowedMacAddressV1, unexpected response", ""))
+				"Failure when executing 2 GetAllowedMacAddress", err,
+				"Failure at GetAllowedMacAddress, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetAllowedMacAddressV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetAllowedMacAddress", err,
+				"Failure at GetAllowedMacAddress, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDevicesGetAllowedMacAddressItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAllowedMacAddressV1 response",
+				"Failure when setting GetAllowedMacAddress response",
 				err))
 			return diags
 		}
@@ -111,7 +125,7 @@ func dataSourceSecurityThreatsRogueAllowedListRead(ctx context.Context, d *schem
 	return diags
 }
 
-func flattenDevicesGetAllowedMacAddressV1Items(items *catalystcentersdkgo.ResponseDevicesGetAllowedMacAddressV1) []map[string]interface{} {
+func flattenDevicesGetAllowedMacAddressItems(items *catalystcentersdkgo.ResponseDevicesGetAllowedMacAddress) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

@@ -17,7 +17,9 @@ It performs create operation on Site Design.
 - Assign unprovisioned network devices to a site. Along with that it can also be used to assign unprovisioned network
 devices to a different site. If device controllability is enabled, it will be triggered once device assigned to site
 successfully. Device Controllability can be enabled/disabled using
-*/dna/intent/api/v1/networkDevices/deviceControllability/settings*.
+**/dna/intent/api/v1/networkDevices/deviceControllability/settings**.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -27,11 +29,11 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_assign_to_site_apply" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
     device_ids = ["string"]
     site_id    = "string"
-  }
+  }]
 }
 
 output "catalystcenter_assign_to_site_apply_example" {
@@ -57,7 +59,7 @@ output "catalystcenter_assign_to_site_apply_example" {
 
 Optional:
 
-- `device_ids` (List of String) Unassigned network devices.
+- `device_ids` (List of String) Unassigned network devices, ranging from a minimum of 1 to a maximum of 100.
 - `site_id` (String) This must be building Id or floor Id. Access points, Sensors are assigned to floor. Remaining network devices are assigned to building. Site Id can be retrieved using '/intent/api/v1/sites'.
 
 

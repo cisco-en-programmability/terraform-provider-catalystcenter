@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -47,26 +47,40 @@ func dataSourceWirelessControllersWirelessMobilityGroupsCountRead(ctx context.Co
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetMobilityGroupsCountV1")
+		log.Printf("[DEBUG] Selected method: GetMobilityGroupsCount")
 
-		response1, restyResp1, err := client.Wireless.GetMobilityGroupsCountV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Wireless.GetMobilityGroupsCount()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetMobilityGroupsCountV1", err,
-				"Failure at GetMobilityGroupsCountV1, unexpected response", ""))
+				"Failure when executing 2 GetMobilityGroupsCount", err,
+				"Failure at GetMobilityGroupsCount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessGetMobilityGroupsCountV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetMobilityGroupsCount", err,
+				"Failure at GetMobilityGroupsCount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenWirelessGetMobilityGroupsCountItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetMobilityGroupsCountV1 response",
+				"Failure when setting GetMobilityGroupsCount response",
 				err))
 			return diags
 		}
@@ -78,7 +92,7 @@ func dataSourceWirelessControllersWirelessMobilityGroupsCountRead(ctx context.Co
 	return diags
 }
 
-func flattenWirelessGetMobilityGroupsCountV1Item(item *catalystcentersdkgo.ResponseWirelessGetMobilityGroupsCountV1Response) []map[string]interface{} {
+func flattenWirelessGetMobilityGroupsCountItem(item *catalystcentersdkgo.ResponseWirelessGetMobilityGroupsCountResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

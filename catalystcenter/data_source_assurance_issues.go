@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -41,7 +41,7 @@ programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 				Optional: true,
 			},
 			"attribute": &schema.Schema{
-				Description: `attribute query parameter. List of attributes related to the issue. If these are provided, then only those attributes will be part of response along with the default attributes. Please refer to the *IssuesResponseAttribute* Model for supported attributes. Examples: *attribute=deviceType* (single attribute requested) *attribute=deviceType&attribute=updatedBy* (multiple attributes requested)
+				Description: `attribute query parameter. List of attributes related to the issue. If these are provided, then only those attributes will be part of response along with the default attributes. Please refer to the **IssuesResponseAttribute** Model for supported attributes. Examples: **attribute=deviceType** (single attribute requested) **attribute=deviceType&attribute=updatedBy** (multiple attributes requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -66,6 +66,7 @@ programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 			},
 			"entity_id": &schema.Schema{
 				Description: `entityId query parameter. Id of the entity for which this issue belongs to. For example, it
+
     could be mac address of AP or UUID of Sensor
   example: 68:ca:e4:79:3f:20 4de02167-901b-43cf-8822-cffd3caa286f
 Examples: entityId=68:ca:e4:79:3f:20 (single entity id requested) entityId=68:ca:e4:79:3f:20&entityId=864d0421-02c0-43a6-9c52-81cad45f66d8 (multiple entity ids requested)
@@ -146,9 +147,9 @@ Examples: entityId=68:ca:e4:79:3f:20 (single entity id requested) entityId=68:ca
 				Optional: true,
 			},
 			"mac_address": &schema.Schema{
-				Description: `macAddress query parameter. The macAddress of the network device or client This field supports wildcard (***) character-based search.  Ex: **AB:AB:AB** or *AB:AB:AB** or **AB:AB:AB* Examples:
-*macAddress=AB:AB:AB:CD:CD:CD* (single macAddress requested)
-*macAddress=AB:AB:AB:CD:CD:DC&macAddress=AB:AB:AB:CD:CD:FE* (multiple macAddress requested)
+				Description: `macAddress query parameter. The macAddress of the network device or client This field supports wildcard (*****) character-based search. Ex: ***AB:AB:AB*** or **AB:AB:AB*** or ***AB:AB:AB** Examples:
+**macAddress=AB:AB:AB:CD:CD:CD** (single macAddress requested)
+**macAddress=AB:AB:AB:CD:CD:DC&macAddress=AB:AB:AB:CD:CD:FE** (multiple macAddress requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -160,20 +161,20 @@ Examples: entityId=68:ca:e4:79:3f:20 (single entity id requested) entityId=68:ca
 				Optional: true,
 			},
 			"network_device_id": &schema.Schema{
-				Description: `networkDeviceId query parameter. The list of Network Device Uuids. (Ex. *6bef213c-19ca-4170-8375-b694e251101c*)
+				Description: `networkDeviceId query parameter. The list of Network Device Uuids. (Ex. **6bef213c-19ca-4170-8375-b694e251101c**)
 Examples:
-*networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c* (single networkDeviceId requested)
-*networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c&networkDeviceId=32219612-819e-4b5e-a96b-cf22aca13dd9&networkDeviceId=2541e9a7-b80d-4955-8aa2-79b233318ba0* (multiple networkDeviceIds with & separator)
+**networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c** (single networkDeviceId requested)
+**networkDeviceId=6bef213c-19ca-4170-8375-b694e251101c&networkDeviceId=32219612-819e-4b5e-a96b-cf22aca13dd9&networkDeviceId=2541e9a7-b80d-4955-8aa2-79b233318ba0** (multiple networkDeviceIds with & separator)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"network_device_ip_address": &schema.Schema{
-				Description: `networkDeviceIpAddress query parameter. The list of Network Device management IP Address. (Ex. *121.1.1.10*)
-This field supports wildcard (***) character-based search.  Ex: **1.1** or *1.1** or **1.1*
+				Description: `networkDeviceIpAddress query parameter. The list of Network Device management IP Address. (Ex. **121.1.1.10**)
+This field supports wildcard (*****) character-based search. Ex: ***1.1*** or **1.1*** or ***1.1**
 Examples:
-*networkDeviceIpAddress=121.1.1.10*
-*networkDeviceIpAddress=121.1.1.10&networkDeviceIpAddress=172.20.1.10&networkDeviceIpAddress=10.10.20.10* (multiple networkDevice IP Address with & separator)
+**networkDeviceIpAddress=121.1.1.10**
+**networkDeviceIpAddress=121.1.1.10&networkDeviceIpAddress=172.20.1.10&networkDeviceIpAddress=10.10.20.10** (multiple networkDevice IP Address with & separator)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -203,41 +204,41 @@ Examples:
 				Optional: true,
 			},
 			"site_hierarchy": &schema.Schema{
-				Description: `siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. *Global/AreaName/BuildingName/FloorName*)
+				Description: `siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. **Global/AreaName/BuildingName/FloorName**)
 This field supports wildcard asterisk (*) character search support. E.g. */San*, */San, /San*
 Examples:
-*?siteHierarchy=Global/AreaName/BuildingName/FloorName* (single siteHierarchy requested)
-*?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2* (multiple siteHierarchies requested)
+**?siteHierarchy=Global/AreaName/BuildingName/FloorName** (single siteHierarchy requested)
+**?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2** (multiple siteHierarchies requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_hierarchy_id": &schema.Schema{
-				Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. *globalUuid/areaUuid/buildingUuid/floorUuid*)
-This field supports wildcard asterisk (*) character search support. E.g. **uuid*, *uuid, uuid*
+				Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. **globalUuid/areaUuid/buildingUuid/floorUuid**)
+This field supports wildcard asterisk (*) character search support. E.g. ***uuid*, *uuid, uuid*
 Examples:
-*?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid *(single siteHierarchyId requested)
-*?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2* (multiple siteHierarchyIds requested)
+**?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid **(single siteHierarchyId requested)
+**?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2** (multiple siteHierarchyIds requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_id": &schema.Schema{
-				Description: `siteId query parameter. The UUID of the site. (Ex. *flooruuid*)
+				Description: `siteId query parameter. The UUID of the site. (Ex. **flooruuid**)
 This field supports wildcard asterisk (*) character search support. E.g.*flooruuid*, *flooruuid, flooruuid*
 Examples:
-*?siteId=id1* (single id requested)
-*?siteId=id1&siteId=id2&siteId=id3* (multiple ids requested)
+**?siteId=id1** (single id requested)
+**?siteId=id1&siteId=id2&siteId=id3** (multiple ids requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_name": &schema.Schema{
-				Description: `siteName query parameter. The name of the site. (Ex. *FloorName*)
+				Description: `siteName query parameter. The name of the site. (Ex. **FloorName**)
 This field supports wildcard asterisk (*) character search support. E.g. *San*, *San, San*
 Examples:
-*?siteName=building1* (single siteName requested)
-*?siteName=building1&siteName=building2&siteName=building3* (multiple siteNames requested)
+**?siteName=building1** (single siteName requested)
+**?siteName=building1&siteName=building2&siteName=building3** (multiple siteNames requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -249,7 +250,7 @@ Examples:
 			},
 			"start_time": &schema.Schema{
 				Description: `startTime query parameter. Start time from which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
-If *startTime* is not provided, API will default to current time.
+If **startTime** is not provided, API will default to current time.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -267,8 +268,8 @@ If *startTime* is not provided, API will default to current time.
 				Optional: true,
 			},
 			"view": &schema.Schema{
-				Description: `view query parameter. The name of the View. Each view represents a specific data set. Please refer to the *IssuesView* Model for supported views. View is predefined set of attributes supported by the API. Only the attributes related to the given view will be part of the API response along with default attributes. If multiple views are provided, then response will contain attributes from all those views. If no views are specified, all attributes will be returned.
-| View Name | Included Attributes | | --| --| | *update* | updatedTime, updatedBy | | *site* | siteName, siteHierarchy, siteId, siteHierarchyId | Examples: *view=update* (single view requested) *view=update&view=site* (multiple views requested)
+				Description: `view query parameter. The name of the View. Each view represents a specific data set. Please refer to the **IssuesView** Model for supported views. View is predefined set of attributes supported by the API. Only the attributes related to the given view will be part of the API response along with default attributes. If multiple views are provided, then response will contain attributes from all those views. If no views are specified, all attributes will be returned.
+| View Name | Included Attributes | | --| --| | **update** | updatedTime, updatedBy | | **site** | siteName, siteHierarchy, siteId, siteHierarchyId | Examples: **view=update** (single view requested) **view=update&view=site** (multiple views requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -694,10 +695,10 @@ func dataSourceAssuranceIssuesRead(ctx context.Context, d *schema.ResourceData, 
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1")
+		log.Printf("[DEBUG] Selected method: GetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetwork")
 
-		headerParams1 := catalystcentersdkgo.GetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.GetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.GetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkHeaderParams{}
+		queryParams1 := catalystcentersdkgo.GetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -808,24 +809,38 @@ func dataSourceAssuranceIssuesRead(ctx context.Context, d *schema.ResourceData, 
 			headerParams1.XCaLLERID = vXCaLLERID.(string)
 		}
 
-		response1, restyResp1, err := client.Issues.GetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1(&headerParams1, &queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Issues.GetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetwork(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1", err,
-				"Failure at GetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1, unexpected response", ""))
+				"Failure when executing 2 GetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetwork", err,
+				"Failure at GetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetwork, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetwork", err,
+				"Failure at GetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetwork, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1 response",
+				"Failure when setting GetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetwork response",
 				err))
 			return diags
 		}
@@ -835,11 +850,11 @@ func dataSourceAssuranceIssuesRead(ctx context.Context, d *schema.ResourceData, 
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1")
+		log.Printf("[DEBUG] Selected method: GetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueID")
 		vvID := vID.(string)
 
-		headerParams2 := catalystcentersdkgo.GetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1HeaderParams{}
-		queryParams2 := catalystcentersdkgo.GetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1QueryParams{}
+		headerParams2 := catalystcentersdkgo.GetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDHeaderParams{}
+		queryParams2 := catalystcentersdkgo.GetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDQueryParams{}
 
 		if okView {
 			queryParams2.View = vView.(string)
@@ -854,24 +869,38 @@ func dataSourceAssuranceIssuesRead(ctx context.Context, d *schema.ResourceData, 
 			headerParams2.XCaLLERID = vXCaLLERID.(string)
 		}
 
-		response2, restyResp2, err := client.Issues.GetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1(vvID, &headerParams2, &queryParams2)
+		// has_unknown_response: None
+
+		response2, restyResp2, err := client.Issues.GetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueID(vvID, &headerParams2, &queryParams2)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1", err,
-				"Failure at GetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1, unexpected response", ""))
+				"Failure when executing 2 GetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueID", err,
+				"Failure at GetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1Item(response2.Response)
+		if err != nil || response2 == nil {
+			if restyResp2 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueID", err,
+				"Failure at GetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
+
+		vItem2 := flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDItem(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1 response",
+				"Failure when setting GetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueID response",
 				err))
 			return diags
 		}
@@ -883,7 +912,7 @@ func dataSourceAssuranceIssuesRead(ctx context.Context, d *schema.ResourceData, 
 	return diags
 }
 
-func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1Items(items *[]catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1Response) []map[string]interface{} {
+func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkItems(items *[]catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -904,21 +933,21 @@ func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1Item
 		respItem["most_recent_occurred_time"] = item.MostRecentOccurredTime
 		respItem["status"] = item.Status
 		respItem["is_global"] = boolPtrToString(item.IsGlobal)
-		respItem["updated_by"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ItemsUpdatedBy(item.UpdatedBy)
-		respItem["updated_time"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ItemsUpdatedTime(item.UpdatedTime)
-		respItem["notes"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ItemsNotes(item.Notes)
-		respItem["site_id"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ItemsSiteID(item.SiteID)
-		respItem["site_hierarchy_id"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ItemsSiteHierarchyID(item.SiteHierarchyID)
-		respItem["site_name"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ItemsSiteName(item.SiteName)
-		respItem["site_hierarchy"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ItemsSiteHierarchy(item.SiteHierarchy)
-		respItem["suggested_actions"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ItemsSuggestedActions(item.SuggestedActions)
-		respItem["additional_attributes"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ItemsAdditionalAttributes(item.AdditionalAttributes)
+		respItem["updated_by"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkItemsUpdatedBy(item.UpdatedBy)
+		respItem["updated_time"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkItemsUpdatedTime(item.UpdatedTime)
+		respItem["notes"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkItemsNotes(item.Notes)
+		respItem["site_id"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkItemsSiteID(item.SiteID)
+		respItem["site_hierarchy_id"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkItemsSiteHierarchyID(item.SiteHierarchyID)
+		respItem["site_name"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkItemsSiteName(item.SiteName)
+		respItem["site_hierarchy"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkItemsSiteHierarchy(item.SiteHierarchy)
+		respItem["suggested_actions"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkItemsSuggestedActions(item.SuggestedActions)
+		respItem["additional_attributes"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkItemsAdditionalAttributes(item.AdditionalAttributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ItemsUpdatedBy(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ResponseUpdatedBy) interface{} {
+func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkItemsUpdatedBy(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkResponseUpdatedBy) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -928,7 +957,7 @@ func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1Item
 
 }
 
-func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ItemsUpdatedTime(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ResponseUpdatedTime) interface{} {
+func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkItemsUpdatedTime(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkResponseUpdatedTime) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -938,7 +967,7 @@ func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1Item
 
 }
 
-func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ItemsNotes(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ResponseNotes) interface{} {
+func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkItemsNotes(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkResponseNotes) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -948,7 +977,7 @@ func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1Item
 
 }
 
-func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ItemsSiteID(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ResponseSiteID) interface{} {
+func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkItemsSiteID(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkResponseSiteID) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -958,7 +987,7 @@ func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1Item
 
 }
 
-func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ItemsSiteHierarchyID(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ResponseSiteHierarchyID) interface{} {
+func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkItemsSiteHierarchyID(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkResponseSiteHierarchyID) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -968,7 +997,7 @@ func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1Item
 
 }
 
-func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ItemsSiteName(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ResponseSiteName) interface{} {
+func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkItemsSiteName(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkResponseSiteName) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -978,7 +1007,7 @@ func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1Item
 
 }
 
-func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ItemsSiteHierarchy(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ResponseSiteHierarchy) interface{} {
+func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkItemsSiteHierarchy(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkResponseSiteHierarchy) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -988,7 +1017,7 @@ func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1Item
 
 }
 
-func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ItemsSuggestedActions(items *[]catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ResponseSuggestedActions) []map[string]interface{} {
+func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkItemsSuggestedActions(items *[]catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkResponseSuggestedActions) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -996,13 +1025,13 @@ func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1Item
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["message"] = item.Message
-		respItem["steps"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ItemsSuggestedActionsSteps(item.Steps)
+		respItem["steps"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkItemsSuggestedActionsSteps(item.Steps)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ItemsSuggestedActionsSteps(items *[]catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ResponseSuggestedActionsSteps) []interface{} {
+func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkItemsSuggestedActionsSteps(items *[]catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkResponseSuggestedActionsSteps) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1014,7 +1043,7 @@ func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1Item
 	return respItems
 }
 
-func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ItemsAdditionalAttributes(items *[]catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1ResponseAdditionalAttributes) []map[string]interface{} {
+func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkItemsAdditionalAttributes(items *[]catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkResponseAdditionalAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1028,7 +1057,7 @@ func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersKnowYourNetworkV1Item
 	return respItems
 }
 
-func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1Item(item *catalystcentersdkgo.ResponseIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1Response) []map[string]interface{} {
+func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDItem(item *catalystcentersdkgo.ResponseIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1049,19 +1078,19 @@ func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueID
 	respItem["is_global"] = boolPtrToString(item.IsGlobal)
 	respItem["updated_by"] = item.UpdatedBy
 	respItem["updated_time"] = item.UpdatedTime
-	respItem["notes"] = flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ItemNotes(item.Notes)
-	respItem["site_id"] = flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ItemSiteID(item.SiteID)
-	respItem["site_hierarchy_id"] = flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ItemSiteHierarchyID(item.SiteHierarchyID)
-	respItem["site_name"] = flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ItemSiteName(item.SiteName)
-	respItem["site_hierarchy"] = flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ItemSiteHierarchy(item.SiteHierarchy)
-	respItem["suggested_actions"] = flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ItemSuggestedActions(item.SuggestedActions)
-	respItem["additional_attributes"] = flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ItemAdditionalAttributes(item.AdditionalAttributes)
+	respItem["notes"] = flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDItemNotes(item.Notes)
+	respItem["site_id"] = flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDItemSiteID(item.SiteID)
+	respItem["site_hierarchy_id"] = flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDItemSiteHierarchyID(item.SiteHierarchyID)
+	respItem["site_name"] = flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDItemSiteName(item.SiteName)
+	respItem["site_hierarchy"] = flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDItemSiteHierarchy(item.SiteHierarchy)
+	respItem["suggested_actions"] = flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDItemSuggestedActions(item.SuggestedActions)
+	respItem["additional_attributes"] = flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDItemAdditionalAttributes(item.AdditionalAttributes)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ItemNotes(item *catalystcentersdkgo.ResponseIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ResponseNotes) interface{} {
+func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDItemNotes(item *catalystcentersdkgo.ResponseIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDResponseNotes) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1071,7 +1100,7 @@ func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueID
 
 }
 
-func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ItemSiteID(item *catalystcentersdkgo.ResponseIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ResponseSiteID) interface{} {
+func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDItemSiteID(item *catalystcentersdkgo.ResponseIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDResponseSiteID) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1081,7 +1110,7 @@ func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueID
 
 }
 
-func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ItemSiteHierarchyID(item *catalystcentersdkgo.ResponseIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ResponseSiteHierarchyID) interface{} {
+func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDItemSiteHierarchyID(item *catalystcentersdkgo.ResponseIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDResponseSiteHierarchyID) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1091,7 +1120,7 @@ func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueID
 
 }
 
-func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ItemSiteName(item *catalystcentersdkgo.ResponseIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ResponseSiteName) interface{} {
+func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDItemSiteName(item *catalystcentersdkgo.ResponseIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDResponseSiteName) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1101,7 +1130,7 @@ func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueID
 
 }
 
-func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ItemSiteHierarchy(item *catalystcentersdkgo.ResponseIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ResponseSiteHierarchy) interface{} {
+func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDItemSiteHierarchy(item *catalystcentersdkgo.ResponseIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDResponseSiteHierarchy) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1111,7 +1140,7 @@ func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueID
 
 }
 
-func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ItemSuggestedActions(items *[]catalystcentersdkgo.ResponseIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ResponseSuggestedActions) []map[string]interface{} {
+func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDItemSuggestedActions(items *[]catalystcentersdkgo.ResponseIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDResponseSuggestedActions) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1119,13 +1148,13 @@ func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueID
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["message"] = item.Message
-		respItem["steps"] = flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ItemSuggestedActionsSteps(item.Steps)
+		respItem["steps"] = flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDItemSuggestedActionsSteps(item.Steps)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ItemSuggestedActionsSteps(items *[]catalystcentersdkgo.ResponseIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ResponseSuggestedActionsSteps) []interface{} {
+func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDItemSuggestedActionsSteps(items *[]catalystcentersdkgo.ResponseIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDResponseSuggestedActionsSteps) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1137,7 +1166,7 @@ func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueID
 	return respItems
 }
 
-func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ItemAdditionalAttributes(items *[]catalystcentersdkgo.ResponseIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDV1ResponseAdditionalAttributes) []map[string]interface{} {
+func flattenIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDItemAdditionalAttributes(items *[]catalystcentersdkgo.ResponseIssuesGetAllTheDetailsAndSuggestedActionsOfAnIssueForTheGivenIssueIDResponseAdditionalAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

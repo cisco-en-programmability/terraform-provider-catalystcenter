@@ -17,6 +17,7 @@ It performs create operation on Devices.
 usage of the API, please refer to the Open API specification document https://github.com/cisco-en-
 programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-AAAServices-1.0.0-resolved.yaml
 
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -28,33 +29,33 @@ resource "catalystcenter_aaa_services_id_trend_analytics" "example" {
   provider    = catalystcenter
   id          = "string"
   xca_lle_rid = "string"
-  parameters {
+  parameters = [{
 
-    aggregate_attributes {
+    aggregate_attributes = [{
 
       function = "string"
       name     = "string"
-    }
+    }]
     attributes = ["string"]
     end_time   = 1
-    filters {
+    filters = [{
 
       filters          = ["string"]
       key              = "string"
       logical_operator = "string"
       operator         = "string"
-      value            = "------"
-    }
+      value            = ["string"]
+    }]
     group_by = ["string"]
-    page {
+    page = [{
 
       limit           = 1
       offset          = 1
       timestamp_order = "string"
-    }
+    }]
     start_time     = 1
     trend_interval = "string"
-  }
+  }]
 }
 
 output "catalystcenter_aaa_services_id_trend_analytics_example" {
@@ -79,7 +80,7 @@ output "catalystcenter_aaa_services_id_trend_analytics_example" {
 
 Required:
 
-- `id` (String) id path parameter. Unique id of the AAA Service. It is the combination of AAA Server IP (***) and Device UUID (***) separated by underscore (***). Example: If *serverIp* is *10.76.81.33* and *deviceId* is *6bef213c-19ca-4170-8375-b694e251101c*, then the *id* would be *10.76.81.33_6bef213c-19ca-4170-8375-b694e251101c*
+- `id` (String) id path parameter. Unique id of the AAA Service. It is the combination of AAA Server IP (**serverIp**) and Device UUID (**deviceId**) separated by underscore (**_**). Example: If **serverIp** is **10.76.81.33** and **deviceId** is **6bef213c-19ca-4170-8375-b694e251101c**, then the **id** would be **10.76.81.33_6bef213c-19ca-4170-8375-b694e251101c**
 - `xca_lle_rid` (String) X-CALLER-ID header parameter. Caller ID is used to trace the origin of API calls and their associated queries executed on the database. It's an optional header parameter that can be added to an API request.
 
 Optional:
@@ -115,7 +116,7 @@ Optional:
 - `key` (String) Key
 - `logical_operator` (String) Logical Operator
 - `operator` (String) Operator
-- `value` (String) Value
+- `value` (List of String) Value
 
 
 <a id="nestedblock--parameters--page"></a>

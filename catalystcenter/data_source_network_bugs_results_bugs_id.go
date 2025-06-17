@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -117,29 +117,41 @@ func dataSourceNetworkBugsResultsBugsIDRead(ctx context.Context, d *schema.Resou
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetNetworkBugByIDV1")
+		log.Printf("[DEBUG] Selected method: GetNetworkBugByID")
 		vvID := vID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Compliance.GetNetworkBugByIDV1(vvID)
+		response1, restyResp1, err := client.Compliance.GetNetworkBugByID(vvID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetNetworkBugByIDV1", err,
-				"Failure at GetNetworkBugByIDV1, unexpected response", ""))
+				"Failure when executing 2 GetNetworkBugByID", err,
+				"Failure at GetNetworkBugByID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenComplianceGetNetworkBugByIDV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetNetworkBugByID", err,
+				"Failure at GetNetworkBugByID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenComplianceGetNetworkBugByIDItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetNetworkBugByIDV1 response",
+				"Failure when setting GetNetworkBugByID response",
 				err))
 			return diags
 		}
@@ -151,7 +163,7 @@ func dataSourceNetworkBugsResultsBugsIDRead(ctx context.Context, d *schema.Resou
 	return diags
 }
 
-func flattenComplianceGetNetworkBugByIDV1Item(item *catalystcentersdkgo.ResponseComplianceGetNetworkBugByIDV1Response) []map[string]interface{} {
+func flattenComplianceGetNetworkBugByIDItem(item *catalystcentersdkgo.ResponseComplianceGetNetworkBugByIDResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

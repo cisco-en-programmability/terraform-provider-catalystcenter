@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -9,7 +10,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -82,25 +83,30 @@ func resourceFieldNoticesTriggerScanCreate(ctx context.Context, d *schema.Resour
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	queryParams1 := catalystcentersdkgo.TriggersAFieldNoticesScanForTheSupportedNetworkDevicesV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.TriggersAFieldNoticesScanForTheSupportedNetworkDevicesQueryParams{}
 
-	// has_unknown_response: None
+	if v, ok := d.GetOkExists("parameters.0.failed_devices_only"); ok {
+		queryParams1.FailedDevicesOnly = interfaceToBool(v)
+	}
 
-	response1, restyResp1, err := client.Compliance.TriggersAFieldNoticesScanForTheSupportedNetworkDevicesV1(&queryParams1)
+	response1, restyResp1, err := client.Compliance.TriggersAFieldNoticesScanForTheSupportedNetworkDevices(&queryParams1)
 
-	vItem1 := flattenComplianceTriggersAFieldNoticesScanForTheSupportedNetworkDevicesV1Item(response1.Response)
-	if err := d.Set("item", vItem1); err != nil {
-		diags = append(diags, diagError(
-			"Failure when setting TriggersAFieldNoticesScanForTheSupportedNetworkDevicesV1 response",
-			err))
+	if err != nil || response1 == nil {
+		if restyResp1 != nil {
+			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+		}
+		d.SetId("")
 		return diags
 	}
+
+	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing TriggersAFieldNoticesScanForTheSupportedNetworkDevicesV1", err))
+			"Failure when executing TriggersAFieldNoticesScanForTheSupportedNetworkDevices", err))
 		return diags
 	}
+
 	taskId := response1.Response.TaskID
 	log.Printf("[DEBUG] TASKID => %s", taskId)
 	if taskId != "" {
@@ -125,44 +131,43 @@ func resourceFieldNoticesTriggerScanCreate(ctx context.Context, d *schema.Resour
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing TriggersAFieldNoticesScanForTheSupportedNetworkDevicesV1", err1))
+				"Failure when executing TriggersAFieldNoticesScanForTheSupportedNetworkDevices", err1))
 			return diags
 		}
 	}
 
-	if err != nil || response1 == nil {
-		if restyResp1 != nil {
-			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
-		}
-		d.SetId("")
+	vItem1 := flattenComplianceTriggersAFieldNoticesScanForTheSupportedNetworkDevicesItem(response1.Response)
+	if err := d.Set("item", vItem1); err != nil {
+		diags = append(diags, diagError(
+			"Failure when setting TriggersAFieldNoticesScanForTheSupportedNetworkDevices response",
+			err))
 		return diags
 	}
 
-	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 	d.SetId(getUnixTimeString())
 	return diags
 }
 func resourceFieldNoticesTriggerScanRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 	return diags
 }
 
 func resourceFieldNoticesTriggerScanDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 	return diags
 }
 
-func flattenComplianceTriggersAFieldNoticesScanForTheSupportedNetworkDevicesV1Item(item *catalystcentersdkgo.ResponseComplianceTriggersAFieldNoticesScanForTheSupportedNetworkDevicesV1Response) []map[string]interface{} {
+func flattenComplianceTriggersAFieldNoticesScanForTheSupportedNetworkDevicesItem(item *catalystcentersdkgo.ResponseComplianceTriggersAFieldNoticesScanForTheSupportedNetworkDevicesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

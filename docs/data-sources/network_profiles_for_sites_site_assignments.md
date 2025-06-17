@@ -37,11 +37,11 @@ output "catalystcenter_network_profiles_for_sites_site_assignments_example" {
 
 ### Required
 
-- `profile_id` (String) profileId path parameter. The *id* of the network profile, retrievable from *GET /intent/api/v1/networkProfilesForSites*
+- `profile_id` (String) profileId path parameter. The **id** of the network profile, retrievable from **GET /intent/api/v1/networkProfilesForSites**
 
 ### Optional
 
-- `limit` (Number) limit query parameter. The number of records to show for this page.
+- `limit` (Number) limit query parameter. The number of records to show for this page;The minimum is 1, and the maximum is 500.
 - `offset` (Number) offset query parameter. The first record to show for this page; the first record is numbered 1.
 
 ### Read-Only

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -17,9 +17,13 @@ func dataSourceNetworkDeviceMaintenanceSchedules() *schema.Resource {
 
 - This data source retrieves a list of scheduled maintenance windows for network devices based on filter parameters.
 Each maintenance window is composed of a start schedule and end schedule, both of which have unique
-identifiers(startId and endId). These identifiers can be used to fetch the status of the start schedule and end
-schedule using the GET /dna/intent/api/v1/activities/{id} API. Completed maintenance schedules are automatically
-removed from the system after two weeks.
+identifiers(**startId** and **endId**). These identifiers can be used to fetch the status of the start schedule and end
+schedule using the **GET /dna/intent/api/v1/activities/{id}** API. Completed maintenance schedules are automatically
+removed from the system after two weeks. The API returns a paginated response based on 'limit' and 'offset' parameters,
+allowing up to 500 records per page. 'limit' specifies the number of records, and 'offset' sets the starting point using
+1-based indexing. Use '/dna/intent/api/v1/networkDeviceMaintenanceSchedules/count' API to get the total record count.
+For data sets over 500 records, make multiple calls, adjusting 'limit' and 'offset' to retrieve all records
+incrementally.
 `,
 
 		ReadContext: dataSourceNetworkDeviceMaintenanceSchedulesRead,
@@ -177,8 +181,8 @@ func dataSourceNetworkDeviceMaintenanceSchedulesRead(ctx context.Context, d *sch
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveScheduledMaintenanceWindowsForNetworkDevicesV1")
-		queryParams1 := catalystcentersdkgo.RetrieveScheduledMaintenanceWindowsForNetworkDevicesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: RetrieveScheduledMaintenanceWindowsForNetworkDevices")
+		queryParams1 := catalystcentersdkgo.RetrieveScheduledMaintenanceWindowsForNetworkDevicesQueryParams{}
 
 		if okNetworkDeviceIDs {
 			queryParams1.NetworkDeviceIDs = vNetworkDeviceIDs.(string)
@@ -201,24 +205,36 @@ func dataSourceNetworkDeviceMaintenanceSchedulesRead(ctx context.Context, d *sch
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Devices.RetrieveScheduledMaintenanceWindowsForNetworkDevicesV1(&queryParams1)
+		response1, restyResp1, err := client.Devices.RetrieveScheduledMaintenanceWindowsForNetworkDevices(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveScheduledMaintenanceWindowsForNetworkDevicesV1", err,
-				"Failure at RetrieveScheduledMaintenanceWindowsForNetworkDevicesV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveScheduledMaintenanceWindowsForNetworkDevices", err,
+				"Failure at RetrieveScheduledMaintenanceWindowsForNetworkDevices, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesRetrieveScheduledMaintenanceWindowsForNetworkDevicesV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveScheduledMaintenanceWindowsForNetworkDevices", err,
+				"Failure at RetrieveScheduledMaintenanceWindowsForNetworkDevices, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDevicesRetrieveScheduledMaintenanceWindowsForNetworkDevicesItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveScheduledMaintenanceWindowsForNetworkDevicesV1 response",
+				"Failure when setting RetrieveScheduledMaintenanceWindowsForNetworkDevices response",
 				err))
 			return diags
 		}
@@ -230,7 +246,7 @@ func dataSourceNetworkDeviceMaintenanceSchedulesRead(ctx context.Context, d *sch
 	return diags
 }
 
-func flattenDevicesRetrieveScheduledMaintenanceWindowsForNetworkDevicesV1Items(items *[]catalystcentersdkgo.ResponseDevicesRetrieveScheduledMaintenanceWindowsForNetworkDevicesV1Response) []map[string]interface{} {
+func flattenDevicesRetrieveScheduledMaintenanceWindowsForNetworkDevicesItems(items *[]catalystcentersdkgo.ResponseDevicesRetrieveScheduledMaintenanceWindowsForNetworkDevicesResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -239,14 +255,14 @@ func flattenDevicesRetrieveScheduledMaintenanceWindowsForNetworkDevicesV1Items(i
 		respItem := make(map[string]interface{})
 		respItem["id"] = item.ID
 		respItem["description"] = item.Description
-		respItem["maintenance_schedule"] = flattenDevicesRetrieveScheduledMaintenanceWindowsForNetworkDevicesV1ItemsMaintenanceSchedule(item.MaintenanceSchedule)
+		respItem["maintenance_schedule"] = flattenDevicesRetrieveScheduledMaintenanceWindowsForNetworkDevicesItemsMaintenanceSchedule(item.MaintenanceSchedule)
 		respItem["network_device_ids"] = item.NetworkDeviceIDs
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesRetrieveScheduledMaintenanceWindowsForNetworkDevicesV1ItemsMaintenanceSchedule(item *catalystcentersdkgo.ResponseDevicesRetrieveScheduledMaintenanceWindowsForNetworkDevicesV1ResponseMaintenanceSchedule) []map[string]interface{} {
+func flattenDevicesRetrieveScheduledMaintenanceWindowsForNetworkDevicesItemsMaintenanceSchedule(item *catalystcentersdkgo.ResponseDevicesRetrieveScheduledMaintenanceWindowsForNetworkDevicesResponseMaintenanceSchedule) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -255,7 +271,7 @@ func flattenDevicesRetrieveScheduledMaintenanceWindowsForNetworkDevicesV1ItemsMa
 	respItem["end_id"] = item.EndID
 	respItem["start_time"] = item.StartTime
 	respItem["end_time"] = item.EndTime
-	respItem["recurrence"] = flattenDevicesRetrieveScheduledMaintenanceWindowsForNetworkDevicesV1ItemsMaintenanceScheduleRecurrence(item.Recurrence)
+	respItem["recurrence"] = flattenDevicesRetrieveScheduledMaintenanceWindowsForNetworkDevicesItemsMaintenanceScheduleRecurrence(item.Recurrence)
 	respItem["status"] = item.Status
 
 	return []map[string]interface{}{
@@ -264,7 +280,7 @@ func flattenDevicesRetrieveScheduledMaintenanceWindowsForNetworkDevicesV1ItemsMa
 
 }
 
-func flattenDevicesRetrieveScheduledMaintenanceWindowsForNetworkDevicesV1ItemsMaintenanceScheduleRecurrence(item *catalystcentersdkgo.ResponseDevicesRetrieveScheduledMaintenanceWindowsForNetworkDevicesV1ResponseMaintenanceScheduleRecurrence) []map[string]interface{} {
+func flattenDevicesRetrieveScheduledMaintenanceWindowsForNetworkDevicesItemsMaintenanceScheduleRecurrence(item *catalystcentersdkgo.ResponseDevicesRetrieveScheduledMaintenanceWindowsForNetworkDevicesResponseMaintenanceScheduleRecurrence) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

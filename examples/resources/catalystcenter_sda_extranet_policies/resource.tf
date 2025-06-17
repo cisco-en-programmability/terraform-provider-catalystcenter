@@ -1,7 +1,7 @@
 
 resource "catalystcenter_sda_extranet_policies" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     extranet_policy_name             = "string"

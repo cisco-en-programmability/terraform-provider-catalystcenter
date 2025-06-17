@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -186,7 +186,7 @@ func resourceFieldNoticesTrialsRead(ctx context.Context, d *schema.ResourceData,
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenComplianceGetTrialDetailsForFieldNoticesDetectionOnNetworkDevicesV1Item(response1.Response)
+		vItem1 := flattenComplianceGetTrialDetailsForFieldNoticesDetectionOnNetworkDevicesItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetTrialDetailsForFieldNoticesDetectionOnNetworkDevices response",
@@ -202,7 +202,7 @@ func resourceFieldNoticesTrialsRead(ctx context.Context, d *schema.ResourceData,
 
 func resourceFieldNoticesTrialsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	// NOTE: Unable to delete FieldNoticesTrials on Dna Center
+	// NOTE: Unable to delete FieldNoticesTrials on Catalyst Center
 	//       Returning empty diags to delete it on Terraform
 	return diags
 }

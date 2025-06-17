@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -66,24 +66,22 @@ func dataSourceIcapCaptureFilesIDDownloadRead(ctx context.Context, d *schema.Res
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: DownloadsASpecificICapPacketCaptureFileV1")
+		log.Printf("[DEBUG] Selected method: DownloadsASpecificICapPacketCaptureFile")
 		vvID := vID.(string)
 
-		headerParams1 := catalystcentersdkgo.DownloadsASpecificICapPacketCaptureFileV1HeaderParams{}
+		headerParams1 := catalystcentersdkgo.DownloadsASpecificICapPacketCaptureFileHeaderParams{}
 
 		headerParams1.XCaLLERID = vXCaLLERID.(string)
 
-		// has_unknown_response: None
-
-		response1, restyResp1, err := client.Sensors.DownloadsASpecificICapPacketCaptureFileV1(vvID, &headerParams1)
+		response1, restyResp1, err := client.Sensors.DownloadsASpecificICapPacketCaptureFile(vvID, &headerParams1)
 
 		if err != nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 DownloadsASpecificICapPacketCaptureFileV1", err,
-				"Failure at DownloadsASpecificICapPacketCaptureFileV1, unexpected response", ""))
+				"Failure when executing 2 DownloadsASpecificICapPacketCaptureFile", err,
+				"Failure at DownloadsASpecificICapPacketCaptureFile, unexpected response", ""))
 			return diags
 		}
 
@@ -97,7 +95,6 @@ func dataSourceIcapCaptureFilesIDDownloadRead(ctx context.Context, d *schema.Res
 			return diags
 		}
 		log.Printf("[DEBUG] Downloaded file %s", vvDirpath)
-
 	}
 	return diags
 }

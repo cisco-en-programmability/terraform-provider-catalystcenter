@@ -4,14 +4,16 @@ page_title: "catalystcenter_device_configurations_export Resource - terraform-pr
 subcategory: ""
 description: |-
   It performs create operation on Configuration Archive.
-  Export Device configurations to an encrypted zip file
+  Export Device configuration for every device that is provided will be included in an encrypted zip file.
 ---
 
 # catalystcenter_device_configurations_export (Resource)
 
 It performs create operation on Configuration Archive.
 
-- Export Device configurations to an encrypted zip file
+- Export Device configuration for every device that is provided will be included in an encrypted zip file.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -21,11 +23,11 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_device_configurations_export" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
-    device_id = "string"
+    device_id = ["string"]
     password  = "******"
-  }
+  }]
 }
 
 output "catalystcenter_device_configurations_export_example" {
@@ -51,7 +53,7 @@ output "catalystcenter_device_configurations_export_example" {
 
 Optional:
 
-- `device_id` (String) UUIDs of the devices for which configurations need to be exported.
+- `device_id` (List of String) UUIDs of the devices for which configurations need to be exported.
 - `password` (String, Sensitive) Password for the zip file to protect exported configurations. Must contain, at minimum 8 characters, one lowercase letter, one uppercase letter, one number, one special character(-=[];,./~!@#$%^&*()_+{}|:?). It may not contain white space or the characters <>.
 
 

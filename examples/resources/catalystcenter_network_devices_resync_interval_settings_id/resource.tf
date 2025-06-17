@@ -1,7 +1,7 @@
 
 resource "catalystcenter_network_devices_resync_interval_settings_id" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     id       = "string"

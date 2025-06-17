@@ -1,34 +1,34 @@
 
 resource "catalystcenter_network_devices_trend_analytics_id" "example" {
-  provider = meraki
+  provider = catalystcenter
   id       = "string"
-  parameters {
+  parameters = [{
 
-    aggregate_attributes {
+    aggregate_attributes = [{
 
       function = "string"
       name     = "string"
-    }
+    }]
     attributes = ["string"]
     end_time   = 1
-    filters {
+    filters = [{
 
       filters          = ["string"]
       key              = "string"
       logical_operator = "string"
       operator         = "string"
-      value            = "------"
-    }
+      value            = "string"
+    }]
     group_by = ["string"]
-    page {
+    page = [{
 
       limit           = 1
       offset          = 1
       timestamp_order = "string"
-    }
+    }]
     start_time                = 1
     trend_interval_in_minutes = 1
-  }
+  }]
 }
 
 output "catalystcenter_network_devices_trend_analytics_id_example" {

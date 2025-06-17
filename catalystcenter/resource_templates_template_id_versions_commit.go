@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -11,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -63,7 +64,7 @@ func resourceTemplatesTemplateIDVersionsCommit() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"template_id": &schema.Schema{
-							Description: `templateId path parameter. The id of the template to commit a new version for, retrieveable from GET /dna/intent/api/v1/templates
+							Description: `templateId path parameter. The id of the template to commit a new version for, retrieveable from **GET /dna/intent/api/v1/templates**
 `,
 							Type:     schema.TypeString,
 							Required: true,
@@ -93,29 +94,30 @@ func resourceTemplatesTemplateIDVersionsCommitCreate(ctx context.Context, d *sch
 	vTemplateID := resourceItem["template_id"]
 
 	vvTemplateID := vTemplateID.(string)
-	request1 := expandRequestTemplatesTemplateIDVersionsCommitCommitTemplateForANewVersionV1(ctx, "parameters.0", d)
+	request1 := expandRequestTemplatesTemplateIDVersionsCommitCommitTemplateForANewVersion(ctx, "parameters.0", d)
 
-	// has_unknown_response: None
-
-	response1, restyResp1, err := client.ConfigurationTemplates.CommitTemplateForANewVersionV1(vvTemplateID, request1)
+	response1, restyResp1, err := client.ConfigurationTemplates.CommitTemplateForANewVersion(vvTemplateID, request1)
 
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
 
-	vItem1 := flattenConfigurationTemplatesCommitTemplateForANewVersionV1Item(response1.Response)
-	if err := d.Set("item", vItem1); err != nil {
-		diags = append(diags, diagError(
-			"Failure when setting CommitTemplateForANewVersionV1 response",
-			err))
+	if err != nil || response1 == nil {
+		if restyResp1 != nil {
+			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+		}
+		d.SetId("")
 		return diags
 	}
 
+	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing CommitTemplateForANewVersionV1", err))
+			"Failure when executing CommitTemplateForANewVersion", err))
 		return diags
 	}
+
 	taskId := response1.Response.TaskID
 	log.Printf("[DEBUG] TASKID => %s", taskId)
 	if taskId != "" {
@@ -140,52 +142,51 @@ func resourceTemplatesTemplateIDVersionsCommitCreate(ctx context.Context, d *sch
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing CommitTemplateForANewVersionV1", err1))
+				"Failure when executing CommitTemplateForANewVersion", err1))
 			return diags
 		}
 	}
 
-	if err != nil || response1 == nil {
-		if restyResp1 != nil {
-			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
-		}
-		d.SetId("")
+	vItem1 := flattenConfigurationTemplatesCommitTemplateForANewVersionItem(response1.Response)
+	if err := d.Set("item", vItem1); err != nil {
+		diags = append(diags, diagError(
+			"Failure when setting CommitTemplateForANewVersion response",
+			err))
 		return diags
 	}
 
-	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 	d.SetId(getUnixTimeString())
 	return diags
 }
 func resourceTemplatesTemplateIDVersionsCommitRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 	return diags
 }
 
 func resourceTemplatesTemplateIDVersionsCommitDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 	return diags
 }
 
-func expandRequestTemplatesTemplateIDVersionsCommitCommitTemplateForANewVersionV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCommitTemplateForANewVersionV1 {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesCommitTemplateForANewVersionV1{}
+func expandRequestTemplatesTemplateIDVersionsCommitCommitTemplateForANewVersion(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCommitTemplateForANewVersion {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesCommitTemplateForANewVersion{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".commit_note")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".commit_note")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".commit_note")))) {
 		request.CommitNote = interfaceToString(v)
 	}
 	return &request
 }
 
-func flattenConfigurationTemplatesCommitTemplateForANewVersionV1Item(item *catalystcentersdkgo.ResponseConfigurationTemplatesCommitTemplateForANewVersionV1Response) []map[string]interface{} {
+func flattenConfigurationTemplatesCommitTemplateForANewVersionItem(item *catalystcentersdkgo.ResponseConfigurationTemplatesCommitTemplateForANewVersionResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

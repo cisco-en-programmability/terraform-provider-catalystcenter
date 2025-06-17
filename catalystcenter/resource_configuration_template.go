@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -1965,6 +1965,13 @@ func resourceConfigurationTemplate() *schema.Resource {
 							Optional: true,
 							Computed: true,
 						},
+						"template_id": &schema.Schema{
+							Description: `templateId path parameter. templateId(UUID) of template to be deleted
+`,
+							Type:     schema.TypeString,
+							Optional: true,
+							Computed: true,
+						},
 						"template_params": &schema.Schema{
 							Type:     schema.TypeList,
 							Optional: true,
@@ -2223,7 +2230,7 @@ func resourceConfigurationTemplateCreate(ctx context.Context, d *schema.Resource
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestConfigurationTemplateCreateTemplateV1(ctx, "parameters.0", d)
+	request1 := expandRequestConfigurationTemplateCreateTemplate(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vTemplateID := resourceItem["template_id"]
@@ -2261,7 +2268,7 @@ func resourceConfigurationTemplateCreate(ctx context.Context, d *schema.Resource
 			return resourceConfigurationTemplateRead(ctx, d, m)
 		}
 	} else {
-		queryParamImport := catalystcentersdkgo.GetsAListOfProjectsV1QueryParams{}
+		queryParamImport := catalystcentersdkgo.GetsAListOfProjectsQueryParams{}
 		queryParamImport.Name = vvProjectName
 		log.Print("[DEBUG] 1")
 		response2, err := searchConfigurationTemplatesGetsTheTemplatesAvailable(m, queryParamImport, vvName)
@@ -2318,7 +2325,7 @@ func resourceConfigurationTemplateCreate(ctx context.Context, d *schema.Resource
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetsAListOfProjectsV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetsAListOfProjectsQueryParams{}
 	queryParamValidate.Name = vvProjectName
 	item3, err := searchConfigurationTemplatesGetsTheTemplatesAvailable(m, queryParamValidate, vvName)
 	if err != nil || item3 == nil {
@@ -2351,7 +2358,7 @@ func resourceConfigurationTemplateRead(ctx context.Context, d *schema.ResourceDa
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetsDetailsOfAGivenTemplate")
-		queryParams1 := catalystcentersdkgo.GetsAListOfProjectsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetsAListOfProjectsQueryParams{}
 		queryParams1.Name = vProjectName
 
 		// response1, err := searchConfigurationTemplatesGetsTheTemplatesAvailable(m, queryParams1, vTemplateName)
@@ -2369,7 +2376,7 @@ func resourceConfigurationTemplateRead(ctx context.Context, d *schema.ResourceDa
 		// items := catalystcentersdkgo.ResponseConfigurationTemplatesGetsDetailsOfAGivenTemplate{
 		// 	*response1,
 
-		vItem1 := flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateV1Item(response1)
+		vItem1 := flattenConfigurationTemplatesGetsDetailsOfAGivenTemplateItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetsTheTemplatesAvailable search response",
@@ -2396,7 +2403,7 @@ func resourceConfigurationTemplateUpdate(ctx context.Context, d *schema.Resource
 	resourceMap := separateResourceID(resourceID)
 	vID := resourceMap["template_id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestConfigurationTemplateUpdateTemplateV1(ctx, "parameters.0", d)
+		request1 := expandRequestConfigurationTemplateUpdateTemplate(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		if request1 != nil && request1.ID == "" {
 			request1.ID = vID
@@ -2510,10 +2517,11 @@ func resourceConfigurationTemplateDelete(ctx context.Context, d *schema.Resource
 
 	return diags
 }
-func expandRequestConfigurationTemplateCreateTemplateV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1 {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1{}
+
+func expandRequestConfigurationTemplateCreateTemplate(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplate {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplate{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tags")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tags")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tags")))) {
-		request.Tags = expandRequestConfigurationTemplateCreateTemplateV1TagsArray(ctx, key+".tags", d)
+		request.Tags = expandRequestConfigurationTemplateCreateTemplateTagsArray(ctx, key+".tags", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".author")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".author")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".author")))) {
 		request.Author = interfaceToString(v)
@@ -2522,7 +2530,7 @@ func expandRequestConfigurationTemplateCreateTemplateV1(ctx context.Context, key
 		request.Composite = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".containing_templates")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".containing_templates")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".containing_templates")))) {
-		request.ContainingTemplates = expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesArray(ctx, key+".containing_templates", d)
+		request.ContainingTemplates = expandRequestConfigurationTemplateCreateTemplateContainingTemplatesArray(ctx, key+".containing_templates", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".create_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".create_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".create_time")))) {
 		request.CreateTime = interfaceToIntPtr(v)
@@ -2534,7 +2542,7 @@ func expandRequestConfigurationTemplateCreateTemplateV1(ctx context.Context, key
 		request.Description = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_types")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_types")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_types")))) {
-		request.DeviceTypes = expandRequestConfigurationTemplateCreateTemplateV1DeviceTypesArray(ctx, key+".device_types", d)
+		request.DeviceTypes = expandRequestConfigurationTemplateCreateTemplateDeviceTypesArray(ctx, key+".device_types", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".failure_policy")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".failure_policy")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".failure_policy")))) {
 		request.FailurePolicy = interfaceToString(v)
@@ -2567,7 +2575,7 @@ func expandRequestConfigurationTemplateCreateTemplateV1(ctx context.Context, key
 		request.RollbackTemplateContent = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rollback_template_params")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rollback_template_params")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rollback_template_params")))) {
-		request.RollbackTemplateParams = expandRequestConfigurationTemplateCreateTemplateV1RollbackTemplateParamsArray(ctx, key+".rollback_template_params", d)
+		request.RollbackTemplateParams = expandRequestConfigurationTemplateCreateTemplateRollbackTemplateParamsArray(ctx, key+".rollback_template_params", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".software_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".software_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".software_type")))) {
 		request.SoftwareType = interfaceToString(v)
@@ -2582,10 +2590,10 @@ func expandRequestConfigurationTemplateCreateTemplateV1(ctx context.Context, key
 		request.TemplateContent = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".template_params")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".template_params")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".template_params")))) {
-		request.TemplateParams = expandRequestConfigurationTemplateCreateTemplateV1TemplateParamsArray(ctx, key+".template_params", d)
+		request.TemplateParams = expandRequestConfigurationTemplateCreateTemplateTemplateParamsArray(ctx, key+".template_params", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".validation_errors")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".validation_errors")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".validation_errors")))) {
-		request.ValidationErrors = expandRequestConfigurationTemplateCreateTemplateV1ValidationErrors(ctx, key+".validation_errors.0", d)
+		request.ValidationErrors = expandRequestConfigurationTemplateCreateTemplateValidationErrors(ctx, key+".validation_errors.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".version")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".version")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".version")))) {
 		request.Version = interfaceToString(v)
@@ -2596,8 +2604,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1(ctx context.Context, key
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1TagsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1Tags {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1Tags{}
+func expandRequestConfigurationTemplateCreateTemplateTagsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateTags {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateTags{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -2608,7 +2616,7 @@ func expandRequestConfigurationTemplateCreateTemplateV1TagsArray(ctx context.Con
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateCreateTemplateV1Tags(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateCreateTemplateTags(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -2619,8 +2627,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1TagsArray(ctx context.Con
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1Tags(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1Tags {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1Tags{}
+func expandRequestConfigurationTemplateCreateTemplateTags(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateTags {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateTags{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -2633,8 +2641,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1Tags(ctx context.Context,
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplates {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplates{}
+func expandRequestConfigurationTemplateCreateTemplateContainingTemplatesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplates {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplates{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -2645,7 +2653,7 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesArray(
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplates(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateCreateTemplateContainingTemplates(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -2656,10 +2664,10 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesArray(
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplates(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplates {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplates{}
+func expandRequestConfigurationTemplateCreateTemplateContainingTemplates(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplates {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplates{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tags")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tags")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tags")))) {
-		request.Tags = expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTagsArray(ctx, key+".tags", d)
+		request.Tags = expandRequestConfigurationTemplateCreateTemplateContainingTemplatesTagsArray(ctx, key+".tags", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".composite")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".composite")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".composite")))) {
 		request.Composite = interfaceToBoolPtr(v)
@@ -2668,7 +2676,7 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplates(ctx c
 		request.Description = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_types")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_types")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_types")))) {
-		request.DeviceTypes = expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesDeviceTypesArray(ctx, key+".device_types", d)
+		request.DeviceTypes = expandRequestConfigurationTemplateCreateTemplateContainingTemplatesDeviceTypesArray(ctx, key+".device_types", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
@@ -2683,13 +2691,13 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplates(ctx c
 		request.ProjectName = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rollback_template_params")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rollback_template_params")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rollback_template_params")))) {
-		request.RollbackTemplateParams = expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesRollbackTemplateParamsArray(ctx, key+".rollback_template_params", d)
+		request.RollbackTemplateParams = expandRequestConfigurationTemplateCreateTemplateContainingTemplatesRollbackTemplateParamsArray(ctx, key+".rollback_template_params", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".template_content")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".template_content")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".template_content")))) {
 		request.TemplateContent = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".template_params")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".template_params")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".template_params")))) {
-		request.TemplateParams = expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTemplateParamsArray(ctx, key+".template_params", d)
+		request.TemplateParams = expandRequestConfigurationTemplateCreateTemplateContainingTemplatesTemplateParamsArray(ctx, key+".template_params", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".version")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".version")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".version")))) {
 		request.Version = interfaceToString(v)
@@ -2700,8 +2708,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplates(ctx c
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTagsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesTags {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesTags{}
+func expandRequestConfigurationTemplateCreateTemplateContainingTemplatesTagsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesTags {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesTags{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -2712,7 +2720,7 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTagsAr
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTags(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateCreateTemplateContainingTemplatesTags(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -2723,8 +2731,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTagsAr
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTags(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesTags {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesTags{}
+func expandRequestConfigurationTemplateCreateTemplateContainingTemplatesTags(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesTags {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesTags{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -2737,8 +2745,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTags(c
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesDeviceTypesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesDeviceTypes {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesDeviceTypes{}
+func expandRequestConfigurationTemplateCreateTemplateContainingTemplatesDeviceTypesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesDeviceTypes {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesDeviceTypes{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -2749,7 +2757,7 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesDevice
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesDeviceTypes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateCreateTemplateContainingTemplatesDeviceTypes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -2760,8 +2768,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesDevice
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesDeviceTypes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesDeviceTypes {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesDeviceTypes{}
+func expandRequestConfigurationTemplateCreateTemplateContainingTemplatesDeviceTypes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesDeviceTypes {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesDeviceTypes{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".product_family")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".product_family")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".product_family")))) {
 		request.ProductFamily = interfaceToString(v)
 	}
@@ -2777,8 +2785,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesDevice
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesRollbackTemplateParamsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesRollbackTemplateParams {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesRollbackTemplateParams{}
+func expandRequestConfigurationTemplateCreateTemplateContainingTemplatesRollbackTemplateParamsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesRollbackTemplateParams {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesRollbackTemplateParams{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -2789,7 +2797,7 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesRollba
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesRollbackTemplateParams(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateCreateTemplateContainingTemplatesRollbackTemplateParams(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -2800,8 +2808,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesRollba
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesRollbackTemplateParams(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesRollbackTemplateParams {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesRollbackTemplateParams{}
+func expandRequestConfigurationTemplateCreateTemplateContainingTemplatesRollbackTemplateParams(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesRollbackTemplateParams {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesRollbackTemplateParams{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".binding")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".binding")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".binding")))) {
 		request.Binding = interfaceToString(v)
 	}
@@ -2848,13 +2856,13 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesRollba
 		request.Provider = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".range")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".range")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".range")))) {
-		request.Range = expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesRollbackTemplateParamsRangeArray(ctx, key+".range", d)
+		request.Range = expandRequestConfigurationTemplateCreateTemplateContainingTemplatesRollbackTemplateParamsRangeArray(ctx, key+".range", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".required")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".required")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".required")))) {
 		request.Required = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".selection")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".selection")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".selection")))) {
-		request.Selection = expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesRollbackTemplateParamsSelection(ctx, key+".selection.0", d)
+		request.Selection = expandRequestConfigurationTemplateCreateTemplateContainingTemplatesRollbackTemplateParamsSelection(ctx, key+".selection.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -2862,8 +2870,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesRollba
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesRollbackTemplateParamsRangeArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesRollbackTemplateParamsRange {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesRollbackTemplateParamsRange{}
+func expandRequestConfigurationTemplateCreateTemplateContainingTemplatesRollbackTemplateParamsRangeArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesRollbackTemplateParamsRange {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesRollbackTemplateParamsRange{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -2874,7 +2882,7 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesRollba
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesRollbackTemplateParamsRange(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateCreateTemplateContainingTemplatesRollbackTemplateParamsRange(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -2885,8 +2893,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesRollba
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesRollbackTemplateParamsRange(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesRollbackTemplateParamsRange {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesRollbackTemplateParamsRange{}
+func expandRequestConfigurationTemplateCreateTemplateContainingTemplatesRollbackTemplateParamsRange(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesRollbackTemplateParamsRange {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesRollbackTemplateParamsRange{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -2902,8 +2910,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesRollba
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesRollbackTemplateParamsSelection(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesRollbackTemplateParamsSelection {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesRollbackTemplateParamsSelection{}
+func expandRequestConfigurationTemplateCreateTemplateContainingTemplatesRollbackTemplateParamsSelection(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesRollbackTemplateParamsSelection {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesRollbackTemplateParamsSelection{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".default_selected_values")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".default_selected_values")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".default_selected_values")))) {
 		request.DefaultSelectedValues = interfaceToSliceString(v)
 	}
@@ -2914,7 +2922,7 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesRollba
 		request.SelectionType = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".selection_values")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".selection_values")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".selection_values")))) {
-		request.SelectionValues = expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesRollbackTemplateParamsSelectionSelectionValues(ctx, key+".selection_values.0", d)
+		request.SelectionValues = expandRequestConfigurationTemplateCreateTemplateContainingTemplatesRollbackTemplateParamsSelectionSelectionValues(ctx, key+".selection_values.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -2922,8 +2930,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesRollba
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesRollbackTemplateParamsSelectionSelectionValues(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesRollbackTemplateParamsSelectionSelectionValues {
-	var request catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesRollbackTemplateParamsSelectionSelectionValues
+func expandRequestConfigurationTemplateCreateTemplateContainingTemplatesRollbackTemplateParamsSelectionSelectionValues(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesRollbackTemplateParamsSelectionSelectionValues {
+	var request catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesRollbackTemplateParamsSelectionSelectionValues
 	request = d.Get(fixKeyAccess(key))
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -2931,8 +2939,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesRollba
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTemplateParamsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesTemplateParams {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesTemplateParams{}
+func expandRequestConfigurationTemplateCreateTemplateContainingTemplatesTemplateParamsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesTemplateParams {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesTemplateParams{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -2943,7 +2951,7 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTempla
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTemplateParams(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateCreateTemplateContainingTemplatesTemplateParams(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -2954,8 +2962,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTempla
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTemplateParams(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesTemplateParams {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesTemplateParams{}
+func expandRequestConfigurationTemplateCreateTemplateContainingTemplatesTemplateParams(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesTemplateParams {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesTemplateParams{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".binding")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".binding")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".binding")))) {
 		request.Binding = interfaceToString(v)
 	}
@@ -3002,13 +3010,13 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTempla
 		request.Provider = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".range")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".range")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".range")))) {
-		request.Range = expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTemplateParamsRangeArray(ctx, key+".range", d)
+		request.Range = expandRequestConfigurationTemplateCreateTemplateContainingTemplatesTemplateParamsRangeArray(ctx, key+".range", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".required")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".required")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".required")))) {
 		request.Required = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".selection")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".selection")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".selection")))) {
-		request.Selection = expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTemplateParamsSelection(ctx, key+".selection.0", d)
+		request.Selection = expandRequestConfigurationTemplateCreateTemplateContainingTemplatesTemplateParamsSelection(ctx, key+".selection.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -3016,8 +3024,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTempla
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTemplateParamsRangeArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesTemplateParamsRange {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesTemplateParamsRange{}
+func expandRequestConfigurationTemplateCreateTemplateContainingTemplatesTemplateParamsRangeArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesTemplateParamsRange {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesTemplateParamsRange{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3028,7 +3036,7 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTempla
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTemplateParamsRange(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateCreateTemplateContainingTemplatesTemplateParamsRange(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3039,8 +3047,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTempla
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTemplateParamsRange(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesTemplateParamsRange {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesTemplateParamsRange{}
+func expandRequestConfigurationTemplateCreateTemplateContainingTemplatesTemplateParamsRange(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesTemplateParamsRange {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesTemplateParamsRange{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -3056,8 +3064,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTempla
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTemplateParamsSelection(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesTemplateParamsSelection {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesTemplateParamsSelection{}
+func expandRequestConfigurationTemplateCreateTemplateContainingTemplatesTemplateParamsSelection(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesTemplateParamsSelection {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesTemplateParamsSelection{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".default_selected_values")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".default_selected_values")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".default_selected_values")))) {
 		request.DefaultSelectedValues = interfaceToSliceString(v)
 	}
@@ -3068,7 +3076,7 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTempla
 		request.SelectionType = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".selection_values")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".selection_values")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".selection_values")))) {
-		request.SelectionValues = expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTemplateParamsSelectionSelectionValues(ctx, key+".selection_values.0", d)
+		request.SelectionValues = expandRequestConfigurationTemplateCreateTemplateContainingTemplatesTemplateParamsSelectionSelectionValues(ctx, key+".selection_values.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -3076,8 +3084,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTempla
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTemplateParamsSelectionSelectionValues(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesTemplateParamsSelectionSelectionValues {
-	var request catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ContainingTemplatesTemplateParamsSelectionSelectionValues
+func expandRequestConfigurationTemplateCreateTemplateContainingTemplatesTemplateParamsSelectionSelectionValues(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesTemplateParamsSelectionSelectionValues {
+	var request catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateContainingTemplatesTemplateParamsSelectionSelectionValues
 	request = d.Get(fixKeyAccess(key))
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -3085,8 +3093,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1ContainingTemplatesTempla
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1DeviceTypesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1DeviceTypes {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1DeviceTypes{}
+func expandRequestConfigurationTemplateCreateTemplateDeviceTypesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateDeviceTypes {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateDeviceTypes{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3097,7 +3105,7 @@ func expandRequestConfigurationTemplateCreateTemplateV1DeviceTypesArray(ctx cont
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateCreateTemplateV1DeviceTypes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateCreateTemplateDeviceTypes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3108,8 +3116,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1DeviceTypesArray(ctx cont
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1DeviceTypes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1DeviceTypes {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1DeviceTypes{}
+func expandRequestConfigurationTemplateCreateTemplateDeviceTypes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateDeviceTypes {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateDeviceTypes{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".product_family")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".product_family")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".product_family")))) {
 		request.ProductFamily = interfaceToString(v)
 	}
@@ -3125,8 +3133,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1DeviceTypes(ctx context.C
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1RollbackTemplateParamsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1RollbackTemplateParams {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1RollbackTemplateParams{}
+func expandRequestConfigurationTemplateCreateTemplateRollbackTemplateParamsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateRollbackTemplateParams {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateRollbackTemplateParams{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3137,7 +3145,7 @@ func expandRequestConfigurationTemplateCreateTemplateV1RollbackTemplateParamsArr
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateCreateTemplateV1RollbackTemplateParams(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateCreateTemplateRollbackTemplateParams(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3148,8 +3156,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1RollbackTemplateParamsArr
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1RollbackTemplateParams(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1RollbackTemplateParams {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1RollbackTemplateParams{}
+func expandRequestConfigurationTemplateCreateTemplateRollbackTemplateParams(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateRollbackTemplateParams {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateRollbackTemplateParams{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".binding")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".binding")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".binding")))) {
 		request.Binding = interfaceToString(v)
 	}
@@ -3196,13 +3204,13 @@ func expandRequestConfigurationTemplateCreateTemplateV1RollbackTemplateParams(ct
 		request.Provider = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".range")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".range")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".range")))) {
-		request.Range = expandRequestConfigurationTemplateCreateTemplateV1RollbackTemplateParamsRangeArray(ctx, key+".range", d)
+		request.Range = expandRequestConfigurationTemplateCreateTemplateRollbackTemplateParamsRangeArray(ctx, key+".range", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".required")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".required")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".required")))) {
 		request.Required = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".selection")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".selection")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".selection")))) {
-		request.Selection = expandRequestConfigurationTemplateCreateTemplateV1RollbackTemplateParamsSelection(ctx, key+".selection.0", d)
+		request.Selection = expandRequestConfigurationTemplateCreateTemplateRollbackTemplateParamsSelection(ctx, key+".selection.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -3210,8 +3218,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1RollbackTemplateParams(ct
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1RollbackTemplateParamsRangeArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1RollbackTemplateParamsRange {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1RollbackTemplateParamsRange{}
+func expandRequestConfigurationTemplateCreateTemplateRollbackTemplateParamsRangeArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateRollbackTemplateParamsRange {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateRollbackTemplateParamsRange{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3222,7 +3230,7 @@ func expandRequestConfigurationTemplateCreateTemplateV1RollbackTemplateParamsRan
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateCreateTemplateV1RollbackTemplateParamsRange(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateCreateTemplateRollbackTemplateParamsRange(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3233,8 +3241,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1RollbackTemplateParamsRan
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1RollbackTemplateParamsRange(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1RollbackTemplateParamsRange {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1RollbackTemplateParamsRange{}
+func expandRequestConfigurationTemplateCreateTemplateRollbackTemplateParamsRange(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateRollbackTemplateParamsRange {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateRollbackTemplateParamsRange{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -3250,8 +3258,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1RollbackTemplateParamsRan
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1RollbackTemplateParamsSelection(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1RollbackTemplateParamsSelection {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1RollbackTemplateParamsSelection{}
+func expandRequestConfigurationTemplateCreateTemplateRollbackTemplateParamsSelection(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateRollbackTemplateParamsSelection {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateRollbackTemplateParamsSelection{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".default_selected_values")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".default_selected_values")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".default_selected_values")))) {
 		request.DefaultSelectedValues = interfaceToSliceString(v)
 	}
@@ -3262,7 +3270,7 @@ func expandRequestConfigurationTemplateCreateTemplateV1RollbackTemplateParamsSel
 		request.SelectionType = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".selection_values")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".selection_values")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".selection_values")))) {
-		request.SelectionValues = expandRequestConfigurationTemplateCreateTemplateV1RollbackTemplateParamsSelectionSelectionValues(ctx, key+".selection_values.0", d)
+		request.SelectionValues = expandRequestConfigurationTemplateCreateTemplateRollbackTemplateParamsSelectionSelectionValues(ctx, key+".selection_values.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -3270,8 +3278,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1RollbackTemplateParamsSel
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1RollbackTemplateParamsSelectionSelectionValues(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1RollbackTemplateParamsSelectionSelectionValues {
-	var request catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1RollbackTemplateParamsSelectionSelectionValues
+func expandRequestConfigurationTemplateCreateTemplateRollbackTemplateParamsSelectionSelectionValues(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateRollbackTemplateParamsSelectionSelectionValues {
+	var request catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateRollbackTemplateParamsSelectionSelectionValues
 	request = d.Get(fixKeyAccess(key))
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -3279,8 +3287,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1RollbackTemplateParamsSel
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1TemplateParamsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1TemplateParams {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1TemplateParams{}
+func expandRequestConfigurationTemplateCreateTemplateTemplateParamsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateTemplateParams {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateTemplateParams{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3291,7 +3299,7 @@ func expandRequestConfigurationTemplateCreateTemplateV1TemplateParamsArray(ctx c
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateCreateTemplateV1TemplateParams(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateCreateTemplateTemplateParams(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3302,8 +3310,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1TemplateParamsArray(ctx c
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1TemplateParams(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1TemplateParams {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1TemplateParams{}
+func expandRequestConfigurationTemplateCreateTemplateTemplateParams(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateTemplateParams {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateTemplateParams{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".binding")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".binding")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".binding")))) {
 		request.Binding = interfaceToString(v)
 	}
@@ -3350,13 +3358,13 @@ func expandRequestConfigurationTemplateCreateTemplateV1TemplateParams(ctx contex
 		request.Provider = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".range")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".range")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".range")))) {
-		request.Range = expandRequestConfigurationTemplateCreateTemplateV1TemplateParamsRangeArray(ctx, key+".range", d)
+		request.Range = expandRequestConfigurationTemplateCreateTemplateTemplateParamsRangeArray(ctx, key+".range", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".required")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".required")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".required")))) {
 		request.Required = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".selection")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".selection")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".selection")))) {
-		request.Selection = expandRequestConfigurationTemplateCreateTemplateV1TemplateParamsSelection(ctx, key+".selection.0", d)
+		request.Selection = expandRequestConfigurationTemplateCreateTemplateTemplateParamsSelection(ctx, key+".selection.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -3364,8 +3372,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1TemplateParams(ctx contex
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1TemplateParamsRangeArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1TemplateParamsRange {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1TemplateParamsRange{}
+func expandRequestConfigurationTemplateCreateTemplateTemplateParamsRangeArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateTemplateParamsRange {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateTemplateParamsRange{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3376,7 +3384,7 @@ func expandRequestConfigurationTemplateCreateTemplateV1TemplateParamsRangeArray(
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateCreateTemplateV1TemplateParamsRange(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateCreateTemplateTemplateParamsRange(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3387,8 +3395,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1TemplateParamsRangeArray(
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1TemplateParamsRange(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1TemplateParamsRange {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1TemplateParamsRange{}
+func expandRequestConfigurationTemplateCreateTemplateTemplateParamsRange(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateTemplateParamsRange {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateTemplateParamsRange{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -3404,8 +3412,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1TemplateParamsRange(ctx c
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1TemplateParamsSelection(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1TemplateParamsSelection {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1TemplateParamsSelection{}
+func expandRequestConfigurationTemplateCreateTemplateTemplateParamsSelection(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateTemplateParamsSelection {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateTemplateParamsSelection{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".default_selected_values")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".default_selected_values")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".default_selected_values")))) {
 		request.DefaultSelectedValues = interfaceToSliceString(v)
 	}
@@ -3416,7 +3424,7 @@ func expandRequestConfigurationTemplateCreateTemplateV1TemplateParamsSelection(c
 		request.SelectionType = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".selection_values")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".selection_values")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".selection_values")))) {
-		request.SelectionValues = expandRequestConfigurationTemplateCreateTemplateV1TemplateParamsSelectionSelectionValues(ctx, key+".selection_values.0", d)
+		request.SelectionValues = expandRequestConfigurationTemplateCreateTemplateTemplateParamsSelectionSelectionValues(ctx, key+".selection_values.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -3424,8 +3432,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1TemplateParamsSelection(c
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1TemplateParamsSelectionSelectionValues(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1TemplateParamsSelectionSelectionValues {
-	var request catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1TemplateParamsSelectionSelectionValues
+func expandRequestConfigurationTemplateCreateTemplateTemplateParamsSelectionSelectionValues(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateTemplateParamsSelectionSelectionValues {
+	var request catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateTemplateParamsSelectionSelectionValues
 	request = d.Get(fixKeyAccess(key))
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -3433,13 +3441,13 @@ func expandRequestConfigurationTemplateCreateTemplateV1TemplateParamsSelectionSe
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1ValidationErrors(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ValidationErrors {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ValidationErrors{}
+func expandRequestConfigurationTemplateCreateTemplateValidationErrors(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateValidationErrors {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateValidationErrors{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rollback_template_errors")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rollback_template_errors")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rollback_template_errors")))) {
-		request.RollbackTemplateErrors = expandRequestConfigurationTemplateCreateTemplateV1ValidationErrorsRollbackTemplateErrors(ctx, key+".rollback_template_errors.0", d)
+		request.RollbackTemplateErrors = expandRequestConfigurationTemplateCreateTemplateValidationErrorsRollbackTemplateErrors(ctx, key+".rollback_template_errors.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".template_errors")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".template_errors")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".template_errors")))) {
-		request.TemplateErrors = expandRequestConfigurationTemplateCreateTemplateV1ValidationErrorsTemplateErrors(ctx, key+".template_errors.0", d)
+		request.TemplateErrors = expandRequestConfigurationTemplateCreateTemplateValidationErrorsTemplateErrors(ctx, key+".template_errors.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".template_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".template_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".template_id")))) {
 		request.TemplateID = interfaceToString(v)
@@ -3453,8 +3461,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1ValidationErrors(ctx cont
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1ValidationErrorsRollbackTemplateErrors(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ValidationErrorsRollbackTemplateErrors {
-	var request catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ValidationErrorsRollbackTemplateErrors
+func expandRequestConfigurationTemplateCreateTemplateValidationErrorsRollbackTemplateErrors(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateValidationErrorsRollbackTemplateErrors {
+	var request catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateValidationErrorsRollbackTemplateErrors
 	request = d.Get(fixKeyAccess(key))
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -3462,8 +3470,8 @@ func expandRequestConfigurationTemplateCreateTemplateV1ValidationErrorsRollbackT
 	return &request
 }
 
-func expandRequestConfigurationTemplateCreateTemplateV1ValidationErrorsTemplateErrors(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ValidationErrorsTemplateErrors {
-	var request catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateV1ValidationErrorsTemplateErrors
+func expandRequestConfigurationTemplateCreateTemplateValidationErrorsTemplateErrors(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateValidationErrorsTemplateErrors {
+	var request catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateValidationErrorsTemplateErrors
 	request = d.Get(fixKeyAccess(key))
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -3471,10 +3479,10 @@ func expandRequestConfigurationTemplateCreateTemplateV1ValidationErrorsTemplateE
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1 {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1{}
+func expandRequestConfigurationTemplateUpdateTemplate(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplate {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplate{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tags")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tags")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tags")))) {
-		request.Tags = expandRequestConfigurationTemplateUpdateTemplateV1TagsArray(ctx, key+".tags", d)
+		request.Tags = expandRequestConfigurationTemplateUpdateTemplateTagsArray(ctx, key+".tags", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".author")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".author")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".author")))) {
 		request.Author = interfaceToString(v)
@@ -3483,7 +3491,7 @@ func expandRequestConfigurationTemplateUpdateTemplateV1(ctx context.Context, key
 		request.Composite = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".containing_templates")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".containing_templates")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".containing_templates")))) {
-		request.ContainingTemplates = expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesArray(ctx, key+".containing_templates", d)
+		request.ContainingTemplates = expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesArray(ctx, key+".containing_templates", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".create_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".create_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".create_time")))) {
 		request.CreateTime = interfaceToIntPtr(v)
@@ -3495,7 +3503,7 @@ func expandRequestConfigurationTemplateUpdateTemplateV1(ctx context.Context, key
 		request.Description = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_types")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_types")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_types")))) {
-		request.DeviceTypes = expandRequestConfigurationTemplateUpdateTemplateV1DeviceTypesArray(ctx, key+".device_types", d)
+		request.DeviceTypes = expandRequestConfigurationTemplateUpdateTemplateDeviceTypesArray(ctx, key+".device_types", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".failure_policy")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".failure_policy")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".failure_policy")))) {
 		request.FailurePolicy = interfaceToString(v)
@@ -3528,7 +3536,7 @@ func expandRequestConfigurationTemplateUpdateTemplateV1(ctx context.Context, key
 		request.RollbackTemplateContent = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rollback_template_params")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rollback_template_params")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rollback_template_params")))) {
-		request.RollbackTemplateParams = expandRequestConfigurationTemplateUpdateTemplateV1RollbackTemplateParamsArray(ctx, key+".rollback_template_params", d)
+		request.RollbackTemplateParams = expandRequestConfigurationTemplateUpdateTemplateRollbackTemplateParamsArray(ctx, key+".rollback_template_params", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".software_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".software_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".software_type")))) {
 		request.SoftwareType = interfaceToString(v)
@@ -3543,10 +3551,10 @@ func expandRequestConfigurationTemplateUpdateTemplateV1(ctx context.Context, key
 		request.TemplateContent = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".template_params")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".template_params")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".template_params")))) {
-		request.TemplateParams = expandRequestConfigurationTemplateUpdateTemplateV1TemplateParamsArray(ctx, key+".template_params", d)
+		request.TemplateParams = expandRequestConfigurationTemplateUpdateTemplateTemplateParamsArray(ctx, key+".template_params", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".validation_errors")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".validation_errors")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".validation_errors")))) {
-		request.ValidationErrors = expandRequestConfigurationTemplateUpdateTemplateV1ValidationErrors(ctx, key+".validation_errors.0", d)
+		request.ValidationErrors = expandRequestConfigurationTemplateUpdateTemplateValidationErrors(ctx, key+".validation_errors.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".version")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".version")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".version")))) {
 		request.Version = interfaceToString(v)
@@ -3557,8 +3565,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1(ctx context.Context, key
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1TagsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1Tags {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1Tags{}
+func expandRequestConfigurationTemplateUpdateTemplateTagsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateTags {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateTags{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3569,7 +3577,7 @@ func expandRequestConfigurationTemplateUpdateTemplateV1TagsArray(ctx context.Con
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateUpdateTemplateV1Tags(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateUpdateTemplateTags(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3580,8 +3588,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1TagsArray(ctx context.Con
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1Tags(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1Tags {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1Tags{}
+func expandRequestConfigurationTemplateUpdateTemplateTags(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateTags {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateTags{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -3594,8 +3602,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1Tags(ctx context.Context,
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplates {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplates{}
+func expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplates {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplates{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3606,7 +3614,7 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesArray(
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplates(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateUpdateTemplateContainingTemplates(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3617,10 +3625,10 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesArray(
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplates(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplates {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplates{}
+func expandRequestConfigurationTemplateUpdateTemplateContainingTemplates(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplates {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplates{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tags")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tags")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tags")))) {
-		request.Tags = expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTagsArray(ctx, key+".tags", d)
+		request.Tags = expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesTagsArray(ctx, key+".tags", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".composite")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".composite")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".composite")))) {
 		request.Composite = interfaceToBoolPtr(v)
@@ -3629,7 +3637,7 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplates(ctx c
 		request.Description = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_types")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_types")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_types")))) {
-		request.DeviceTypes = expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesDeviceTypesArray(ctx, key+".device_types", d)
+		request.DeviceTypes = expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesDeviceTypesArray(ctx, key+".device_types", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
@@ -3644,13 +3652,13 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplates(ctx c
 		request.ProjectName = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rollback_template_params")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rollback_template_params")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rollback_template_params")))) {
-		request.RollbackTemplateParams = expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesRollbackTemplateParamsArray(ctx, key+".rollback_template_params", d)
+		request.RollbackTemplateParams = expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesRollbackTemplateParamsArray(ctx, key+".rollback_template_params", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".template_content")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".template_content")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".template_content")))) {
 		request.TemplateContent = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".template_params")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".template_params")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".template_params")))) {
-		request.TemplateParams = expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTemplateParamsArray(ctx, key+".template_params", d)
+		request.TemplateParams = expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesTemplateParamsArray(ctx, key+".template_params", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".version")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".version")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".version")))) {
 		request.Version = interfaceToString(v)
@@ -3661,8 +3669,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplates(ctx c
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTagsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesTags {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesTags{}
+func expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesTagsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesTags {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesTags{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3673,7 +3681,7 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTagsAr
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTags(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesTags(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3684,8 +3692,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTagsAr
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTags(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesTags {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesTags{}
+func expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesTags(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesTags {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesTags{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -3698,8 +3706,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTags(c
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesDeviceTypesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesDeviceTypes {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesDeviceTypes{}
+func expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesDeviceTypesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesDeviceTypes {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesDeviceTypes{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3710,7 +3718,7 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesDevice
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesDeviceTypes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesDeviceTypes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3721,8 +3729,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesDevice
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesDeviceTypes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesDeviceTypes {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesDeviceTypes{}
+func expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesDeviceTypes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesDeviceTypes {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesDeviceTypes{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".product_family")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".product_family")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".product_family")))) {
 		request.ProductFamily = interfaceToString(v)
 	}
@@ -3738,8 +3746,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesDevice
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesRollbackTemplateParamsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesRollbackTemplateParams {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesRollbackTemplateParams{}
+func expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesRollbackTemplateParamsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesRollbackTemplateParams {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesRollbackTemplateParams{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3750,7 +3758,7 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesRollba
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesRollbackTemplateParams(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesRollbackTemplateParams(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3761,8 +3769,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesRollba
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesRollbackTemplateParams(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesRollbackTemplateParams {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesRollbackTemplateParams{}
+func expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesRollbackTemplateParams(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesRollbackTemplateParams {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesRollbackTemplateParams{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".binding")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".binding")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".binding")))) {
 		request.Binding = interfaceToString(v)
 	}
@@ -3809,13 +3817,13 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesRollba
 		request.Provider = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".range")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".range")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".range")))) {
-		request.Range = expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesRollbackTemplateParamsRangeArray(ctx, key+".range", d)
+		request.Range = expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesRollbackTemplateParamsRangeArray(ctx, key+".range", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".required")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".required")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".required")))) {
 		request.Required = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".selection")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".selection")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".selection")))) {
-		request.Selection = expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesRollbackTemplateParamsSelection(ctx, key+".selection.0", d)
+		request.Selection = expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesRollbackTemplateParamsSelection(ctx, key+".selection.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -3823,8 +3831,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesRollba
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesRollbackTemplateParamsRangeArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesRollbackTemplateParamsRange {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesRollbackTemplateParamsRange{}
+func expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesRollbackTemplateParamsRangeArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesRollbackTemplateParamsRange {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesRollbackTemplateParamsRange{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3835,7 +3843,7 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesRollba
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesRollbackTemplateParamsRange(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesRollbackTemplateParamsRange(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3846,8 +3854,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesRollba
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesRollbackTemplateParamsRange(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesRollbackTemplateParamsRange {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesRollbackTemplateParamsRange{}
+func expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesRollbackTemplateParamsRange(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesRollbackTemplateParamsRange {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesRollbackTemplateParamsRange{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -3863,8 +3871,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesRollba
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesRollbackTemplateParamsSelection(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesRollbackTemplateParamsSelection {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesRollbackTemplateParamsSelection{}
+func expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesRollbackTemplateParamsSelection(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesRollbackTemplateParamsSelection {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesRollbackTemplateParamsSelection{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".default_selected_values")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".default_selected_values")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".default_selected_values")))) {
 		request.DefaultSelectedValues = interfaceToSliceString(v)
 	}
@@ -3875,7 +3883,7 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesRollba
 		request.SelectionType = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".selection_values")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".selection_values")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".selection_values")))) {
-		request.SelectionValues = expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesRollbackTemplateParamsSelectionSelectionValues(ctx, key+".selection_values.0", d)
+		request.SelectionValues = expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesRollbackTemplateParamsSelectionSelectionValues(ctx, key+".selection_values.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -3883,8 +3891,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesRollba
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesRollbackTemplateParamsSelectionSelectionValues(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesRollbackTemplateParamsSelectionSelectionValues {
-	var request catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesRollbackTemplateParamsSelectionSelectionValues
+func expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesRollbackTemplateParamsSelectionSelectionValues(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesRollbackTemplateParamsSelectionSelectionValues {
+	var request catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesRollbackTemplateParamsSelectionSelectionValues
 	request = d.Get(fixKeyAccess(key))
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -3892,8 +3900,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesRollba
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTemplateParamsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesTemplateParams {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesTemplateParams{}
+func expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesTemplateParamsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesTemplateParams {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesTemplateParams{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3904,7 +3912,7 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTempla
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTemplateParams(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesTemplateParams(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -3915,8 +3923,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTempla
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTemplateParams(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesTemplateParams {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesTemplateParams{}
+func expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesTemplateParams(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesTemplateParams {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesTemplateParams{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".binding")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".binding")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".binding")))) {
 		request.Binding = interfaceToString(v)
 	}
@@ -3963,13 +3971,13 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTempla
 		request.Provider = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".range")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".range")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".range")))) {
-		request.Range = expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTemplateParamsRangeArray(ctx, key+".range", d)
+		request.Range = expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesTemplateParamsRangeArray(ctx, key+".range", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".required")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".required")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".required")))) {
 		request.Required = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".selection")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".selection")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".selection")))) {
-		request.Selection = expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTemplateParamsSelection(ctx, key+".selection.0", d)
+		request.Selection = expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesTemplateParamsSelection(ctx, key+".selection.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -3977,8 +3985,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTempla
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTemplateParamsRangeArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesTemplateParamsRange {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesTemplateParamsRange{}
+func expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesTemplateParamsRangeArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesTemplateParamsRange {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesTemplateParamsRange{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -3989,7 +3997,7 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTempla
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTemplateParamsRange(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesTemplateParamsRange(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -4000,8 +4008,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTempla
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTemplateParamsRange(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesTemplateParamsRange {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesTemplateParamsRange{}
+func expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesTemplateParamsRange(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesTemplateParamsRange {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesTemplateParamsRange{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -4017,8 +4025,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTempla
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTemplateParamsSelection(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesTemplateParamsSelection {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesTemplateParamsSelection{}
+func expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesTemplateParamsSelection(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesTemplateParamsSelection {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesTemplateParamsSelection{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".default_selected_values")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".default_selected_values")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".default_selected_values")))) {
 		request.DefaultSelectedValues = interfaceToSliceString(v)
 	}
@@ -4029,7 +4037,7 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTempla
 		request.SelectionType = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".selection_values")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".selection_values")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".selection_values")))) {
-		request.SelectionValues = expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTemplateParamsSelectionSelectionValues(ctx, key+".selection_values.0", d)
+		request.SelectionValues = expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesTemplateParamsSelectionSelectionValues(ctx, key+".selection_values.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -4037,8 +4045,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTempla
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTemplateParamsSelectionSelectionValues(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesTemplateParamsSelectionSelectionValues {
-	var request catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ContainingTemplatesTemplateParamsSelectionSelectionValues
+func expandRequestConfigurationTemplateUpdateTemplateContainingTemplatesTemplateParamsSelectionSelectionValues(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesTemplateParamsSelectionSelectionValues {
+	var request catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateContainingTemplatesTemplateParamsSelectionSelectionValues
 	request = d.Get(fixKeyAccess(key))
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -4046,8 +4054,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ContainingTemplatesTempla
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1DeviceTypesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1DeviceTypes {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1DeviceTypes{}
+func expandRequestConfigurationTemplateUpdateTemplateDeviceTypesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateDeviceTypes {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateDeviceTypes{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -4058,7 +4066,7 @@ func expandRequestConfigurationTemplateUpdateTemplateV1DeviceTypesArray(ctx cont
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateUpdateTemplateV1DeviceTypes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateUpdateTemplateDeviceTypes(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -4069,8 +4077,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1DeviceTypesArray(ctx cont
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1DeviceTypes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1DeviceTypes {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1DeviceTypes{}
+func expandRequestConfigurationTemplateUpdateTemplateDeviceTypes(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateDeviceTypes {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateDeviceTypes{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".product_family")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".product_family")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".product_family")))) {
 		request.ProductFamily = interfaceToString(v)
 	}
@@ -4086,8 +4094,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1DeviceTypes(ctx context.C
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1RollbackTemplateParamsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1RollbackTemplateParams {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1RollbackTemplateParams{}
+func expandRequestConfigurationTemplateUpdateTemplateRollbackTemplateParamsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateRollbackTemplateParams {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateRollbackTemplateParams{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -4098,7 +4106,7 @@ func expandRequestConfigurationTemplateUpdateTemplateV1RollbackTemplateParamsArr
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateUpdateTemplateV1RollbackTemplateParams(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateUpdateTemplateRollbackTemplateParams(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -4109,8 +4117,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1RollbackTemplateParamsArr
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1RollbackTemplateParams(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1RollbackTemplateParams {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1RollbackTemplateParams{}
+func expandRequestConfigurationTemplateUpdateTemplateRollbackTemplateParams(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateRollbackTemplateParams {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateRollbackTemplateParams{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".binding")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".binding")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".binding")))) {
 		request.Binding = interfaceToString(v)
 	}
@@ -4157,13 +4165,13 @@ func expandRequestConfigurationTemplateUpdateTemplateV1RollbackTemplateParams(ct
 		request.Provider = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".range")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".range")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".range")))) {
-		request.Range = expandRequestConfigurationTemplateUpdateTemplateV1RollbackTemplateParamsRangeArray(ctx, key+".range", d)
+		request.Range = expandRequestConfigurationTemplateUpdateTemplateRollbackTemplateParamsRangeArray(ctx, key+".range", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".required")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".required")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".required")))) {
 		request.Required = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".selection")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".selection")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".selection")))) {
-		request.Selection = expandRequestConfigurationTemplateUpdateTemplateV1RollbackTemplateParamsSelection(ctx, key+".selection.0", d)
+		request.Selection = expandRequestConfigurationTemplateUpdateTemplateRollbackTemplateParamsSelection(ctx, key+".selection.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -4171,8 +4179,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1RollbackTemplateParams(ct
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1RollbackTemplateParamsRangeArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1RollbackTemplateParamsRange {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1RollbackTemplateParamsRange{}
+func expandRequestConfigurationTemplateUpdateTemplateRollbackTemplateParamsRangeArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateRollbackTemplateParamsRange {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateRollbackTemplateParamsRange{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -4183,7 +4191,7 @@ func expandRequestConfigurationTemplateUpdateTemplateV1RollbackTemplateParamsRan
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateUpdateTemplateV1RollbackTemplateParamsRange(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateUpdateTemplateRollbackTemplateParamsRange(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -4194,8 +4202,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1RollbackTemplateParamsRan
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1RollbackTemplateParamsRange(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1RollbackTemplateParamsRange {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1RollbackTemplateParamsRange{}
+func expandRequestConfigurationTemplateUpdateTemplateRollbackTemplateParamsRange(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateRollbackTemplateParamsRange {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateRollbackTemplateParamsRange{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -4211,8 +4219,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1RollbackTemplateParamsRan
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1RollbackTemplateParamsSelection(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1RollbackTemplateParamsSelection {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1RollbackTemplateParamsSelection{}
+func expandRequestConfigurationTemplateUpdateTemplateRollbackTemplateParamsSelection(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateRollbackTemplateParamsSelection {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateRollbackTemplateParamsSelection{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".default_selected_values")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".default_selected_values")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".default_selected_values")))) {
 		request.DefaultSelectedValues = interfaceToSliceString(v)
 	}
@@ -4223,7 +4231,7 @@ func expandRequestConfigurationTemplateUpdateTemplateV1RollbackTemplateParamsSel
 		request.SelectionType = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".selection_values")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".selection_values")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".selection_values")))) {
-		request.SelectionValues = expandRequestConfigurationTemplateUpdateTemplateV1RollbackTemplateParamsSelectionSelectionValues(ctx, key+".selection_values.0", d)
+		request.SelectionValues = expandRequestConfigurationTemplateUpdateTemplateRollbackTemplateParamsSelectionSelectionValues(ctx, key+".selection_values.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -4231,8 +4239,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1RollbackTemplateParamsSel
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1RollbackTemplateParamsSelectionSelectionValues(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1RollbackTemplateParamsSelectionSelectionValues {
-	var request catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1RollbackTemplateParamsSelectionSelectionValues
+func expandRequestConfigurationTemplateUpdateTemplateRollbackTemplateParamsSelectionSelectionValues(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateRollbackTemplateParamsSelectionSelectionValues {
+	var request catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateRollbackTemplateParamsSelectionSelectionValues
 	request = d.Get(fixKeyAccess(key))
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -4240,8 +4248,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1RollbackTemplateParamsSel
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1TemplateParamsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1TemplateParams {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1TemplateParams{}
+func expandRequestConfigurationTemplateUpdateTemplateTemplateParamsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateTemplateParams {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateTemplateParams{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -4252,7 +4260,7 @@ func expandRequestConfigurationTemplateUpdateTemplateV1TemplateParamsArray(ctx c
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateUpdateTemplateV1TemplateParams(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateUpdateTemplateTemplateParams(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -4263,8 +4271,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1TemplateParamsArray(ctx c
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1TemplateParams(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1TemplateParams {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1TemplateParams{}
+func expandRequestConfigurationTemplateUpdateTemplateTemplateParams(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateTemplateParams {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateTemplateParams{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".binding")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".binding")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".binding")))) {
 		request.Binding = interfaceToString(v)
 	}
@@ -4311,13 +4319,13 @@ func expandRequestConfigurationTemplateUpdateTemplateV1TemplateParams(ctx contex
 		request.Provider = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".range")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".range")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".range")))) {
-		request.Range = expandRequestConfigurationTemplateUpdateTemplateV1TemplateParamsRangeArray(ctx, key+".range", d)
+		request.Range = expandRequestConfigurationTemplateUpdateTemplateTemplateParamsRangeArray(ctx, key+".range", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".required")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".required")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".required")))) {
 		request.Required = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".selection")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".selection")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".selection")))) {
-		request.Selection = expandRequestConfigurationTemplateUpdateTemplateV1TemplateParamsSelection(ctx, key+".selection.0", d)
+		request.Selection = expandRequestConfigurationTemplateUpdateTemplateTemplateParamsSelection(ctx, key+".selection.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -4325,8 +4333,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1TemplateParams(ctx contex
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1TemplateParamsRangeArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1TemplateParamsRange {
-	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1TemplateParamsRange{}
+func expandRequestConfigurationTemplateUpdateTemplateTemplateParamsRangeArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateTemplateParamsRange {
+	request := []catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateTemplateParamsRange{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -4337,7 +4345,7 @@ func expandRequestConfigurationTemplateUpdateTemplateV1TemplateParamsRangeArray(
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestConfigurationTemplateUpdateTemplateV1TemplateParamsRange(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestConfigurationTemplateUpdateTemplateTemplateParamsRange(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -4348,8 +4356,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1TemplateParamsRangeArray(
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1TemplateParamsRange(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1TemplateParamsRange {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1TemplateParamsRange{}
+func expandRequestConfigurationTemplateUpdateTemplateTemplateParamsRange(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateTemplateParamsRange {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateTemplateParamsRange{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -4365,8 +4373,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1TemplateParamsRange(ctx c
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1TemplateParamsSelection(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1TemplateParamsSelection {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1TemplateParamsSelection{}
+func expandRequestConfigurationTemplateUpdateTemplateTemplateParamsSelection(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateTemplateParamsSelection {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateTemplateParamsSelection{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".default_selected_values")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".default_selected_values")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".default_selected_values")))) {
 		request.DefaultSelectedValues = interfaceToSliceString(v)
 	}
@@ -4377,7 +4385,7 @@ func expandRequestConfigurationTemplateUpdateTemplateV1TemplateParamsSelection(c
 		request.SelectionType = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".selection_values")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".selection_values")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".selection_values")))) {
-		request.SelectionValues = expandRequestConfigurationTemplateUpdateTemplateV1TemplateParamsSelectionSelectionValues(ctx, key+".selection_values.0", d)
+		request.SelectionValues = expandRequestConfigurationTemplateUpdateTemplateTemplateParamsSelectionSelectionValues(ctx, key+".selection_values.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -4385,8 +4393,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1TemplateParamsSelection(c
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1TemplateParamsSelectionSelectionValues(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1TemplateParamsSelectionSelectionValues {
-	var request catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1TemplateParamsSelectionSelectionValues
+func expandRequestConfigurationTemplateUpdateTemplateTemplateParamsSelectionSelectionValues(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateTemplateParamsSelectionSelectionValues {
+	var request catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateTemplateParamsSelectionSelectionValues
 	request = d.Get(fixKeyAccess(key))
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -4394,13 +4402,13 @@ func expandRequestConfigurationTemplateUpdateTemplateV1TemplateParamsSelectionSe
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1ValidationErrors(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ValidationErrors {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ValidationErrors{}
+func expandRequestConfigurationTemplateUpdateTemplateValidationErrors(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateValidationErrors {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateValidationErrors{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rollback_template_errors")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rollback_template_errors")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rollback_template_errors")))) {
-		request.RollbackTemplateErrors = expandRequestConfigurationTemplateUpdateTemplateV1ValidationErrorsRollbackTemplateErrors(ctx, key+".rollback_template_errors.0", d)
+		request.RollbackTemplateErrors = expandRequestConfigurationTemplateUpdateTemplateValidationErrorsRollbackTemplateErrors(ctx, key+".rollback_template_errors.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".template_errors")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".template_errors")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".template_errors")))) {
-		request.TemplateErrors = expandRequestConfigurationTemplateUpdateTemplateV1ValidationErrorsTemplateErrors(ctx, key+".template_errors.0", d)
+		request.TemplateErrors = expandRequestConfigurationTemplateUpdateTemplateValidationErrorsTemplateErrors(ctx, key+".template_errors.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".template_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".template_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".template_id")))) {
 		request.TemplateID = interfaceToString(v)
@@ -4414,8 +4422,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ValidationErrors(ctx cont
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1ValidationErrorsRollbackTemplateErrors(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ValidationErrorsRollbackTemplateErrors {
-	var request catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ValidationErrorsRollbackTemplateErrors
+func expandRequestConfigurationTemplateUpdateTemplateValidationErrorsRollbackTemplateErrors(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateValidationErrorsRollbackTemplateErrors {
+	var request catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateValidationErrorsRollbackTemplateErrors
 	request = d.Get(fixKeyAccess(key))
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -4423,8 +4431,8 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ValidationErrorsRollbackT
 	return &request
 }
 
-func expandRequestConfigurationTemplateUpdateTemplateV1ValidationErrorsTemplateErrors(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ValidationErrorsTemplateErrors {
-	var request catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateV1ValidationErrorsTemplateErrors
+func expandRequestConfigurationTemplateUpdateTemplateValidationErrorsTemplateErrors(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateValidationErrorsTemplateErrors {
+	var request catalystcentersdkgo.RequestConfigurationTemplatesUpdateTemplateValidationErrorsTemplateErrors
 	request = d.Get(fixKeyAccess(key))
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -4432,10 +4440,10 @@ func expandRequestConfigurationTemplateUpdateTemplateV1ValidationErrorsTemplateE
 	return &request
 }
 
-func searchConfigurationTemplatesGetsTheTemplatesAvailable(m interface{}, queryParams catalystcentersdkgo.GetsAListOfProjectsV1QueryParams, vName string) (*catalystcentersdkgo.ResponseItemConfigurationTemplatesGetsAListOfProjectsV1Templates, error) {
+func searchConfigurationTemplatesGetsTheTemplatesAvailable(m interface{}, queryParams catalystcentersdkgo.GetsAListOfProjectsQueryParams, vName string) (*catalystcentersdkgo.ResponseItemConfigurationTemplatesGetsAListOfProjectsTemplates, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseItemConfigurationTemplatesGetsAListOfProjectsV1Templates
+	var foundItem *catalystcentersdkgo.ResponseItemConfigurationTemplatesGetsAListOfProjectsTemplates
 	log.Print("[DEBUG] 4")
 	nResponse, _, err := client.ConfigurationTemplates.GetsAListOfProjects(&queryParams)
 	log.Print("[DEBUG] 5")

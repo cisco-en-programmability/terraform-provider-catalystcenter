@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -11,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -24,7 +25,7 @@ func resourceNetworkDevicesUnassignFromSiteApply() *schema.Resource {
 
 - Unassign unprovisioned network devices from their site. If device controllability is enabled, it will be triggered
 once device unassigned from site successfully. Device Controllability can be enabled/disabled using
-*/dna/intent/api/v1/networkDevices/deviceControllability/settings*.
+**/dna/intent/api/v1/networkDevices/deviceControllability/settings**.
 `,
 
 		CreateContext: resourceNetworkDevicesUnassignFromSiteApplyCreate,
@@ -65,7 +66,7 @@ once device unassigned from site successfully. Device Controllability can be ena
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"device_ids": &schema.Schema{
-							Description: `Network device Ids.
+							Description: `Network device Ids, ranging from a minimum of 1 to a maximum of 100.
 `,
 							Type:     schema.TypeList,
 							Optional: true,
@@ -86,18 +87,18 @@ func resourceNetworkDevicesUnassignFromSiteApplyCreate(ctx context.Context, d *s
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestNetworkDevicesUnassignFromSiteApplyUnassignNetworkDevicesFromSitesV1(ctx, "parameters.0", d)
+	request1 := expandRequestNetworkDevicesUnassignFromSiteApplyUnassignNetworkDevicesFromSites(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.SiteDesign.UnassignNetworkDevicesFromSitesV1(request1)
+	response1, restyResp1, err := client.SiteDesign.UnassignNetworkDevicesFromSites(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing UnassignNetworkDevicesFromSitesV1", err))
+			"Failure when executing UnassignNetworkDevicesFromSites", err))
 		return diags
 	}
 
@@ -105,7 +106,7 @@ func resourceNetworkDevicesUnassignFromSiteApplyCreate(ctx context.Context, d *s
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing UnassignNetworkDevicesFromSitesV1", err))
+			"Failure when executing UnassignNetworkDevicesFromSites", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -132,14 +133,14 @@ func resourceNetworkDevicesUnassignFromSiteApplyCreate(ctx context.Context, d *s
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing UnassignNetworkDevicesFromSitesV1", err1))
+				"Failure when executing UnassignNetworkDevicesFromSites", err1))
 			return diags
 		}
 	}
@@ -147,10 +148,10 @@ func resourceNetworkDevicesUnassignFromSiteApplyCreate(ctx context.Context, d *s
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenSiteDesignUnassignNetworkDevicesFromSitesV1Item(response1.Response)
+	vItem1 := flattenSiteDesignUnassignNetworkDevicesFromSitesItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting UnassignNetworkDevicesFromSitesV1 response",
+			"Failure when setting UnassignNetworkDevicesFromSites response",
 			err))
 		return diags
 	}
@@ -171,15 +172,15 @@ func resourceNetworkDevicesUnassignFromSiteApplyDelete(ctx context.Context, d *s
 	return diags
 }
 
-func expandRequestNetworkDevicesUnassignFromSiteApplyUnassignNetworkDevicesFromSitesV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSiteDesignUnassignNetworkDevicesFromSitesV1 {
-	request := catalystcentersdkgo.RequestSiteDesignUnassignNetworkDevicesFromSitesV1{}
+func expandRequestNetworkDevicesUnassignFromSiteApplyUnassignNetworkDevicesFromSites(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSiteDesignUnassignNetworkDevicesFromSites {
+	request := catalystcentersdkgo.RequestSiteDesignUnassignNetworkDevicesFromSites{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_ids")))) {
 		request.DeviceIDs = interfaceToSliceString(v)
 	}
 	return &request
 }
 
-func flattenSiteDesignUnassignNetworkDevicesFromSitesV1Item(item *catalystcentersdkgo.ResponseSiteDesignUnassignNetworkDevicesFromSitesV1Response) []map[string]interface{} {
+func flattenSiteDesignUnassignNetworkDevicesFromSitesItem(item *catalystcentersdkgo.ResponseSiteDesignUnassignNetworkDevicesFromSitesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -30,7 +30,7 @@ be part of the Fabric Site representing 'Fabric ID' specified in the API request
 ```terraform
 resource "catalystcenter_sda_fabrics_vlan_to_ssids_fabric_id" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     fabric_id = "string"

@@ -5,8 +5,8 @@ subcategory: ""
 description: |-
   It manages read, update and delete operations on Network Settings.
   Updates a global IP address pool.
-  Restrictions on updating a global IP address pool: The poolType cannot be changed. The subnet and prefixLength
-  within addressSpace cannot be changed.Deletes a global IP address pool.  A global IP address pool can only be deleted if there are no subpools reserving
+  Restrictions on updating a global IP address pool: The poolType cannot be changed. The subnet and
+  prefixLength within addressSpace cannot be changed.Deletes a global IP address pool.  A global IP address pool can only be deleted if there are no subpools reserving
   address space from it.
 ---
 
@@ -15,8 +15,8 @@ description: |-
 It manages read, update and delete operations on Network Settings.
 
 - Updates a global IP address pool.
-Restrictions on updating a global IP address pool: The *poolType* cannot be changed. The *subnet* and *prefixLength*
-within *addressSpace* cannot be changed.
+Restrictions on updating a global IP address pool: The **poolType** cannot be changed. The **subnet** and
+**prefixLength** within **addressSpace** cannot be changed.
 
 - Deletes a global IP address pool.  A global IP address pool can only be deleted if there are no subpools reserving
 address space from it.
@@ -26,7 +26,7 @@ address space from it.
 ```terraform
 resource "catalystcenter_ipam_global_ip_address_pools_id" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     address_space {
@@ -66,7 +66,7 @@ output "catalystcenter_ipam_global_ip_address_pools_id_example" {
 
 Required:
 
-- `id` (String) id path parameter. The *id* of the global IP address pool to update.
+- `id` (String) id path parameter. The **id** of the global IP address pool to update.
 
 Optional:
 

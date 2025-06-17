@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -19,8 +19,8 @@ func resourceNetworkDevicesResyncIntervalSettingsID() *schema.Resource {
 		Description: `It manages read and update operations on Devices.
 
 - Update the resync interval (in minutes) for the given network device id.
-To disable periodic resync, set interval as *0*.
-To use global settings, set interval as *null*.
+To disable periodic resync, set interval as **0**.
+To use global settings, set interval as **null**.
 `,
 
 		CreateContext: resourceNetworkDevicesResyncIntervalSettingsIDCreate,
@@ -65,7 +65,7 @@ To use global settings, set interval as *null*.
 							Required: true,
 						},
 						"interval": &schema.Schema{
-							Description: `Resync interval in minutes. To disable periodic resync, set interval as *0*. To use global settings, set interval as *null*.
+							Description: `Resync interval in minutes. To disable periodic resync, set interval as **0**. To use global settings, set interval as **null**.
 `,
 							Type:     schema.TypeInt,
 							Optional: true,
@@ -116,7 +116,7 @@ func resourceNetworkDevicesResyncIntervalSettingsIDRead(ctx context.Context, d *
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesGetResyncIntervalForTheNetworkDeviceV1Item(response1.Response)
+		vItem1 := flattenDevicesGetResyncIntervalForTheNetworkDeviceItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetResyncIntervalForTheNetworkDevice response",
@@ -139,7 +139,7 @@ func resourceNetworkDevicesResyncIntervalSettingsIDUpdate(ctx context.Context, d
 
 	vvID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestNetworkDevicesResyncIntervalSettingsIDUpdateResyncIntervalForTheNetworkDeviceV1(ctx, "parameters.0", d)
+		request1 := expandRequestNetworkDevicesResyncIntervalSettingsIDUpdateResyncIntervalForTheNetworkDevice(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.Devices.UpdateResyncIntervalForTheNetworkDevice(vvID, request1)
 		if err != nil || response1 == nil {
@@ -198,8 +198,9 @@ func resourceNetworkDevicesResyncIntervalSettingsIDDelete(ctx context.Context, d
 		"Failure at NetworkDevicesResyncIntervalSettingsIDDelete, unexpected response", ""))
 	return diags
 }
-func expandRequestNetworkDevicesResyncIntervalSettingsIDUpdateResyncIntervalForTheNetworkDeviceV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateResyncIntervalForTheNetworkDeviceV1 {
-	request := catalystcentersdkgo.RequestDevicesUpdateResyncIntervalForTheNetworkDeviceV1{}
+
+func expandRequestNetworkDevicesResyncIntervalSettingsIDUpdateResyncIntervalForTheNetworkDevice(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateResyncIntervalForTheNetworkDevice {
+	request := catalystcentersdkgo.RequestDevicesUpdateResyncIntervalForTheNetworkDevice{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".interval")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".interval")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".interval")))) {
 		request.Interval = interfaceToIntPtr(v)
 	}

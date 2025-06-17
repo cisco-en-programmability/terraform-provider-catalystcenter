@@ -36,7 +36,7 @@ output "catalystcenter_sites_example" {
 
 ### Optional
 
-- `limit` (Number) limit query parameter. The number of records to show for this page.
+- `limit` (Number) limit query parameter. The number of records to show for this page;The minimum is 1, and the maximum is 500.
 - `name` (String) name query parameter. Site name.
 - `name_hierarchy` (String) nameHierarchy query parameter. Site name hierarchy.
 - `offset` (Number) offset query parameter. The first record to show for this page; the first record is numbered 1.
@@ -65,6 +65,7 @@ Read-Only:
 - `name_hierarchy` (String)
 - `parent_id` (String)
 - `rf_model` (String)
+- `site_hierarchy_id` (String)
 - `type` (String)
 - `units_of_measure` (String)
 - `width` (Number)

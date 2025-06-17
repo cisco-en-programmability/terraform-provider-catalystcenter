@@ -20,7 +20,7 @@ It manages create, read and update operations on Event Management.
 ```terraform
 resource "catalystcenter_event_syslog_config" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     config_id   = "string"

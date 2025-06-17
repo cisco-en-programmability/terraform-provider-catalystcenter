@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -24,9 +24,9 @@ global pool(s).  Subpools cannot be released when assigned addresses in use.
 
 - Updates an IP address subpool, which reserves address space from a global pool (or global pools) for a particular
 site.
-Restrictions on updating an IP address subpool: The *poolType* cannot be changed. The *siteId* cannot be changed. The
-*ipV4AddressSpace* may not be removed. The *globalPoolId*, *subnet*, and *prefixLength* cannot be changed once it's
-already been set. However you may edit a subpool to add an IP address space if it does not already have one.
+Restrictions on updating an IP address subpool: The **poolType** cannot be changed. The **siteId** cannot be changed.
+The **ipV4AddressSpace** may not be removed. The **globalPoolId**, **subnet**, and **prefixLength** cannot be changed
+once it's already been set. However you may edit a subpool to add an IP address space if it does not already have one.
 `,
 
 		CreateContext: resourceIPamSiteIPAddressPoolsIDCreate,
@@ -231,7 +231,7 @@ already been set. However you may edit a subpool to add an IP address space if i
 							Computed: true,
 						},
 						"site_id": &schema.Schema{
-							Description: `The *id* of the site that this subpool belongs to. This must be the *id* of a non-Global site.
+							Description: `The **id** of the site that this subpool belongs to. This must be the **id** of a non-Global site.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -253,7 +253,7 @@ already been set. However you may edit a subpool to add an IP address space if i
 					Schema: map[string]*schema.Schema{
 
 						"id": &schema.Schema{
-							Description: `id path parameter. The *id* of the IP address subpool to update.
+							Description: `id path parameter. The **id** of the IP address subpool to update.
 `,
 							Type:     schema.TypeString,
 							Required: true,
@@ -407,7 +407,7 @@ already been set. However you may edit a subpool to add an IP address space if i
 							Computed: true,
 						},
 						"site_id": &schema.Schema{
-							Description: `The *id* of the site that this subpool belongs to. This must be the *id* of a non-Global site.
+							Description: `The **id** of the site that this subpool belongs to. This must be the **id** of a non-Global site.
 `,
 							Type:     schema.TypeString,
 							Optional: true,
@@ -459,7 +459,7 @@ func resourceIPamSiteIPAddressPoolsIDRead(ctx context.Context, d *schema.Resourc
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenNetworkSettingsRetrievesAnIPAddressSubpoolV1Item(response1.Response)
+		vItem1 := flattenNetworkSettingsRetrievesAnIPAddressSubpoolItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrievesAnIPAddressSubpool response",
@@ -483,7 +483,7 @@ func resourceIPamSiteIPAddressPoolsIDUpdate(ctx context.Context, d *schema.Resou
 	vvID := resourceMap["id"]
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvID)
-		request1 := expandRequestIPamSiteIPAddressPoolsIDUpdatesAnIPAddressSubpoolV1(ctx, "parameters.0", d)
+		request1 := expandRequestIPamSiteIPAddressPoolsIDUpdatesAnIPAddressSubpool(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.NetworkSettings.UpdatesAnIPAddressSubpool(vvID, request1)
 		if err != nil || response1 == nil {
@@ -593,13 +593,14 @@ func resourceIPamSiteIPAddressPoolsIDDelete(ctx context.Context, d *schema.Resou
 
 	return diags
 }
-func expandRequestIPamSiteIPAddressPoolsIDUpdatesAnIPAddressSubpoolV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdatesAnIPAddressSubpoolV1 {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdatesAnIPAddressSubpoolV1{}
+
+func expandRequestIPamSiteIPAddressPoolsIDUpdatesAnIPAddressSubpool(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdatesAnIPAddressSubpool {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdatesAnIPAddressSubpool{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ip_v4_address_space")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ip_v4_address_space")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ip_v4_address_space")))) {
-		request.IPV4AddressSpace = expandRequestIPamSiteIPAddressPoolsIDUpdatesAnIPAddressSubpoolV1IPV4AddressSpace(ctx, key+".ip_v4_address_space.0", d)
+		request.IPV4AddressSpace = expandRequestIPamSiteIPAddressPoolsIDUpdatesAnIPAddressSubpoolIPV4AddressSpace(ctx, key+".ip_v4_address_space.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ip_v6_address_space")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ip_v6_address_space")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ip_v6_address_space")))) {
-		request.IPV6AddressSpace = expandRequestIPamSiteIPAddressPoolsIDUpdatesAnIPAddressSubpoolV1IPV6AddressSpace(ctx, key+".ip_v6_address_space.0", d)
+		request.IPV6AddressSpace = expandRequestIPamSiteIPAddressPoolsIDUpdatesAnIPAddressSubpoolIPV6AddressSpace(ctx, key+".ip_v6_address_space.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
@@ -616,8 +617,8 @@ func expandRequestIPamSiteIPAddressPoolsIDUpdatesAnIPAddressSubpoolV1(ctx contex
 	return &request
 }
 
-func expandRequestIPamSiteIPAddressPoolsIDUpdatesAnIPAddressSubpoolV1IPV4AddressSpace(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdatesAnIPAddressSubpoolV1IPV4AddressSpace {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdatesAnIPAddressSubpoolV1IPV4AddressSpace{}
+func expandRequestIPamSiteIPAddressPoolsIDUpdatesAnIPAddressSubpoolIPV4AddressSpace(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdatesAnIPAddressSubpoolIPV4AddressSpace {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdatesAnIPAddressSubpoolIPV4AddressSpace{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subnet")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subnet")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subnet")))) {
 		request.Subnet = interfaceToString(v)
 	}
@@ -645,8 +646,8 @@ func expandRequestIPamSiteIPAddressPoolsIDUpdatesAnIPAddressSubpoolV1IPV4Address
 	return &request
 }
 
-func expandRequestIPamSiteIPAddressPoolsIDUpdatesAnIPAddressSubpoolV1IPV6AddressSpace(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdatesAnIPAddressSubpoolV1IPV6AddressSpace {
-	request := catalystcentersdkgo.RequestNetworkSettingsUpdatesAnIPAddressSubpoolV1IPV6AddressSpace{}
+func expandRequestIPamSiteIPAddressPoolsIDUpdatesAnIPAddressSubpoolIPV6AddressSpace(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsUpdatesAnIPAddressSubpoolIPV6AddressSpace {
+	request := catalystcentersdkgo.RequestNetworkSettingsUpdatesAnIPAddressSubpoolIPV6AddressSpace{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subnet")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subnet")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subnet")))) {
 		request.Subnet = interfaceToString(v)
 	}

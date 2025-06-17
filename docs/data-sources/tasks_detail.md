@@ -31,7 +31,7 @@ output "catalystcenter_tasks_detail_example" {
 
 ### Required
 
-- `id` (String) id path parameter. the *id* of the task to retrieve details for
+- `id` (String) id path parameter. the **id** of the task to retrieve details for
 
 ### Read-Only
 

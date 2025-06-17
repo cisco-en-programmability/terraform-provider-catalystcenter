@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -22,7 +22,7 @@ internal identifiers.
 		ReadContext: dataSourceNetworkDevicesAssignedToSiteRead,
 		Schema: map[string]*schema.Schema{
 			"limit": &schema.Schema{
-				Description: `limit query parameter. The number of records to show for this page.
+				Description: `limit query parameter. The number of records to show for this page;The minimum is 1, and the maximum is 500.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -90,8 +90,8 @@ func dataSourceNetworkDevicesAssignedToSiteRead(ctx context.Context, d *schema.R
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSiteAssignedNetworkDevicesV1")
-		queryParams1 := catalystcentersdkgo.GetSiteAssignedNetworkDevicesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetSiteAssignedNetworkDevices")
+		queryParams1 := catalystcentersdkgo.GetSiteAssignedNetworkDevicesQueryParams{}
 
 		queryParams1.SiteID = vSiteID.(string)
 
@@ -102,24 +102,38 @@ func dataSourceNetworkDevicesAssignedToSiteRead(ctx context.Context, d *schema.R
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.SiteDesign.GetSiteAssignedNetworkDevicesV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.SiteDesign.GetSiteAssignedNetworkDevices(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSiteAssignedNetworkDevicesV1", err,
-				"Failure at GetSiteAssignedNetworkDevicesV1, unexpected response", ""))
+				"Failure when executing 2 GetSiteAssignedNetworkDevices", err,
+				"Failure at GetSiteAssignedNetworkDevices, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSiteDesignGetSiteAssignedNetworkDevicesV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetSiteAssignedNetworkDevices", err,
+				"Failure at GetSiteAssignedNetworkDevices, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSiteDesignGetSiteAssignedNetworkDevicesItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSiteAssignedNetworkDevicesV1 response",
+				"Failure when setting GetSiteAssignedNetworkDevices response",
 				err))
 			return diags
 		}
@@ -131,7 +145,7 @@ func dataSourceNetworkDevicesAssignedToSiteRead(ctx context.Context, d *schema.R
 	return diags
 }
 
-func flattenSiteDesignGetSiteAssignedNetworkDevicesV1Items(items *[]catalystcentersdkgo.ResponseSiteDesignGetSiteAssignedNetworkDevicesV1Response) []map[string]interface{} {
+func flattenSiteDesignGetSiteAssignedNetworkDevicesItems(items *[]catalystcentersdkgo.ResponseSiteDesignGetSiteAssignedNetworkDevicesResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

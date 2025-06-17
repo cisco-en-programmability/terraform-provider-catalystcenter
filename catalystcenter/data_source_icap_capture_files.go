@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -160,10 +160,10 @@ func dataSourceIcapCaptureFilesRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: ListsICapPacketCaptureFilesMatchingSpecifiedCriteriaV1")
+		log.Printf("[DEBUG] Selected method: ListsICapPacketCaptureFilesMatchingSpecifiedCriteria")
 
-		headerParams1 := catalystcentersdkgo.ListsICapPacketCaptureFilesMatchingSpecifiedCriteriaV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.ListsICapPacketCaptureFilesMatchingSpecifiedCriteriaV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.ListsICapPacketCaptureFilesMatchingSpecifiedCriteriaHeaderParams{}
+		queryParams1 := catalystcentersdkgo.ListsICapPacketCaptureFilesMatchingSpecifiedCriteriaQueryParams{}
 
 		queryParams1.Type = vType.(string)
 
@@ -195,24 +195,36 @@ func dataSourceIcapCaptureFilesRead(ctx context.Context, d *schema.ResourceData,
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sensors.ListsICapPacketCaptureFilesMatchingSpecifiedCriteriaV1(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Sensors.ListsICapPacketCaptureFilesMatchingSpecifiedCriteria(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 ListsICapPacketCaptureFilesMatchingSpecifiedCriteriaV1", err,
-				"Failure at ListsICapPacketCaptureFilesMatchingSpecifiedCriteriaV1, unexpected response", ""))
+				"Failure when executing 2 ListsICapPacketCaptureFilesMatchingSpecifiedCriteria", err,
+				"Failure at ListsICapPacketCaptureFilesMatchingSpecifiedCriteria, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSensorsListsICapPacketCaptureFilesMatchingSpecifiedCriteriaV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 ListsICapPacketCaptureFilesMatchingSpecifiedCriteria", err,
+				"Failure at ListsICapPacketCaptureFilesMatchingSpecifiedCriteria, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSensorsListsICapPacketCaptureFilesMatchingSpecifiedCriteriaItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting ListsICapPacketCaptureFilesMatchingSpecifiedCriteriaV1 response",
+				"Failure when setting ListsICapPacketCaptureFilesMatchingSpecifiedCriteria response",
 				err))
 			return diags
 		}
@@ -224,7 +236,7 @@ func dataSourceIcapCaptureFilesRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenSensorsListsICapPacketCaptureFilesMatchingSpecifiedCriteriaV1Items(items *[]catalystcentersdkgo.ResponseSensorsListsICapPacketCaptureFilesMatchingSpecifiedCriteriaV1Response) []map[string]interface{} {
+func flattenSensorsListsICapPacketCaptureFilesMatchingSpecifiedCriteriaItems(items *[]catalystcentersdkgo.ResponseSensorsListsICapPacketCaptureFilesMatchingSpecifiedCriteriaResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

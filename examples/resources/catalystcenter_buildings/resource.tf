@@ -1,7 +1,7 @@
 
 resource "catalystcenter_buildings" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     address   = "string"

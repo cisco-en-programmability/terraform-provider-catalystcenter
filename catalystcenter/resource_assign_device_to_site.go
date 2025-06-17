@@ -10,7 +10,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -112,9 +112,9 @@ func resourceAssignDeviceToSiteCreate(ctx context.Context, d *schema.ResourceDat
 	vPersistbapioutput := resourceItem["persistbapioutput"]
 
 	vvSiteID := vSiteID.(string)
-	request1 := expandRequestAssignDeviceToSiteAssignDevicesToSiteV1(ctx, "parameters.0", d)
+	request1 := expandRequestAssignDeviceToSiteAssignDevicesToSite(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.AssignDevicesToSiteV1HeaderParams{}
+	headerParams1 := catalystcentersdkgo.AssignDevicesToSiteHeaderParams{}
 
 	headerParams1.Runsync = vRunsync.(string)
 
@@ -124,14 +124,14 @@ func resourceAssignDeviceToSiteCreate(ctx context.Context, d *schema.ResourceDat
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Sites.AssignDevicesToSiteV1(vvSiteID, request1, &headerParams1)
+	response1, restyResp1, err := client.Sites.AssignDevicesToSite(vvSiteID, request1, &headerParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing AssignDevicesToSiteV1", err))
+			"Failure when executing AssignDevicesToSite", err))
 		return diags
 	}
 
@@ -167,16 +167,16 @@ func resourceAssignDeviceToSiteCreate(ctx context.Context, d *schema.ResourceDat
 		if response2.Status == "FAILURE" {
 			bapiError := response2.BapiError
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing AssignDevicesToSiteV1", err,
-				"Failure at AssignDevicesToSiteV1 execution", bapiError))
+				"Failure when executing AssignDevicesToSite", err,
+				"Failure at AssignDevicesToSite execution", bapiError))
 			return diags
 		}
 	}
 
-	vItem1 := flattenSitesAssignDevicesToSiteV1Item(response1)
+	vItem1 := flattenSiteDesignAssignDevicesToSiteItem(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting AssignDevicesToSiteV1 response",
+			"Failure when setting AssignDevicesToSite response",
 			err))
 		return diags
 	}
@@ -197,16 +197,16 @@ func resourceAssignDeviceToSiteDelete(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func expandRequestAssignDeviceToSiteAssignDevicesToSiteV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesAssignDevicesToSiteV1 {
-	request := catalystcentersdkgo.RequestSitesAssignDevicesToSiteV1{}
+func expandRequestAssignDeviceToSiteAssignDevicesToSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesAssignDevicesToSite {
+	request := catalystcentersdkgo.RequestSitesAssignDevicesToSite{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device")))) {
-		request.Device = expandRequestAssignDeviceToSiteAssignDevicesToSiteV1DeviceArray(ctx, key+".device", d)
+		request.Device = expandRequestAssignDeviceToSiteAssignDevicesToSiteDeviceArray(ctx, key+".device", d)
 	}
 	return &request
 }
 
-func expandRequestAssignDeviceToSiteAssignDevicesToSiteV1DeviceArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSitesAssignDevicesToSiteV1Device {
-	request := []catalystcentersdkgo.RequestSitesAssignDevicesToSiteV1Device{}
+func expandRequestAssignDeviceToSiteAssignDevicesToSiteDeviceArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSitesAssignDevicesToSiteDevice {
+	request := []catalystcentersdkgo.RequestSitesAssignDevicesToSiteDevice{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -217,7 +217,7 @@ func expandRequestAssignDeviceToSiteAssignDevicesToSiteV1DeviceArray(ctx context
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAssignDeviceToSiteAssignDevicesToSiteV1Device(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAssignDeviceToSiteAssignDevicesToSiteDevice(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -225,15 +225,15 @@ func expandRequestAssignDeviceToSiteAssignDevicesToSiteV1DeviceArray(ctx context
 	return &request
 }
 
-func expandRequestAssignDeviceToSiteAssignDevicesToSiteV1Device(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesAssignDevicesToSiteV1Device {
-	request := catalystcentersdkgo.RequestSitesAssignDevicesToSiteV1Device{}
+func expandRequestAssignDeviceToSiteAssignDevicesToSiteDevice(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesAssignDevicesToSiteDevice {
+	request := catalystcentersdkgo.RequestSitesAssignDevicesToSiteDevice{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ip")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ip")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ip")))) {
 		request.IP = interfaceToString(v)
 	}
 	return &request
 }
 
-func flattenSitesAssignDevicesToSiteV1Item(item *catalystcentersdkgo.ResponseSitesAssignDevicesToSiteV1) []map[string]interface{} {
+func flattenSiteDesignAssignDevicesToSiteItem(item *catalystcentersdkgo.ResponseSitesAssignDevicesToSite) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

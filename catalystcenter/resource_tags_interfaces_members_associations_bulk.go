@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -12,7 +13,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -25,7 +26,7 @@ func resourceTagsInterfacesMembersAssociationsBulk() *schema.Resource {
 
 - Updates the tags associated with the interfaces. A tag is a user-defined or system-defined construct to group
 resources. When an interface is tagged, it is called a member of the tag. A tag can be created by using this POST
-/dna/intent/api/v1/tag API.
+**/dna/intent/api/v1/tag** API.
 `,
 
 		CreateContext: resourceTagsInterfacesMembersAssociationsBulkCreate,
@@ -66,7 +67,7 @@ resources. When an interface is tagged, it is called a member of the tag. A tag 
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"payload": &schema.Schema{
-							Description: `Array of RequestTagUpdateTagsAssociatedWithTheInterfacesV1`,
+							Description: `Array of RequestTagUpdateTagsAssociatedWithTheInterfaces`,
 							Type:        schema.TypeList,
 							Optional:    true,
 							ForceNew:    true,
@@ -114,29 +115,31 @@ resources. When an interface is tagged, it is called a member of the tag. A tag 
 func resourceTagsInterfacesMembersAssociationsBulkCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
-	request1 := expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithTheInterfacesV1(ctx, "parameters.0", d)
 
-	// has_unknown_response: None
-
-	response1, restyResp1, err := client.Tag.UpdateTagsAssociatedWithTheInterfacesV1(request1)
+	request1 := expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithTheInterfaces(ctx, "parameters.0", d)
 
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
 
-	vItem1 := flattenTagUpdateTagsAssociatedWithTheInterfacesV1Item(response1.Response)
-	if err := d.Set("item", vItem1); err != nil {
-		diags = append(diags, diagError(
-			"Failure when setting UpdateTagsAssociatedWithTheInterfacesV1 response",
-			err))
+	response1, restyResp1, err := client.Tag.UpdateTagsAssociatedWithTheInterfaces(request1)
+
+	if err != nil || response1 == nil {
+		if restyResp1 != nil {
+			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+		}
+		d.SetId("")
 		return diags
 	}
 
+	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing UpdateTagsAssociatedWithTheInterfacesV1", err))
+			"Failure when executing UpdateTagsAssociatedWithTheInterfaces", err))
 		return diags
 	}
+
 	taskId := response1.Response.TaskID
 	log.Printf("[DEBUG] TASKID => %s", taskId)
 	if taskId != "" {
@@ -161,53 +164,52 @@ func resourceTagsInterfacesMembersAssociationsBulkCreate(ctx context.Context, d 
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing UpdateTagsAssociatedWithTheInterfacesV1", err1))
+				"Failure when executing UpdateTagsAssociatedWithTheInterfaces", err1))
 			return diags
 		}
 	}
 
-	if err != nil || response1 == nil {
-		if restyResp1 != nil {
-			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
-		}
-		d.SetId("")
+	vItem1 := flattenTagUpdateTagsAssociatedWithTheInterfacesItem(response1.Response)
+	if err := d.Set("item", vItem1); err != nil {
+		diags = append(diags, diagError(
+			"Failure when setting UpdateTagsAssociatedWithTheInterfaces response",
+			err))
 		return diags
 	}
 
-	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 	d.SetId(getUnixTimeString())
 	return diags
 }
 func resourceTagsInterfacesMembersAssociationsBulkRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 	return diags
 }
 
 func resourceTagsInterfacesMembersAssociationsBulkDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 	return diags
 }
 
-func expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithTheInterfacesV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagUpdateTagsAssociatedWithTheInterfacesV1 {
-	request := catalystcentersdkgo.RequestTagUpdateTagsAssociatedWithTheInterfacesV1{}
-	if v := expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithTheInterfacesV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithTheInterfaces(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestTagUpdateTagsAssociatedWithTheInterfaces {
+	request := catalystcentersdkgo.RequestTagUpdateTagsAssociatedWithTheInterfaces{}
+	if v := expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithTheInterfacesItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	return &request
 }
 
-func expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithTheInterfacesV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheInterfacesV1 {
-	request := []catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheInterfacesV1{}
+func expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithTheInterfacesItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheInterfaces {
+	request := []catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheInterfaces{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -218,7 +220,7 @@ func expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithT
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithTheInterfacesV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithTheInterfacesItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -226,19 +228,19 @@ func expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithT
 	return &request
 }
 
-func expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithTheInterfacesV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheInterfacesV1 {
-	request := catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheInterfacesV1{}
+func expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithTheInterfacesItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheInterfaces {
+	request := catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheInterfaces{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".tags")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".tags")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".tags")))) {
-		request.Tags = expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithTheInterfacesV1ItemTagsArray(ctx, key+".tags", d)
+		request.Tags = expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithTheInterfacesItemTagsArray(ctx, key+".tags", d)
 	}
 	return &request
 }
 
-func expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithTheInterfacesV1ItemTagsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheInterfacesV1Tags {
-	request := []catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheInterfacesV1Tags{}
+func expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithTheInterfacesItemTagsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheInterfacesTags {
+	request := []catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheInterfacesTags{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -249,7 +251,7 @@ func expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithT
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithTheInterfacesV1ItemTags(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithTheInterfacesItemTags(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -257,15 +259,15 @@ func expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithT
 	return &request
 }
 
-func expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithTheInterfacesV1ItemTags(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheInterfacesV1Tags {
-	request := catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheInterfacesV1Tags{}
+func expandRequestTagsInterfacesMembersAssociationsBulkUpdateTagsAssociatedWithTheInterfacesItemTags(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheInterfacesTags {
+	request := catalystcentersdkgo.RequestItemTagUpdateTagsAssociatedWithTheInterfacesTags{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
 	return &request
 }
 
-func flattenTagUpdateTagsAssociatedWithTheInterfacesV1Item(item *catalystcentersdkgo.ResponseTagUpdateTagsAssociatedWithTheInterfacesV1Response) []map[string]interface{} {
+func flattenTagUpdateTagsAssociatedWithTheInterfacesItem(item *catalystcentersdkgo.ResponseTagUpdateTagsAssociatedWithTheInterfacesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

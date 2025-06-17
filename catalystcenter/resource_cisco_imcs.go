@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -19,8 +19,8 @@ func resourceCiscoImcs() *schema.Resource {
 		Description: `It manages create and read operations on Cisco IMC.
 
 - This resource adds a Cisco Integrated Management Controller (IMC) configuration to a Cisco Catalyst Center node,
-identified by its *nodeId*. Obtain the *nodeId* from the *id* attribute in the response of the
-*/dna/intent/api/v1/nodes-config* API.
+identified by its **nodeId**. Obtain the **nodeId** from the **id** attribute in the response of the
+**/dna/intent/api/v1/nodes-config** API.
 The Cisco IMC configuration APIs enable the management of connections between Cisco IMC and Cisco Catalyst Center. By
 providing the Cisco IMC IP address and credentials to Catalyst Center, Catalyst Center can access and report the health
 status of hardware components within the Cisco appliance.
@@ -28,7 +28,8 @@ More data about the Cisco IMC can be retrieved using the APIs exposed directly b
 the Cisco IMC documentation https://www.cisco.com/c/en/us/support/servers-unified-computing/ucs-c-series-integrated-
 management-controller/series.html#~tab-documents
 The Cisco IMC configuration is relevant only for Catalyst Center deployments based on UCS appliances. In cases where
-Cisco IMC configuration is not supported by the deployment, these APIs will respond with a *404 Not Found* status code.
+Cisco IMC configuration is not supported by the deployment, these APIs will respond with a **404 Not Found** status
+code.
 When Cisco IMC configuration is supported, this API responds with the URL of a diagnostic task.
 `,
 
@@ -64,7 +65,7 @@ When Cisco IMC configuration is supported, this API responds with the URL of a d
 							Computed: true,
 						},
 						"node_id": &schema.Schema{
-							Description: `The UUID that represents the Catalyst Center node. Its value can be obtained from the *id* attribute of the response of the */dna/intent/api/v1/nodes-config* API.
+							Description: `The UUID that represents the Catalyst Center node. Its value can be obtained from the **id** attribute of the response of the **/dna/intent/api/v1/nodes-config** API.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -93,7 +94,7 @@ When Cisco IMC configuration is supported, this API responds with the URL of a d
 							Computed: true,
 						},
 						"node_id": &schema.Schema{
-							Description: `The UUID that represents the Catalyst Center node. Its value can be obtained from the *id* attribute of the response of the */dna/intent/api/v1/nodes-config* API.
+							Description: `The UUID that represents the Catalyst Center node. Its value can be obtained from the **id** attribute of the response of the **/dna/intent/api/v1/nodes-config** API.
 `,
 							Type:     schema.TypeString,
 							Optional: true,
@@ -127,12 +128,12 @@ func resourceCiscoImcsCreate(ctx context.Context, d *schema.ResourceData, m inte
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestCiscoImcsAddsCiscoIMCConfigurationToACatalystCenterNodeV1(ctx, "parameters.0", d)
+	request1 := expandRequestCiscoImcsAddsCiscoIMCConfigurationToACatalystCenterNode(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	vNodeId := resourceItem["node_id"]
 	vvNodeId := interfaceToString(vNodeId)
 
-	item2, err := searchCiscoIMCRetrievesCiscoIMCConfigurationsForCatalystCenterNodesV1(m, vvNodeId)
+	item2, err := searchCiscoIMCRetrievesCiscoIMCConfigurationsForCatalystCenterNodes(m, vvNodeId)
 	if err != nil || item2 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["node_id"] = item2.NodeID
@@ -178,14 +179,14 @@ func resourceCiscoImcsCreate(ctx context.Context, d *schema.ResourceData, m inte
 			return diags
 		}
 	}
-	item3, err := searchCiscoIMCRetrievesCiscoIMCConfigurationsForCatalystCenterNodesV1(m, vvNodeId)
+	item3, err := searchCiscoIMCRetrievesCiscoIMCConfigurationsForCatalystCenterNodes(m, vvNodeId)
 	if err != nil || item3 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["node_id"] = item3.NodeID
 		d.SetId(joinResourceID(resourceMap))
 		return resourceCiscoImcsRead(ctx, d, m)
 	}
-	item4, err := searchCiscoIMCRetrievesCiscoIMCConfigurationsForCatalystCenterNodesV1(m, vvNodeId)
+	item4, err := searchCiscoIMCRetrievesCiscoIMCConfigurationsForCatalystCenterNodes(m, vvNodeId)
 	if err != nil || item4 == nil {
 		diags = append(diags, diagErrorWithAlt(
 			"Failure when executing AddsCiscoIMCConfigurationToACatalystCenterNode", err,
@@ -223,7 +224,7 @@ func resourceCiscoImcsRead(ctx context.Context, d *schema.ResourceData, m interf
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		item1, err := searchCiscoIMCRetrievesCiscoIMCConfigurationsForCatalystCenterNodesV1(m, vvNodeId)
+		item1, err := searchCiscoIMCRetrievesCiscoIMCConfigurationsForCatalystCenterNodes(m, vvNodeId)
 		if err != nil || item1 == nil {
 			d.SetId("")
 			return diags
@@ -241,7 +242,7 @@ func resourceCiscoImcsRead(ctx context.Context, d *schema.ResourceData, m interf
 	return diags
 }
 
-func flattenCiscoIMCRetrievesCiscoIMCConfigurationsForCatalystCenterNodesByIDItem(item *catalystcentersdkgo.ResponseCiscoIMCRetrievesCiscoIMCConfigurationsForCatalystCenterNodesV1Response) []map[string]interface{} {
+func flattenCiscoIMCRetrievesCiscoIMCConfigurationsForCatalystCenterNodesByIDItem(item *catalystcentersdkgo.ResponseCiscoIMCRetrievesCiscoIMCConfigurationsForCatalystCenterNodesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -261,12 +262,13 @@ func resourceCiscoImcsUpdate(ctx context.Context, d *schema.ResourceData, m inte
 
 func resourceCiscoImcsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	// NOTE: Unable to delete CiscoImcs on Dna Center
+	// NOTE: Unable to delete CiscoImcs on Catalyst Center
 	//       Returning empty diags to delete it on Terraform
 	return diags
 }
-func expandRequestCiscoImcsAddsCiscoIMCConfigurationToACatalystCenterNodeV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestCiscoIMCaddsCiscoIMCConfigurationToACatalystCenterNodeV1 {
-	request := catalystcentersdkgo.RequestCiscoIMCaddsCiscoIMCConfigurationToACatalystCenterNodeV1{}
+
+func expandRequestCiscoImcsAddsCiscoIMCConfigurationToACatalystCenterNode(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestCiscoIMCaddsCiscoIMCConfigurationToACatalystCenterNode {
+	request := catalystcentersdkgo.RequestCiscoIMCaddsCiscoIMCConfigurationToACatalystCenterNode{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".node_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".node_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".node_id")))) {
 		request.NodeID = interfaceToString(v)
 	}
@@ -285,11 +287,11 @@ func expandRequestCiscoImcsAddsCiscoIMCConfigurationToACatalystCenterNodeV1(ctx 
 	return &request
 }
 
-func searchCiscoIMCRetrievesCiscoIMCConfigurationsForCatalystCenterNodesV1(m interface{}, vID string) (*catalystcentersdkgo.ResponseCiscoIMCRetrievesCiscoIMCConfigurationsForCatalystCenterNodesV1Response, error) {
+func searchCiscoIMCRetrievesCiscoIMCConfigurationsForCatalystCenterNodes(m interface{}, vID string) (*catalystcentersdkgo.ResponseCiscoIMCRetrievesCiscoIMCConfigurationsForCatalystCenterNodesResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseCiscoIMCRetrievesCiscoIMCConfigurationsForCatalystCenterNodesV1Response
-	var ite *catalystcentersdkgo.ResponseCiscoIMCRetrievesCiscoIMCConfigurationsForCatalystCenterNodesV1
+	var foundItem *catalystcentersdkgo.ResponseCiscoIMCRetrievesCiscoIMCConfigurationsForCatalystCenterNodesResponse
+	var ite *catalystcentersdkgo.ResponseCiscoIMCRetrievesCiscoIMCConfigurationsForCatalystCenterNodes
 	ite, _, err = client.CiscoIMC.RetrievesCiscoIMCConfigurationsForCatalystCenterNodes()
 	if err != nil || ite == nil {
 		return foundItem, err
@@ -300,7 +302,7 @@ func searchCiscoIMCRetrievesCiscoIMCConfigurationsForCatalystCenterNodesV1(m int
 	for _, item := range *itemsCopy.Response {
 		// Call get by _ method and set value to foundItem and return
 		if item.NodeID == vID {
-			var getItem *catalystcentersdkgo.ResponseCiscoIMCRetrievesCiscoIMCConfigurationsForCatalystCenterNodesV1Response
+			var getItem *catalystcentersdkgo.ResponseCiscoIMCRetrievesCiscoIMCConfigurationsForCatalystCenterNodesResponse
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

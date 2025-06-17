@@ -15,6 +15,15 @@ func interfaceToFloat64Ptr(item interface{}) *float64 {
 	return &nnItem
 }
 
+func interfaceToFloat64PtrArray(item interface{}) *[]float64 {
+	nItem := interfaceToSliceString(item)
+	nnItem := []float64{}
+	for _, v := range nItem {
+		nnItem = append(nnItem, *stringToFloat64Ptr(v))
+	}
+	return &nnItem
+}
+
 func mapInterfaceToMapString(m map[string]interface{}) map[string]string {
 	new_m := map[string]string{}
 	for k, v := range m {

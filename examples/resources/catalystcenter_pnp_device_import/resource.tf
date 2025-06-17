@@ -1,10 +1,10 @@
 
 resource "catalystcenter_pnp_device_import" "example" {
-  provider = meraki
-  parameters {
+  provider = catalystcenter
+  parameters = [{
 
     id = "string"
-    device_info {
+    device_info = [{
 
       description            = "string"
       device_sudi_serial_nos = ["string"]
@@ -14,10 +14,10 @@ resource "catalystcenter_pnp_device_import" "example" {
       serial_number          = "string"
       site_id                = "string"
       stack                  = "false"
-      stack_info {
+      stack_info = [{
 
         is_full_ring = "false"
-        stack_member_list {
+        stack_member_list = [{
 
           hardware_version   = "string"
           license_level      = "string"
@@ -31,19 +31,19 @@ resource "catalystcenter_pnp_device_import" "example" {
           stack_number       = 1.0
           state              = "string"
           sudi_serial_number = "string"
-        }
+        }]
         stack_ring_protocol      = "string"
         supports_stack_workflows = "false"
         total_member_count       = 1.0
         valid_license_levels     = ["string"]
-      }
+      }]
       sudi_required        = "false"
       user_mic_numbers     = ["string"]
       user_sudi_serial_nos = ["string"]
       workflow_id          = "string"
       workflow_name        = "string"
-    }
-  }
+    }]
+  }]
 }
 
 output "catalystcenter_pnp_device_import_example" {

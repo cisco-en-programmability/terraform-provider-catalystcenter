@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -178,7 +178,7 @@ func resourcePnpVirtualAccountDeregisterCreate(ctx context.Context, d *schema.Re
 
 	vName := resourceItem["name"]
 
-	queryParams1 := catalystcentersdkgo.DeregisterVirtualAccountV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.DeregisterVirtualAccountQueryParams{}
 
 	queryParams1.Domain = vDomain.(string)
 
@@ -186,23 +186,23 @@ func resourcePnpVirtualAccountDeregisterCreate(ctx context.Context, d *schema.Re
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.DeviceOnboardingPnp.DeregisterVirtualAccountV1(&queryParams1)
+	response1, restyResp1, err := client.DeviceOnboardingPnp.DeregisterVirtualAccount(&queryParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing DeregisterVirtualAccountV1", err))
+			"Failure when executing DeregisterVirtualAccount", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItem1 := flattenDeviceOnboardingPnpDeregisterVirtualAccountV1Item(response1)
+	vItem1 := flattenDeviceOnboardingPnpDeregisterVirtualAccountItem(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting DeregisterVirtualAccountV1 response",
+			"Failure when setting DeregisterVirtualAccount response",
 			err))
 		return diags
 	}
@@ -226,7 +226,7 @@ func resourcePnpVirtualAccountDeregisterDelete(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func flattenDeviceOnboardingPnpDeregisterVirtualAccountV1Item(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpDeregisterVirtualAccountV1) []map[string]interface{} {
+func flattenDeviceOnboardingPnpDeregisterVirtualAccountItem(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpDeregisterVirtualAccount) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -237,7 +237,7 @@ func flattenDeviceOnboardingPnpDeregisterVirtualAccountV1Item(item *catalystcent
 	respItem["cco_user"] = item.CcoUser
 	respItem["expiry"] = item.Expiry
 	respItem["auto_sync_period"] = item.AutoSyncPeriod
-	respItem["profile"] = flattenDeviceOnboardingPnpDeregisterVirtualAccountV1ItemProfile(item.Profile)
+	respItem["profile"] = flattenDeviceOnboardingPnpDeregisterVirtualAccountItemProfile(item.Profile)
 	respItem["sync_status"] = item.SyncStatus
 	respItem["sync_start_time"] = item.SyncStartTime
 	respItem["tenant_id"] = item.TenantID
@@ -246,7 +246,7 @@ func flattenDeviceOnboardingPnpDeregisterVirtualAccountV1Item(item *catalystcent
 	}
 }
 
-func flattenDeviceOnboardingPnpDeregisterVirtualAccountV1ItemProfile(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpDeregisterVirtualAccountV1Profile) []map[string]interface{} {
+func flattenDeviceOnboardingPnpDeregisterVirtualAccountItemProfile(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpDeregisterVirtualAccountProfile) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -52,26 +52,40 @@ func dataSourceSecurityThreatsLevelRead(ctx context.Context, d *schema.ResourceD
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetThreatLevelsV1")
+		log.Printf("[DEBUG] Selected method: GetThreatLevels")
 
-		response1, restyResp1, err := client.Devices.GetThreatLevelsV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Devices.GetThreatLevels()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetThreatLevelsV1", err,
-				"Failure at GetThreatLevelsV1, unexpected response", ""))
+				"Failure when executing 2 GetThreatLevels", err,
+				"Failure at GetThreatLevels, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetThreatLevelsV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetThreatLevels", err,
+				"Failure at GetThreatLevels, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDevicesGetThreatLevelsItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetThreatLevelsV1 response",
+				"Failure when setting GetThreatLevels response",
 				err))
 			return diags
 		}
@@ -83,7 +97,7 @@ func dataSourceSecurityThreatsLevelRead(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func flattenDevicesGetThreatLevelsV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetThreatLevelsV1Response) []map[string]interface{} {
+func flattenDevicesGetThreatLevelsItems(items *[]catalystcentersdkgo.ResponseDevicesGetThreatLevelsResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

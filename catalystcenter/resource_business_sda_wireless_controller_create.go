@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -89,18 +89,18 @@ func resourceBusinessSdaWirelessControllerCreateCreate(ctx context.Context, d *s
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestBusinessSdaWirelessControllerCreateAddWLCToFabricDomainV1(ctx, "parameters.0", d)
+	request1 := expandRequestBusinessSdaWirelessControllerCreateAddWLCToFabricDomain(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.FabricWireless.AddWLCToFabricDomainV1(request1)
+	response1, restyResp1, err := client.FabricWireless.AddWLCToFabricDomain(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing AddWLCToFabricDomainV1", err))
+			"Failure when executing AddWLCToFabricDomain", err))
 		return diags
 	}
 
@@ -136,15 +136,15 @@ func resourceBusinessSdaWirelessControllerCreateCreate(ctx context.Context, d *s
 		if response2.Status == "FAILURE" {
 			bapiError := response2.BapiError
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing AddWLCToFabricDomainV1", err,
-				"Failure at AddWLCToFabricDomainV1 execution", bapiError))
+				"Failure when executing AddWLCToFabricDomain", err,
+				"Failure at AddWLCToFabricDomain execution", bapiError))
 			return diags
 		}
 	}
-	vItem1 := flattenFabricWirelessAddWLCToFabricDomainV1Item(response1)
+	vItem1 := flattenFabricWirelessAddWLCToFabricDomainItem(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting AddWLCToFabricDomainV1 response",
+			"Failure when setting AddWLCToFabricDomain response",
 			err))
 		return diags
 	}
@@ -166,8 +166,8 @@ func resourceBusinessSdaWirelessControllerCreateDelete(ctx context.Context, d *s
 	return diags
 }
 
-func expandRequestBusinessSdaWirelessControllerCreateAddWLCToFabricDomainV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestFabricWirelessAddWLCToFabricDomainV1 {
-	request := catalystcentersdkgo.RequestFabricWirelessAddWLCToFabricDomainV1{}
+func expandRequestBusinessSdaWirelessControllerCreateAddWLCToFabricDomain(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestFabricWirelessAddWLCToFabricDomain {
+	request := catalystcentersdkgo.RequestFabricWirelessAddWLCToFabricDomain{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_name")))) {
 		request.DeviceName = interfaceToString(v)
 	}
@@ -177,7 +177,7 @@ func expandRequestBusinessSdaWirelessControllerCreateAddWLCToFabricDomainV1(ctx 
 	return &request
 }
 
-func flattenFabricWirelessAddWLCToFabricDomainV1Item(item *catalystcentersdkgo.ResponseFabricWirelessAddWLCToFabricDomainV1) []map[string]interface{} {
+func flattenFabricWirelessAddWLCToFabricDomainItem(item *catalystcentersdkgo.ResponseFabricWirelessAddWLCToFabricDomain) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

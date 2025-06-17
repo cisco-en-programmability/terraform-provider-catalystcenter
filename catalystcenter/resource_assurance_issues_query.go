@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -341,9 +341,9 @@ func resourceAssuranceIssuesQueryCreate(ctx context.Context, d *schema.ResourceD
 
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
-	request1 := expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersV1(ctx, "parameters.0", d)
+	request1 := expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFilters(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.GetTheDetailsOfIssuesForGivenSetOfFiltersV1HeaderParams{}
+	headerParams1 := catalystcentersdkgo.GetTheDetailsOfIssuesForGivenSetOfFiltersHeaderParams{}
 
 	headerParams1.AcceptLanguage = vAcceptLanguage.(string)
 
@@ -351,23 +351,23 @@ func resourceAssuranceIssuesQueryCreate(ctx context.Context, d *schema.ResourceD
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Issues.GetTheDetailsOfIssuesForGivenSetOfFiltersV1(request1, &headerParams1)
+	response1, restyResp1, err := client.Issues.GetTheDetailsOfIssuesForGivenSetOfFilters(request1, &headerParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing GetTheDetailsOfIssuesForGivenSetOfFiltersV1", err))
+			"Failure when executing GetTheDetailsOfIssuesForGivenSetOfFilters", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItems1 := flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1Items(response1.Response)
+	vItems1 := flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersItems(response1.Response)
 	if err := d.Set("items", vItems1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting GetTheDetailsOfIssuesForGivenSetOfFiltersV1 response",
+			"Failure when setting GetTheDetailsOfIssuesForGivenSetOfFilters response",
 			err))
 		return diags
 	}
@@ -391,8 +391,8 @@ func resourceAssuranceIssuesQueryDelete(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1 {
-	request := catalystcentersdkgo.RequestIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1{}
+func expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetTheDetailsOfIssuesForGivenSetOfFilters {
+	request := catalystcentersdkgo.RequestIssuesGetTheDetailsOfIssuesForGivenSetOfFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -400,13 +400,13 @@ func expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersV
 		request.EndTime = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersV1FiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersFiltersArray(ctx, key+".filters", d)
 	}
 	return &request
 }
 
-func expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1Filters {
-	request := []catalystcentersdkgo.RequestIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1Filters{}
+func expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersFilters {
+	request := []catalystcentersdkgo.RequestIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -417,7 +417,7 @@ func expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersV
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -425,8 +425,8 @@ func expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersV
 	return &request
 }
 
-func expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1Filters {
-	request := catalystcentersdkgo.RequestIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1Filters{}
+func expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersFilters {
+	request := catalystcentersdkgo.RequestIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -440,13 +440,13 @@ func expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersV
 		request.LogicalOperator = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersV1FiltersFiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersFiltersFiltersArray(ctx, key+".filters", d)
 	}
 	return &request
 }
 
-func expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersV1FiltersFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1FiltersFilters {
-	request := []catalystcentersdkgo.RequestIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1FiltersFilters{}
+func expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersFiltersFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersFiltersFilters {
+	request := []catalystcentersdkgo.RequestIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersFiltersFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -457,7 +457,7 @@ func expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersV
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersV1FiltersFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersFiltersFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -465,8 +465,8 @@ func expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersV
 	return &request
 }
 
-func expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersV1FiltersFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1FiltersFilters {
-	request := catalystcentersdkgo.RequestIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1FiltersFilters{}
+func expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersFiltersFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersFiltersFilters {
+	request := catalystcentersdkgo.RequestIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersFiltersFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -479,7 +479,7 @@ func expandRequestAssuranceIssuesQueryGetTheDetailsOfIssuesForGivenSetOfFiltersV
 	return &request
 }
 
-func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1Items(items *[]catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1Response) []map[string]interface{} {
+func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersItems(items *[]catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -500,21 +500,21 @@ func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1Items(items *[]cata
 		respItem["most_recent_occurred_time"] = item.MostRecentOccurredTime
 		respItem["status"] = item.Status
 		respItem["is_global"] = boolPtrToString(item.IsGlobal)
-		respItem["updated_by"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsUpdatedBy(item.UpdatedBy)
-		respItem["updated_time"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsUpdatedTime(item.UpdatedTime)
-		respItem["notes"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsNotes(item.Notes)
-		respItem["site_id"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsSiteID(item.SiteID)
-		respItem["site_hierarchy_id"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsSiteHierarchyID(item.SiteHierarchyID)
-		respItem["site_name"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsSiteName(item.SiteName)
-		respItem["site_hierarchy"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsSiteHierarchy(item.SiteHierarchy)
-		respItem["suggested_actions"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsSuggestedActions(item.SuggestedActions)
-		respItem["additional_attributes"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsAdditionalAttributes(item.AdditionalAttributes)
+		respItem["updated_by"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersItemsUpdatedBy(item.UpdatedBy)
+		respItem["updated_time"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersItemsUpdatedTime(item.UpdatedTime)
+		respItem["notes"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersItemsNotes(item.Notes)
+		respItem["site_id"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersItemsSiteID(item.SiteID)
+		respItem["site_hierarchy_id"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersItemsSiteHierarchyID(item.SiteHierarchyID)
+		respItem["site_name"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersItemsSiteName(item.SiteName)
+		respItem["site_hierarchy"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersItemsSiteHierarchy(item.SiteHierarchy)
+		respItem["suggested_actions"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersItemsSuggestedActions(item.SuggestedActions)
+		respItem["additional_attributes"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersItemsAdditionalAttributes(item.AdditionalAttributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsUpdatedBy(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ResponseUpdatedBy) interface{} {
+func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersItemsUpdatedBy(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersResponseUpdatedBy) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -524,7 +524,7 @@ func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsUpdatedBy(item
 
 }
 
-func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsUpdatedTime(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ResponseUpdatedTime) interface{} {
+func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersItemsUpdatedTime(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersResponseUpdatedTime) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -534,7 +534,7 @@ func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsUpdatedTime(it
 
 }
 
-func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsNotes(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ResponseNotes) interface{} {
+func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersItemsNotes(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersResponseNotes) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -544,7 +544,7 @@ func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsNotes(item *ca
 
 }
 
-func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsSiteID(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ResponseSiteID) interface{} {
+func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersItemsSiteID(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersResponseSiteID) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -554,7 +554,7 @@ func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsSiteID(item *c
 
 }
 
-func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsSiteHierarchyID(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ResponseSiteHierarchyID) interface{} {
+func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersItemsSiteHierarchyID(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersResponseSiteHierarchyID) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -564,7 +564,7 @@ func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsSiteHierarchyI
 
 }
 
-func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsSiteName(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ResponseSiteName) interface{} {
+func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersItemsSiteName(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersResponseSiteName) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -574,7 +574,7 @@ func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsSiteName(item 
 
 }
 
-func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsSiteHierarchy(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ResponseSiteHierarchy) interface{} {
+func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersItemsSiteHierarchy(item *catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersResponseSiteHierarchy) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -584,7 +584,7 @@ func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsSiteHierarchy(
 
 }
 
-func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsSuggestedActions(items *[]catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ResponseSuggestedActions) []map[string]interface{} {
+func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersItemsSuggestedActions(items *[]catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersResponseSuggestedActions) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -592,13 +592,13 @@ func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsSuggestedActio
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["message"] = item.Message
-		respItem["steps"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsSuggestedActionsSteps(item.Steps)
+		respItem["steps"] = flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersItemsSuggestedActionsSteps(item.Steps)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsSuggestedActionsSteps(items *[]catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ResponseSuggestedActionsSteps) []interface{} {
+func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersItemsSuggestedActionsSteps(items *[]catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersResponseSuggestedActionsSteps) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -610,7 +610,7 @@ func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsSuggestedActio
 	return respItems
 }
 
-func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ItemsAdditionalAttributes(items *[]catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersV1ResponseAdditionalAttributes) []map[string]interface{} {
+func flattenIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersItemsAdditionalAttributes(items *[]catalystcentersdkgo.ResponseIssuesGetTheDetailsOfIssuesForGivenSetOfFiltersResponseAdditionalAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

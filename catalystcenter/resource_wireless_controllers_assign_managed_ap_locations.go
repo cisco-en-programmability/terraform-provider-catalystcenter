@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -11,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -22,9 +23,9 @@ func resourceWirelessControllersAssignManagedApLocations() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs create operation on Wireless.
 
-- This data source action allows user to assign Managed AP Locations for WLC by device ID. The payload should always be
-a complete list. The Managed AP Locations included in the payload will be fully processed for both addition and
-deletion.
+- This data source action allows user to assign Managed AP Locations for IOS-XE Wireless supported devices by device ID.
+The payload should always be a complete list. The Managed AP Locations included in the payload will be fully processed
+for both addition and deletion.
 `,
 
 		CreateContext: resourceWirelessControllersAssignManagedApLocationsCreate,
@@ -109,18 +110,18 @@ func resourceWirelessControllersAssignManagedApLocationsCreate(ctx context.Conte
 	vDeviceID := resourceItem["device_id"]
 
 	vvDeviceID := vDeviceID.(string)
-	request1 := expandRequestWirelessControllersAssignManagedApLocationsAssignManagedApLocationsForWLCV1(ctx, "parameters.0", d)
+	request1 := expandRequestWirelessControllersAssignManagedApLocationsAssignManagedApLocationsForWLC(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Wireless.AssignManagedApLocationsForWLCV1(vvDeviceID, request1)
+	response1, restyResp1, err := client.Wireless.AssignManagedApLocationsForWLC(vvDeviceID, request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing AssignManagedApLocationsForWLCV1", err))
+			"Failure when executing AssignManagedApLocationsForWLC", err))
 		return diags
 	}
 
@@ -128,7 +129,7 @@ func resourceWirelessControllersAssignManagedApLocationsCreate(ctx context.Conte
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing AssignManagedAPLocationsForWLCV1", err))
+			"Failure when executing AssignManagedAPLocationsForWLC", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -155,14 +156,14 @@ func resourceWirelessControllersAssignManagedApLocationsCreate(ctx context.Conte
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing AssignManagedAPLocationsForWLCV1", err1))
+				"Failure when executing AssignManagedAPLocationsForWLC", err1))
 			return diags
 		}
 	}
@@ -170,10 +171,10 @@ func resourceWirelessControllersAssignManagedApLocationsCreate(ctx context.Conte
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenWirelessAssignManagedApLocationsForWLCV1Item(response1.Response)
+	vItem1 := flattenWirelessAssignManagedApLocationsForWLCItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting AssignManagedApLocationsForWLCV1 response",
+			"Failure when setting AssignManagedApLocationsForWLC response",
 			err))
 		return diags
 	}
@@ -194,8 +195,8 @@ func resourceWirelessControllersAssignManagedApLocationsDelete(ctx context.Conte
 	return diags
 }
 
-func expandRequestWirelessControllersAssignManagedApLocationsAssignManagedApLocationsForWLCV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessAssignManagedApLocationsForWLCV1 {
-	request := catalystcentersdkgo.RequestWirelessAssignManagedApLocationsForWLCV1{}
+func expandRequestWirelessControllersAssignManagedApLocationsAssignManagedApLocationsForWLC(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessAssignManagedApLocationsForWLC {
+	request := catalystcentersdkgo.RequestWirelessAssignManagedApLocationsForWLC{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".primary_managed_aplocations_site_ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".primary_managed_aplocations_site_ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".primary_managed_aplocations_site_ids")))) {
 		request.PrimaryManagedApLocationsSiteIDs = interfaceToSliceString(v)
 	}
@@ -205,7 +206,7 @@ func expandRequestWirelessControllersAssignManagedApLocationsAssignManagedApLoca
 	return &request
 }
 
-func flattenWirelessAssignManagedApLocationsForWLCV1Item(item *catalystcentersdkgo.ResponseWirelessAssignManagedApLocationsForWLCV1Response) []map[string]interface{} {
+func flattenWirelessAssignManagedApLocationsForWLCItem(item *catalystcentersdkgo.ResponseWirelessAssignManagedApLocationsForWLCResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

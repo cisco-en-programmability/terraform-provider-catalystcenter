@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -27,7 +27,7 @@ func dataSourceDiagnosticValidationWorkflowsCount() *schema.Resource {
 				Optional: true,
 			},
 			"run_status": &schema.Schema{
-				Description: `runStatus query parameter. Execution status of the workflow. If the workflow is successfully submitted, runStatus is *PENDING*. If the workflow execution has started, runStatus is *IN_PROGRESS*. If the workflow executed is completed with all validations executed, runStatus is *COMPLETED*. If the workflow execution fails while running validations, runStatus is *FAILED*.
+				Description: `runStatus query parameter. Execution status of the workflow. If the workflow is successfully submitted, runStatus is **PENDING**. If the workflow execution has started, runStatus is **IN_PROGRESS**. If the workflow executed is completed with all validations executed, runStatus is **COMPLETED**. If the workflow execution fails while running validations, runStatus is **FAILED**.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -68,8 +68,8 @@ func dataSourceDiagnosticValidationWorkflowsCountRead(ctx context.Context, d *sc
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesTheCountOfValidationWorkflowsV1")
-		queryParams1 := catalystcentersdkgo.RetrievesTheCountOfValidationWorkflowsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: RetrievesTheCountOfValidationWorkflows")
+		queryParams1 := catalystcentersdkgo.RetrievesTheCountOfValidationWorkflowsQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -81,24 +81,38 @@ func dataSourceDiagnosticValidationWorkflowsCountRead(ctx context.Context, d *sc
 			queryParams1.RunStatus = vRunStatus.(string)
 		}
 
-		response1, restyResp1, err := client.HealthAndPerformance.RetrievesTheCountOfValidationWorkflowsV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.HealthAndPerformance.RetrievesTheCountOfValidationWorkflows(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesTheCountOfValidationWorkflowsV1", err,
-				"Failure at RetrievesTheCountOfValidationWorkflowsV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesTheCountOfValidationWorkflows", err,
+				"Failure at RetrievesTheCountOfValidationWorkflows, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenHealthAndPerformanceRetrievesTheCountOfValidationWorkflowsV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesTheCountOfValidationWorkflows", err,
+				"Failure at RetrievesTheCountOfValidationWorkflows, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenHealthAndPerformanceRetrievesTheCountOfValidationWorkflowsItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesTheCountOfValidationWorkflowsV1 response",
+				"Failure when setting RetrievesTheCountOfValidationWorkflows response",
 				err))
 			return diags
 		}
@@ -110,7 +124,7 @@ func dataSourceDiagnosticValidationWorkflowsCountRead(ctx context.Context, d *sc
 	return diags
 }
 
-func flattenHealthAndPerformanceRetrievesTheCountOfValidationWorkflowsV1Item(item *catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesTheCountOfValidationWorkflowsV1Response) []map[string]interface{} {
+func flattenHealthAndPerformanceRetrievesTheCountOfValidationWorkflowsItem(item *catalystcentersdkgo.ResponseHealthAndPerformanceRetrievesTheCountOfValidationWorkflowsResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -1,13 +1,13 @@
 
 resource "catalystcenter_device_reboot_apreboot" "example" {
-    provider = catalystcenter
+  provider = catalystcenter
+ 
+  parameters {
 
-    parameters {
-
-      ap_mac_addresses = ["string"]
-    }
+    ap_mac_addresses = ["string"]
+  }
 }
 
 output "catalystcenter_device_reboot_apreboot_example" {
-    value = catalystcenter_device_reboot_apreboot.example
+  value = catalystcenter_device_reboot_apreboot.example
 }

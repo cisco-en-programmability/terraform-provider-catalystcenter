@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -82,8 +82,8 @@ func dataSourceSdaLayer2VirtualNetworksCountRead(ctx context.Context, d *schema.
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetLayer2VirtualNetworkCountV1")
-		queryParams1 := catalystcentersdkgo.GetLayer2VirtualNetworkCountV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetLayer2VirtualNetworkCount")
+		queryParams1 := catalystcentersdkgo.GetLayer2VirtualNetworkCountQueryParams{}
 
 		if okFabricID {
 			queryParams1.FabricID = vFabricID.(string)
@@ -101,24 +101,38 @@ func dataSourceSdaLayer2VirtualNetworksCountRead(ctx context.Context, d *schema.
 			queryParams1.AssociatedLayer3VirtualNetworkName = vAssociatedLayer3VirtualNetworkName.(string)
 		}
 
-		response1, restyResp1, err := client.Sda.GetLayer2VirtualNetworkCountV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sda.GetLayer2VirtualNetworkCount(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetLayer2VirtualNetworkCountV1", err,
-				"Failure at GetLayer2VirtualNetworkCountV1, unexpected response", ""))
+				"Failure when executing 2 GetLayer2VirtualNetworkCount", err,
+				"Failure at GetLayer2VirtualNetworkCount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetLayer2VirtualNetworkCountV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetLayer2VirtualNetworkCount", err,
+				"Failure at GetLayer2VirtualNetworkCount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSdaGetLayer2VirtualNetworkCountItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetLayer2VirtualNetworkCountV1 response",
+				"Failure when setting GetLayer2VirtualNetworkCount response",
 				err))
 			return diags
 		}
@@ -130,7 +144,7 @@ func dataSourceSdaLayer2VirtualNetworksCountRead(ctx context.Context, d *schema.
 	return diags
 }
 
-func flattenSdaGetLayer2VirtualNetworkCountV1Item(item *catalystcentersdkgo.ResponseSdaGetLayer2VirtualNetworkCountV1Response) []map[string]interface{} {
+func flattenSdaGetLayer2VirtualNetworkCountItem(item *catalystcentersdkgo.ResponseSdaGetLayer2VirtualNetworkCountResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -74,8 +74,8 @@ func resourceLicenseDevice() *schema.Resource {
 			},
 			"parameters": &schema.Schema{
 				Type:     schema.TypeList,
-				Required: true,
-				MaxItems: 1,
+				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 
@@ -116,7 +116,7 @@ func resourceLicenseDeviceCreate(ctx context.Context, d *schema.ResourceData, m 
 	vvSmartAccountID := interfaceToString(vSmartAccountID)
 	vVirtualAccountName := resourceItem["virtual_account_name"]
 	vvVirtualAccountName := interfaceToString(vVirtualAccountName)
-	request1 := expandRequestLicenseDeviceChangeVirtualAccountV1(ctx, "parameters.0", d)
+	request1 := expandRequestLicenseDeviceChangeVirtualAccount(ctx, "parameters.0", d)
 	response1, err := searchLicensesSmartAccountDetails(m, vvVirtualAccountName, vvSmartAccountID)
 
 	if err != nil || response1 != nil {
@@ -202,7 +202,7 @@ func resourceLicenseDeviceRead(ctx context.Context, d *schema.ResourceData, m in
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		//TODO FOR DNAC
+		//TODO FOR CATALYST
 
 		vItem1 := flattenLicensesSmartAccountDetailsItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
@@ -235,7 +235,7 @@ func resourceLicenseDeviceUpdate(ctx context.Context, d *schema.ResourceData, m 
 	}
 
 	if d.HasChange("parameters") {
-		request1 := expandRequestLicenseDeviceDeviceRegistrationV1(ctx, "parameters.0", d)
+		request1 := expandRequestLicenseDeviceDeviceRegistration(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.Licenses.DeviceRegistration(vVirtualAccountName, request1)
 
@@ -331,8 +331,9 @@ func resourceLicenseDeviceDelete(ctx context.Context, d *schema.ResourceData, m 
 	d.SetId("")
 	return diags
 }
-func expandRequestLicenseDeviceChangeVirtualAccountV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLicensesChangeVirtualAccountV1 {
-	request := catalystcentersdkgo.RequestLicensesChangeVirtualAccountV1{}
+
+func expandRequestLicenseDeviceChangeVirtualAccount(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLicensesChangeVirtualAccount {
+	request := catalystcentersdkgo.RequestLicensesChangeVirtualAccount{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_uuids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_uuids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_uuids")))) {
 		request.DeviceUUIDs = interfaceToSliceString(v)
 	}
@@ -342,8 +343,8 @@ func expandRequestLicenseDeviceChangeVirtualAccountV1(ctx context.Context, key s
 	return &request
 }
 
-func expandRequestLicenseDeviceDeviceRegistrationV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLicensesDeviceRegistrationV1 {
-	request := catalystcentersdkgo.RequestLicensesDeviceRegistrationV1{}
+func expandRequestLicenseDeviceDeviceRegistration(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLicensesDeviceRegistration {
+	request := catalystcentersdkgo.RequestLicensesDeviceRegistration{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_uuids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_uuids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_uuids")))) {
 		request.DeviceUUIDs = interfaceToSliceString(v)
 	}
@@ -353,8 +354,8 @@ func expandRequestLicenseDeviceDeviceRegistrationV1(ctx context.Context, key str
 	return &request
 }
 
-func expandRequestLicenseDeviceDeregistrationDeviceDeregistration(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLicensesDeviceDeregistrationV1 {
-	request := catalystcentersdkgo.RequestLicensesDeviceDeregistrationV1{}
+func expandRequestLicenseDeviceDeregistrationDeviceDeregistration(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLicensesDeviceDeregistration {
+	request := catalystcentersdkgo.RequestLicensesDeviceDeregistration{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_uuids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_uuids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_uuids")))) {
 		request.DeviceUUIDs = interfaceToSliceString(v)
 	}
@@ -365,11 +366,11 @@ func expandRequestLicenseDeviceDeregistrationDeviceDeregistration(ctx context.Co
 	return &request
 }
 
-func searchLicensesSmartAccountDetails(m interface{}, vName string, vID string) (*catalystcentersdkgo.ResponseLicensesSmartAccountDetailsV1Response, error) {
+func searchLicensesSmartAccountDetails(m interface{}, vName string, vID string) (*catalystcentersdkgo.ResponseLicensesSmartAccountDetailsResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseLicensesSmartAccountDetailsV1Response
-	var ite *catalystcentersdkgo.ResponseLicensesSmartAccountDetailsV1
+	var foundItem *catalystcentersdkgo.ResponseLicensesSmartAccountDetailsResponse
+	var ite *catalystcentersdkgo.ResponseLicensesSmartAccountDetails
 	ite, _, err = client.Licenses.SmartAccountDetails()
 	if err != nil {
 		return foundItem, err
@@ -382,7 +383,7 @@ func searchLicensesSmartAccountDetails(m interface{}, vName string, vID string) 
 	for _, item := range itemsCopy {
 		// Call get by _ method and set value to foundItem and return
 		if item.Name == vName && item.ID == vID {
-			var getItem *catalystcentersdkgo.ResponseLicensesSmartAccountDetailsV1Response
+			var getItem *catalystcentersdkgo.ResponseLicensesSmartAccountDetailsResponse
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

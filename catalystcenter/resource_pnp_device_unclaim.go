@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -89,27 +89,27 @@ func resourcePnpDeviceUnclaimCreate(ctx context.Context, d *schema.ResourceData,
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestPnpDeviceUnclaimUnClaimDeviceV1(ctx, "parameters.0", d)
+	request1 := expandRequestPnpDeviceUnclaimUnClaimDevice(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.DeviceOnboardingPnp.UnClaimDeviceV1(request1)
+	response1, restyResp1, err := client.DeviceOnboardingPnp.UnClaimDevice(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing UnClaimDeviceV1", err))
+			"Failure when executing UnClaimDevice", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItem1 := flattenDeviceOnboardingPnpUnClaimDeviceV1Item(response1)
+	vItem1 := flattenDeviceOnboardingPnpUnClaimDeviceItem(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting UnClaimDeviceV1 response",
+			"Failure when setting UnClaimDevice response",
 			err))
 		return diags
 	}
@@ -133,21 +133,21 @@ func resourcePnpDeviceUnclaimDelete(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func expandRequestPnpDeviceUnclaimUnClaimDeviceV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUnClaimDeviceV1 {
-	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUnClaimDeviceV1{}
+func expandRequestPnpDeviceUnclaimUnClaimDevice(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDeviceOnboardingPnpUnClaimDevice {
+	request := catalystcentersdkgo.RequestDeviceOnboardingPnpUnClaimDevice{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_id_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_id_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_id_list")))) {
 		request.DeviceIDList = interfaceToSliceString(v)
 	}
 	return &request
 }
 
-func flattenDeviceOnboardingPnpUnClaimDeviceV1Item(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpUnClaimDeviceV1) []map[string]interface{} {
+func flattenDeviceOnboardingPnpUnClaimDeviceItem(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpUnClaimDevice) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["json_array_response"] = flattenDeviceOnboardingPnpUnClaimDeviceV1ItemJSONArrayResponse(item.JSONArrayResponse)
-	respItem["json_response"] = flattenDeviceOnboardingPnpUnClaimDeviceV1ItemJSONResponse(item.JSONResponse)
+	respItem["json_array_response"] = flattenDeviceOnboardingPnpUnClaimDeviceItemJSONArrayResponse(item.JSONArrayResponse)
+	respItem["json_response"] = flattenDeviceOnboardingPnpUnClaimDeviceItemJSONResponse(item.JSONResponse)
 	respItem["message"] = item.Message
 	respItem["status_code"] = item.StatusCode
 	return []map[string]interface{}{
@@ -155,7 +155,7 @@ func flattenDeviceOnboardingPnpUnClaimDeviceV1Item(item *catalystcentersdkgo.Res
 	}
 }
 
-func flattenDeviceOnboardingPnpUnClaimDeviceV1ItemJSONArrayResponse(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpUnClaimDeviceV1JSONArrayResponse) []interface{} {
+func flattenDeviceOnboardingPnpUnClaimDeviceItemJSONArrayResponse(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpUnClaimDeviceJSONArrayResponse) []interface{} {
 	if items == nil {
 		return nil
 	}
@@ -167,7 +167,7 @@ func flattenDeviceOnboardingPnpUnClaimDeviceV1ItemJSONArrayResponse(items *[]cat
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpUnClaimDeviceV1ItemJSONResponse(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpUnClaimDeviceV1JSONResponse) interface{} {
+func flattenDeviceOnboardingPnpUnClaimDeviceItemJSONResponse(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpUnClaimDeviceJSONResponse) interface{} {
 	if item == nil {
 		return nil
 	}

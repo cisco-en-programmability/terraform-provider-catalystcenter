@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -256,7 +256,7 @@ func resourceEventSubscriptionSyslog() *schema.Resource {
 				},
 			},
 			"parameters": &schema.Schema{
-				Description: `Array of RequestEventManagementCreateSyslogEventSubscriptionV1`,
+				Description: `Array of RequestEventManagementCreateSyslogEventSubscription`,
 				Type:        schema.TypeList,
 				Optional:    true,
 				Computed:    true,
@@ -434,14 +434,14 @@ func resourceEventSubscriptionSyslogCreate(ctx context.Context, d *schema.Resour
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters.0.payload"))
-	request1 := expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1(ctx, "parameters.0", d)
+	request1 := expandRequestEventSubscriptionSyslogCreateSyslogEventSubscription(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vName := resourceItem["name"]
 	vvName := interfaceToString(vName)
 	vSubscriptionID := resourceItem["subscription_id"]
 	vvSubscriptionID := interfaceToString(vSubscriptionID)
-	queryParamImport := catalystcentersdkgo.GetSyslogEventSubscriptionsV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetSyslogEventSubscriptionsQueryParams{}
 	queryParamImport.Name = vvName
 	item2, err := searchEventManagementGetSyslogEventSubscriptions(m, queryParamImport, vvSubscriptionID)
 	if err == nil && item2 != nil {
@@ -463,7 +463,7 @@ func resourceEventSubscriptionSyslogCreate(ctx context.Context, d *schema.Resour
 		return diags
 	}
 	// TODO REVIEW
-	queryParamValidate := catalystcentersdkgo.GetSyslogEventSubscriptionsV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetSyslogEventSubscriptionsQueryParams{}
 	queryParamValidate.Name = vvName
 	item3, err := searchEventManagementGetSyslogEventSubscriptions(m, queryParamValidate, "")
 	if err != nil || item3 == nil {
@@ -493,18 +493,18 @@ func resourceEventSubscriptionSyslogRead(ctx context.Context, d *schema.Resource
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetSyslogEventSubscriptions")
-		queryParams1 := catalystcentersdkgo.GetSyslogEventSubscriptionsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetSyslogEventSubscriptionsQueryParams{}
 		queryParams1.Name = vName
 		item1, err := searchEventManagementGetSyslogEventSubscriptions(m, queryParams1, vvID)
 		if err != nil || item1 == nil {
 			d.SetId("")
 			return diags
 		}
-		items := catalystcentersdkgo.ResponseEventManagementGetSyslogEventSubscriptionsV1{
+		items := catalystcentersdkgo.ResponseEventManagementGetSyslogEventSubscriptions{
 			*item1,
 		}
 		// Review flatten function used
-		vItem1 := flattenEventManagementGetSyslogEventSubscriptionsV1Items(&items)
+		vItem1 := flattenEventManagementGetSyslogEventSubscriptionsItems(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetSyslogEventSubscriptions search response",
@@ -522,7 +522,7 @@ func resourceEventSubscriptionSyslogUpdate(ctx context.Context, d *schema.Resour
 	var diags diag.Diagnostics
 
 	if d.HasChange("parameters") {
-		request1 := expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1(ctx, "parameters.0", d)
+		request1 := expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscription(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.EventManagement.UpdateSyslogEventSubscription(request1)
 		if err != nil || response1 == nil {
@@ -555,9 +555,10 @@ func resourceEventSubscriptionSyslogDelete(ctx context.Context, d *schema.Resour
 
 	return diags
 }
-func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementCreateSyslogEventSubscriptionV1 {
-	request := catalystcentersdkgo.RequestEventManagementCreateSyslogEventSubscriptionV1{}
-	if v := expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemArray(ctx, key+".payload", d); v != nil {
+
+func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscription(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementCreateSyslogEventSubscription {
+	request := catalystcentersdkgo.RequestEventManagementCreateSyslogEventSubscription{}
+	if v := expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -566,8 +567,8 @@ func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1(ctx con
 	return &request
 }
 
-func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionV1 {
-	request := []catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionV1{}
+func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscription {
+	request := []catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscription{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -578,7 +579,7 @@ func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemArra
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -589,8 +590,8 @@ func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemArra
 	return &request
 }
 
-func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionV1 {
-	request := catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionV1{}
+func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscription {
+	request := catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscription{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_id")))) {
 		request.SubscriptionID = interfaceToString(v)
 	}
@@ -604,10 +605,10 @@ func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1Item(ctx
 		request.Description = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_endpoints")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_endpoints")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_endpoints")))) {
-		request.SubscriptionEndpoints = expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemSubscriptionEndpointsArray(ctx, key+".subscription_endpoints", d)
+		request.SubscriptionEndpoints = expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionItemSubscriptionEndpointsArray(ctx, key+".subscription_endpoints", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filter")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filter")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filter")))) {
-		request.Filter = expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemFilter(ctx, key+".filter.0", d)
+		request.Filter = expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionItemFilter(ctx, key+".filter.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -615,8 +616,8 @@ func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1Item(ctx
 	return &request
 }
 
-func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemSubscriptionEndpointsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionV1SubscriptionEndpoints {
-	request := []catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionV1SubscriptionEndpoints{}
+func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionItemSubscriptionEndpointsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionSubscriptionEndpoints {
+	request := []catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionSubscriptionEndpoints{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -627,7 +628,7 @@ func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemSubs
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemSubscriptionEndpoints(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionItemSubscriptionEndpoints(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -638,13 +639,13 @@ func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemSubs
 	return &request
 }
 
-func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemSubscriptionEndpoints(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionV1SubscriptionEndpoints {
-	request := catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionV1SubscriptionEndpoints{}
+func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionItemSubscriptionEndpoints(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionSubscriptionEndpoints {
+	request := catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionSubscriptionEndpoints{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".instance_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".instance_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".instance_id")))) {
 		request.InstanceID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_details")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_details")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_details")))) {
-		request.SubscriptionDetails = expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemSubscriptionEndpointsSubscriptionDetails(ctx, key+".subscription_details.0", d)
+		request.SubscriptionDetails = expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionItemSubscriptionEndpointsSubscriptionDetails(ctx, key+".subscription_details.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -652,8 +653,8 @@ func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemSubs
 	return &request
 }
 
-func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemSubscriptionEndpointsSubscriptionDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionV1SubscriptionEndpointsSubscriptionDetails {
-	request := catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionV1SubscriptionEndpointsSubscriptionDetails{}
+func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionItemSubscriptionEndpointsSubscriptionDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionSubscriptionEndpointsSubscriptionDetails {
+	request := catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionSubscriptionEndpointsSubscriptionDetails{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".connector_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".connector_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".connector_type")))) {
 		request.ConnectorType = interfaceToString(v)
 	}
@@ -663,13 +664,13 @@ func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemSubs
 	return &request
 }
 
-func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemFilter(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionV1Filter {
-	request := catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionV1Filter{}
+func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionItemFilter(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionFilter {
+	request := catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionFilter{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".event_ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".event_ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".event_ids")))) {
 		request.EventIDs = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".domains_subdomains")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".domains_subdomains")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".domains_subdomains")))) {
-		request.DomainsSubdomains = expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemFilterDomainsSubdomainsArray(ctx, key+".domains_subdomains", d)
+		request.DomainsSubdomains = expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionItemFilterDomainsSubdomainsArray(ctx, key+".domains_subdomains", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".types")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".types")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".types")))) {
 		request.Types = interfaceToSliceString(v)
@@ -692,8 +693,8 @@ func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemFilt
 	return &request
 }
 
-func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemFilterDomainsSubdomainsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionV1FilterDomainsSubdomains {
-	request := []catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionV1FilterDomainsSubdomains{}
+func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionItemFilterDomainsSubdomainsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionFilterDomainsSubdomains {
+	request := []catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionFilterDomainsSubdomains{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -704,7 +705,7 @@ func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemFilt
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemFilterDomainsSubdomains(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionItemFilterDomainsSubdomains(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -715,8 +716,8 @@ func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemFilt
 	return &request
 }
 
-func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemFilterDomainsSubdomains(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionV1FilterDomainsSubdomains {
-	request := catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionV1FilterDomainsSubdomains{}
+func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionItemFilterDomainsSubdomains(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionFilterDomainsSubdomains {
+	request := catalystcentersdkgo.RequestItemEventManagementCreateSyslogEventSubscriptionFilterDomainsSubdomains{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".domain")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".domain")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".domain")))) {
 		request.Domain = interfaceToString(v)
 	}
@@ -729,9 +730,9 @@ func expandRequestEventSubscriptionSyslogCreateSyslogEventSubscriptionV1ItemFilt
 	return &request
 }
 
-func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateSyslogEventSubscriptionV1 {
-	request := catalystcentersdkgo.RequestEventManagementUpdateSyslogEventSubscriptionV1{}
-	if v := expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscription(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateSyslogEventSubscription {
+	request := catalystcentersdkgo.RequestEventManagementUpdateSyslogEventSubscription{}
+	if v := expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -740,8 +741,8 @@ func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1(ctx con
 	return &request
 }
 
-func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionV1 {
-	request := []catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionV1{}
+func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscription {
+	request := []catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscription{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -752,7 +753,7 @@ func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemArra
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -763,8 +764,8 @@ func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemArra
 	return &request
 }
 
-func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionV1 {
-	request := catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionV1{}
+func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscription {
+	request := catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscription{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_id")))) {
 		request.SubscriptionID = interfaceToString(v)
 	}
@@ -778,10 +779,10 @@ func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1Item(ctx
 		request.Description = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_endpoints")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_endpoints")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_endpoints")))) {
-		request.SubscriptionEndpoints = expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemSubscriptionEndpointsArray(ctx, key+".subscription_endpoints", d)
+		request.SubscriptionEndpoints = expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionItemSubscriptionEndpointsArray(ctx, key+".subscription_endpoints", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filter")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filter")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filter")))) {
-		request.Filter = expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemFilter(ctx, key+".filter.0", d)
+		request.Filter = expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionItemFilter(ctx, key+".filter.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -789,8 +790,8 @@ func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1Item(ctx
 	return &request
 }
 
-func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemSubscriptionEndpointsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionV1SubscriptionEndpoints {
-	request := []catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionV1SubscriptionEndpoints{}
+func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionItemSubscriptionEndpointsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionSubscriptionEndpoints {
+	request := []catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionSubscriptionEndpoints{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -801,7 +802,7 @@ func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemSubs
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemSubscriptionEndpoints(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionItemSubscriptionEndpoints(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -812,13 +813,13 @@ func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemSubs
 	return &request
 }
 
-func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemSubscriptionEndpoints(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionV1SubscriptionEndpoints {
-	request := catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionV1SubscriptionEndpoints{}
+func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionItemSubscriptionEndpoints(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionSubscriptionEndpoints {
+	request := catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionSubscriptionEndpoints{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".instance_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".instance_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".instance_id")))) {
 		request.InstanceID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_details")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_details")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_details")))) {
-		request.SubscriptionDetails = expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemSubscriptionEndpointsSubscriptionDetails(ctx, key+".subscription_details.0", d)
+		request.SubscriptionDetails = expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionItemSubscriptionEndpointsSubscriptionDetails(ctx, key+".subscription_details.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -826,8 +827,8 @@ func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemSubs
 	return &request
 }
 
-func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemSubscriptionEndpointsSubscriptionDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionV1SubscriptionEndpointsSubscriptionDetails {
-	request := catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionV1SubscriptionEndpointsSubscriptionDetails{}
+func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionItemSubscriptionEndpointsSubscriptionDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionSubscriptionEndpointsSubscriptionDetails {
+	request := catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionSubscriptionEndpointsSubscriptionDetails{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".connector_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".connector_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".connector_type")))) {
 		request.ConnectorType = interfaceToString(v)
 	}
@@ -837,13 +838,13 @@ func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemSubs
 	return &request
 }
 
-func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemFilter(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionV1Filter {
-	request := catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionV1Filter{}
+func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionItemFilter(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionFilter {
+	request := catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionFilter{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".event_ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".event_ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".event_ids")))) {
 		request.EventIDs = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".domains_subdomains")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".domains_subdomains")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".domains_subdomains")))) {
-		request.DomainsSubdomains = expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemFilterDomainsSubdomainsArray(ctx, key+".domains_subdomains", d)
+		request.DomainsSubdomains = expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionItemFilterDomainsSubdomainsArray(ctx, key+".domains_subdomains", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".types")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".types")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".types")))) {
 		request.Types = interfaceToSliceString(v)
@@ -866,8 +867,8 @@ func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemFilt
 	return &request
 }
 
-func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemFilterDomainsSubdomainsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionV1FilterDomainsSubdomains {
-	request := []catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionV1FilterDomainsSubdomains{}
+func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionItemFilterDomainsSubdomainsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionFilterDomainsSubdomains {
+	request := []catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionFilterDomainsSubdomains{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -878,7 +879,7 @@ func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemFilt
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemFilterDomainsSubdomains(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionItemFilterDomainsSubdomains(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -889,8 +890,8 @@ func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemFilt
 	return &request
 }
 
-func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemFilterDomainsSubdomains(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionV1FilterDomainsSubdomains {
-	request := catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionV1FilterDomainsSubdomains{}
+func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionItemFilterDomainsSubdomains(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionFilterDomainsSubdomains {
+	request := catalystcentersdkgo.RequestItemEventManagementUpdateSyslogEventSubscriptionFilterDomainsSubdomains{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".domain")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".domain")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".domain")))) {
 		request.Domain = interfaceToString(v)
 	}
@@ -903,11 +904,11 @@ func expandRequestEventSubscriptionSyslogUpdateSyslogEventSubscriptionV1ItemFilt
 	return &request
 }
 
-func searchEventManagementGetSyslogEventSubscriptions(m interface{}, queryParams catalystcentersdkgo.GetSyslogEventSubscriptionsV1QueryParams, vID string) (*catalystcentersdkgo.ResponseItemEventManagementGetSyslogEventSubscriptionsV1, error) {
+func searchEventManagementGetSyslogEventSubscriptions(m interface{}, queryParams catalystcentersdkgo.GetSyslogEventSubscriptionsQueryParams, vID string) (*catalystcentersdkgo.ResponseItemEventManagementGetSyslogEventSubscriptions, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseItemEventManagementGetSyslogEventSubscriptionsV1
-	var ite *catalystcentersdkgo.ResponseEventManagementGetSyslogEventSubscriptionsV1
+	var foundItem *catalystcentersdkgo.ResponseItemEventManagementGetSyslogEventSubscriptions
+	var ite *catalystcentersdkgo.ResponseEventManagementGetSyslogEventSubscriptions
 	if vID != "" {
 		queryParams.Offset = 1
 		nResponse, _, err := client.EventManagement.GetSyslogEventSubscriptions(nil)

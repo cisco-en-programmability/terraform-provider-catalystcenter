@@ -41,7 +41,7 @@ output "catalystcenter_sda_anycast_gateways_example" {
 - `fabric_id` (String) fabricId query parameter. ID of the fabric the anycast gateway is assigned to.
 - `id` (String) id query parameter. ID of the anycast gateway.
 - `ip_pool_name` (String) ipPoolName query parameter. Name of the IP pool associated with the anycast gateways.
-- `limit` (Number) limit query parameter. Maximum number of records to return.
+- `limit` (Number) limit query parameter. Maximum number of records to return. The maximum number of objects supported in a single request is 500.
 - `offset` (Number) offset query parameter. Starting record for pagination.
 - `virtual_network_name` (String) virtualNetworkName query parameter. Name of the virtual network associated with the anycast gateways.
 - `vlan_id` (Number) vlanId query parameter. VLAN ID of the anycast gateways. The allowed range for vlanId is [2-4093] except for reserved VLANs [1002-1005], 2046, and 4094.
@@ -65,8 +65,12 @@ Read-Only:
 - `is_ip_directed_broadcast` (String)
 - `is_layer2_flooding_enabled` (String)
 - `is_multiple_ip_to_mac_addresses` (String)
+- `is_resource_guard_enabled` (String)
 - `is_supplicant_based_extended_node_onboarding` (String)
+- `is_wireless_flooding_enabled` (String)
 - `is_wireless_pool` (String)
+- `layer2_flooding_address` (String)
+- `layer2_flooding_address_assignment` (String)
 - `pool_type` (String)
 - `security_group_name` (String)
 - `tcp_mss_adjustment` (Number)

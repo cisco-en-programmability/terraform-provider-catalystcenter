@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,8 +15,8 @@ func dataSourceWirelessProfilesIDSiteTagsSiteTagID() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Wireless.
 
-- This endpoint retrieves the details of a specific Site Tag associated with a given Wireless Profile. This data
-source requires the id of the Wireless Profile and the siteTagId of the Site Tag.
+- This endpoint retrieves the details of a specific **Site Tag** associated with a given **Wireless Profile**. This data
+source requires the **id** of the **Wireless Profile** and the **siteTagId** of the **Site Tag**.
 `,
 
 		ReadContext: dataSourceWirelessProfilesIDSiteTagsSiteTagIDRead,
@@ -89,30 +89,42 @@ func dataSourceWirelessProfilesIDSiteTagsSiteTagIDRead(ctx context.Context, d *s
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveASpecificSiteTagForAWirelessProfileV1")
+		log.Printf("[DEBUG] Selected method: RetrieveASpecificSiteTagForAWirelessProfile")
 		vvID := vID.(string)
 		vvSiteTagID := vSiteTagID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Wireless.RetrieveASpecificSiteTagForAWirelessProfileV1(vvID, vvSiteTagID)
+		response1, restyResp1, err := client.Wireless.RetrieveASpecificSiteTagForAWirelessProfile(vvID, vvSiteTagID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveASpecificSiteTagForAWirelessProfileV1", err,
-				"Failure at RetrieveASpecificSiteTagForAWirelessProfileV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveASpecificSiteTagForAWirelessProfile", err,
+				"Failure at RetrieveASpecificSiteTagForAWirelessProfile, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessRetrieveASpecificSiteTagForAWirelessProfileV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveASpecificSiteTagForAWirelessProfile", err,
+				"Failure at RetrieveASpecificSiteTagForAWirelessProfile, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenWirelessRetrieveASpecificSiteTagForAWirelessProfileItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveASpecificSiteTagForAWirelessProfileV1 response",
+				"Failure when setting RetrieveASpecificSiteTagForAWirelessProfile response",
 				err))
 			return diags
 		}
@@ -124,7 +136,7 @@ func dataSourceWirelessProfilesIDSiteTagsSiteTagIDRead(ctx context.Context, d *s
 	return diags
 }
 
-func flattenWirelessRetrieveASpecificSiteTagForAWirelessProfileV1Item(item *catalystcentersdkgo.ResponseWirelessRetrieveASpecificSiteTagForAWirelessProfileV1Response) []map[string]interface{} {
+func flattenWirelessRetrieveASpecificSiteTagForAWirelessProfileItem(item *catalystcentersdkgo.ResponseWirelessRetrieveASpecificSiteTagForAWirelessProfileResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -17,7 +17,7 @@ import (
 // resourceAction
 func resourceSiteAssignCredential() *schema.Resource {
 	return &schema.Resource{
-		Description: `It performs create operation on NetworkSettings.
+		Description: `It performs create operation on Sites.
 
 - Assign Device Credential to a site.
 `,
@@ -129,22 +129,22 @@ func resourceSiteAssignCredentialCreate(ctx context.Context, d *schema.ResourceD
 	vPersistbapioutput := resourceItem["persistbapioutput"]
 
 	vvSiteID := vSiteID.(string)
-	request1 := expandRequestSiteAssignCredentialAssignDeviceCredentialToSiteV1(ctx, "parameters.0", d)
+	request1 := expandRequestSiteAssignCredentialAssignDeviceCredentialToSite(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.AssignDeviceCredentialToSiteV1HeaderParams{}
+	headerParams1 := catalystcentersdkgo.AssignDeviceCredentialToSiteHeaderParams{}
 
 	headerParams1.Persistbapioutput = vPersistbapioutput.(string)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.NetworkSettings.AssignDeviceCredentialToSiteV1(vvSiteID, request1, &headerParams1)
+	response1, restyResp1, err := client.NetworkSettings.AssignDeviceCredentialToSite(vvSiteID, request1, &headerParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing AssignDeviceCredentialToSiteV1", err))
+			"Failure when executing AssignDeviceCredentialToSite", err))
 		return diags
 	}
 
@@ -180,8 +180,8 @@ func resourceSiteAssignCredentialCreate(ctx context.Context, d *schema.ResourceD
 		if response2.Status == "FAILURE" {
 			bapiError := response2.BapiError
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing AssignDeviceCredentialToSiteV1", err,
-				"Failure at AssignDeviceCredentialToSiteV1 execution", bapiError))
+				"Failure when executing AssignDeviceCredentialToSite", err,
+				"Failure at AssignDeviceCredentialToSite execution", bapiError))
 			return diags
 		}
 	}
@@ -189,10 +189,10 @@ func resourceSiteAssignCredentialCreate(ctx context.Context, d *schema.ResourceD
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenNetworkSettingsAssignDeviceCredentialToSiteV1Item(response1)
+	vItem1 := flattenSitesAssignDeviceCredentialToSiteItem(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting AssignDeviceCredentialToSiteV1 response",
+			"Failure when setting AssignDeviceCredentialToSite response",
 			err))
 		return diags
 	}
@@ -213,8 +213,8 @@ func resourceSiteAssignCredentialDelete(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func expandRequestSiteAssignCredentialAssignDeviceCredentialToSiteV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsAssignDeviceCredentialToSiteV1 {
-	request := catalystcentersdkgo.RequestNetworkSettingsAssignDeviceCredentialToSiteV1{}
+func expandRequestSiteAssignCredentialAssignDeviceCredentialToSite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsAssignDeviceCredentialToSite {
+	request := catalystcentersdkgo.RequestNetworkSettingsAssignDeviceCredentialToSite{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".cli_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".cli_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".cli_id")))) {
 		request.CliID = interfaceToString(v)
 	}
@@ -236,7 +236,7 @@ func expandRequestSiteAssignCredentialAssignDeviceCredentialToSiteV1(ctx context
 	return &request
 }
 
-func flattenNetworkSettingsAssignDeviceCredentialToSiteV1Item(item *catalystcentersdkgo.ResponseNetworkSettingsAssignDeviceCredentialToSiteV1) []map[string]interface{} {
+func flattenSitesAssignDeviceCredentialToSiteItem(item *catalystcentersdkgo.ResponseNetworkSettingsAssignDeviceCredentialToSite) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

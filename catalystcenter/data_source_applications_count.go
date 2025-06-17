@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -52,26 +52,40 @@ func dataSourceApplicationsCountRead(ctx context.Context, d *schema.ResourceData
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetApplicationsCountV1")
+		log.Printf("[DEBUG] Selected method: GetApplicationsCount")
 
-		response1, restyResp1, err := client.ApplicationPolicy.GetApplicationsCountV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.ApplicationPolicy.GetApplicationsCount()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetApplicationsCountV1", err,
-				"Failure at GetApplicationsCountV1, unexpected response", ""))
+				"Failure when executing 2 GetApplicationsCount", err,
+				"Failure at GetApplicationsCount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenApplicationPolicyGetApplicationsCountV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetApplicationsCount", err,
+				"Failure at GetApplicationsCount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenApplicationPolicyGetApplicationsCountItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetApplicationsCountV1 response",
+				"Failure when setting GetApplicationsCount response",
 				err))
 			return diags
 		}
@@ -83,7 +97,7 @@ func dataSourceApplicationsCountRead(ctx context.Context, d *schema.ResourceData
 	return diags
 }
 
-func flattenApplicationPolicyGetApplicationsCountV1Item(item *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationsCountV1) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationsCountItem(item *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationsCount) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

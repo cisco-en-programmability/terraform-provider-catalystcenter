@@ -3,11 +3,12 @@ package catalystcenter
 import (
 	"context"
 	"errors"
-	"log"
 	"reflect"
 	"time"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	"log"
+
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -17,8 +18,8 @@ func resourceSitesAAASettings() *schema.Resource {
 	return &schema.Resource{
 		Description: `It manages read and update operations on Network Settings.
 
-- Set AAA settings for a site; *null* values indicate that the settings will be inherited from the parent site; empty
-objects (*{}*) indicate that the settings is unset.
+- Set AAA settings for a site; **null** values indicate that the settings will be inherited from the parent site; empty
+objects (**{}**) indicate that the settings is unset.
 `,
 
 		CreateContext: resourceSitesAAASettingsCreate,
@@ -294,7 +295,7 @@ func resourceSitesAAASettingsRead(ctx context.Context, d *schema.ResourceData, m
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: RetrieveAAASettingsForASite")
 		vvID := vID
-		queryParams1 := catalystcentersdkgo.RetrieveAAASettingsForASiteV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrieveAAASettingsForASiteQueryParams{}
 
 		response1, restyResp1, err := client.NetworkSettings.RetrieveAAASettingsForASite(vvID, &queryParams1)
 
@@ -308,7 +309,7 @@ func resourceSitesAAASettingsRead(ctx context.Context, d *schema.ResourceData, m
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenNetworkSettingsRetrieveAAASettingsForASiteV1Item(response1.Response)
+		vItem1 := flattenNetworkSettingsRetrieveAAASettingsForASiteItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrieveAAASettingsForASite response",
@@ -331,7 +332,7 @@ func resourceSitesAAASettingsUpdate(ctx context.Context, d *schema.ResourceData,
 
 	vvID := resourceMap["id"]
 	if d.HasChange("parameters") {
-		request1 := expandRequestSitesAAASettingsSetAAASettingsForASiteV1(ctx, "parameters.0", d)
+		request1 := expandRequestSitesAAASettingsSetAAASettingsForASite(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.NetworkSettings.SetAAASettingsForASite(vvID, request1)
 		if err != nil || response1 == nil {
@@ -390,13 +391,14 @@ func resourceSitesAAASettingsDelete(ctx context.Context, d *schema.ResourceData,
 		"Failure at SitesAAASettingsDelete, unexpected response", ""))
 	return diags
 }
-func expandRequestSitesAAASettingsSetAAASettingsForASiteV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetAAASettingsForASiteV1 {
-	request := catalystcentersdkgo.RequestNetworkSettingsSetAAASettingsForASiteV1{}
+
+func expandRequestSitesAAASettingsSetAAASettingsForASite(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetAAASettingsForASite {
+	request := catalystcentersdkgo.RequestNetworkSettingsSetAAASettingsForASite{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".aaa_network")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".aaa_network")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".aaa_network")))) {
-		request.AAANetwork = expandRequestSitesAAASettingsSetAAASettingsForASiteV1AAANetwork(ctx, key+".aaa_network.0", d)
+		request.AAANetwork = expandRequestSitesAAASettingsSetAAASettingsForASiteAAANetwork(ctx, key+".aaa_network.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".aaa_client")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".aaa_client")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".aaa_client")))) {
-		request.AAAClient = expandRequestSitesAAASettingsSetAAASettingsForASiteV1AAAClient(ctx, key+".aaa_client.0", d)
+		request.AAAClient = expandRequestSitesAAASettingsSetAAASettingsForASiteAAAClient(ctx, key+".aaa_client.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -404,8 +406,8 @@ func expandRequestSitesAAASettingsSetAAASettingsForASiteV1(ctx context.Context, 
 	return &request
 }
 
-func expandRequestSitesAAASettingsSetAAASettingsForASiteV1AAANetwork(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetAAASettingsForASiteV1AAANetwork {
-	request := catalystcentersdkgo.RequestNetworkSettingsSetAAASettingsForASiteV1AAANetwork{}
+func expandRequestSitesAAASettingsSetAAASettingsForASiteAAANetwork(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetAAASettingsForASiteAAANetwork {
+	request := catalystcentersdkgo.RequestNetworkSettingsSetAAASettingsForASiteAAANetwork{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".server_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".server_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".server_type")))) {
 		request.ServerType = interfaceToString(v)
 	}
@@ -430,8 +432,8 @@ func expandRequestSitesAAASettingsSetAAASettingsForASiteV1AAANetwork(ctx context
 	return &request
 }
 
-func expandRequestSitesAAASettingsSetAAASettingsForASiteV1AAAClient(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetAAASettingsForASiteV1AAAClient {
-	request := catalystcentersdkgo.RequestNetworkSettingsSetAAASettingsForASiteV1AAAClient{}
+func expandRequestSitesAAASettingsSetAAASettingsForASiteAAAClient(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsSetAAASettingsForASiteAAAClient {
+	request := catalystcentersdkgo.RequestNetworkSettingsSetAAASettingsForASiteAAAClient{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".server_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".server_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".server_type")))) {
 		request.ServerType = interfaceToString(v)
 	}

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -91,8 +91,8 @@ func dataSourceApplicationSetsRead(ctx context.Context, d *schema.ResourceData, 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetApplicationSetsV1")
-		queryParams1 := catalystcentersdkgo.GetApplicationSetsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetApplicationSets")
+		queryParams1 := catalystcentersdkgo.GetApplicationSetsQueryParams{}
 
 		if okOffset {
 			queryParams1.Offset = vOffset.(float64)
@@ -104,24 +104,38 @@ func dataSourceApplicationSetsRead(ctx context.Context, d *schema.ResourceData, 
 			queryParams1.Name = vName.(string)
 		}
 
-		response1, restyResp1, err := client.ApplicationPolicy.GetApplicationSetsV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.ApplicationPolicy.GetApplicationSets(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetApplicationSetsV1", err,
-				"Failure at GetApplicationSetsV1, unexpected response", ""))
+				"Failure when executing 2 GetApplicationSets", err,
+				"Failure at GetApplicationSets, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenApplicationPolicyGetApplicationSetsV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetApplicationSets", err,
+				"Failure at GetApplicationSets, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenApplicationPolicyGetApplicationSetsItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetApplicationSetsV1 response",
+				"Failure when setting GetApplicationSets response",
 				err))
 			return diags
 		}
@@ -133,7 +147,7 @@ func dataSourceApplicationSetsRead(ctx context.Context, d *schema.ResourceData, 
 	return diags
 }
 
-func flattenApplicationPolicyGetApplicationSetsV1Items(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationSetsV1Response) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationSetsItems(items *[]catalystcentersdkgo.ResponseApplicationPolicyGetApplicationSetsResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -141,14 +155,14 @@ func flattenApplicationPolicyGetApplicationSetsV1Items(items *[]catalystcentersd
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["id"] = item.ID
-		respItem["identity_source"] = flattenApplicationPolicyGetApplicationSetsV1ItemsIDentitySource(item.IDentitySource)
+		respItem["identity_source"] = flattenApplicationPolicyGetApplicationSetsItemsIDentitySource(item.IDentitySource)
 		respItem["name"] = item.Name
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenApplicationPolicyGetApplicationSetsV1ItemsIDentitySource(item *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationSetsV1ResponseIDentitySource) []map[string]interface{} {
+func flattenApplicationPolicyGetApplicationSetsItemsIDentitySource(item *catalystcentersdkgo.ResponseApplicationPolicyGetApplicationSetsResponseIDentitySource) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

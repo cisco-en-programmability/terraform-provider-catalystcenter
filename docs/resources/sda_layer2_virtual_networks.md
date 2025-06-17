@@ -24,7 +24,7 @@ It manages create, read, update and delete operations on SDA.
 ```terraform
 resource "catalystcenter_sda_layer2_virtual_networks" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     associated_layer3_virtual_network_name = "string"
@@ -32,6 +32,10 @@ resource "catalystcenter_sda_layer2_virtual_networks" "example" {
     id                                     = "string"
     is_fabric_enabled_wireless             = "false"
     is_multiple_ip_to_mac_addresses        = "false"
+    is_resource_guard_enabled              = "false"
+    is_wireless_flooding_enabled           = "false"
+    layer2_flooding_address                = "string"
+    layer2_flooding_address_assignment     = "string"
     traffic_type                           = "string"
     vlan_id                                = 1
     vlan_name                              = "string"
@@ -48,7 +52,7 @@ output "catalystcenter_sda_layer2_virtual_networks_example" {
 
 ### Optional
 
-- `parameters` (Block List) Array of RequestSdaAddLayer2VirtualNetworksV1 (see [below for nested schema](#nestedblock--parameters))
+- `parameters` (Block List) Array of RequestSdaAddLayer2VirtualNetworks (see [below for nested schema](#nestedblock--parameters))
 
 ### Read-Only
 
@@ -61,7 +65,7 @@ output "catalystcenter_sda_layer2_virtual_networks_example" {
 
 Optional:
 
-- `payload` (Block List) Array of RequestApplicationPolicyCreateApplication (see [below for nested schema](#nestedblock--parameters--payload))
+- `payload` (Block List) Array of RequestSdaAddLayer2VirtualNetworks (see [below for nested schema](#nestedblock--parameters--payload))
 
 <a id="nestedblock--parameters--payload"></a>
 ### Nested Schema for `parameters.payload`
@@ -72,6 +76,11 @@ Optional:
 - `fabric_id` (String) ID of the fabric this layer 2 virtual network is to be assigned to.
 - `id` (String) ID of the layer 2 virtual network (updating this field is not allowed).
 - `is_fabric_enabled_wireless` (String) Set to true to enable wireless. Default is false.
+- `is_multiple_ip_to_mac_addresses` (String) Set to true to enable multiple IP-to-MAC addresses (Wireless Bridged-Network Virtual Machine). This field defaults to false when associated with a layer 3 virtual network and cannot be used when not associated with a layer 3 virtual network.
+- `is_resource_guard_enabled` (String) Set to true to enable Resource Guard.
+- `is_wireless_flooding_enabled` (String) Set to true to enable wireless flooding. If there is an associated layer 3 virtual network, wireless flooding will default to false and can only be true when fabric-enabled wireless is also true. If there is no associated layer 3 virtual network, wireless flooding will match fabric-enabled wireless.
+- `layer2_flooding_address` (String) The flooding address to use for layer 2 flooding. The IP address must be in the 239.0.0.0/8 range. This property is applicable only when the flooding address source is set to "CUSTOM".
+- `layer2_flooding_address_assignment` (String) The source of the flooding address for layer 2 flooding. "SHARED" means that the layer 2 virtual network will inherit the flooding address from the fabric. "CUSTOM" allows the layer 2 virtual network to use a different flooding address (defaults to "SHARED").
 - `traffic_type` (String) The type of traffic that is served.
 - `vlan_id` (Number) ID of the VLAN of the layer 2 virtual network. Allowed VLAN range is 2-4093 except for reserved VLANs 1002-1005, and 2046. If deploying on a fabric zone, this vlanId must match the vlanId of the corresponding layer 2 virtual network on the fabric site.
 - `vlan_name` (String) Name of the VLAN of the layer 2 virtual network. Must contain only alphanumeric characters, underscores, and hyphens.
@@ -87,6 +96,11 @@ Read-Only:
 - `fabric_id` (String)
 - `id` (String)
 - `is_fabric_enabled_wireless` (String)
+- `is_multiple_ip_to_mac_addresses` (String)
+- `is_resource_guard_enabled` (String)
+- `is_wireless_flooding_enabled` (String)
+- `layer2_flooding_address` (String)
+- `layer2_flooding_address_assignment` (String)
 - `traffic_type` (String)
 - `vlan_id` (Number)
 - `vlan_name` (String)

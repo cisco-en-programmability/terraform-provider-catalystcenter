@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -60,7 +60,7 @@ func resourceSecurityThreatsRogueAllowedList() *schema.Resource {
 				},
 			},
 			"parameters": &schema.Schema{
-				Description: `Array of RequestDevicesAddAllowedMacAddressV1`,
+				Description: `Array of RequestDevicesAddAllowedMacAddress`,
 				Type:        schema.TypeList,
 				Optional:    true,
 				Computed:    true,
@@ -92,37 +92,37 @@ func resourceSecurityThreatsRogueAllowedListCreate(ctx context.Context, d *schem
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestSecurityThreatsRogueAllowedListAddAllowedMacAddressV1(ctx, "parameters", d)
+	request1 := expandRequestSecurityThreatsRogueAllowedListAddAllowedMacAddress(ctx, "parameters", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vMacAddress := resourceItem["mac_address"]
 	vvMacAddress := interfaceToString(vMacAddress)
-	queryParamImport := catalystcentersdkgo.GetAllowedMacAddressV1QueryParams{}
-	item2, err := searchDevicesGetAllowedMacAddressV1(m, queryParamImport, vvMacAddress)
+	queryParamImport := catalystcentersdkgo.GetAllowedMacAddressQueryParams{}
+	item2, err := searchDevicesGetAllowedMacAddress(m, queryParamImport, vvMacAddress)
 	if err != nil || item2 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["mac_address"] = item2.MacAddress
 		d.SetId(joinResourceID(resourceMap))
 		return resourceSecurityThreatsRogueAllowedListRead(ctx, d, m)
 	}
-	resp1, restyResp1, err := client.Devices.AddAllowedMacAddressV1(request1)
+	resp1, restyResp1, err := client.Devices.AddAllowedMacAddress(request1)
 	if err != nil || resp1 == nil {
 		if restyResp1 != nil {
 			diags = append(diags, diagErrorWithResponse(
-				"Failure when executing AddAllowedMacAddressV1", err, restyResp1.String()))
+				"Failure when executing AddAllowedMacAddress", err, restyResp1.String()))
 			return diags
 		}
 		diags = append(diags, diagError(
-			"Failure when executing AddAllowedMacAddressV1", err))
+			"Failure when executing AddAllowedMacAddress", err))
 		return diags
 	}
 	// TODO REVIEW
-	queryParamValidate := catalystcentersdkgo.GetAllowedMacAddressV1QueryParams{}
-	item3, err := searchDevicesGetAllowedMacAddressV1(m, queryParamValidate, vvMacAddress)
+	queryParamValidate := catalystcentersdkgo.GetAllowedMacAddressQueryParams{}
+	item3, err := searchDevicesGetAllowedMacAddress(m, queryParamValidate, vvMacAddress)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing AddAllowedMacAddressV1", err,
-			"Failure at AddAllowedMacAddressV1, unexpected response", ""))
+			"Failure when executing AddAllowedMacAddress", err,
+			"Failure at AddAllowedMacAddress, unexpected response", ""))
 		return diags
 	}
 
@@ -142,23 +142,23 @@ func resourceSecurityThreatsRogueAllowedListRead(ctx context.Context, d *schema.
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAllowedMacAddressV1")
-		queryParams1 := catalystcentersdkgo.GetAllowedMacAddressV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetAllowedMacAddress")
+		queryParams1 := catalystcentersdkgo.GetAllowedMacAddressQueryParams{}
 
 		// has_unknown_response: None
 
-		item1, err := searchDevicesGetAllowedMacAddressV1(m, queryParams1, vvMacAddress)
+		item1, err := searchDevicesGetAllowedMacAddress(m, queryParams1, vvMacAddress)
 		if err != nil || item1 == nil {
 			d.SetId("")
 			return diags
 		}
-		var items catalystcentersdkgo.ResponseDevicesGetAllowedMacAddressV1
+		var items catalystcentersdkgo.ResponseDevicesGetAllowedMacAddress
 		items = append(items, *item1)
 		// Review flatten function used
-		vItem1 := flattenDevicesGetAllowedMacAddressV1Items(&items)
+		vItem1 := flattenDevicesGetAllowedMacAddressItems(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAllowedMacAddressV1 search response",
+				"Failure when setting GetAllowedMacAddress search response",
 				err))
 			return diags
 		}
@@ -181,18 +181,18 @@ func resourceSecurityThreatsRogueAllowedListDelete(ctx context.Context, d *schem
 	resourceMap := separateResourceID(resourceID)
 	vvMacAddress := resourceMap["mac_address"]
 
-	response1, restyResp1, err := client.Devices.RemoveAllowedMacAddressV1(vvMacAddress)
+	response1, restyResp1, err := client.Devices.RemoveAllowedMacAddress(vvMacAddress)
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] resty response for delete operation => %v", restyResp1.String())
 			diags = append(diags, diagErrorWithAltAndResponse(
-				"Failure when executing RemoveAllowedMacAddressV1", err, restyResp1.String(),
-				"Failure at RemoveAllowedMacAddressV1, unexpected response", ""))
+				"Failure when executing RemoveAllowedMacAddress", err, restyResp1.String(),
+				"Failure at RemoveAllowedMacAddress, unexpected response", ""))
 			return diags
 		}
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing RemoveAllowedMacAddressV1", err,
-			"Failure at RemoveAllowedMacAddressV1, unexpected response", ""))
+			"Failure when executing RemoveAllowedMacAddress", err,
+			"Failure at RemoveAllowedMacAddress, unexpected response", ""))
 		return diags
 	}
 
@@ -204,9 +204,10 @@ func resourceSecurityThreatsRogueAllowedListDelete(ctx context.Context, d *schem
 
 	return diags
 }
-func expandRequestSecurityThreatsRogueAllowedListAddAllowedMacAddressV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesAddAllowedMacAddressV1 {
-	request := catalystcentersdkgo.RequestDevicesAddAllowedMacAddressV1{}
-	if v := expandRequestSecurityThreatsRogueAllowedListAddAllowedMacAddressV1ItemArray(ctx, key+".payload", d); v != nil {
+
+func expandRequestSecurityThreatsRogueAllowedListAddAllowedMacAddress(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesAddAllowedMacAddress {
+	request := catalystcentersdkgo.RequestDevicesAddAllowedMacAddress{}
+	if v := expandRequestSecurityThreatsRogueAllowedListAddAllowedMacAddressItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -215,8 +216,8 @@ func expandRequestSecurityThreatsRogueAllowedListAddAllowedMacAddressV1(ctx cont
 	return &request
 }
 
-func expandRequestSecurityThreatsRogueAllowedListAddAllowedMacAddressV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDevicesAddAllowedMacAddressV1 {
-	request := []catalystcentersdkgo.RequestItemDevicesAddAllowedMacAddressV1{}
+func expandRequestSecurityThreatsRogueAllowedListAddAllowedMacAddressItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDevicesAddAllowedMacAddress {
+	request := []catalystcentersdkgo.RequestItemDevicesAddAllowedMacAddress{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -227,7 +228,7 @@ func expandRequestSecurityThreatsRogueAllowedListAddAllowedMacAddressV1ItemArray
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSecurityThreatsRogueAllowedListAddAllowedMacAddressV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSecurityThreatsRogueAllowedListAddAllowedMacAddressItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -238,8 +239,8 @@ func expandRequestSecurityThreatsRogueAllowedListAddAllowedMacAddressV1ItemArray
 	return &request
 }
 
-func expandRequestSecurityThreatsRogueAllowedListAddAllowedMacAddressV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDevicesAddAllowedMacAddressV1 {
-	request := catalystcentersdkgo.RequestItemDevicesAddAllowedMacAddressV1{}
+func expandRequestSecurityThreatsRogueAllowedListAddAllowedMacAddressItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDevicesAddAllowedMacAddress {
+	request := catalystcentersdkgo.RequestItemDevicesAddAllowedMacAddress{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".mac_address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".mac_address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".mac_address")))) {
 		request.MacAddress = interfaceToString(v)
 	}
@@ -252,13 +253,13 @@ func expandRequestSecurityThreatsRogueAllowedListAddAllowedMacAddressV1Item(ctx 
 	return &request
 }
 
-func searchDevicesGetAllowedMacAddressV1(m interface{}, queryParams catalystcentersdkgo.GetAllowedMacAddressV1QueryParams, vID string) (*catalystcentersdkgo.ResponseItemDevicesGetAllowedMacAddressV1, error) {
+func searchDevicesGetAllowedMacAddress(m interface{}, queryParams catalystcentersdkgo.GetAllowedMacAddressQueryParams, vID string) (*catalystcentersdkgo.ResponseItemDevicesGetAllowedMacAddress, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseItemDevicesGetAllowedMacAddressV1
+	var foundItem *catalystcentersdkgo.ResponseItemDevicesGetAllowedMacAddress
 	if vID != "" {
 		queryParams.Offset = 1
-		nResponse, _, err := client.Devices.GetAllowedMacAddressV1(nil)
+		nResponse, _, err := client.Devices.GetAllowedMacAddress(nil)
 		maxPageSize := len(*nResponse)
 		for len(*nResponse) > 0 {
 			for _, item := range *nResponse {
@@ -269,7 +270,7 @@ func searchDevicesGetAllowedMacAddressV1(m interface{}, queryParams catalystcent
 			}
 			queryParams.Limit = float64(maxPageSize)
 			queryParams.Offset += float64(maxPageSize)
-			nResponse, _, err = client.Devices.GetAllowedMacAddressV1(&queryParams)
+			nResponse, _, err = client.Devices.GetAllowedMacAddress(&queryParams)
 		}
 		return nil, err
 	}

@@ -20,7 +20,7 @@ It manages create, read and delete operations on Software Image Management (SWIM
 ```terraform
 resource "catalystcenter_golden_tag_image" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     device_family_identifier = "string"

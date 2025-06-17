@@ -4,16 +4,16 @@ page_title: "catalystcenter_network_devices_id Data Source - terraform-provider-
 subcategory: ""
 description: |-
   It performs read operation on Devices.
-  API to fetch the details of network device using the id. Use the /dna/intent/api/v1/networkDevices/query API for
-  advanced filtering. The API supports views to fetch only the required fields. Refer features for more details.
+  API to fetch the details of network device using the id. Use the /dna/intent/api/v1/networkDevices/query API
+  for advanced filtering. The API supports views to fetch only the required fields. Refer features for more details.
 ---
 
 # catalystcenter_network_devices_id (Data Source)
 
 It performs read operation on Devices.
 
-- API to fetch the details of network device using the id. Use the /dna/intent/api/v1/networkDevices/query API for
-advanced filtering. The API supports views to fetch only the required fields. Refer features for more details.
+- API to fetch the details of network device using the **id**. Use the **/dna/intent/api/v1/networkDevices/query** API
+for advanced filtering. The API supports views to fetch only the required fields. Refer features for more details.
 
 ## Example Usage
 

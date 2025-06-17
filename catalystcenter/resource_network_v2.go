@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -311,7 +311,7 @@ server settings.
 											Schema: map[string]*schema.Schema{
 
 												"configure_dnac_ip": &schema.Schema{
-													Description: `Configuration DNAC IP for SNMP Server (eg: true)
+													Description: `Configuration CATALYST IP for SNMP Server (eg: true)
 `,
 													// Type:        schema.TypeBool,
 													Type:         schema.TypeString,
@@ -340,7 +340,7 @@ server settings.
 											Schema: map[string]*schema.Schema{
 
 												"configure_dnac_ip": &schema.Schema{
-													Description: `Configuration DNAC IP for syslog server (eg: true)
+													Description: `Configuration CATALYST IP for syslog server (eg: true)
 `,
 													// Type:        schema.TypeBool,
 													Type:         schema.TypeString,
@@ -560,6 +560,7 @@ func resourceNetworkV2Delete(ctx context.Context, d *schema.ResourceData, m inte
 
 	return diags
 }
+
 func expandRequestNetworkV2CreateNetworkV2(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateNetworkV2 {
 	request := catalystcentersdkgo.RequestNetworkSettingsCreateNetworkV2{}
 	request.Settings = expandRequestNetworkV2CreateNetworkV2Settings(ctx, key, d)

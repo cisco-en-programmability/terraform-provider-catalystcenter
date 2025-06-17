@@ -13,7 +13,8 @@ description: |-
   the Cisco IMC documentation https://www.cisco.com/c/en/us/support/servers-unified-computing/ucs-c-series-integrated-
   management-controller/series.html#~tab-documents
   The Cisco IMC configuration is relevant only for Catalyst Center deployments based on UCS appliances. In cases where
-  Cisco IMC configuration is not supported by the deployment, these APIs will respond with a 404 Not Found status code.
+  Cisco IMC configuration is not supported by the deployment, these APIs will respond with a 404 Not Found status
+  code.
 ---
 
 # catalystcenter_cisco_imcs_id (Data Source)
@@ -29,7 +30,8 @@ More data about the Cisco IMC can be retrieved using the APIs exposed directly b
 the Cisco IMC documentation https://www.cisco.com/c/en/us/support/servers-unified-computing/ucs-c-series-integrated-
 management-controller/series.html#~tab-documents
 The Cisco IMC configuration is relevant only for Catalyst Center deployments based on UCS appliances. In cases where
-Cisco IMC configuration is not supported by the deployment, these APIs will respond with a 404 Not Found status code.
+Cisco IMC configuration is not supported by the deployment, these APIs will respond with a **404 Not Found** status
+code.
 
 ## Example Usage
 

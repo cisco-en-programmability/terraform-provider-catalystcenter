@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -35,8 +35,18 @@ func resourceTemplatesTemplateIDNetworkProfilesForSites() *schema.Resource {
 				Computed: true,
 			},
 			"item": &schema.Schema{
-				Type:     schema.TypeString,
+				Type:     schema.TypeList,
 				Computed: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+
+						"object": &schema.Schema{
+							Description: `object`,
+							Type:        schema.TypeString,
+							Computed:    true,
+						},
+					},
+				},
 			},
 			"parameters": &schema.Schema{
 				Type:     schema.TypeList,
@@ -46,14 +56,14 @@ func resourceTemplatesTemplateIDNetworkProfilesForSites() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 
 						"profile_id": &schema.Schema{
-							Description: `The id of the network profile, retrievable from /intent/api/v1/networkProfilesForSites
+							Description: `The id of the network profile, retrievable from **/intent/api/v1/networkProfilesForSites**
 `,
 							Type:     schema.TypeString,
 							Optional: true,
 							Computed: true,
 						},
 						"template_id": &schema.Schema{
-							Description: `templateId path parameter. The id of the template, retrievable from GET /intent/api/v1/templates
+							Description: `templateId path parameter. The **id** of the template, retrievable from **GET /intent/api/v1/templates**
 `,
 							Type:     schema.TypeString,
 							Required: true,
@@ -71,14 +81,14 @@ func resourceTemplatesTemplateIDNetworkProfilesForSitesCreate(ctx context.Contex
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestTemplatesTemplateIDNetworkProfilesForSitesAttachNetworkProfileToADayNCliTemplateV1(ctx, "parameters.0", d)
+	request1 := expandRequestTemplatesTemplateIDNetworkProfilesForSitesAttachNetworkProfileToADayNCliTemplate(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vTemplateID := resourceItem["template_id"]
 	vvTemplateID := interfaceToString(vTemplateID)
 	vProfileID := resourceItem["profile_id"]
 	vvProfileID := interfaceToString(vProfileID)
-	item2, err := client.ConfigurationTemplates.RetrieveTheNetworkProfilesAttachedToACLITemplate(vvTemplateID)
+	_, item2, err := client.ConfigurationTemplates.RetrieveTheNetworkProfilesAttachedToACLITemplate(vvTemplateID)
 	if err != nil || item2 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["template_id"] = vvTemplateID
@@ -125,7 +135,7 @@ func resourceTemplatesTemplateIDNetworkProfilesForSitesCreate(ctx context.Contex
 			return diags
 		}
 	}
-	item3, err := client.ConfigurationTemplates.RetrieveTheNetworkProfilesAttachedToACLITemplate(vvTemplateID)
+	_, item3, err := client.ConfigurationTemplates.RetrieveTheNetworkProfilesAttachedToACLITemplate(vvTemplateID)
 	if err != nil || item3 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["template_id"] = vvTemplateID
@@ -133,7 +143,7 @@ func resourceTemplatesTemplateIDNetworkProfilesForSitesCreate(ctx context.Contex
 		d.SetId(joinResourceID(resourceMap))
 		return resourceTemplatesTemplateIDNetworkProfilesForSitesRead(ctx, d, m)
 	}
-	item4, err := client.ConfigurationTemplates.RetrieveTheNetworkProfilesAttachedToACLITemplate(vvTemplateID)
+	_, item4, err := client.ConfigurationTemplates.RetrieveTheNetworkProfilesAttachedToACLITemplate(vvTemplateID)
 	if err != nil || item4 == nil {
 		diags = append(diags, diagErrorWithAlt(
 			"Failure when executing AttachNetworkProfileToADayNCliTemplate", err,
@@ -163,7 +173,7 @@ func resourceTemplatesTemplateIDNetworkProfilesForSitesRead(ctx context.Context,
 		log.Printf("[DEBUG] Selected method: RetrieveTheNetworkProfilesAttachedToACLITemplate")
 		vvTemplateID := vTemplateID
 
-		restyResp1, err := client.ConfigurationTemplates.RetrieveTheNetworkProfilesAttachedToACLITemplate(vvTemplateID)
+		_, restyResp1, err := client.ConfigurationTemplates.RetrieveTheNetworkProfilesAttachedToACLITemplate(vvTemplateID)
 
 		if err != nil || restyResp1 == nil {
 			if restyResp1 != nil {
@@ -194,12 +204,13 @@ func resourceTemplatesTemplateIDNetworkProfilesForSitesUpdate(ctx context.Contex
 
 func resourceTemplatesTemplateIDNetworkProfilesForSitesDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	// NOTE: Unable to delete TemplatesTemplateIDNetworkProfilesForSites on Dna Center
+	// NOTE: Unable to delete TemplatesTemplateIDNetworkProfilesForSites on Catalyst Center
 	//       Returning empty diags to delete it on Terraform
 	return diags
 }
-func expandRequestTemplatesTemplateIDNetworkProfilesForSitesAttachNetworkProfileToADayNCliTemplateV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesAttachNetworkProfileToADayNCliTemplateV1 {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesAttachNetworkProfileToADayNCliTemplateV1{}
+
+func expandRequestTemplatesTemplateIDNetworkProfilesForSitesAttachNetworkProfileToADayNCliTemplate(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesAttachNetworkProfileToADayNCliTemplate {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesAttachNetworkProfileToADayNCliTemplate{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".profile_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".profile_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".profile_id")))) {
 		request.ProfileID = interfaceToString(v)
 	}

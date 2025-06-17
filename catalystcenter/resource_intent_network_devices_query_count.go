@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -86,7 +86,7 @@ func resourceIntentNetworkDevicesQueryCount() *schema.Resource {
 													Computed: true,
 												},
 												"value": &schema.Schema{
-													Description: `Value to filter by. For in operator, the value should be a list of values.
+													Description: `Value to filter by. For **in** operator, the value should be a list of values.
 `,
 													Type:     schema.TypeString, //TEST,
 													Optional: true,
@@ -118,24 +118,15 @@ func resourceIntentNetworkDevicesQueryCountCreate(ctx context.Context, d *schema
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestIntentNetworkDevicesQueryCountCountTheNumberOfNetworkDevicesWithFiltersV1(ctx, "parameters.0", d)
+	request1 := expandRequestIntentNetworkDevicesQueryCountCountTheNumberOfNetworkDevicesWithFilters(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Devices.CountTheNumberOfNetworkDevicesWithFiltersV1(request1)
+	response1, restyResp1, err := client.Devices.CountTheNumberOfNetworkDevicesWithFilters(request1)
 
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-
-	vItem1 := flattenDevicesCountTheNumberOfNetworkDevicesWithFiltersV1Item(response1.Response)
-	if err := d.Set("item", vItem1); err != nil {
-		diags = append(diags, diagError(
-			"Failure when setting CountTheNumberOfNetworkDevicesWithFiltersV1 response",
-			err))
-		return diags
-	}
-	//Analizar verificacion.
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
@@ -146,41 +137,53 @@ func resourceIntentNetworkDevicesQueryCountCreate(ctx context.Context, d *schema
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+	vItem1 := flattenDevicesCountTheNumberOfNetworkDevicesWithFiltersItem(response1.Response)
+	if err := d.Set("item", vItem1); err != nil {
+		diags = append(diags, diagError(
+			"Failure when setting CountTheNumberOfNetworkDevicesWithFilters response",
+			err))
+		return diags
+	}
+
 	d.SetId(getUnixTimeString())
 	return diags
+
+	//Analizar verificacion.
+
 }
 func resourceIntentNetworkDevicesQueryCountRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 	return diags
 }
 
 func resourceIntentNetworkDevicesQueryCountDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 	return diags
 }
 
-func expandRequestIntentNetworkDevicesQueryCountCountTheNumberOfNetworkDevicesWithFiltersV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesCountTheNumberOfNetworkDevicesWithFiltersV1 {
-	request := catalystcentersdkgo.RequestDevicesCountTheNumberOfNetworkDevicesWithFiltersV1{}
-	request.Filter = expandRequestIntentNetworkDevicesQueryCountCountTheNumberOfNetworkDevicesWithFiltersV1Filter(ctx, key, d)
+func expandRequestIntentNetworkDevicesQueryCountCountTheNumberOfNetworkDevicesWithFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesCountTheNumberOfNetworkDevicesWithFilters {
+	request := catalystcentersdkgo.RequestDevicesCountTheNumberOfNetworkDevicesWithFilters{}
+	request.Filter = expandRequestIntentNetworkDevicesQueryCountCountTheNumberOfNetworkDevicesWithFiltersFilter(ctx, key, d)
 	return &request
 }
 
-func expandRequestIntentNetworkDevicesQueryCountCountTheNumberOfNetworkDevicesWithFiltersV1Filter(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesCountTheNumberOfNetworkDevicesWithFiltersV1Filter {
-	request := catalystcentersdkgo.RequestDevicesCountTheNumberOfNetworkDevicesWithFiltersV1Filter{}
+func expandRequestIntentNetworkDevicesQueryCountCountTheNumberOfNetworkDevicesWithFiltersFilter(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesCountTheNumberOfNetworkDevicesWithFiltersFilter {
+	request := catalystcentersdkgo.RequestDevicesCountTheNumberOfNetworkDevicesWithFiltersFilter{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".logical_operator")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".logical_operator")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".logical_operator")))) {
 		request.LogicalOperator = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestIntentNetworkDevicesQueryCountCountTheNumberOfNetworkDevicesWithFiltersV1FilterFiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestIntentNetworkDevicesQueryCountCountTheNumberOfNetworkDevicesWithFiltersFilterFiltersArray(ctx, key+".filters", d)
 	}
 	return &request
 }
 
-func expandRequestIntentNetworkDevicesQueryCountCountTheNumberOfNetworkDevicesWithFiltersV1FilterFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesCountTheNumberOfNetworkDevicesWithFiltersV1FilterFilters {
-	request := []catalystcentersdkgo.RequestDevicesCountTheNumberOfNetworkDevicesWithFiltersV1FilterFilters{}
+func expandRequestIntentNetworkDevicesQueryCountCountTheNumberOfNetworkDevicesWithFiltersFilterFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesCountTheNumberOfNetworkDevicesWithFiltersFilterFilters {
+	request := []catalystcentersdkgo.RequestDevicesCountTheNumberOfNetworkDevicesWithFiltersFilterFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -191,7 +194,7 @@ func expandRequestIntentNetworkDevicesQueryCountCountTheNumberOfNetworkDevicesWi
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestIntentNetworkDevicesQueryCountCountTheNumberOfNetworkDevicesWithFiltersV1FilterFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestIntentNetworkDevicesQueryCountCountTheNumberOfNetworkDevicesWithFiltersFilterFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -199,8 +202,8 @@ func expandRequestIntentNetworkDevicesQueryCountCountTheNumberOfNetworkDevicesWi
 	return &request
 }
 
-func expandRequestIntentNetworkDevicesQueryCountCountTheNumberOfNetworkDevicesWithFiltersV1FilterFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesCountTheNumberOfNetworkDevicesWithFiltersV1FilterFilters {
-	request := catalystcentersdkgo.RequestDevicesCountTheNumberOfNetworkDevicesWithFiltersV1FilterFilters{}
+func expandRequestIntentNetworkDevicesQueryCountCountTheNumberOfNetworkDevicesWithFiltersFilterFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesCountTheNumberOfNetworkDevicesWithFiltersFilterFilters {
+	request := catalystcentersdkgo.RequestDevicesCountTheNumberOfNetworkDevicesWithFiltersFilterFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -208,18 +211,18 @@ func expandRequestIntentNetworkDevicesQueryCountCountTheNumberOfNetworkDevicesWi
 		request.Operator = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".value")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".value")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".value")))) {
-		request.Value = expandRequestIntentNetworkDevicesQueryCountCountTheNumberOfNetworkDevicesWithFiltersV1FilterFiltersValue(ctx, key+".value.0", d)
+		request.Value = expandRequestIntentNetworkDevicesQueryCountCountTheNumberOfNetworkDevicesWithFiltersFilterFiltersValue(ctx, key+".value.0", d)
 	}
 	return &request
 }
 
-func expandRequestIntentNetworkDevicesQueryCountCountTheNumberOfNetworkDevicesWithFiltersV1FilterFiltersValue(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesCountTheNumberOfNetworkDevicesWithFiltersV1FilterFiltersValue {
-	var request catalystcentersdkgo.RequestDevicesCountTheNumberOfNetworkDevicesWithFiltersV1FilterFiltersValue
+func expandRequestIntentNetworkDevicesQueryCountCountTheNumberOfNetworkDevicesWithFiltersFilterFiltersValue(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesCountTheNumberOfNetworkDevicesWithFiltersFilterFiltersValue {
+	var request catalystcentersdkgo.RequestDevicesCountTheNumberOfNetworkDevicesWithFiltersFilterFiltersValue
 	request = d.Get(fixKeyAccess(key))
 	return &request
 }
 
-func flattenDevicesCountTheNumberOfNetworkDevicesWithFiltersV1Item(item *catalystcentersdkgo.ResponseDevicesCountTheNumberOfNetworkDevicesWithFiltersV1Response) []map[string]interface{} {
+func flattenDevicesCountTheNumberOfNetworkDevicesWithFiltersItem(item *catalystcentersdkgo.ResponseDevicesCountTheNumberOfNetworkDevicesWithFiltersResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

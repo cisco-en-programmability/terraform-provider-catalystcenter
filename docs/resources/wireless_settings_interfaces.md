@@ -22,7 +22,7 @@ It manages create, read, update and delete operations on Wireless.
 ```terraform
 resource "catalystcenter_wireless_settings_interfaces" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     id             = "string"

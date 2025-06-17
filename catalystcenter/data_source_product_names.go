@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -153,8 +153,8 @@ func dataSourceProductNamesRead(ctx context.Context, d *schema.ResourceData, m i
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesTheListOfNetworkDeviceProductNamesV1")
-		queryParams1 := catalystcentersdkgo.RetrievesTheListOfNetworkDeviceProductNamesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: RetrievesTheListOfNetworkDeviceProductNames")
+		queryParams1 := catalystcentersdkgo.RetrievesTheListOfNetworkDeviceProductNamesQueryParams{}
 
 		if okProductName {
 			queryParams1.ProductName = vProductName.(string)
@@ -171,24 +171,36 @@ func dataSourceProductNamesRead(ctx context.Context, d *schema.ResourceData, m i
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.SoftwareImageManagementSwim.RetrievesTheListOfNetworkDeviceProductNamesV1(&queryParams1)
+		response1, restyResp1, err := client.SoftwareImageManagementSwim.RetrievesTheListOfNetworkDeviceProductNames(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesTheListOfNetworkDeviceProductNamesV1", err,
-				"Failure at RetrievesTheListOfNetworkDeviceProductNamesV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesTheListOfNetworkDeviceProductNames", err,
+				"Failure at RetrievesTheListOfNetworkDeviceProductNames, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSoftwareImageManagementSwimRetrievesTheListOfNetworkDeviceProductNamesV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesTheListOfNetworkDeviceProductNames", err,
+				"Failure at RetrievesTheListOfNetworkDeviceProductNames, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSoftwareImageManagementSwimRetrievesTheListOfNetworkDeviceProductNamesItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesTheListOfNetworkDeviceProductNamesV1 response",
+				"Failure when setting RetrievesTheListOfNetworkDeviceProductNames response",
 				err))
 			return diags
 		}
@@ -198,29 +210,41 @@ func dataSourceProductNamesRead(ctx context.Context, d *schema.ResourceData, m i
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: RetrieveNetworkDeviceProductNameV1")
+		log.Printf("[DEBUG] Selected method: RetrieveNetworkDeviceProductName")
 		vvProductNameOrdinal := vProductNameOrdinal.(float64)
 
 		// has_unknown_response: None
 
-		response2, restyResp2, err := client.SoftwareImageManagementSwim.RetrieveNetworkDeviceProductNameV1(vvProductNameOrdinal)
+		response2, restyResp2, err := client.SoftwareImageManagementSwim.RetrieveNetworkDeviceProductName(vvProductNameOrdinal)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveNetworkDeviceProductNameV1", err,
-				"Failure at RetrieveNetworkDeviceProductNameV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveNetworkDeviceProductName", err,
+				"Failure at RetrieveNetworkDeviceProductName, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenSoftwareImageManagementSwimRetrieveNetworkDeviceProductNameV1Item(response2.Response)
+		if err != nil || response2 == nil {
+			if restyResp2 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveNetworkDeviceProductName", err,
+				"Failure at RetrieveNetworkDeviceProductName, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
+
+		vItem2 := flattenSoftwareImageManagementSwimRetrieveNetworkDeviceProductNameItem(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveNetworkDeviceProductNameV1 response",
+				"Failure when setting RetrieveNetworkDeviceProductName response",
 				err))
 			return diags
 		}
@@ -232,7 +256,7 @@ func dataSourceProductNamesRead(ctx context.Context, d *schema.ResourceData, m i
 	return diags
 }
 
-func flattenSoftwareImageManagementSwimRetrievesTheListOfNetworkDeviceProductNamesV1Items(items *[]catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrievesTheListOfNetworkDeviceProductNamesV1Response) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimRetrievesTheListOfNetworkDeviceProductNamesItems(items *[]catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrievesTheListOfNetworkDeviceProductNamesResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -248,7 +272,7 @@ func flattenSoftwareImageManagementSwimRetrievesTheListOfNetworkDeviceProductNam
 	return respItems
 }
 
-func flattenSoftwareImageManagementSwimRetrieveNetworkDeviceProductNameV1Item(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrieveNetworkDeviceProductNameV1Response) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimRetrieveNetworkDeviceProductNameItem(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimRetrieveNetworkDeviceProductNameResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -13,6 +13,7 @@ It performs create operation on Site Design.
 
 - Position or reposition the Access Points on the map.
 
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -23,26 +24,26 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_floors_floor_id_access_point_positions_bulk_change" "example" {
   provider = catalystcenter
   floor_id = "string"
-  parameters {
+  parameters = [{
 
     id = "string"
-    position {
+    position = [{
 
       x = 1.0
       y = 1.0
       z = 1.0
-    }
-    radios {
+    }]
+    radios = [{
 
-      antenna {
+      antenna = [{
 
         azimuth   = 1
         elevation = 1
         name      = "string"
-      }
+      }]
       id = "string"
-    }
-  }
+    }]
+  }]
 }
 
 output "catalystcenter_floors_floor_id_access_point_positions_bulk_change_example" {
@@ -108,7 +109,7 @@ Optional:
 
 - `azimuth` (Number) Angle of the antenna, measured relative to the x axis, clockwise. The azimuth range is from 0 through 360
 - `elevation` (Number) Elevation of the antenna. The elevation range is from -90 through 90
-- `name` (String) Antenna type for this Access Point. Use /dna/intent/api/v1/maps/supported-access-points to find supported Antennas for a particualr Access Point model
+- `name` (String) Antenna type for this Access Point. Use **/dna/intent/api/v1/maps/supported-access-points** to find supported Antennas for a particualr Access Point model
 
 
 

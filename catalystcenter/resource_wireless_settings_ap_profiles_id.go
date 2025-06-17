@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -81,16 +81,22 @@ func resourceWirelessSettingsApProfilesID() *schema.Resource {
 											Schema: map[string]*schema.Schema{
 
 												"scheduler_date": &schema.Schema{
-													Description: `Start and End date of the duration setting, applicable for MONTHLY schedulers.
+													Description: `Start and End date of the duration setting, applicable for MONTHLY schedulers. Values will range from 1 to 31.
 `,
-													Type:     schema.TypeString,
+													Type:     schema.TypeList,
 													Computed: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
 												},
 												"scheduler_day": &schema.Schema{
-													Description: `Applies every week on the selected days
+													Description: `Applies every week on the selected days. Ex: ["sunday","saturday","tuesday","wednesday","thursday","friday","monday"]
 `,
-													Type:     schema.TypeString,
+													Type:     schema.TypeList,
 													Computed: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
 												},
 												"scheduler_end_time": &schema.Schema{
 													Description: `End time of the duration setting.
@@ -165,7 +171,7 @@ func resourceWirelessSettingsApProfilesID() *schema.Resource {
 										Computed: true,
 									},
 									"dot1x_password": &schema.Schema{
-										Description: `Password for 802.1X authentication. AP dot1x password length should not exceed 120.
+										Description: `Password for 802.1X authentication.  Length must be 8-120 characters.
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -387,18 +393,24 @@ func resourceWirelessSettingsApProfilesID() *schema.Resource {
 											Schema: map[string]*schema.Schema{
 
 												"scheduler_date": &schema.Schema{
-													Description: `Start and End date of the duration setting, applicable for MONTHLY schedulers.
+													Description: `Start and End date of the duration setting, applicable for MONTHLY schedulers. Values must be between 1 and 31.
 `,
-													Type:     schema.TypeString,
+													Type:     schema.TypeList,
 													Optional: true,
 													Computed: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
 												},
 												"scheduler_day": &schema.Schema{
-													Description: `Applies every week on the selected days
+													Description: `Applies every week on the selected days. Ex: ["sunday","saturday","tuesday","wednesday","thursday","friday","monday"]
 `,
-													Type:     schema.TypeString,
+													Type:     schema.TypeList,
 													Optional: true,
 													Computed: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
 												},
 												"scheduler_end_time": &schema.Schema{
 													Description: `End time of the duration setting.
@@ -484,7 +496,7 @@ func resourceWirelessSettingsApProfilesID() *schema.Resource {
 										Computed:     true,
 									},
 									"dot1x_password": &schema.Schema{
-										Description: `Password for 802.1X authentication. AP dot1x password length should not exceed 120.
+										Description: `Password for 802.1X authentication. Length must be 8-120 characters.
 `,
 										Type:     schema.TypeString,
 										Optional: true,
@@ -727,7 +739,7 @@ func resourceWirelessSettingsApProfilesIDRead(ctx context.Context, d *schema.Res
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		item1, err := searchWirelessGetApProfileByIDV1(m, vvID)
+		item1, err := searchWirelessGetApProfileByID(m, vvID)
 		if err != nil || item1 == nil {
 			d.SetId("")
 			return diags
@@ -745,7 +757,7 @@ func resourceWirelessSettingsApProfilesIDRead(ctx context.Context, d *schema.Res
 	return diags
 }
 
-func flattenWirelessGetApProfileByIDByIDItem(item *catalystcentersdkgo.ResponseWirelessGetApProfileByIDV1Response) []map[string]interface{} {
+func flattenWirelessGetApProfileByIDByIDItem(item *catalystcentersdkgo.ResponseWirelessGetApProfileByIDResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -773,7 +785,7 @@ func flattenWirelessGetApProfileByIDByIDItem(item *catalystcentersdkgo.ResponseW
 	}
 }
 
-func flattenWirelessGetApProfileByIDByIDItemManagementSetting(item *catalystcentersdkgo.ResponseWirelessGetApProfileByIDV1ResponseManagementSetting) []map[string]interface{} {
+func flattenWirelessGetApProfileByIDByIDItemManagementSetting(item *catalystcentersdkgo.ResponseWirelessGetApProfileByIDResponseManagementSetting) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -792,7 +804,7 @@ func flattenWirelessGetApProfileByIDByIDItemManagementSetting(item *catalystcent
 	}
 }
 
-func flattenWirelessGetApProfileByIDByIDItemRogueDetectionSetting(item *catalystcentersdkgo.ResponseWirelessGetApProfileByIDV1ResponseRogueDetectionSetting) []map[string]interface{} {
+func flattenWirelessGetApProfileByIDByIDItemRogueDetectionSetting(item *catalystcentersdkgo.ResponseWirelessGetApProfileByIDResponseRogueDetectionSetting) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -805,7 +817,7 @@ func flattenWirelessGetApProfileByIDByIDItemRogueDetectionSetting(item *catalyst
 		respItem,
 	}
 }
-func flattenWirelessGetApProfileByIDByIDItemMeshSetting(item *catalystcentersdkgo.ResponseWirelessGetApProfileByIDV1ResponseMeshSetting) []map[string]interface{} {
+func flattenWirelessGetApProfileByIDByIDItemMeshSetting(item *catalystcentersdkgo.ResponseWirelessGetApProfileByIDResponseMeshSetting) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -821,7 +833,7 @@ func flattenWirelessGetApProfileByIDByIDItemMeshSetting(item *catalystcentersdkg
 	}
 }
 
-func flattenWirelessGetApProfileByIDByIDItemCalendarPowerProfiles(item *catalystcentersdkgo.ResponseWirelessGetApProfileByIDV1ResponseCalendarPowerProfiles) []map[string]interface{} {
+func flattenWirelessGetApProfileByIDByIDItemCalendarPowerProfiles(item *catalystcentersdkgo.ResponseWirelessGetApProfileByIDResponseCalendarPowerProfiles) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -834,7 +846,7 @@ func flattenWirelessGetApProfileByIDByIDItemCalendarPowerProfiles(item *catalyst
 	}
 }
 
-func flattenWirelessGetApProfileByIDByIDItemCalendarPowerProfilesDuration(item *catalystcentersdkgo.ResponseWirelessGetApProfileByIDV1ResponseCalendarPowerProfilesDuration) []map[string]interface{} {
+func flattenWirelessGetApProfileByIDByIDItemCalendarPowerProfilesDuration(item *catalystcentersdkgo.ResponseWirelessGetApProfileByIDResponseCalendarPowerProfilesDuration) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -858,7 +870,7 @@ func resourceWirelessSettingsApProfilesIDUpdate(ctx context.Context, d *schema.R
 
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvID)
-		request1 := expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDV1(ctx, "parameters.0", d)
+		request1 := expandRequestWirelessSettingsApProfilesIDUpdateApProfileByID(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.Wireless.UpdateApProfileByID(vvID, request1)
 		if err != nil || response1 == nil {
@@ -968,8 +980,9 @@ func resourceWirelessSettingsApProfilesIDDelete(ctx context.Context, d *schema.R
 
 	return diags
 }
-func expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateApProfileByIDV1 {
-	request := catalystcentersdkgo.RequestWirelessUpdateApProfileByIDV1{}
+
+func expandRequestWirelessSettingsApProfilesIDUpdateApProfileByID(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateApProfileByID {
+	request := catalystcentersdkgo.RequestWirelessUpdateApProfileByID{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ap_profile_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ap_profile_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ap_profile_name")))) {
 		request.ApProfileName = interfaceToString(v)
 	}
@@ -980,7 +993,7 @@ func expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDV1(ctx context.
 		request.RemoteWorkerEnabled = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".management_setting")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".management_setting")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".management_setting")))) {
-		request.ManagementSetting = expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDV1ManagementSetting(ctx, key+".management_setting.0", d)
+		request.ManagementSetting = expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDManagementSetting(ctx, key+".management_setting.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".awips_enabled")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".awips_enabled")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".awips_enabled")))) {
 		request.AwipsEnabled = interfaceToBoolPtr(v)
@@ -989,7 +1002,7 @@ func expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDV1(ctx context.
 		request.AwipsForensicEnabled = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rogue_detection_setting")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rogue_detection_setting")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rogue_detection_setting")))) {
-		request.RogueDetectionSetting = expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDV1RogueDetectionSetting(ctx, key+".rogue_detection_setting.0", d)
+		request.RogueDetectionSetting = expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDRogueDetectionSetting(ctx, key+".rogue_detection_setting.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".pmf_denial_enabled")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".pmf_denial_enabled")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".pmf_denial_enabled")))) {
 		request.PmfDenialEnabled = interfaceToBoolPtr(v)
@@ -998,13 +1011,13 @@ func expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDV1(ctx context.
 		request.MeshEnabled = interfaceToBoolPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".mesh_setting")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".mesh_setting")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".mesh_setting")))) {
-		request.MeshSetting = expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDV1MeshSetting(ctx, key+".mesh_setting.0", d)
+		request.MeshSetting = expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDMeshSetting(ctx, key+".mesh_setting.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ap_power_profile_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ap_power_profile_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ap_power_profile_name")))) {
 		request.ApPowerProfileName = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".calendar_power_profiles")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".calendar_power_profiles")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".calendar_power_profiles")))) {
-		request.CalendarPowerProfiles = expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDV1CalendarPowerProfiles(ctx, key+".calendar_power_profiles.0", d)
+		request.CalendarPowerProfiles = expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDCalendarPowerProfiles(ctx, key+".calendar_power_profiles.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".country_code")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".country_code")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".country_code")))) {
 		request.CountryCode = interfaceToString(v)
@@ -1027,8 +1040,8 @@ func expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDV1(ctx context.
 	return &request
 }
 
-func expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDV1ManagementSetting(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateApProfileByIDV1ManagementSetting {
-	request := catalystcentersdkgo.RequestWirelessUpdateApProfileByIDV1ManagementSetting{}
+func expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDManagementSetting(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateApProfileByIDManagementSetting {
+	request := catalystcentersdkgo.RequestWirelessUpdateApProfileByIDManagementSetting{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".auth_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".auth_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".auth_type")))) {
 		request.AuthType = interfaceToString(v)
 	}
@@ -1062,8 +1075,8 @@ func expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDV1ManagementSet
 	return &request
 }
 
-func expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDV1RogueDetectionSetting(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateApProfileByIDV1RogueDetectionSetting {
-	request := catalystcentersdkgo.RequestWirelessUpdateApProfileByIDV1RogueDetectionSetting{}
+func expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDRogueDetectionSetting(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateApProfileByIDRogueDetectionSetting {
+	request := catalystcentersdkgo.RequestWirelessUpdateApProfileByIDRogueDetectionSetting{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".rogue_detection")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".rogue_detection")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".rogue_detection")))) {
 		request.RogueDetection = interfaceToBoolPtr(v)
 	}
@@ -1082,8 +1095,8 @@ func expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDV1RogueDetectio
 	return &request
 }
 
-func expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDV1MeshSetting(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateApProfileByIDV1MeshSetting {
-	request := catalystcentersdkgo.RequestWirelessUpdateApProfileByIDV1MeshSetting{}
+func expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDMeshSetting(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateApProfileByIDMeshSetting {
+	request := catalystcentersdkgo.RequestWirelessUpdateApProfileByIDMeshSetting{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".bridge_group_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".bridge_group_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".bridge_group_name")))) {
 		request.BridgeGroupName = interfaceToString(v)
 	}
@@ -1108,8 +1121,8 @@ func expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDV1MeshSetting(c
 	return &request
 }
 
-func expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDV1CalendarPowerProfiles(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateApProfileByIDV1CalendarPowerProfiles {
-	request := catalystcentersdkgo.RequestWirelessUpdateApProfileByIDV1CalendarPowerProfiles{}
+func expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDCalendarPowerProfiles(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateApProfileByIDCalendarPowerProfiles {
+	request := catalystcentersdkgo.RequestWirelessUpdateApProfileByIDCalendarPowerProfiles{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".power_profile_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".power_profile_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".power_profile_name")))) {
 		request.PowerProfileName = interfaceToString(v)
 	}
@@ -1117,7 +1130,7 @@ func expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDV1CalendarPower
 		request.SchedulerType = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".duration")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".duration")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".duration")))) {
-		request.Duration = expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDV1CalendarPowerProfilesDuration(ctx, key+".duration.0", d)
+		request.Duration = expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDCalendarPowerProfilesDuration(ctx, key+".duration.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -1125,8 +1138,8 @@ func expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDV1CalendarPower
 	return &request
 }
 
-func expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDV1CalendarPowerProfilesDuration(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateApProfileByIDV1CalendarPowerProfilesDuration {
-	request := catalystcentersdkgo.RequestWirelessUpdateApProfileByIDV1CalendarPowerProfilesDuration{}
+func expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDCalendarPowerProfilesDuration(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateApProfileByIDCalendarPowerProfilesDuration {
+	request := catalystcentersdkgo.RequestWirelessUpdateApProfileByIDCalendarPowerProfilesDuration{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".scheduler_start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".scheduler_start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".scheduler_start_time")))) {
 		request.SchedulerStartTime = interfaceToString(v)
 	}
@@ -1134,10 +1147,10 @@ func expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDV1CalendarPower
 		request.SchedulerEndTime = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".scheduler_day")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".scheduler_day")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".scheduler_day")))) {
-		request.SchedulerDay = interfaceToString(v)
+		request.SchedulerDay = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".scheduler_date")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".scheduler_date")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".scheduler_date")))) {
-		request.SchedulerDate = interfaceToString(v)
+		request.SchedulerDate = interfaceToSliceString(v)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -1145,11 +1158,11 @@ func expandRequestWirelessSettingsApProfilesIDUpdateApProfileByIDV1CalendarPower
 	return &request
 }
 
-func searchWirelessGetApProfileByIDV1(m interface{}, vID string) (*catalystcentersdkgo.ResponseWirelessGetApProfileByIDV1Response, error) {
+func searchWirelessGetApProfileByID(m interface{}, vID string) (*catalystcentersdkgo.ResponseWirelessGetApProfileByIDResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseWirelessGetApProfileByIDV1Response
-	var ite *catalystcentersdkgo.ResponseWirelessGetApProfileByIDV1
+	var foundItem *catalystcentersdkgo.ResponseWirelessGetApProfileByIDResponse
+	var ite *catalystcentersdkgo.ResponseWirelessGetApProfileByID
 	ite, _, err = client.Wireless.GetApProfileByID(vID)
 	if err != nil || ite == nil {
 		return foundItem, err
@@ -1160,7 +1173,7 @@ func searchWirelessGetApProfileByIDV1(m interface{}, vID string) (*catalystcente
 	for _, item := range itemsCopy {
 		// Call get by _ method and set value to foundItem and return
 		if item.ID == vID {
-			var getItem *catalystcentersdkgo.ResponseWirelessGetApProfileByIDV1Response
+			var getItem *catalystcentersdkgo.ResponseWirelessGetApProfileByIDResponse
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

@@ -61,9 +61,11 @@ Read-Only:
 - `creation_time` (String)
 - `discovered_device_list` (List of Object) (see [below for nested schema](#nestedobjatt--item--discovered_device_list))
 - `discovered_device_site_name_hierarchy` (String)
-- `discovery_devices` (List of String)
+- `discovery_devices` (List of Object) (see [below for nested schema](#nestedobjatt--item--discovery_devices))
 - `discovery_level` (Number)
 - `discovery_timeout` (Number)
+- `host_name_file_id` (String)
+- `host_name_prefix` (String)
 - `id` (String)
 - `ip_pools` (List of Object) (see [below for nested schema](#nestedobjatt--item--ip_pools))
 - `multicast_enabled` (String)
@@ -82,6 +84,22 @@ Read-Only:
 - `name` (String)
 - `serial_number` (String)
 - `state` (String)
+
+
+<a id="nestedobjatt--item--discovery_devices"></a>
+### Nested Schema for `item.discovery_devices`
+
+Read-Only:
+
+- `device_host_name` (String)
+- `device_management_ipaddress` (String)
+- `device_serial_number` (String)
+- `device_site_id` (String)
+- `device_site_name_hierarchy` (String)
+- `is_device_discovered` (String)
+- `is_ipallocated` (String)
+- `is_ipassigned` (String)
+- `pnp_device_id` (String)
 
 
 <a id="nestedobjatt--item--ip_pools"></a>
@@ -103,9 +121,11 @@ Read-Only:
 - `creation_time` (String)
 - `discovered_device_list` (List of Object) (see [below for nested schema](#nestedobjatt--items--discovered_device_list))
 - `discovered_device_site_name_hierarchy` (String)
-- `discovery_devices` (List of String)
+- `discovery_devices` (List of Object) (see [below for nested schema](#nestedobjatt--items--discovery_devices))
 - `discovery_level` (Number)
 - `discovery_timeout` (Number)
+- `host_name_file_id` (String)
+- `host_name_prefix` (String)
 - `id` (String)
 - `ip_pools` (List of Object) (see [below for nested schema](#nestedobjatt--items--ip_pools))
 - `multicast_enabled` (String)
@@ -124,6 +144,22 @@ Read-Only:
 - `name` (String)
 - `serial_number` (String)
 - `state` (String)
+
+
+<a id="nestedobjatt--items--discovery_devices"></a>
+### Nested Schema for `items.discovery_devices`
+
+Read-Only:
+
+- `device_host_name` (String)
+- `device_management_ipaddress` (String)
+- `device_serial_number` (String)
+- `device_site_id` (String)
+- `device_site_name_hierarchy` (String)
+- `is_device_discovered` (String)
+- `is_ipallocated` (String)
+- `is_ipassigned` (String)
+- `pnp_device_id` (String)
 
 
 <a id="nestedobjatt--items--ip_pools"></a>

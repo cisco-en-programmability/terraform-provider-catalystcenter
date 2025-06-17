@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -232,29 +232,29 @@ func resourceSdaMulticastCreate(ctx context.Context, d *schema.ResourceData, m i
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestSdaMulticastAddMulticastInSdaFabricV1(ctx, "parameters.0", d)
+	request1 := expandRequestSdaMulticastAddMulticastInSdaFabric(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vSiteNameHierarchy := resourceItem["site_name_hierarchy"]
 	vvSiteNameHierarchy := interfaceToString(vSiteNameHierarchy)
-	queryParamImport := catalystcentersdkgo.GetMulticastDetailsFromSdaFabricV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetMulticastDetailsFromSdaFabricQueryParams{}
 	queryParamImport.SiteNameHierarchy = vvSiteNameHierarchy
-	item2, _, err := client.Sda.GetMulticastDetailsFromSdaFabricV1(&queryParamImport)
+	item2, _, err := client.Sda.GetMulticastDetailsFromSdaFabric(&queryParamImport)
 	if err != nil || item2 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["site_name_hierarchy"] = vvSiteNameHierarchy
 		d.SetId(joinResourceID(resourceMap))
 		return resourceSdaMulticastRead(ctx, d, m)
 	}
-	resp1, restyResp1, err := client.Sda.AddMulticastInSdaFabricV1(request1)
+	resp1, restyResp1, err := client.Sda.AddMulticastInSdaFabric(request1)
 	if err != nil || resp1 == nil {
 		if restyResp1 != nil {
 			diags = append(diags, diagErrorWithResponse(
-				"Failure when executing AddMulticastInSdaFabricV1", err, restyResp1.String()))
+				"Failure when executing AddMulticastInSdaFabric", err, restyResp1.String()))
 			return diags
 		}
 		diags = append(diags, diagError(
-			"Failure when executing AddMulticastInSdaFabricV1", err))
+			"Failure when executing AddMulticastInSdaFabric", err))
 		return diags
 	}
 	executionId := resp1.ExecutionID
@@ -287,17 +287,17 @@ func resourceSdaMulticastCreate(ctx context.Context, d *schema.ResourceData, m i
 		if response2.Status == "FAILURE" {
 			log.Printf("[DEBUG] Error %s", response2.BapiError)
 			diags = append(diags, diagError(
-				"Failure when executing AddMulticastInSdaFabricV1", err))
+				"Failure when executing AddMulticastInSdaFabric", err))
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetMulticastDetailsFromSdaFabricV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetMulticastDetailsFromSdaFabricQueryParams{}
 	queryParamValidate.SiteNameHierarchy = vvSiteNameHierarchy
-	item3, _, err := client.Sda.GetMulticastDetailsFromSdaFabricV1(&queryParamValidate)
+	item3, _, err := client.Sda.GetMulticastDetailsFromSdaFabric(&queryParamValidate)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing AddMulticastInSdaFabricV1", err,
-			"Failure at AddMulticastInSdaFabricV1, unexpected response", ""))
+			"Failure when executing AddMulticastInSdaFabric", err,
+			"Failure at AddMulticastInSdaFabric, unexpected response", ""))
 		return diags
 	}
 
@@ -320,14 +320,14 @@ func resourceSdaMulticastRead(ctx context.Context, d *schema.ResourceData, m int
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetMulticastDetailsFromSdaFabricV1")
-		queryParams1 := catalystcentersdkgo.GetMulticastDetailsFromSdaFabricV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetMulticastDetailsFromSdaFabric")
+		queryParams1 := catalystcentersdkgo.GetMulticastDetailsFromSdaFabricQueryParams{}
 
 		queryParams1.SiteNameHierarchy = vSiteNameHierarchy
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sda.GetMulticastDetailsFromSdaFabricV1(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetMulticastDetailsFromSdaFabric(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
@@ -339,10 +339,10 @@ func resourceSdaMulticastRead(ctx context.Context, d *schema.ResourceData, m int
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetMulticastDetailsFromSdaFabricV1Item(response1)
+		vItem1 := flattenSdaGetMulticastDetailsFromSdaFabricItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetMulticastDetailsFromSdaFabricV1 response",
+				"Failure when setting GetMulticastDetailsFromSdaFabric response",
 				err))
 			return diags
 		}
@@ -366,23 +366,23 @@ func resourceSdaMulticastDelete(ctx context.Context, d *schema.ResourceData, m i
 	resourceID := d.Id()
 	resourceMap := separateResourceID(resourceID)
 
-	queryParamDelete := catalystcentersdkgo.DeleteMulticastFromSdaFabricV1QueryParams{}
+	queryParamDelete := catalystcentersdkgo.DeleteMulticastFromSdaFabricQueryParams{}
 
 	vvSiteNameHierarchy := resourceMap["site_name_hierarchy"]
 	queryParamDelete.SiteNameHierarchy = vvSiteNameHierarchy
 
-	response1, restyResp1, err := client.Sda.DeleteMulticastFromSdaFabricV1(&queryParamDelete)
+	response1, restyResp1, err := client.Sda.DeleteMulticastFromSdaFabric(&queryParamDelete)
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] resty response for delete operation => %v", restyResp1.String())
 			diags = append(diags, diagErrorWithAltAndResponse(
-				"Failure when executing DeleteMulticastFromSdaFabricV1", err, restyResp1.String(),
-				"Failure at DeleteMulticastFromSdaFabricV1, unexpected response", ""))
+				"Failure when executing DeleteMulticastFromSdaFabric", err, restyResp1.String(),
+				"Failure at DeleteMulticastFromSdaFabric, unexpected response", ""))
 			return diags
 		}
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing DeleteMulticastFromSdaFabricV1", err,
-			"Failure at DeleteMulticastFromSdaFabricV1, unexpected response", ""))
+			"Failure when executing DeleteMulticastFromSdaFabric", err,
+			"Failure at DeleteMulticastFromSdaFabric, unexpected response", ""))
 		return diags
 	}
 
@@ -416,7 +416,7 @@ func resourceSdaMulticastDelete(ctx context.Context, d *schema.ResourceData, m i
 		if response2.Status == "FAILURE" {
 			log.Printf("[DEBUG] Error %s", response2.BapiError)
 			diags = append(diags, diagError(
-				"Failure when executing DeleteMulticastFromSdaFabricV1", err))
+				"Failure when executing DeleteMulticastFromSdaFabric", err))
 			return diags
 		}
 	}
@@ -427,8 +427,9 @@ func resourceSdaMulticastDelete(ctx context.Context, d *schema.ResourceData, m i
 
 	return diags
 }
-func expandRequestSdaMulticastAddMulticastInSdaFabricV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddMulticastInSdaFabricV1 {
-	request := catalystcentersdkgo.RequestSdaAddMulticastInSdaFabricV1{}
+
+func expandRequestSdaMulticastAddMulticastInSdaFabric(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddMulticastInSdaFabric {
+	request := catalystcentersdkgo.RequestSdaAddMulticastInSdaFabric{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".site_name_hierarchy")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".site_name_hierarchy")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".site_name_hierarchy")))) {
 		request.SiteNameHierarchy = interfaceToString(v)
 	}
@@ -439,7 +440,7 @@ func expandRequestSdaMulticastAddMulticastInSdaFabricV1(ctx context.Context, key
 		request.MulticastType = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".multicast_vn_info")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".multicast_vn_info")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".multicast_vn_info")))) {
-		request.MulticastVnInfo = expandRequestSdaMulticastAddMulticastInSdaFabricV1MulticastVnInfoArray(ctx, key+".multicast_vn_info", d)
+		request.MulticastVnInfo = expandRequestSdaMulticastAddMulticastInSdaFabricMulticastVnInfoArray(ctx, key+".multicast_vn_info", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -447,8 +448,8 @@ func expandRequestSdaMulticastAddMulticastInSdaFabricV1(ctx context.Context, key
 	return &request
 }
 
-func expandRequestSdaMulticastAddMulticastInSdaFabricV1MulticastVnInfoArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSdaAddMulticastInSdaFabricV1MulticastVnInfo {
-	request := []catalystcentersdkgo.RequestSdaAddMulticastInSdaFabricV1MulticastVnInfo{}
+func expandRequestSdaMulticastAddMulticastInSdaFabricMulticastVnInfoArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSdaAddMulticastInSdaFabricMulticastVnInfo {
+	request := []catalystcentersdkgo.RequestSdaAddMulticastInSdaFabricMulticastVnInfo{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -459,7 +460,7 @@ func expandRequestSdaMulticastAddMulticastInSdaFabricV1MulticastVnInfoArray(ctx 
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaMulticastAddMulticastInSdaFabricV1MulticastVnInfo(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaMulticastAddMulticastInSdaFabricMulticastVnInfo(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -470,8 +471,8 @@ func expandRequestSdaMulticastAddMulticastInSdaFabricV1MulticastVnInfoArray(ctx 
 	return &request
 }
 
-func expandRequestSdaMulticastAddMulticastInSdaFabricV1MulticastVnInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddMulticastInSdaFabricV1MulticastVnInfo {
-	request := catalystcentersdkgo.RequestSdaAddMulticastInSdaFabricV1MulticastVnInfo{}
+func expandRequestSdaMulticastAddMulticastInSdaFabricMulticastVnInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddMulticastInSdaFabricMulticastVnInfo {
+	request := catalystcentersdkgo.RequestSdaAddMulticastInSdaFabricMulticastVnInfo{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".virtual_network_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".virtual_network_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".virtual_network_name")))) {
 		request.VirtualNetworkName = interfaceToString(v)
 	}
@@ -485,7 +486,7 @@ func expandRequestSdaMulticastAddMulticastInSdaFabricV1MulticastVnInfo(ctx conte
 		request.ExternalRpIPAddress = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ssm_info")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ssm_info")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ssm_info")))) {
-		request.SsmInfo = expandRequestSdaMulticastAddMulticastInSdaFabricV1MulticastVnInfoSsmInfoArray(ctx, key+".ssm_info", d)
+		request.SsmInfo = expandRequestSdaMulticastAddMulticastInSdaFabricMulticastVnInfoSsmInfoArray(ctx, key+".ssm_info", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -493,8 +494,8 @@ func expandRequestSdaMulticastAddMulticastInSdaFabricV1MulticastVnInfo(ctx conte
 	return &request
 }
 
-func expandRequestSdaMulticastAddMulticastInSdaFabricV1MulticastVnInfoSsmInfoArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSdaAddMulticastInSdaFabricV1MulticastVnInfoSsmInfo {
-	request := []catalystcentersdkgo.RequestSdaAddMulticastInSdaFabricV1MulticastVnInfoSsmInfo{}
+func expandRequestSdaMulticastAddMulticastInSdaFabricMulticastVnInfoSsmInfoArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSdaAddMulticastInSdaFabricMulticastVnInfoSsmInfo {
+	request := []catalystcentersdkgo.RequestSdaAddMulticastInSdaFabricMulticastVnInfoSsmInfo{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -505,7 +506,7 @@ func expandRequestSdaMulticastAddMulticastInSdaFabricV1MulticastVnInfoSsmInfoArr
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaMulticastAddMulticastInSdaFabricV1MulticastVnInfoSsmInfo(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaMulticastAddMulticastInSdaFabricMulticastVnInfoSsmInfo(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -516,8 +517,8 @@ func expandRequestSdaMulticastAddMulticastInSdaFabricV1MulticastVnInfoSsmInfoArr
 	return &request
 }
 
-func expandRequestSdaMulticastAddMulticastInSdaFabricV1MulticastVnInfoSsmInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddMulticastInSdaFabricV1MulticastVnInfoSsmInfo {
-	request := catalystcentersdkgo.RequestSdaAddMulticastInSdaFabricV1MulticastVnInfoSsmInfo{}
+func expandRequestSdaMulticastAddMulticastInSdaFabricMulticastVnInfoSsmInfo(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddMulticastInSdaFabricMulticastVnInfoSsmInfo {
+	request := catalystcentersdkgo.RequestSdaAddMulticastInSdaFabricMulticastVnInfoSsmInfo{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ssm_group_range")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ssm_group_range")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ssm_group_range")))) {
 		request.SsmGroupRange = interfaceToString(v)
 	}

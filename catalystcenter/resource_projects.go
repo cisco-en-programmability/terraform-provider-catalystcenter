@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -101,14 +101,14 @@ func resourceProjectsCreate(ctx context.Context, d *schema.ResourceData, m inter
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestProjectsCreateTemplateProjectV1(ctx, "parameters.0", d)
+	request1 := expandRequestProjectsCreateTemplateProject(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vName := resourceItem["name"]
 	vvName := interfaceToString(vName)
-	queryParamImport := catalystcentersdkgo.GetTemplateProjectsV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetTemplateProjectsQueryParams{}
 	queryParamImport.Name = vvName
-	item2, err := searchConfigurationTemplatesGetTemplateProjectsV1(m, queryParamImport, vvName)
+	item2, err := searchConfigurationTemplatesGetTemplateProjects(m, queryParamImport, vvName)
 	if err != nil || item2 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["name"] = item2.Name
@@ -154,9 +154,9 @@ func resourceProjectsCreate(ctx context.Context, d *schema.ResourceData, m inter
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetTemplateProjectsV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetTemplateProjectsQueryParams{}
 	queryParamValidate.Name = vvName
-	item3, err := searchConfigurationTemplatesGetTemplateProjectsV1(m, queryParamValidate, vvName)
+	item3, err := searchConfigurationTemplatesGetTemplateProjects(m, queryParamValidate, vvName)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
 			"Failure when executing CreateTemplateProject", err,
@@ -183,7 +183,7 @@ func resourceProjectsRead(ctx context.Context, d *schema.ResourceData, m interfa
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetTemplateProjects")
-		queryParams1 := catalystcentersdkgo.GetTemplateProjectsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetTemplateProjectsQueryParams{}
 
 		response1, restyResp1, err := client.ConfigurationTemplates.GetTemplateProjects(&queryParams1)
 
@@ -197,7 +197,7 @@ func resourceProjectsRead(ctx context.Context, d *schema.ResourceData, m interfa
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		item1, err := searchConfigurationTemplatesGetTemplateProjectsV1(m, queryParams1, vName)
+		item1, err := searchConfigurationTemplatesGetTemplateProjects(m, queryParams1, vName)
 		if err != nil || item1 == nil {
 			d.SetId("")
 			return diags
@@ -215,7 +215,7 @@ func resourceProjectsRead(ctx context.Context, d *schema.ResourceData, m interfa
 	return diags
 }
 
-func flattenConfigurationTemplatesGetTemplateProjectsByIDItem(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetTemplateProjectsV1Response) []map[string]interface{} {
+func flattenConfigurationTemplatesGetTemplateProjectsByIDItem(item *catalystcentersdkgo.ResponseConfigurationTemplatesGetTemplateProjectsResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -235,12 +235,13 @@ func resourceProjectsUpdate(ctx context.Context, d *schema.ResourceData, m inter
 
 func resourceProjectsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	// NOTE: Unable to delete Projects on Dna Center
+	// NOTE: Unable to delete Projects on Catalyst Center
 	//       Returning empty diags to delete it on Terraform
 	return diags
 }
-func expandRequestProjectsCreateTemplateProjectV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateProjectV1 {
-	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateProjectV1{}
+
+func expandRequestProjectsCreateTemplateProject(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateProject {
+	request := catalystcentersdkgo.RequestConfigurationTemplatesCreateTemplateProject{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -253,19 +254,19 @@ func expandRequestProjectsCreateTemplateProjectV1(ctx context.Context, key strin
 	return &request
 }
 
-func searchConfigurationTemplatesGetTemplateProjectsV1(m interface{}, queryParams catalystcentersdkgo.GetTemplateProjectsV1QueryParams, name string) (*catalystcentersdkgo.ResponseConfigurationTemplatesGetTemplateProjectsV1Response, error) {
+func searchConfigurationTemplatesGetTemplateProjects(m interface{}, queryParams catalystcentersdkgo.GetTemplateProjectsQueryParams, vID string) (*catalystcentersdkgo.ResponseConfigurationTemplatesGetTemplateProjectsResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseConfigurationTemplatesGetTemplateProjectsV1Response
-	var ite *catalystcentersdkgo.ResponseConfigurationTemplatesGetTemplateProjectsV1
-	if name != "" {
+	var foundItem *catalystcentersdkgo.ResponseConfigurationTemplatesGetTemplateProjectsResponse
+	var ite *catalystcentersdkgo.ResponseConfigurationTemplatesGetTemplateProjects
+	if vID != "" {
 		queryParams.Offset = 1
 		nResponse, _, err := client.ConfigurationTemplates.GetTemplateProjects(nil)
 		maxPageSize := len(*nResponse.Response)
 		for len(*nResponse.Response) > 0 {
 			time.Sleep(15 * time.Second)
 			for _, item := range *nResponse.Response {
-				if name == item.Name {
+				if vID == item.ProjectID {
 					foundItem = &item
 					return foundItem, err
 				}

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -16,10 +16,10 @@ func dataSourceAssuranceTasks() *schema.Resource {
 		Description: `It performs read operation on Task.
 
 - returns all existing tasks in a paginated list
-default sorting of list is startTime, asc
-valid field to sort by are [startTime,endTime,updateTime,status] For detailed information about the usage of the
-API, please refer to the Open API specification document https://github.com/cisco-en-programmability/catalyst-center-
-api-specs/blob/main/Assurance/CE_Cat_Center_Org-AssuranceTasks-1.0.0-resolved.yaml
+default sorting of list is **startTime**, **asc**
+valid field to sort by are [**startTime**,**endTime**,**updateTime**,**status**] For detailed information about the
+usage of the API, please refer to the Open API specification document https://github.com/cisco-en-
+programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-AssuranceTasks-1.0.0-resolved.yaml
 `,
 
 		ReadContext: dataSourceAssuranceTasksRead,
@@ -152,10 +152,10 @@ func dataSourceAssuranceTasksRead(ctx context.Context, d *schema.ResourceData, m
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveAListOfAssuranceTasksV1")
+		log.Printf("[DEBUG] Selected method: RetrieveAListOfAssuranceTasks")
 
-		headerParams1 := catalystcentersdkgo.RetrieveAListOfAssuranceTasksV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.RetrieveAListOfAssuranceTasksV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.RetrieveAListOfAssuranceTasksHeaderParams{}
+		queryParams1 := catalystcentersdkgo.RetrieveAListOfAssuranceTasksQueryParams{}
 
 		if okLimit {
 			queryParams1.Limit = vLimit.(float64)
@@ -176,24 +176,36 @@ func dataSourceAssuranceTasksRead(ctx context.Context, d *schema.ResourceData, m
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Task.RetrieveAListOfAssuranceTasksV1(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Task.RetrieveAListOfAssuranceTasks(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveAListOfAssuranceTasksV1", err,
-				"Failure at RetrieveAListOfAssuranceTasksV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveAListOfAssuranceTasks", err,
+				"Failure at RetrieveAListOfAssuranceTasks, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenTaskRetrieveAListOfAssuranceTasksV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveAListOfAssuranceTasks", err,
+				"Failure at RetrieveAListOfAssuranceTasks, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenTaskRetrieveAListOfAssuranceTasksItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveAListOfAssuranceTasksV1 response",
+				"Failure when setting RetrieveAListOfAssuranceTasks response",
 				err))
 			return diags
 		}
@@ -205,7 +217,7 @@ func dataSourceAssuranceTasksRead(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func flattenTaskRetrieveAListOfAssuranceTasksV1Items(items *[]catalystcentersdkgo.ResponseTaskRetrieveAListOfAssuranceTasksV1Response) []map[string]interface{} {
+func flattenTaskRetrieveAListOfAssuranceTasksItems(items *[]catalystcentersdkgo.ResponseTaskRetrieveAListOfAssuranceTasksResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -221,14 +233,14 @@ func flattenTaskRetrieveAListOfAssuranceTasksV1Items(items *[]catalystcentersdkg
 		respItem["failure_reason"] = item.FailureReason
 		respItem["error_code"] = item.ErrorCode
 		respItem["request_type"] = item.RequestType
-		respItem["data"] = flattenTaskRetrieveAListOfAssuranceTasksV1ItemsData(item.Data)
+		respItem["data"] = flattenTaskRetrieveAListOfAssuranceTasksItemsData(item.Data)
 		respItem["result_url"] = item.ResultURL
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenTaskRetrieveAListOfAssuranceTasksV1ItemsData(item *catalystcentersdkgo.ResponseTaskRetrieveAListOfAssuranceTasksV1ResponseData) interface{} {
+func flattenTaskRetrieveAListOfAssuranceTasksItemsData(item *catalystcentersdkgo.ResponseTaskRetrieveAListOfAssuranceTasksResponseData) interface{} {
 	if item == nil {
 		return nil
 	}

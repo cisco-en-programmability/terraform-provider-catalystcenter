@@ -4,20 +4,20 @@ page_title: "catalystcenter_network_device_config_files_id_download_unmasked Res
 subcategory: ""
 description: |-
   It performs create operation on Configuration Archive.
-  Download the unmasked (raw) device configuration by providing the file id and a password. The response will be a
-  password-protected zip file containing the unmasked configuration. Password must contain a minimum of 8 characters, one
-  lowercase letter, one uppercase letter, one number, one special character (-=[];,./~!@#$%^&*()_+{}|:?). It may not
-  contain white space or the characters <>.
+  Download the unmasked (raw) device configuration by providing the file id and a password. The response will be
+  a password-protected zip file containing the unmasked configuration. Password must contain a minimum of 8 characters,
+  one lowercase letter, one uppercase letter, one number, one special character (-=[];,./~!@#$%^&*()_+{}|:?). It may
+  not contain white space or the characters <>.
 ---
 
 # catalystcenter_network_device_config_files_id_download_unmasked (Resource)
 
 It performs create operation on Configuration Archive.
 
-- Download the unmasked (raw) device configuration by providing the file id and a password. The response will be a
-password-protected zip file containing the unmasked configuration. Password must contain a minimum of 8 characters, one
-lowercase letter, one uppercase letter, one number, one special character (-=[];,./~!@#$%^&*()_+{}|:?). It may not
-contain white space or the characters <>.
+- Download the unmasked (raw) device configuration by providing the file **id** and a **password**. The response will be
+a password-protected zip file containing the unmasked configuration. Password must contain a minimum of 8 characters,
+one lowercase letter, one uppercase letter, one number, one special character (**-=[];,./~!@#$%^&*()_+{}|:?**). It may
+not contain white space or the characters **<>**.
 
 
 ~>**Warning:**
@@ -30,10 +30,10 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_network_device_config_files_id_download_unmasked" "example" {
   provider = catalystcenter
   id       = "string"
-  parameters {
+  parameters = [{
 
     password = "******"
-  }
+  }]
 }
 
 output "catalystcenter_network_device_config_files_id_download_unmasked_example" {
@@ -51,7 +51,6 @@ output "catalystcenter_network_device_config_files_id_download_unmasked_example"
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `item` (List of Map of String)
 - `last_updated` (String)
 
 <a id="nestedblock--parameters"></a>
@@ -59,7 +58,7 @@ output "catalystcenter_network_device_config_files_id_download_unmasked_example"
 
 Required:
 
-- `id` (String) id path parameter. The value of id can be obtained from the response of API /dna/intent/api/v1/networkDeviceConfigFiles
+- `id` (String) id path parameter. The value of **id** can be obtained from the response of API **/dna/intent/api/v1/networkDeviceConfigFiles**
 
 Optional:
 

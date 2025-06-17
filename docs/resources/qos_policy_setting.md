@@ -18,7 +18,7 @@ It manages read and update operations on Application Policy.
 ```terraform
 resource "catalystcenter_qos_policy_setting" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     deploy_by_default_on_wired_devices = "false"

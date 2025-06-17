@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -21,7 +21,7 @@ func dataSourceIPamSiteIPAddressPoolsCount() *schema.Resource {
 		ReadContext: dataSourceIPamSiteIPAddressPoolsCountRead,
 		Schema: map[string]*schema.Schema{
 			"site_id": &schema.Schema{
-				Description: `siteId query parameter. The id of the site for which to retrieve IP address subpools. Only subpools whose siteId matches will be counted.
+				Description: `siteId query parameter. The **id** of the site for which to retrieve IP address subpools. Only subpools whose **siteId** matches will be counted.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -54,8 +54,8 @@ func dataSourceIPamSiteIPAddressPoolsCountRead(ctx context.Context, d *schema.Re
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: CountsIPAddressSubpoolsV1")
-		queryParams1 := catalystcentersdkgo.CountsIPAddressSubpoolsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: CountsIPAddressSubpools")
+		queryParams1 := catalystcentersdkgo.CountsIPAddressSubpoolsQueryParams{}
 
 		if okSiteID {
 			queryParams1.SiteID = vSiteID.(string)
@@ -63,24 +63,36 @@ func dataSourceIPamSiteIPAddressPoolsCountRead(ctx context.Context, d *schema.Re
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.NetworkSettings.CountsIPAddressSubpoolsV1(&queryParams1)
+		response1, restyResp1, err := client.NetworkSettings.CountsIPAddressSubpools(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 CountsIPAddressSubpoolsV1", err,
-				"Failure at CountsIPAddressSubpoolsV1, unexpected response", ""))
+				"Failure when executing 2 CountsIPAddressSubpools", err,
+				"Failure at CountsIPAddressSubpools, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenNetworkSettingsCountsIPAddressSubpoolsV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 CountsIPAddressSubpools", err,
+				"Failure at CountsIPAddressSubpools, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenNetworkSettingsCountsIPAddressSubpoolsItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting CountsIPAddressSubpoolsV1 response",
+				"Failure when setting CountsIPAddressSubpools response",
 				err))
 			return diags
 		}
@@ -92,7 +104,7 @@ func dataSourceIPamSiteIPAddressPoolsCountRead(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func flattenNetworkSettingsCountsIPAddressSubpoolsV1Item(item *catalystcentersdkgo.ResponseNetworkSettingsCountsIPAddressSubpoolsV1Response) []map[string]interface{} {
+func flattenNetworkSettingsCountsIPAddressSubpoolsItem(item *catalystcentersdkgo.ResponseNetworkSettingsCountsIPAddressSubpoolsResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

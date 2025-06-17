@@ -20,7 +20,7 @@ provide all the custom prompt in case of any update
 ```terraform
 resource "catalystcenter_network_device_custom_prompt" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     password_prompt = "******"

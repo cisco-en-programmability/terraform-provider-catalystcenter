@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -85,7 +85,7 @@ func resourceFloorsSettingsV2Read(ctx context.Context, d *schema.ResourceData, m
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetFloorSettings")
 
-		response1, restyResp1, err := client.SiteDesign.GetFloorSettings()
+		response1, restyResp1, err := client.SiteDesign.GetFloorSettingsV2()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
@@ -117,9 +117,9 @@ func resourceFloorsSettingsV2Update(ctx context.Context, d *schema.ResourceData,
 	var diags diag.Diagnostics
 
 	if d.HasChange("parameters") {
-		request1 := expandRequestFloorsSettingsUpdatesFloorSettingsV2(ctx, "parameters.0", d)
+		request1 := expandRequestFloorsSettingsV2UpdatesFloorSettingsV2(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-		response1, restyResp1, err := client.SiteDesign.UpdatesFloorSettings(request1)
+		response1, restyResp1, err := client.SiteDesign.UpdatesFloorSettingsV2(request1)
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] resty response for update operation => %v", restyResp1.String())
@@ -176,7 +176,8 @@ func resourceFloorsSettingsV2Delete(ctx context.Context, d *schema.ResourceData,
 		"Failure at FloorsSettingsDelete, unexpected response", ""))
 	return diags
 }
-func expandRequestFloorsSettingsUpdatesFloorSettingsV2(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSiteDesignUpdatesFloorSettingsV2 {
+
+func expandRequestFloorsSettingsV2UpdatesFloorSettingsV2(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSiteDesignUpdatesFloorSettingsV2 {
 	request := catalystcentersdkgo.RequestSiteDesignUpdatesFloorSettingsV2{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".units_of_measure")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".units_of_measure")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".units_of_measure")))) {
 		request.UnitsOfMeasure = interfaceToString(v)

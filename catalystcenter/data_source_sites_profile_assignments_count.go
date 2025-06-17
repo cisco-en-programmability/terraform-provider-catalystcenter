@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -22,7 +22,7 @@ to this site, or were assigned to a parent site and have been inherited.
 		ReadContext: dataSourceSitesProfileAssignmentsCountRead,
 		Schema: map[string]*schema.Schema{
 			"site_id": &schema.Schema{
-				Description: `siteId path parameter. The *id* of the site, retrievable from */dna/intent/api/v1/sites*
+				Description: `siteId path parameter. The **id** of the site, retrievable from **/dna/intent/api/v1/sites**
 `,
 				Type:     schema.TypeString,
 				Required: true,
@@ -54,27 +54,41 @@ func dataSourceSitesProfileAssignmentsCountRead(ctx context.Context, d *schema.R
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesTheCountOfProfilesThatTheGivenSiteHasBeenAssignedV1")
+		log.Printf("[DEBUG] Selected method: RetrievesTheCountOfProfilesThatTheGivenSiteHasBeenAssigned")
 		vvSiteID := vSiteID.(string)
 
-		response1, restyResp1, err := client.SiteDesign.RetrievesTheCountOfProfilesThatTheGivenSiteHasBeenAssignedV1(vvSiteID)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.SiteDesign.RetrievesTheCountOfProfilesThatTheGivenSiteHasBeenAssigned(vvSiteID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesTheCountOfProfilesThatTheGivenSiteHasBeenAssignedV1", err,
-				"Failure at RetrievesTheCountOfProfilesThatTheGivenSiteHasBeenAssignedV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesTheCountOfProfilesThatTheGivenSiteHasBeenAssigned", err,
+				"Failure at RetrievesTheCountOfProfilesThatTheGivenSiteHasBeenAssigned, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSiteDesignRetrievesTheCountOfProfilesThatTheGivenSiteHasBeenAssignedV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesTheCountOfProfilesThatTheGivenSiteHasBeenAssigned", err,
+				"Failure at RetrievesTheCountOfProfilesThatTheGivenSiteHasBeenAssigned, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSiteDesignRetrievesTheCountOfProfilesThatTheGivenSiteHasBeenAssignedItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesTheCountOfProfilesThatTheGivenSiteHasBeenAssignedV1 response",
+				"Failure when setting RetrievesTheCountOfProfilesThatTheGivenSiteHasBeenAssigned response",
 				err))
 			return diags
 		}
@@ -86,7 +100,7 @@ func dataSourceSitesProfileAssignmentsCountRead(ctx context.Context, d *schema.R
 	return diags
 }
 
-func flattenSiteDesignRetrievesTheCountOfProfilesThatTheGivenSiteHasBeenAssignedV1Item(item *catalystcentersdkgo.ResponseSiteDesignRetrievesTheCountOfProfilesThatTheGivenSiteHasBeenAssignedV1Response) []map[string]interface{} {
+func flattenSiteDesignRetrievesTheCountOfProfilesThatTheGivenSiteHasBeenAssignedItem(item *catalystcentersdkgo.ResponseSiteDesignRetrievesTheCountOfProfilesThatTheGivenSiteHasBeenAssignedResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

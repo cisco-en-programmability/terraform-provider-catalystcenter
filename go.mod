@@ -3,7 +3,7 @@ module terraform-provider-catalystcenter
 go 1.21
 
 require (
-	github.com/cisco-en-programmability/catalystcenter-go-sdk/v2 v2.0.3
+	github.com/cisco-en-programmability/catalystcenter-go-sdk/v3 v3.0.0
 	github.com/hashicorp/terraform-plugin-docs v0.16.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.27.0
 )

@@ -13,10 +13,10 @@ It performs delete operation on Configuration Templates.
 
 - Detach a network profile from a Day-N CLI template by the profile ID and template ID.
 
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
-
 
 ## Example Usage
 
@@ -25,9 +25,9 @@ resource "catalystcenter_templates_template_id_network_profiles_for_sites_profil
   provider    = catalystcenter
   profile_id  = "string"
   template_id = "string"
-  parameters {
+  parameters = [{
 
-  }
+  }]
 }
 
 output "catalystcenter_templates_template_id_network_profiles_for_sites_profile_id_delete_example" {
@@ -53,8 +53,8 @@ output "catalystcenter_templates_template_id_network_profiles_for_sites_profile_
 
 Required:
 
-- `profile_id` (String) profileId path parameter. The id of the network profile, retrievable from GET /intent/api/v1/networkProfilesForSites
-- `template_id` (String) templateId path parameter. The id of the template, retrievable from GET /intent/api/v1/templates
+- `profile_id` (String) profileId path parameter. The **id** of the network profile, retrievable from **GET /intent/api/v1/networkProfilesForSites**
+- `template_id` (String) templateId path parameter. The **id** of the template, retrievable from **GET /intent/api/v1/templates**
 
 
 <a id="nestedatt--item"></a>

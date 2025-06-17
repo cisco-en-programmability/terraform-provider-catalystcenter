@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -168,7 +168,7 @@ func resourceConnectionModesettingRead(ctx context.Context, d *schema.ResourceDa
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenLicensesRetrievesCSSMConnectionModeV1Item(response1.Response)
+		vItem1 := flattenLicensesRetrievesCSSMConnectionModeItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrievesCSSMConnectionMode response",
@@ -188,7 +188,7 @@ func resourceConnectionModesettingUpdate(ctx context.Context, d *schema.Resource
 	var diags diag.Diagnostics
 
 	if d.HasChange("parameters") {
-		request1 := expandRequestConnectionModesettingUpdateCSSMConnectionModeV1(ctx, "parameters.0", d)
+		request1 := expandRequestConnectionModesettingUpdateCSSMConnectionMode(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.Licenses.UpdateCSSMConnectionMode(request1)
 		if err != nil || response1 == nil {
@@ -241,17 +241,18 @@ func resourceConnectionModesettingUpdate(ctx context.Context, d *schema.Resource
 
 func resourceConnectionModesettingDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	// NOTE: Unable to delete ConnectionModesetting on Dna Center
+	// NOTE: Unable to delete ConnectionModesetting on Catalyst Center
 	//       Returning empty diags to delete it on Terraform
 	return diags
 }
-func expandRequestConnectionModesettingUpdateCSSMConnectionModeV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLicensesUpdateCSSMConnectionModeV1 {
-	request := catalystcentersdkgo.RequestLicensesUpdateCSSMConnectionModeV1{}
+
+func expandRequestConnectionModesettingUpdateCSSMConnectionMode(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLicensesUpdateCSSMConnectionMode {
+	request := catalystcentersdkgo.RequestLicensesUpdateCSSMConnectionMode{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".connection_mode")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".connection_mode")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".connection_mode")))) {
 		request.ConnectionMode = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".parameters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".parameters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".parameters")))) {
-		request.Parameters = expandRequestConnectionModesettingUpdateCSSMConnectionModeV1Parameters(ctx, key+".parameters.0", d)
+		request.Parameters = expandRequestConnectionModesettingUpdateCSSMConnectionModeParameters(ctx, key+".parameters.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -259,8 +260,8 @@ func expandRequestConnectionModesettingUpdateCSSMConnectionModeV1(ctx context.Co
 	return &request
 }
 
-func expandRequestConnectionModesettingUpdateCSSMConnectionModeV1Parameters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLicensesUpdateCSSMConnectionModeV1Parameters {
-	request := catalystcentersdkgo.RequestLicensesUpdateCSSMConnectionModeV1Parameters{}
+func expandRequestConnectionModesettingUpdateCSSMConnectionModeParameters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestLicensesUpdateCSSMConnectionModeParameters {
+	request := catalystcentersdkgo.RequestLicensesUpdateCSSMConnectionModeParameters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".on_premise_host")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".on_premise_host")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".on_premise_host")))) {
 		request.OnPremiseHost = interfaceToString(v)
 	}

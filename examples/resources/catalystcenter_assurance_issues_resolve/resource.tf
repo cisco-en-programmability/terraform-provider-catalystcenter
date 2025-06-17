@@ -1,11 +1,11 @@
 
 resource "catalystcenter_assurance_issues_resolve" "example" {
-  provider    = meraki
+  provider    = catalystcenter
   xca_lle_rid = "string"
-  parameters {
+  parameters = [{
 
     issue_ids = ["string"]
-  }
+  }]
 }
 
 output "catalystcenter_assurance_issues_resolve_example" {

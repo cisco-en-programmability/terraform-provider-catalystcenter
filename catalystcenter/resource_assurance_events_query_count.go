@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -133,31 +133,31 @@ func resourceAssuranceEventsQueryCountCreate(ctx context.Context, d *schema.Reso
 
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
-	request1 := expandRequestAssuranceEventsQueryCountCountTheNumberOfEventsWithFiltersV1(ctx, "parameters.0", d)
+	request1 := expandRequestAssuranceEventsQueryCountCountTheNumberOfEventsWithFilters(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.CountTheNumberOfEventsWithFiltersV1HeaderParams{}
+	headerParams1 := catalystcentersdkgo.CountTheNumberOfEventsWithFiltersHeaderParams{}
 
 	headerParams1.XCaLLERID = vXCaLLERID.(string)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Devices.CountTheNumberOfEventsWithFiltersV1(request1, &headerParams1)
+	response1, restyResp1, err := client.Devices.CountTheNumberOfEventsWithFilters(request1, &headerParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing CountTheNumberOfEventsWithFiltersV1", err))
+			"Failure when executing CountTheNumberOfEventsWithFilters", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItem1 := flattenDevicesCountTheNumberOfEventsWithFiltersV1Item(response1.Response)
+	vItem1 := flattenDevicesCountTheNumberOfEventsWithFiltersItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting CountTheNumberOfEventsWithFiltersV1 response",
+			"Failure when setting CountTheNumberOfEventsWithFilters response",
 			err))
 		return diags
 	}
@@ -181,8 +181,8 @@ func resourceAssuranceEventsQueryCountDelete(ctx context.Context, d *schema.Reso
 	return diags
 }
 
-func expandRequestAssuranceEventsQueryCountCountTheNumberOfEventsWithFiltersV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesCountTheNumberOfEventsWithFiltersV1 {
-	request := catalystcentersdkgo.RequestDevicesCountTheNumberOfEventsWithFiltersV1{}
+func expandRequestAssuranceEventsQueryCountCountTheNumberOfEventsWithFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesCountTheNumberOfEventsWithFilters {
+	request := catalystcentersdkgo.RequestDevicesCountTheNumberOfEventsWithFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_family")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_family")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_family")))) {
 		request.DeviceFamily = interfaceToSliceString(v)
 	}
@@ -193,13 +193,13 @@ func expandRequestAssuranceEventsQueryCountCountTheNumberOfEventsWithFiltersV1(c
 		request.EndTime = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestAssuranceEventsQueryCountCountTheNumberOfEventsWithFiltersV1FiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestAssuranceEventsQueryCountCountTheNumberOfEventsWithFiltersFiltersArray(ctx, key+".filters", d)
 	}
 	return &request
 }
 
-func expandRequestAssuranceEventsQueryCountCountTheNumberOfEventsWithFiltersV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesCountTheNumberOfEventsWithFiltersV1Filters {
-	request := []catalystcentersdkgo.RequestDevicesCountTheNumberOfEventsWithFiltersV1Filters{}
+func expandRequestAssuranceEventsQueryCountCountTheNumberOfEventsWithFiltersFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesCountTheNumberOfEventsWithFiltersFilters {
+	request := []catalystcentersdkgo.RequestDevicesCountTheNumberOfEventsWithFiltersFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -210,7 +210,7 @@ func expandRequestAssuranceEventsQueryCountCountTheNumberOfEventsWithFiltersV1Fi
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAssuranceEventsQueryCountCountTheNumberOfEventsWithFiltersV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAssuranceEventsQueryCountCountTheNumberOfEventsWithFiltersFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -218,8 +218,8 @@ func expandRequestAssuranceEventsQueryCountCountTheNumberOfEventsWithFiltersV1Fi
 	return &request
 }
 
-func expandRequestAssuranceEventsQueryCountCountTheNumberOfEventsWithFiltersV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesCountTheNumberOfEventsWithFiltersV1Filters {
-	request := catalystcentersdkgo.RequestDevicesCountTheNumberOfEventsWithFiltersV1Filters{}
+func expandRequestAssuranceEventsQueryCountCountTheNumberOfEventsWithFiltersFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesCountTheNumberOfEventsWithFiltersFilters {
+	request := catalystcentersdkgo.RequestDevicesCountTheNumberOfEventsWithFiltersFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -232,7 +232,7 @@ func expandRequestAssuranceEventsQueryCountCountTheNumberOfEventsWithFiltersV1Fi
 	return &request
 }
 
-func flattenDevicesCountTheNumberOfEventsWithFiltersV1Item(item *catalystcentersdkgo.ResponseDevicesCountTheNumberOfEventsWithFiltersV1Response) []map[string]interface{} {
+func flattenDevicesCountTheNumberOfEventsWithFiltersItem(item *catalystcentersdkgo.ResponseDevicesCountTheNumberOfEventsWithFiltersResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -16,6 +16,8 @@ It performs create operation on Devices.
 - Intent API to stop the wireless rogue access point containment. This data source action will stop the containment
 through single WLC. The response includes the details like WLC and BSSID on which the stop containment has been
 initiated.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -25,12 +27,12 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_security_rogue_wireless_containment_stop" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
     mac_address = "string"
     type        = 1
     wlc_ip      = "string"
-  }
+  }]
 }
 
 output "catalystcenter_security_rogue_wireless_containment_stop_example" {

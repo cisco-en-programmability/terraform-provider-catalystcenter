@@ -14,6 +14,8 @@ It performs create operation on Sites.
 
 - Initiates a map archive import of a tar.gz file.  The archive must consist of one xmlDir/MapsImportExport.xml map
 descriptor file, and 1 or more images for the map areas nested under /images folder.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.

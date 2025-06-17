@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -47,26 +47,40 @@ func dataSourceSdaFabricZonesCountRead(ctx context.Context, d *schema.ResourceDa
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetFabricZoneCountV1")
+		log.Printf("[DEBUG] Selected method: GetFabricZoneCount")
 
-		response1, restyResp1, err := client.Sda.GetFabricZoneCountV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sda.GetFabricZoneCount()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetFabricZoneCountV1", err,
-				"Failure at GetFabricZoneCountV1, unexpected response", ""))
+				"Failure when executing 2 GetFabricZoneCount", err,
+				"Failure at GetFabricZoneCount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetFabricZoneCountV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetFabricZoneCount", err,
+				"Failure at GetFabricZoneCount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSdaGetFabricZoneCountItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetFabricZoneCountV1 response",
+				"Failure when setting GetFabricZoneCount response",
 				err))
 			return diags
 		}
@@ -78,7 +92,7 @@ func dataSourceSdaFabricZonesCountRead(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func flattenSdaGetFabricZoneCountV1Item(item *catalystcentersdkgo.ResponseSdaGetFabricZoneCountV1Response) []map[string]interface{} {
+func flattenSdaGetFabricZoneCountItem(item *catalystcentersdkgo.ResponseSdaGetFabricZoneCountResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

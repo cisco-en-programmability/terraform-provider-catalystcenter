@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -112,29 +112,41 @@ func dataSourceWirelessSettingsPowerProfilesIDRead(ctx context.Context, d *schem
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetPowerProfileByIDV1")
+		log.Printf("[DEBUG] Selected method: GetPowerProfileByID")
 		vvID := vID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Wireless.GetPowerProfileByIDV1(vvID)
+		response1, restyResp1, err := client.Wireless.GetPowerProfileByID(vvID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetPowerProfileByIDV1", err,
-				"Failure at GetPowerProfileByIDV1, unexpected response", ""))
+				"Failure when executing 2 GetPowerProfileByID", err,
+				"Failure at GetPowerProfileByID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessGetPowerProfileByIDV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetPowerProfileByID", err,
+				"Failure at GetPowerProfileByID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenWirelessGetPowerProfileByIDItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetPowerProfileByIDV1 response",
+				"Failure when setting GetPowerProfileByID response",
 				err))
 			return diags
 		}
@@ -146,7 +158,7 @@ func dataSourceWirelessSettingsPowerProfilesIDRead(ctx context.Context, d *schem
 	return diags
 }
 
-func flattenWirelessGetPowerProfileByIDV1Item(item *catalystcentersdkgo.ResponseWirelessGetPowerProfileByIDV1Response) []map[string]interface{} {
+func flattenWirelessGetPowerProfileByIDItem(item *catalystcentersdkgo.ResponseWirelessGetPowerProfileByIDResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -154,13 +166,13 @@ func flattenWirelessGetPowerProfileByIDV1Item(item *catalystcentersdkgo.Response
 	respItem["id"] = item.ID
 	respItem["profile_name"] = item.ProfileName
 	respItem["description"] = item.Description
-	respItem["rules"] = flattenWirelessGetPowerProfileByIDV1ItemRules(item.Rules)
+	respItem["rules"] = flattenWirelessGetPowerProfileByIDItemRules(item.Rules)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenWirelessGetPowerProfileByIDV1ItemRules(items *[]catalystcentersdkgo.ResponseWirelessGetPowerProfileByIDV1ResponseRules) []map[string]interface{} {
+func flattenWirelessGetPowerProfileByIDItemRules(items *[]catalystcentersdkgo.ResponseWirelessGetPowerProfileByIDResponseRules) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

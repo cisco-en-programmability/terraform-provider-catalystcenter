@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -21,13 +21,13 @@ func dataSourceComplianceDeviceByIDDetail() *schema.Resource {
 		ReadContext: dataSourceComplianceDeviceByIDDetailRead,
 		Schema: map[string]*schema.Schema{
 			"category": &schema.Schema{
-				Description: `category query parameter. category can have any value among 'INTENT', 'RUNNING_CONFIG' , 'IMAGE' , 'PSIRT' , 'DESIGN_OOD' , 'EoX' , 'NETWORK_SETTINGS'
+				Description: `category query parameter. category can have any value among 'INTENT', 'RUNNING_CONFIG' , 'IMAGE' , 'PSIRT' , 'DESIGN_OOD' , 'EOX' , 'NETWORK_SETTINGS'
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"compliance_type": &schema.Schema{
-				Description: `complianceType query parameter. Specify "Compliance type(s)" separated by commas. The Compliance type can be 'APPLICATION_VISIBILITY', 'EoX', 'FABRIC', 'IMAGE', 'NETWORK_PROFILE', 'NETWORK_SETTINGS', 'PSIRT', 'RUNNING_CONFIG', 'WORKFLOW'.
+				Description: `complianceType query parameter. Specify "Compliance type(s)" separated by commas. The Compliance type can be 'APPLICATION_VISIBILITY', 'EOX', 'FABRIC', 'IMAGE', 'NETWORK_PROFILE', 'NETWORK_SETTINGS', 'PSIRT', 'RUNNING_CONFIG', 'WORKFLOW'.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -71,7 +71,7 @@ func dataSourceComplianceDeviceByIDDetail() *schema.Resource {
 						},
 
 						"compliance_type": &schema.Schema{
-							Description: `Compliance type corresponds to a tile on the UI that will be one of NETWORK_PROFILE, IMAGE, APPLICATION_VISIBILITY, FABRIC, PSIRT, RUNNING_CONFIG, NETWORK_SETTINGS, WORKFLOW, or EoX.
+							Description: `Compliance type corresponds to a tile on the UI that will be one of NETWORK_PROFILE, IMAGE, APPLICATION_VISIBILITY, FABRIC, PSIRT, RUNNING_CONFIG, NETWORK_SETTINGS, WORKFLOW, or EOX.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -370,7 +370,7 @@ func dataSourceComplianceDeviceByIDDetail() *schema.Resource {
 						},
 
 						"status": &schema.Schema{
-							Description: `Status of compliance for the compliance type, will be one of COMPLIANT, NON_COMPLIANT, ERROR, IN_PROGRESS, NOT_APPLICABLE, NOT_AVAILABLE, COMPLIANT_WARNING, REMEDIATION_IN_PROGRESS, or ABORTED.
+							Description: `Status of compliance for the compliance type, will be one of COMPLIANT, NON_COMPLIANT, ERROR, IN_PROGRESS, NOT_APPLICABLE, NOT_AVAILABLE, WARNING, REMEDIATION_IN_PROGRESS can be the value of the compliance status parameter. [COMPLIANT: Device currently meets the compliance requirements.  NON_COMPLIANT: One of the compliance requirements like Software Image, PSIRT, Network Profile, Startup vs Running, etc. are not met. ERROR: Compliance is unable to compute status due to underlying errors. IN_PROGRESS: Compliance check is in progress for the device. NOT_APPLICABLE: Device is not supported for compliance, or minimum license requirement is not met. NOT_AVAILABLE: Compliance is not available for the device. COMPLIANT_WARNING: The device is compliant with warning if the last date of support is nearing. REMEDIATION_IN_PROGRESS: Compliance remediation is in progress for the device.]
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -402,9 +402,9 @@ func dataSourceComplianceDeviceByIDDetailRead(ctx context.Context, d *schema.Res
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: ComplianceDetailsOfDeviceV1")
+		log.Printf("[DEBUG] Selected method: ComplianceDetailsOfDevice")
 		vvDeviceUUID := vDeviceUUID.(string)
-		queryParams1 := catalystcentersdkgo.ComplianceDetailsOfDeviceV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.ComplianceDetailsOfDeviceQueryParams{}
 
 		if okCategory {
 			queryParams1.Category = vCategory.(string)
@@ -424,24 +424,36 @@ func dataSourceComplianceDeviceByIDDetailRead(ctx context.Context, d *schema.Res
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Compliance.ComplianceDetailsOfDeviceV1(vvDeviceUUID, &queryParams1)
+		response1, restyResp1, err := client.Compliance.ComplianceDetailsOfDevice(vvDeviceUUID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 ComplianceDetailsOfDeviceV1", err,
-				"Failure at ComplianceDetailsOfDeviceV1, unexpected response", ""))
+				"Failure when executing 2 ComplianceDetailsOfDevice", err,
+				"Failure at ComplianceDetailsOfDevice, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenComplianceComplianceDetailsOfDeviceV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 ComplianceDetailsOfDevice", err,
+				"Failure at ComplianceDetailsOfDevice, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenComplianceComplianceDetailsOfDeviceItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting ComplianceDetailsOfDeviceV1 response",
+				"Failure when setting ComplianceDetailsOfDevice response",
 				err))
 			return diags
 		}
@@ -453,7 +465,7 @@ func dataSourceComplianceDeviceByIDDetailRead(ctx context.Context, d *schema.Res
 	return diags
 }
 
-func flattenComplianceComplianceDetailsOfDeviceV1Items(items *[]catalystcentersdkgo.ResponseComplianceComplianceDetailsOfDeviceV1Response) []map[string]interface{} {
+func flattenComplianceComplianceDetailsOfDeviceItems(items *[]catalystcentersdkgo.ResponseComplianceComplianceDetailsOfDeviceResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -466,15 +478,16 @@ func flattenComplianceComplianceDetailsOfDeviceV1Items(items *[]catalystcentersd
 		respItem["state"] = item.State
 		respItem["last_sync_time"] = item.LastSyncTime
 		respItem["last_update_time"] = item.LastUpdateTime
-		respItem["source_info_list"] = flattenComplianceComplianceDetailsOfDeviceV1ItemsSourceInfoList(item.SourceInfoList)
+		respItem["source_info_list"] = flattenComplianceComplianceDetailsOfDeviceItemsSourceInfoList(item.SourceInfoList)
 		respItem["ack_status"] = item.AckStatus
 		respItem["version"] = item.Version
+		respItem["remediation_supported"] = boolPtrToString(item.RemediationSupported)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenComplianceComplianceDetailsOfDeviceV1ItemsSourceInfoList(items *[]catalystcentersdkgo.ResponseComplianceComplianceDetailsOfDeviceV1ResponseSourceInfoList) []map[string]interface{} {
+func flattenComplianceComplianceDetailsOfDeviceItemsSourceInfoList(items *[]catalystcentersdkgo.ResponseComplianceComplianceDetailsOfDeviceResponseSourceInfoList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -488,22 +501,22 @@ func flattenComplianceComplianceDetailsOfDeviceV1ItemsSourceInfoList(items *[]ca
 		respItem["app_name"] = item.AppName
 		respItem["count"] = item.Count
 		respItem["ack_status"] = item.AckStatus
-		respItem["business_key"] = flattenComplianceComplianceDetailsOfDeviceV1ItemsSourceInfoListBusinessKey(item.BusinessKey)
-		respItem["diff_list"] = flattenComplianceComplianceDetailsOfDeviceV1ItemsSourceInfoListDiffList(item.DiffList)
+		respItem["business_key"] = flattenComplianceComplianceDetailsOfDeviceItemsSourceInfoListBusinessKey(item.BusinessKey)
+		respItem["diff_list"] = flattenComplianceComplianceDetailsOfDeviceItemsSourceInfoListDiffList(item.DiffList)
 		respItem["display_name"] = item.DisplayName
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenComplianceComplianceDetailsOfDeviceV1ItemsSourceInfoListBusinessKey(item *catalystcentersdkgo.ResponseComplianceComplianceDetailsOfDeviceV1ResponseSourceInfoListBusinessKey) []map[string]interface{} {
+func flattenComplianceComplianceDetailsOfDeviceItemsSourceInfoListBusinessKey(item *catalystcentersdkgo.ResponseComplianceComplianceDetailsOfDeviceResponseSourceInfoListBusinessKey) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["resource_name"] = item.ResourceName
-	respItem["business_key_attributes"] = flattenComplianceComplianceDetailsOfDeviceV1ItemsSourceInfoListBusinessKeyBusinessKeyAttributes(item.BusinessKeyAttributes)
-	respItem["other_attributes"] = flattenComplianceComplianceDetailsOfDeviceV1ItemsSourceInfoListBusinessKeyOtherAttributes(item.OtherAttributes)
+	respItem["business_key_attributes"] = flattenComplianceComplianceDetailsOfDeviceItemsSourceInfoListBusinessKeyBusinessKeyAttributes(item.BusinessKeyAttributes)
+	respItem["other_attributes"] = flattenComplianceComplianceDetailsOfDeviceItemsSourceInfoListBusinessKeyOtherAttributes(item.OtherAttributes)
 
 	return []map[string]interface{}{
 		respItem,
@@ -511,7 +524,7 @@ func flattenComplianceComplianceDetailsOfDeviceV1ItemsSourceInfoListBusinessKey(
 
 }
 
-func flattenComplianceComplianceDetailsOfDeviceV1ItemsSourceInfoListBusinessKeyBusinessKeyAttributes(item *catalystcentersdkgo.ResponseComplianceComplianceDetailsOfDeviceV1ResponseSourceInfoListBusinessKeyBusinessKeyAttributes) interface{} {
+func flattenComplianceComplianceDetailsOfDeviceItemsSourceInfoListBusinessKeyBusinessKeyAttributes(item *catalystcentersdkgo.ResponseComplianceComplianceDetailsOfDeviceResponseSourceInfoListBusinessKeyBusinessKeyAttributes) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -521,13 +534,13 @@ func flattenComplianceComplianceDetailsOfDeviceV1ItemsSourceInfoListBusinessKeyB
 
 }
 
-func flattenComplianceComplianceDetailsOfDeviceV1ItemsSourceInfoListBusinessKeyOtherAttributes(item *catalystcentersdkgo.ResponseComplianceComplianceDetailsOfDeviceV1ResponseSourceInfoListBusinessKeyOtherAttributes) []map[string]interface{} {
+func flattenComplianceComplianceDetailsOfDeviceItemsSourceInfoListBusinessKeyOtherAttributes(item *catalystcentersdkgo.ResponseComplianceComplianceDetailsOfDeviceResponseSourceInfoListBusinessKeyOtherAttributes) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["name"] = item.Name
-	respItem["cfs_attributes"] = flattenComplianceComplianceDetailsOfDeviceV1ItemsSourceInfoListBusinessKeyOtherAttributesCfsAttributes(item.CfsAttributes)
+	respItem["cfs_attributes"] = flattenComplianceComplianceDetailsOfDeviceItemsSourceInfoListBusinessKeyOtherAttributesCfsAttributes(item.CfsAttributes)
 
 	return []map[string]interface{}{
 		respItem,
@@ -535,7 +548,7 @@ func flattenComplianceComplianceDetailsOfDeviceV1ItemsSourceInfoListBusinessKeyO
 
 }
 
-func flattenComplianceComplianceDetailsOfDeviceV1ItemsSourceInfoListBusinessKeyOtherAttributesCfsAttributes(item *catalystcentersdkgo.ResponseComplianceComplianceDetailsOfDeviceV1ResponseSourceInfoListBusinessKeyOtherAttributesCfsAttributes) []map[string]interface{} {
+func flattenComplianceComplianceDetailsOfDeviceItemsSourceInfoListBusinessKeyOtherAttributesCfsAttributes(item *catalystcentersdkgo.ResponseComplianceComplianceDetailsOfDeviceResponseSourceInfoListBusinessKeyOtherAttributesCfsAttributes) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -552,7 +565,7 @@ func flattenComplianceComplianceDetailsOfDeviceV1ItemsSourceInfoListBusinessKeyO
 
 }
 
-func flattenComplianceComplianceDetailsOfDeviceV1ItemsSourceInfoListDiffList(items *[]catalystcentersdkgo.ResponseComplianceComplianceDetailsOfDeviceV1ResponseSourceInfoListDiffList) []map[string]interface{} {
+func flattenComplianceComplianceDetailsOfDeviceItemsSourceInfoListDiffList(items *[]catalystcentersdkgo.ResponseComplianceComplianceDetailsOfDeviceResponseSourceInfoListDiffList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -565,7 +578,7 @@ func flattenComplianceComplianceDetailsOfDeviceV1ItemsSourceInfoListDiffList(ite
 		respItem["move_from_path"] = item.MoveFromPath
 		respItem["business_key"] = item.BusinessKey
 		respItem["path"] = item.Path
-		respItem["extended_attributes"] = flattenComplianceComplianceDetailsOfDeviceV1ItemsSourceInfoListDiffListExtendedAttributes(item.ExtendedAttributes)
+		respItem["extended_attributes"] = flattenComplianceComplianceDetailsOfDeviceItemsSourceInfoListDiffListExtendedAttributes(item.ExtendedAttributes)
 		respItem["ack_status"] = item.AckStatus
 		respItem["instance_uui_d"] = item.InstanceUUID
 		respItem["display_name"] = item.DisplayName
@@ -574,7 +587,7 @@ func flattenComplianceComplianceDetailsOfDeviceV1ItemsSourceInfoListDiffList(ite
 	return respItems
 }
 
-func flattenComplianceComplianceDetailsOfDeviceV1ItemsSourceInfoListDiffListExtendedAttributes(item *catalystcentersdkgo.ResponseComplianceComplianceDetailsOfDeviceV1ResponseSourceInfoListDiffListExtendedAttributes) []map[string]interface{} {
+func flattenComplianceComplianceDetailsOfDeviceItemsSourceInfoListDiffListExtendedAttributes(item *catalystcentersdkgo.ResponseComplianceComplianceDetailsOfDeviceResponseSourceInfoListDiffListExtendedAttributes) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

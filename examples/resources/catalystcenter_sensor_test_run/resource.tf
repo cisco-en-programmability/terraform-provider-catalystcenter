@@ -1,10 +1,10 @@
 
 resource "catalystcenter_sensor_test_run" "example" {
-  provider = meraki
-  parameters {
+  provider = catalystcenter
+  parameters = [{
 
     template_name = "string"
-  }
+  }]
 }
 
 output "catalystcenter_sensor_test_run_example" {

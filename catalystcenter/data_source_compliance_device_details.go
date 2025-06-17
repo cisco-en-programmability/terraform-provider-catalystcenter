@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -27,7 +27,7 @@ func dataSourceComplianceDeviceDetails() *schema.Resource {
 				Optional: true,
 			},
 			"compliance_type": &schema.Schema{
-				Description: `complianceType query parameter. Specify "Compliance type(s)" in commas. The Compliance type can be 'NETWORK_PROFILE', 'IMAGE', 'FABRIC', 'APPLICATION_VISIBILITY', 'FABRIC', RUNNING_CONFIG', 'NETWORK_SETTINGS', 'WORKFLOW' , 'EoX'.
+				Description: `complianceType query parameter. Specify "Compliance type(s)" in commas. The Compliance type can be 'NETWORK_PROFILE', 'IMAGE', 'FABRIC', 'APPLICATION_VISIBILITY', 'FABRIC', RUNNING_CONFIG', 'NETWORK_SETTINGS', 'WORKFLOW' , 'EOX'.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -39,7 +39,7 @@ func dataSourceComplianceDeviceDetails() *schema.Resource {
 				Optional: true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter. Number of records to be retrieved
+				Description: `limit query parameter. The number of records to be retrieved defaults to 500 if not specified, with a maximum allowed limit of 500.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -58,14 +58,14 @@ func dataSourceComplianceDeviceDetails() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 
 						"category": &schema.Schema{
-							Description: `category can have any value among 'INTENT'(mapped to compliance types: NETWORK_SETTINGS,NETWORK_PROFILE,WORKFLOW,FABRIC,APPLICATION_VISIBILITY), 'RUNNING_CONFIG' , 'IMAGE' , 'PSIRT' , 'EoX' , 'NETWORK_SETTINGS'.
+							Description: `category can have any value among 'INTENT'(mapped to compliance types: NETWORK_SETTINGS,NETWORK_PROFILE,WORKFLOW,FABRIC,APPLICATION_VISIBILITY), 'RUNNING_CONFIG' , 'IMAGE' , 'PSIRT' , 'EOX' , 'NETWORK_SETTINGS'.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
 						},
 
 						"compliance_type": &schema.Schema{
-							Description: `Compliance type corresponds to a tile on the UI. Will be one of NETWORK_PROFILE, IMAGE, APPLICATION_VISIBILITY, FABRIC, PSIRT, RUNNING_CONFIG, NETWORK_SETTINGS, WORKFLOW, or EoX.
+							Description: `Compliance type corresponds to a tile on the UI. Will be one of NETWORK_PROFILE, IMAGE, APPLICATION_VISIBILITY, FABRIC, PSIRT, RUNNING_CONFIG, NETWORK_SETTINGS, WORKFLOW, or EOX.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -139,8 +139,8 @@ func dataSourceComplianceDeviceDetailsRead(ctx context.Context, d *schema.Resour
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetComplianceDetailV1")
-		queryParams1 := catalystcentersdkgo.GetComplianceDetailV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetComplianceDetail")
+		queryParams1 := catalystcentersdkgo.GetComplianceDetailQueryParams{}
 
 		if okComplianceType {
 			queryParams1.ComplianceType = vComplianceType.(string)
@@ -160,24 +160,36 @@ func dataSourceComplianceDeviceDetailsRead(ctx context.Context, d *schema.Resour
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Compliance.GetComplianceDetailV1(&queryParams1)
+		response1, restyResp1, err := client.Compliance.GetComplianceDetail(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetComplianceDetailV1", err,
-				"Failure at GetComplianceDetailV1, unexpected response", ""))
+				"Failure when executing 2 GetComplianceDetail", err,
+				"Failure at GetComplianceDetail, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenComplianceGetComplianceDetailV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetComplianceDetail", err,
+				"Failure at GetComplianceDetail, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenComplianceGetComplianceDetailItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetComplianceDetailV1 response",
+				"Failure when setting GetComplianceDetail response",
 				err))
 			return diags
 		}
@@ -189,7 +201,7 @@ func dataSourceComplianceDeviceDetailsRead(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func flattenComplianceGetComplianceDetailV1Items(items *[]catalystcentersdkgo.ResponseComplianceGetComplianceDetailV1Response) []map[string]interface{} {
+func flattenComplianceGetComplianceDetailItems(items *[]catalystcentersdkgo.ResponseComplianceGetComplianceDetailResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

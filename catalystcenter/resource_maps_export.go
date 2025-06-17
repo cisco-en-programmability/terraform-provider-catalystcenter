@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -9,7 +10,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -82,14 +83,14 @@ func resourceMapsExportCreate(ctx context.Context, d *schema.ResourceData, m int
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Sites.ExportMapArchiveV1(vvSiteHierarchyUUID)
+	response1, restyResp1, err := client.Sites.ExportMapArchive(vvSiteHierarchyUUID)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ExportMapArchiveV1", err))
+			"Failure when executing ExportMapArchive", err))
 		return diags
 	}
 
@@ -97,7 +98,7 @@ func resourceMapsExportCreate(ctx context.Context, d *schema.ResourceData, m int
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing ExportMapArchiveV1", err))
+			"Failure when executing ExportMapArchive", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -124,22 +125,22 @@ func resourceMapsExportCreate(ctx context.Context, d *schema.ResourceData, m int
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing ExportMapArchiveV1", err1))
+				"Failure when executing ExportMapArchive", err1))
 			return diags
 		}
 	}
 
-	vItem1 := flattenSitesExportMapArchiveV1Item(response1.Response)
+	vItem1 := flattenSitesExportMapArchiveItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ExportMapArchiveV1 response",
+			"Failure when setting ExportMapArchive response",
 			err))
 		return diags
 	}
@@ -160,7 +161,7 @@ func resourceMapsExportDelete(ctx context.Context, d *schema.ResourceData, m int
 	return diags
 }
 
-func flattenSitesExportMapArchiveV1Item(item *catalystcentersdkgo.ResponseSitesExportMapArchiveV1Response) []map[string]interface{} {
+func flattenSitesExportMapArchiveItem(item *catalystcentersdkgo.ResponseSitesExportMapArchiveResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -18,15 +18,15 @@ func resourceWirelessProfilesIDPolicyTagsPolicyTagID() *schema.Resource {
 	return &schema.Resource{
 		Description: `It manages read, update and delete operations on Wireless.
 
-- This endpoint allows for the deletion of a specific *Policy Tag* associated with a given *Wireless Profile*. This
-resource requires the *id* of the *Wireless Profile* and the *policyTagId* of the *Policy Tag* to be provided as path
-parameters.
+- This endpoint allows for the deletion of a specific **Policy Tag** associated with a given **Wireless Profile**. This
+resource requires the **id** of the **Wireless Profile** and the **policyTagId** of the **Policy Tag** to be provided as
+path parameters.
 
-- This endpoint allows updating the details of a specific *Policy Tag* associated with a given *Wireless Profile*. The
-*id* of the *Wireless Profile* and the *policyTagId* of the Policy Tag must be provided as path parameters, and the
-request body should contain the updated details of the *Policy Tag*. The *policyTagName* cannot be modified through this
-endpoint. Note: When updating a Policy Tag, if the same set of AP Zones (apZones) is used for the same site or its
-parent site, the existing Policy Tag will be overridden by the new one.
+- This endpoint allows updating the details of a specific **Policy Tag** associated with a given **Wireless Profile**.
+The **id** of the **Wireless Profile** and the **policyTagId** of the Policy Tag must be provided as path parameters,
+and the request body should contain the updated details of the **Policy Tag**. The **policyTagName** cannot be modified
+through this endpoint. Note: When updating a Policy Tag, if the same set of AP Zones (apZones) is used for the same site
+or its parent site, the existing Policy Tag will be overridden by the new one.
 `,
 
 		CreateContext: resourceWirelessProfilesIDPolicyTagsPolicyTagIDCreate,
@@ -170,7 +170,7 @@ func resourceWirelessProfilesIDPolicyTagsPolicyTagIDRead(ctx context.Context, d 
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessRetrieveASpecificPolicyTagForAWirelessProfileV1Item(response1.Response)
+		vItem1 := flattenWirelessRetrieveASpecificPolicyTagForAWirelessProfileItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrieveASpecificPolicyTagForAWirelessProfile response",
@@ -196,7 +196,7 @@ func resourceWirelessProfilesIDPolicyTagsPolicyTagIDUpdate(ctx context.Context, 
 
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vID)
-		request1 := expandRequestWirelessProfilesIDPolicyTagsPolicyTagIDUpdateASpecificPolicyTagForAWirelessProfileV1(ctx, "parameters.0", d)
+		request1 := expandRequestWirelessProfilesIDPolicyTagsPolicyTagIDUpdateASpecificPolicyTagForAWirelessProfile(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.Wireless.UpdateASpecificPolicyTagForAWirelessProfile(vID, vPolicyTagID, request1)
 		if err != nil || response1 == nil {
@@ -309,8 +309,9 @@ func resourceWirelessProfilesIDPolicyTagsPolicyTagIDDelete(ctx context.Context, 
 
 	return diags
 }
-func expandRequestWirelessProfilesIDPolicyTagsPolicyTagIDUpdateASpecificPolicyTagForAWirelessProfileV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateASpecificPolicyTagForAWirelessProfileV1 {
-	request := catalystcentersdkgo.RequestWirelessUpdateASpecificPolicyTagForAWirelessProfileV1{}
+
+func expandRequestWirelessProfilesIDPolicyTagsPolicyTagIDUpdateASpecificPolicyTagForAWirelessProfile(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessUpdateASpecificPolicyTagForAWirelessProfile {
+	request := catalystcentersdkgo.RequestWirelessUpdateASpecificPolicyTagForAWirelessProfile{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".site_ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".site_ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".site_ids")))) {
 		request.SiteIDs = interfaceToSliceString(v)
 	}

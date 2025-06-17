@@ -1,7 +1,7 @@
 
 resource "catalystcenter_sda_fabric_authentication_profile" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     authenticate_template_name    = "string"

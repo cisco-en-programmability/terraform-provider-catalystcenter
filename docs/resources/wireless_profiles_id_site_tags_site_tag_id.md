@@ -5,38 +5,40 @@ subcategory: ""
 description: |-
   It manages read, update and delete operations on Wireless.
   This endpoint allows updating the details of a specific Site Tag associated with a given Wireless Profile. The
-  id of the Wireless Profile and the siteTagId of the Site Tag must be provided as path parameters, and the request
-  body should contain the updated Site Tag details.  The siteTagName cannot be modified through this endpoint. Note:
-  When updating a Site Tag (siteTag), if the siteId already has an associated siteTag and the same siteId is included in
-  the update request, the existing siteTag for that siteId will be overridden by the new one. For Flex-enabled Wireless
-  Profiles (i.e., a Wireless Profile with one or more Flex SSIDs), a non-default Flex Profile Name (flexProfileName) will
-  be used. If no custom flexProfileName is provided, the System will automatically generate one and configure it in the
-  controller.This endpoint enables the deletion of a specific Site Tag associated with a given Wireless Profile. This resource
-  requires the id of the Wireless Profile and the siteTagId of the Site Tag to be provided as path parameters.
+  id of the Wireless Profile and the siteTagId of the Site Tag must be provided as path parameters, and the
+  request body should contain the updated Site Tag details.  The siteTagName cannot be modified through this
+  endpoint. Note: When updating a Site Tag (siteTag), if the siteId already has an associated siteTag and the same siteId
+  is included in the update request, the existing siteTag for that siteId will be overridden by the new one. For Flex-
+  enabled Wireless Profiles (i.e., a Wireless Profile with one or more Flex SSIDs), a non-default Flex Profile Name
+  (flexProfileName) will be used. If no custom flexProfileName is provided, the System will automatically generate one and
+  configure it in the controller.This endpoint enables the deletion of a specific Site Tag associated with a given Wireless Profile. This
+  resource requires the id of the Wireless Profile and the siteTagId of the Site Tag to be provided as
+  path parameters.
 ---
 
 # catalystcenter_wireless_profiles_id_site_tags_site_tag_id (Resource)
 
 It manages read, update and delete operations on Wireless.
 
-- This endpoint allows updating the details of a specific *Site Tag* associated with a given *Wireless Profile*. The
-*id* of the *Wireless Profile* and the *siteTagId* of the Site Tag must be provided as path parameters, and the request
-body should contain the updated *Site Tag* details.  The *siteTagName* cannot be modified through this endpoint. Note:
-When updating a Site Tag (siteTag), if the siteId already has an associated siteTag and the same siteId is included in
-the update request, the existing siteTag for that siteId will be overridden by the new one. For Flex-enabled Wireless
-Profiles (i.e., a Wireless Profile with one or more Flex SSIDs), a non-default Flex Profile Name (flexProfileName) will
-be used. If no custom flexProfileName is provided, the System will automatically generate one and configure it in the
-controller.
+- This endpoint allows updating the details of a specific **Site Tag** associated with a given **Wireless Profile**. The
+**id** of the **Wireless Profile** and the **siteTagId** of the Site Tag must be provided as path parameters, and the
+request body should contain the updated **Site Tag** details.  The **siteTagName** cannot be modified through this
+endpoint. Note: When updating a Site Tag (siteTag), if the siteId already has an associated siteTag and the same siteId
+is included in the update request, the existing siteTag for that siteId will be overridden by the new one. For Flex-
+enabled Wireless Profiles (i.e., a Wireless Profile with one or more Flex SSIDs), a non-default Flex Profile Name
+(flexProfileName) will be used. If no custom flexProfileName is provided, the System will automatically generate one and
+configure it in the controller.
 
-- This endpoint enables the deletion of a specific *Site Tag* associated with a given *Wireless Profile*. This resource
-requires the *id* of the *Wireless Profile* and the *siteTagId* of the *Site Tag* to be provided as path parameters.
+- This endpoint enables the deletion of a specific **Site Tag** associated with a given **Wireless Profile**. This
+resource requires the **id** of the **Wireless Profile** and the **siteTagId** of the **Site Tag** to be provided as
+path parameters.
 
 ## Example Usage
 
 ```terraform
 resource "catalystcenter_wireless_profiles_id_site_tags_site_tag_id" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     ap_profile_name   = "string"

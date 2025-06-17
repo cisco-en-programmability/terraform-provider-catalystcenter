@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,8 +15,8 @@ func dataSourceNetworkDevicesIntentCount() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Devices.
 
-- API to fetch the count of network devices using basic filters. Use the /dna/intent/api/v1/networkDevices/query/count
-API if you need advanced filtering.
+- API to fetch the count of network devices using basic filters. Use the
+**/dna/intent/api/v1/networkDevices/query/count** API if you need advanced filtering.
 `,
 
 		ReadContext: dataSourceNetworkDevicesIntentCountRead,
@@ -111,8 +111,8 @@ func dataSourceNetworkDevicesIntentCountRead(ctx context.Context, d *schema.Reso
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: CountTheNumberOfNetworkDevicesV1")
-		queryParams1 := catalystcentersdkgo.CountTheNumberOfNetworkDevicesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: CountTheNumberOfNetworkDevices")
+		queryParams1 := catalystcentersdkgo.CountTheNumberOfNetworkDevicesQueryParams{}
 
 		if okID {
 			queryParams1.ID = vID.(string)
@@ -144,24 +144,36 @@ func dataSourceNetworkDevicesIntentCountRead(ctx context.Context, d *schema.Reso
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Devices.CountTheNumberOfNetworkDevicesV1(&queryParams1)
+		response1, restyResp1, err := client.Devices.CountTheNumberOfNetworkDevices(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 CountTheNumberOfNetworkDevicesV1", err,
-				"Failure at CountTheNumberOfNetworkDevicesV1, unexpected response", ""))
+				"Failure when executing 2 CountTheNumberOfNetworkDevices", err,
+				"Failure at CountTheNumberOfNetworkDevices, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesCountTheNumberOfNetworkDevicesV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 CountTheNumberOfNetworkDevices", err,
+				"Failure at CountTheNumberOfNetworkDevices, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenDevicesCountTheNumberOfNetworkDevicesItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting CountTheNumberOfNetworkDevicesV1 response",
+				"Failure when setting CountTheNumberOfNetworkDevices response",
 				err))
 			return diags
 		}
@@ -173,7 +185,7 @@ func dataSourceNetworkDevicesIntentCountRead(ctx context.Context, d *schema.Reso
 	return diags
 }
 
-func flattenDevicesCountTheNumberOfNetworkDevicesV1Item(item *catalystcentersdkgo.ResponseDevicesCountTheNumberOfNetworkDevicesV1Response) []map[string]interface{} {
+func flattenDevicesCountTheNumberOfNetworkDevicesItem(item *catalystcentersdkgo.ResponseDevicesCountTheNumberOfNetworkDevicesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

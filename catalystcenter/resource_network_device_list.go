@@ -10,7 +10,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -449,7 +449,7 @@ an inventory sync.
 							},
 						},
 						"netconf_port": &schema.Schema{
-							Description: `Netconf Port of the device. cliTransport must be 'ssh' if netconf is provided.
+							Description: `Netconf Port of the device. cliTransport must be 'ssh' if netconf is provided. Netconf port is required for eWLC.
 `,
 							Type:     schema.TypeString,
 							Optional: true,
@@ -598,7 +598,7 @@ func resourceNetworkDeviceListCreate(ctx context.Context, d *schema.ResourceData
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestNetworkDeviceListAddDeviceKnowYourNetworkV1(ctx, "parameters.0", d)
+	request1 := expandRequestNetworkDeviceListAddDeviceKnowYourNetwork(ctx, "parameters.0", d)
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
@@ -619,7 +619,7 @@ func resourceNetworkDeviceListCreate(ctx context.Context, d *schema.ResourceData
 	}
 	vvIPAddress = strings.Join(vIPAddress, ",")
 
-	queryParams1 := catalystcentersdkgo.GetDeviceListV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.GetDeviceListQueryParams{}
 	if vSerialNumber != "" {
 		queryParams1.SerialNumber = []string{vvSerialNumber}
 	}
@@ -697,7 +697,7 @@ func resourceNetworkDeviceListRead(ctx context.Context, d *schema.ResourceData, 
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method 1: GetDeviceList")
-		queryParams1 := catalystcentersdkgo.GetDeviceListV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetDeviceListQueryParams{}
 		if vSerialNumber != "" {
 			queryParams1.SerialNumber = []string{vSerialNumber}
 		}
@@ -721,7 +721,7 @@ func resourceNetworkDeviceListRead(ctx context.Context, d *schema.ResourceData, 
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesGetDeviceListV1Items(response1.Response)
+		vItem1 := flattenDevicesGetDeviceListItems(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetDeviceList search response",
@@ -744,7 +744,7 @@ func resourceNetworkDeviceListUpdate(ctx context.Context, d *schema.ResourceData
 	vvIPAddress := resourceMap["ip_address"]
 	vIPAddress := strings.Split(vvIPAddress, ",")
 
-	queryParams1 := catalystcentersdkgo.GetDeviceListV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.GetDeviceListQueryParams{}
 	if vSerialNumber != "" {
 		queryParams1.SerialNumber = []string{vSerialNumber}
 	}
@@ -760,7 +760,7 @@ func resourceNetworkDeviceListUpdate(ctx context.Context, d *schema.ResourceData
 	// NOTE: Consider adding getAllItems and search function to get missing params
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] Name used for update operation %s", vSerialNumber)
-		request1 := expandRequestNetworkDeviceListUpdateDeviceDetailsV1(ctx, "parameters.0", d)
+		request1 := expandRequestNetworkDeviceListUpdateDeviceDetails(ctx, "parameters.0", d)
 		if request1 != nil {
 			log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		}
@@ -821,8 +821,9 @@ func resourceNetworkDeviceListDelete(ctx context.Context, d *schema.ResourceData
 
 	return diags
 }
-func expandRequestNetworkDeviceListAddDeviceKnowYourNetworkV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesAddDeviceKnowYourNetworkV1 {
-	request := catalystcentersdkgo.RequestDevicesAddDeviceKnowYourNetworkV1{}
+
+func expandRequestNetworkDeviceListAddDeviceKnowYourNetwork(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesAddDeviceKnowYourNetwork {
+	request := catalystcentersdkgo.RequestDevicesAddDeviceKnowYourNetwork{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".cli_transport")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".cli_transport")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".cli_transport")))) {
 		request.CliTransport = interfaceToString(v)
 	}
@@ -907,8 +908,8 @@ func expandRequestNetworkDeviceListAddDeviceKnowYourNetworkV1(ctx context.Contex
 	return &request
 }
 
-func expandRequestNetworkDeviceListUpdateDeviceDetailsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateDeviceDetailsV1 {
-	request := catalystcentersdkgo.RequestDevicesUpdateDeviceDetailsV1{}
+func expandRequestNetworkDeviceListUpdateDeviceDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateDeviceDetails {
+	request := catalystcentersdkgo.RequestDevicesUpdateDeviceDetails{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".cli_transport")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".cli_transport")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".cli_transport")))) {
 		request.CliTransport = interfaceToString(v)
 	}
@@ -985,7 +986,7 @@ func expandRequestNetworkDeviceListUpdateDeviceDetailsV1(ctx context.Context, ke
 		request.Type = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".update_mgmt_ipaddress_list")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".update_mgmt_ipaddress_list")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".update_mgmt_ipaddress_list")))) {
-		request.UpdateMgmtIPaddressList = expandRequestNetworkDeviceListUpdateDeviceDetailsV1UpdateMgmtIPaddressListArray(ctx, key+".update_mgmt_ipaddress_list", d)
+		request.UpdateMgmtIPaddressList = expandRequestNetworkDeviceListUpdateDeviceDetailsUpdateMgmtIPaddressListArray(ctx, key+".update_mgmt_ipaddress_list", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".user_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".user_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".user_name")))) {
 		request.UserName = interfaceToString(v)
@@ -996,8 +997,8 @@ func expandRequestNetworkDeviceListUpdateDeviceDetailsV1(ctx context.Context, ke
 	return &request
 }
 
-func expandRequestNetworkDeviceListUpdateDeviceDetailsV1UpdateMgmtIPaddressListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesUpdateDeviceDetailsV1UpdateMgmtIPaddressList {
-	request := []catalystcentersdkgo.RequestDevicesUpdateDeviceDetailsV1UpdateMgmtIPaddressList{}
+func expandRequestNetworkDeviceListUpdateDeviceDetailsUpdateMgmtIPaddressListArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesUpdateDeviceDetailsUpdateMgmtIPaddressList {
+	request := []catalystcentersdkgo.RequestDevicesUpdateDeviceDetailsUpdateMgmtIPaddressList{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1008,7 +1009,7 @@ func expandRequestNetworkDeviceListUpdateDeviceDetailsV1UpdateMgmtIPaddressListA
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestNetworkDeviceListUpdateDeviceDetailsV1UpdateMgmtIPaddressList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestNetworkDeviceListUpdateDeviceDetailsUpdateMgmtIPaddressList(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1019,8 +1020,8 @@ func expandRequestNetworkDeviceListUpdateDeviceDetailsV1UpdateMgmtIPaddressListA
 	return &request
 }
 
-func expandRequestNetworkDeviceListUpdateDeviceDetailsV1UpdateMgmtIPaddressList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateDeviceDetailsV1UpdateMgmtIPaddressList {
-	request := catalystcentersdkgo.RequestDevicesUpdateDeviceDetailsV1UpdateMgmtIPaddressList{}
+func expandRequestNetworkDeviceListUpdateDeviceDetailsUpdateMgmtIPaddressList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateDeviceDetailsUpdateMgmtIPaddressList {
+	request := catalystcentersdkgo.RequestDevicesUpdateDeviceDetailsUpdateMgmtIPaddressList{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".exist_mgmt_ip_address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".exist_mgmt_ip_address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".exist_mgmt_ip_address")))) {
 		request.ExistMgmtIPAddress = interfaceToString(v)
 	}
@@ -1033,11 +1034,11 @@ func expandRequestNetworkDeviceListUpdateDeviceDetailsV1UpdateMgmtIPaddressList(
 	return &request
 }
 
-func searchDevicesGetDeviceList(m interface{}, queryParams catalystcentersdkgo.GetDeviceListV1QueryParams) (*catalystcentersdkgo.ResponseDevicesGetDeviceListV1Response, error) {
+func searchDevicesGetDeviceList(m interface{}, queryParams catalystcentersdkgo.GetDeviceListQueryParams) (*catalystcentersdkgo.ResponseDevicesGetDeviceListResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseDevicesGetDeviceListV1Response
-	var ite *catalystcentersdkgo.ResponseDevicesGetDeviceListV1
+	var foundItem *catalystcentersdkgo.ResponseDevicesGetDeviceListResponse
+	var ite *catalystcentersdkgo.ResponseDevicesGetDeviceList
 	ite, _, err = client.Devices.GetDeviceList(&queryParams)
 	if err != nil {
 		return nil, err
@@ -1054,12 +1055,12 @@ func searchDevicesGetDeviceList(m interface{}, queryParams catalystcentersdkgo.G
 	for _, item := range itemsCopy {
 		// Call get by _ method and set value to foundItem and return
 		if strings.Contains(strings.Join(queryParams.SerialNumber, ","), item.SerialNumber) {
-			var getItem *catalystcentersdkgo.ResponseDevicesGetDeviceListV1Response
+			var getItem *catalystcentersdkgo.ResponseDevicesGetDeviceListResponse
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err
 		} else if strings.Contains(strings.Join(queryParams.ManagementIPAddress, ","), item.ManagementIPAddress) {
-			var getItem *catalystcentersdkgo.ResponseDevicesGetDeviceListV1Response
+			var getItem *catalystcentersdkgo.ResponseDevicesGetDeviceListResponse
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

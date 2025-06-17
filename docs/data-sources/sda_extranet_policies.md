@@ -34,7 +34,7 @@ output "catalystcenter_sda_extranet_policies_example" {
 ### Optional
 
 - `extranet_policy_name` (String) extranetPolicyName query parameter. Name of the extranet policy.
-- `limit` (Number) limit query parameter. Maximum number of records to return.
+- `limit` (Number) limit query parameter. Maximum number of records to return. The maximum number of objects supported in a single request is 500.
 - `offset` (Number) offset query parameter. Starting record for pagination.
 
 ### Read-Only

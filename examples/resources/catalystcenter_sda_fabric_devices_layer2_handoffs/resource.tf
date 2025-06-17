@@ -1,7 +1,7 @@
 
 resource "catalystcenter_sda_fabric_devices_layer2_handoffs" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     external_vlan_id  = 1

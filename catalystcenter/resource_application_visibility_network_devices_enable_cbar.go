@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -12,7 +13,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -29,8 +30,8 @@ modes (wireless) to be excluded from CBAR enablement.
 Please note that this operation can be performed even if the feature is already enabled on the network device. It would
 push the updated configurations to the network device.
 This operation is only permitted if the provisioning settings do not mandate a configuration preview for CBAR
-enablement. In cases where such settings are active, attempting to use this endpoint will result in *422 Unprocessable
-Content* error.
+enablement. In cases where such settings are active, attempting to use this endpoint will result in **422 Unprocessable
+Content** error.
 `,
 
 		CreateContext: resourceApplicationVisibilityNetworkDevicesEnableCbarCreate,
@@ -120,7 +121,7 @@ func resourceApplicationVisibilityNetworkDevicesEnableCbarCreate(ctx context.Con
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestApplicationVisibilityNetworkDevicesEnableCbarEnableCBARFeatureOnMultipleNetworkDevicesV1(ctx, "parameters.0", d)
+	request1 := expandRequestApplicationVisibilityNetworkDevicesEnableCbarEnableCBARFeatureOnMultipleNetworkDevices(ctx, "parameters.0", d)
 
 	response1, restyResp1, err := client.ApplicationPolicy.EnableCBARFeatureOnMultipleNetworkDevices(request1)
 
@@ -167,7 +168,7 @@ func resourceApplicationVisibilityNetworkDevicesEnableCbarCreate(ctx context.Con
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
@@ -179,7 +180,7 @@ func resourceApplicationVisibilityNetworkDevicesEnableCbarCreate(ctx context.Con
 		}
 	}
 
-	vItem1 := flattenApplicationPolicyEnableCBARFeatureOnMultipleNetworkDevicesV1Item(response1.Response)
+	vItem1 := flattenApplicationPolicyEnableCBARFeatureOnMultipleNetworkDevicesItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
 			"Failure when setting EnableCBARFeatureOnMultipleNetworkDevices response",
@@ -204,16 +205,16 @@ func resourceApplicationVisibilityNetworkDevicesEnableCbarDelete(ctx context.Con
 	return diags
 }
 
-func expandRequestApplicationVisibilityNetworkDevicesEnableCbarEnableCBARFeatureOnMultipleNetworkDevicesV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyEnableCBARFeatureOnMultipleNetworkDevicesV1 {
-	request := catalystcentersdkgo.RequestApplicationPolicyEnableCBARFeatureOnMultipleNetworkDevicesV1{}
+func expandRequestApplicationVisibilityNetworkDevicesEnableCbarEnableCBARFeatureOnMultipleNetworkDevices(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyEnableCBARFeatureOnMultipleNetworkDevices {
+	request := catalystcentersdkgo.RequestApplicationPolicyEnableCBARFeatureOnMultipleNetworkDevices{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".network_devices")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".network_devices")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".network_devices")))) {
-		request.NetworkDevices = expandRequestApplicationVisibilityNetworkDevicesEnableCbarEnableCBARFeatureOnMultipleNetworkDevicesV1NetworkDevicesArray(ctx, key+".network_devices", d)
+		request.NetworkDevices = expandRequestApplicationVisibilityNetworkDevicesEnableCbarEnableCBARFeatureOnMultipleNetworkDevicesNetworkDevicesArray(ctx, key+".network_devices", d)
 	}
 	return &request
 }
 
-func expandRequestApplicationVisibilityNetworkDevicesEnableCbarEnableCBARFeatureOnMultipleNetworkDevicesV1NetworkDevicesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyEnableCBARFeatureOnMultipleNetworkDevicesV1NetworkDevices {
-	request := []catalystcentersdkgo.RequestApplicationPolicyEnableCBARFeatureOnMultipleNetworkDevicesV1NetworkDevices{}
+func expandRequestApplicationVisibilityNetworkDevicesEnableCbarEnableCBARFeatureOnMultipleNetworkDevicesNetworkDevicesArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestApplicationPolicyEnableCBARFeatureOnMultipleNetworkDevicesNetworkDevices {
+	request := []catalystcentersdkgo.RequestApplicationPolicyEnableCBARFeatureOnMultipleNetworkDevicesNetworkDevices{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -224,7 +225,7 @@ func expandRequestApplicationVisibilityNetworkDevicesEnableCbarEnableCBARFeature
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestApplicationVisibilityNetworkDevicesEnableCbarEnableCBARFeatureOnMultipleNetworkDevicesV1NetworkDevices(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestApplicationVisibilityNetworkDevicesEnableCbarEnableCBARFeatureOnMultipleNetworkDevicesNetworkDevices(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -232,8 +233,8 @@ func expandRequestApplicationVisibilityNetworkDevicesEnableCbarEnableCBARFeature
 	return &request
 }
 
-func expandRequestApplicationVisibilityNetworkDevicesEnableCbarEnableCBARFeatureOnMultipleNetworkDevicesV1NetworkDevices(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyEnableCBARFeatureOnMultipleNetworkDevicesV1NetworkDevices {
-	request := catalystcentersdkgo.RequestApplicationPolicyEnableCBARFeatureOnMultipleNetworkDevicesV1NetworkDevices{}
+func expandRequestApplicationVisibilityNetworkDevicesEnableCbarEnableCBARFeatureOnMultipleNetworkDevicesNetworkDevices(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestApplicationPolicyEnableCBARFeatureOnMultipleNetworkDevicesNetworkDevices {
+	request := catalystcentersdkgo.RequestApplicationPolicyEnableCBARFeatureOnMultipleNetworkDevicesNetworkDevices{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -246,7 +247,7 @@ func expandRequestApplicationVisibilityNetworkDevicesEnableCbarEnableCBARFeature
 	return &request
 }
 
-func flattenApplicationPolicyEnableCBARFeatureOnMultipleNetworkDevicesV1Item(item *catalystcentersdkgo.ResponseApplicationPolicyEnableCBARFeatureOnMultipleNetworkDevicesV1Response) []map[string]interface{} {
+func flattenApplicationPolicyEnableCBARFeatureOnMultipleNetworkDevicesItem(item *catalystcentersdkgo.ResponseApplicationPolicyEnableCBARFeatureOnMultipleNetworkDevicesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

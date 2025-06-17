@@ -14,7 +14,7 @@ description: |-
 
 It performs read operation on Devices.
 
-- Wireless client event could have child events and this API can be used to fetch the same using parent event *id* as
+- Wireless client event could have child events and this API can be used to fetch the same using parent event **id** as
 the input. For detailed information about the usage of the API, please refer to the Open API specification document
 https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 AssuranceEvents-1.0.0-resolved.yaml

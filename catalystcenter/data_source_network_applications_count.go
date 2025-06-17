@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -16,9 +16,10 @@ func dataSourceNetworkApplicationsCount() *schema.Resource {
 		Description: `It performs read operation on Applications.
 
 - Retrieves the number of network applications by applying basic filtering. If startTime and endTime are not provided,
-the API defaults to the last 24 hours. siteId is mandatory. siteId must be a site UUID of a building. For detailed
-information about the usage of the API, please refer to the Open API specification document https://github.com/cisco-en-
-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-NetworkApplications-1.0.0-resolved.yaml
+the API defaults to the last 24 hours. **siteId** is mandatory. **siteId** must be a site UUID of a building. For
+detailed information about the usage of the API, please refer to the Open API specification document
+https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
+NetworkApplications-1.0.0-resolved.yaml
 `,
 
 		ReadContext: dataSourceNetworkApplicationsCountRead,
@@ -26,8 +27,8 @@ programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 			"application_name": &schema.Schema{
 				Description: `applicationName query parameter. Name of the application for which the experience data is intended.
 Examples:
-applicationName=webex (single applicationName requested)
-applicationName=webex&applicationName=teams (multiple applicationName requested)
+**applicationName=webex** (single applicationName requested)
+**applicationName=webex&applicationName=teams** (multiple applicationName requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -45,7 +46,7 @@ applicationName=webex&applicationName=teams (multiple applicationName requested)
 				Optional: true,
 			},
 			"site_id": &schema.Schema{
-				Description: `siteId query parameter. The site UUID without the top level hierarchy. siteId is mandatory. siteId must be a site UUID of a building. (Ex."buildingUuid") Examples: siteId=buildingUuid (single siteId requested) siteId=buildingUuid1&siteId=buildingUuid2 (multiple siteId requested)
+				Description: `siteId query parameter. The site UUID without the top level hierarchy. **siteId** is mandatory. **siteId** must be a site UUID of a building. (Ex."buildingUuid") Examples: **siteId=buildingUuid** (single siteId requested) **siteId=buildingUuid1&siteId=buildingUuid2** (multiple siteId requested)
 `,
 				Type:     schema.TypeString,
 				Required: true,
@@ -53,8 +54,8 @@ applicationName=webex&applicationName=teams (multiple applicationName requested)
 			"ssid": &schema.Schema{
 				Description: `ssid query parameter. In the context of a network application, SSID refers to the name of the wireless network to which the client connects.
 Examples:
-ssid=Alpha (single ssid requested)
-ssid=Alpha&ssid=Guest (multiple ssid requested)
+**ssid=Alpha** (single ssid requested)
+**ssid=Alpha&ssid=Guest** (multiple ssid requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -104,10 +105,10 @@ func dataSourceNetworkApplicationsCountRead(ctx context.Context, d *schema.Resou
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesTheTotalCountOfNetworkApplicationsByApplyingBasicFilteringV1")
+		log.Printf("[DEBUG] Selected method: RetrievesTheTotalCountOfNetworkApplicationsByApplyingBasicFiltering")
 
-		headerParams1 := catalystcentersdkgo.RetrievesTheTotalCountOfNetworkApplicationsByApplyingBasicFilteringV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.RetrievesTheTotalCountOfNetworkApplicationsByApplyingBasicFilteringV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.RetrievesTheTotalCountOfNetworkApplicationsByApplyingBasicFilteringHeaderParams{}
+		queryParams1 := catalystcentersdkgo.RetrievesTheTotalCountOfNetworkApplicationsByApplyingBasicFilteringQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -130,24 +131,36 @@ func dataSourceNetworkApplicationsCountRead(ctx context.Context, d *schema.Resou
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Applications.RetrievesTheTotalCountOfNetworkApplicationsByApplyingBasicFilteringV1(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Applications.RetrievesTheTotalCountOfNetworkApplicationsByApplyingBasicFiltering(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesTheTotalCountOfNetworkApplicationsByApplyingBasicFilteringV1", err,
-				"Failure at RetrievesTheTotalCountOfNetworkApplicationsByApplyingBasicFilteringV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesTheTotalCountOfNetworkApplicationsByApplyingBasicFiltering", err,
+				"Failure at RetrievesTheTotalCountOfNetworkApplicationsByApplyingBasicFiltering, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenApplicationsRetrievesTheTotalCountOfNetworkApplicationsByApplyingBasicFilteringV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesTheTotalCountOfNetworkApplicationsByApplyingBasicFiltering", err,
+				"Failure at RetrievesTheTotalCountOfNetworkApplicationsByApplyingBasicFiltering, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenApplicationsRetrievesTheTotalCountOfNetworkApplicationsByApplyingBasicFilteringItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesTheTotalCountOfNetworkApplicationsByApplyingBasicFilteringV1 response",
+				"Failure when setting RetrievesTheTotalCountOfNetworkApplicationsByApplyingBasicFiltering response",
 				err))
 			return diags
 		}
@@ -159,7 +172,7 @@ func dataSourceNetworkApplicationsCountRead(ctx context.Context, d *schema.Resou
 	return diags
 }
 
-func flattenApplicationsRetrievesTheTotalCountOfNetworkApplicationsByApplyingBasicFilteringV1Item(item *catalystcentersdkgo.ResponseApplicationsRetrievesTheTotalCountOfNetworkApplicationsByApplyingBasicFilteringV1Response) []map[string]interface{} {
+func flattenApplicationsRetrievesTheTotalCountOfNetworkApplicationsByApplyingBasicFilteringItem(item *catalystcentersdkgo.ResponseApplicationsRetrievesTheTotalCountOfNetworkApplicationsByApplyingBasicFilteringResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -75,27 +75,41 @@ func dataSourceComplianceDeviceByIDRead(ctx context.Context, d *schema.ResourceD
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: DeviceComplianceStatusV1")
+		log.Printf("[DEBUG] Selected method: DeviceComplianceStatus")
 		vvDeviceUUID := vDeviceUUID.(string)
 
-		response1, restyResp1, err := client.Compliance.DeviceComplianceStatusV1(vvDeviceUUID)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Compliance.DeviceComplianceStatus(vvDeviceUUID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 DeviceComplianceStatusV1", err,
-				"Failure at DeviceComplianceStatusV1, unexpected response", ""))
+				"Failure when executing 2 DeviceComplianceStatus", err,
+				"Failure at DeviceComplianceStatus, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenComplianceDeviceComplianceStatusV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 DeviceComplianceStatus", err,
+				"Failure at DeviceComplianceStatus, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenComplianceDeviceComplianceStatusItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting DeviceComplianceStatusV1 response",
+				"Failure when setting DeviceComplianceStatus response",
 				err))
 			return diags
 		}
@@ -107,7 +121,7 @@ func dataSourceComplianceDeviceByIDRead(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func flattenComplianceDeviceComplianceStatusV1Item(item *catalystcentersdkgo.ResponseComplianceDeviceComplianceStatusV1Response) []map[string]interface{} {
+func flattenComplianceDeviceComplianceStatusItem(item *catalystcentersdkgo.ResponseComplianceDeviceComplianceStatusResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

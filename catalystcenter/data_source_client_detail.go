@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -1484,8 +1484,8 @@ func dataSourceClientDetailRead(ctx context.Context, d *schema.ResourceData, m i
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetClientDetailV1")
-		queryParams1 := catalystcentersdkgo.GetClientDetailV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetClientDetail")
+		queryParams1 := catalystcentersdkgo.GetClientDetailQueryParams{}
 
 		queryParams1.MacAddress = vMacAddress.(string)
 
@@ -1493,24 +1493,38 @@ func dataSourceClientDetailRead(ctx context.Context, d *schema.ResourceData, m i
 			queryParams1.Timestamp = vTimestamp.(float64)
 		}
 
-		response1, restyResp1, err := client.Clients.GetClientDetailV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Clients.GetClientDetail(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetClientDetailV1", err,
-				"Failure at GetClientDetailV1, unexpected response", ""))
+				"Failure when executing 2 GetClientDetail", err,
+				"Failure at GetClientDetail, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenClientsGetClientDetailV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetClientDetail", err,
+				"Failure at GetClientDetail, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenClientsGetClientDetailItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetClientDetailV1 response",
+				"Failure when setting GetClientDetail response",
 				err))
 			return diags
 		}
@@ -1522,20 +1536,20 @@ func dataSourceClientDetailRead(ctx context.Context, d *schema.ResourceData, m i
 	return diags
 }
 
-func flattenClientsGetClientDetailV1Item(item *catalystcentersdkgo.ResponseClientsGetClientDetailV1) []map[string]interface{} {
+func flattenClientsGetClientDetailItem(item *catalystcentersdkgo.ResponseClientsGetClientDetail) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["detail"] = flattenClientsGetClientDetailV1ItemDetail(item.Detail)
-	respItem["connection_info"] = flattenClientsGetClientDetailV1ItemConnectionInfo(item.ConnectionInfo)
-	respItem["topology"] = flattenClientsGetClientDetailV1ItemTopology(item.Topology)
+	respItem["detail"] = flattenClientsGetClientDetailItemDetail(item.Detail)
+	respItem["connection_info"] = flattenClientsGetClientDetailItemConnectionInfo(item.ConnectionInfo)
+	respItem["topology"] = flattenClientsGetClientDetailItemTopology(item.Topology)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenClientsGetClientDetailV1ItemDetail(item *catalystcentersdkgo.ResponseClientsGetClientDetailV1Detail) []map[string]interface{} {
+func flattenClientsGetClientDetailItemDetail(item *catalystcentersdkgo.ResponseClientsGetClientDetailDetail) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1557,7 +1571,7 @@ func flattenClientsGetClientDetailV1ItemDetail(item *catalystcentersdkgo.Respons
 	respItem["sales_code"] = item.SalesCode
 	respItem["country_code"] = item.CountryCode
 	respItem["last_updated"] = item.LastUpdated
-	respItem["health_score"] = flattenClientsGetClientDetailV1ItemDetailHealthScore(item.HealthScore)
+	respItem["health_score"] = flattenClientsGetClientDetailItemDetailHealthScore(item.HealthScore)
 	respItem["host_mac"] = item.HostMac
 	respItem["host_ip_v4"] = item.HostIPV4
 	respItem["host_ip_v6"] = item.HostIPV6
@@ -1575,7 +1589,7 @@ func flattenClientsGetClientDetailV1ItemDetail(item *catalystcentersdkgo.Respons
 	respItem["sgt"] = item.Sgt
 	respItem["location"] = item.Location
 	respItem["client_connection"] = item.ClientConnection
-	respItem["connected_device"] = flattenClientsGetClientDetailV1ItemDetailConnectedDevice(item.ConnectedDevice)
+	respItem["connected_device"] = flattenClientsGetClientDetailItemDetailConnectedDevice(item.ConnectedDevice)
 	respItem["issue_count"] = item.IssueCount
 	respItem["rssi"] = item.Rssi
 	respItem["rssi_threshold"] = item.RssiThreshold
@@ -1590,7 +1604,7 @@ func flattenClientsGetClientDetailV1ItemDetail(item *catalystcentersdkgo.Respons
 	respItem["rx_bytes"] = item.RxBytes
 	respItem["dns_response"] = item.DNSResponse
 	respItem["dns_request"] = item.DNSRequest
-	respItem["onboarding"] = flattenClientsGetClientDetailV1ItemDetailOnboarding(item.Onboarding)
+	respItem["onboarding"] = flattenClientsGetClientDetailItemDetailOnboarding(item.Onboarding)
 	respItem["client_type"] = item.ClientType
 	respItem["onboarding_time"] = item.OnboardingTime
 	respItem["port"] = item.Port
@@ -1653,7 +1667,7 @@ func flattenClientsGetClientDetailV1ItemDetail(item *catalystcentersdkgo.Respons
 
 }
 
-func flattenClientsGetClientDetailV1ItemDetailHealthScore(items *[]catalystcentersdkgo.ResponseClientsGetClientDetailV1DetailHealthScore) []map[string]interface{} {
+func flattenClientsGetClientDetailItemDetailHealthScore(items *[]catalystcentersdkgo.ResponseClientsGetClientDetailDetailHealthScore) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1668,7 +1682,7 @@ func flattenClientsGetClientDetailV1ItemDetailHealthScore(items *[]catalystcente
 	return respItems
 }
 
-func flattenClientsGetClientDetailV1ItemDetailConnectedDevice(items *[]catalystcentersdkgo.ResponseClientsGetClientDetailV1DetailConnectedDevice) []map[string]interface{} {
+func flattenClientsGetClientDetailItemDetailConnectedDevice(items *[]catalystcentersdkgo.ResponseClientsGetClientDetailDetailConnectedDevice) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1688,7 +1702,7 @@ func flattenClientsGetClientDetailV1ItemDetailConnectedDevice(items *[]catalystc
 	return respItems
 }
 
-func flattenClientsGetClientDetailV1ItemDetailOnboarding(item *catalystcentersdkgo.ResponseClientsGetClientDetailV1DetailOnboarding) []map[string]interface{} {
+func flattenClientsGetClientDetailItemDetailOnboarding(item *catalystcentersdkgo.ResponseClientsGetClientDetailDetailOnboarding) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1718,7 +1732,7 @@ func flattenClientsGetClientDetailV1ItemDetailOnboarding(item *catalystcentersdk
 
 }
 
-func flattenClientsGetClientDetailV1ItemConnectionInfo(item *catalystcentersdkgo.ResponseClientsGetClientDetailV1ConnectionInfo) []map[string]interface{} {
+func flattenClientsGetClientDetailItemConnectionInfo(item *catalystcentersdkgo.ResponseClientsGetClientDetailConnectionInfo) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -1741,13 +1755,13 @@ func flattenClientsGetClientDetailV1ItemConnectionInfo(item *catalystcentersdkgo
 
 }
 
-func flattenClientsGetClientDetailV1ItemTopology(item *catalystcentersdkgo.ResponseClientsGetClientDetailV1Topology) []map[string]interface{} {
+func flattenClientsGetClientDetailItemTopology(item *catalystcentersdkgo.ResponseClientsGetClientDetailTopology) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["nodes"] = flattenClientsGetClientDetailV1ItemTopologyNodes(item.Nodes)
-	respItem["links"] = flattenClientsGetClientDetailV1ItemTopologyLinks(item.Links)
+	respItem["nodes"] = flattenClientsGetClientDetailItemTopologyNodes(item.Nodes)
+	respItem["links"] = flattenClientsGetClientDetailItemTopologyLinks(item.Links)
 
 	return []map[string]interface{}{
 		respItem,
@@ -1755,7 +1769,7 @@ func flattenClientsGetClientDetailV1ItemTopology(item *catalystcentersdkgo.Respo
 
 }
 
-func flattenClientsGetClientDetailV1ItemTopologyNodes(items *[]catalystcentersdkgo.ResponseClientsGetClientDetailV1TopologyNodes) []map[string]interface{} {
+func flattenClientsGetClientDetailItemTopologyNodes(items *[]catalystcentersdkgo.ResponseClientsGetClientDetailTopologyNodes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1788,7 +1802,7 @@ func flattenClientsGetClientDetailV1ItemTopologyNodes(items *[]catalystcentersdk
 	return respItems
 }
 
-func flattenClientsGetClientDetailV1ItemTopologyLinks(items *[]catalystcentersdkgo.ResponseClientsGetClientDetailV1TopologyLinks) []map[string]interface{} {
+func flattenClientsGetClientDetailItemTopologyLinks(items *[]catalystcentersdkgo.ResponseClientsGetClientDetailTopologyLinks) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1815,13 +1829,13 @@ func flattenClientsGetClientDetailV1ItemTopologyLinks(items *[]catalystcentersdk
 		respItem["ap_radio_oper_status"] = item.ApRadioOperStatus
 		respItem["source_port_vla_n_info"] = item.SourcePortVLANInfo
 		respItem["target_port_vla_n_info"] = item.TargetPortVLANInfo
-		respItem["interface_details"] = flattenClientsGetClientDetailV1ItemTopologyLinksInterfaceDetails(item.InterfaceDetails)
+		respItem["interface_details"] = flattenClientsGetClientDetailItemTopologyLinksInterfaceDetails(item.InterfaceDetails)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenClientsGetClientDetailV1ItemTopologyLinksInterfaceDetails(items *[]catalystcentersdkgo.ResponseClientsGetClientDetailV1TopologyLinksInterfaceDetails) []map[string]interface{} {
+func flattenClientsGetClientDetailItemTopologyLinksInterfaceDetails(items *[]catalystcentersdkgo.ResponseClientsGetClientDetailTopologyLinksInterfaceDetails) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

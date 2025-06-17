@@ -1,7 +1,7 @@
 
 resource "catalystcenter_snmp_properties" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     id                   = "string"

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -60,31 +60,45 @@ func dataSourceDeviceReplacementCountRead(ctx context.Context, d *schema.Resourc
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: ReturnReplacementDevicesCountV1")
-		queryParams1 := catalystcentersdkgo.ReturnReplacementDevicesCountV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: ReturnReplacementDevicesCount")
+		queryParams1 := catalystcentersdkgo.ReturnReplacementDevicesCountQueryParams{}
 
 		if okReplacementStatus {
 			queryParams1.ReplacementStatus = interfaceToSliceString(vReplacementStatus)
 		}
 
-		response1, restyResp1, err := client.DeviceReplacement.ReturnReplacementDevicesCountV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.DeviceReplacement.ReturnReplacementDevicesCount(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 ReturnReplacementDevicesCountV1", err,
-				"Failure at ReturnReplacementDevicesCountV1, unexpected response", ""))
+				"Failure when executing 2 ReturnReplacementDevicesCount", err,
+				"Failure at ReturnReplacementDevicesCount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDeviceReplacementReturnReplacementDevicesCountV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 ReturnReplacementDevicesCount", err,
+				"Failure at ReturnReplacementDevicesCount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenDeviceReplacementReturnReplacementDevicesCountItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting ReturnReplacementDevicesCountV1 response",
+				"Failure when setting ReturnReplacementDevicesCount response",
 				err))
 			return diags
 		}
@@ -96,7 +110,7 @@ func dataSourceDeviceReplacementCountRead(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func flattenDeviceReplacementReturnReplacementDevicesCountV1Item(item *catalystcentersdkgo.ResponseDeviceReplacementReturnReplacementDevicesCountV1) []map[string]interface{} {
+func flattenDeviceReplacementReturnReplacementDevicesCountItem(item *catalystcentersdkgo.ResponseDeviceReplacementReturnReplacementDevicesCount) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

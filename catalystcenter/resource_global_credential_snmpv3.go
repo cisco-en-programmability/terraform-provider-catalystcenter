@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -115,7 +115,7 @@ func resourceGlobalCredentialSNMPv3() *schema.Resource {
 				},
 			},
 			"parameters": &schema.Schema{
-				Description: `Array of RequestDiscoveryCreateSNMPv3CredentialsV1`,
+				Description: `Array of RequestDiscoveryCreateSNMPv3Credentials`,
 				Type:        schema.TypeList,
 				MinItems:    1,
 				MaxItems:    1,
@@ -191,7 +191,7 @@ func resourceGlobalCredentialSNMPv3Create(ctx context.Context, d *schema.Resourc
 	vvUsername := interfaceToString(vUsername)
 	vID := resourceItem["id"]
 	vvID := interfaceToString(vID)
-	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
 
 	queryParams1.CredentialSubType = "SNMPV3"
 	item, err := searchDiscoveryGetGlobalCredentialsSmpv3(m, queryParams1, vvUsername, vvID)
@@ -257,7 +257,7 @@ func resourceGlobalCredentialSNMPv3Read(ctx context.Context, d *schema.ResourceD
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method 1: GetGlobalCredentials")
-		queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
 
 		queryParams1.CredentialSubType = vCredentialSubType
 
@@ -275,11 +275,11 @@ func resourceGlobalCredentialSNMPv3Read(ctx context.Context, d *schema.ResourceD
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		//TODO FOR DNAC
-		items := []catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response{
+		//TODO FOR CATALYST
+		items := []catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse{
 			*response1,
 		}
-		vItem1 := flattenDiscoveryGetGlobalCredentialsV1Items(&items)
+		vItem1 := flattenDiscoveryGetGlobalCredentialsItems(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetGlobalCredentials search response",
@@ -302,7 +302,7 @@ func resourceGlobalCredentialSNMPv3Update(ctx context.Context, d *schema.Resourc
 	vUsername := resourceMap["username"]
 	vID := resourceMap["id"]
 
-	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
 	queryParams1.CredentialSubType = vCredentialSubType
 	response1, err := searchDiscoveryGetGlobalCredentialsSmpv3(m, queryParams1, vUsername, vID)
 	if err != nil || response1 == nil {
@@ -374,7 +374,7 @@ func resourceGlobalCredentialSNMPv3Delete(ctx context.Context, d *schema.Resourc
 	vID := resourceMap["id"]
 	vUsername := resourceMap["username"]
 
-	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.GetGlobalCredentialsQueryParams{}
 
 	queryParams1.CredentialSubType = "SNMPV3"
 	item, err := searchDiscoveryGetGlobalCredentialsSmpv3(m, queryParams1, vUsername, vID)
@@ -399,8 +399,8 @@ func resourceGlobalCredentialSNMPv3Delete(ctx context.Context, d *schema.Resourc
 	}
 	return diags
 }
-func expandRequestGlobalCredentialSNMPv3CreateSNMPv3Credentials(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryCreateSNMPv3CredentialsV1 {
-	request := catalystcentersdkgo.RequestDiscoveryCreateSNMPv3CredentialsV1{}
+func expandRequestGlobalCredentialSNMPv3CreateSNMPv3Credentials(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryCreateSNMPv3Credentials {
+	request := catalystcentersdkgo.RequestDiscoveryCreateSNMPv3Credentials{}
 	if v := expandRequestGlobalCredentialSNMPv3CreateSNMPv3CredentialsItemArray(ctx, key, d); v != nil {
 		request = *v
 	}
@@ -411,8 +411,8 @@ func expandRequestGlobalCredentialSNMPv3CreateSNMPv3Credentials(ctx context.Cont
 	return &request
 }
 
-func expandRequestGlobalCredentialSNMPv3CreateSNMPv3CredentialsItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDiscoveryCreateSNMPv3CredentialsV1 {
-	request := []catalystcentersdkgo.RequestItemDiscoveryCreateSNMPv3CredentialsV1{}
+func expandRequestGlobalCredentialSNMPv3CreateSNMPv3CredentialsItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDiscoveryCreateSNMPv3Credentials {
+	request := []catalystcentersdkgo.RequestItemDiscoveryCreateSNMPv3Credentials{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -435,8 +435,8 @@ func expandRequestGlobalCredentialSNMPv3CreateSNMPv3CredentialsItemArray(ctx con
 	return &request
 }
 
-func expandRequestGlobalCredentialSNMPv3CreateSNMPv3CredentialsItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDiscoveryCreateSNMPv3CredentialsV1 {
-	request := catalystcentersdkgo.RequestItemDiscoveryCreateSNMPv3CredentialsV1{}
+func expandRequestGlobalCredentialSNMPv3CreateSNMPv3CredentialsItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDiscoveryCreateSNMPv3Credentials {
+	request := catalystcentersdkgo.RequestItemDiscoveryCreateSNMPv3Credentials{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".auth_password")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".auth_password")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".auth_password")))) {
 		request.AuthPassword = interfaceToString(v)
 	}
@@ -480,8 +480,8 @@ func expandRequestGlobalCredentialSNMPv3CreateSNMPv3CredentialsItem(ctx context.
 	return &request
 }
 
-func expandRequestGlobalCredentialSNMPv3UpdateSNMPv3Credentials(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdateSNMPv3CredentialsV1 {
-	request := catalystcentersdkgo.RequestDiscoveryUpdateSNMPv3CredentialsV1{}
+func expandRequestGlobalCredentialSNMPv3UpdateSNMPv3Credentials(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryUpdateSNMPv3Credentials {
+	request := catalystcentersdkgo.RequestDiscoveryUpdateSNMPv3Credentials{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".auth_password")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".auth_password")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".auth_password")))) {
 		request.AuthPassword = interfaceToString(v)
 	}
@@ -525,11 +525,11 @@ func expandRequestGlobalCredentialSNMPv3UpdateSNMPv3Credentials(ctx context.Cont
 	return &request
 }
 
-func searchDiscoveryGetGlobalCredentialsSmpv3(m interface{}, queryParams catalystcentersdkgo.GetGlobalCredentialsV1QueryParams, vUsername string, vID string) (*catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response, error) {
+func searchDiscoveryGetGlobalCredentialsSmpv3(m interface{}, queryParams catalystcentersdkgo.GetGlobalCredentialsQueryParams, vUsername string, vID string) (*catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response
-	var ite *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1
+	var foundItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse
+	var ite *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentials
 	queryParams.CredentialSubType = "SNMPV3"
 	ite, _, err = client.Discovery.GetGlobalCredentials(&queryParams)
 	if err != nil {
@@ -543,7 +543,7 @@ func searchDiscoveryGetGlobalCredentialsSmpv3(m interface{}, queryParams catalys
 	for _, item := range *itemsCopy.Response {
 		// Call get by _ method and set value to foundItem and return
 		if item.ID == vID || item.Username == vUsername {
-			var getItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsV1Response
+			var getItem *catalystcentersdkgo.ResponseDiscoveryGetGlobalCredentialsResponse
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

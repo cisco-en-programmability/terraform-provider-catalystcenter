@@ -22,7 +22,7 @@ It manages create, read, update and delete operations on Application Policy.
 ```terraform
 resource "catalystcenter_applications" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     application_set {
@@ -73,7 +73,7 @@ output "catalystcenter_applications_example" {
 
 ### Optional
 
-- `parameters` (Block List) Array of RequestApplicationPolicyCreateApplicationV1 (see [below for nested schema](#nestedblock--parameters))
+- `parameters` (Block List) Array of RequestApplicationPolicyCreateApplication (see [below for nested schema](#nestedblock--parameters))
 
 ### Read-Only
 
@@ -86,7 +86,7 @@ output "catalystcenter_applications_example" {
 
 Optional:
 
-- `payload` (Block List) Array of RequestApplicationPolicyCreateApplicationV1 (see [below for nested schema](#nestedblock--parameters--payload))
+- `payload` (Block List) Array of RequestApplicationPolicyCreateApplication (see [below for nested schema](#nestedblock--parameters--payload))
 
 <a id="nestedblock--parameters--payload"></a>
 ### Nested Schema for `parameters.payload`

@@ -11,7 +11,7 @@ description: |-
 
 It performs read operation on Configuration Archive.
 
-- Retrieves the details of a specific network device configuration file using the id.
+- Retrieves the details of a specific network device configuration file using the **id**.
 
 ## Example Usage
 
@@ -31,7 +31,7 @@ output "catalystcenter_network_device_config_files_id_example" {
 
 ### Required
 
-- `id` (String) id path parameter. The value of id can be obtained from the response of API /dna/intent/api/v1/networkDeviceConfigFiles
+- `id` (String) id path parameter. The value of **id** can be obtained from the response of API **/dna/intent/api/v1/networkDeviceConfigFiles**
 
 ### Read-Only
 

@@ -14,6 +14,8 @@ It performs create operation on Software Image Management (SWIM).
 
 - Fetches a software image from local file system and uploads to Catalyst Center. Supported software image files extensions
 are bin, img, tar, smu, pie, aes, iso, ova, tar_gz and qcow2
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -23,6 +25,8 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_swim_image_file" "example" {
   provider                     = catalystcenter
+  file_name                    = "string"
+  file_path                    = "string"
   is_third_party               = "false"
   third_party_application_type = "string"
   third_party_image_family     = "string"

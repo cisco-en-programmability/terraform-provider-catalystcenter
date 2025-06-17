@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -12,7 +13,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -171,7 +172,7 @@ func resourceFloorsFloorIDPlannedAccessPointPositionsBulkChange() *schema.Resour
 																Computed: true,
 															},
 															"name": &schema.Schema{
-																Description: `Antenna type for this Planned Access Point. Use /dna/intent/api/v1/maps/supported-access-points to find supported Antennas for a particualr Planned Access Point type
+																Description: `Antenna type for this Planned Access Point. Use **/dna/intent/api/v1/maps/supported-access-points** to find supported Antennas for a particualr Planned Access Point type
 `,
 																Type:     schema.TypeString,
 																Optional: true,
@@ -209,7 +210,7 @@ func resourceFloorsFloorIDPlannedAccessPointPositionsBulkChange() *schema.Resour
 										},
 									},
 									"type": &schema.Schema{
-										Description: `Planned Access Point type. Use dna/intent/api/v1/maps/supported-access-points to find the supported models
+										Description: `Planned Access Point type. Use **dna/intent/api/v1/maps/supported-access-points** to find the supported models
 `,
 										Type:     schema.TypeString,
 										Optional: true,
@@ -237,27 +238,28 @@ func resourceFloorsFloorIDPlannedAccessPointPositionsBulkChangeCreate(ctx contex
 	vvFloorID := vFloorID.(string)
 	request1 := expandRequestFloorsFloorIDPlannedAccessPointPositionsBulkChangeEditPlannedAccessPointsPositionsV2(ctx, "parameters.0", d)
 
-	// has_unknown_response: None
-
 	response1, restyResp1, err := client.SiteDesign.EditPlannedAccessPointsPositionsV2(vvFloorID, request1)
 
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
 
-	vItem1 := flattenSiteDesignEditPlannedAccessPointsPositionsV2Item(response1.Response)
-	if err := d.Set("item", vItem1); err != nil {
-		diags = append(diags, diagError(
-			"Failure when setting EditPlannedAccessPointsPositionsV2 response",
-			err))
+	if err != nil || response1 == nil {
+		if restyResp1 != nil {
+			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+		}
+		d.SetId("")
 		return diags
 	}
+
+	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
 			"Failure when executing EditPlannedAccessPointsPositionsV2", err))
 		return diags
 	}
+
 	taskId := response1.Response.TaskID
 	log.Printf("[DEBUG] TASKID => %s", taskId)
 	if taskId != "" {
@@ -282,7 +284,7 @@ func resourceFloorsFloorIDPlannedAccessPointPositionsBulkChangeCreate(ctx contex
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
@@ -294,26 +296,25 @@ func resourceFloorsFloorIDPlannedAccessPointPositionsBulkChangeCreate(ctx contex
 		}
 	}
 
-	if err != nil || response1 == nil {
-		if restyResp1 != nil {
-			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
-		}
-		d.SetId("")
+	vItem1 := flattenSiteDesignEditPlannedAccessPointsPositionsV2Item(response1.Response)
+	if err := d.Set("item", vItem1); err != nil {
+		diags = append(diags, diagError(
+			"Failure when setting EditPlannedAccessPointsPositionsV2 response",
+			err))
 		return diags
 	}
 
-	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 	d.SetId(getUnixTimeString())
 	return diags
 }
 func resourceFloorsFloorIDPlannedAccessPointPositionsBulkChangeRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 	return diags
 }
 
 func resourceFloorsFloorIDPlannedAccessPointPositionsBulkChangeDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 	return diags

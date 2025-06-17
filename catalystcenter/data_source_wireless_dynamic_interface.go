@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -61,31 +61,45 @@ func dataSourceWirelessDynamicInterfaceRead(ctx context.Context, d *schema.Resou
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDynamicInterfaceV1")
-		queryParams1 := catalystcentersdkgo.GetDynamicInterfaceV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetDynamicInterface")
+		queryParams1 := catalystcentersdkgo.GetDynamicInterfaceQueryParams{}
 
 		if okInterfaceName {
 			queryParams1.InterfaceName = vInterfaceName.(string)
 		}
 
-		response1, restyResp1, err := client.Wireless.GetDynamicInterfaceV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Wireless.GetDynamicInterface(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDynamicInterfaceV1", err,
-				"Failure at GetDynamicInterfaceV1, unexpected response", ""))
+				"Failure when executing 2 GetDynamicInterface", err,
+				"Failure at GetDynamicInterface, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenWirelessGetDynamicInterfaceV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetDynamicInterface", err,
+				"Failure at GetDynamicInterface, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenWirelessGetDynamicInterfaceItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDynamicInterfaceV1 response",
+				"Failure when setting GetDynamicInterface response",
 				err))
 			return diags
 		}
@@ -97,7 +111,7 @@ func dataSourceWirelessDynamicInterfaceRead(ctx context.Context, d *schema.Resou
 	return diags
 }
 
-func flattenWirelessGetDynamicInterfaceV1Items(items *catalystcentersdkgo.ResponseWirelessGetDynamicInterfaceV1) []map[string]interface{} {
+func flattenWirelessGetDynamicInterfaceItems(items *catalystcentersdkgo.ResponseWirelessGetDynamicInterface) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

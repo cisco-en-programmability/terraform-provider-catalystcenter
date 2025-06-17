@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -53,26 +53,40 @@ func dataSourceDnaCommandRunnerKeywordsRead(ctx context.Context, d *schema.Resou
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAllKeywordsOfClisAcceptedByCommandRunnerV1")
+		log.Printf("[DEBUG] Selected method: GetAllKeywordsOfClisAcceptedByCommandRunner")
 
-		response1, restyResp1, err := client.CommandRunner.GetAllKeywordsOfClisAcceptedByCommandRunnerV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.CommandRunner.GetAllKeywordsOfClisAcceptedByCommandRunner()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAllKeywordsOfClisAcceptedByCommandRunnerV1", err,
-				"Failure at GetAllKeywordsOfClisAcceptedByCommandRunnerV1, unexpected response", ""))
+				"Failure when executing 2 GetAllKeywordsOfClisAcceptedByCommandRunner", err,
+				"Failure at GetAllKeywordsOfClisAcceptedByCommandRunner, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenCommandRunnerGetAllKeywordsOfClisAcceptedByCommandRunnerV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetAllKeywordsOfClisAcceptedByCommandRunner", err,
+				"Failure at GetAllKeywordsOfClisAcceptedByCommandRunner, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenCommandRunnerGetAllKeywordsOfClisAcceptedByCommandRunnerItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAllKeywordsOfClisAcceptedByCommandRunnerV1 response",
+				"Failure when setting GetAllKeywordsOfClisAcceptedByCommandRunner response",
 				err))
 			return diags
 		}
@@ -84,7 +98,7 @@ func dataSourceDnaCommandRunnerKeywordsRead(ctx context.Context, d *schema.Resou
 	return diags
 }
 
-func flattenCommandRunnerGetAllKeywordsOfClisAcceptedByCommandRunnerV1Items(items *catalystcentersdkgo.ResponseCommandRunnerGetAllKeywordsOfClisAcceptedByCommandRunnerV1) []map[string]interface{} {
+func flattenCommandRunnerGetAllKeywordsOfClisAcceptedByCommandRunnerItems(items *catalystcentersdkgo.ResponseCommandRunnerGetAllKeywordsOfClisAcceptedByCommandRunner) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

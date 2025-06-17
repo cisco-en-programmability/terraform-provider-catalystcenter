@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -75,7 +75,7 @@ func resourceSNMPProperties() *schema.Resource {
 				},
 			},
 			"parameters": &schema.Schema{
-				Description: `Array of RequestDiscoveryCreateUpdateSNMPPropertiesV1`,
+				Description: `Array of RequestDiscoveryCreateUpdateSNMPProperties`,
 				Type:        schema.TypeList,
 				Optional:    true,
 				Computed:    true,
@@ -129,7 +129,7 @@ func resourceSNMPPropertiesCreate(ctx context.Context, d *schema.ResourceData, m
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesV1(ctx, "parameters.0", d)
+	request1 := expandRequestSNMPPropertiesCreateUpdateSNMPProperties(ctx, "parameters.0", d)
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
@@ -219,10 +219,10 @@ func resourceSNMPPropertiesRead(ctx context.Context, d *schema.ResourceData, m i
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
-		items := []catalystcentersdkgo.ResponseDiscoveryGetSNMPPropertiesV1Response{
+		items := []catalystcentersdkgo.ResponseDiscoveryGetSNMPPropertiesResponse{
 			*response1,
 		}
-		vItem1 := flattenDiscoveryGetSNMPPropertiesV1Items(&items)
+		vItem1 := flattenDiscoveryGetSNMPPropertiesItems(&items)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetSNMPProperties search response",
@@ -253,9 +253,10 @@ func resourceSNMPPropertiesDelete(ctx context.Context, d *schema.ResourceData, m
 
 	return diags
 }
-func expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryCreateUpdateSNMPPropertiesV1 {
-	request := catalystcentersdkgo.RequestDiscoveryCreateUpdateSNMPPropertiesV1{}
-	if v := expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesV1ItemArray(ctx, key+".payload", d); v != nil {
+
+func expandRequestSNMPPropertiesCreateUpdateSNMPProperties(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDiscoveryCreateUpdateSNMPProperties {
+	request := catalystcentersdkgo.RequestDiscoveryCreateUpdateSNMPProperties{}
+	if v := expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -264,8 +265,8 @@ func expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesV1(ctx context.Context
 	return &request
 }
 
-func expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDiscoveryCreateUpdateSNMPPropertiesV1 {
-	request := []catalystcentersdkgo.RequestItemDiscoveryCreateUpdateSNMPPropertiesV1{}
+func expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDiscoveryCreateUpdateSNMPProperties {
+	request := []catalystcentersdkgo.RequestItemDiscoveryCreateUpdateSNMPProperties{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -276,7 +277,7 @@ func expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesV1ItemArray(ctx contex
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -287,8 +288,8 @@ func expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesV1ItemArray(ctx contex
 	return &request
 }
 
-func expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDiscoveryCreateUpdateSNMPPropertiesV1 {
-	request := catalystcentersdkgo.RequestItemDiscoveryCreateUpdateSNMPPropertiesV1{}
+func expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDiscoveryCreateUpdateSNMPProperties {
+	request := catalystcentersdkgo.RequestItemDiscoveryCreateUpdateSNMPProperties{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".id")))) {
 		request.ID = interfaceToString(v)
 	}
@@ -310,11 +311,11 @@ func expandRequestSNMPPropertiesCreateUpdateSNMPPropertiesV1Item(ctx context.Con
 	return &request
 }
 
-func searchDiscoveryGetSNMPProperties(m interface{}, vID string, vName string) (*catalystcentersdkgo.ResponseDiscoveryGetSNMPPropertiesV1Response, error) {
+func searchDiscoveryGetSNMPProperties(m interface{}, vID string, vName string) (*catalystcentersdkgo.ResponseDiscoveryGetSNMPPropertiesResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseDiscoveryGetSNMPPropertiesV1Response
-	var ite *catalystcentersdkgo.ResponseDiscoveryGetSNMPPropertiesV1
+	var foundItem *catalystcentersdkgo.ResponseDiscoveryGetSNMPPropertiesResponse
+	var ite *catalystcentersdkgo.ResponseDiscoveryGetSNMPProperties
 	ite, _, err = client.Discovery.GetSNMPProperties()
 	if err != nil {
 		return foundItem, err
@@ -328,7 +329,7 @@ func searchDiscoveryGetSNMPProperties(m interface{}, vID string, vName string) (
 	for _, item := range itemsCopy {
 		// Call get by _ method and set value to foundItem and return
 		if item.InstanceTenantID == vID || item.SystemPropertyName == vName {
-			var getItem *catalystcentersdkgo.ResponseDiscoveryGetSNMPPropertiesV1Response
+			var getItem *catalystcentersdkgo.ResponseDiscoveryGetSNMPPropertiesResponse
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -11,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -63,7 +64,7 @@ func resourceCompliance() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"categories": &schema.Schema{
-							Description: `Category can have any value among 'INTENT'(mapped to compliance types: NETWORK_SETTINGS,NETWORK_PROFILE,WORKFLOW,FABRIC,APPLICATION_VISIBILITY), 'RUNNING_CONFIG' , 'IMAGE' , 'PSIRT' , 'EOX' , 'NETWORK_SETTINGS'
+							Description: `Category can have any value among 'INTENT'(mapped to compliance types: NETWORK_SETTINGS,NETWORK_PROFILE,WORKFLOW,FABRIC,APPLICATION_VISIBILITY), 'RUNNING_CONFIG' , 'IMAGE' , 'PSIRT' , 'EOX'
 `,
 							Type:     schema.TypeList,
 							Optional: true,
@@ -105,18 +106,18 @@ func resourceComplianceCreate(ctx context.Context, d *schema.ResourceData, m int
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestComplianceRunComplianceV1(ctx, "parameters.0", d)
+	request1 := expandRequestComplianceRunCompliance(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Compliance.RunComplianceV1(request1)
+	response1, restyResp1, err := client.Compliance.RunCompliance(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing RunComplianceV1", err))
+			"Failure when executing RunCompliance", err))
 		return diags
 	}
 
@@ -124,7 +125,7 @@ func resourceComplianceCreate(ctx context.Context, d *schema.ResourceData, m int
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing RunComplianceV1", err))
+			"Failure when executing RunCompliance", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -151,14 +152,14 @@ func resourceComplianceCreate(ctx context.Context, d *schema.ResourceData, m int
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing RunComplianceV1", err1))
+				"Failure when executing RunCompliance", err1))
 			return diags
 		}
 	}
@@ -166,10 +167,10 @@ func resourceComplianceCreate(ctx context.Context, d *schema.ResourceData, m int
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenComplianceRunComplianceV1Item(response1.Response)
+	vItem1 := flattenComplianceRunComplianceItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting RunComplianceV1 response",
+			"Failure when setting RunCompliance response",
 			err))
 		return diags
 	}
@@ -190,8 +191,8 @@ func resourceComplianceDelete(ctx context.Context, d *schema.ResourceData, m int
 	return diags
 }
 
-func expandRequestComplianceRunComplianceV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestComplianceRunComplianceV1 {
-	request := catalystcentersdkgo.RequestComplianceRunComplianceV1{}
+func expandRequestComplianceRunCompliance(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestComplianceRunCompliance {
+	request := catalystcentersdkgo.RequestComplianceRunCompliance{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".trigger_full")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".trigger_full")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".trigger_full")))) {
 		request.TriggerFull = interfaceToBoolPtr(v)
 	}
@@ -204,7 +205,7 @@ func expandRequestComplianceRunComplianceV1(ctx context.Context, key string, d *
 	return &request
 }
 
-func flattenComplianceRunComplianceV1Item(item *catalystcentersdkgo.ResponseComplianceRunComplianceV1Response) []map[string]interface{} {
+func flattenComplianceRunComplianceItem(item *catalystcentersdkgo.ResponseComplianceRunComplianceResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

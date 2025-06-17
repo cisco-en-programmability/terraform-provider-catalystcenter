@@ -3,14 +3,14 @@
 page_title: "catalystcenter_profiling_rules_count Data Source - terraform-provider-catalystcenter"
 subcategory: ""
 description: |-
-  It performs read operation on AIEndpointAnalytics.
+  It performs read operation on AiEndpointAnalytics.
   This data source fetches the count of profiling rules based on the filter values provided in the query parameters. The
   filter parameters are same as that of 'GET /profiling-rules' API, excluding the pagination and sort parameters.
 ---
 
 # catalystcenter_profiling_rules_count (Data Source)
 
-It performs read operation on AIEndpointAnalytics.
+It performs read operation on AiEndpointAnalytics.
 
 - This data source fetches the count of profiling rules based on the filter values provided in the query parameters. The
 filter parameters are same as that of 'GET /profiling-rules' API, excluding the pagination and sort parameters.

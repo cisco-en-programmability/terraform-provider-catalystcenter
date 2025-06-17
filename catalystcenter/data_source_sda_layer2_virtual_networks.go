@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -112,6 +112,36 @@ func dataSourceSdaLayer2VirtualNetworks() *schema.Resource {
 							Computed: true,
 						},
 
+						"is_resource_guard_enabled": &schema.Schema{
+							Description: `Set to true to enable resource guard.
+`,
+							// Type:        schema.TypeBool,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
+						"is_wireless_flooding_enabled": &schema.Schema{
+							Description: `Set to true to enable wireless flooding.
+`,
+							// Type:        schema.TypeBool,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
+						"layer2_flooding_address": &schema.Schema{
+							Description: `The flooding address to use for layer 2 flooding.
+`,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
+						"layer2_flooding_address_assignment": &schema.Schema{
+							Description: `The source of the flooding address for layer 2 flooding.
+`,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
 						"traffic_type": &schema.Schema{
 							Description: `The type of traffic that is served.
 `,
@@ -154,8 +184,8 @@ func dataSourceSdaLayer2VirtualNetworksRead(ctx context.Context, d *schema.Resou
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetLayer2VirtualNetworksV1")
-		queryParams1 := catalystcentersdkgo.GetLayer2VirtualNetworksV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetLayer2VirtualNetworks")
+		queryParams1 := catalystcentersdkgo.GetLayer2VirtualNetworksQueryParams{}
 
 		if okID {
 			queryParams1.ID = vID.(string)
@@ -184,24 +214,36 @@ func dataSourceSdaLayer2VirtualNetworksRead(ctx context.Context, d *schema.Resou
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sda.GetLayer2VirtualNetworksV1(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetLayer2VirtualNetworks(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetLayer2VirtualNetworksV1", err,
-				"Failure at GetLayer2VirtualNetworksV1, unexpected response", ""))
+				"Failure when executing 2 GetLayer2VirtualNetworks", err,
+				"Failure at GetLayer2VirtualNetworks, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaGetLayer2VirtualNetworksV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetLayer2VirtualNetworks", err,
+				"Failure at GetLayer2VirtualNetworks, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSdaGetLayer2VirtualNetworksItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetLayer2VirtualNetworksV1 response",
+				"Failure when setting GetLayer2VirtualNetworks response",
 				err))
 			return diags
 		}
@@ -213,7 +255,7 @@ func dataSourceSdaLayer2VirtualNetworksRead(ctx context.Context, d *schema.Resou
 	return diags
 }
 
-func flattenSdaGetLayer2VirtualNetworksV1Items(items *[]catalystcentersdkgo.ResponseSdaGetLayer2VirtualNetworksV1Response) []map[string]interface{} {
+func flattenSdaGetLayer2VirtualNetworksItems(items *[]catalystcentersdkgo.ResponseSdaGetLayer2VirtualNetworksResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -226,6 +268,10 @@ func flattenSdaGetLayer2VirtualNetworksV1Items(items *[]catalystcentersdkgo.Resp
 		respItem["vlan_id"] = item.VLANID
 		respItem["traffic_type"] = item.TrafficType
 		respItem["is_fabric_enabled_wireless"] = boolPtrToString(item.IsFabricEnabledWireless)
+		respItem["is_wireless_flooding_enabled"] = boolPtrToString(item.IsWirelessFloodingEnabled)
+		respItem["is_resource_guard_enabled"] = boolPtrToString(item.IsResourceGuardEnabled)
+		respItem["layer2_flooding_address_assignment"] = item.Layer2FloodingAddressAssignment
+		respItem["layer2_flooding_address"] = item.Layer2FloodingAddress
 		respItem["is_multiple_ip_to_mac_addresses"] = boolPtrToString(item.IsMultipleIPToMacAddresses)
 		respItem["associated_layer3_virtual_network_name"] = item.AssociatedLayer3VirtualNetworkName
 		respItems = append(respItems, respItem)

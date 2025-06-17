@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -115,8 +115,8 @@ func dataSourceSdaVirtualNetworkIPPoolRead(ctx context.Context, d *schema.Resour
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetIPPoolFromSdaVirtualNetworkV1")
-		queryParams1 := catalystcentersdkgo.GetIPPoolFromSdaVirtualNetworkV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetIPPoolFromSdaVirtualNetwork")
+		queryParams1 := catalystcentersdkgo.GetIPPoolFromSdaVirtualNetworkQueryParams{}
 
 		queryParams1.SiteNameHierarchy = vSiteNameHierarchy.(string)
 
@@ -124,24 +124,38 @@ func dataSourceSdaVirtualNetworkIPPoolRead(ctx context.Context, d *schema.Resour
 
 		queryParams1.IPPoolName = vIPPoolName.(string)
 
-		response1, restyResp1, err := client.Sda.GetIPPoolFromSdaVirtualNetworkV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sda.GetIPPoolFromSdaVirtualNetwork(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetIPPoolFromSdaVirtualNetworkV1", err,
-				"Failure at GetIPPoolFromSdaVirtualNetworkV1, unexpected response", ""))
+				"Failure when executing 2 GetIPPoolFromSdaVirtualNetwork", err,
+				"Failure at GetIPPoolFromSdaVirtualNetwork, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetIPPoolFromSdaVirtualNetworkV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetIPPoolFromSdaVirtualNetwork", err,
+				"Failure at GetIPPoolFromSdaVirtualNetwork, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSdaGetIPPoolFromSdaVirtualNetworkItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetIPPoolFromSdaVirtualNetworkV1 response",
+				"Failure when setting GetIPPoolFromSdaVirtualNetwork response",
 				err))
 			return diags
 		}
@@ -153,7 +167,7 @@ func dataSourceSdaVirtualNetworkIPPoolRead(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func flattenSdaGetIPPoolFromSdaVirtualNetworkV1Item(item *catalystcentersdkgo.ResponseSdaGetIPPoolFromSdaVirtualNetworkV1) []map[string]interface{} {
+func flattenSdaGetIPPoolFromSdaVirtualNetworkItem(item *catalystcentersdkgo.ResponseSdaGetIPPoolFromSdaVirtualNetwork) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,8 +15,8 @@ func dataSourceSitesBannerSettings() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Network Settings.
 
-- Retrieve banner settings for a site; *null* values indicate that the setting will be inherited from the parent site;
-empty objects (*{}*) indicate that the setting is unset at a site.
+- Retrieve banner settings for a site; **null** values indicate that the setting will be inherited from the parent site;
+empty objects (**{}**) indicate that the setting is unset at a site.
 `,
 
 		ReadContext: dataSourceSitesBannerSettingsRead,
@@ -28,7 +28,7 @@ empty objects (*{}*) indicate that the setting is unset at a site.
 				Required: true,
 			},
 			"inherited": &schema.Schema{
-				Description: `_inherited query parameter. Include settings explicitly set for this site and settings inherited from sites higher in the site hierarchy; when *false*, *null* values indicate that the site inherits that setting from the parent site or a site higher in the site hierarchy.
+				Description: `_inherited query parameter. Include settings explicitly set for this site and settings inherited from sites higher in the site hierarchy; when **false**, **null** values indicate that the site inherits that setting from the parent site or a site higher in the site hierarchy.
 `,
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -91,32 +91,46 @@ func dataSourceSitesBannerSettingsRead(ctx context.Context, d *schema.ResourceDa
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveBannerSettingsForASiteV1")
+		log.Printf("[DEBUG] Selected method: RetrieveBannerSettingsForASite")
 		vvID := vID.(string)
-		queryParams1 := catalystcentersdkgo.RetrieveBannerSettingsForASiteV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.RetrieveBannerSettingsForASiteQueryParams{}
 
 		if okInherited {
 			queryParams1.Inherited = vInherited.(bool)
 		}
 
-		response1, restyResp1, err := client.NetworkSettings.RetrieveBannerSettingsForASiteV1(vvID, &queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.NetworkSettings.RetrieveBannerSettingsForASite(vvID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveBannerSettingsForASiteV1", err,
-				"Failure at RetrieveBannerSettingsForASiteV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveBannerSettingsForASite", err,
+				"Failure at RetrieveBannerSettingsForASite, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenNetworkSettingsRetrieveBannerSettingsForASiteV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveBannerSettingsForASite", err,
+				"Failure at RetrieveBannerSettingsForASite, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenNetworkSettingsRetrieveBannerSettingsForASiteItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveBannerSettingsForASiteV1 response",
+				"Failure when setting RetrieveBannerSettingsForASite response",
 				err))
 			return diags
 		}
@@ -128,18 +142,18 @@ func dataSourceSitesBannerSettingsRead(ctx context.Context, d *schema.ResourceDa
 	return diags
 }
 
-func flattenNetworkSettingsRetrieveBannerSettingsForASiteV1Item(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveBannerSettingsForASiteV1Response) []map[string]interface{} {
+func flattenNetworkSettingsRetrieveBannerSettingsForASiteItem(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveBannerSettingsForASiteResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["banner"] = flattenNetworkSettingsRetrieveBannerSettingsForASiteV1ItemBanner(item.Banner)
+	respItem["banner"] = flattenNetworkSettingsRetrieveBannerSettingsForASiteItemBanner(item.Banner)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenNetworkSettingsRetrieveBannerSettingsForASiteV1ItemBanner(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveBannerSettingsForASiteV1ResponseBanner) []map[string]interface{} {
+func flattenNetworkSettingsRetrieveBannerSettingsForASiteItemBanner(item *catalystcentersdkgo.ResponseNetworkSettingsRetrieveBannerSettingsForASiteResponseBanner) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

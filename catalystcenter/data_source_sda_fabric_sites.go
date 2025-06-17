@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -27,7 +27,7 @@ func dataSourceSdaFabricSites() *schema.Resource {
 				Optional: true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter. Maximum number of records to return.
+				Description: `limit query parameter. Maximum number of records to return. The maximum number of objects supported in a single request is 500.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -97,8 +97,8 @@ func dataSourceSdaFabricSitesRead(ctx context.Context, d *schema.ResourceData, m
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetFabricSitesV1")
-		queryParams1 := catalystcentersdkgo.GetFabricSitesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetFabricSites")
+		queryParams1 := catalystcentersdkgo.GetFabricSitesQueryParams{}
 
 		if okID {
 			queryParams1.ID = vID.(string)
@@ -113,24 +113,38 @@ func dataSourceSdaFabricSitesRead(ctx context.Context, d *schema.ResourceData, m
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.Sda.GetFabricSitesV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sda.GetFabricSites(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetFabricSitesV1", err,
-				"Failure at GetFabricSitesV1, unexpected response", ""))
+				"Failure when executing 2 GetFabricSites", err,
+				"Failure at GetFabricSites, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaGetFabricSitesV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetFabricSites", err,
+				"Failure at GetFabricSites, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSdaGetFabricSitesItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetFabricSitesV1 response",
+				"Failure when setting GetFabricSites response",
 				err))
 			return diags
 		}
@@ -142,7 +156,7 @@ func dataSourceSdaFabricSitesRead(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func flattenSdaGetFabricSitesV1Items(items *[]catalystcentersdkgo.ResponseSdaGetFabricSitesV1Response) []map[string]interface{} {
+func flattenSdaGetFabricSitesItems(items *[]catalystcentersdkgo.ResponseSdaGetFabricSitesResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

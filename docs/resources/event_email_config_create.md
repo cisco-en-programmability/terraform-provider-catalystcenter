@@ -12,6 +12,8 @@ description: |-
 It performs create operation on Event Management.
 
 - Create Email Destination
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -21,29 +23,29 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_event_email_config_create" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
     email_config_id = "string"
     from_email      = "string"
-    primary_smt_p_config {
+    primary_smt_p_config = [{
 
       host_name = "string"
       password  = "******"
       port      = "string"
       smtp_type = "string"
       user_name = "string"
-    }
-    secondary_smt_p_config {
+    }]
+    secondary_smt_p_config = [{
 
       host_name = "string"
       password  = "******"
       port      = "string"
       smtp_type = "string"
       user_name = "string"
-    }
+    }]
     subject  = "string"
     to_email = "string"
-  }
+  }]
 }
 
 output "catalystcenter_event_email_config_create_example" {

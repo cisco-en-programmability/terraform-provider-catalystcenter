@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -801,31 +801,31 @@ func resourceAssuranceEventsQueryCreate(ctx context.Context, d *schema.ResourceD
 
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 
-	request1 := expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersV1(ctx, "parameters.0", d)
+	request1 := expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFilters(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.QueryAssuranceEventsWithFiltersV1HeaderParams{}
+	headerParams1 := catalystcentersdkgo.QueryAssuranceEventsWithFiltersHeaderParams{}
 
 	headerParams1.XCaLLERID = vXCaLLERID.(string)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Devices.QueryAssuranceEventsWithFiltersV1(request1, &headerParams1)
+	response1, restyResp1, err := client.Devices.QueryAssuranceEventsWithFilters(request1, &headerParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing QueryAssuranceEventsWithFiltersV1", err))
+			"Failure when executing QueryAssuranceEventsWithFilters", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItems1 := flattenDevicesQueryAssuranceEventsWithFiltersV1Items(response1.Response)
+	vItems1 := flattenDevicesQueryAssuranceEventsWithFiltersItems(response1.Response)
 	if err := d.Set("items", vItems1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting QueryAssuranceEventsWithFiltersV1 response",
+			"Failure when setting QueryAssuranceEventsWithFilters response",
 			err))
 		return diags
 	}
@@ -849,8 +849,8 @@ func resourceAssuranceEventsQueryDelete(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFiltersV1 {
-	request := catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFiltersV1{}
+func expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFilters {
+	request := catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_family")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_family")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_family")))) {
 		request.DeviceFamily = interfaceToSliceString(v)
 	}
@@ -867,16 +867,16 @@ func expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersV1(ctx cont
 		request.Views = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersV1FiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersFiltersArray(ctx, key+".filters", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".page")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".page")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".page")))) {
-		request.Page = expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersV1Page(ctx, key+".page.0", d)
+		request.Page = expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersPage(ctx, key+".page.0", d)
 	}
 	return &request
 }
 
-func expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFiltersV1Filters {
-	request := []catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFiltersV1Filters{}
+func expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFiltersFilters {
+	request := []catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFiltersFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -887,7 +887,7 @@ func expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersV1FiltersAr
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -895,8 +895,8 @@ func expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersV1FiltersAr
 	return &request
 }
 
-func expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFiltersV1Filters {
-	request := catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFiltersV1Filters{}
+func expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFiltersFilters {
+	request := catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFiltersFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -909,8 +909,8 @@ func expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersV1Filters(c
 	return &request
 }
 
-func expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersV1Page(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFiltersV1Page {
-	request := catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFiltersV1Page{}
+func expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersPage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFiltersPage {
+	request := catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFiltersPage{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".offset")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".offset")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".offset")))) {
 		request.Offset = interfaceToIntPtr(v)
 	}
@@ -918,13 +918,13 @@ func expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersV1Page(ctx 
 		request.Limit = interfaceToIntPtr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".sort_by")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".sort_by")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".sort_by")))) {
-		request.SortBy = expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersV1PageSortByArray(ctx, key+".sort_by", d)
+		request.SortBy = expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersPageSortByArray(ctx, key+".sort_by", d)
 	}
 	return &request
 }
 
-func expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersV1PageSortByArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFiltersV1PageSortBy {
-	request := []catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFiltersV1PageSortBy{}
+func expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersPageSortByArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFiltersPageSortBy {
+	request := []catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFiltersPageSortBy{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -935,7 +935,7 @@ func expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersV1PageSortB
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersV1PageSortBy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersPageSortBy(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -943,8 +943,8 @@ func expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersV1PageSortB
 	return &request
 }
 
-func expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersV1PageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFiltersV1PageSortBy {
-	request := catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFiltersV1PageSortBy{}
+func expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersPageSortBy(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFiltersPageSortBy {
+	request := catalystcentersdkgo.RequestDevicesQueryAssuranceEventsWithFiltersPageSortBy{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -954,7 +954,7 @@ func expandRequestAssuranceEventsQueryQueryAssuranceEventsWithFiltersV1PageSortB
 	return &request
 }
 
-func flattenDevicesQueryAssuranceEventsWithFiltersV1Items(items *[]catalystcentersdkgo.ResponseDevicesQueryAssuranceEventsWithFiltersV1Response) []map[string]interface{} {
+func flattenDevicesQueryAssuranceEventsWithFiltersItems(items *[]catalystcentersdkgo.ResponseDevicesQueryAssuranceEventsWithFiltersResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -996,7 +996,7 @@ func flattenDevicesQueryAssuranceEventsWithFiltersV1Items(items *[]catalystcente
 		respItem["new_radio_channel_list"] = item.NewRadioChannelList
 		respItem["duid"] = item.Duid
 		respItem["roam_type"] = item.RoamType
-		respItem["candidate_a_ps"] = flattenDevicesQueryAssuranceEventsWithFiltersV1ItemsCandidateAPs(item.CandidateAPs)
+		respItem["candidate_a_ps"] = flattenDevicesQueryAssuranceEventsWithFiltersItemsCandidateAPs(item.CandidateAPs)
 		respItem["replaced_device_serial_number"] = item.ReplacedDeviceSerialNumber
 		respItem["old_radio_channel_list"] = item.OldRadioChannelList
 		respItem["ssid"] = item.SSID
@@ -1005,14 +1005,14 @@ func flattenDevicesQueryAssuranceEventsWithFiltersV1Items(items *[]catalystcente
 		respItem["ipv4"] = item.IPv4
 		respItem["wlc_id"] = item.WlcID
 		respItem["ipv6"] = item.IPv6
-		respItem["missing_response_a_ps"] = flattenDevicesQueryAssuranceEventsWithFiltersV1ItemsMissingResponseAPs(item.MissingResponseAPs)
+		respItem["missing_response_a_ps"] = flattenDevicesQueryAssuranceEventsWithFiltersItemsMissingResponseAPs(item.MissingResponseAPs)
 		respItem["timestamp"] = item.Timestamp
 		respItem["severity"] = item.Severity
 		respItem["current_radio_power_level"] = item.CurrentRadioPowerLevel
 		respItem["new_radio_channel_width"] = item.NewRadioChannelWidth
 		respItem["assoc_snr"] = item.AssocSnr
 		respItem["auth_server_ip"] = item.AuthServerIP
-		respItem["child_events"] = flattenDevicesQueryAssuranceEventsWithFiltersV1ItemsChildEvents(item.ChildEvents)
+		respItem["child_events"] = flattenDevicesQueryAssuranceEventsWithFiltersItemsChildEvents(item.ChildEvents)
 		respItem["connected_interface_name"] = item.ConnectedInterfaceName
 		respItem["dhcp_server_ip"] = item.DhcpServerIP
 		respItem["management_ip_address"] = item.ManagementIPAddress
@@ -1027,14 +1027,14 @@ func flattenDevicesQueryAssuranceEventsWithFiltersV1Items(items *[]catalystcente
 		respItem["udn_name"] = item.UdnName
 		respItem["facility"] = item.Facility
 		respItem["last_ap_reset_type"] = item.LastApResetType
-		respItem["invalid_ie_a_ps"] = flattenDevicesQueryAssuranceEventsWithFiltersV1ItemsInvalidIeAPs(item.InvalidIeAPs)
+		respItem["invalid_ie_a_ps"] = flattenDevicesQueryAssuranceEventsWithFiltersItemsInvalidIeAPs(item.InvalidIeAPs)
 		respItem["username"] = item.Username
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesQueryAssuranceEventsWithFiltersV1ItemsCandidateAPs(items *[]catalystcentersdkgo.ResponseDevicesQueryAssuranceEventsWithFiltersV1ResponseCandidateAPs) []map[string]interface{} {
+func flattenDevicesQueryAssuranceEventsWithFiltersItemsCandidateAPs(items *[]catalystcentersdkgo.ResponseDevicesQueryAssuranceEventsWithFiltersResponseCandidateAPs) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1051,7 +1051,7 @@ func flattenDevicesQueryAssuranceEventsWithFiltersV1ItemsCandidateAPs(items *[]c
 	return respItems
 }
 
-func flattenDevicesQueryAssuranceEventsWithFiltersV1ItemsMissingResponseAPs(items *[]catalystcentersdkgo.ResponseDevicesQueryAssuranceEventsWithFiltersV1ResponseMissingResponseAPs) []map[string]interface{} {
+func flattenDevicesQueryAssuranceEventsWithFiltersItemsMissingResponseAPs(items *[]catalystcentersdkgo.ResponseDevicesQueryAssuranceEventsWithFiltersResponseMissingResponseAPs) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1069,7 +1069,7 @@ func flattenDevicesQueryAssuranceEventsWithFiltersV1ItemsMissingResponseAPs(item
 	return respItems
 }
 
-func flattenDevicesQueryAssuranceEventsWithFiltersV1ItemsChildEvents(items *[]catalystcentersdkgo.ResponseDevicesQueryAssuranceEventsWithFiltersV1ResponseChildEvents) []map[string]interface{} {
+func flattenDevicesQueryAssuranceEventsWithFiltersItemsChildEvents(items *[]catalystcentersdkgo.ResponseDevicesQueryAssuranceEventsWithFiltersResponseChildEvents) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -1092,7 +1092,7 @@ func flattenDevicesQueryAssuranceEventsWithFiltersV1ItemsChildEvents(items *[]ca
 	return respItems
 }
 
-func flattenDevicesQueryAssuranceEventsWithFiltersV1ItemsInvalidIeAPs(items *[]catalystcentersdkgo.ResponseDevicesQueryAssuranceEventsWithFiltersV1ResponseInvalidIeAPs) []map[string]interface{} {
+func flattenDevicesQueryAssuranceEventsWithFiltersItemsInvalidIeAPs(items *[]catalystcentersdkgo.ResponseDevicesQueryAssuranceEventsWithFiltersResponseInvalidIeAPs) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

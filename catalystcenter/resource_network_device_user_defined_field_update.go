@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -12,7 +13,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -71,7 +72,7 @@ Otherwise error shall be shown.
 							ForceNew: true,
 						},
 						"payload": &schema.Schema{
-							Description: `Array of RequestDevicesAddUserDefinedFieldToDeviceV1`,
+							Description: `Array of RequestDevicesAddUserDefinedFieldToDevice`,
 							Type:        schema.TypeList,
 							Optional:    true,
 							ForceNew:    true,
@@ -114,18 +115,18 @@ func resourceNetworkDeviceUserDefinedFieldUpdateCreate(ctx context.Context, d *s
 	vDeviceID := resourceItem["device_id"]
 
 	vvDeviceID := vDeviceID.(string)
-	request1 := expandRequestNetworkDeviceUserDefinedFieldUpdateAddUserDefinedFieldToDeviceV1(ctx, "parameters.0", d)
+	request1 := expandRequestNetworkDeviceUserDefinedFieldUpdateAddUserDefinedFieldToDevice(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Devices.AddUserDefinedFieldToDeviceV1(vvDeviceID, request1)
+	response1, restyResp1, err := client.Devices.AddUserDefinedFieldToDevice(vvDeviceID, request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing AddUserDefinedFieldToDeviceV1", err))
+			"Failure when executing AddUserDefinedFieldToDevice", err))
 		return diags
 	}
 
@@ -133,7 +134,7 @@ func resourceNetworkDeviceUserDefinedFieldUpdateCreate(ctx context.Context, d *s
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing AddUserDefinedFieldToDeviceV1", err))
+			"Failure when executing AddUserDefinedFieldToDevice", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -160,14 +161,14 @@ func resourceNetworkDeviceUserDefinedFieldUpdateCreate(ctx context.Context, d *s
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing AddUserDefinedFieldToDeviceV1", err1))
+				"Failure when executing AddUserDefinedFieldToDevice", err1))
 			return diags
 		}
 	}
@@ -175,10 +176,10 @@ func resourceNetworkDeviceUserDefinedFieldUpdateCreate(ctx context.Context, d *s
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenDevicesAddUserDefinedFieldToDeviceV1Item(response1.Response)
+	vItem1 := flattenDevicesAddUserDefinedFieldToDeviceItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting AddUserDefinedFieldToDeviceV1 response",
+			"Failure when setting AddUserDefinedFieldToDevice response",
 			err))
 		return diags
 	}
@@ -199,16 +200,16 @@ func resourceNetworkDeviceUserDefinedFieldUpdateDelete(ctx context.Context, d *s
 	return diags
 }
 
-func expandRequestNetworkDeviceUserDefinedFieldUpdateAddUserDefinedFieldToDeviceV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesAddUserDefinedFieldToDeviceV1 {
-	request := catalystcentersdkgo.RequestDevicesAddUserDefinedFieldToDeviceV1{}
-	if v := expandRequestNetworkDeviceUserDefinedFieldUpdateAddUserDefinedFieldToDeviceV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestNetworkDeviceUserDefinedFieldUpdateAddUserDefinedFieldToDevice(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesAddUserDefinedFieldToDevice {
+	request := catalystcentersdkgo.RequestDevicesAddUserDefinedFieldToDevice{}
+	if v := expandRequestNetworkDeviceUserDefinedFieldUpdateAddUserDefinedFieldToDeviceItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	return &request
 }
 
-func expandRequestNetworkDeviceUserDefinedFieldUpdateAddUserDefinedFieldToDeviceV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDevicesAddUserDefinedFieldToDeviceV1 {
-	request := []catalystcentersdkgo.RequestItemDevicesAddUserDefinedFieldToDeviceV1{}
+func expandRequestNetworkDeviceUserDefinedFieldUpdateAddUserDefinedFieldToDeviceItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemDevicesAddUserDefinedFieldToDevice {
+	request := []catalystcentersdkgo.RequestItemDevicesAddUserDefinedFieldToDevice{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -219,7 +220,7 @@ func expandRequestNetworkDeviceUserDefinedFieldUpdateAddUserDefinedFieldToDevice
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestNetworkDeviceUserDefinedFieldUpdateAddUserDefinedFieldToDeviceV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestNetworkDeviceUserDefinedFieldUpdateAddUserDefinedFieldToDeviceItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -227,8 +228,8 @@ func expandRequestNetworkDeviceUserDefinedFieldUpdateAddUserDefinedFieldToDevice
 	return &request
 }
 
-func expandRequestNetworkDeviceUserDefinedFieldUpdateAddUserDefinedFieldToDeviceV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDevicesAddUserDefinedFieldToDeviceV1 {
-	request := catalystcentersdkgo.RequestItemDevicesAddUserDefinedFieldToDeviceV1{}
+func expandRequestNetworkDeviceUserDefinedFieldUpdateAddUserDefinedFieldToDeviceItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemDevicesAddUserDefinedFieldToDevice {
+	request := catalystcentersdkgo.RequestItemDevicesAddUserDefinedFieldToDevice{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".name")))) {
 		request.Name = interfaceToString(v)
 	}
@@ -238,7 +239,7 @@ func expandRequestNetworkDeviceUserDefinedFieldUpdateAddUserDefinedFieldToDevice
 	return &request
 }
 
-func flattenDevicesAddUserDefinedFieldToDeviceV1Item(item *catalystcentersdkgo.ResponseDevicesAddUserDefinedFieldToDeviceV1Response) []map[string]interface{} {
+func flattenDevicesAddUserDefinedFieldToDeviceItem(item *catalystcentersdkgo.ResponseDevicesAddUserDefinedFieldToDeviceResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

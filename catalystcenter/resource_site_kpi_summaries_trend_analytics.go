@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -92,15 +92,6 @@ api-specs/blob/main/Assurance/CE_Cat_Center_Org-SiteKpiSummaries-1.0.0-resolved.
 							Optional:    true,
 							Computed:    true,
 						},
-						"task_id": &schema.Schema{
-							Description: `task id`,
-							Type:        schema.TypeString,
-							Required:    true,
-						}, "xca_lle_rid": &schema.Schema{
-							Description: `xca lle rid`,
-							Type:        schema.TypeString,
-							Required:    true,
-						},
 						"filters": &schema.Schema{
 							Type:     schema.TypeList,
 							Optional: true,
@@ -182,18 +173,18 @@ func resourceSiteKpiSummariesTrendAnalyticsCreate(ctx context.Context, d *schema
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestSiteKpiSummariesTrendAnalyticsSubmitRequestForSiteAnalyticsTrendDataV1(ctx, "parameters.0", d)
+	request1 := expandRequestSiteKpiSummariesTrendAnalyticsSubmitRequestForSiteAnalyticsTrendData(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vTaskID := resourceItem["task_id"]
 	vvTaskID := interfaceToString(vTaskID)
 	vXCaLLERID := resourceItem["xca_lle_rid"]
 	vvXCaLLERID := interfaceToString(vXCaLLERID)
-	queryParamImport := catalystcentersdkgo.GetSiteAnalyticsTrendDataForTheGivenTaskIDV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetSiteAnalyticsTrendDataForTheGivenTaskIDQueryParams{}
 	queryParamImport.TaskID = vvTaskID
-	headerParams1 := catalystcentersdkgo.GetSiteAnalyticsTrendDataForTheGivenTaskIDV1HeaderParams{}
+	headerParams1 := catalystcentersdkgo.GetSiteAnalyticsTrendDataForTheGivenTaskIDHeaderParams{}
 	headerParams1.XCaLLERID = vvXCaLLERID
-	item2, err := searchSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDV1(m, queryParamImport, headerParams1)
+	item2, err := searchSitesGetSiteAnalyticsTrendDataForTheGivenTaskID(m, queryParamImport, headerParams1)
 	if err != nil || item2 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["task_id"] = vvTaskID
@@ -240,9 +231,9 @@ func resourceSiteKpiSummariesTrendAnalyticsCreate(ctx context.Context, d *schema
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetSiteAnalyticsTrendDataForTheGivenTaskIDV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetSiteAnalyticsTrendDataForTheGivenTaskIDQueryParams{}
 	queryParamValidate.TaskID = vvTaskID
-	item3, err := searchSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDV1(m, queryParamValidate, headerParams1)
+	item3, err := searchSitesGetSiteAnalyticsTrendDataForTheGivenTaskID(m, queryParamValidate, headerParams1)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
 			"Failure when executing SubmitRequestForSiteAnalyticsTrendData", err,
@@ -273,8 +264,8 @@ func resourceSiteKpiSummariesTrendAnalyticsRead(ctx context.Context, d *schema.R
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetSiteAnalyticsTrendDataForTheGivenTaskID")
 
-		headerParams1 := catalystcentersdkgo.GetSiteAnalyticsTrendDataForTheGivenTaskIDV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.GetSiteAnalyticsTrendDataForTheGivenTaskIDV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.GetSiteAnalyticsTrendDataForTheGivenTaskIDHeaderParams{}
+		queryParams1 := catalystcentersdkgo.GetSiteAnalyticsTrendDataForTheGivenTaskIDQueryParams{}
 
 		queryParams1.TaskID = vTaskID
 
@@ -292,7 +283,7 @@ func resourceSiteKpiSummariesTrendAnalyticsRead(ctx context.Context, d *schema.R
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		item1, err := searchSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDV1(m, queryParams1, headerParams1)
+		item1, err := searchSitesGetSiteAnalyticsTrendDataForTheGivenTaskID(m, queryParams1, headerParams1)
 		if err != nil || item1 == nil {
 			d.SetId("")
 			return diags
@@ -310,7 +301,7 @@ func resourceSiteKpiSummariesTrendAnalyticsRead(ctx context.Context, d *schema.R
 	return diags
 }
 
-func flattenSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDByIDItem(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDV1Response) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDByIDItem(item *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -321,7 +312,7 @@ func flattenSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDByIDItem(item *cataly
 		respItem,
 	}
 }
-func flattenSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDByIDItemAttributes(items *[]catalystcentersdkgo.ResponseSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDV1ResponseAttributes) []map[string]interface{} {
+func flattenSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDByIDItemAttributes(items *[]catalystcentersdkgo.ResponseSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDResponseAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -341,12 +332,13 @@ func resourceSiteKpiSummariesTrendAnalyticsUpdate(ctx context.Context, d *schema
 
 func resourceSiteKpiSummariesTrendAnalyticsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	// NOTE: Unable to delete SiteKpiSummariesTrendAnalytics on Dna Center
+	// NOTE: Unable to delete SiteKpiSummariesTrendAnalytics on Catalyst Center
 	//       Returning empty diags to delete it on Terraform
 	return diags
 }
-func expandRequestSiteKpiSummariesTrendAnalyticsSubmitRequestForSiteAnalyticsTrendDataV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsTrendDataV1 {
-	request := catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsTrendDataV1{}
+
+func expandRequestSiteKpiSummariesTrendAnalyticsSubmitRequestForSiteAnalyticsTrendData(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsTrendData {
+	request := catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsTrendData{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToIntPtr(v)
 	}
@@ -357,13 +349,13 @@ func expandRequestSiteKpiSummariesTrendAnalyticsSubmitRequestForSiteAnalyticsTre
 		request.TrendInterval = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filters")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filters")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filters")))) {
-		request.Filters = expandRequestSiteKpiSummariesTrendAnalyticsSubmitRequestForSiteAnalyticsTrendDataV1FiltersArray(ctx, key+".filters", d)
+		request.Filters = expandRequestSiteKpiSummariesTrendAnalyticsSubmitRequestForSiteAnalyticsTrendDataFiltersArray(ctx, key+".filters", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".attributes")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".attributes")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".attributes")))) {
 		request.Attributes = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".page")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".page")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".page")))) {
-		request.Page = expandRequestSiteKpiSummariesTrendAnalyticsSubmitRequestForSiteAnalyticsTrendDataV1Page(ctx, key+".page.0", d)
+		request.Page = expandRequestSiteKpiSummariesTrendAnalyticsSubmitRequestForSiteAnalyticsTrendDataPage(ctx, key+".page.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -371,8 +363,8 @@ func expandRequestSiteKpiSummariesTrendAnalyticsSubmitRequestForSiteAnalyticsTre
 	return &request
 }
 
-func expandRequestSiteKpiSummariesTrendAnalyticsSubmitRequestForSiteAnalyticsTrendDataV1FiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsTrendDataV1Filters {
-	request := []catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsTrendDataV1Filters{}
+func expandRequestSiteKpiSummariesTrendAnalyticsSubmitRequestForSiteAnalyticsTrendDataFiltersArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsTrendDataFilters {
+	request := []catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsTrendDataFilters{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -383,7 +375,7 @@ func expandRequestSiteKpiSummariesTrendAnalyticsSubmitRequestForSiteAnalyticsTre
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSiteKpiSummariesTrendAnalyticsSubmitRequestForSiteAnalyticsTrendDataV1Filters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSiteKpiSummariesTrendAnalyticsSubmitRequestForSiteAnalyticsTrendDataFilters(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -394,8 +386,8 @@ func expandRequestSiteKpiSummariesTrendAnalyticsSubmitRequestForSiteAnalyticsTre
 	return &request
 }
 
-func expandRequestSiteKpiSummariesTrendAnalyticsSubmitRequestForSiteAnalyticsTrendDataV1Filters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsTrendDataV1Filters {
-	request := catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsTrendDataV1Filters{}
+func expandRequestSiteKpiSummariesTrendAnalyticsSubmitRequestForSiteAnalyticsTrendDataFilters(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsTrendDataFilters {
+	request := catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsTrendDataFilters{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".key")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".key")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".key")))) {
 		request.Key = interfaceToString(v)
 	}
@@ -411,8 +403,8 @@ func expandRequestSiteKpiSummariesTrendAnalyticsSubmitRequestForSiteAnalyticsTre
 	return &request
 }
 
-func expandRequestSiteKpiSummariesTrendAnalyticsSubmitRequestForSiteAnalyticsTrendDataV1Page(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsTrendDataV1Page {
-	request := catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsTrendDataV1Page{}
+func expandRequestSiteKpiSummariesTrendAnalyticsSubmitRequestForSiteAnalyticsTrendDataPage(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsTrendDataPage {
+	request := catalystcentersdkgo.RequestSitesSubmitRequestForSiteAnalyticsTrendDataPage{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".limit")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".limit")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".limit")))) {
 		request.Limit = interfaceToIntPtr(v)
 	}
@@ -428,11 +420,11 @@ func expandRequestSiteKpiSummariesTrendAnalyticsSubmitRequestForSiteAnalyticsTre
 	return &request
 }
 
-func searchSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDV1(m interface{}, queryParams catalystcentersdkgo.GetSiteAnalyticsTrendDataForTheGivenTaskIDV1QueryParams, header catalystcentersdkgo.GetSiteAnalyticsTrendDataForTheGivenTaskIDV1HeaderParams) (*catalystcentersdkgo.ResponseSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDV1Response, error) {
+func searchSitesGetSiteAnalyticsTrendDataForTheGivenTaskID(m interface{}, queryParams catalystcentersdkgo.GetSiteAnalyticsTrendDataForTheGivenTaskIDQueryParams, header catalystcentersdkgo.GetSiteAnalyticsTrendDataForTheGivenTaskIDHeaderParams) (*catalystcentersdkgo.ResponseSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDResponse, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItem *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDV1Response
-	var ite *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDV1
+	var foundItem *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDResponse
+	var ite *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsTrendDataForTheGivenTaskID
 	ite, _, err = client.Sites.GetSiteAnalyticsTrendDataForTheGivenTaskID(&header, &queryParams)
 	if err != nil || ite == nil {
 		return foundItem, err
@@ -443,7 +435,7 @@ func searchSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDV1(m interface{}, quer
 	for _, item := range itemsCopy {
 		// Call get by _ method and set value to foundItem and return
 		if "" == queryParams.TaskID {
-			var getItem *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDV1Response
+			var getItem *catalystcentersdkgo.ResponseSitesGetSiteAnalyticsTrendDataForTheGivenTaskIDResponse
 			getItem = &item
 			foundItem = getItem
 			return foundItem, err

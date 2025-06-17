@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -65,7 +65,7 @@ Ids can be retrieved using the 'Get Failed ITSM Events' API in the 'instanceId' 
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"payload": &schema.Schema{
-							Description: `Array of RequestItsmRetryIntegrationEventsV1`,
+							Description: `Array of RequestItsmRetryIntegrationEvents`,
 							Type:        schema.TypeList,
 							Optional:    true,
 							ForceNew:    true,
@@ -85,18 +85,18 @@ func resourceItsmIntegrationEventsRetryCreate(ctx context.Context, d *schema.Res
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestItsmIntegrationEventsRetryRetryIntegrationEventsV1(ctx, "parameters.0", d)
+	request1 := expandRequestItsmIntegrationEventsRetryRetryIntegrationEvents(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Itsm.RetryIntegrationEventsV1(request1)
+	response1, restyResp1, err := client.Itsm.RetryIntegrationEvents(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing RetryIntegrationEventsV1", err))
+			"Failure when executing RetryIntegrationEvents", err))
 		return diags
 	}
 
@@ -132,8 +132,8 @@ func resourceItsmIntegrationEventsRetryCreate(ctx context.Context, d *schema.Res
 		if response2.Status == "FAILURE" {
 			bapiError := response2.BapiError
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing RetryIntegrationEventsV1", err,
-				"Failure at RetryIntegrationEventsV1 execution", bapiError))
+				"Failure when executing RetryIntegrationEvents", err,
+				"Failure at RetryIntegrationEvents execution", bapiError))
 			return diags
 		}
 	}
@@ -141,10 +141,10 @@ func resourceItsmIntegrationEventsRetryCreate(ctx context.Context, d *schema.Res
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenItsmRetryIntegrationEventsV1Item(response1)
+	vItem1 := flattenItsmRetryIntegrationEventsItem(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting RetryIntegrationEventsV1 response",
+			"Failure when setting RetryIntegrationEvents response",
 			err))
 		return diags
 	}
@@ -165,15 +165,15 @@ func resourceItsmIntegrationEventsRetryDelete(ctx context.Context, d *schema.Res
 	return diags
 }
 
-func expandRequestItsmIntegrationEventsRetryRetryIntegrationEventsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItsmRetryIntegrationEventsV1 {
-	request := catalystcentersdkgo.RequestItsmRetryIntegrationEventsV1{}
+func expandRequestItsmIntegrationEventsRetryRetryIntegrationEvents(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItsmRetryIntegrationEvents {
+	request := catalystcentersdkgo.RequestItsmRetryIntegrationEvents{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".payload")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".payload")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".payload")))) {
 		request = interfaceToSliceString(v)
 	}
 	return &request
 }
 
-func flattenItsmRetryIntegrationEventsV1Item(item *catalystcentersdkgo.ResponseItsmRetryIntegrationEventsV1) []map[string]interface{} {
+func flattenItsmRetryIntegrationEventsItem(item *catalystcentersdkgo.ResponseItsmRetryIntegrationEvents) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

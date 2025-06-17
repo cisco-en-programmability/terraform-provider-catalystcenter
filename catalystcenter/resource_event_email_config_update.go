@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -185,27 +185,27 @@ func resourceEventEmailConfigUpdateCreate(ctx context.Context, d *schema.Resourc
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestEventEmailConfigUpdateUpdateEmailDestinationV1(ctx, "parameters.0", d)
+	request1 := expandRequestEventEmailConfigUpdateUpdateEmailDestination(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.EventManagement.UpdateEmailDestinationV1(request1)
+	response1, restyResp1, err := client.EventManagement.UpdateEmailDestination(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing UpdateEmailDestinationV1", err))
+			"Failure when executing UpdateEmailDestination", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItem1 := flattenEventManagementUpdateEmailDestinationV1Item(response1)
+	vItem1 := flattenEventManagementUpdateEmailDestinationItem(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting UpdateEmailDestinationV1 response",
+			"Failure when setting UpdateEmailDestination response",
 			err))
 		return diags
 	}
@@ -227,16 +227,16 @@ func resourceEventEmailConfigUpdateDelete(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func expandRequestEventEmailConfigUpdateUpdateEmailDestinationV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateEmailDestinationV1 {
-	request := catalystcentersdkgo.RequestEventManagementUpdateEmailDestinationV1{}
+func expandRequestEventEmailConfigUpdateUpdateEmailDestination(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateEmailDestination {
+	request := catalystcentersdkgo.RequestEventManagementUpdateEmailDestination{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".email_config_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".email_config_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".email_config_id")))) {
 		request.EmailConfigID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".primary_smt_p_config")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".primary_smt_p_config")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".primary_smt_p_config")))) {
-		request.PrimarySmtpConfig = expandRequestEventEmailConfigUpdateUpdateEmailDestinationV1PrimarySmtpConfig(ctx, key+".primary_smt_p_config.0", d)
+		request.PrimarySmtpConfig = expandRequestEventEmailConfigUpdateUpdateEmailDestinationPrimarySmtpConfig(ctx, key+".primary_smt_p_config.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".secondary_smt_p_config")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".secondary_smt_p_config")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".secondary_smt_p_config")))) {
-		request.SecondarySmtpConfig = expandRequestEventEmailConfigUpdateUpdateEmailDestinationV1SecondarySmtpConfig(ctx, key+".secondary_smt_p_config.0", d)
+		request.SecondarySmtpConfig = expandRequestEventEmailConfigUpdateUpdateEmailDestinationSecondarySmtpConfig(ctx, key+".secondary_smt_p_config.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".from_email")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".from_email")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".from_email")))) {
 		request.FromEmail = interfaceToString(v)
@@ -250,8 +250,8 @@ func expandRequestEventEmailConfigUpdateUpdateEmailDestinationV1(ctx context.Con
 	return &request
 }
 
-func expandRequestEventEmailConfigUpdateUpdateEmailDestinationV1PrimarySmtpConfig(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateEmailDestinationV1PrimarySmtpConfig {
-	request := catalystcentersdkgo.RequestEventManagementUpdateEmailDestinationV1PrimarySmtpConfig{}
+func expandRequestEventEmailConfigUpdateUpdateEmailDestinationPrimarySmtpConfig(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateEmailDestinationPrimarySmtpConfig {
+	request := catalystcentersdkgo.RequestEventManagementUpdateEmailDestinationPrimarySmtpConfig{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".host_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".host_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".host_name")))) {
 		request.HostName = interfaceToString(v)
 	}
@@ -270,8 +270,8 @@ func expandRequestEventEmailConfigUpdateUpdateEmailDestinationV1PrimarySmtpConfi
 	return &request
 }
 
-func expandRequestEventEmailConfigUpdateUpdateEmailDestinationV1SecondarySmtpConfig(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateEmailDestinationV1SecondarySmtpConfig {
-	request := catalystcentersdkgo.RequestEventManagementUpdateEmailDestinationV1SecondarySmtpConfig{}
+func expandRequestEventEmailConfigUpdateUpdateEmailDestinationSecondarySmtpConfig(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateEmailDestinationSecondarySmtpConfig {
+	request := catalystcentersdkgo.RequestEventManagementUpdateEmailDestinationSecondarySmtpConfig{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".host_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".host_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".host_name")))) {
 		request.HostName = interfaceToString(v)
 	}
@@ -290,7 +290,7 @@ func expandRequestEventEmailConfigUpdateUpdateEmailDestinationV1SecondarySmtpCon
 	return &request
 }
 
-func flattenEventManagementUpdateEmailDestinationV1Item(item *catalystcentersdkgo.ResponseEventManagementUpdateEmailDestinationV1) []map[string]interface{} {
+func flattenEventManagementUpdateEmailDestinationItem(item *catalystcentersdkgo.ResponseEventManagementUpdateEmailDestination) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

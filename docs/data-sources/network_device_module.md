@@ -4,14 +4,20 @@ page_title: "catalystcenter_network_device_module Data Source - terraform-provid
 subcategory: ""
 description: |-
   It performs read operation on Devices.
-  Returns modules by specified device idReturns Module info by 'module id'
+  Returns modules by specified device id. The API returns a paginated response based on 'limit' and 'offset' parameters,
+  allowing up to 500 records per page. 'limit' specifies the number of records, and 'offset' sets the starting point using
+  1-based indexing. Use /dna/intent/api/v1/network-device/module/count API to get the total record count. For data sets
+  over 500 records, make multiple calls, adjusting 'limit' and 'offset' to retrieve all records incrementally.Returns Module info by 'module id'
 ---
 
 # catalystcenter_network_device_module (Data Source)
 
 It performs read operation on Devices.
 
-- Returns modules by specified device id
+- Returns modules by specified device id. The API returns a paginated response based on 'limit' and 'offset' parameters,
+allowing up to 500 records per page. 'limit' specifies the number of records, and 'offset' sets the starting point using
+1-based indexing. Use /dna/intent/api/v1/network-device/module/count API to get the total record count. For data sets
+over 500 records, make multiple calls, adjusting 'limit' and 'offset' to retrieve all records incrementally.
 
 - Returns Module info by 'module id'
 
@@ -50,7 +56,7 @@ output "catalystcenter_network_device_module_example" {
 
 - `device_id` (String) deviceId query parameter.
 - `id` (String) id path parameter. Module id
-- `limit` (Number) limit query parameter.
+- `limit` (Number) limit query parameter. The number of records to show for this page. Min: 1, Max: 500
 - `name_list` (List of String) nameList query parameter.
 - `offset` (Number) offset query parameter.
 - `operational_state_code_list` (List of String) operationalStateCodeList query parameter.

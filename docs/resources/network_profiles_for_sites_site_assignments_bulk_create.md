@@ -12,6 +12,8 @@ description: |-
 It performs create operation on Site Design.
 
 - Assign a network profile for sites to a list of sites. Also assigns the profile to child sites.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -22,10 +24,10 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_network_profiles_for_sites_site_assignments_bulk_create" "example" {
   provider   = catalystcenter
   profile_id = "string"
-  parameters {
+  parameters = [{
 
-    type = "------"
-  }
+    items = []
+  }]
 }
 
 output "catalystcenter_network_profiles_for_sites_site_assignments_bulk_create_example" {

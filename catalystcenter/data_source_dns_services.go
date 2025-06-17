@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -25,28 +25,29 @@ programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
 			"device_id": &schema.Schema{
 				Description: `deviceId query parameter. The device UUID.
 
+
  Examples:
- deviceId=6bef213c-19ca-4170-8375-b694e251101c (single deviceId is requested)
- deviceId=6bef213c-19ca-4170-8375-b694e251101c&deviceId=32219612-819e-4b5e-a96b-cf22aca13dd9 (multiple networkDeviceIds with & separator)
+ **deviceId=6bef213c-19ca-4170-8375-b694e251101c** (single deviceId is requested)
+ **deviceId=6bef213c-19ca-4170-8375-b694e251101c&deviceId=32219612-819e-4b5e-a96b-cf22aca13dd9 (multiple networkDeviceIds with & separator)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"device_site_hierarchy_id": &schema.Schema{
-				Description: `deviceSiteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. globalUuid/areaUuid/buildingUuid/floorUuid)
-This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*
+				Description: `deviceSiteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. **globalUuid/areaUuid/buildingUuid/floorUuid**)
+This field supports wildcard asterisk (*****) character search support. E.g. ***uuid*, *uuid, uuid***
 Examples:
-?deviceSiteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid (single siteHierarchyId requested)
-?deviceSiteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&deviceSiteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2 (multiple siteHierarchyIds requested)
+**?deviceSiteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid **(single siteHierarchyId requested)
+**?deviceSiteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&deviceSiteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2** (multiple siteHierarchyIds requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"device_site_id": &schema.Schema{
-				Description: `deviceSiteId query parameter. The UUID of the site. (Ex. flooruuid)
+				Description: `deviceSiteId query parameter. The UUID of the site. (Ex. **flooruuid**)
 Examples:
-?deviceSiteIds=id1 (single id requested)
-?deviceSiteIds=id1&deviceSiteIds=id2&siteId=id3 (multiple ids requested)
+**?deviceSiteIds=id1** (single id requested)
+**?deviceSiteIds=id1&deviceSiteIds=id2&siteId=id3** (multiple ids requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -76,7 +77,7 @@ Examples:
 				Optional: true,
 			},
 			"server_ip": &schema.Schema{
-				Description: `serverIp query parameter. IP Address of the DNS Server. This parameter supports wildcard (*) character -based search. Example: 10.76.81.* or *56.78* or *50.28 Examples: serverIp=10.42.3.31 (single IP Address is requested) serverIp=10.42.3.31&serverIp=name2&fabricVnName=name3 (multiple IP Addresses are requested)
+				Description: `serverIp query parameter. IP Address of the DNS Server. This parameter supports wildcard (*****) character -based search. Example: **10.76.81.*** or ***56.78*** or ***50.28** Examples: serverIp=10.42.3.31 (single IP Address is requested) serverIp=10.42.3.31&serverIp=name2&fabricVnName=name3 (multiple IP Addresses are requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -88,10 +89,10 @@ Examples:
 				Optional: true,
 			},
 			"ssid": &schema.Schema{
-				Description: `ssid query parameter. SSID is the name of wireless network to which client connects to. It is also referred to as WLAN ID Wireless Local Area Network Identifier. This field supports wildcard (*) character-based search. If the field contains the (*) character, please use the /query API for search. Ex: *Alpha* or Alpha* or *Alpha
+				Description: `ssid query parameter. SSID is the name of wireless network to which client connects to. It is also referred to as WLAN ID Wireless Local Area Network Identifier. This field supports wildcard (*****) character-based search. If the field contains the (*****) character, please use the /query API for search. Ex: ***Alpha*** or **Alpha*** or ***Alpha**
 Examples:
-ssid=Alpha (single ssid requested)
-ssid=Alpha&ssid=Guest (multiple ssid requested)
+**ssid=Alpha** (single ssid requested)
+**ssid=Alpha&ssid=Guest** (multiple ssid requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -245,10 +246,10 @@ func dataSourceDNSServicesRead(ctx context.Context, d *schema.ResourceData, m in
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesTheListOfDNSServicesForGivenParametersV1")
+		log.Printf("[DEBUG] Selected method: RetrievesTheListOfDNSServicesForGivenParameters")
 
-		headerParams1 := catalystcentersdkgo.RetrievesTheListOfDNSServicesForGivenParametersV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.RetrievesTheListOfDNSServicesForGivenParametersV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.RetrievesTheListOfDNSServicesForGivenParametersHeaderParams{}
+		queryParams1 := catalystcentersdkgo.RetrievesTheListOfDNSServicesForGivenParametersQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -287,24 +288,36 @@ func dataSourceDNSServicesRead(ctx context.Context, d *schema.ResourceData, m in
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Devices.RetrievesTheListOfDNSServicesForGivenParametersV1(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Devices.RetrievesTheListOfDNSServicesForGivenParameters(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesTheListOfDNSServicesForGivenParametersV1", err,
-				"Failure at RetrievesTheListOfDNSServicesForGivenParametersV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesTheListOfDNSServicesForGivenParameters", err,
+				"Failure at RetrievesTheListOfDNSServicesForGivenParameters, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesRetrievesTheListOfDNSServicesForGivenParametersV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesTheListOfDNSServicesForGivenParameters", err,
+				"Failure at RetrievesTheListOfDNSServicesForGivenParameters, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDevicesRetrievesTheListOfDNSServicesForGivenParametersItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesTheListOfDNSServicesForGivenParametersV1 response",
+				"Failure when setting RetrievesTheListOfDNSServicesForGivenParameters response",
 				err))
 			return diags
 		}
@@ -316,7 +329,7 @@ func dataSourceDNSServicesRead(ctx context.Context, d *schema.ResourceData, m in
 	return diags
 }
 
-func flattenDevicesRetrievesTheListOfDNSServicesForGivenParametersV1Items(items *[]catalystcentersdkgo.ResponseDevicesRetrievesTheListOfDNSServicesForGivenParametersV1Response) []map[string]interface{} {
+func flattenDevicesRetrievesTheListOfDNSServicesForGivenParametersItems(items *[]catalystcentersdkgo.ResponseDevicesRetrievesTheListOfDNSServicesForGivenParametersResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -333,7 +346,7 @@ func flattenDevicesRetrievesTheListOfDNSServicesForGivenParametersV1Items(items 
 		respItem["device_site_hierarchy_id"] = item.DeviceSiteHierarchyID
 		respItem["transactions"] = item.Transactions
 		respItem["failed_transactions"] = item.FailedTransactions
-		respItem["failures"] = flattenDevicesRetrievesTheListOfDNSServicesForGivenParametersV1ItemsFailures(item.Failures)
+		respItem["failures"] = flattenDevicesRetrievesTheListOfDNSServicesForGivenParametersItemsFailures(item.Failures)
 		respItem["successful_transactions"] = item.SuccessfulTransactions
 		respItem["latency"] = item.Latency
 		respItem["ssid"] = item.SSID
@@ -342,7 +355,7 @@ func flattenDevicesRetrievesTheListOfDNSServicesForGivenParametersV1Items(items 
 	return respItems
 }
 
-func flattenDevicesRetrievesTheListOfDNSServicesForGivenParametersV1ItemsFailures(items *[]catalystcentersdkgo.ResponseDevicesRetrievesTheListOfDNSServicesForGivenParametersV1ResponseFailures) []map[string]interface{} {
+func flattenDevicesRetrievesTheListOfDNSServicesForGivenParametersItemsFailures(items *[]catalystcentersdkgo.ResponseDevicesRetrievesTheListOfDNSServicesForGivenParametersResponseFailures) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

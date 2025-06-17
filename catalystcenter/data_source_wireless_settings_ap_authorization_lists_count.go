@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -47,28 +47,40 @@ func dataSourceWirelessSettingsApAuthorizationListsCountRead(ctx context.Context
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetApAuthorizationListCountV1")
+		log.Printf("[DEBUG] Selected method: GetApAuthorizationListCount")
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Wireless.GetApAuthorizationListCountV1()
+		response1, restyResp1, err := client.Wireless.GetApAuthorizationListCount()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetApAuthorizationListCountV1", err,
-				"Failure at GetApAuthorizationListCountV1, unexpected response", ""))
+				"Failure when executing 2 GetApAuthorizationListCount", err,
+				"Failure at GetApAuthorizationListCount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessGetApAuthorizationListCountV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetApAuthorizationListCount", err,
+				"Failure at GetApAuthorizationListCount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenWirelessGetApAuthorizationListCountItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetApAuthorizationListCountV1 response",
+				"Failure when setting GetApAuthorizationListCount response",
 				err))
 			return diags
 		}
@@ -80,7 +92,7 @@ func dataSourceWirelessSettingsApAuthorizationListsCountRead(ctx context.Context
 	return diags
 }
 
-func flattenWirelessGetApAuthorizationListCountV1Item(item *catalystcentersdkgo.ResponseWirelessGetApAuthorizationListCountV1Response) []map[string]interface{} {
+func flattenWirelessGetApAuthorizationListCountItem(item *catalystcentersdkgo.ResponseWirelessGetApAuthorizationListCountResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -120,29 +120,29 @@ func resourceSdaFabricEdgeDeviceCreate(ctx context.Context, d *schema.ResourceDa
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestSdaFabricEdgeDeviceAddEdgeDeviceInSdaFabricV1(ctx, "parameters.0", d)
+	request1 := expandRequestSdaFabricEdgeDeviceAddEdgeDeviceInSdaFabric(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vDeviceManagementIPAddress := resourceItem["device_management_ip_address"]
 	vvDeviceManagementIPAddress := interfaceToString(vDeviceManagementIPAddress)
-	queryParamImport := catalystcentersdkgo.GetEdgeDeviceFromSdaFabricV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetEdgeDeviceFromSdaFabricQueryParams{}
 	queryParamImport.DeviceManagementIPAddress = vvDeviceManagementIPAddress
-	item2, _, err := client.Sda.GetEdgeDeviceFromSdaFabricV1(&queryParamImport)
+	item2, _, err := client.Sda.GetEdgeDeviceFromSdaFabric(&queryParamImport)
 	if err != nil || item2 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["device_management_ip_address"] = item2.DeviceManagementIPAddress
 		d.SetId(joinResourceID(resourceMap))
 		return resourceSdaFabricEdgeDeviceRead(ctx, d, m)
 	}
-	resp1, restyResp1, err := client.Sda.AddEdgeDeviceInSdaFabricV1(request1)
+	resp1, restyResp1, err := client.Sda.AddEdgeDeviceInSdaFabric(request1)
 	if err != nil || resp1 == nil {
 		if restyResp1 != nil {
 			diags = append(diags, diagErrorWithResponse(
-				"Failure when executing AddEdgeDeviceInSdaFabricV1", err, restyResp1.String()))
+				"Failure when executing AddEdgeDeviceInSdaFabric", err, restyResp1.String()))
 			return diags
 		}
 		diags = append(diags, diagError(
-			"Failure when executing AddEdgeDeviceInSdaFabricV1", err))
+			"Failure when executing AddEdgeDeviceInSdaFabric", err))
 		return diags
 	}
 	executionId := resp1.ExecutionID
@@ -175,17 +175,17 @@ func resourceSdaFabricEdgeDeviceCreate(ctx context.Context, d *schema.ResourceDa
 		if response2.Status == "FAILURE" {
 			log.Printf("[DEBUG] Error %s", response2.BapiError)
 			diags = append(diags, diagError(
-				"Failure when executing AddEdgeDeviceInSdaFabricV1", err))
+				"Failure when executing AddEdgeDeviceInSdaFabric", err))
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetEdgeDeviceFromSdaFabricV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetEdgeDeviceFromSdaFabricQueryParams{}
 	queryParamValidate.DeviceManagementIPAddress = vvDeviceManagementIPAddress
-	item3, _, err := client.Sda.GetEdgeDeviceFromSdaFabricV1(&queryParamValidate)
+	item3, _, err := client.Sda.GetEdgeDeviceFromSdaFabric(&queryParamValidate)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing AddEdgeDeviceInSdaFabricV1", err,
-			"Failure at AddEdgeDeviceInSdaFabricV1, unexpected response", ""))
+			"Failure when executing AddEdgeDeviceInSdaFabric", err,
+			"Failure at AddEdgeDeviceInSdaFabric, unexpected response", ""))
 		return diags
 	}
 
@@ -208,14 +208,14 @@ func resourceSdaFabricEdgeDeviceRead(ctx context.Context, d *schema.ResourceData
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetEdgeDeviceFromSdaFabricV1")
-		queryParams1 := catalystcentersdkgo.GetEdgeDeviceFromSdaFabricV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetEdgeDeviceFromSdaFabric")
+		queryParams1 := catalystcentersdkgo.GetEdgeDeviceFromSdaFabricQueryParams{}
 
 		queryParams1.DeviceManagementIPAddress = vDeviceManagementIPAddress
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sda.GetEdgeDeviceFromSdaFabricV1(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetEdgeDeviceFromSdaFabric(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
@@ -227,10 +227,10 @@ func resourceSdaFabricEdgeDeviceRead(ctx context.Context, d *schema.ResourceData
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetEdgeDeviceFromSdaFabricV1Item(response1)
+		vItem1 := flattenSdaGetEdgeDeviceFromSdaFabricItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetEdgeDeviceFromSdaFabricV1 response",
+				"Failure when setting GetEdgeDeviceFromSdaFabric response",
 				err))
 			return diags
 		}
@@ -254,23 +254,23 @@ func resourceSdaFabricEdgeDeviceDelete(ctx context.Context, d *schema.ResourceDa
 	resourceID := d.Id()
 	resourceMap := separateResourceID(resourceID)
 
-	queryParamDelete := catalystcentersdkgo.DeleteEdgeDeviceFromSdaFabricV1QueryParams{}
+	queryParamDelete := catalystcentersdkgo.DeleteEdgeDeviceFromSdaFabricQueryParams{}
 
 	vvDeviceManagementIPAddress := resourceMap["device_management_ip_address"]
 	queryParamDelete.DeviceManagementIPAddress = vvDeviceManagementIPAddress
 
-	response1, restyResp1, err := client.Sda.DeleteEdgeDeviceFromSdaFabricV1(&queryParamDelete)
+	response1, restyResp1, err := client.Sda.DeleteEdgeDeviceFromSdaFabric(&queryParamDelete)
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] resty response for delete operation => %v", restyResp1.String())
 			diags = append(diags, diagErrorWithAltAndResponse(
-				"Failure when executing DeleteEdgeDeviceFromSdaFabricV1", err, restyResp1.String(),
-				"Failure at DeleteEdgeDeviceFromSdaFabricV1, unexpected response", ""))
+				"Failure when executing DeleteEdgeDeviceFromSdaFabric", err, restyResp1.String(),
+				"Failure at DeleteEdgeDeviceFromSdaFabric, unexpected response", ""))
 			return diags
 		}
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing DeleteEdgeDeviceFromSdaFabricV1", err,
-			"Failure at DeleteEdgeDeviceFromSdaFabricV1, unexpected response", ""))
+			"Failure when executing DeleteEdgeDeviceFromSdaFabric", err,
+			"Failure at DeleteEdgeDeviceFromSdaFabric, unexpected response", ""))
 		return diags
 	}
 
@@ -304,7 +304,7 @@ func resourceSdaFabricEdgeDeviceDelete(ctx context.Context, d *schema.ResourceDa
 		if response2.Status == "FAILURE" {
 			log.Printf("[DEBUG] Error %s", response2.BapiError)
 			diags = append(diags, diagError(
-				"Failure when executing DeleteEdgeDeviceFromSdaFabricV1", err))
+				"Failure when executing DeleteEdgeDeviceFromSdaFabric", err))
 			return diags
 		}
 	}
@@ -315,8 +315,9 @@ func resourceSdaFabricEdgeDeviceDelete(ctx context.Context, d *schema.ResourceDa
 
 	return diags
 }
-func expandRequestSdaFabricEdgeDeviceAddEdgeDeviceInSdaFabricV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddEdgeDeviceInSdaFabricV1 {
-	request := catalystcentersdkgo.RequestSdaAddEdgeDeviceInSdaFabricV1{}
+
+func expandRequestSdaFabricEdgeDeviceAddEdgeDeviceInSdaFabric(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddEdgeDeviceInSdaFabric {
+	request := catalystcentersdkgo.RequestSdaAddEdgeDeviceInSdaFabric{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_management_ip_address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_management_ip_address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_management_ip_address")))) {
 		request.DeviceManagementIPAddress = interfaceToString(v)
 	}

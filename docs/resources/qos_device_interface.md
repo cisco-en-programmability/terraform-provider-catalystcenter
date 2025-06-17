@@ -24,7 +24,7 @@ WAN, to associate WAN interfaces with specific SP Profile and to be able to defi
 ```terraform
 resource "catalystcenter_qos_device_interface" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     excluded_interfaces = ["string"]

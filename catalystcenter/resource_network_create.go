@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -301,7 +301,7 @@ settings.
 											Schema: map[string]*schema.Schema{
 
 												"configure_dnac_ip": &schema.Schema{
-													Description: `Configuration DNAC IP for SNMP Server (eg: true)
+													Description: `Configuration CATALYST IP for SNMP Server (eg: true)
 `,
 													// Type:        schema.TypeBool,
 													Type:         schema.TypeString,
@@ -333,7 +333,7 @@ settings.
 											Schema: map[string]*schema.Schema{
 
 												"configure_dnac_ip": &schema.Schema{
-													Description: `Configuration DNAC IP for syslog server (eg: true)
+													Description: `Configuration CATALYST IP for syslog server (eg: true)
 `,
 													// Type:        schema.TypeBool,
 													Type:         schema.TypeString,
@@ -385,22 +385,22 @@ func resourceNetworkCreateCreate(ctx context.Context, d *schema.ResourceData, m 
 	vPersistbapioutput := resourceItem["persistbapioutput"]
 
 	vvSiteID := vSiteID.(string)
-	request1 := expandRequestNetworkCreateCreateNetworkV1(ctx, "parameters.0", d)
+	request1 := expandRequestNetworkCreateCreateNetwork(ctx, "parameters.0", d)
 
-	headerParams1 := catalystcentersdkgo.CreateNetworkV1HeaderParams{}
+	headerParams1 := catalystcentersdkgo.CreateNetworkHeaderParams{}
 
 	headerParams1.Persistbapioutput = vPersistbapioutput.(string)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.NetworkSettings.CreateNetworkV1(vvSiteID, request1, &headerParams1)
+	response1, restyResp1, err := client.NetworkSettings.CreateNetwork(vvSiteID, request1, &headerParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing CreateNetworkV1", err))
+			"Failure when executing CreateNetwork", err))
 		return diags
 	}
 
@@ -436,8 +436,8 @@ func resourceNetworkCreateCreate(ctx context.Context, d *schema.ResourceData, m 
 		if response2.Status == "FAILURE" {
 			bapiError := response2.BapiError
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing CreateNetworkV1", err,
-				"Failure at CreateNetworkV1 execution", bapiError))
+				"Failure when executing CreateNetwork", err,
+				"Failure at CreateNetwork execution", bapiError))
 			return diags
 		}
 	}
@@ -445,10 +445,10 @@ func resourceNetworkCreateCreate(ctx context.Context, d *schema.ResourceData, m 
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenNetworkSettingsCreateNetworkV1Item(response1)
+	vItem1 := flattenNetworkSettingsCreateNetworkItem(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting CreateNetworkV1 response",
+			"Failure when setting CreateNetwork response",
 			err))
 		return diags
 	}
@@ -469,28 +469,28 @@ func resourceNetworkCreateDelete(ctx context.Context, d *schema.ResourceData, m 
 	return diags
 }
 
-func expandRequestNetworkCreateCreateNetworkV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateNetworkV1 {
-	request := catalystcentersdkgo.RequestNetworkSettingsCreateNetworkV1{}
-	request.Settings = expandRequestNetworkCreateCreateNetworkV1Settings(ctx, key, d)
+func expandRequestNetworkCreateCreateNetwork(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateNetwork {
+	request := catalystcentersdkgo.RequestNetworkSettingsCreateNetwork{}
+	request.Settings = expandRequestNetworkCreateCreateNetworkSettings(ctx, key, d)
 	return &request
 }
 
-func expandRequestNetworkCreateCreateNetworkV1Settings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateNetworkV1Settings {
-	request := catalystcentersdkgo.RequestNetworkSettingsCreateNetworkV1Settings{}
+func expandRequestNetworkCreateCreateNetworkSettings(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateNetworkSettings {
+	request := catalystcentersdkgo.RequestNetworkSettingsCreateNetworkSettings{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".dhcp_server")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".dhcp_server")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".dhcp_server")))) {
 		request.DhcpServer = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".dns_server")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".dns_server")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".dns_server")))) {
-		request.DNSServer = expandRequestNetworkCreateCreateNetworkV1SettingsDNSServer(ctx, key+".dns_server.0", d)
+		request.DNSServer = expandRequestNetworkCreateCreateNetworkSettingsDNSServer(ctx, key+".dns_server.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".syslog_server")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".syslog_server")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".syslog_server")))) {
-		request.SyslogServer = expandRequestNetworkCreateCreateNetworkV1SettingsSyslogServer(ctx, key+".syslog_server.0", d)
+		request.SyslogServer = expandRequestNetworkCreateCreateNetworkSettingsSyslogServer(ctx, key+".syslog_server.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".snmp_server")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".snmp_server")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".snmp_server")))) {
-		request.SNMPServer = expandRequestNetworkCreateCreateNetworkV1SettingsSNMPServer(ctx, key+".snmp_server.0", d)
+		request.SNMPServer = expandRequestNetworkCreateCreateNetworkSettingsSNMPServer(ctx, key+".snmp_server.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".netflowcollector")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".netflowcollector")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".netflowcollector")))) {
-		request.Netflowcollector = expandRequestNetworkCreateCreateNetworkV1SettingsNetflowcollector(ctx, key+".netflowcollector.0", d)
+		request.Netflowcollector = expandRequestNetworkCreateCreateNetworkSettingsNetflowcollector(ctx, key+".netflowcollector.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ntp_server")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ntp_server")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ntp_server")))) {
 		request.NtpServer = interfaceToSliceString(v)
@@ -499,19 +499,19 @@ func expandRequestNetworkCreateCreateNetworkV1Settings(ctx context.Context, key 
 		request.Timezone = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".message_of_theday")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".message_of_theday")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".message_of_theday")))) {
-		request.MessageOfTheday = expandRequestNetworkCreateCreateNetworkV1SettingsMessageOfTheday(ctx, key+".message_of_theday.0", d)
+		request.MessageOfTheday = expandRequestNetworkCreateCreateNetworkSettingsMessageOfTheday(ctx, key+".message_of_theday.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".network_aaa")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".network_aaa")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".network_aaa")))) {
-		request.NetworkAAA = expandRequestNetworkCreateCreateNetworkV1SettingsNetworkAAA(ctx, key+".network_aaa.0", d)
+		request.NetworkAAA = expandRequestNetworkCreateCreateNetworkSettingsNetworkAAA(ctx, key+".network_aaa.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".client_and_endpoint_aaa")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".client_and_endpoint_aaa")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".client_and_endpoint_aaa")))) {
-		request.ClientAndEndpointAAA = expandRequestNetworkCreateCreateNetworkV1SettingsClientAndEndpointAAA(ctx, key+".client_and_endpoint_aaa.0", d)
+		request.ClientAndEndpointAAA = expandRequestNetworkCreateCreateNetworkSettingsClientAndEndpointAAA(ctx, key+".client_and_endpoint_aaa.0", d)
 	}
 	return &request
 }
 
-func expandRequestNetworkCreateCreateNetworkV1SettingsDNSServer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateNetworkV1SettingsDNSServer {
-	request := catalystcentersdkgo.RequestNetworkSettingsCreateNetworkV1SettingsDNSServer{}
+func expandRequestNetworkCreateCreateNetworkSettingsDNSServer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateNetworkSettingsDNSServer {
+	request := catalystcentersdkgo.RequestNetworkSettingsCreateNetworkSettingsDNSServer{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".domain_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".domain_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".domain_name")))) {
 		request.DomainName = interfaceToString(v)
 	}
@@ -524,8 +524,8 @@ func expandRequestNetworkCreateCreateNetworkV1SettingsDNSServer(ctx context.Cont
 	return &request
 }
 
-func expandRequestNetworkCreateCreateNetworkV1SettingsSyslogServer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateNetworkV1SettingsSyslogServer {
-	request := catalystcentersdkgo.RequestNetworkSettingsCreateNetworkV1SettingsSyslogServer{}
+func expandRequestNetworkCreateCreateNetworkSettingsSyslogServer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateNetworkSettingsSyslogServer {
+	request := catalystcentersdkgo.RequestNetworkSettingsCreateNetworkSettingsSyslogServer{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ip_addresses")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ip_addresses")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ip_addresses")))) {
 		request.IPAddresses = interfaceToSliceString(v)
 	}
@@ -535,8 +535,8 @@ func expandRequestNetworkCreateCreateNetworkV1SettingsSyslogServer(ctx context.C
 	return &request
 }
 
-func expandRequestNetworkCreateCreateNetworkV1SettingsSNMPServer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateNetworkV1SettingsSNMPServer {
-	request := catalystcentersdkgo.RequestNetworkSettingsCreateNetworkV1SettingsSNMPServer{}
+func expandRequestNetworkCreateCreateNetworkSettingsSNMPServer(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateNetworkSettingsSNMPServer {
+	request := catalystcentersdkgo.RequestNetworkSettingsCreateNetworkSettingsSNMPServer{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ip_addresses")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ip_addresses")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ip_addresses")))) {
 		request.IPAddresses = interfaceToSliceString(v)
 	}
@@ -546,8 +546,8 @@ func expandRequestNetworkCreateCreateNetworkV1SettingsSNMPServer(ctx context.Con
 	return &request
 }
 
-func expandRequestNetworkCreateCreateNetworkV1SettingsNetflowcollector(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateNetworkV1SettingsNetflowcollector {
-	request := catalystcentersdkgo.RequestNetworkSettingsCreateNetworkV1SettingsNetflowcollector{}
+func expandRequestNetworkCreateCreateNetworkSettingsNetflowcollector(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateNetworkSettingsNetflowcollector {
+	request := catalystcentersdkgo.RequestNetworkSettingsCreateNetworkSettingsNetflowcollector{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ip_address")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ip_address")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ip_address")))) {
 		request.IPAddress = interfaceToString(v)
 	}
@@ -557,8 +557,8 @@ func expandRequestNetworkCreateCreateNetworkV1SettingsNetflowcollector(ctx conte
 	return &request
 }
 
-func expandRequestNetworkCreateCreateNetworkV1SettingsMessageOfTheday(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateNetworkV1SettingsMessageOfTheday {
-	request := catalystcentersdkgo.RequestNetworkSettingsCreateNetworkV1SettingsMessageOfTheday{}
+func expandRequestNetworkCreateCreateNetworkSettingsMessageOfTheday(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateNetworkSettingsMessageOfTheday {
+	request := catalystcentersdkgo.RequestNetworkSettingsCreateNetworkSettingsMessageOfTheday{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".banner_message")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".banner_message")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".banner_message")))) {
 		request.BannerMessage = interfaceToString(v)
 	}
@@ -568,8 +568,8 @@ func expandRequestNetworkCreateCreateNetworkV1SettingsMessageOfTheday(ctx contex
 	return &request
 }
 
-func expandRequestNetworkCreateCreateNetworkV1SettingsNetworkAAA(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateNetworkV1SettingsNetworkAAA {
-	request := catalystcentersdkgo.RequestNetworkSettingsCreateNetworkV1SettingsNetworkAAA{}
+func expandRequestNetworkCreateCreateNetworkSettingsNetworkAAA(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateNetworkSettingsNetworkAAA {
+	request := catalystcentersdkgo.RequestNetworkSettingsCreateNetworkSettingsNetworkAAA{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".servers")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".servers")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".servers")))) {
 		request.Servers = interfaceToString(v)
 	}
@@ -588,8 +588,8 @@ func expandRequestNetworkCreateCreateNetworkV1SettingsNetworkAAA(ctx context.Con
 	return &request
 }
 
-func expandRequestNetworkCreateCreateNetworkV1SettingsClientAndEndpointAAA(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateNetworkV1SettingsClientAndEndpointAAA {
-	request := catalystcentersdkgo.RequestNetworkSettingsCreateNetworkV1SettingsClientAndEndpointAAA{}
+func expandRequestNetworkCreateCreateNetworkSettingsClientAndEndpointAAA(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestNetworkSettingsCreateNetworkSettingsClientAndEndpointAAA {
+	request := catalystcentersdkgo.RequestNetworkSettingsCreateNetworkSettingsClientAndEndpointAAA{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".servers")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".servers")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".servers")))) {
 		request.Servers = interfaceToString(v)
 	}
@@ -608,7 +608,7 @@ func expandRequestNetworkCreateCreateNetworkV1SettingsClientAndEndpointAAA(ctx c
 	return &request
 }
 
-func flattenNetworkSettingsCreateNetworkV1Item(item *catalystcentersdkgo.ResponseNetworkSettingsCreateNetworkV1) []map[string]interface{} {
+func flattenNetworkSettingsCreateNetworkItem(item *catalystcentersdkgo.ResponseNetworkSettingsCreateNetwork) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

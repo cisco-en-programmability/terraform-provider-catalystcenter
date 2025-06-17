@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -172,10 +172,10 @@ func dataSourceIcapSpectrumInterferenceDeviceReportsRead(ctx context.Context, d 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesTheSpectrumInterferenceDevicesReportsSentByWLCForProvidedApMacV1")
+		log.Printf("[DEBUG] Selected method: RetrievesTheSpectrumInterferenceDevicesReportsSentByWLCForProvidedApMac")
 
-		headerParams1 := catalystcentersdkgo.RetrievesTheSpectrumInterferenceDevicesReportsSentByWLCForProvidedApMacV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.RetrievesTheSpectrumInterferenceDevicesReportsSentByWLCForProvidedApMacV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.RetrievesTheSpectrumInterferenceDevicesReportsSentByWLCForProvidedApMacHeaderParams{}
+		queryParams1 := catalystcentersdkgo.RetrievesTheSpectrumInterferenceDevicesReportsSentByWLCForProvidedApMacQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -198,24 +198,36 @@ func dataSourceIcapSpectrumInterferenceDeviceReportsRead(ctx context.Context, d 
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sensors.RetrievesTheSpectrumInterferenceDevicesReportsSentByWLCForProvidedApMacV1(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Sensors.RetrievesTheSpectrumInterferenceDevicesReportsSentByWLCForProvidedApMac(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesTheSpectrumInterferenceDevicesReportsSentByWLCForProvidedApMacV1", err,
-				"Failure at RetrievesTheSpectrumInterferenceDevicesReportsSentByWLCForProvidedApMacV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesTheSpectrumInterferenceDevicesReportsSentByWLCForProvidedApMac", err,
+				"Failure at RetrievesTheSpectrumInterferenceDevicesReportsSentByWLCForProvidedApMac, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSensorsRetrievesTheSpectrumInterferenceDevicesReportsSentByWLCForProvidedApMacV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesTheSpectrumInterferenceDevicesReportsSentByWLCForProvidedApMac", err,
+				"Failure at RetrievesTheSpectrumInterferenceDevicesReportsSentByWLCForProvidedApMac, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSensorsRetrievesTheSpectrumInterferenceDevicesReportsSentByWLCForProvidedApMacItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesTheSpectrumInterferenceDevicesReportsSentByWLCForProvidedApMacV1 response",
+				"Failure when setting RetrievesTheSpectrumInterferenceDevicesReportsSentByWLCForProvidedApMac response",
 				err))
 			return diags
 		}
@@ -227,7 +239,7 @@ func dataSourceIcapSpectrumInterferenceDeviceReportsRead(ctx context.Context, d 
 	return diags
 }
 
-func flattenSensorsRetrievesTheSpectrumInterferenceDevicesReportsSentByWLCForProvidedApMacV1Items(items *[]catalystcentersdkgo.ResponseSensorsRetrievesTheSpectrumInterferenceDevicesReportsSentByWLCForProvidedApMacV1Response) []map[string]interface{} {
+func flattenSensorsRetrievesTheSpectrumInterferenceDevicesReportsSentByWLCForProvidedApMacItems(items *[]catalystcentersdkgo.ResponseSensorsRetrievesTheSpectrumInterferenceDevicesReportsSentByWLCForProvidedApMacResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

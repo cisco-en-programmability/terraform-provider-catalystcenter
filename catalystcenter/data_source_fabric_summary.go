@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -17,13 +17,13 @@ func dataSourceFabricSummary() *schema.Resource {
 
 - Read Fabric summary for overall deployment. Get an aggregated summary of all fabric entities in a deployment including
 the entity health.
-This data source provides the latest health data until the given endTime. If data is not ready for the provided
-endTime, the request will fail with error code 400 Bad Request, and the error message will indicate the recommended
+This data source provides the latest health data until the given **endTime**. If data is not ready for the provided
+endTime, the request will fail with error code **400 Bad Request**, and the error message will indicate the recommended
 endTime to use to retrieve a complete data set. This behavior may occur if the provided endTime=currentTime, since we
-are not a real time system. When endTime is not provided, the API returns the latest data.
+are not a real time system. When **endTime** is not provided, the API returns the latest data.
 For detailed information about the usage of the API, please refer to the Open API specification document
 https://github.com/cisco-en-programmability/catalyst-center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-
-fabricSummary-1.0.1-oas3-resolved.yaml
+fabricSummary-1.1.0-resolved.yaml
 `,
 
 		ReadContext: dataSourceFabricSummaryRead,
@@ -32,6 +32,18 @@ fabricSummary-1.0.1-oas3-resolved.yaml
 				Description: `endTime query parameter. End time to which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
 `,
 				Type:     schema.TypeFloat,
+				Optional: true,
+			},
+			"site_hierarchy": &schema.Schema{
+				Description: `siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. **Global/AreaName/BuildingName/FloorName**)          This field supports wildcard asterisk (*****) character search support. E.g. ***/San*, */San, /San***          Examples:          **?siteHierarchy=Global/AreaName/BuildingName/FloorName** (single siteHierarchy requested)          **?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2** (multiple siteHierarchies requested)
+`,
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"site_hierarchy_id": &schema.Schema{
+				Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. **globalUuid/areaUuid/buildingUuid/floorUuid**)          This field supports wildcard asterisk (*****) character search support. E.g. ***uuid*, *uuid, uuid***          Examples:          **?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid **(single siteHierarchyId requested)          **?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2** (multiple siteHierarchyIds requested)
+`,
+				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"start_time": &schema.Schema{
@@ -73,7 +85,7 @@ fabricSummary-1.0.1-oas3-resolved.yaml
 
 									"fabric_site_fair_health_count": &schema.Schema{
 										Description: `Fabric Site Fair Health Count`,
-										Type:        schema.TypeFloat,
+										Type:        schema.TypeInt,
 										Computed:    true,
 									},
 
@@ -85,7 +97,7 @@ fabricSummary-1.0.1-oas3-resolved.yaml
 
 									"fabric_site_good_health_percentage": &schema.Schema{
 										Description: `Fabric Site Good Health Percentage`,
-										Type:        schema.TypeInt,
+										Type:        schema.TypeFloat,
 										Computed:    true,
 									},
 
@@ -115,7 +127,7 @@ fabricSummary-1.0.1-oas3-resolved.yaml
 
 									"l2_vn_fair_health_count": &schema.Schema{
 										Description: `L2 Vn Fair Health Count`,
-										Type:        schema.TypeFloat,
+										Type:        schema.TypeInt,
 										Computed:    true,
 									},
 
@@ -127,7 +139,7 @@ fabricSummary-1.0.1-oas3-resolved.yaml
 
 									"l2_vn_good_health_percentage": &schema.Schema{
 										Description: `L2 Vn Good Health Percentage`,
-										Type:        schema.TypeInt,
+										Type:        schema.TypeFloat,
 										Computed:    true,
 									},
 
@@ -151,7 +163,7 @@ fabricSummary-1.0.1-oas3-resolved.yaml
 
 									"l3_vn_fair_health_count": &schema.Schema{
 										Description: `L3 Vn Fair Health Count`,
-										Type:        schema.TypeFloat,
+										Type:        schema.TypeInt,
 										Computed:    true,
 									},
 
@@ -163,7 +175,7 @@ fabricSummary-1.0.1-oas3-resolved.yaml
 
 									"l3_vn_good_health_percentage": &schema.Schema{
 										Description: `L3 Vn Good Health Percentage`,
-										Type:        schema.TypeInt,
+										Type:        schema.TypeFloat,
 										Computed:    true,
 									},
 
@@ -211,7 +223,7 @@ fabricSummary-1.0.1-oas3-resolved.yaml
 
 									"transit_network_fair_health_count": &schema.Schema{
 										Description: `Transit Network Fair Health Count`,
-										Type:        schema.TypeFloat,
+										Type:        schema.TypeInt,
 										Computed:    true,
 									},
 
@@ -223,7 +235,7 @@ fabricSummary-1.0.1-oas3-resolved.yaml
 
 									"transit_network_good_health_percentage": &schema.Schema{
 										Description: `Transit Network Good Health Percentage`,
-										Type:        schema.TypeInt,
+										Type:        schema.TypeFloat,
 										Computed:    true,
 									},
 
@@ -254,14 +266,16 @@ func dataSourceFabricSummaryRead(ctx context.Context, d *schema.ResourceData, m 
 	var diags diag.Diagnostics
 	vStartTime, okStartTime := d.GetOk("start_time")
 	vEndTime, okEndTime := d.GetOk("end_time")
+	vSiteHierarchy, okSiteHierarchy := d.GetOk("site_hierarchy")
+	vSiteHierarchyID, okSiteHierarchyID := d.GetOk("site_hierarchy_id")
 	vXCaLLERID := d.Get("xca_lle_rid")
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: ReadFabricEntitySummaryV1")
+		log.Printf("[DEBUG] Selected method: ReadFabricEntitySummary")
 
-		headerParams1 := catalystcentersdkgo.ReadFabricEntitySummaryV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.ReadFabricEntitySummaryV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.ReadFabricEntitySummaryHeaderParams{}
+		queryParams1 := catalystcentersdkgo.ReadFabricEntitySummaryQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -269,28 +283,46 @@ func dataSourceFabricSummaryRead(ctx context.Context, d *schema.ResourceData, m 
 		if okEndTime {
 			queryParams1.EndTime = vEndTime.(float64)
 		}
+		if okSiteHierarchy {
+			queryParams1.SiteHierarchy = vSiteHierarchy.(string)
+		}
+		if okSiteHierarchyID {
+			queryParams1.SiteHierarchyID = vSiteHierarchyID.(string)
+		}
 		headerParams1.XCaLLERID = vXCaLLERID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sda.ReadFabricEntitySummaryV1(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Sda.ReadFabricEntitySummary(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 ReadFabricEntitySummaryV1", err,
-				"Failure at ReadFabricEntitySummaryV1, unexpected response", ""))
+				"Failure when executing 2 ReadFabricEntitySummary", err,
+				"Failure at ReadFabricEntitySummary, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaReadFabricEntitySummaryV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 ReadFabricEntitySummary", err,
+				"Failure at ReadFabricEntitySummary, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSdaReadFabricEntitySummaryItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting ReadFabricEntitySummaryV1 response",
+				"Failure when setting ReadFabricEntitySummary response",
 				err))
 			return diags
 		}
@@ -302,18 +334,18 @@ func dataSourceFabricSummaryRead(ctx context.Context, d *schema.ResourceData, m 
 	return diags
 }
 
-func flattenSdaReadFabricEntitySummaryV1Item(item *catalystcentersdkgo.ResponseSdaReadFabricEntitySummaryV1Response) []map[string]interface{} {
+func flattenSdaReadFabricEntitySummaryItem(item *catalystcentersdkgo.ResponseSdaReadFabricEntitySummaryResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["protocol_summaries"] = flattenSdaReadFabricEntitySummaryV1ItemProtocolSummaries(item.ProtocolSummaries)
+	respItem["protocol_summaries"] = flattenSdaReadFabricEntitySummaryItemProtocolSummaries(item.ProtocolSummaries)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenSdaReadFabricEntitySummaryV1ItemProtocolSummaries(items *[]catalystcentersdkgo.ResponseSdaReadFabricEntitySummaryV1ResponseProtocolSummaries) []map[string]interface{} {
+func flattenSdaReadFabricEntitySummaryItemProtocolSummaries(items *[]catalystcentersdkgo.ResponseSdaReadFabricEntitySummaryResponseProtocolSummaries) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

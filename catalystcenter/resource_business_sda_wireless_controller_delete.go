@@ -6,7 +6,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -67,6 +67,13 @@ func resourceBusinessSdaWirelessControllerDelete() *schema.Resource {
 							Required: true,
 							ForceNew: true,
 						},
+						"persistbapioutput": &schema.Schema{
+							Description: `persistbapioutput query parameter. Persist BAPI Output
+`,
+							Type:     schema.TypeString,
+							Optional: true,
+							ForceNew: true,
+						},
 					},
 				},
 			},
@@ -84,8 +91,8 @@ func resourceBusinessSdaWirelessControllerDeleteCreate(ctx context.Context, d *s
 
 	vPersistbapioutput := resourceItem["persistbapioutput"]
 
-	headerParams1 := catalystcentersdkgo.RemoveWLCFromFabricDomainV1HeaderParams{}
-	queryParams1 := catalystcentersdkgo.RemoveWLCFromFabricDomainV1QueryParams{}
+	headerParams1 := catalystcentersdkgo.RemoveWLCFromFabricDomainHeaderParams{}
+	queryParams1 := catalystcentersdkgo.RemoveWLCFromFabricDomainQueryParams{}
 
 	queryParams1.DeviceIPAddress = vDeviceIPAddress.(string)
 
@@ -93,14 +100,14 @@ func resourceBusinessSdaWirelessControllerDeleteCreate(ctx context.Context, d *s
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.FabricWireless.RemoveWLCFromFabricDomainV1(&headerParams1, &queryParams1)
+	response1, restyResp1, err := client.FabricWireless.RemoveWLCFromFabricDomain(&headerParams1, &queryParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing RemoveWLCFromFabricDomainV1", err))
+			"Failure when executing RemoveWLCFromFabricDomain", err))
 		return diags
 	}
 
@@ -136,15 +143,15 @@ func resourceBusinessSdaWirelessControllerDeleteCreate(ctx context.Context, d *s
 		if response2.Status == "FAILURE" {
 			bapiError := response2.BapiError
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing RemoveWLCFromFabricDomainV1", err,
-				"Failure at RemoveWLCFromFabricDomainV1 execution", bapiError))
+				"Failure when executing RemoveWLCFromFabricDomain", err,
+				"Failure at RemoveWLCFromFabricDomain execution", bapiError))
 			return diags
 		}
 	}
-	vItem1 := flattenFabricWirelessRemoveWLCFromFabricDomainV1Item(response1)
+	vItem1 := flattenFabricWirelessRemoveWLCFromFabricDomainItem(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting RemoveWLCFromFabricDomainV1 response",
+			"Failure when setting RemoveWLCFromFabricDomain response",
 			err))
 		return diags
 	}
@@ -166,7 +173,7 @@ func resourceBusinessSdaWirelessControllerDeleteDelete(ctx context.Context, d *s
 	return diags
 }
 
-func flattenFabricWirelessRemoveWLCFromFabricDomainV1Item(item *catalystcentersdkgo.ResponseFabricWirelessRemoveWLCFromFabricDomainV1) []map[string]interface{} {
+func flattenFabricWirelessRemoveWLCFromFabricDomainItem(item *catalystcentersdkgo.ResponseFabricWirelessRemoveWLCFromFabricDomain) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

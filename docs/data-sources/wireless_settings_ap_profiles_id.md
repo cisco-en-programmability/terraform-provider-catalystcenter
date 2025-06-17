@@ -75,8 +75,8 @@ Read-Only:
 
 Read-Only:
 
-- `scheduler_date` (String)
-- `scheduler_day` (String)
+- `scheduler_date` (List of String)
+- `scheduler_day` (List of String)
 - `scheduler_end_time` (String)
 - `scheduler_start_time` (String)
 

@@ -9,7 +9,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -21,9 +21,11 @@ func resourceEventSubscription() *schema.Resource {
 
 - Delete EventSubscriptions
 
-- Update SubscriptionEndpoint to list of registered events(Deprecated)
+- Update SubscriptionEndpoint to list of registered events. Deprecated since Guardian release. Alternative: PUT
+/intent/api/v1/event/subscription/rest
 
-- Subscribe SubscriptionEndpoint to list of registered events (Deprecated)
+- Subscribe SubscriptionEndpoint to list of registered events. Deprecated since Guardian release. Alternative: POST
+/intent/api/v1/event/subscription/rest
 `,
 
 		CreateContext: resourceEventSubscriptionCreate,
@@ -298,7 +300,7 @@ func resourceEventSubscription() *schema.Resource {
 				},
 			},
 			"parameters": &schema.Schema{
-				Description: `Array of RequestEventManagementCreateEventSubscriptionsV1`,
+				Description: `Array of RequestEventManagementCreateEventSubscriptions`,
 				Type:        schema.TypeList,
 				Optional:    true,
 				Computed:    true,
@@ -480,13 +482,13 @@ func resourceEventSubscriptionCreate(ctx context.Context, d *schema.ResourceData
 	}
 
 	resourceItem := *getResourceItem(d.Get("parameters.0.payload"))
-	request1 := expandRequestEventSubscriptionCreateEventSubscriptionsV1(ctx, "parameters.0", d)
+	request1 := expandRequestEventSubscriptionCreateEventSubscriptions(ctx, "parameters.0", d)
 	vName := resourceItem["name"]
 	vvName := interfaceToString(vName)
 	vSubscriptionID := resourceItem["subscription_id"]
 	vvSubscriptionID := interfaceToString(vSubscriptionID)
 
-	queryParams1 := catalystcentersdkgo.GetEventSubscriptionsV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.GetEventSubscriptionsQueryParams{}
 	item, err := searchEventManagementGetEventSubscriptions(m, queryParams1, vvName, vvSubscriptionID)
 	if err == nil && (item != nil && len(*item) > 0) {
 		resourceMap := make(map[string]string)
@@ -556,7 +558,7 @@ func resourceEventSubscriptionRead(ctx context.Context, d *schema.ResourceData, 
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method 1: GetEventSubscriptions")
-		queryParams1 := catalystcentersdkgo.GetEventSubscriptionsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetEventSubscriptionsQueryParams{}
 		item, err := searchEventManagementGetEventSubscriptions(m, queryParams1, vName, vSubscriptionID)
 		if err != nil {
 			diags = append(diags, diagError(
@@ -573,7 +575,7 @@ func resourceEventSubscriptionRead(ctx context.Context, d *schema.ResourceData, 
 			log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*item))
 		}
 
-		vItem1 := flattenEventManagementGetEventSubscriptionsV1Items(item)
+		vItem1 := flattenEventManagementGetEventSubscriptionsItems(item)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetEventSubscriptions search response",
@@ -595,7 +597,7 @@ func resourceEventSubscriptionUpdate(ctx context.Context, d *schema.ResourceData
 	vName, _ := resourceMap["name"]
 	vSubscriptionID, _ := resourceMap["subscription_id"]
 
-	queryParams1 := catalystcentersdkgo.GetEventSubscriptionsV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.GetEventSubscriptionsQueryParams{}
 	item, err := searchEventManagementGetEventSubscriptions(m, queryParams1, vName, vSubscriptionID)
 	if err != nil || item == nil || len(*item) <= 0 {
 		diags = append(diags, diagErrorWithAlt(
@@ -606,7 +608,7 @@ func resourceEventSubscriptionUpdate(ctx context.Context, d *schema.ResourceData
 
 	// NOTE: Consider adding getAllItems and search function to get missing params
 	if d.HasChange("parameters") {
-		request1 := expandRequestEventSubscriptionUpdateEventSubscriptionsV1(ctx, "parameters.0", d)
+		request1 := expandRequestEventSubscriptionUpdateEventSubscriptions(ctx, "parameters.0", d)
 		if request1 != nil {
 			log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		}
@@ -650,7 +652,7 @@ func resourceEventSubscriptionDelete(ctx context.Context, d *schema.ResourceData
 	vName, _ := resourceMap["name"]
 	vSubscriptionID, _ := resourceMap["subscription_id"]
 
-	queryParams1 := catalystcentersdkgo.GetEventSubscriptionsV1QueryParams{}
+	queryParams1 := catalystcentersdkgo.GetEventSubscriptionsQueryParams{}
 	item, err := searchEventManagementGetEventSubscriptions(m, queryParams1, vName, vSubscriptionID)
 	if err != nil {
 		diags = append(diags, diagErrorWithAlt(
@@ -663,7 +665,7 @@ func resourceEventSubscriptionDelete(ctx context.Context, d *schema.ResourceData
 	}
 
 	// REVIEW: Add getAllItems and search function to get missing params
-	queryParams2 := catalystcentersdkgo.DeleteEventSubscriptionsV1QueryParams{}
+	queryParams2 := catalystcentersdkgo.DeleteEventSubscriptionsQueryParams{}
 	if len(*item) > 0 {
 		itemCopy := *item
 		queryParams2.Subscriptions = itemCopy[0].SubscriptionID
@@ -691,9 +693,10 @@ func resourceEventSubscriptionDelete(ctx context.Context, d *schema.ResourceData
 
 	return diags
 }
-func expandRequestEventSubscriptionCreateEventSubscriptionsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementCreateEventSubscriptionsV1 {
-	request := catalystcentersdkgo.RequestEventManagementCreateEventSubscriptionsV1{}
-	if v := expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemArray(ctx, key+".payload", d); v != nil {
+
+func expandRequestEventSubscriptionCreateEventSubscriptions(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementCreateEventSubscriptions {
+	request := catalystcentersdkgo.RequestEventManagementCreateEventSubscriptions{}
+	if v := expandRequestEventSubscriptionCreateEventSubscriptionsItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -702,8 +705,8 @@ func expandRequestEventSubscriptionCreateEventSubscriptionsV1(ctx context.Contex
 	return &request
 }
 
-func expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsV1 {
-	request := []catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsV1{}
+func expandRequestEventSubscriptionCreateEventSubscriptionsItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptions {
+	request := []catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptions{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -714,7 +717,7 @@ func expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemArray(ctx conte
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionCreateEventSubscriptionsV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionCreateEventSubscriptionsItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -725,8 +728,8 @@ func expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemArray(ctx conte
 	return &request
 }
 
-func expandRequestEventSubscriptionCreateEventSubscriptionsV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsV1 {
-	request := catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsV1{}
+func expandRequestEventSubscriptionCreateEventSubscriptionsItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptions {
+	request := catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptions{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_id")))) {
 		request.SubscriptionID = interfaceToString(v)
 	}
@@ -740,10 +743,10 @@ func expandRequestEventSubscriptionCreateEventSubscriptionsV1Item(ctx context.Co
 		request.Description = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_endpoints")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_endpoints")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_endpoints")))) {
-		request.SubscriptionEndpoints = expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemSubscriptionEndpointsArray(ctx, key+".subscription_endpoints", d)
+		request.SubscriptionEndpoints = expandRequestEventSubscriptionCreateEventSubscriptionsItemSubscriptionEndpointsArray(ctx, key+".subscription_endpoints", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filter")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filter")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filter")))) {
-		request.Filter = expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemFilter(ctx, key+".filter.0", d)
+		request.Filter = expandRequestEventSubscriptionCreateEventSubscriptionsItemFilter(ctx, key+".filter.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -751,8 +754,8 @@ func expandRequestEventSubscriptionCreateEventSubscriptionsV1Item(ctx context.Co
 	return &request
 }
 
-func expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemSubscriptionEndpointsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsV1SubscriptionEndpoints {
-	request := []catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsV1SubscriptionEndpoints{}
+func expandRequestEventSubscriptionCreateEventSubscriptionsItemSubscriptionEndpointsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsSubscriptionEndpoints {
+	request := []catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsSubscriptionEndpoints{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -763,7 +766,7 @@ func expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemSubscriptionEnd
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemSubscriptionEndpoints(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionCreateEventSubscriptionsItemSubscriptionEndpoints(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -774,13 +777,13 @@ func expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemSubscriptionEnd
 	return &request
 }
 
-func expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemSubscriptionEndpoints(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsV1SubscriptionEndpoints {
-	request := catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsV1SubscriptionEndpoints{}
+func expandRequestEventSubscriptionCreateEventSubscriptionsItemSubscriptionEndpoints(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsSubscriptionEndpoints {
+	request := catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsSubscriptionEndpoints{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".instance_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".instance_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".instance_id")))) {
 		request.InstanceID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_details")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_details")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_details")))) {
-		request.SubscriptionDetails = expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemSubscriptionEndpointsSubscriptionDetails(ctx, key+".subscription_details.0", d)
+		request.SubscriptionDetails = expandRequestEventSubscriptionCreateEventSubscriptionsItemSubscriptionEndpointsSubscriptionDetails(ctx, key+".subscription_details.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -788,8 +791,8 @@ func expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemSubscriptionEnd
 	return &request
 }
 
-func expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemSubscriptionEndpointsSubscriptionDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsV1SubscriptionEndpointsSubscriptionDetails {
-	request := catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsV1SubscriptionEndpointsSubscriptionDetails{}
+func expandRequestEventSubscriptionCreateEventSubscriptionsItemSubscriptionEndpointsSubscriptionDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsSubscriptionEndpointsSubscriptionDetails {
+	request := catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsSubscriptionEndpointsSubscriptionDetails{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".connector_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".connector_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".connector_type")))) {
 		request.ConnectorType = interfaceToString(v)
 	}
@@ -799,13 +802,13 @@ func expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemSubscriptionEnd
 	return &request
 }
 
-func expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemFilter(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsV1Filter {
-	request := catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsV1Filter{}
+func expandRequestEventSubscriptionCreateEventSubscriptionsItemFilter(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsFilter {
+	request := catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsFilter{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".event_ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".event_ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".event_ids")))) {
 		request.EventIDs = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".domains_subdomains")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".domains_subdomains")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".domains_subdomains")))) {
-		request.DomainsSubdomains = expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemFilterDomainsSubdomainsArray(ctx, key+".domains_subdomains", d)
+		request.DomainsSubdomains = expandRequestEventSubscriptionCreateEventSubscriptionsItemFilterDomainsSubdomainsArray(ctx, key+".domains_subdomains", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".types")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".types")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".types")))) {
 		request.Types = interfaceToSliceString(v)
@@ -828,8 +831,8 @@ func expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemFilter(ctx cont
 	return &request
 }
 
-func expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemFilterDomainsSubdomainsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsV1FilterDomainsSubdomains {
-	request := []catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsV1FilterDomainsSubdomains{}
+func expandRequestEventSubscriptionCreateEventSubscriptionsItemFilterDomainsSubdomainsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsFilterDomainsSubdomains {
+	request := []catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsFilterDomainsSubdomains{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -840,7 +843,7 @@ func expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemFilterDomainsSu
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemFilterDomainsSubdomains(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionCreateEventSubscriptionsItemFilterDomainsSubdomains(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -851,8 +854,8 @@ func expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemFilterDomainsSu
 	return &request
 }
 
-func expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemFilterDomainsSubdomains(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsV1FilterDomainsSubdomains {
-	request := catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsV1FilterDomainsSubdomains{}
+func expandRequestEventSubscriptionCreateEventSubscriptionsItemFilterDomainsSubdomains(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsFilterDomainsSubdomains {
+	request := catalystcentersdkgo.RequestItemEventManagementCreateEventSubscriptionsFilterDomainsSubdomains{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".domain")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".domain")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".domain")))) {
 		request.Domain = interfaceToString(v)
 	}
@@ -865,9 +868,9 @@ func expandRequestEventSubscriptionCreateEventSubscriptionsV1ItemFilterDomainsSu
 	return &request
 }
 
-func expandRequestEventSubscriptionUpdateEventSubscriptionsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateEventSubscriptionsV1 {
-	request := catalystcentersdkgo.RequestEventManagementUpdateEventSubscriptionsV1{}
-	if v := expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestEventSubscriptionUpdateEventSubscriptions(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestEventManagementUpdateEventSubscriptions {
+	request := catalystcentersdkgo.RequestEventManagementUpdateEventSubscriptions{}
+	if v := expandRequestEventSubscriptionUpdateEventSubscriptionsItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -876,8 +879,8 @@ func expandRequestEventSubscriptionUpdateEventSubscriptionsV1(ctx context.Contex
 	return &request
 }
 
-func expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsV1 {
-	request := []catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsV1{}
+func expandRequestEventSubscriptionUpdateEventSubscriptionsItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptions {
+	request := []catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptions{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -888,7 +891,7 @@ func expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemArray(ctx conte
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionUpdateEventSubscriptionsV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionUpdateEventSubscriptionsItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -899,8 +902,8 @@ func expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemArray(ctx conte
 	return &request
 }
 
-func expandRequestEventSubscriptionUpdateEventSubscriptionsV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsV1 {
-	request := catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsV1{}
+func expandRequestEventSubscriptionUpdateEventSubscriptionsItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptions {
+	request := catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptions{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_id")))) {
 		request.SubscriptionID = interfaceToString(v)
 	}
@@ -914,10 +917,10 @@ func expandRequestEventSubscriptionUpdateEventSubscriptionsV1Item(ctx context.Co
 		request.Description = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_endpoints")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_endpoints")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_endpoints")))) {
-		request.SubscriptionEndpoints = expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemSubscriptionEndpointsArray(ctx, key+".subscription_endpoints", d)
+		request.SubscriptionEndpoints = expandRequestEventSubscriptionUpdateEventSubscriptionsItemSubscriptionEndpointsArray(ctx, key+".subscription_endpoints", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".filter")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".filter")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".filter")))) {
-		request.Filter = expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemFilter(ctx, key+".filter.0", d)
+		request.Filter = expandRequestEventSubscriptionUpdateEventSubscriptionsItemFilter(ctx, key+".filter.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -925,8 +928,8 @@ func expandRequestEventSubscriptionUpdateEventSubscriptionsV1Item(ctx context.Co
 	return &request
 }
 
-func expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemSubscriptionEndpointsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsV1SubscriptionEndpoints {
-	request := []catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsV1SubscriptionEndpoints{}
+func expandRequestEventSubscriptionUpdateEventSubscriptionsItemSubscriptionEndpointsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsSubscriptionEndpoints {
+	request := []catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsSubscriptionEndpoints{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -937,7 +940,7 @@ func expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemSubscriptionEnd
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemSubscriptionEndpoints(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionUpdateEventSubscriptionsItemSubscriptionEndpoints(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -948,13 +951,13 @@ func expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemSubscriptionEnd
 	return &request
 }
 
-func expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemSubscriptionEndpoints(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsV1SubscriptionEndpoints {
-	request := catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsV1SubscriptionEndpoints{}
+func expandRequestEventSubscriptionUpdateEventSubscriptionsItemSubscriptionEndpoints(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsSubscriptionEndpoints {
+	request := catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsSubscriptionEndpoints{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".instance_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".instance_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".instance_id")))) {
 		request.InstanceID = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".subscription_details")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".subscription_details")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".subscription_details")))) {
-		request.SubscriptionDetails = expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemSubscriptionEndpointsSubscriptionDetails(ctx, key+".subscription_details.0", d)
+		request.SubscriptionDetails = expandRequestEventSubscriptionUpdateEventSubscriptionsItemSubscriptionEndpointsSubscriptionDetails(ctx, key+".subscription_details.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -962,8 +965,8 @@ func expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemSubscriptionEnd
 	return &request
 }
 
-func expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemSubscriptionEndpointsSubscriptionDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsV1SubscriptionEndpointsSubscriptionDetails {
-	request := catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsV1SubscriptionEndpointsSubscriptionDetails{}
+func expandRequestEventSubscriptionUpdateEventSubscriptionsItemSubscriptionEndpointsSubscriptionDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsSubscriptionEndpointsSubscriptionDetails {
+	request := catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsSubscriptionEndpointsSubscriptionDetails{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".connector_type")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".connector_type")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".connector_type")))) {
 		request.ConnectorType = interfaceToString(v)
 	}
@@ -973,13 +976,13 @@ func expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemSubscriptionEnd
 	return &request
 }
 
-func expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemFilter(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsV1Filter {
-	request := catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsV1Filter{}
+func expandRequestEventSubscriptionUpdateEventSubscriptionsItemFilter(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsFilter {
+	request := catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsFilter{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".event_ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".event_ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".event_ids")))) {
 		request.EventIDs = interfaceToSliceString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".domains_subdomains")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".domains_subdomains")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".domains_subdomains")))) {
-		request.DomainsSubdomains = expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemFilterDomainsSubdomainsArray(ctx, key+".domains_subdomains", d)
+		request.DomainsSubdomains = expandRequestEventSubscriptionUpdateEventSubscriptionsItemFilterDomainsSubdomainsArray(ctx, key+".domains_subdomains", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".types")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".types")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".types")))) {
 		request.Types = interfaceToSliceString(v)
@@ -1002,8 +1005,8 @@ func expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemFilter(ctx cont
 	return &request
 }
 
-func expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemFilterDomainsSubdomainsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsV1FilterDomainsSubdomains {
-	request := []catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsV1FilterDomainsSubdomains{}
+func expandRequestEventSubscriptionUpdateEventSubscriptionsItemFilterDomainsSubdomainsArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsFilterDomainsSubdomains {
+	request := []catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsFilterDomainsSubdomains{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -1014,7 +1017,7 @@ func expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemFilterDomainsSu
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemFilterDomainsSubdomains(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestEventSubscriptionUpdateEventSubscriptionsItemFilterDomainsSubdomains(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -1025,8 +1028,8 @@ func expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemFilterDomainsSu
 	return &request
 }
 
-func expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemFilterDomainsSubdomains(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsV1FilterDomainsSubdomains {
-	request := catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsV1FilterDomainsSubdomains{}
+func expandRequestEventSubscriptionUpdateEventSubscriptionsItemFilterDomainsSubdomains(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsFilterDomainsSubdomains {
+	request := catalystcentersdkgo.RequestItemEventManagementUpdateEventSubscriptionsFilterDomainsSubdomains{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".domain")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".domain")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".domain")))) {
 		request.Domain = interfaceToString(v)
 	}
@@ -1039,11 +1042,11 @@ func expandRequestEventSubscriptionUpdateEventSubscriptionsV1ItemFilterDomainsSu
 	return &request
 }
 
-func searchEventManagementGetEventSubscriptions(m interface{}, queryParams catalystcentersdkgo.GetEventSubscriptionsV1QueryParams, name string, subscriptionID string) (*catalystcentersdkgo.ResponseEventManagementGetEventSubscriptionsV1, error) {
+func searchEventManagementGetEventSubscriptions(m interface{}, queryParams catalystcentersdkgo.GetEventSubscriptionsQueryParams, name string, subscriptionID string) (*catalystcentersdkgo.ResponseEventManagementGetEventSubscriptions, error) {
 	client := m.(*catalystcentersdkgo.Client)
 	var err error
-	var foundItems catalystcentersdkgo.ResponseEventManagementGetEventSubscriptionsV1 = []catalystcentersdkgo.ResponseItemEventManagementGetEventSubscriptionsV1{}
-	var items *catalystcentersdkgo.ResponseEventManagementGetEventSubscriptionsV1
+	var foundItems catalystcentersdkgo.ResponseEventManagementGetEventSubscriptions = []catalystcentersdkgo.ResponseItemEventManagementGetEventSubscriptions{}
+	var items *catalystcentersdkgo.ResponseEventManagementGetEventSubscriptions
 	items, _, err = client.EventManagement.GetEventSubscriptions(&queryParams)
 	if err != nil {
 		return nil, err

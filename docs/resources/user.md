@@ -4,23 +4,23 @@ page_title: "catalystcenter_user Resource - terraform-provider-catalystcenter"
 subcategory: ""
 description: |-
   It manages create, read and update operations on User and Roles.
-  Add a new user for Cisco Catalyst Center System.Update a user for Cisco Catalyst Center System.
+  Add a new user in the systemUpdate a user in the system
 ---
 
 # catalystcenter_user (Resource)
 
 It manages create, read and update operations on User and Roles.
 
-- Add a new user for Cisco Catalyst Center System.
+- Add a new user in the system
 
-- Update a user for Cisco Catalyst Center System.
+- Update a user in the system
 
 ## Example Usage
 
 ```terraform
 resource "catalystcenter_user" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     email      = "string"

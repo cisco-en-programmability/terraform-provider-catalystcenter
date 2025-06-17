@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -159,9 +159,9 @@ func dataSourceNetworkBugsResultsNetworkDevicesNetworkDeviceIDBugsRead(ctx conte
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetBugsAffectingTheNetworkDeviceV1")
+		log.Printf("[DEBUG] Selected method: GetBugsAffectingTheNetworkDevice")
 		vvNetworkDeviceID := vNetworkDeviceID.(string)
-		queryParams1 := catalystcentersdkgo.GetBugsAffectingTheNetworkDeviceV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetBugsAffectingTheNetworkDeviceQueryParams{}
 
 		if okID {
 			queryParams1.ID = vID.(string)
@@ -184,24 +184,36 @@ func dataSourceNetworkBugsResultsNetworkDevicesNetworkDeviceIDBugsRead(ctx conte
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Compliance.GetBugsAffectingTheNetworkDeviceV1(vvNetworkDeviceID, &queryParams1)
+		response1, restyResp1, err := client.Compliance.GetBugsAffectingTheNetworkDevice(vvNetworkDeviceID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetBugsAffectingTheNetworkDeviceV1", err,
-				"Failure at GetBugsAffectingTheNetworkDeviceV1, unexpected response", ""))
+				"Failure when executing 2 GetBugsAffectingTheNetworkDevice", err,
+				"Failure at GetBugsAffectingTheNetworkDevice, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenComplianceGetBugsAffectingTheNetworkDeviceV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetBugsAffectingTheNetworkDevice", err,
+				"Failure at GetBugsAffectingTheNetworkDevice, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenComplianceGetBugsAffectingTheNetworkDeviceItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetBugsAffectingTheNetworkDeviceV1 response",
+				"Failure when setting GetBugsAffectingTheNetworkDevice response",
 				err))
 			return diags
 		}
@@ -213,7 +225,7 @@ func dataSourceNetworkBugsResultsNetworkDevicesNetworkDeviceIDBugsRead(ctx conte
 	return diags
 }
 
-func flattenComplianceGetBugsAffectingTheNetworkDeviceV1Items(items *[]catalystcentersdkgo.ResponseComplianceGetBugsAffectingTheNetworkDeviceV1Response) []map[string]interface{} {
+func flattenComplianceGetBugsAffectingTheNetworkDeviceItems(items *[]catalystcentersdkgo.ResponseComplianceGetBugsAffectingTheNetworkDeviceResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

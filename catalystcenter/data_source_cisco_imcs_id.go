@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -24,7 +24,8 @@ More data about the Cisco IMC can be retrieved using the APIs exposed directly b
 the Cisco IMC documentation https://www.cisco.com/c/en/us/support/servers-unified-computing/ucs-c-series-integrated-
 management-controller/series.html#~tab-documents
 The Cisco IMC configuration is relevant only for Catalyst Center deployments based on UCS appliances. In cases where
-Cisco IMC configuration is not supported by the deployment, these APIs will respond with a 404 Not Found status code.
+Cisco IMC configuration is not supported by the deployment, these APIs will respond with a **404 Not Found** status
+code.
 `,
 
 		ReadContext: dataSourceCiscoImcsIDRead,
@@ -57,7 +58,7 @@ Cisco IMC configuration is not supported by the deployment, these APIs will resp
 						},
 
 						"node_id": &schema.Schema{
-							Description: `The UUID that represents the Catalyst Center node. Its value can be obtained from the id attribute of the response of the /dna/intent/api/v1/nodes-config API.
+							Description: `The UUID that represents the Catalyst Center node. Its value can be obtained from the **id** attribute of the response of the **/dna/intent/api/v1/nodes-config** API.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -84,29 +85,41 @@ func dataSourceCiscoImcsIDRead(ctx context.Context, d *schema.ResourceData, m in
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesTheCiscoIMCConfigurationForACatalystCenterNodeV1")
+		log.Printf("[DEBUG] Selected method: RetrievesTheCiscoIMCConfigurationForACatalystCenterNode")
 		vvID := vID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.CiscoIMC.RetrievesTheCiscoIMCConfigurationForACatalystCenterNodeV1(vvID)
+		response1, restyResp1, err := client.CiscoIMC.RetrievesTheCiscoIMCConfigurationForACatalystCenterNode(vvID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesTheCiscoIMCConfigurationForACatalystCenterNodeV1", err,
-				"Failure at RetrievesTheCiscoIMCConfigurationForACatalystCenterNodeV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesTheCiscoIMCConfigurationForACatalystCenterNode", err,
+				"Failure at RetrievesTheCiscoIMCConfigurationForACatalystCenterNode, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenCiscoIMCRetrievesTheCiscoIMCConfigurationForACatalystCenterNodeV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesTheCiscoIMCConfigurationForACatalystCenterNode", err,
+				"Failure at RetrievesTheCiscoIMCConfigurationForACatalystCenterNode, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenCiscoIMCRetrievesTheCiscoIMCConfigurationForACatalystCenterNodeItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesTheCiscoIMCConfigurationForACatalystCenterNodeV1 response",
+				"Failure when setting RetrievesTheCiscoIMCConfigurationForACatalystCenterNode response",
 				err))
 			return diags
 		}
@@ -118,7 +131,7 @@ func dataSourceCiscoImcsIDRead(ctx context.Context, d *schema.ResourceData, m in
 	return diags
 }
 
-func flattenCiscoIMCRetrievesTheCiscoIMCConfigurationForACatalystCenterNodeV1Item(item *catalystcentersdkgo.ResponseCiscoIMCRetrievesTheCiscoIMCConfigurationForACatalystCenterNodeV1Response) []map[string]interface{} {
+func flattenCiscoIMCRetrievesTheCiscoIMCConfigurationForACatalystCenterNodeItem(item *catalystcentersdkgo.ResponseCiscoIMCRetrievesTheCiscoIMCConfigurationForACatalystCenterNodeResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

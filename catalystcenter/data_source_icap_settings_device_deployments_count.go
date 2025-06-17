@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -62,8 +62,8 @@ func dataSourceIcapSettingsDeviceDeploymentsCountRead(ctx context.Context, d *sc
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceDeploymentStatusCountV1")
-		queryParams1 := catalystcentersdkgo.GetDeviceDeploymentStatusCountV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetDeviceDeploymentStatusCount")
+		queryParams1 := catalystcentersdkgo.GetDeviceDeploymentStatusCountQueryParams{}
 
 		if okDeployActivityID {
 			queryParams1.DeployActivityID = vDeployActivityID.(string)
@@ -74,24 +74,36 @@ func dataSourceIcapSettingsDeviceDeploymentsCountRead(ctx context.Context, d *sc
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sensors.GetDeviceDeploymentStatusCountV1(&queryParams1)
+		response1, restyResp1, err := client.Sensors.GetDeviceDeploymentStatusCount(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceDeploymentStatusCountV1", err,
-				"Failure at GetDeviceDeploymentStatusCountV1, unexpected response", ""))
+				"Failure when executing 2 GetDeviceDeploymentStatusCount", err,
+				"Failure at GetDeviceDeploymentStatusCount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSensorsGetDeviceDeploymentStatusCountV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetDeviceDeploymentStatusCount", err,
+				"Failure at GetDeviceDeploymentStatusCount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSensorsGetDeviceDeploymentStatusCountItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceDeploymentStatusCountV1 response",
+				"Failure when setting GetDeviceDeploymentStatusCount response",
 				err))
 			return diags
 		}
@@ -103,7 +115,7 @@ func dataSourceIcapSettingsDeviceDeploymentsCountRead(ctx context.Context, d *sc
 	return diags
 }
 
-func flattenSensorsGetDeviceDeploymentStatusCountV1Item(item *catalystcentersdkgo.ResponseSensorsGetDeviceDeploymentStatusCountV1Response) []map[string]interface{} {
+func flattenSensorsGetDeviceDeploymentStatusCountItem(item *catalystcentersdkgo.ResponseSensorsGetDeviceDeploymentStatusCountResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

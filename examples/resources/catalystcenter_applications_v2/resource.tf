@@ -1,7 +1,7 @@
 
 resource "catalystcenter_applications_v2" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     display_name = "string"

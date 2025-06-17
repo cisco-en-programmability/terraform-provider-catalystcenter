@@ -1,7 +1,7 @@
 
 resource "catalystcenter_wireless_settings_interfaces" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     id             = "string"

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -32,7 +32,7 @@ func dataSourceTagMember() *schema.Resource {
 				Optional:    true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter. Used to Number of maximum members to return in the result
+				Description: `limit query parameter. The number of members to be retrieved. If not specified, the default is 500. The maximum allowed limit is 500.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -86,9 +86,9 @@ func dataSourceTagMemberRead(ctx context.Context, d *schema.ResourceData, m inte
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTagMembersByIDV1")
+		log.Printf("[DEBUG] Selected method: GetTagMembersByID")
 		vvID := vID.(string)
-		queryParams1 := catalystcentersdkgo.GetTagMembersByIDV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetTagMembersByIDQueryParams{}
 
 		queryParams1.MemberType = vMemberType.(string)
 
@@ -105,24 +105,38 @@ func dataSourceTagMemberRead(ctx context.Context, d *schema.ResourceData, m inte
 			queryParams1.Level = vLevel.(string)
 		}
 
-		response1, restyResp1, err := client.Tag.GetTagMembersByIDV1(vvID, &queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Tag.GetTagMembersByID(vvID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTagMembersByIDV1", err,
-				"Failure at GetTagMembersByIDV1, unexpected response", ""))
+				"Failure when executing 2 GetTagMembersByID", err,
+				"Failure at GetTagMembersByID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenTagGetTagMembersByIDV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetTagMembersByID", err,
+				"Failure at GetTagMembersByID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenTagGetTagMembersByIDItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTagMembersByIDV1 response",
+				"Failure when setting GetTagMembersByID response",
 				err))
 			return diags
 		}
@@ -134,7 +148,7 @@ func dataSourceTagMemberRead(ctx context.Context, d *schema.ResourceData, m inte
 	return diags
 }
 
-func flattenTagGetTagMembersByIDV1Items(items *[]catalystcentersdkgo.ResponseTagGetTagMembersByIDV1Response) []map[string]interface{} {
+func flattenTagGetTagMembersByIDItems(items *[]catalystcentersdkgo.ResponseTagGetTagMembersByIDResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

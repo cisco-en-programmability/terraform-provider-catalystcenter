@@ -1,7 +1,7 @@
 
 resource "catalystcenter_areas" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     id        = "string"

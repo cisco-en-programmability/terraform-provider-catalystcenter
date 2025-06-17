@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,8 +15,8 @@ func dataSourceWirelessProfilesIDSiteTagsCount() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Wireless.
 
-- This endpoint retrieves the total count of Site Tags associated with a specific Wireless Profile.This data source
-requires the id of the Wireless Profile to be provided as a path parameter.
+- This endpoint retrieves the total count of **Site Tags** associated with a specific **Wireless Profile**.This data
+source requires the **id** of the **Wireless Profile** to be provided as a path parameter.
 `,
 
 		ReadContext: dataSourceWirelessProfilesIDSiteTagsCountRead,
@@ -55,29 +55,41 @@ func dataSourceWirelessProfilesIDSiteTagsCountRead(ctx context.Context, d *schem
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrieveTheCountOfSiteTagsForAWirelessProfileV1")
+		log.Printf("[DEBUG] Selected method: RetrieveTheCountOfSiteTagsForAWirelessProfile")
 		vvID := vID.(string)
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Wireless.RetrieveTheCountOfSiteTagsForAWirelessProfileV1(vvID)
+		response1, restyResp1, err := client.Wireless.RetrieveTheCountOfSiteTagsForAWirelessProfile(vvID)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrieveTheCountOfSiteTagsForAWirelessProfileV1", err,
-				"Failure at RetrieveTheCountOfSiteTagsForAWirelessProfileV1, unexpected response", ""))
+				"Failure when executing 2 RetrieveTheCountOfSiteTagsForAWirelessProfile", err,
+				"Failure at RetrieveTheCountOfSiteTagsForAWirelessProfile, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessRetrieveTheCountOfSiteTagsForAWirelessProfileV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrieveTheCountOfSiteTagsForAWirelessProfile", err,
+				"Failure at RetrieveTheCountOfSiteTagsForAWirelessProfile, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenWirelessRetrieveTheCountOfSiteTagsForAWirelessProfileItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrieveTheCountOfSiteTagsForAWirelessProfileV1 response",
+				"Failure when setting RetrieveTheCountOfSiteTagsForAWirelessProfile response",
 				err))
 			return diags
 		}
@@ -89,7 +101,7 @@ func dataSourceWirelessProfilesIDSiteTagsCountRead(ctx context.Context, d *schem
 	return diags
 }
 
-func flattenWirelessRetrieveTheCountOfSiteTagsForAWirelessProfileV1Item(item *catalystcentersdkgo.ResponseWirelessRetrieveTheCountOfSiteTagsForAWirelessProfileV1Response) []map[string]interface{} {
+func flattenWirelessRetrieveTheCountOfSiteTagsForAWirelessProfileItem(item *catalystcentersdkgo.ResponseWirelessRetrieveTheCountOfSiteTagsForAWirelessProfileResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

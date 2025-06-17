@@ -11,7 +11,7 @@ description: |-
 
 It performs read operation on Health and Performance.
 
-- This data source retrieves the details of the diagnostic task identified by the specified id.
+- This data source retrieves the details of the diagnostic task identified by the specified **id**.
 
 ## Example Usage
 
@@ -31,7 +31,7 @@ output "catalystcenter_diagnostic_tasks_id_detail_example" {
 
 ### Required
 
-- `id` (String) id path parameter. The id of the diagnostic task to be retrieved
+- `id` (String) id path parameter. The **id** of the diagnostic task to be retrieved
 
 ### Read-Only
 

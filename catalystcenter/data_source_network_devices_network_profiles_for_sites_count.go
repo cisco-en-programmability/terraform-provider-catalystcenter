@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -53,31 +53,45 @@ func dataSourceNetworkDevicesNetworkProfilesForSitesCountRead(ctx context.Contex
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesTheCountOfNetworkProfilesForSitesV1")
-		queryParams1 := catalystcentersdkgo.RetrievesTheCountOfNetworkProfilesForSitesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: RetrievesTheCountOfNetworkProfilesForSites")
+		queryParams1 := catalystcentersdkgo.RetrievesTheCountOfNetworkProfilesForSitesQueryParams{}
 
 		if okType {
 			queryParams1.Type = vType.(string)
 		}
 
-		response1, restyResp1, err := client.SiteDesign.RetrievesTheCountOfNetworkProfilesForSitesV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.SiteDesign.RetrievesTheCountOfNetworkProfilesForSites(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesTheCountOfNetworkProfilesForSitesV1", err,
-				"Failure at RetrievesTheCountOfNetworkProfilesForSitesV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesTheCountOfNetworkProfilesForSites", err,
+				"Failure at RetrievesTheCountOfNetworkProfilesForSites, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSiteDesignRetrievesTheCountOfNetworkProfilesForSitesV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesTheCountOfNetworkProfilesForSites", err,
+				"Failure at RetrievesTheCountOfNetworkProfilesForSites, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSiteDesignRetrievesTheCountOfNetworkProfilesForSitesItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesTheCountOfNetworkProfilesForSitesV1 response",
+				"Failure when setting RetrievesTheCountOfNetworkProfilesForSites response",
 				err))
 			return diags
 		}
@@ -89,7 +103,7 @@ func dataSourceNetworkDevicesNetworkProfilesForSitesCountRead(ctx context.Contex
 	return diags
 }
 
-func flattenSiteDesignRetrievesTheCountOfNetworkProfilesForSitesV1Item(item *catalystcentersdkgo.ResponseSiteDesignRetrievesTheCountOfNetworkProfilesForSitesV1Response) []map[string]interface{} {
+func flattenSiteDesignRetrievesTheCountOfNetworkProfilesForSitesItem(item *catalystcentersdkgo.ResponseSiteDesignRetrievesTheCountOfNetworkProfilesForSitesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

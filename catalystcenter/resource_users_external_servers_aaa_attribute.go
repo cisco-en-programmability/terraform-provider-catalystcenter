@@ -6,7 +6,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -88,7 +88,7 @@ func resourceUsersExternalServersAAAAttributeCreate(ctx context.Context, d *sche
 
 	var diags diag.Diagnostics
 
-	request1 := expandRequestUsersExternalServersAAAAttributeAddAndUpdateAAAAttributeAPIV1(ctx, "parameters.0", d)
+	request1 := expandRequestUsersExternalServersAAAAttributeAddAndUpdateAAAAttributeAPI(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	item2, _, err := client.UserandRoles.GetAAAAttributeAPI()
@@ -144,7 +144,7 @@ func resourceUsersExternalServersAAAAttributeRead(ctx context.Context, d *schema
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenUserandRolesGetAAAAttributeAPIV1Item(response1.Response)
+		vItem1 := flattenUserandRolesGetAAAAttributeAPIItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetAAAAttributeAPI response",
@@ -191,8 +191,9 @@ func resourceUsersExternalServersAAAAttributeDelete(ctx context.Context, d *sche
 
 	return diags
 }
-func expandRequestUsersExternalServersAAAAttributeAddAndUpdateAAAAttributeAPIV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestUserandRolesAddAndUpdateAAAAttributeAPIV1 {
-	request := catalystcentersdkgo.RequestUserandRolesAddAndUpdateAAAAttributeAPIV1{}
+
+func expandRequestUsersExternalServersAAAAttributeAddAndUpdateAAAAttributeAPI(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestUserandRolesAddAndUpdateAAAAttributeAPI {
+	request := catalystcentersdkgo.RequestUserandRolesAddAndUpdateAAAAttributeAPI{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".attribute_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".attribute_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".attribute_name")))) {
 		request.AttributeName = interfaceToString(v)
 	}

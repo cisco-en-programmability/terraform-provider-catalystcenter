@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -27,7 +27,7 @@ func dataSourceSdaTransitNetworks() *schema.Resource {
 				Optional: true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter. Maximum number of records to return.
+				Description: `limit query parameter. Maximum number of records to return. The maximum number of objects supported in a single request is 500.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -121,6 +121,13 @@ func dataSourceSdaTransitNetworks() *schema.Resource {
 							},
 						},
 
+						"site_id": &schema.Schema{
+							Description: `ID of the site of this transit network.
+`,
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+
 						"type": &schema.Schema{
 							Description: `Type of the transit network.
 `,
@@ -146,8 +153,8 @@ func dataSourceSdaTransitNetworksRead(ctx context.Context, d *schema.ResourceDat
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetTransitNetworksV1")
-		queryParams1 := catalystcentersdkgo.GetTransitNetworksV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetTransitNetworks")
+		queryParams1 := catalystcentersdkgo.GetTransitNetworksQueryParams{}
 
 		if okID {
 			queryParams1.ID = vID.(string)
@@ -165,24 +172,38 @@ func dataSourceSdaTransitNetworksRead(ctx context.Context, d *schema.ResourceDat
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.Sda.GetTransitNetworksV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sda.GetTransitNetworks(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTransitNetworksV1", err,
-				"Failure at GetTransitNetworksV1, unexpected response", ""))
+				"Failure when executing 2 GetTransitNetworks", err,
+				"Failure at GetTransitNetworks, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSdaGetTransitNetworksV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetTransitNetworks", err,
+				"Failure at GetTransitNetworks, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSdaGetTransitNetworksItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTransitNetworksV1 response",
+				"Failure when setting GetTransitNetworks response",
 				err))
 			return diags
 		}
@@ -194,7 +215,7 @@ func dataSourceSdaTransitNetworksRead(ctx context.Context, d *schema.ResourceDat
 	return diags
 }
 
-func flattenSdaGetTransitNetworksV1Items(items *[]catalystcentersdkgo.ResponseSdaGetTransitNetworksV1Response) []map[string]interface{} {
+func flattenSdaGetTransitNetworksItems(items *[]catalystcentersdkgo.ResponseSdaGetTransitNetworksResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -203,15 +224,16 @@ func flattenSdaGetTransitNetworksV1Items(items *[]catalystcentersdkgo.ResponseSd
 		respItem := make(map[string]interface{})
 		respItem["id"] = item.ID
 		respItem["name"] = item.Name
+		respItem["site_id"] = item.SiteID
 		respItem["type"] = item.Type
-		respItem["ip_transit_settings"] = flattenSdaGetTransitNetworksV1ItemsIPTransitSettings(item.IPTransitSettings)
-		respItem["sda_transit_settings"] = flattenSdaGetTransitNetworksV1ItemsSdaTransitSettings(item.SdaTransitSettings)
+		respItem["ip_transit_settings"] = flattenSdaGetTransitNetworksItemsIPTransitSettings(item.IPTransitSettings)
+		respItem["sda_transit_settings"] = flattenSdaGetTransitNetworksItemsSdaTransitSettings(item.SdaTransitSettings)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenSdaGetTransitNetworksV1ItemsIPTransitSettings(item *catalystcentersdkgo.ResponseSdaGetTransitNetworksV1ResponseIPTransitSettings) []map[string]interface{} {
+func flattenSdaGetTransitNetworksItemsIPTransitSettings(item *catalystcentersdkgo.ResponseSdaGetTransitNetworksResponseIPTransitSettings) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -225,7 +247,7 @@ func flattenSdaGetTransitNetworksV1ItemsIPTransitSettings(item *catalystcentersd
 
 }
 
-func flattenSdaGetTransitNetworksV1ItemsSdaTransitSettings(item *catalystcentersdkgo.ResponseSdaGetTransitNetworksV1ResponseSdaTransitSettings) []map[string]interface{} {
+func flattenSdaGetTransitNetworksItemsSdaTransitSettings(item *catalystcentersdkgo.ResponseSdaGetTransitNetworksResponseSdaTransitSettings) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

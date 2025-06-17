@@ -46,4 +46,5 @@ Read-Only:
 - `name` (String)
 - `name_hierarchy` (String)
 - `parent_id` (String)
+- `site_hierarchy_id` (String)
 - `type` (String)

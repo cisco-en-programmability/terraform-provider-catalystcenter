@@ -12,15 +12,15 @@ description: |-
 
 It manages read and update operations on Network Settings.
 
-- Set AAA settings for a site; *null* values indicate that the settings will be inherited from the parent site; empty
-objects (*{}*) indicate that the settings is unset.
+- Set AAA settings for a site; **null** values indicate that the settings will be inherited from the parent site; empty
+objects (**{}**) indicate that the settings is unset.
 
 ## Example Usage
 
 ```terraform
 resource "catalystcenter_sites_aaa_settings" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     aaa_client {

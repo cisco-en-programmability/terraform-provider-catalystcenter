@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -30,7 +30,7 @@ api-specs/blob/main/Assurance/CE_Cat_Center_Org-icap-1.0.0-resolved.yaml
 			},
 			"data_type": &schema.Schema{
 				Description: `dataType query parameter. Data type reported by the sensor
-|Data Type | Description | | --| --| | 0 | Duty Cycle | | 1| Max Power | | 2 | Average Power | | 3 | Max Power in dBm with adjusted base of +48 | | 4 | Average Power in dBm with adjusted base of +48 |
+|Data Type | Description | | --| --| | **0** | Duty Cycle | | **1** | Max Power | | **2** | Average Power | | **3** | Max Power in dBm with adjusted base of +48 | | **4** | Average Power in dBm with adjusted base of +48 |
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
@@ -189,10 +189,10 @@ func dataSourceIcapSpectrumSensorReportsRead(ctx context.Context, d *schema.Reso
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesTheSpectrumSensorReportsSentByWLCForProvidedApMacV1")
+		log.Printf("[DEBUG] Selected method: RetrievesTheSpectrumSensorReportsSentByWLCForProvidedApMac")
 
-		headerParams1 := catalystcentersdkgo.RetrievesTheSpectrumSensorReportsSentByWLCForProvidedApMacV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.RetrievesTheSpectrumSensorReportsSentByWLCForProvidedApMacV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.RetrievesTheSpectrumSensorReportsSentByWLCForProvidedApMacHeaderParams{}
+		queryParams1 := catalystcentersdkgo.RetrievesTheSpectrumSensorReportsSentByWLCForProvidedApMacQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -218,24 +218,36 @@ func dataSourceIcapSpectrumSensorReportsRead(ctx context.Context, d *schema.Reso
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sensors.RetrievesTheSpectrumSensorReportsSentByWLCForProvidedApMacV1(&headerParams1, &queryParams1)
+		response1, restyResp1, err := client.Sensors.RetrievesTheSpectrumSensorReportsSentByWLCForProvidedApMac(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesTheSpectrumSensorReportsSentByWLCForProvidedApMacV1", err,
-				"Failure at RetrievesTheSpectrumSensorReportsSentByWLCForProvidedApMacV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesTheSpectrumSensorReportsSentByWLCForProvidedApMac", err,
+				"Failure at RetrievesTheSpectrumSensorReportsSentByWLCForProvidedApMac, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSensorsRetrievesTheSpectrumSensorReportsSentByWLCForProvidedApMacV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesTheSpectrumSensorReportsSentByWLCForProvidedApMac", err,
+				"Failure at RetrievesTheSpectrumSensorReportsSentByWLCForProvidedApMac, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSensorsRetrievesTheSpectrumSensorReportsSentByWLCForProvidedApMacItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesTheSpectrumSensorReportsSentByWLCForProvidedApMacV1 response",
+				"Failure when setting RetrievesTheSpectrumSensorReportsSentByWLCForProvidedApMac response",
 				err))
 			return diags
 		}
@@ -247,7 +259,7 @@ func dataSourceIcapSpectrumSensorReportsRead(ctx context.Context, d *schema.Reso
 	return diags
 }
 
-func flattenSensorsRetrievesTheSpectrumSensorReportsSentByWLCForProvidedApMacV1Items(items *[]catalystcentersdkgo.ResponseSensorsRetrievesTheSpectrumSensorReportsSentByWLCForProvidedApMacV1Response) []map[string]interface{} {
+func flattenSensorsRetrievesTheSpectrumSensorReportsSentByWLCForProvidedApMacItems(items *[]catalystcentersdkgo.ResponseSensorsRetrievesTheSpectrumSensorReportsSentByWLCForProvidedApMacResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

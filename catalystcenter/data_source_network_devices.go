@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -29,7 +29,7 @@ center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-AssuranceNetworkDevices-2
 		ReadContext: dataSourceNetworkDevicesRead,
 		Schema: map[string]*schema.Schema{
 			"attribute": &schema.Schema{
-				Description: `attribute query parameter. The List of Network Device model attributes. Please refer to NetworkDeviceAttribute section in the Open API specification document mentioned in the description.
+				Description: `attribute query parameter. The List of Network Device model attributes. Please refer to ******NetworkDeviceAttribute****** section in the Open API specification document mentioned in the description.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -47,7 +47,7 @@ center-api-specs/blob/main/Assurance/CE_Cat_Center_Org-AssuranceNetworkDevices-2
 				Optional: true,
 			},
 			"fabric_site_id": &schema.Schema{
-				Description: `fabricSiteId query parameter. The fabric site Id or list to fabric site Ids to filter the data  This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*  Examples:  ?fabricSiteId=fabricSiteUuid)  ?fabricSiteId=fabricSiteUuid1&fabricSiteId=fabricSiteUuid2 (multiple fabricSiteIds requested)
+				Description: `fabricSiteId query parameter. The fabric site Id or list to fabric site Ids to filter the data  This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*  Examples:  **?fabricSiteId=fabricSiteUuid)  ?fabricSiteId=fabricSiteUuid1&fabricSiteId=fabricSiteUuid2 (multiple fabricSiteIds requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -73,13 +73,13 @@ healthScore=good, healthScore=good&healthScore=fair (multiple entity healthscore
 				Optional: true,
 			},
 			"l2_vn": &schema.Schema{
-				Description: `l2Vn query parameter. The L2 Virtual Network Id or list to Virtual Network Ids to filter the data  This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*  Examples:  ?l2Vn=virtualNetworkId  ?l2Vn=virtualNetworkId1&l2Vn=virtualNetworkId2 (multiple virtualNetworkId's requested)
+				Description: `l2Vn query parameter. The L2 Virtual Network Id or list to Virtual Network Ids to filter the data  This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*  Examples:  **?l2Vn=virtualNetworkId  ?l2Vn=virtualNetworkId1&l2Vn=virtualNetworkId2 (multiple virtualNetworkId's requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"l3_vn": &schema.Schema{
-				Description: `l3Vn query parameter. The L3 Virtual Network Id or list to Virtual Network Ids to filter the data  This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*  Examples:  ?l3Vn=virtualNetworkId  ?l3Vn=virtualNetworkId1&l3Vn=virtualNetworkId2 (multiple virtualNetworkId's requested)
+				Description: `l3Vn query parameter. The L3 Virtual Network Id or list to Virtual Network Ids to filter the data  This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*  Examples:  **?l3Vn=virtualNetworkId  ?l3Vn=virtualNetworkId1&l3Vn=virtualNetworkId2 (multiple virtualNetworkId's requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -91,9 +91,9 @@ healthScore=good, healthScore=good&healthScore=fair (multiple entity healthscore
 				Optional: true,
 			},
 			"mac_address": &schema.Schema{
-				Description: `macAddress query parameter. The macAddress of the network device or client This field supports wildcard (*) character-based search. Ex: *AB:AB:AB* or AB:AB:AB* or *AB:AB:AB Examples:
-macAddress=AB:AB:AB:CD:CD:CD (single macAddress requested)
-macAddress=AB:AB:AB:CD:CD:DC&macAddress=AB:AB:AB:CD:CD:FE (multiple macAddress requested)
+				Description: `macAddress query parameter. The macAddress of the network device or client This field supports wildcard (*****) character-based search. Ex: ***AB:AB:AB*** or **AB:AB:AB*** or ***AB:AB:AB** Examples:
+**macAddress=AB:AB:AB:CD:CD:CD** (single macAddress requested)
+**macAddress=AB:AB:AB:CD:CD:DC&macAddress=AB:AB:AB:CD:CD:FE** (multiple macAddress requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -106,7 +106,7 @@ macAddress=AB:AB:AB:CD:CD:DC&macAddress=AB:AB:AB:CD:CD:FE (multiple macAddress r
 			},
 			"management_ip_address": &schema.Schema{
 				Description: `managementIpAddress query parameter. The list of entity management IP Address. It can be either Ipv4 or Ipv6 address or combination of both(Ex. "121.1.1.10")
-This field supports wildcard (*) character-based search.  Ex: *1.1* or 1.1* or *1.1
+This field supports wildcard (*****) character-based search.  Ex: ***1.1*** or **1.1*** or ***1.1**
 Examples: managementIpAddresses=121.1.1.10 managementIpAddresses=121.1.1.10&managementIpAddresses=172.20.1.10&managementIpAddresses=200:10&=managementIpAddresses172.20.3.4 (multiple entity IP Address with & separator)
 `,
 				Type:     schema.TypeString,
@@ -131,43 +131,43 @@ Examples: managementIpAddresses=121.1.1.10 managementIpAddresses=121.1.1.10&mana
 				Optional: true,
 			},
 			"serial_number": &schema.Schema{
-				Description: `serialNumber query parameter. The list of network device serial numbers. This field supports wildcard (*) character-based search.  Ex: *MS1SV* or MS1SV* or *MS1SV Examples: serialNumber=9FUFMS1SVAX serialNumber=9FUFMS1SVAX&FCW2333Q0BY&FJC240617JX(multiple Network device serial number with & separator)
+				Description: `serialNumber query parameter. The list of network device serial numbers. This field supports wildcard (*****) character-based search.  Ex: ***MS1SV*** or **MS1SV*** or ***MS1SV** Examples: serialNumber=9FUFMS1SVAX serialNumber=9FUFMS1SVAX&FCW2333Q0BY&FJC240617JX(multiple Network device serial number with & separator)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_hierarchy": &schema.Schema{
-				Description: `siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. Global/AreaName/BuildingName/FloorName)
+				Description: `siteHierarchy query parameter. The full hierarchical breakdown of the site tree starting from Global site name and ending with the specific site name. The Root site is named "Global" (Ex. **Global/AreaName/BuildingName/FloorName**)
 This field supports wildcard asterisk (*) character search support. E.g. */San*, */San, /San*
 Examples:
-?siteHierarchy=Global/AreaName/BuildingName/FloorName (single siteHierarchy requested)
-?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2 (multiple siteHierarchies requested)
+**?siteHierarchy=Global/AreaName/BuildingName/FloorName** (single siteHierarchy requested)
+**?siteHierarchy=Global/AreaName/BuildingName/FloorName&siteHierarchy=Global/AreaName2/BuildingName2/FloorName2** (multiple siteHierarchies requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_hierarchy_id": &schema.Schema{
-				Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. globalUuid/areaUuid/buildingUuid/floorUuid)
-This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*
+				Description: `siteHierarchyId query parameter. The full hierarchy breakdown of the site tree in id form starting from Global site UUID and ending with the specific site UUID. (Ex. **globalUuid/areaUuid/buildingUuid/floorUuid**)
+This field supports wildcard asterisk (*) character search support. E.g. ***uuid*, *uuid, uuid*
 Examples:
-?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid (single siteHierarchyId requested)
-?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2 (multiple siteHierarchyIds requested)
+**?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid **(single siteHierarchyId requested)
+**?siteHierarchyId=globalUuid/areaUuid/buildingUuid/floorUuid&siteHierarchyId=globalUuid/areaUuid2/buildingUuid2/floorUuid2** (multiple siteHierarchyIds requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"site_id": &schema.Schema{
-				Description: `siteId query parameter. The UUID of the site. (Ex. flooruuid)
+				Description: `siteId query parameter. The UUID of the site. (Ex. **flooruuid**)
 This field supports wildcard asterisk (*) character search support. E.g.*flooruuid*, *flooruuid, flooruuid*
 Examples:
-?siteId=id1 (single id requested)
-?siteId=id1&siteId=id2&siteId=id3 (multiple ids requested)
+**?siteId=id1** (single id requested)
+**?siteId=id1&siteId=id2&siteId=id3** (multiple ids requested)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"software_version": &schema.Schema{
-				Description: `softwareVersion query parameter. The list of network device software version This field supports wildcard (*) character-based search. Ex: *17.8* or *17.8 or 17.8* Examples: softwareVersion=2.3.4.0 (single network device software version ) softwareVersion=17.9.3.23&softwareVersion=17.7.1.2&softwareVersion=*.17.7 (multiple Network device software versions with & separator)
+				Description: `softwareVersion query parameter. The list of network device software version This field supports wildcard (*****) character-based search. Ex: ***17.8*** or ***17.8** or **17.8*** Examples: softwareVersion=2.3.4.0 (single network device software version ) softwareVersion=17.9.3.23&softwareVersion=17.7.1.2&softwareVersion=*.17.7 (multiple Network device software versions with & separator)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -180,25 +180,25 @@ Examples:
 			},
 			"start_time": &schema.Schema{
 				Description: `startTime query parameter. Start time from which API queries the data set related to the resource. It must be specified in UNIX epochtime in milliseconds. Value is inclusive.
-If startTime is not provided, API will default to current time.
+If **startTime** is not provided, API will default to current time.
 `,
 				Type:     schema.TypeFloat,
 				Optional: true,
 			},
 			"transit_network_id": &schema.Schema{
-				Description: `transitNetworkId query parameter. The Transit Network Id or list to Transit Network Ids to filter the data  This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*  Examples:  ?transitNetworkId=transitNetworkId  ?transitNetworkId=transitNetworkuuid1&transitNetworkId=transitNetworkuuid1 (multiple transitNetworkIds requested
+				Description: `transitNetworkId query parameter. The Transit Network Id or list to Transit Network Ids to filter the data  This field supports wildcard asterisk (*) character search support. E.g. *uuid*, *uuid, uuid*  Examples:  **?transitNetworkId=transitNetworkId  ?transitNetworkId=transitNetworkuuid1&transitNetworkId=transitNetworkuuid1 (multiple transitNetworkIds requested
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"type": &schema.Schema{
-				Description: `type query parameter. The list of network device type This field supports wildcard (*) character-based search. Ex: *9407R* or *9407R or 9407R* Examples: type=SwitchesCisco Catalyst 9407R Switch (single network device types ) type=Cisco Catalyst 38xx stack-able ethernet switch&type=Cisco 3945 Integrated Services Router G2 (multiple Network device types with & separator)
+				Description: `type query parameter. The list of network device type This field supports wildcard (*****) character-based search. Ex: ***9407R*** or ***9407R** or **9407R*** Examples: type=SwitchesCisco Catalyst 9407R Switch (single network device types ) type=Cisco Catalyst 38xx stack-able ethernet switch&type=Cisco 3945 Integrated Services Router G2 (multiple Network device types with & separator)
 `,
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"view": &schema.Schema{
-				Description: `view query parameter. The List of Network Device model views. Please refer to NetworkDeviceView section in the Open API specification document mentioned in the description.
+				Description: `view query parameter. The List of Network Device model views. Please refer to ******NetworkDeviceView****** section in the Open API specification document mentioned in the description.
 `,
 				Type:     schema.TypeString,
 				Optional: true,
@@ -2539,8 +2539,8 @@ func dataSourceNetworkDevicesRead(ctx context.Context, d *schema.ResourceData, m
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1")
-		queryParams1 := catalystcentersdkgo.GetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParameters")
+		queryParams1 := catalystcentersdkgo.GetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersQueryParams{}
 
 		if okStartTime {
 			queryParams1.StartTime = vStartTime.(float64)
@@ -2623,24 +2623,36 @@ func dataSourceNetworkDevicesRead(ctx context.Context, d *schema.ResourceData, m
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Devices.GetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1(&queryParams1)
+		response1, restyResp1, err := client.Devices.GetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParameters(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1", err,
-				"Failure at GetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1, unexpected response", ""))
+				"Failure when executing 2 GetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParameters", err,
+				"Failure at GetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParameters, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParameters", err,
+				"Failure at GetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParameters, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1 response",
+				"Failure when setting GetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParameters response",
 				err))
 			return diags
 		}
@@ -2650,9 +2662,9 @@ func dataSourceNetworkDevicesRead(ctx context.Context, d *schema.ResourceData, m
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetTheDeviceDataForTheGivenDeviceIDUUIDV1")
+		log.Printf("[DEBUG] Selected method: GetTheDeviceDataForTheGivenDeviceIDUUID")
 		vvID := vID.(string)
-		queryParams2 := catalystcentersdkgo.GetTheDeviceDataForTheGivenDeviceIDUUIDV1QueryParams{}
+		queryParams2 := catalystcentersdkgo.GetTheDeviceDataForTheGivenDeviceIDUUIDQueryParams{}
 
 		if okStartTime {
 			queryParams2.StartTime = vStartTime.(float64)
@@ -2669,24 +2681,36 @@ func dataSourceNetworkDevicesRead(ctx context.Context, d *schema.ResourceData, m
 
 		// has_unknown_response: None
 
-		response2, restyResp2, err := client.Devices.GetTheDeviceDataForTheGivenDeviceIDUUIDV1(vvID, &queryParams2)
+		response2, restyResp2, err := client.Devices.GetTheDeviceDataForTheGivenDeviceIDUUID(vvID, &queryParams2)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetTheDeviceDataForTheGivenDeviceIDUUIDV1", err,
-				"Failure at GetTheDeviceDataForTheGivenDeviceIDUUIDV1, unexpected response", ""))
+				"Failure when executing 2 GetTheDeviceDataForTheGivenDeviceIDUUID", err,
+				"Failure at GetTheDeviceDataForTheGivenDeviceIDUUID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1Item(response2.Response)
+		if err != nil || response2 == nil {
+			if restyResp2 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetTheDeviceDataForTheGivenDeviceIDUUID", err,
+				"Failure at GetTheDeviceDataForTheGivenDeviceIDUUID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
+
+		vItem2 := flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDItem(response2.Response)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetTheDeviceDataForTheGivenDeviceIDUUIDV1 response",
+				"Failure when setting GetTheDeviceDataForTheGivenDeviceIDUUID response",
 				err))
 			return diags
 		}
@@ -2698,7 +2722,7 @@ func dataSourceNetworkDevicesRead(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1Response) []map[string]interface{} {
+func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersItems(items *[]catalystcentersdkgo.ResponseDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -2746,18 +2770,18 @@ func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV
 		respItem["physical_port_count"] = item.PhysicalPortCount
 		respItem["virtual_port_count"] = item.VirtualPortCount
 		respItem["client_count"] = item.ClientCount
-		respItem["ap_details"] = flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ItemsApDetails(item.ApDetails)
-		respItem["metrics_details"] = flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ItemsMetricsDetails(item.MetricsDetails)
-		respItem["fabric_details"] = flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ItemsFabricDetails(item.FabricDetails)
-		respItem["switch_poe_details"] = flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ItemsSwitchPoeDetails(item.SwitchPoeDetails)
-		respItem["fabric_metrics_details"] = flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ItemsFabricMetricsDetails(item.FabricMetricsDetails)
-		respItem["aggregate_attributes"] = flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ItemsAggregateAttributes(item.AggregateAttributes)
+		respItem["ap_details"] = flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersItemsApDetails(item.ApDetails)
+		respItem["metrics_details"] = flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersItemsMetricsDetails(item.MetricsDetails)
+		respItem["fabric_details"] = flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersItemsFabricDetails(item.FabricDetails)
+		respItem["switch_poe_details"] = flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersItemsSwitchPoeDetails(item.SwitchPoeDetails)
+		respItem["fabric_metrics_details"] = flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersItemsFabricMetricsDetails(item.FabricMetricsDetails)
+		respItem["aggregate_attributes"] = flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersItemsAggregateAttributes(item.AggregateAttributes)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ItemsApDetails(item *catalystcentersdkgo.ResponseDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ResponseApDetails) []map[string]interface{} {
+func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersItemsApDetails(item *catalystcentersdkgo.ResponseDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersResponseApDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -2788,7 +2812,7 @@ func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV
 	respItem["flex_group"] = item.FlexGroup
 	respItem["power_calendar_profile"] = item.PowerCalendarProfile
 	respItem["ap_group"] = item.ApGroup
-	respItem["radios"] = flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ItemsApDetailsRadios(item.Radios)
+	respItem["radios"] = flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersItemsApDetailsRadios(item.Radios)
 
 	return []map[string]interface{}{
 		respItem,
@@ -2796,7 +2820,7 @@ func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV
 
 }
 
-func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ItemsApDetailsRadios(items *[]catalystcentersdkgo.ResponseDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ResponseApDetailsRadios) []map[string]interface{} {
+func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersItemsApDetailsRadios(items *[]catalystcentersdkgo.ResponseDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersResponseApDetailsRadios) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -2816,7 +2840,7 @@ func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV
 	return respItems
 }
 
-func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ItemsMetricsDetails(item *catalystcentersdkgo.ResponseDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ResponseMetricsDetails) []map[string]interface{} {
+func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersItemsMetricsDetails(item *catalystcentersdkgo.ResponseDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersResponseMetricsDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -2856,7 +2880,7 @@ func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV
 
 }
 
-func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ItemsFabricDetails(item *catalystcentersdkgo.ResponseDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ResponseFabricDetails) []map[string]interface{} {
+func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersItemsFabricDetails(item *catalystcentersdkgo.ResponseDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersResponseFabricDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -2875,7 +2899,7 @@ func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV
 
 }
 
-func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ItemsSwitchPoeDetails(item *catalystcentersdkgo.ResponseDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ResponseSwitchPoeDetails) []map[string]interface{} {
+func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersItemsSwitchPoeDetails(item *catalystcentersdkgo.ResponseDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersResponseSwitchPoeDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -2893,7 +2917,7 @@ func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV
 	respItem["poe_version"] = item.PoeVersion
 	respItem["chassis_count"] = item.ChassisCount
 	respItem["module_count"] = item.ModuleCount
-	respItem["module_details"] = flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ItemsSwitchPoeDetailsModuleDetails(item.ModuleDetails)
+	respItem["module_details"] = flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersItemsSwitchPoeDetailsModuleDetails(item.ModuleDetails)
 
 	return []map[string]interface{}{
 		respItem,
@@ -2901,7 +2925,7 @@ func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV
 
 }
 
-func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ItemsSwitchPoeDetailsModuleDetails(items *[]catalystcentersdkgo.ResponseDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ResponseSwitchPoeDetailsModuleDetails) []map[string]interface{} {
+func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersItemsSwitchPoeDetailsModuleDetails(items *[]catalystcentersdkgo.ResponseDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersResponseSwitchPoeDetailsModuleDetails) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -2926,7 +2950,7 @@ func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV
 	return respItems
 }
 
-func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ItemsFabricMetricsDetails(item *catalystcentersdkgo.ResponseDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ResponseFabricMetricsDetails) []map[string]interface{} {
+func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersItemsFabricMetricsDetails(item *catalystcentersdkgo.ResponseDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersResponseFabricMetricsDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -2971,7 +2995,7 @@ func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV
 
 }
 
-func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ItemsAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV1ResponseAggregateAttributes) []map[string]interface{} {
+func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersItemsAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersResponseAggregateAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -2986,7 +3010,7 @@ func flattenDevicesGetsTheNetworkDeviceDetailsBasedOnTheProvidedQueryParametersV
 	return respItems
 }
 
-func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1Item(item *catalystcentersdkgo.ResponseDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1Response) []map[string]interface{} {
+func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDItem(item *catalystcentersdkgo.ResponseDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -3032,18 +3056,18 @@ func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1Item(item *catalystc
 	respItem["physical_port_count"] = item.PhysicalPortCount
 	respItem["virtual_port_count"] = item.VirtualPortCount
 	respItem["client_count"] = item.ClientCount
-	respItem["ap_details"] = flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemApDetails(item.ApDetails)
-	respItem["metrics_details"] = flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemMetricsDetails(item.MetricsDetails)
-	respItem["fabric_details"] = flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemFabricDetails(item.FabricDetails)
-	respItem["switch_poe_details"] = flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemSwitchPoeDetails(item.SwitchPoeDetails)
-	respItem["fabric_metrics_details"] = flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemFabricMetricsDetails(item.FabricMetricsDetails)
-	respItem["aggregate_attributes"] = flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemAggregateAttributes(item.AggregateAttributes)
+	respItem["ap_details"] = flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDItemApDetails(item.ApDetails)
+	respItem["metrics_details"] = flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDItemMetricsDetails(item.MetricsDetails)
+	respItem["fabric_details"] = flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDItemFabricDetails(item.FabricDetails)
+	respItem["switch_poe_details"] = flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDItemSwitchPoeDetails(item.SwitchPoeDetails)
+	respItem["fabric_metrics_details"] = flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDItemFabricMetricsDetails(item.FabricMetricsDetails)
+	respItem["aggregate_attributes"] = flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDItemAggregateAttributes(item.AggregateAttributes)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemApDetails(item *catalystcentersdkgo.ResponseDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ResponseApDetails) []map[string]interface{} {
+func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDItemApDetails(item *catalystcentersdkgo.ResponseDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDResponseApDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -3074,7 +3098,7 @@ func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemApDetails(item *
 	respItem["flex_group"] = item.FlexGroup
 	respItem["power_calendar_profile"] = item.PowerCalendarProfile
 	respItem["ap_group"] = item.ApGroup
-	respItem["radios"] = flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemApDetailsRadios(item.Radios)
+	respItem["radios"] = flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDItemApDetailsRadios(item.Radios)
 
 	return []map[string]interface{}{
 		respItem,
@@ -3082,7 +3106,7 @@ func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemApDetails(item *
 
 }
 
-func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemApDetailsRadios(items *[]catalystcentersdkgo.ResponseDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ResponseApDetailsRadios) []map[string]interface{} {
+func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDItemApDetailsRadios(items *[]catalystcentersdkgo.ResponseDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDResponseApDetailsRadios) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -3102,7 +3126,7 @@ func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemApDetailsRadios(
 	return respItems
 }
 
-func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemMetricsDetails(item *catalystcentersdkgo.ResponseDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ResponseMetricsDetails) []map[string]interface{} {
+func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDItemMetricsDetails(item *catalystcentersdkgo.ResponseDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDResponseMetricsDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -3142,7 +3166,7 @@ func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemMetricsDetails(i
 
 }
 
-func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemFabricDetails(item *catalystcentersdkgo.ResponseDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ResponseFabricDetails) []map[string]interface{} {
+func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDItemFabricDetails(item *catalystcentersdkgo.ResponseDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDResponseFabricDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -3161,7 +3185,7 @@ func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemFabricDetails(it
 
 }
 
-func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemSwitchPoeDetails(item *catalystcentersdkgo.ResponseDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ResponseSwitchPoeDetails) []map[string]interface{} {
+func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDItemSwitchPoeDetails(item *catalystcentersdkgo.ResponseDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDResponseSwitchPoeDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -3179,7 +3203,7 @@ func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemSwitchPoeDetails
 	respItem["poe_version"] = item.PoeVersion
 	respItem["chassis_count"] = item.ChassisCount
 	respItem["module_count"] = item.ModuleCount
-	respItem["module_details"] = flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemSwitchPoeDetailsModuleDetails(item.ModuleDetails)
+	respItem["module_details"] = flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDItemSwitchPoeDetailsModuleDetails(item.ModuleDetails)
 
 	return []map[string]interface{}{
 		respItem,
@@ -3187,7 +3211,7 @@ func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemSwitchPoeDetails
 
 }
 
-func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemSwitchPoeDetailsModuleDetails(items *[]catalystcentersdkgo.ResponseDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ResponseSwitchPoeDetailsModuleDetails) []map[string]interface{} {
+func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDItemSwitchPoeDetailsModuleDetails(items *[]catalystcentersdkgo.ResponseDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDResponseSwitchPoeDetailsModuleDetails) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -3212,7 +3236,7 @@ func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemSwitchPoeDetails
 	return respItems
 }
 
-func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemFabricMetricsDetails(item *catalystcentersdkgo.ResponseDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ResponseFabricMetricsDetails) []map[string]interface{} {
+func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDItemFabricMetricsDetails(item *catalystcentersdkgo.ResponseDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDResponseFabricMetricsDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -3257,7 +3281,7 @@ func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemFabricMetricsDet
 
 }
 
-func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ItemAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDV1ResponseAggregateAttributes) []map[string]interface{} {
+func flattenDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDItemAggregateAttributes(items *[]catalystcentersdkgo.ResponseDevicesGetTheDeviceDataForTheGivenDeviceIDUUIDResponseAggregateAttributes) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

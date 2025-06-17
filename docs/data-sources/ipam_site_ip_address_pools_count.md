@@ -31,7 +31,7 @@ output "catalystcenter_ipam_site_ip_address_pools_count_example" {
 
 ### Optional
 
-- `site_id` (String) siteId query parameter. The id of the site for which to retrieve IP address subpools. Only subpools whose siteId matches will be counted.
+- `site_id` (String) siteId query parameter. The **id** of the site for which to retrieve IP address subpools. Only subpools whose **siteId** matches will be counted.
 
 ### Read-Only
 

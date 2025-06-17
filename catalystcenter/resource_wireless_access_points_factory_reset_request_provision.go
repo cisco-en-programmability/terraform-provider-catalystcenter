@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -11,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -94,18 +95,18 @@ func resourceWirelessAccessPointsFactoryResetRequestProvisionCreate(ctx context.
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestWirelessAccessPointsFactoryResetRequestProvisionFactoryResetAccessPointsV1(ctx, "parameters.0", d)
+	request1 := expandRequestWirelessAccessPointsFactoryResetRequestProvisionFactoryResetAccessPoints(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Wireless.FactoryResetAccessPointsV1(request1)
+	response1, restyResp1, err := client.Wireless.FactoryResetAccessPoints(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing FactoryResetAccessPointsV1", err))
+			"Failure when executing FactoryResetAccessPoints", err))
 		return diags
 	}
 
@@ -113,7 +114,7 @@ func resourceWirelessAccessPointsFactoryResetRequestProvisionCreate(ctx context.
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing FactoryResetAccessPointsV1", err))
+			"Failure when executing FactoryResetAccessPoints", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -140,14 +141,14 @@ func resourceWirelessAccessPointsFactoryResetRequestProvisionCreate(ctx context.
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing FactoryResetAccessPointsV1", err1))
+				"Failure when executing FactoryResetAccessPoints", err1))
 			return diags
 		}
 	}
@@ -155,10 +156,10 @@ func resourceWirelessAccessPointsFactoryResetRequestProvisionCreate(ctx context.
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenWirelessFactoryResetAccessPointsV1Item(response1.Response)
+	vItem1 := flattenWirelessFactoryResetAccessPointsItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting FactoryResetAccessPointsV1 response",
+			"Failure when setting FactoryResetAccessPoints response",
 			err))
 		return diags
 	}
@@ -179,8 +180,8 @@ func resourceWirelessAccessPointsFactoryResetRequestProvisionDelete(ctx context.
 	return diags
 }
 
-func expandRequestWirelessAccessPointsFactoryResetRequestProvisionFactoryResetAccessPointsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessFactoryResetAccessPointsV1 {
-	request := catalystcentersdkgo.RequestWirelessFactoryResetAccessPointsV1{}
+func expandRequestWirelessAccessPointsFactoryResetRequestProvisionFactoryResetAccessPoints(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessFactoryResetAccessPoints {
+	request := catalystcentersdkgo.RequestWirelessFactoryResetAccessPoints{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".keep_static_ipconfig")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".keep_static_ipconfig")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".keep_static_ipconfig")))) {
 		request.KeepStaticIPConfig = interfaceToBoolPtr(v)
 	}
@@ -190,7 +191,7 @@ func expandRequestWirelessAccessPointsFactoryResetRequestProvisionFactoryResetAc
 	return &request
 }
 
-func flattenWirelessFactoryResetAccessPointsV1Item(item *catalystcentersdkgo.ResponseWirelessFactoryResetAccessPointsV1Response) []map[string]interface{} {
+func flattenWirelessFactoryResetAccessPointsItem(item *catalystcentersdkgo.ResponseWirelessFactoryResetAccessPointsResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

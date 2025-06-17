@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -202,13 +202,13 @@ func resourceWirelessSettingsApAuthorizationListsCreate(ctx context.Context, d *
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestWirelessSettingsApAuthorizationListsCreateApAuthorizationListV1(ctx, "parameters.0", d)
+	request1 := expandRequestWirelessSettingsApAuthorizationListsCreateApAuthorizationList(ctx, "parameters.0", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vApAuthorizationListName := resourceItem["ap_authorization_list_name"]
 	vvApAuthorizationListName := interfaceToString(vApAuthorizationListName)
 
-	queryParamImport := catalystcentersdkgo.GetApAuthorizationListsV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetApAuthorizationListsQueryParams{}
 	queryParamImport.ApAuthorizationListName = vvApAuthorizationListName
 	item2, _, err := client.Wireless.GetApAuthorizationLists(&queryParamImport)
 	if err != nil || item2 != nil {
@@ -256,7 +256,7 @@ func resourceWirelessSettingsApAuthorizationListsCreate(ctx context.Context, d *
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetApAuthorizationListsV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetApAuthorizationListsQueryParams{}
 	queryParamValidate.ApAuthorizationListName = vvApAuthorizationListName
 	item3, _, err := client.Wireless.GetApAuthorizationLists(&queryParamValidate)
 	if err != nil || item3 == nil {
@@ -284,7 +284,7 @@ func resourceWirelessSettingsApAuthorizationListsRead(ctx context.Context, d *sc
 	selectedMethod := 1
 	if selectedMethod == 1 {
 		log.Printf("[DEBUG] Selected method: GetApAuthorizationLists")
-		queryParams1 := catalystcentersdkgo.GetApAuthorizationListsV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetApAuthorizationListsQueryParams{}
 		queryParams1.ApAuthorizationListName = vvApAuthorizationListName
 		response1, restyResp1, err := client.Wireless.GetApAuthorizationLists(&queryParams1)
 
@@ -298,7 +298,7 @@ func resourceWirelessSettingsApAuthorizationListsRead(ctx context.Context, d *sc
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenWirelessGetApAuthorizationListsV1Item(response1.Response)
+		vItem1 := flattenWirelessGetApAuthorizationListsItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting GetApAuthorizationLists response",
@@ -318,20 +318,21 @@ func resourceWirelessSettingsApAuthorizationListsUpdate(ctx context.Context, d *
 
 func resourceWirelessSettingsApAuthorizationListsDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	// NOTE: Unable to delete WirelessSettingsApAuthorizationLists on Dna Center
+	// NOTE: Unable to delete WirelessSettingsApAuthorizationLists on Catalyst Center
 	//       Returning empty diags to delete it on Terraform
 	return diags
 }
-func expandRequestWirelessSettingsApAuthorizationListsCreateApAuthorizationListV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateApAuthorizationListV1 {
-	request := catalystcentersdkgo.RequestWirelessCreateApAuthorizationListV1{}
+
+func expandRequestWirelessSettingsApAuthorizationListsCreateApAuthorizationList(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateApAuthorizationList {
+	request := catalystcentersdkgo.RequestWirelessCreateApAuthorizationList{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ap_authorization_list_name")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ap_authorization_list_name")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ap_authorization_list_name")))) {
 		request.ApAuthorizationListName = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".local_authorization")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".local_authorization")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".local_authorization")))) {
-		request.LocalAuthorization = expandRequestWirelessSettingsApAuthorizationListsCreateApAuthorizationListV1LocalAuthorization(ctx, key+".local_authorization.0", d)
+		request.LocalAuthorization = expandRequestWirelessSettingsApAuthorizationListsCreateApAuthorizationListLocalAuthorization(ctx, key+".local_authorization.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".remote_authorization")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".remote_authorization")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".remote_authorization")))) {
-		request.RemoteAuthorization = expandRequestWirelessSettingsApAuthorizationListsCreateApAuthorizationListV1RemoteAuthorization(ctx, key+".remote_authorization.0", d)
+		request.RemoteAuthorization = expandRequestWirelessSettingsApAuthorizationListsCreateApAuthorizationListRemoteAuthorization(ctx, key+".remote_authorization.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -339,8 +340,8 @@ func expandRequestWirelessSettingsApAuthorizationListsCreateApAuthorizationListV
 	return &request
 }
 
-func expandRequestWirelessSettingsApAuthorizationListsCreateApAuthorizationListV1LocalAuthorization(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateApAuthorizationListV1LocalAuthorization {
-	request := catalystcentersdkgo.RequestWirelessCreateApAuthorizationListV1LocalAuthorization{}
+func expandRequestWirelessSettingsApAuthorizationListsCreateApAuthorizationListLocalAuthorization(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateApAuthorizationListLocalAuthorization {
+	request := catalystcentersdkgo.RequestWirelessCreateApAuthorizationListLocalAuthorization{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".ap_mac_entries")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".ap_mac_entries")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".ap_mac_entries")))) {
 		request.ApMacEntries = interfaceToSliceString(v)
 	}
@@ -353,8 +354,8 @@ func expandRequestWirelessSettingsApAuthorizationListsCreateApAuthorizationListV
 	return &request
 }
 
-func expandRequestWirelessSettingsApAuthorizationListsCreateApAuthorizationListV1RemoteAuthorization(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateApAuthorizationListV1RemoteAuthorization {
-	request := catalystcentersdkgo.RequestWirelessCreateApAuthorizationListV1RemoteAuthorization{}
+func expandRequestWirelessSettingsApAuthorizationListsCreateApAuthorizationListRemoteAuthorization(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestWirelessCreateApAuthorizationListRemoteAuthorization {
+	request := catalystcentersdkgo.RequestWirelessCreateApAuthorizationListRemoteAuthorization{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".aaa_servers")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".aaa_servers")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".aaa_servers")))) {
 		request.AAAServers = interfaceToSliceString(v)
 	}

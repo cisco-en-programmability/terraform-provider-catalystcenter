@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -12,7 +13,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -65,7 +66,7 @@ payload need not to be ordered.
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"payload": &schema.Schema{
-							Description: `Array of RequestSiteDesignCreateSitesV1`,
+							Description: `Array of RequestSiteDesignCreateSites`,
 							Type:        schema.TypeList,
 							Optional:    true,
 							ForceNew:    true,
@@ -190,18 +191,18 @@ func resourceSitesBulkCreate(ctx context.Context, d *schema.ResourceData, m inte
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestSitesBulkCreateSitesV1(ctx, "parameters.0", d)
+	request1 := expandRequestSitesBulkCreateSites(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.SiteDesign.CreateSitesV1(request1)
+	response1, restyResp1, err := client.SiteDesign.CreateSites(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing CreateSitesV1", err))
+			"Failure when executing CreateSites", err))
 		return diags
 	}
 
@@ -209,7 +210,7 @@ func resourceSitesBulkCreate(ctx context.Context, d *schema.ResourceData, m inte
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing CreateSitesV1", err))
+			"Failure when executing CreateSites", err))
 		return diags
 	}
 	taskId := response1.Response.TaskID
@@ -236,14 +237,14 @@ func resourceSitesBulkCreate(ctx context.Context, d *schema.ResourceData, m inte
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing CreateSitesV1", err1))
+				"Failure when executing CreateSites", err1))
 			return diags
 		}
 	}
@@ -251,10 +252,10 @@ func resourceSitesBulkCreate(ctx context.Context, d *schema.ResourceData, m inte
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
-	vItem1 := flattenSiteDesignCreateSitesV1Item(response1.Response)
+	vItem1 := flattenSiteDesignCreateSitesItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting CreateSitesV1 response",
+			"Failure when setting CreateSites response",
 			err))
 		return diags
 	}
@@ -275,16 +276,16 @@ func resourceSitesBulkDelete(ctx context.Context, d *schema.ResourceData, m inte
 	return diags
 }
 
-func expandRequestSitesBulkCreateSitesV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSiteDesignCreateSitesV1 {
-	request := catalystcentersdkgo.RequestSiteDesignCreateSitesV1{}
-	if v := expandRequestSitesBulkCreateSitesV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSitesBulkCreateSites(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSiteDesignCreateSites {
+	request := catalystcentersdkgo.RequestSiteDesignCreateSites{}
+	if v := expandRequestSitesBulkCreateSitesItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	return &request
 }
 
-func expandRequestSitesBulkCreateSitesV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSiteDesignCreateSitesV1 {
-	request := []catalystcentersdkgo.RequestItemSiteDesignCreateSitesV1{}
+func expandRequestSitesBulkCreateSitesItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSiteDesignCreateSites {
+	request := []catalystcentersdkgo.RequestItemSiteDesignCreateSites{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -295,7 +296,7 @@ func expandRequestSitesBulkCreateSitesV1ItemArray(ctx context.Context, key strin
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSitesBulkCreateSitesV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSitesBulkCreateSitesItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -303,8 +304,8 @@ func expandRequestSitesBulkCreateSitesV1ItemArray(ctx context.Context, key strin
 	return &request
 }
 
-func expandRequestSitesBulkCreateSitesV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSiteDesignCreateSitesV1 {
-	request := catalystcentersdkgo.RequestItemSiteDesignCreateSitesV1{}
+func expandRequestSitesBulkCreateSitesItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSiteDesignCreateSites {
+	request := catalystcentersdkgo.RequestItemSiteDesignCreateSites{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".parent_name_hierarchy")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".parent_name_hierarchy")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".parent_name_hierarchy")))) {
 		request.ParentNameHierarchy = interfaceToString(v)
 	}
@@ -347,7 +348,7 @@ func expandRequestSitesBulkCreateSitesV1Item(ctx context.Context, key string, d 
 	return &request
 }
 
-func flattenSiteDesignCreateSitesV1Item(item *catalystcentersdkgo.ResponseSiteDesignCreateSitesV1Response) []map[string]interface{} {
+func flattenSiteDesignCreateSitesItem(item *catalystcentersdkgo.ResponseSiteDesignCreateSitesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

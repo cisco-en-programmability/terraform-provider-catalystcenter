@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -153,8 +153,8 @@ func dataSourcePnpDeviceCountRead(ctx context.Context, d *schema.ResourceData, m
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceCountV1")
-		queryParams1 := catalystcentersdkgo.GetDeviceCountV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetDeviceCount")
+		queryParams1 := catalystcentersdkgo.GetDeviceCountQueryParams{}
 
 		if okSerialNumber {
 			queryParams1.SerialNumber = interfaceToSliceString(vSerialNumber)
@@ -190,24 +190,38 @@ func dataSourcePnpDeviceCountRead(ctx context.Context, d *schema.ResourceData, m
 			queryParams1.LastContact = vLastContact.(bool)
 		}
 
-		response1, restyResp1, err := client.DeviceOnboardingPnp.GetDeviceCountV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.DeviceOnboardingPnp.GetDeviceCount(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceCountV1", err,
-				"Failure at GetDeviceCountV1, unexpected response", ""))
+				"Failure when executing 2 GetDeviceCount", err,
+				"Failure at GetDeviceCount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDeviceOnboardingPnpGetDeviceCountV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetDeviceCount", err,
+				"Failure at GetDeviceCount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenDeviceOnboardingPnpGetDeviceCountItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceCountV1 response",
+				"Failure when setting GetDeviceCount response",
 				err))
 			return diags
 		}
@@ -219,7 +233,7 @@ func dataSourcePnpDeviceCountRead(ctx context.Context, d *schema.ResourceData, m
 	return diags
 }
 
-func flattenDeviceOnboardingPnpGetDeviceCountV1Item(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceCountV1) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetDeviceCountItem(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetDeviceCount) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

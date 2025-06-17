@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -258,27 +258,27 @@ func resourceSecurityRogueAdditionalDetailsCreate(ctx context.Context, d *schema
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestSecurityRogueAdditionalDetailsRogueAdditionalDetailsV1(ctx, "parameters.0", d)
+	request1 := expandRequestSecurityRogueAdditionalDetailsRogueAdditionalDetails(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Devices.RogueAdditionalDetailsV1(request1)
+	response1, restyResp1, err := client.Devices.RogueAdditionalDetails(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing RogueAdditionalDetailsV1", err))
+			"Failure when executing RogueAdditionalDetails", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItems1 := flattenDevicesRogueAdditionalDetailsV1Items(response1.Response)
+	vItems1 := flattenDevicesRogueAdditionalDetailsItems(response1.Response)
 	if err := d.Set("items", vItems1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting RogueAdditionalDetailsV1 response",
+			"Failure when setting RogueAdditionalDetails response",
 			err))
 		return diags
 	}
@@ -300,8 +300,8 @@ func resourceSecurityRogueAdditionalDetailsDelete(ctx context.Context, d *schema
 	return diags
 }
 
-func expandRequestSecurityRogueAdditionalDetailsRogueAdditionalDetailsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRogueAdditionalDetailsV1 {
-	request := catalystcentersdkgo.RequestDevicesRogueAdditionalDetailsV1{}
+func expandRequestSecurityRogueAdditionalDetailsRogueAdditionalDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesRogueAdditionalDetails {
+	request := catalystcentersdkgo.RequestDevicesRogueAdditionalDetails{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".offset")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".offset")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".offset")))) {
 		request.Offset = interfaceToFloat64Ptr(v)
 	}
@@ -326,7 +326,7 @@ func expandRequestSecurityRogueAdditionalDetailsRogueAdditionalDetailsV1(ctx con
 	return &request
 }
 
-func flattenDevicesRogueAdditionalDetailsV1Items(items *[]catalystcentersdkgo.ResponseDevicesRogueAdditionalDetailsV1Response) []map[string]interface{} {
+func flattenDevicesRogueAdditionalDetailsItems(items *[]catalystcentersdkgo.ResponseDevicesRogueAdditionalDetailsResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

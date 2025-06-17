@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -67,9 +67,9 @@ func dataSourceFieldNoticesResultsNetworkDevicesNetworkDeviceIDNoticesCountRead(
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetCountOfFieldNoticesAffectingTheNetworkDeviceV1")
+		log.Printf("[DEBUG] Selected method: GetCountOfFieldNoticesAffectingTheNetworkDevice")
 		vvNetworkDeviceID := vNetworkDeviceID.(string)
-		queryParams1 := catalystcentersdkgo.GetCountOfFieldNoticesAffectingTheNetworkDeviceV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetCountOfFieldNoticesAffectingTheNetworkDeviceQueryParams{}
 
 		if okID {
 			queryParams1.ID = vID.(string)
@@ -80,24 +80,36 @@ func dataSourceFieldNoticesResultsNetworkDevicesNetworkDeviceIDNoticesCountRead(
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Compliance.GetCountOfFieldNoticesAffectingTheNetworkDeviceV1(vvNetworkDeviceID, &queryParams1)
+		response1, restyResp1, err := client.Compliance.GetCountOfFieldNoticesAffectingTheNetworkDevice(vvNetworkDeviceID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetCountOfFieldNoticesAffectingTheNetworkDeviceV1", err,
-				"Failure at GetCountOfFieldNoticesAffectingTheNetworkDeviceV1, unexpected response", ""))
+				"Failure when executing 2 GetCountOfFieldNoticesAffectingTheNetworkDevice", err,
+				"Failure at GetCountOfFieldNoticesAffectingTheNetworkDevice, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenComplianceGetCountOfFieldNoticesAffectingTheNetworkDeviceV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetCountOfFieldNoticesAffectingTheNetworkDevice", err,
+				"Failure at GetCountOfFieldNoticesAffectingTheNetworkDevice, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenComplianceGetCountOfFieldNoticesAffectingTheNetworkDeviceItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetCountOfFieldNoticesAffectingTheNetworkDeviceV1 response",
+				"Failure when setting GetCountOfFieldNoticesAffectingTheNetworkDevice response",
 				err))
 			return diags
 		}
@@ -109,7 +121,7 @@ func dataSourceFieldNoticesResultsNetworkDevicesNetworkDeviceIDNoticesCountRead(
 	return diags
 }
 
-func flattenComplianceGetCountOfFieldNoticesAffectingTheNetworkDeviceV1Item(item *catalystcentersdkgo.ResponseComplianceGetCountOfFieldNoticesAffectingTheNetworkDeviceV1Response) []map[string]interface{} {
+func flattenComplianceGetCountOfFieldNoticesAffectingTheNetworkDeviceItem(item *catalystcentersdkgo.ResponseComplianceGetCountOfFieldNoticesAffectingTheNetworkDeviceResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

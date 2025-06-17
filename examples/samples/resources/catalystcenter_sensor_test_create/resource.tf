@@ -20,20 +20,17 @@ resource "catalystcenter_sensor_test_create" "example" {
       number_of_aps_to_test = "string"
       rssi_threshold        = "string"
     }
-    r_connection  = "string"
     model_version = 1
     name          = "string"
     ssids {
 
       auth_type    = "string"
-      categories   = ["string"]
       profile_name = "string"
       psk          = "string"
       qos_policy   = "string"
       ssid         = "string"
       tests {
 
-        config = ["string"]
         name   = "string"
       }
       third_party {

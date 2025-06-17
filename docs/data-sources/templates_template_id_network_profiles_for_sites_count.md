@@ -31,7 +31,7 @@ output "catalystcenter_templates_template_id_network_profiles_for_sites_count_ex
 
 ### Required
 
-- `template_id` (String) templateId path parameter. The id of the template, retrievable from GET /intent/api/v1/templates
+- `template_id` (String) templateId path parameter. The **id** of the template, retrievable from **GET /intent/api/v1/templates**
 
 ### Read-Only
 

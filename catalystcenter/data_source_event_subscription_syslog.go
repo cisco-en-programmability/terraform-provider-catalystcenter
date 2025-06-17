@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -347,8 +347,8 @@ func dataSourceEventSubscriptionSyslogRead(ctx context.Context, d *schema.Resour
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSyslogEventSubscriptionsV1")
-		queryParams1 := catalystcentersdkgo.GetSyslogEventSubscriptionsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetSyslogEventSubscriptions")
+		queryParams1 := catalystcentersdkgo.GetSyslogEventSubscriptionsQueryParams{}
 
 		if okEventIDs {
 			queryParams1.EventIDs = vEventIDs.(string)
@@ -381,24 +381,38 @@ func dataSourceEventSubscriptionSyslogRead(ctx context.Context, d *schema.Resour
 			queryParams1.Name = vName.(string)
 		}
 
-		response1, restyResp1, err := client.EventManagement.GetSyslogEventSubscriptionsV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.EventManagement.GetSyslogEventSubscriptions(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSyslogEventSubscriptionsV1", err,
-				"Failure at GetSyslogEventSubscriptionsV1, unexpected response", ""))
+				"Failure when executing 2 GetSyslogEventSubscriptions", err,
+				"Failure at GetSyslogEventSubscriptions, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenEventManagementGetSyslogEventSubscriptionsV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetSyslogEventSubscriptions", err,
+				"Failure at GetSyslogEventSubscriptions, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenEventManagementGetSyslogEventSubscriptionsItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSyslogEventSubscriptionsV1 response",
+				"Failure when setting GetSyslogEventSubscriptions response",
 				err))
 			return diags
 		}
@@ -410,7 +424,7 @@ func dataSourceEventSubscriptionSyslogRead(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func flattenEventManagementGetSyslogEventSubscriptionsV1Items(items *catalystcentersdkgo.ResponseEventManagementGetSyslogEventSubscriptionsV1) []map[string]interface{} {
+func flattenEventManagementGetSyslogEventSubscriptionsItems(items *catalystcentersdkgo.ResponseEventManagementGetSyslogEventSubscriptions) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -421,8 +435,8 @@ func flattenEventManagementGetSyslogEventSubscriptionsV1Items(items *catalystcen
 		respItem["subscription_id"] = item.SubscriptionID
 		respItem["name"] = item.Name
 		respItem["description"] = item.Description
-		respItem["subscription_endpoints"] = flattenEventManagementGetSyslogEventSubscriptionsV1ItemsSubscriptionEndpoints(item.SubscriptionEndpoints)
-		respItem["filter"] = flattenEventManagementGetSyslogEventSubscriptionsV1ItemsFilter(item.Filter)
+		respItem["subscription_endpoints"] = flattenEventManagementGetSyslogEventSubscriptionsItemsSubscriptionEndpoints(item.SubscriptionEndpoints)
+		respItem["filter"] = flattenEventManagementGetSyslogEventSubscriptionsItemsFilter(item.Filter)
 		respItem["is_private"] = boolPtrToString(item.IsPrivate)
 		respItem["tenant_id"] = item.TenantID
 		respItems = append(respItems, respItem)
@@ -430,7 +444,7 @@ func flattenEventManagementGetSyslogEventSubscriptionsV1Items(items *catalystcen
 	return respItems
 }
 
-func flattenEventManagementGetSyslogEventSubscriptionsV1ItemsSubscriptionEndpoints(items *[]catalystcentersdkgo.ResponseItemEventManagementGetSyslogEventSubscriptionsV1SubscriptionEndpoints) []map[string]interface{} {
+func flattenEventManagementGetSyslogEventSubscriptionsItemsSubscriptionEndpoints(items *[]catalystcentersdkgo.ResponseItemEventManagementGetSyslogEventSubscriptionsSubscriptionEndpoints) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -438,14 +452,14 @@ func flattenEventManagementGetSyslogEventSubscriptionsV1ItemsSubscriptionEndpoin
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["instance_id"] = item.InstanceID
-		respItem["subscription_details"] = flattenEventManagementGetSyslogEventSubscriptionsV1ItemsSubscriptionEndpointsSubscriptionDetails(item.SubscriptionDetails)
+		respItem["subscription_details"] = flattenEventManagementGetSyslogEventSubscriptionsItemsSubscriptionEndpointsSubscriptionDetails(item.SubscriptionDetails)
 		respItem["connector_type"] = item.ConnectorType
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenEventManagementGetSyslogEventSubscriptionsV1ItemsSubscriptionEndpointsSubscriptionDetails(item *catalystcentersdkgo.ResponseItemEventManagementGetSyslogEventSubscriptionsV1SubscriptionEndpointsSubscriptionDetails) []map[string]interface{} {
+func flattenEventManagementGetSyslogEventSubscriptionsItemsSubscriptionEndpointsSubscriptionDetails(item *catalystcentersdkgo.ResponseItemEventManagementGetSyslogEventSubscriptionsSubscriptionEndpointsSubscriptionDetails) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -454,7 +468,7 @@ func flattenEventManagementGetSyslogEventSubscriptionsV1ItemsSubscriptionEndpoin
 	respItem["instance_id"] = item.InstanceID
 	respItem["name"] = item.Name
 	respItem["description"] = item.Description
-	respItem["syslog_config"] = flattenEventManagementGetSyslogEventSubscriptionsV1ItemsSubscriptionEndpointsSubscriptionDetailsSyslogConfig(item.SyslogConfig)
+	respItem["syslog_config"] = flattenEventManagementGetSyslogEventSubscriptionsItemsSubscriptionEndpointsSubscriptionDetailsSyslogConfig(item.SyslogConfig)
 
 	return []map[string]interface{}{
 		respItem,
@@ -462,7 +476,7 @@ func flattenEventManagementGetSyslogEventSubscriptionsV1ItemsSubscriptionEndpoin
 
 }
 
-func flattenEventManagementGetSyslogEventSubscriptionsV1ItemsSubscriptionEndpointsSubscriptionDetailsSyslogConfig(item *catalystcentersdkgo.ResponseItemEventManagementGetSyslogEventSubscriptionsV1SubscriptionEndpointsSubscriptionDetailsSyslogConfig) []map[string]interface{} {
+func flattenEventManagementGetSyslogEventSubscriptionsItemsSubscriptionEndpointsSubscriptionDetailsSyslogConfig(item *catalystcentersdkgo.ResponseItemEventManagementGetSyslogEventSubscriptionsSubscriptionEndpointsSubscriptionDetailsSyslogConfig) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -481,17 +495,17 @@ func flattenEventManagementGetSyslogEventSubscriptionsV1ItemsSubscriptionEndpoin
 
 }
 
-func flattenEventManagementGetSyslogEventSubscriptionsV1ItemsFilter(item *catalystcentersdkgo.ResponseItemEventManagementGetSyslogEventSubscriptionsV1Filter) []map[string]interface{} {
+func flattenEventManagementGetSyslogEventSubscriptionsItemsFilter(item *catalystcentersdkgo.ResponseItemEventManagementGetSyslogEventSubscriptionsFilter) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["event_ids"] = item.EventIDs
 	respItem["others"] = item.Others
-	respItem["domains_subdomains"] = flattenEventManagementGetSyslogEventSubscriptionsV1ItemsFilterDomainsSubdomains(item.DomainsSubdomains)
+	respItem["domains_subdomains"] = flattenEventManagementGetSyslogEventSubscriptionsItemsFilterDomainsSubdomains(item.DomainsSubdomains)
 	respItem["types"] = item.Types
 	respItem["categories"] = item.Categories
-	respItem["severities"] = flattenEventManagementGetSyslogEventSubscriptionsV1ItemsFilterSeverities(item.Severities)
+	respItem["severities"] = flattenEventManagementGetSyslogEventSubscriptionsItemsFilterSeverities(item.Severities)
 	respItem["sources"] = item.Sources
 	respItem["site_ids"] = item.SiteIDs
 
@@ -501,7 +515,7 @@ func flattenEventManagementGetSyslogEventSubscriptionsV1ItemsFilter(item *cataly
 
 }
 
-func flattenEventManagementGetSyslogEventSubscriptionsV1ItemsFilterDomainsSubdomains(items *[]catalystcentersdkgo.ResponseItemEventManagementGetSyslogEventSubscriptionsV1FilterDomainsSubdomains) []map[string]interface{} {
+func flattenEventManagementGetSyslogEventSubscriptionsItemsFilterDomainsSubdomains(items *[]catalystcentersdkgo.ResponseItemEventManagementGetSyslogEventSubscriptionsFilterDomainsSubdomains) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -515,7 +529,7 @@ func flattenEventManagementGetSyslogEventSubscriptionsV1ItemsFilterDomainsSubdom
 	return respItems
 }
 
-func flattenEventManagementGetSyslogEventSubscriptionsV1ItemsFilterSeverities(items *[]catalystcentersdkgo.ResponseItemEventManagementGetSyslogEventSubscriptionsV1FilterSeverities) []interface{} {
+func flattenEventManagementGetSyslogEventSubscriptionsItemsFilterSeverities(items *[]catalystcentersdkgo.ResponseItemEventManagementGetSyslogEventSubscriptionsFilterSeverities) []interface{} {
 	if items == nil {
 		return nil
 	}

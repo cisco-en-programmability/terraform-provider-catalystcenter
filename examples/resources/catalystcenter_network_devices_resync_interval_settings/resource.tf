@@ -1,10 +1,10 @@
 
 resource "catalystcenter_network_devices_resync_interval_settings" "example" {
-  provider = meraki
-  parameters {
+  provider = catalystcenter
+  parameters = [{
 
     interval = 1
-  }
+  }]
 }
 
 output "catalystcenter_network_devices_resync_interval_settings_example" {

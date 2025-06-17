@@ -12,6 +12,8 @@ description: |-
 It performs create operation on Devices.
 
 - The Threat Summary for the Rogues and aWIPS
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -21,14 +23,14 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 ```terraform
 resource "catalystcenter_security_threats_summary" "example" {
   provider = catalystcenter
-  parameters {
+  parameters = [{
 
     end_time     = 1
     site_id      = ["string"]
     start_time   = 1
     threat_level = ["string"]
     threat_type  = ["string"]
-  }
+  }]
 }
 
 output "catalystcenter_security_threats_summary_example" {

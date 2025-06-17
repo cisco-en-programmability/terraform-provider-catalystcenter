@@ -14,6 +14,8 @@ It performs update operation on System Settings.
 
 - API to accept Cisco ISE server certificate for Cisco ISE server integration. Use ‘Cisco ISE Server Integration Status’
 Intent API to check the integration status. This data source action can be used to retry the failed integration.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -24,10 +26,10 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_integrate_ise" "example" {
   provider = catalystcenter
   id       = "string"
-  parameters {
+  parameters = [{
 
     is_cert_accepted_by_user = "false"
-  }
+  }]
 }
 
 output "catalystcenter_integrate_ise_example" {

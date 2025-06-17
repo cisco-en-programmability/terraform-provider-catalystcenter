@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -15,7 +15,7 @@ func dataSourceSiteWiseProductNames() *schema.Resource {
 	return &schema.Resource{
 		Description: `It performs read operation on Software Image Management (SWIM).
 
-- Provides network device product names for a site. The default value of *siteId* is global. The response will include
+- Provides network device product names for a site. The default value of **siteId** is global. The response will include
 the network device count and image summary.
 `,
 
@@ -53,7 +53,7 @@ the network device count and image summary.
 					Schema: map[string]*schema.Schema{
 
 						"id": &schema.Schema{
-							Description: `The unique identifier for the record is the *id*. If there is no supervisor engine involved, the *id* will be the same as the *productNameOrdinal*. However, if the supervisor engine is applicable, the *id* will be in the form of *<productNameOrdinal>-<supervisorProductNameOrdinal>*.
+							Description: `The unique identifier for the record is the **id**. If there is no supervisor engine involved, the **id** will be the same as the **productNameOrdinal**. However, if the supervisor engine is applicable, the **id** will be in the form of **<productNameOrdinal>-<supervisorProductNameOrdinal>**.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
@@ -111,14 +111,14 @@ the network device count and image summary.
 						},
 
 						"supervisor_product_name": &schema.Schema{
-							Description: `Name of the Supervisor Engine Module, supported by the *productName*.                  Example: The *Cisco Catalyst 9404R Switch* chassis is capable of supporting  different supervisor engine modules: the *Cisco Catalyst 9400 Supervisor Engine-1*, the *Cisco Catalyst 9400 Supervisor Engine-1XL*, the *Cisco Catalyst 9400 Supervisor Engine-1XL-Y*, etc.
+							Description: `Name of the Supervisor Engine Module, supported by the **productName**.                  Example: The **Cisco Catalyst 9404R Switch** chassis is capable of supporting  different supervisor engine modules: the **Cisco Catalyst 9400 Supervisor Engine-1**, the **Cisco Catalyst 9400 Supervisor Engine-1XL**, the **Cisco Catalyst 9400 Supervisor Engine-1XL-Y**, etc.
 `,
 							Type:     schema.TypeString,
 							Computed: true,
 						},
 
 						"supervisor_product_name_ordinal": &schema.Schema{
-							Description: `Supervisor Engine Module Ordinal, supported by the *productNameOrdinal*. Example: The *286315691* chassis ordinal is capable of supporting  different supervisor engine module ordinals: *286316172*, *286316710*, *286320394* etc.
+							Description: `Supervisor Engine Module Ordinal, supported by the **productNameOrdinal**. Example: The **286315691** chassis ordinal is capable of supporting  different supervisor engine module ordinals: **286316172**, **286316710**, **286320394** etc.
 `,
 							Type:     schema.TypeFloat,
 							Computed: true,
@@ -141,8 +141,8 @@ func dataSourceSiteWiseProductNamesRead(ctx context.Context, d *schema.ResourceD
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: ReturnsNetworkDeviceProductNamesForASiteV1")
-		queryParams1 := catalystcentersdkgo.ReturnsNetworkDeviceProductNamesForASiteV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: ReturnsNetworkDeviceProductNamesForASite")
+		queryParams1 := catalystcentersdkgo.ReturnsNetworkDeviceProductNamesForASiteQueryParams{}
 
 		if okSiteID {
 			queryParams1.SiteID = vSiteID.(string)
@@ -157,24 +157,38 @@ func dataSourceSiteWiseProductNamesRead(ctx context.Context, d *schema.ResourceD
 			queryParams1.Limit = vLimit.(float64)
 		}
 
-		response1, restyResp1, err := client.SoftwareImageManagementSwim.ReturnsNetworkDeviceProductNamesForASiteV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.SoftwareImageManagementSwim.ReturnsNetworkDeviceProductNamesForASite(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 ReturnsNetworkDeviceProductNamesForASiteV1", err,
-				"Failure at ReturnsNetworkDeviceProductNamesForASiteV1, unexpected response", ""))
+				"Failure when executing 2 ReturnsNetworkDeviceProductNamesForASite", err,
+				"Failure at ReturnsNetworkDeviceProductNamesForASite, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSoftwareImageManagementSwimReturnsNetworkDeviceProductNamesForASiteV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 ReturnsNetworkDeviceProductNamesForASite", err,
+				"Failure at ReturnsNetworkDeviceProductNamesForASite, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSoftwareImageManagementSwimReturnsNetworkDeviceProductNamesForASiteItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting ReturnsNetworkDeviceProductNamesForASiteV1 response",
+				"Failure when setting ReturnsNetworkDeviceProductNamesForASite response",
 				err))
 			return diags
 		}
@@ -186,7 +200,7 @@ func dataSourceSiteWiseProductNamesRead(ctx context.Context, d *schema.ResourceD
 	return diags
 }
 
-func flattenSoftwareImageManagementSwimReturnsNetworkDeviceProductNamesForASiteV1Item(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimReturnsNetworkDeviceProductNamesForASiteV1Response) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimReturnsNetworkDeviceProductNamesForASiteItem(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimReturnsNetworkDeviceProductNamesForASiteResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -197,13 +211,13 @@ func flattenSoftwareImageManagementSwimReturnsNetworkDeviceProductNamesForASiteV
 	respItem["supervisor_product_name"] = item.SupervisorProductName
 	respItem["supervisor_product_name_ordinal"] = item.SupervisorProductNameOrdinal
 	respItem["network_device_count"] = item.NetworkDeviceCount
-	respItem["image_summary"] = flattenSoftwareImageManagementSwimReturnsNetworkDeviceProductNamesForASiteV1ItemImageSummary(item.ImageSummary)
+	respItem["image_summary"] = flattenSoftwareImageManagementSwimReturnsNetworkDeviceProductNamesForASiteItemImageSummary(item.ImageSummary)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenSoftwareImageManagementSwimReturnsNetworkDeviceProductNamesForASiteV1ItemImageSummary(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimReturnsNetworkDeviceProductNamesForASiteV1ResponseImageSummary) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimReturnsNetworkDeviceProductNamesForASiteItemImageSummary(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimReturnsNetworkDeviceProductNamesForASiteResponseImageSummary) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

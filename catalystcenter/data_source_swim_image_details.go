@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -335,8 +335,8 @@ func dataSourceSwimImageDetailsRead(ctx context.Context, d *schema.ResourceData,
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSoftwareImageDetailsV1")
-		queryParams1 := catalystcentersdkgo.GetSoftwareImageDetailsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetSoftwareImageDetails")
+		queryParams1 := catalystcentersdkgo.GetSoftwareImageDetailsQueryParams{}
 
 		if okImageUUID {
 			queryParams1.ImageUUID = vImageUUID.(string)
@@ -393,24 +393,38 @@ func dataSourceSwimImageDetailsRead(ctx context.Context, d *schema.ResourceData,
 			queryParams1.Offset = vOffset.(int)
 		}
 
-		response1, restyResp1, err := client.SoftwareImageManagementSwim.GetSoftwareImageDetailsV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.SoftwareImageManagementSwim.GetSoftwareImageDetails(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSoftwareImageDetailsV1", err,
-				"Failure at GetSoftwareImageDetailsV1, unexpected response", ""))
+				"Failure when executing 2 GetSoftwareImageDetails", err,
+				"Failure at GetSoftwareImageDetails, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenSoftwareImageManagementSwimGetSoftwareImageDetailsV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetSoftwareImageDetails", err,
+				"Failure at GetSoftwareImageDetails, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenSoftwareImageManagementSwimGetSoftwareImageDetailsItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSoftwareImageDetailsV1 response",
+				"Failure when setting GetSoftwareImageDetails response",
 				err))
 			return diags
 		}
@@ -422,17 +436,17 @@ func dataSourceSwimImageDetailsRead(ctx context.Context, d *schema.ResourceData,
 	return diags
 }
 
-func flattenSoftwareImageManagementSwimGetSoftwareImageDetailsV1Items(items *[]catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsV1Response) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimGetSoftwareImageDetailsItems(items *[]catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
 	var respItems []map[string]interface{}
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
-		respItem["applicable_devices_for_image"] = flattenSoftwareImageManagementSwimGetSoftwareImageDetailsV1ItemsApplicableDevicesForImage(item.ApplicableDevicesForImage)
+		respItem["applicable_devices_for_image"] = flattenSoftwareImageManagementSwimGetSoftwareImageDetailsItemsApplicableDevicesForImage(item.ApplicableDevicesForImage)
 		respItem["application_type"] = item.ApplicationType
 		respItem["created_time"] = item.CreatedTime
-		respItem["extended_attributes"] = flattenSoftwareImageManagementSwimGetSoftwareImageDetailsV1ItemsExtendedAttributes(item.ExtendedAttributes)
+		respItem["extended_attributes"] = flattenSoftwareImageManagementSwimGetSoftwareImageDetailsItemsExtendedAttributes(item.ExtendedAttributes)
 		respItem["family"] = item.Family
 		respItem["feature"] = item.Feature
 		respItem["file_service_id"] = item.FileServiceID
@@ -447,7 +461,7 @@ func flattenSoftwareImageManagementSwimGetSoftwareImageDetailsV1Items(items *[]c
 		respItem["is_tagged_golden"] = boolPtrToString(item.IsTaggedGolden)
 		respItem["md5_checksum"] = item.Md5Checksum
 		respItem["name"] = item.Name
-		respItem["profile_info"] = flattenSoftwareImageManagementSwimGetSoftwareImageDetailsV1ItemsProfileInfo(item.ProfileInfo)
+		respItem["profile_info"] = flattenSoftwareImageManagementSwimGetSoftwareImageDetailsItemsProfileInfo(item.ProfileInfo)
 		respItem["sha_check_sum"] = item.ShaCheckSum
 		respItem["vendor"] = item.Vendor
 		respItem["version"] = item.Version
@@ -456,7 +470,7 @@ func flattenSoftwareImageManagementSwimGetSoftwareImageDetailsV1Items(items *[]c
 	return respItems
 }
 
-func flattenSoftwareImageManagementSwimGetSoftwareImageDetailsV1ItemsApplicableDevicesForImage(items *[]catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsV1ResponseApplicableDevicesForImage) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimGetSoftwareImageDetailsItemsApplicableDevicesForImage(items *[]catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsResponseApplicableDevicesForImage) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -471,7 +485,7 @@ func flattenSoftwareImageManagementSwimGetSoftwareImageDetailsV1ItemsApplicableD
 	return respItems
 }
 
-func flattenSoftwareImageManagementSwimGetSoftwareImageDetailsV1ItemsExtendedAttributes(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsV1ResponseExtendedAttributes) interface{} {
+func flattenSoftwareImageManagementSwimGetSoftwareImageDetailsItemsExtendedAttributes(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsResponseExtendedAttributes) interface{} {
 	if item == nil {
 		return nil
 	}
@@ -481,7 +495,7 @@ func flattenSoftwareImageManagementSwimGetSoftwareImageDetailsV1ItemsExtendedAtt
 
 }
 
-func flattenSoftwareImageManagementSwimGetSoftwareImageDetailsV1ItemsProfileInfo(items *[]catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsV1ResponseProfileInfo) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimGetSoftwareImageDetailsItemsProfileInfo(items *[]catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsResponseProfileInfo) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -489,7 +503,7 @@ func flattenSoftwareImageManagementSwimGetSoftwareImageDetailsV1ItemsProfileInfo
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["description"] = item.Description
-		respItem["extended_attributes"] = flattenSoftwareImageManagementSwimGetSoftwareImageDetailsV1ItemsProfileInfoExtendedAttributes(item.ExtendedAttributes)
+		respItem["extended_attributes"] = flattenSoftwareImageManagementSwimGetSoftwareImageDetailsItemsProfileInfoExtendedAttributes(item.ExtendedAttributes)
 		respItem["memory"] = item.Memory
 		respItem["product_type"] = item.ProductType
 		respItem["profile_name"] = item.ProfileName
@@ -500,7 +514,7 @@ func flattenSoftwareImageManagementSwimGetSoftwareImageDetailsV1ItemsProfileInfo
 	return respItems
 }
 
-func flattenSoftwareImageManagementSwimGetSoftwareImageDetailsV1ItemsProfileInfoExtendedAttributes(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsV1ResponseProfileInfoExtendedAttributes) interface{} {
+func flattenSoftwareImageManagementSwimGetSoftwareImageDetailsItemsProfileInfoExtendedAttributes(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimGetSoftwareImageDetailsResponseProfileInfoExtendedAttributes) interface{} {
 	if item == nil {
 		return nil
 	}

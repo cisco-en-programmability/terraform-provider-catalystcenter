@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -9,7 +10,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -68,7 +69,7 @@ func resourceTemplatesTemplateIDNetworkProfilesForSitesBulkDelete() *schema.Reso
 							ForceNew: true,
 						},
 						"template_id": &schema.Schema{
-							Description: `templateId path parameter. The id of the template, retrievable from GET /intent/api/v1/templates
+							Description: `templateId path parameter. The **id** of the template, retrievable from **GET /intent/api/v1/templates**
 `,
 							Type:     schema.TypeString,
 							Required: true,
@@ -88,31 +89,30 @@ func resourceTemplatesTemplateIDNetworkProfilesForSitesBulkDeleteCreate(ctx cont
 	resourceItem := *getResourceItem(d.Get("parameters"))
 
 	vTemplateID := resourceItem["template_id"]
-
 	vProfileID := resourceItem["profile_id"]
 
 	vvTemplateID := vTemplateID.(string)
-	queryParams1 := catalystcentersdkgo.DetachAListOfNetworkProfilesFromADayNCliTemplateV1QueryParams{}
-
+	queryParams1 := catalystcentersdkgo.DetachAListOfNetworkProfilesFromADayNCliTemplateQueryParams{}
 	queryParams1.ProfileID = vProfileID.(string)
 
-	// has_unknown_response: None
+	response1, restyResp1, err := client.ConfigurationTemplates.DetachAListOfNetworkProfilesFromADayNCliTemplate(vvTemplateID, &queryParams1)
 
-	response1, restyResp1, err := client.ConfigurationTemplates.DetachAListOfNetworkProfilesFromADayNCliTemplateV1(vvTemplateID, &queryParams1)
-
-	vItem1 := flattenConfigurationTemplatesDetachAListOfNetworkProfilesFromADayNCliTemplateV1Item(response1.Response)
-	if err := d.Set("item", vItem1); err != nil {
-		diags = append(diags, diagError(
-			"Failure when setting DetachAListOfNetworkProfilesFromADayNCliTemplateV1 response",
-			err))
+	if err != nil || response1 == nil {
+		if restyResp1 != nil {
+			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+		}
+		d.SetId("")
 		return diags
 	}
+
+	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing DetachAListOfNetworkProfilesFromADayNCLITemplateV1", err))
+			"Failure when executing DetachAListOfNetworkProfilesFromADayNCLITemplate", err))
 		return diags
 	}
+
 	taskId := response1.Response.TaskID
 	log.Printf("[DEBUG] TASKID => %s", taskId)
 	if taskId != "" {
@@ -137,44 +137,43 @@ func resourceTemplatesTemplateIDNetworkProfilesForSitesBulkDeleteCreate(ctx cont
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing DetachAListOfNetworkProfilesFromADayNCLITemplateV1", err1))
+				"Failure when executing DetachAListOfNetworkProfilesFromADayNCLITemplate", err1))
 			return diags
 		}
 	}
 
-	if err != nil || response1 == nil {
-		if restyResp1 != nil {
-			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
-		}
-		d.SetId("")
+	vItem1 := flattenConfigurationTemplatesDetachAListOfNetworkProfilesFromADayNCliTemplateItem(response1.Response)
+	if err := d.Set("item", vItem1); err != nil {
+		diags = append(diags, diagError(
+			"Failure when setting DetachAListOfNetworkProfilesFromADayNCliTemplate response",
+			err))
 		return diags
 	}
 
-	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 	d.SetId(getUnixTimeString())
 	return diags
 }
 func resourceTemplatesTemplateIDNetworkProfilesForSitesBulkDeleteRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 	return diags
 }
 
 func resourceTemplatesTemplateIDNetworkProfilesForSitesBulkDeleteDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 	return diags
 }
 
-func flattenConfigurationTemplatesDetachAListOfNetworkProfilesFromADayNCliTemplateV1Item(item *catalystcentersdkgo.ResponseConfigurationTemplatesDetachAListOfNetworkProfilesFromADayNCliTemplateV1Response) []map[string]interface{} {
+func flattenConfigurationTemplatesDetachAListOfNetworkProfilesFromADayNCliTemplateItem(item *catalystcentersdkgo.ResponseConfigurationTemplatesDetachAListOfNetworkProfilesFromADayNCliTemplateResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

@@ -1,7 +1,7 @@
 
 resource "catalystcenter_network_devices_network_profiles_for_sites" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     id = "string"

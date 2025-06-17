@@ -1,9 +1,9 @@
 
 data "catalystcenter_event_subscription_count" "example" {
-    provider = catalystcenter
-    event_ids = "string"
+  provider  = catalystcenter
+  event_ids = "string"
 }
 
 output "catalystcenter_event_subscription_count_example" {
-    value = data.catalystcenter_event_subscription_count.example.item
+  value = data.catalystcenter_event_subscription_count.example.item
 }

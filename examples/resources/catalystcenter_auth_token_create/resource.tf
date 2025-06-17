@@ -1,6 +1,6 @@
 
 resource "catalystcenter_auth_token_create" "example" {
-  provider      = meraki
+  provider      = catalystcenter
   authorization = "string"
 }
 

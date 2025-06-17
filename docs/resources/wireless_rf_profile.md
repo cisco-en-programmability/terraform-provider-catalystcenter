@@ -20,7 +20,7 @@ It manages create, read and delete operations on Wireless.
 ```terraform
 resource "catalystcenter_wireless_rf_profile" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     channel_width       = "string"
@@ -38,7 +38,7 @@ resource "catalystcenter_wireless_rf_profile" "example" {
       max_power_level      = 1.0
       min_power_level      = 1.0
       parent_profile       = "string"
-      power_threshold_v1   = 1.0
+      power_threshold      = 1.0
       radio_channels       = "string"
       rx_sop_threshold     = "string"
     }
@@ -49,7 +49,7 @@ resource "catalystcenter_wireless_rf_profile" "example" {
       max_power_level      = 1.0
       min_power_level      = 1.0
       parent_profile       = "string"
-      power_threshold_v1   = 1.0
+      power_threshold      = 1.0
       radio_channels       = "string"
       rx_sop_threshold     = "string"
     }
@@ -60,7 +60,7 @@ resource "catalystcenter_wireless_rf_profile" "example" {
       max_power_level      = 1.0
       min_power_level      = 1.0
       parent_profile       = "string"
-      power_threshold_v1   = 1.0
+      power_threshold      = 1.0
       radio_channels       = "string"
       rx_sop_threshold     = "string"
     }

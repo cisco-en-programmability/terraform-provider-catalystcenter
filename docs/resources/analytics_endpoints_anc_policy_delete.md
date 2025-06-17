@@ -12,6 +12,8 @@ description: |-
 It performs delete operation on AI Endpoint Analytics.
 
 - Revokes given ANC policy from the endpoint.
+
+
 ~>**Warning:**
 This resource does not represent a real-world entity in Cisco Catalyst Center, therefore changing or deleting this resource on its own has no immediate effect.
 Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed in CatalystCenter without any additional verification. It does not check if it was executed before or if a similar configuration or action already existed previously.
@@ -22,9 +24,9 @@ Instead, it is a task part of a Cisco Catalyst Center workflow. It is executed i
 resource "catalystcenter_analytics_endpoints_anc_policy_delete" "example" {
   provider = catalystcenter
   ep_id    = "string"
-  parameters {
+  parameters = [{
 
-  }
+  }]
 }
 
 output "catalystcenter_analytics_endpoints_anc_policy_delete_example" {

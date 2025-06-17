@@ -1,7 +1,7 @@
 
 resource "catalystcenter_system_issue_definitions" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     id                              = "string"

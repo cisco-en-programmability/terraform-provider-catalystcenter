@@ -1,11 +1,12 @@
 
 resource "catalystcenter_assurance_issues_ignore" "example" {
-  provider    = meraki
+  provider    = catalystcenter
   xca_lle_rid = "string"
-  parameters {
+  parameters = [{
 
-    issue_ids = ["string"]
-  }
+    ignore_hours = 1
+    issue_ids    = ["string"]
+  }]
 }
 
 output "catalystcenter_assurance_issues_ignore_example" {

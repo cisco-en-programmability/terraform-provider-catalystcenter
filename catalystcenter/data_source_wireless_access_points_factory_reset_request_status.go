@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -105,29 +105,43 @@ func dataSourceWirelessAccessPointsFactoryResetRequestStatusRead(ctx context.Con
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAccessPointsFactoryResetStatusV1")
-		queryParams1 := catalystcentersdkgo.GetAccessPointsFactoryResetStatusV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetAccessPointsFactoryResetStatus")
+		queryParams1 := catalystcentersdkgo.GetAccessPointsFactoryResetStatusQueryParams{}
 
 		queryParams1.TaskID = vTaskID.(string)
 
-		response1, restyResp1, err := client.Wireless.GetAccessPointsFactoryResetStatusV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Wireless.GetAccessPointsFactoryResetStatus(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAccessPointsFactoryResetStatusV1", err,
-				"Failure at GetAccessPointsFactoryResetStatusV1, unexpected response", ""))
+				"Failure when executing 2 GetAccessPointsFactoryResetStatus", err,
+				"Failure at GetAccessPointsFactoryResetStatus, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenWirelessGetAccessPointsFactoryResetStatusV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetAccessPointsFactoryResetStatus", err,
+				"Failure at GetAccessPointsFactoryResetStatus, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenWirelessGetAccessPointsFactoryResetStatusItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAccessPointsFactoryResetStatusV1 response",
+				"Failure when setting GetAccessPointsFactoryResetStatus response",
 				err))
 			return diags
 		}
@@ -139,7 +153,7 @@ func dataSourceWirelessAccessPointsFactoryResetRequestStatusRead(ctx context.Con
 	return diags
 }
 
-func flattenWirelessGetAccessPointsFactoryResetStatusV1Items(items *[]catalystcentersdkgo.ResponseWirelessGetAccessPointsFactoryResetStatusV1Response) []map[string]interface{} {
+func flattenWirelessGetAccessPointsFactoryResetStatusItems(items *[]catalystcentersdkgo.ResponseWirelessGetAccessPointsFactoryResetStatusResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -148,13 +162,13 @@ func flattenWirelessGetAccessPointsFactoryResetStatusV1Items(items *[]catalystce
 		respItem := make(map[string]interface{})
 		respItem["wlc_ip"] = item.WlcIP
 		respItem["wlc_name"] = item.WlcName
-		respItem["ap_response_info_list"] = flattenWirelessGetAccessPointsFactoryResetStatusV1ItemsApResponseInfoList(item.ApResponseInfoList)
+		respItem["ap_response_info_list"] = flattenWirelessGetAccessPointsFactoryResetStatusItemsApResponseInfoList(item.ApResponseInfoList)
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenWirelessGetAccessPointsFactoryResetStatusV1ItemsApResponseInfoList(items *[]catalystcentersdkgo.ResponseWirelessGetAccessPointsFactoryResetStatusV1ResponseApResponseInfoList) []map[string]interface{} {
+func flattenWirelessGetAccessPointsFactoryResetStatusItemsApResponseInfoList(items *[]catalystcentersdkgo.ResponseWirelessGetAccessPointsFactoryResetStatusResponseApResponseInfoList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

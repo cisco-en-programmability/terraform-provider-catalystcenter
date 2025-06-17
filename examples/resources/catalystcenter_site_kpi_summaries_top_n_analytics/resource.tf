@@ -1,22 +1,22 @@
 
 resource "catalystcenter_site_kpi_summaries_top_n_analytics" "example" {
-    provider = catalystcenter
+  provider = catalystcenter
+ 
+  parameters {
 
-    parameters {
+    end_time = 1
+    filters {
 
-      end_time = 1
-      filters {
-
-        key = "string"
-        operator = "string"
-        value = "string"
-      }
-      group_by = ["string"]
-      start_time = 1
-      top_n = 1
+      key      = "string"
+      operator = "string"
+      value    = "string"
     }
+    group_by   = ["string"]
+    start_time = 1
+    top_n      = 1
+  }
 }
 
 output "catalystcenter_site_kpi_summaries_top_n_analytics_example" {
-    value = catalystcenter_site_kpi_summaries_top_n_analytics.example
+  value = catalystcenter_site_kpi_summaries_top_n_analytics.example
 }

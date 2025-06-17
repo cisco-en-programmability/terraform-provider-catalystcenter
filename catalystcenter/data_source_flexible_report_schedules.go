@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -61,26 +61,40 @@ func dataSourceFlexibleReportSchedulesRead(ctx context.Context, d *schema.Resour
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAllFlexibleReportSchedulesV1")
+		log.Printf("[DEBUG] Selected method: GetAllFlexibleReportSchedules")
 
-		response1, restyResp1, err := client.Reports.GetAllFlexibleReportSchedulesV1()
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Reports.GetAllFlexibleReportSchedules()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAllFlexibleReportSchedulesV1", err,
-				"Failure at GetAllFlexibleReportSchedulesV1, unexpected response", ""))
+				"Failure when executing 2 GetAllFlexibleReportSchedules", err,
+				"Failure at GetAllFlexibleReportSchedules, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenReportsGetAllFlexibleReportSchedulesV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetAllFlexibleReportSchedules", err,
+				"Failure at GetAllFlexibleReportSchedules, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenReportsGetAllFlexibleReportSchedulesItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetAllFlexibleReportSchedulesV1 response",
+				"Failure when setting GetAllFlexibleReportSchedules response",
 				err))
 			return diags
 		}
@@ -92,7 +106,7 @@ func dataSourceFlexibleReportSchedulesRead(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func flattenReportsGetAllFlexibleReportSchedulesV1Items(items *catalystcentersdkgo.ResponseReportsGetAllFlexibleReportSchedulesV1) []map[string]interface{} {
+func flattenReportsGetAllFlexibleReportSchedulesItems(items *catalystcentersdkgo.ResponseReportsGetAllFlexibleReportSchedules) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -100,14 +114,14 @@ func flattenReportsGetAllFlexibleReportSchedulesV1Items(items *catalystcentersdk
 	for _, item := range *items {
 		respItem := make(map[string]interface{})
 		respItem["report_id"] = item.ReportID
-		respItem["schedule"] = flattenReportsGetAllFlexibleReportSchedulesV1ItemsSchedule(item.Schedule)
+		respItem["schedule"] = flattenReportsGetAllFlexibleReportSchedulesItemsSchedule(item.Schedule)
 		respItem["report_name"] = item.ReportName
 		respItems = append(respItems, respItem)
 	}
 	return respItems
 }
 
-func flattenReportsGetAllFlexibleReportSchedulesV1ItemsSchedule(item *catalystcentersdkgo.ResponseItemReportsGetAllFlexibleReportSchedulesV1Schedule) interface{} {
+func flattenReportsGetAllFlexibleReportSchedulesItemsSchedule(item *catalystcentersdkgo.ResponseItemReportsGetAllFlexibleReportSchedulesSchedule) interface{} {
 	if item == nil {
 		return nil
 	}

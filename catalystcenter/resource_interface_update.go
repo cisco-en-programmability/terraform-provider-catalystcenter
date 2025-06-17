@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -36,17 +36,55 @@ Request body.
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 
-						"task_id": &schema.Schema{
-							Description: `Task id
-`,
-							Type:     schema.TypeString,
+						"properties": &schema.Schema{
+							Type:     schema.TypeList,
 							Computed: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+
+									"task_id": &schema.Schema{
+										Type:     schema.TypeList,
+										Computed: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+
+												"type": &schema.Schema{
+													Description: `Type`,
+													Type:        schema.TypeString,
+													Computed:    true,
+												},
+											},
+										},
+									},
+									"url": &schema.Schema{
+										Type:     schema.TypeList,
+										Computed: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+
+												"type": &schema.Schema{
+													Description: `Type`,
+													Type:        schema.TypeString,
+													Computed:    true,
+												},
+											},
+										},
+									},
+								},
+							},
 						},
-						"url": &schema.Schema{
-							Description: `Task url
-`,
-							Type:     schema.TypeString,
-							Computed: true,
+						"required": &schema.Schema{
+							Description: `Required`,
+							Type:        schema.TypeList,
+							Computed:    true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+						"type": &schema.Schema{
+							Description: `Type`,
+							Type:        schema.TypeString,
+							Computed:    true,
 						},
 					},
 				},
@@ -121,28 +159,28 @@ func resourceInterfaceUpdateCreate(ctx context.Context, d *schema.ResourceData, 
 	vInterfaceUUID := resourceItem["interface_uuid"]
 
 	vvInterfaceUUID := vInterfaceUUID.(string)
-	request1 := expandRequestInterfaceUpdateUpdateInterfaceDetailsV1(ctx, "parameters.0", d)
-	queryParams1 := catalystcentersdkgo.UpdateInterfaceDetailsV1QueryParams{}
+	request1 := expandRequestInterfaceUpdateUpdateInterfaceDetails(ctx, "parameters.0", d)
+	queryParams1 := catalystcentersdkgo.UpdateInterfaceDetailsQueryParams{}
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Devices.UpdateInterfaceDetailsV1(vvInterfaceUUID, request1, &queryParams1)
+	response1, restyResp1, err := client.Devices.UpdateInterfaceDetails(vvInterfaceUUID, request1, &queryParams1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing UpdateInterfaceDetailsV1", err))
+			"Failure when executing UpdateInterfaceDetails", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItem1 := flattenDevicesUpdateInterfaceDetailsV1Item(response1.Response)
+	vItem1 := flattenDevicesUpdateInterfaceDetailsItem(response1.Response)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting UpdateInterfaceDetailsV1 response",
+			"Failure when setting UpdateInterfaceDetails response",
 			err))
 		return diags
 	}
@@ -164,8 +202,8 @@ func resourceInterfaceUpdateDelete(ctx context.Context, d *schema.ResourceData, 
 	return diags
 }
 
-func expandRequestInterfaceUpdateUpdateInterfaceDetailsV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateInterfaceDetailsV1 {
-	request := catalystcentersdkgo.RequestDevicesUpdateInterfaceDetailsV1{}
+func expandRequestInterfaceUpdateUpdateInterfaceDetails(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdateInterfaceDetails {
+	request := catalystcentersdkgo.RequestDevicesUpdateInterfaceDetails{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".description")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".description")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".description")))) {
 		request.Description = interfaceToString(v)
 	}
@@ -181,15 +219,55 @@ func expandRequestInterfaceUpdateUpdateInterfaceDetailsV1(ctx context.Context, k
 	return &request
 }
 
-func flattenDevicesUpdateInterfaceDetailsV1Item(item *catalystcentersdkgo.ResponseDevicesUpdateInterfaceDetailsV1Response) []map[string]interface{} {
+func flattenDevicesUpdateInterfaceDetailsItem(item *catalystcentersdkgo.ResponseDevicesUpdateInterfaceDetailsResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
-	respItem["task_id"] = item.TaskID
-	respItem["url"] = item.URL
+	respItem["type"] = item.Type
+	respItem["properties"] = flattenDevicesUpdateInterfaceDetailsItemProperties(item.Properties)
+	respItem["required"] = item.Required
+	return []map[string]interface{}{
+		respItem,
+	}
+}
+
+func flattenDevicesUpdateInterfaceDetailsItemProperties(item *catalystcentersdkgo.ResponseDevicesUpdateInterfaceDetailsResponseProperties) []map[string]interface{} {
+	if item == nil {
+		return nil
+	}
+	respItem := make(map[string]interface{})
+	respItem["task_id"] = flattenDevicesUpdateInterfaceDetailsItemPropertiesTaskID(item.TaskID)
+	respItem["url"] = flattenDevicesUpdateInterfaceDetailsItemPropertiesURL(item.URL)
 
 	return []map[string]interface{}{
 		respItem,
 	}
+
+}
+
+func flattenDevicesUpdateInterfaceDetailsItemPropertiesTaskID(item *catalystcentersdkgo.ResponseDevicesUpdateInterfaceDetailsResponsePropertiesTaskID) []map[string]interface{} {
+	if item == nil {
+		return nil
+	}
+	respItem := make(map[string]interface{})
+	respItem["type"] = item.Type
+
+	return []map[string]interface{}{
+		respItem,
+	}
+
+}
+
+func flattenDevicesUpdateInterfaceDetailsItemPropertiesURL(item *catalystcentersdkgo.ResponseDevicesUpdateInterfaceDetailsResponsePropertiesURL) []map[string]interface{} {
+	if item == nil {
+		return nil
+	}
+	respItem := make(map[string]interface{})
+	respItem["type"] = item.Type
+
+	return []map[string]interface{}{
+		respItem,
+	}
+
 }

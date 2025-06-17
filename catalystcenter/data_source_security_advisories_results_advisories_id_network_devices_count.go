@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -74,9 +74,9 @@ func dataSourceSecurityAdvisoriesResultsAdvisoriesIDNetworkDevicesCountRead(ctx 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetCountOfSecurityAdvisoryNetworkDevicesForTheSecurityAdvisoryV1")
+		log.Printf("[DEBUG] Selected method: GetCountOfSecurityAdvisoryNetworkDevicesForTheSecurityAdvisory")
 		vvID := vID.(string)
-		queryParams1 := catalystcentersdkgo.GetCountOfSecurityAdvisoryNetworkDevicesForTheSecurityAdvisoryV1QueryParams{}
+		queryParams1 := catalystcentersdkgo.GetCountOfSecurityAdvisoryNetworkDevicesForTheSecurityAdvisoryQueryParams{}
 
 		if okNetworkDeviceID {
 			queryParams1.NetworkDeviceID = vNetworkDeviceID.(string)
@@ -90,24 +90,36 @@ func dataSourceSecurityAdvisoriesResultsAdvisoriesIDNetworkDevicesCountRead(ctx 
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Compliance.GetCountOfSecurityAdvisoryNetworkDevicesForTheSecurityAdvisoryV1(vvID, &queryParams1)
+		response1, restyResp1, err := client.Compliance.GetCountOfSecurityAdvisoryNetworkDevicesForTheSecurityAdvisory(vvID, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetCountOfSecurityAdvisoryNetworkDevicesForTheSecurityAdvisoryV1", err,
-				"Failure at GetCountOfSecurityAdvisoryNetworkDevicesForTheSecurityAdvisoryV1, unexpected response", ""))
+				"Failure when executing 2 GetCountOfSecurityAdvisoryNetworkDevicesForTheSecurityAdvisory", err,
+				"Failure at GetCountOfSecurityAdvisoryNetworkDevicesForTheSecurityAdvisory, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenComplianceGetCountOfSecurityAdvisoryNetworkDevicesForTheSecurityAdvisoryV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetCountOfSecurityAdvisoryNetworkDevicesForTheSecurityAdvisory", err,
+				"Failure at GetCountOfSecurityAdvisoryNetworkDevicesForTheSecurityAdvisory, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenComplianceGetCountOfSecurityAdvisoryNetworkDevicesForTheSecurityAdvisoryItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetCountOfSecurityAdvisoryNetworkDevicesForTheSecurityAdvisoryV1 response",
+				"Failure when setting GetCountOfSecurityAdvisoryNetworkDevicesForTheSecurityAdvisory response",
 				err))
 			return diags
 		}
@@ -119,7 +131,7 @@ func dataSourceSecurityAdvisoriesResultsAdvisoriesIDNetworkDevicesCountRead(ctx 
 	return diags
 }
 
-func flattenComplianceGetCountOfSecurityAdvisoryNetworkDevicesForTheSecurityAdvisoryV1Item(item *catalystcentersdkgo.ResponseComplianceGetCountOfSecurityAdvisoryNetworkDevicesForTheSecurityAdvisoryV1Response) []map[string]interface{} {
+func flattenComplianceGetCountOfSecurityAdvisoryNetworkDevicesForTheSecurityAdvisoryItem(item *catalystcentersdkgo.ResponseComplianceGetCountOfSecurityAdvisoryNetworkDevicesForTheSecurityAdvisoryResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

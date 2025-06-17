@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -85,29 +85,43 @@ func dataSourceSdaDeviceRead(ctx context.Context, d *schema.ResourceData, m inte
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDeviceInfoFromSdaFabricV1")
-		queryParams1 := catalystcentersdkgo.GetDeviceInfoFromSdaFabricV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetDeviceInfoFromSdaFabric")
+		queryParams1 := catalystcentersdkgo.GetDeviceInfoFromSdaFabricQueryParams{}
 
 		queryParams1.DeviceManagementIPAddress = vDeviceManagementIPAddress.(string)
 
-		response1, restyResp1, err := client.Sda.GetDeviceInfoFromSdaFabricV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sda.GetDeviceInfoFromSdaFabric(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetDeviceInfoFromSdaFabricV1", err,
-				"Failure at GetDeviceInfoFromSdaFabricV1, unexpected response", ""))
+				"Failure when executing 2 GetDeviceInfoFromSdaFabric", err,
+				"Failure at GetDeviceInfoFromSdaFabric, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetDeviceInfoFromSdaFabricV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetDeviceInfoFromSdaFabric", err,
+				"Failure at GetDeviceInfoFromSdaFabric, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSdaGetDeviceInfoFromSdaFabricItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDeviceInfoFromSdaFabricV1 response",
+				"Failure when setting GetDeviceInfoFromSdaFabric response",
 				err))
 			return diags
 		}
@@ -119,7 +133,7 @@ func dataSourceSdaDeviceRead(ctx context.Context, d *schema.ResourceData, m inte
 	return diags
 }
 
-func flattenSdaGetDeviceInfoFromSdaFabricV1Item(item *catalystcentersdkgo.ResponseSdaGetDeviceInfoFromSdaFabricV1) []map[string]interface{} {
+func flattenSdaGetDeviceInfoFromSdaFabricItem(item *catalystcentersdkgo.ResponseSdaGetDeviceInfoFromSdaFabric) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

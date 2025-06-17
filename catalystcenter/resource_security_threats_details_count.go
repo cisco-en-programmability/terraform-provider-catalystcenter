@@ -7,7 +7,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -134,27 +134,27 @@ func resourceSecurityThreatsDetailsCountCreate(ctx context.Context, d *schema.Re
 	client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 
-	request1 := expandRequestSecurityThreatsDetailsCountThreatDetailCountV1(ctx, "parameters.0", d)
+	request1 := expandRequestSecurityThreatsDetailsCountThreatDetailCount(ctx, "parameters.0", d)
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Devices.ThreatDetailCountV1(request1)
+	response1, restyResp1, err := client.Devices.ThreatDetailCount(request1)
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 		}
 		diags = append(diags, diagError(
-			"Failure when executing ThreatDetailCountV1", err))
+			"Failure when executing ThreatDetailCount", err))
 		return diags
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-	vItem1 := flattenDevicesThreatDetailCountV1Item(response1)
+	vItem1 := flattenDevicesThreatDetailCountItem(response1)
 	if err := d.Set("item", vItem1); err != nil {
 		diags = append(diags, diagError(
-			"Failure when setting ThreatDetailCountV1 response",
+			"Failure when setting ThreatDetailCount response",
 			err))
 		return diags
 	}
@@ -176,8 +176,8 @@ func resourceSecurityThreatsDetailsCountDelete(ctx context.Context, d *schema.Re
 	return diags
 }
 
-func expandRequestSecurityThreatsDetailsCountThreatDetailCountV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesThreatDetailCountV1 {
-	request := catalystcentersdkgo.RequestDevicesThreatDetailCountV1{}
+func expandRequestSecurityThreatsDetailsCountThreatDetailCount(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesThreatDetailCount {
+	request := catalystcentersdkgo.RequestDevicesThreatDetailCount{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".offset")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".offset")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".offset")))) {
 		request.Offset = interfaceToIntPtr(v)
 	}
@@ -203,16 +203,4 @@ func expandRequestSecurityThreatsDetailsCountThreatDetailCountV1(ctx context.Con
 		request.IsNewThreat = interfaceToBoolPtr(v)
 	}
 	return &request
-}
-
-func flattenDevicesThreatDetailCountV1Item(item *catalystcentersdkgo.ResponseDevicesThreatDetailCountV1) []map[string]interface{} {
-	if item == nil {
-		return nil
-	}
-	respItem := make(map[string]interface{})
-	respItem["response"] = item.Response
-	respItem["version"] = item.Version
-	return []map[string]interface{}{
-		respItem,
-	}
 }

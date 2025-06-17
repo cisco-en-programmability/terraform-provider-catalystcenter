@@ -20,7 +20,7 @@ It manages read, update and delete operations on Wireless.
 ```terraform
 resource "catalystcenter_wireless_settings_power_profiles_id" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     description  = "string"

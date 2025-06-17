@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -110,8 +110,8 @@ func dataSourceNetworkDeviceImageUpdatesCountRead(ctx context.Context, d *schema
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: CountOfNetworkDeviceImageUpdatesV1")
-		queryParams1 := catalystcentersdkgo.CountOfNetworkDeviceImageUpdatesV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: CountOfNetworkDeviceImageUpdates")
+		queryParams1 := catalystcentersdkgo.CountOfNetworkDeviceImageUpdatesQueryParams{}
 
 		if okID {
 			queryParams1.ID = vID.(string)
@@ -141,24 +141,38 @@ func dataSourceNetworkDeviceImageUpdatesCountRead(ctx context.Context, d *schema
 			queryParams1.EndTime = vEndTime.(float64)
 		}
 
-		response1, restyResp1, err := client.SoftwareImageManagementSwim.CountOfNetworkDeviceImageUpdatesV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.SoftwareImageManagementSwim.CountOfNetworkDeviceImageUpdates(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 CountOfNetworkDeviceImageUpdatesV1", err,
-				"Failure at CountOfNetworkDeviceImageUpdatesV1, unexpected response", ""))
+				"Failure when executing 2 CountOfNetworkDeviceImageUpdates", err,
+				"Failure at CountOfNetworkDeviceImageUpdates, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSoftwareImageManagementSwimCountOfNetworkDeviceImageUpdatesV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 CountOfNetworkDeviceImageUpdates", err,
+				"Failure at CountOfNetworkDeviceImageUpdates, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSoftwareImageManagementSwimCountOfNetworkDeviceImageUpdatesItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting CountOfNetworkDeviceImageUpdatesV1 response",
+				"Failure when setting CountOfNetworkDeviceImageUpdates response",
 				err))
 			return diags
 		}
@@ -170,7 +184,7 @@ func dataSourceNetworkDeviceImageUpdatesCountRead(ctx context.Context, d *schema
 	return diags
 }
 
-func flattenSoftwareImageManagementSwimCountOfNetworkDeviceImageUpdatesV1Item(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimCountOfNetworkDeviceImageUpdatesV1Response) []map[string]interface{} {
+func flattenSoftwareImageManagementSwimCountOfNetworkDeviceImageUpdatesItem(item *catalystcentersdkgo.ResponseSoftwareImageManagementSwimCountOfNetworkDeviceImageUpdatesResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

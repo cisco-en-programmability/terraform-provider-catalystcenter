@@ -2,6 +2,7 @@ package catalystcenter
 
 import (
 	"context"
+	"strings"
 
 	"errors"
 
@@ -11,7 +12,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -96,29 +97,32 @@ func resourceFabricsFabricIDSwitchWirelessSettingReloadCreate(ctx context.Contex
 	resourceItem := *getResourceItem(d.Get("parameters"))
 
 	vFabricID := resourceItem["fabric_id"]
+
 	vvFabricID := vFabricID.(string)
-	request1 := expandRequestFabricsFabricIDSwitchWirelessSettingReloadReloadSwitchForWirelessControllerCleanupV1(ctx, "parameters.0", d)
+	request1 := expandRequestFabricsFabricIDSwitchWirelessSettingReloadReloadSwitchForWirelessControllerCleanup(ctx, "parameters.0", d)
 
-	// has_unknown_response: None
-
-	response1, restyResp1, err := client.FabricWireless.ReloadSwitchForWirelessControllerCleanupV1(vvFabricID, request1)
+	response1, restyResp1, err := client.FabricWireless.ReloadSwitchForWirelessControllerCleanup(vvFabricID, request1)
 
 	if request1 != nil {
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 	}
 
-	vItem1 := flattenFabricWirelessReloadSwitchForWirelessControllerCleanupV1Item(response1.Response)
-	if err := d.Set("item", vItem1); err != nil {
-		diags = append(diags, diagError(
-			"Failure when setting ReloadSwitchForWirelessControllerCleanupV1 response",
-			err))
+	if err != nil || response1 == nil {
+		if restyResp1 != nil {
+			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+		}
+		d.SetId("")
 		return diags
 	}
+
+	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
 	if response1.Response == nil {
 		diags = append(diags, diagError(
-			"Failure when executing ReloadSwitchForWirelessControllerCleanupV1", err))
+			"Failure when executing ReloadSwitchForWirelessControllerCleanup", err))
 		return diags
 	}
+
 	taskId := response1.Response.TaskID
 	log.Printf("[DEBUG] TASKID => %s", taskId)
 	if taskId != "" {
@@ -143,52 +147,51 @@ func resourceFabricsFabricIDSwitchWirelessSettingReloadCreate(ctx context.Contex
 				return diags
 			}
 			var errorMsg string
-			if restyResp3 == nil {
+			if restyResp3 == nil || strings.Contains(restyResp3.String(), "<!doctype html>") {
 				errorMsg = response2.Response.Progress + "\nFailure Reason: " + response2.Response.FailureReason
 			} else {
 				errorMsg = restyResp3.String()
 			}
 			err1 := errors.New(errorMsg)
 			diags = append(diags, diagError(
-				"Failure when executing ReloadSwitchForWirelessControllerCleanupV1", err1))
+				"Failure when executing ReloadSwitchForWirelessControllerCleanup", err1))
 			return diags
 		}
 	}
 
-	if err != nil || response1 == nil {
-		if restyResp1 != nil {
-			log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
-		}
-		d.SetId("")
+	vItem1 := flattenFabricWirelessReloadSwitchForWirelessControllerCleanupItem(response1.Response)
+	if err := d.Set("item", vItem1); err != nil {
+		diags = append(diags, diagError(
+			"Failure when setting ReloadSwitchForWirelessControllerCleanup response",
+			err))
 		return diags
 	}
 
-	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 	d.SetId(getUnixTimeString())
 	return diags
 }
 func resourceFabricsFabricIDSwitchWirelessSettingReloadRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 	return diags
 }
 
 func resourceFabricsFabricIDSwitchWirelessSettingReloadDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 	return diags
 }
 
-func expandRequestFabricsFabricIDSwitchWirelessSettingReloadReloadSwitchForWirelessControllerCleanupV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestFabricWirelessReloadSwitchForWirelessControllerCleanupV1 {
-	request := catalystcentersdkgo.RequestFabricWirelessReloadSwitchForWirelessControllerCleanupV1{}
+func expandRequestFabricsFabricIDSwitchWirelessSettingReloadReloadSwitchForWirelessControllerCleanup(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestFabricWirelessReloadSwitchForWirelessControllerCleanup {
+	request := catalystcentersdkgo.RequestFabricWirelessReloadSwitchForWirelessControllerCleanup{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".device_id")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".device_id")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".device_id")))) {
 		request.DeviceID = interfaceToString(v)
 	}
 	return &request
 }
 
-func flattenFabricWirelessReloadSwitchForWirelessControllerCleanupV1Item(item *catalystcentersdkgo.ResponseFabricWirelessReloadSwitchForWirelessControllerCleanupV1Response) []map[string]interface{} {
+func flattenFabricWirelessReloadSwitchForWirelessControllerCleanupItem(item *catalystcentersdkgo.ResponseFabricWirelessReloadSwitchForWirelessControllerCleanupResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

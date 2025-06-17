@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -18,16 +18,16 @@ func resourceNetworkDeviceMaintenanceSchedulesID() *schema.Resource {
 	return &schema.Resource{
 		Description: `It manages read, update and delete operations on Devices.
 
-- API to update the maintenance schedule for the network devices. The *maintenanceSchedule* can be updated only if the
-*status* value is *UPCOMING* or *IN_PROGRESS*. User can exit *IN_PROGRESS* maintenance window by setting the *endTime*
-to -1. This will update the endTime to the current time and exit the maintenance window immediately. When exiting the
-maintenance window, only the endTime will be updated while other parameters remain read-only.
+- API to update the maintenance schedule for the network devices. The **maintenanceSchedule** can be updated only if the
+**status** value is **UPCOMING** or **IN_PROGRESS**. User can exit **IN_PROGRESS** maintenance window by setting the
+**endTime** to -1. This will update the endTime to the current time and exit the maintenance window immediately. When
+exiting the maintenance window, only the endTime will be updated while other parameters remain read-only.
 
-- API to delete maintenance schedule by id. Deletion is allowed if the maintenance window is in the *UPCOMING*,
-*COMPLETED*, or *FAILED* state. Deletion of maintenance schedule is not allowed if the maintenance window is currently
-*IN_PROGRESS*. To delete the maintenance schedule while it is *IN_PROGRESS*, first exit the current maintenance window
-using *PUT /dna/intent/api/v1/networkDeviceMaintenanceSchedules/{id}* API, and then proceed to delete the maintenance
-schedule.
+- API to delete maintenance schedule by id. Deletion is allowed if the maintenance window is in the **UPCOMING**,
+**COMPLETED**, or **FAILED** state. Deletion of maintenance schedule is not allowed if the maintenance window is
+currently **IN_PROGRESS**. To delete the maintenance schedule while it is **IN_PROGRESS**, first exit the current
+maintenance window using **PUT /dna/intent/api/v1/networkDeviceMaintenanceSchedules/{id}** API, and then proceed to
+delete the maintenance schedule.
 `,
 
 		CreateContext: resourceNetworkDeviceMaintenanceSchedulesIDCreate,
@@ -68,7 +68,7 @@ schedule.
 								Schema: map[string]*schema.Schema{
 
 									"end_id": &schema.Schema{
-										Description: `Activity id of end schedule of the maintenance window. To check the status of the end schedule, use GET /intent/api/v1/activities/{id}. endId remains same for every occurrence of recurrence instance.
+										Description: `Activity id of end schedule of the maintenance window. To check the status of the end schedule, use GET /dna/intent/api/v1/activities/{id}. endId remains same for every occurrence of recurrence instance.
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -101,7 +101,7 @@ schedule.
 										},
 									},
 									"start_id": &schema.Schema{
-										Description: `Activity id of start schedule of the maintenance window. To check the status of the start schedule, use GET /intent/api/v1/activities/{id}. startId remains same for every occurrence of recurrence instance.
+										Description: `Activity id of start schedule of the maintenance window. To check the status of the start schedule, use GET /dna/intent/api/v1/activities/{id}. startId remains same for every occurrence of recurrence instance.
 `,
 										Type:     schema.TypeString,
 										Computed: true,
@@ -257,7 +257,7 @@ func resourceNetworkDeviceMaintenanceSchedulesIDRead(ctx context.Context, d *sch
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenDevicesRetrievesTheMaintenanceScheduleInformationV1Item(response1.Response)
+		vItem1 := flattenDevicesRetrievesTheMaintenanceScheduleInformationItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
 				"Failure when setting RetrievesTheMaintenanceScheduleInformation response",
@@ -282,7 +282,7 @@ func resourceNetworkDeviceMaintenanceSchedulesIDUpdate(ctx context.Context, d *s
 
 	if d.HasChange("parameters") {
 		log.Printf("[DEBUG] ID used for update operation %s", vvID)
-		request1 := expandRequestNetworkDeviceMaintenanceSchedulesIDUpdatesTheMaintenanceScheduleInformationV1(ctx, "parameters.0", d)
+		request1 := expandRequestNetworkDeviceMaintenanceSchedulesIDUpdatesTheMaintenanceScheduleInformation(ctx, "parameters.0", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 		response1, restyResp1, err := client.Devices.UpdatesTheMaintenanceScheduleInformation(vvID, request1)
 		if err != nil || response1 == nil {
@@ -392,13 +392,14 @@ func resourceNetworkDeviceMaintenanceSchedulesIDDelete(ctx context.Context, d *s
 
 	return diags
 }
-func expandRequestNetworkDeviceMaintenanceSchedulesIDUpdatesTheMaintenanceScheduleInformationV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdatesTheMaintenanceScheduleInformationV1 {
-	request := catalystcentersdkgo.RequestDevicesUpdatesTheMaintenanceScheduleInformationV1{}
+
+func expandRequestNetworkDeviceMaintenanceSchedulesIDUpdatesTheMaintenanceScheduleInformation(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdatesTheMaintenanceScheduleInformation {
+	request := catalystcentersdkgo.RequestDevicesUpdatesTheMaintenanceScheduleInformation{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".description")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".description")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".description")))) {
 		request.Description = interfaceToString(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".maintenance_schedule")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".maintenance_schedule")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".maintenance_schedule")))) {
-		request.MaintenanceSchedule = expandRequestNetworkDeviceMaintenanceSchedulesIDUpdatesTheMaintenanceScheduleInformationV1MaintenanceSchedule(ctx, key+".maintenance_schedule.0", d)
+		request.MaintenanceSchedule = expandRequestNetworkDeviceMaintenanceSchedulesIDUpdatesTheMaintenanceScheduleInformationMaintenanceSchedule(ctx, key+".maintenance_schedule.0", d)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".network_device_ids")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".network_device_ids")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".network_device_ids")))) {
 		request.NetworkDeviceIDs = interfaceToSliceString(v)
@@ -409,8 +410,8 @@ func expandRequestNetworkDeviceMaintenanceSchedulesIDUpdatesTheMaintenanceSchedu
 	return &request
 }
 
-func expandRequestNetworkDeviceMaintenanceSchedulesIDUpdatesTheMaintenanceScheduleInformationV1MaintenanceSchedule(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdatesTheMaintenanceScheduleInformationV1MaintenanceSchedule {
-	request := catalystcentersdkgo.RequestDevicesUpdatesTheMaintenanceScheduleInformationV1MaintenanceSchedule{}
+func expandRequestNetworkDeviceMaintenanceSchedulesIDUpdatesTheMaintenanceScheduleInformationMaintenanceSchedule(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdatesTheMaintenanceScheduleInformationMaintenanceSchedule {
+	request := catalystcentersdkgo.RequestDevicesUpdatesTheMaintenanceScheduleInformationMaintenanceSchedule{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".start_time")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".start_time")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".start_time")))) {
 		request.StartTime = interfaceToFloat64Ptr(v)
 	}
@@ -418,7 +419,7 @@ func expandRequestNetworkDeviceMaintenanceSchedulesIDUpdatesTheMaintenanceSchedu
 		request.EndTime = interfaceToFloat64Ptr(v)
 	}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".recurrence")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".recurrence")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".recurrence")))) {
-		request.Recurrence = expandRequestNetworkDeviceMaintenanceSchedulesIDUpdatesTheMaintenanceScheduleInformationV1MaintenanceScheduleRecurrence(ctx, key+".recurrence.0", d)
+		request.Recurrence = expandRequestNetworkDeviceMaintenanceSchedulesIDUpdatesTheMaintenanceScheduleInformationMaintenanceScheduleRecurrence(ctx, key+".recurrence.0", d)
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
 		return nil
@@ -426,8 +427,8 @@ func expandRequestNetworkDeviceMaintenanceSchedulesIDUpdatesTheMaintenanceSchedu
 	return &request
 }
 
-func expandRequestNetworkDeviceMaintenanceSchedulesIDUpdatesTheMaintenanceScheduleInformationV1MaintenanceScheduleRecurrence(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdatesTheMaintenanceScheduleInformationV1MaintenanceScheduleRecurrence {
-	request := catalystcentersdkgo.RequestDevicesUpdatesTheMaintenanceScheduleInformationV1MaintenanceScheduleRecurrence{}
+func expandRequestNetworkDeviceMaintenanceSchedulesIDUpdatesTheMaintenanceScheduleInformationMaintenanceScheduleRecurrence(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestDevicesUpdatesTheMaintenanceScheduleInformationMaintenanceScheduleRecurrence {
+	request := catalystcentersdkgo.RequestDevicesUpdatesTheMaintenanceScheduleInformationMaintenanceScheduleRecurrence{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".interval")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".interval")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".interval")))) {
 		request.Interval = interfaceToIntPtr(v)
 	}

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -62,16 +62,7 @@ func resourceLicenseRenewCreate(ctx context.Context, d *schema.ResourceData, m i
 
 	// has_unknown_response: None
 
-	response1, restyResp1, err := client.Licenses.SmartLicensingRenewOperationV1()
-
-	vItem1 := flattenLicensesSmartLicensingRenewOperationV1Item(response1.Response)
-	if err := d.Set("item", vItem1); err != nil {
-		diags = append(diags, diagError(
-			"Failure when setting SmartLicensingRenewOperationV1 response",
-			err))
-		return diags
-	}
-	//Analizar verificacion.
+	response1, restyResp1, err := client.Licenses.SmartLicensingRenewOperation()
 
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
@@ -82,23 +73,35 @@ func resourceLicenseRenewCreate(ctx context.Context, d *schema.ResourceData, m i
 	}
 
 	log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+	vItem1 := flattenLicensesSmartLicensingRenewOperationItem(response1.Response)
+	if err := d.Set("item", vItem1); err != nil {
+		diags = append(diags, diagError(
+			"Failure when setting SmartLicensingRenewOperation response",
+			err))
+		return diags
+	}
+
 	d.SetId(getUnixTimeString())
 	return diags
+
+	//Analizar verificacion.
+
 }
 func resourceLicenseRenewRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 	var diags diag.Diagnostics
 	return diags
 }
 
 func resourceLicenseRenewDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	//client := m.(*dnacentersdkgo.Client)
+	//client := m.(*catalystcentersdkgo.Client)
 
 	var diags diag.Diagnostics
 	return diags
 }
 
-func flattenLicensesSmartLicensingRenewOperationV1Item(item *catalystcentersdkgo.ResponseLicensesSmartLicensingRenewOperationV1Response) []map[string]interface{} {
+func flattenLicensesSmartLicensingRenewOperationItem(item *catalystcentersdkgo.ResponseLicensesSmartLicensingRenewOperationResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

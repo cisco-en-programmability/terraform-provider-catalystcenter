@@ -37,7 +37,7 @@ output "catalystcenter_sda_layer3_virtual_networks_example" {
 
 - `anchored_site_id` (String) anchoredSiteId query parameter. Fabric ID of the fabric site the layer 3 virtual network is anchored at.
 - `fabric_id` (String) fabricId query parameter. ID of the fabric the layer 3 virtual network is assigned to.
-- `limit` (Number) limit query parameter. Maximum number of records to return.
+- `limit` (Number) limit query parameter. Maximum number of records to return. The maximum number of objects supported in a single request is 500.
 - `offset` (Number) offset query parameter. Starting record for pagination.
 - `virtual_network_name` (String) virtualNetworkName query parameter. Name of the layer 3 virtual network.
 

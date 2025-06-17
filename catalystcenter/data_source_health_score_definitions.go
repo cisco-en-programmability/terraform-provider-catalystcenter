@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -166,10 +166,10 @@ func dataSourceHealthScoreDefinitionsRead(ctx context.Context, d *schema.Resourc
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetAllHealthScoreDefinitionsForGivenFiltersV1")
+		log.Printf("[DEBUG] Selected method: GetAllHealthScoreDefinitionsForGivenFilters")
 
-		headerParams1 := catalystcentersdkgo.GetAllHealthScoreDefinitionsForGivenFiltersV1HeaderParams{}
-		queryParams1 := catalystcentersdkgo.GetAllHealthScoreDefinitionsForGivenFiltersV1QueryParams{}
+		headerParams1 := catalystcentersdkgo.GetAllHealthScoreDefinitionsForGivenFiltersHeaderParams{}
+		queryParams1 := catalystcentersdkgo.GetAllHealthScoreDefinitionsForGivenFiltersQueryParams{}
 
 		if okDeviceType {
 			queryParams1.DeviceType = vDeviceType.(string)
@@ -193,15 +193,29 @@ func dataSourceHealthScoreDefinitionsRead(ctx context.Context, d *schema.Resourc
 			headerParams1.XCaLLERID = vXCaLLERID.(string)
 		}
 
-		response1, restyResp1, err := client.Devices.GetAllHealthScoreDefinitionsForGivenFiltersV1(&headerParams1, &queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Devices.GetAllHealthScoreDefinitionsForGivenFilters(&headerParams1, &queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetAllHealthScoreDefinitionsForGivenFiltersV1", err,
-				"Failure at GetAllHealthScoreDefinitionsForGivenFiltersV1, unexpected response", ""))
+				"Failure when executing 2 GetAllHealthScoreDefinitionsForGivenFilters", err,
+				"Failure at GetAllHealthScoreDefinitionsForGivenFilters, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetAllHealthScoreDefinitionsForGivenFilters", err,
+				"Failure at GetAllHealthScoreDefinitionsForGivenFilters, unexpected response", ""))
 			return diags
 		}
 
@@ -209,33 +223,47 @@ func dataSourceHealthScoreDefinitionsRead(ctx context.Context, d *schema.Resourc
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetHealthScoreDefinitionForTheGivenIDV1")
+		log.Printf("[DEBUG] Selected method: GetHealthScoreDefinitionForTheGivenID")
 		vvID := vID.(string)
 
-		headerParams2 := catalystcentersdkgo.GetHealthScoreDefinitionForTheGivenIDV1HeaderParams{}
+		headerParams2 := catalystcentersdkgo.GetHealthScoreDefinitionForTheGivenIDHeaderParams{}
 
 		if okXCaLLERID {
 			headerParams2.XCaLLERID = vXCaLLERID.(string)
 		}
 
-		response2, restyResp2, err := client.Devices.GetHealthScoreDefinitionForTheGivenIDV1(vvID, &headerParams2)
+		// has_unknown_response: None
+
+		response2, restyResp2, err := client.Devices.GetHealthScoreDefinitionForTheGivenID(vvID, &headerParams2)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetHealthScoreDefinitionForTheGivenIDV1", err,
-				"Failure at GetHealthScoreDefinitionForTheGivenIDV1, unexpected response", ""))
+				"Failure when executing 2 GetHealthScoreDefinitionForTheGivenID", err,
+				"Failure at GetHealthScoreDefinitionForTheGivenID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItems2 := flattenDevicesGetHealthScoreDefinitionForTheGivenIDV1Items(response2.Response)
+		if err != nil || response2 == nil {
+			if restyResp2 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetHealthScoreDefinitionForTheGivenID", err,
+				"Failure at GetHealthScoreDefinitionForTheGivenID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
+
+		vItems2 := flattenDevicesGetHealthScoreDefinitionForTheGivenIDItems(response2.Response)
 		if err := d.Set("items", vItems2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetHealthScoreDefinitionForTheGivenIDV1 response",
+				"Failure when setting GetHealthScoreDefinitionForTheGivenID response",
 				err))
 			return diags
 		}
@@ -247,7 +275,7 @@ func dataSourceHealthScoreDefinitionsRead(ctx context.Context, d *schema.Resourc
 	return diags
 }
 
-func flattenDevicesGetHealthScoreDefinitionForTheGivenIDV1Items(items *[]catalystcentersdkgo.ResponseDevicesGetHealthScoreDefinitionForTheGivenIDV1Response) []map[string]interface{} {
+func flattenDevicesGetHealthScoreDefinitionForTheGivenIDItems(items *[]catalystcentersdkgo.ResponseDevicesGetHealthScoreDefinitionForTheGivenIDResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

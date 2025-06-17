@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -131,29 +131,43 @@ func dataSourceNetworkDeviceConfigTaskRead(ctx context.Context, d *schema.Resour
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetConfigTaskDetailsV1")
-		queryParams1 := catalystcentersdkgo.GetConfigTaskDetailsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetConfigTaskDetails")
+		queryParams1 := catalystcentersdkgo.GetConfigTaskDetailsQueryParams{}
 
 		queryParams1.ParentTaskID = vParentTaskID.(string)
 
-		response1, restyResp1, err := client.Compliance.GetConfigTaskDetailsV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Compliance.GetConfigTaskDetails(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetConfigTaskDetailsV1", err,
-				"Failure at GetConfigTaskDetailsV1, unexpected response", ""))
+				"Failure when executing 2 GetConfigTaskDetails", err,
+				"Failure at GetConfigTaskDetails, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenComplianceGetConfigTaskDetailsV1Items(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetConfigTaskDetails", err,
+				"Failure at GetConfigTaskDetails, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenComplianceGetConfigTaskDetailsItems(response1.Response)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetConfigTaskDetailsV1 response",
+				"Failure when setting GetConfigTaskDetails response",
 				err))
 			return diags
 		}
@@ -165,7 +179,7 @@ func dataSourceNetworkDeviceConfigTaskRead(ctx context.Context, d *schema.Resour
 	return diags
 }
 
-func flattenComplianceGetConfigTaskDetailsV1Items(items *[]catalystcentersdkgo.ResponseComplianceGetConfigTaskDetailsV1Response) []map[string]interface{} {
+func flattenComplianceGetConfigTaskDetailsItems(items *[]catalystcentersdkgo.ResponseComplianceGetConfigTaskDetailsResponse) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

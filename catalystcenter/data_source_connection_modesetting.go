@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -77,28 +77,40 @@ func dataSourceConnectionModesettingRead(ctx context.Context, d *schema.Resource
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: RetrievesCSSMConnectionModeV1")
+		log.Printf("[DEBUG] Selected method: RetrievesCSSMConnectionMode")
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Licenses.RetrievesCSSMConnectionModeV1()
+		response1, restyResp1, err := client.Licenses.RetrievesCSSMConnectionMode()
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 RetrievesCSSMConnectionModeV1", err,
-				"Failure at RetrievesCSSMConnectionModeV1, unexpected response", ""))
+				"Failure when executing 2 RetrievesCSSMConnectionMode", err,
+				"Failure at RetrievesCSSMConnectionMode, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenLicensesRetrievesCSSMConnectionModeV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 RetrievesCSSMConnectionMode", err,
+				"Failure at RetrievesCSSMConnectionMode, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenLicensesRetrievesCSSMConnectionModeItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting RetrievesCSSMConnectionModeV1 response",
+				"Failure when setting RetrievesCSSMConnectionMode response",
 				err))
 			return diags
 		}
@@ -110,19 +122,19 @@ func dataSourceConnectionModesettingRead(ctx context.Context, d *schema.Resource
 	return diags
 }
 
-func flattenLicensesRetrievesCSSMConnectionModeV1Item(item *catalystcentersdkgo.ResponseLicensesRetrievesCSSMConnectionModeV1Response) []map[string]interface{} {
+func flattenLicensesRetrievesCSSMConnectionModeItem(item *catalystcentersdkgo.ResponseLicensesRetrievesCSSMConnectionModeResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
 	respItem := make(map[string]interface{})
 	respItem["connection_mode"] = item.ConnectionMode
-	respItem["parameters"] = flattenLicensesRetrievesCSSMConnectionModeV1ItemParameters(item.Parameters)
+	respItem["parameters"] = flattenLicensesRetrievesCSSMConnectionModeItemParameters(item.Parameters)
 	return []map[string]interface{}{
 		respItem,
 	}
 }
 
-func flattenLicensesRetrievesCSSMConnectionModeV1ItemParameters(item *catalystcentersdkgo.ResponseLicensesRetrievesCSSMConnectionModeV1ResponseParameters) []map[string]interface{} {
+func flattenLicensesRetrievesCSSMConnectionModeItemParameters(item *catalystcentersdkgo.ResponseLicensesRetrievesCSSMConnectionModeResponseParameters) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

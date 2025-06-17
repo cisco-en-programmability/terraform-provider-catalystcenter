@@ -1,7 +1,7 @@
 
 resource "catalystcenter_configuration_template_project" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     create_time      = 1

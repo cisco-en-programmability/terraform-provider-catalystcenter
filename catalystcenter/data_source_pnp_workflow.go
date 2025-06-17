@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -29,9 +29,9 @@ workflows. Pagination and sorting are also supported by this endpoint
 				Optional:    true,
 			},
 			"limit": &schema.Schema{
-				Description: `limit query parameter. Limits number of results
+				Description: `limit query parameter. The number of records to show for this page. The minimum and maximum values are 0 and 500, respectively
 `,
-				Type:     schema.TypeInt,
+				Type:     schema.TypeFloat,
 				Optional: true,
 			},
 			"name": &schema.Schema{
@@ -44,9 +44,9 @@ workflows. Pagination and sorting are also supported by this endpoint
 				},
 			},
 			"offset": &schema.Schema{
-				Description: `offset query parameter. Index of first result
+				Description: `offset query parameter. The first record to show for this page; the first record is numbered 0. The Minimum value is 0
 `,
-				Type:     schema.TypeInt,
+				Type:     schema.TypeFloat,
 				Optional: true,
 			},
 			"sort": &schema.Schema{
@@ -536,8 +536,8 @@ func dataSourcePnpWorkflowRead(ctx context.Context, d *schema.ResourceData, m in
 
 	selectedMethod := pickMethod([][]bool{method1, method2})
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetWorkflowsV1")
-		queryParams1 := catalystcentersdkgo.GetWorkflowsV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetWorkflows")
+		queryParams1 := catalystcentersdkgo.GetWorkflowsQueryParams{}
 
 		if okLimit {
 			queryParams1.Limit = vLimit.(float64)
@@ -558,24 +558,38 @@ func dataSourcePnpWorkflowRead(ctx context.Context, d *schema.ResourceData, m in
 			queryParams1.Name = interfaceToSliceString(vName)
 		}
 
-		response1, restyResp1, err := client.DeviceOnboardingPnp.GetWorkflowsV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.DeviceOnboardingPnp.GetWorkflows(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetWorkflowsV1", err,
-				"Failure at GetWorkflowsV1, unexpected response", ""))
+				"Failure when executing 2 GetWorkflows", err,
+				"Failure at GetWorkflows, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItems1 := flattenDeviceOnboardingPnpGetWorkflowsV1Items(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetWorkflows", err,
+				"Failure at GetWorkflows, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItems1 := flattenDeviceOnboardingPnpGetWorkflowsItems(response1)
 		if err := d.Set("items", vItems1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetWorkflowsV1 response",
+				"Failure when setting GetWorkflows response",
 				err))
 			return diags
 		}
@@ -585,27 +599,41 @@ func dataSourcePnpWorkflowRead(ctx context.Context, d *schema.ResourceData, m in
 
 	}
 	if selectedMethod == 2 {
-		log.Printf("[DEBUG] Selected method: GetWorkflowByIDV1")
+		log.Printf("[DEBUG] Selected method: GetWorkflowByID")
 		vvID := vID.(string)
 
-		response2, restyResp2, err := client.DeviceOnboardingPnp.GetWorkflowByIDV1(vvID)
+		// has_unknown_response: None
+
+		response2, restyResp2, err := client.DeviceOnboardingPnp.GetWorkflowByID(vvID)
 
 		if err != nil || response2 == nil {
 			if restyResp2 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetWorkflowByIDV1", err,
-				"Failure at GetWorkflowByIDV1, unexpected response", ""))
+				"Failure when executing 2 GetWorkflowByID", err,
+				"Failure at GetWorkflowByID, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
 
-		vItem2 := flattenDeviceOnboardingPnpGetWorkflowByIDV1Item(response2)
+		if err != nil || response2 == nil {
+			if restyResp2 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp2.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetWorkflowByID", err,
+				"Failure at GetWorkflowByID, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response2))
+
+		vItem2 := flattenDeviceOnboardingPnpGetWorkflowByIDItem(response2)
 		if err := d.Set("item", vItem2); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetWorkflowByIDV1 response",
+				"Failure when setting GetWorkflowByID response",
 				err))
 			return diags
 		}
@@ -617,7 +645,7 @@ func dataSourcePnpWorkflowRead(ctx context.Context, d *schema.ResourceData, m in
 	return diags
 }
 
-func flattenDeviceOnboardingPnpGetWorkflowsV1Items(items *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetWorkflowsV1) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetWorkflowsItems(items *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetWorkflows) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -632,7 +660,7 @@ func flattenDeviceOnboardingPnpGetWorkflowsV1Items(items *catalystcentersdkgo.Re
 		respItem["image_id"] = item.ImageID
 		respItem["curr_task_idx"] = item.CurrTaskIDx
 		respItem["added_on"] = item.AddedOn
-		respItem["tasks"] = flattenDeviceOnboardingPnpGetWorkflowsV1ItemsTasks(item.Tasks)
+		respItem["tasks"] = flattenDeviceOnboardingPnpGetWorkflowsItemsTasks(item.Tasks)
 		respItem["add_to_inventory"] = boolPtrToString(item.AddToInventory)
 		respItem["instance_type"] = item.InstanceType
 		respItem["end_time"] = item.EndTime
@@ -648,7 +676,7 @@ func flattenDeviceOnboardingPnpGetWorkflowsV1Items(items *catalystcentersdkgo.Re
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetWorkflowsV1ItemsTasks(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetWorkflowsV1Tasks) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetWorkflowsItemsTasks(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetWorkflowsTasks) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -661,7 +689,7 @@ func flattenDeviceOnboardingPnpGetWorkflowsV1ItemsTasks(items *[]catalystcenters
 		respItem["task_seq_no"] = item.TaskSeqNo
 		respItem["end_time"] = item.EndTime
 		respItem["start_time"] = item.StartTime
-		respItem["work_item_list"] = flattenDeviceOnboardingPnpGetWorkflowsV1ItemsTasksWorkItemList(item.WorkItemList)
+		respItem["work_item_list"] = flattenDeviceOnboardingPnpGetWorkflowsItemsTasksWorkItemList(item.WorkItemList)
 		respItem["time_taken"] = item.TimeTaken
 		respItem["name"] = item.Name
 		respItems = append(respItems, respItem)
@@ -669,7 +697,7 @@ func flattenDeviceOnboardingPnpGetWorkflowsV1ItemsTasks(items *[]catalystcenters
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetWorkflowsV1ItemsTasksWorkItemList(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetWorkflowsV1TasksWorkItemList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetWorkflowsItemsTasksWorkItemList(items *[]catalystcentersdkgo.ResponseItemDeviceOnboardingPnpGetWorkflowsTasksWorkItemList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -687,7 +715,7 @@ func flattenDeviceOnboardingPnpGetWorkflowsV1ItemsTasksWorkItemList(items *[]cat
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetWorkflowByIDV1Item(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetWorkflowByIDV1) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetWorkflowByIDItem(item *catalystcentersdkgo.ResponseDeviceOnboardingPnpGetWorkflowByID) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}
@@ -700,7 +728,7 @@ func flattenDeviceOnboardingPnpGetWorkflowByIDV1Item(item *catalystcentersdkgo.R
 	respItem["image_id"] = item.ImageID
 	respItem["curr_task_idx"] = item.CurrTaskIDx
 	respItem["added_on"] = item.AddedOn
-	respItem["tasks"] = flattenDeviceOnboardingPnpGetWorkflowByIDV1ItemTasks(item.Tasks)
+	respItem["tasks"] = flattenDeviceOnboardingPnpGetWorkflowByIDItemTasks(item.Tasks)
 	respItem["add_to_inventory"] = boolPtrToString(item.AddToInventory)
 	respItem["instance_type"] = item.InstanceType
 	respItem["end_time"] = item.EndTime
@@ -716,7 +744,7 @@ func flattenDeviceOnboardingPnpGetWorkflowByIDV1Item(item *catalystcentersdkgo.R
 	}
 }
 
-func flattenDeviceOnboardingPnpGetWorkflowByIDV1ItemTasks(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetWorkflowByIDV1Tasks) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetWorkflowByIDItemTasks(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetWorkflowByIDTasks) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}
@@ -729,7 +757,7 @@ func flattenDeviceOnboardingPnpGetWorkflowByIDV1ItemTasks(items *[]catalystcente
 		respItem["task_seq_no"] = item.TaskSeqNo
 		respItem["end_time"] = item.EndTime
 		respItem["start_time"] = item.StartTime
-		respItem["work_item_list"] = flattenDeviceOnboardingPnpGetWorkflowByIDV1ItemTasksWorkItemList(item.WorkItemList)
+		respItem["work_item_list"] = flattenDeviceOnboardingPnpGetWorkflowByIDItemTasksWorkItemList(item.WorkItemList)
 		respItem["time_taken"] = item.TimeTaken
 		respItem["name"] = item.Name
 		respItems = append(respItems, respItem)
@@ -737,7 +765,7 @@ func flattenDeviceOnboardingPnpGetWorkflowByIDV1ItemTasks(items *[]catalystcente
 	return respItems
 }
 
-func flattenDeviceOnboardingPnpGetWorkflowByIDV1ItemTasksWorkItemList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetWorkflowByIDV1TasksWorkItemList) []map[string]interface{} {
+func flattenDeviceOnboardingPnpGetWorkflowByIDItemTasksWorkItemList(items *[]catalystcentersdkgo.ResponseDeviceOnboardingPnpGetWorkflowByIDTasksWorkItemList) []map[string]interface{} {
 	if items == nil {
 		return nil
 	}

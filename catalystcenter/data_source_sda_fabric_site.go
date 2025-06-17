@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -89,29 +89,43 @@ func dataSourceSdaFabricSiteRead(ctx context.Context, d *schema.ResourceData, m 
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetSiteFromSdaFabricV1")
-		queryParams1 := catalystcentersdkgo.GetSiteFromSdaFabricV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetSiteFromSdaFabric")
+		queryParams1 := catalystcentersdkgo.GetSiteFromSdaFabricQueryParams{}
 
 		queryParams1.SiteNameHierarchy = vSiteNameHierarchy.(string)
 
-		response1, restyResp1, err := client.Sda.GetSiteFromSdaFabricV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sda.GetSiteFromSdaFabric(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetSiteFromSdaFabricV1", err,
-				"Failure at GetSiteFromSdaFabricV1, unexpected response", ""))
+				"Failure when executing 2 GetSiteFromSdaFabric", err,
+				"Failure at GetSiteFromSdaFabric, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetSiteFromSdaFabricV1Item(response1)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetSiteFromSdaFabric", err,
+				"Failure at GetSiteFromSdaFabric, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSdaGetSiteFromSdaFabricItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetSiteFromSdaFabricV1 response",
+				"Failure when setting GetSiteFromSdaFabric response",
 				err))
 			return diags
 		}
@@ -123,7 +137,7 @@ func dataSourceSdaFabricSiteRead(ctx context.Context, d *schema.ResourceData, m 
 	return diags
 }
 
-func flattenSdaGetSiteFromSdaFabricV1Item(item *catalystcentersdkgo.ResponseSdaGetSiteFromSdaFabricV1) []map[string]interface{} {
+func flattenSdaGetSiteFromSdaFabricItem(item *catalystcentersdkgo.ResponseSdaGetSiteFromSdaFabric) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

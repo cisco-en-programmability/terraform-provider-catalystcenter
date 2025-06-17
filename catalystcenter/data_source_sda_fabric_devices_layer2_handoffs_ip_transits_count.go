@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -61,8 +61,8 @@ func dataSourceSdaFabricDevicesLayer2HandoffsIPTransitsCountRead(ctx context.Con
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetFabricDevicesLayer3HandoffsWithIPTransitCountV1")
-		queryParams1 := catalystcentersdkgo.GetFabricDevicesLayer3HandoffsWithIPTransitCountV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetFabricDevicesLayer3HandoffsWithIPTransitCount")
+		queryParams1 := catalystcentersdkgo.GetFabricDevicesLayer3HandoffsWithIPTransitCountQueryParams{}
 
 		queryParams1.FabricID = vFabricID.(string)
 
@@ -70,24 +70,38 @@ func dataSourceSdaFabricDevicesLayer2HandoffsIPTransitsCountRead(ctx context.Con
 			queryParams1.NetworkDeviceID = vNetworkDeviceID.(string)
 		}
 
-		response1, restyResp1, err := client.Sda.GetFabricDevicesLayer3HandoffsWithIPTransitCountV1(&queryParams1)
+		// has_unknown_response: None
+
+		response1, restyResp1, err := client.Sda.GetFabricDevicesLayer3HandoffsWithIPTransitCount(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing 2 GetFabricDevicesLayer3HandoffsWithIPTransitCountV1", err,
-				"Failure at GetFabricDevicesLayer3HandoffsWithIPTransitCountV1, unexpected response", ""))
+				"Failure when executing 2 GetFabricDevicesLayer3HandoffsWithIPTransitCount", err,
+				"Failure at GetFabricDevicesLayer3HandoffsWithIPTransitCount, unexpected response", ""))
 			return diags
 		}
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetFabricDevicesLayer3HandoffsWithIPTransitCountV1Item(response1.Response)
+		if err != nil || response1 == nil {
+			if restyResp1 != nil {
+				log.Printf("[DEBUG] Retrieved error response %s", restyResp1.String())
+			}
+			diags = append(diags, diagErrorWithAlt(
+				"Failure when executing 2 GetFabricDevicesLayer3HandoffsWithIPTransitCount", err,
+				"Failure at GetFabricDevicesLayer3HandoffsWithIPTransitCount, unexpected response", ""))
+			return diags
+		}
+
+		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
+
+		vItem1 := flattenSdaGetFabricDevicesLayer3HandoffsWithIPTransitCountItem(response1.Response)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetFabricDevicesLayer3HandoffsWithIPTransitCountV1 response",
+				"Failure when setting GetFabricDevicesLayer3HandoffsWithIPTransitCount response",
 				err))
 			return diags
 		}
@@ -99,7 +113,7 @@ func dataSourceSdaFabricDevicesLayer2HandoffsIPTransitsCountRead(ctx context.Con
 	return diags
 }
 
-func flattenSdaGetFabricDevicesLayer3HandoffsWithIPTransitCountV1Item(item *catalystcentersdkgo.ResponseSdaGetFabricDevicesLayer3HandoffsWithIPTransitCountV1Response) []map[string]interface{} {
+func flattenSdaGetFabricDevicesLayer3HandoffsWithIPTransitCountItem(item *catalystcentersdkgo.ResponseSdaGetFabricDevicesLayer3HandoffsWithIPTransitCountResponse) []map[string]interface{} {
 	if item == nil {
 		return nil
 	}

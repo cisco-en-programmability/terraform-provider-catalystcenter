@@ -87,7 +87,7 @@ Read-Only:
 - `data_rates` (String)
 - `discovery_frames6_g_hz` (String)
 - `enable_standard_power_service` (String)
-- `fra_properties` (List of Object) (see [below for nested schema](#nestedobjatt--item--radio_type6_g_hz_properties--fra_properties))
+- `fra_properties_c` (List of Object) (see [below for nested schema](#nestedobjatt--item--radio_type6_g_hz_properties--fra_properties_c))
 - `mandatory_data_rates` (String)
 - `max_dbs_width` (Number)
 - `max_power_level` (Number)
@@ -114,8 +114,8 @@ Read-Only:
 - `chd_voice_rssi_threshold` (Number)
 
 
-<a id="nestedobjatt--item--radio_type6_g_hz_properties--fra_properties"></a>
-### Nested Schema for `item.radio_type6_g_hz_properties.fra_properties`
+<a id="nestedobjatt--item--radio_type6_g_hz_properties--fra_properties_c"></a>
+### Nested Schema for `item.radio_type6_g_hz_properties.fra_properties_c`
 
 Read-Only:
 
@@ -179,7 +179,7 @@ Read-Only:
 - `coverage_hole_detection_properties` (List of Object) (see [below for nested schema](#nestedobjatt--item--radio_type_a_properties--coverage_hole_detection_properties))
 - `custom_rx_sop_threshold` (Number)
 - `data_rates` (String)
-- `fra_properties` (List of Object) (see [below for nested schema](#nestedobjatt--item--radio_type_a_properties--fra_properties))
+- `fra_properties_a` (List of Object) (see [below for nested schema](#nestedobjatt--item--radio_type_a_properties--fra_properties_a))
 - `mandatory_data_rates` (String)
 - `max_power_level` (Number)
 - `max_radio_clients` (Number)
@@ -203,8 +203,8 @@ Read-Only:
 - `chd_voice_rssi_threshold` (Number)
 
 
-<a id="nestedobjatt--item--radio_type_a_properties--fra_properties"></a>
-### Nested Schema for `item.radio_type_a_properties.fra_properties`
+<a id="nestedobjatt--item--radio_type_a_properties--fra_properties_a"></a>
+### Nested Schema for `item.radio_type_a_properties.fra_properties_a`
 
 Read-Only:
 
@@ -296,7 +296,7 @@ Read-Only:
 - `data_rates` (String)
 - `discovery_frames6_g_hz` (String)
 - `enable_standard_power_service` (String)
-- `fra_properties` (List of Object) (see [below for nested schema](#nestedobjatt--items--radio_type6_g_hz_properties--fra_properties))
+- `fra_properties_c` (List of Object) (see [below for nested schema](#nestedobjatt--items--radio_type6_g_hz_properties--fra_properties_c))
 - `mandatory_data_rates` (String)
 - `max_dbs_width` (Number)
 - `max_power_level` (Number)
@@ -323,8 +323,8 @@ Read-Only:
 - `chd_voice_rssi_threshold` (Number)
 
 
-<a id="nestedobjatt--items--radio_type6_g_hz_properties--fra_properties"></a>
-### Nested Schema for `items.radio_type6_g_hz_properties.fra_properties`
+<a id="nestedobjatt--items--radio_type6_g_hz_properties--fra_properties_c"></a>
+### Nested Schema for `items.radio_type6_g_hz_properties.fra_properties_c`
 
 Read-Only:
 
@@ -388,7 +388,7 @@ Read-Only:
 - `coverage_hole_detection_properties` (List of Object) (see [below for nested schema](#nestedobjatt--items--radio_type_a_properties--coverage_hole_detection_properties))
 - `custom_rx_sop_threshold` (Number)
 - `data_rates` (String)
-- `fra_properties` (List of Object) (see [below for nested schema](#nestedobjatt--items--radio_type_a_properties--fra_properties))
+- `fra_properties_a` (List of Object) (see [below for nested schema](#nestedobjatt--items--radio_type_a_properties--fra_properties_a))
 - `mandatory_data_rates` (String)
 - `max_power_level` (Number)
 - `max_radio_clients` (Number)
@@ -412,8 +412,8 @@ Read-Only:
 - `chd_voice_rssi_threshold` (Number)
 
 
-<a id="nestedobjatt--items--radio_type_a_properties--fra_properties"></a>
-### Nested Schema for `items.radio_type_a_properties.fra_properties`
+<a id="nestedobjatt--items--radio_type_a_properties--fra_properties_a"></a>
+### Nested Schema for `items.radio_type_a_properties.fra_properties_a`
 
 Read-Only:
 

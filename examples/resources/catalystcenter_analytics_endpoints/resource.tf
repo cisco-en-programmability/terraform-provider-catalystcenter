@@ -1,7 +1,7 @@
 
 resource "catalystcenter_analytics_endpoints" "example" {
   provider = catalystcenter
-
+ 
   parameters {
 
     device_type           = "string"

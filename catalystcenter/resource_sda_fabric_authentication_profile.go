@@ -8,7 +8,7 @@ import (
 
 	"log"
 
-	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v2/sdk"
+	catalystcentersdkgo "github.com/cisco-en-programmability/catalystcenter-go-sdk/v3/sdk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -103,56 +103,66 @@ func resourceSdaFabricAuthenticationProfile() *schema.Resource {
 				},
 			},
 			"parameters": &schema.Schema{
-				Description: `Array of RequestSdaAddDefaultAuthenticationTemplateInSDAFabricV1`,
+				Description: `Array of RequestSdaAddDefaultAuthenticationTemplateInSDAFabric`,
 				Type:        schema.TypeList,
 				Optional:    true,
 				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"payload": &schema.Schema{
+							Description: `Array of RequestApplicationPolicyCreateApplication`,
+							Type:        schema.TypeList,
+							Optional:    true,
+							Computed:    true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
 
-						"authenticate_template_name": &schema.Schema{
-							Description: `Authenticate Template Name
+									"authenticate_template_name": &schema.Schema{
+										Description: `Authenticate Template Name
 `,
-							Type:     schema.TypeString,
-							Optional: true,
-							Computed: true,
-						},
-						"authentication_order": &schema.Schema{
-							Description: `Authentication Order
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+									},
+									"authentication_order": &schema.Schema{
+										Description: `Authentication Order
 `,
-							Type:     schema.TypeString,
-							Optional: true,
-							Computed: true,
-						},
-						"dot1x_to_mab_fallback_timeout": &schema.Schema{
-							Description: `Dot1x To MabFallback Timeout( Allowed range is [3-120])
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+									},
+									"dot1x_to_mab_fallback_timeout": &schema.Schema{
+										Description: `Dot1x To MabFallback Timeout( Allowed range is [3-120])
 `,
-							Type:     schema.TypeString,
-							Optional: true,
-							Computed: true,
-						},
-						"number_of_hosts": &schema.Schema{
-							Description: `Number Of Hosts
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+									},
+									"number_of_hosts": &schema.Schema{
+										Description: `Number Of Hosts
 `,
-							Type:     schema.TypeString,
-							Optional: true,
-							Computed: true,
-						},
-						"site_name_hierarchy": &schema.Schema{
-							Description: `Path of sda Fabric Site
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+									},
+									"site_name_hierarchy": &schema.Schema{
+										Description: `Path of sda Fabric Site
 `,
-							Type:     schema.TypeString,
-							Optional: true,
-							Computed: true,
-						},
-						"wake_on_lan": &schema.Schema{
-							Description: `Wake On Lan
+										Type:     schema.TypeString,
+										Optional: true,
+										Computed: true,
+									},
+									"wake_on_lan": &schema.Schema{
+										Description: `Wake On Lan
 `,
-							// Type:        schema.TypeBool,
-							Type:         schema.TypeString,
-							ValidateFunc: validateStringHasValueFunc([]string{"", "true", "false"}),
-							Optional:     true,
-							Computed:     true,
+										// Type:        schema.TypeBool,
+										Type:         schema.TypeString,
+										ValidateFunc: validateStringHasValueFunc([]string{"", "true", "false"}),
+										Optional:     true,
+										Computed:     true,
+									},
+								},
+							},
 						},
 					},
 				},
@@ -167,29 +177,29 @@ func resourceSdaFabricAuthenticationProfileCreate(ctx context.Context, d *schema
 	var diags diag.Diagnostics
 
 	resourceItem := *getResourceItem(d.Get("parameters"))
-	request1 := expandRequestSdaFabricAuthenticationProfileAddDefaultAuthenticationTemplateInSdaFabricV1(ctx, "parameters", d)
+	request1 := expandRequestSdaFabricAuthenticationProfileAddDefaultAuthenticationTemplateInSdaFabric(ctx, "parameters", d)
 	log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
 
 	vSiteNameHierarchy := resourceItem["site_name_hierarchy"]
 	vvSiteNameHierarchy := interfaceToString(vSiteNameHierarchy)
-	queryParamImport := catalystcentersdkgo.GetDefaultAuthenticationProfileFromSdaFabricV1QueryParams{}
+	queryParamImport := catalystcentersdkgo.GetDefaultAuthenticationProfileFromSdaFabricQueryParams{}
 	queryParamImport.SiteNameHierarchy = vvSiteNameHierarchy
-	item2, _, err := client.Sda.GetDefaultAuthenticationProfileFromSdaFabricV1(&queryParamImport)
+	item2, _, err := client.Sda.GetDefaultAuthenticationProfileFromSdaFabric(&queryParamImport)
 	if err != nil || item2 != nil {
 		resourceMap := make(map[string]string)
 		resourceMap["site_name_hierarchy"] = item2.SiteNameHierarchy
 		d.SetId(joinResourceID(resourceMap))
 		return resourceSdaFabricAuthenticationProfileRead(ctx, d, m)
 	}
-	resp1, restyResp1, err := client.Sda.AddDefaultAuthenticationTemplateInSdaFabricV1(request1)
+	resp1, restyResp1, err := client.Sda.AddDefaultAuthenticationTemplateInSdaFabric(request1)
 	if err != nil || resp1 == nil {
 		if restyResp1 != nil {
 			diags = append(diags, diagErrorWithResponse(
-				"Failure when executing AddDefaultAuthenticationTemplateInSdaFabricV1", err, restyResp1.String()))
+				"Failure when executing AddDefaultAuthenticationTemplateInSdaFabric", err, restyResp1.String()))
 			return diags
 		}
 		diags = append(diags, diagError(
-			"Failure when executing AddDefaultAuthenticationTemplateInSdaFabricV1", err))
+			"Failure when executing AddDefaultAuthenticationTemplateInSdaFabric", err))
 		return diags
 	}
 	executionId := resp1.ExecutionID
@@ -222,17 +232,17 @@ func resourceSdaFabricAuthenticationProfileCreate(ctx context.Context, d *schema
 		if response2.Status == "FAILURE" {
 			log.Printf("[DEBUG] Error %s", response2.BapiError)
 			diags = append(diags, diagError(
-				"Failure when executing AddDefaultAuthenticationTemplateInSdaFabricV1", err))
+				"Failure when executing AddDefaultAuthenticationTemplateInSdaFabric", err))
 			return diags
 		}
 	}
-	queryParamValidate := catalystcentersdkgo.GetDefaultAuthenticationProfileFromSdaFabricV1QueryParams{}
+	queryParamValidate := catalystcentersdkgo.GetDefaultAuthenticationProfileFromSdaFabricQueryParams{}
 	queryParamValidate.SiteNameHierarchy = vvSiteNameHierarchy
-	item3, _, err := client.Sda.GetDefaultAuthenticationProfileFromSdaFabricV1(&queryParamValidate)
+	item3, _, err := client.Sda.GetDefaultAuthenticationProfileFromSdaFabric(&queryParamValidate)
 	if err != nil || item3 == nil {
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing AddDefaultAuthenticationTemplateInSdaFabricV1", err,
-			"Failure at AddDefaultAuthenticationTemplateInSdaFabricV1, unexpected response", ""))
+			"Failure when executing AddDefaultAuthenticationTemplateInSdaFabric", err,
+			"Failure at AddDefaultAuthenticationTemplateInSdaFabric, unexpected response", ""))
 		return diags
 	}
 
@@ -255,14 +265,14 @@ func resourceSdaFabricAuthenticationProfileRead(ctx context.Context, d *schema.R
 
 	selectedMethod := 1
 	if selectedMethod == 1 {
-		log.Printf("[DEBUG] Selected method: GetDefaultAuthenticationProfileFromSdaFabricV1")
-		queryParams1 := catalystcentersdkgo.GetDefaultAuthenticationProfileFromSdaFabricV1QueryParams{}
+		log.Printf("[DEBUG] Selected method: GetDefaultAuthenticationProfileFromSdaFabric")
+		queryParams1 := catalystcentersdkgo.GetDefaultAuthenticationProfileFromSdaFabricQueryParams{}
 
 		queryParams1.SiteNameHierarchy = vSiteNameHierarchy
 
 		// has_unknown_response: None
 
-		response1, restyResp1, err := client.Sda.GetDefaultAuthenticationProfileFromSdaFabricV1(&queryParams1)
+		response1, restyResp1, err := client.Sda.GetDefaultAuthenticationProfileFromSdaFabric(&queryParams1)
 
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
@@ -274,10 +284,10 @@ func resourceSdaFabricAuthenticationProfileRead(ctx context.Context, d *schema.R
 
 		log.Printf("[DEBUG] Retrieved response %+v", responseInterfaceToString(*response1))
 
-		vItem1 := flattenSdaGetDefaultAuthenticationProfileFromSdaFabricV1Item(response1)
+		vItem1 := flattenSdaGetDefaultAuthenticationProfileFromSdaFabricItem(response1)
 		if err := d.Set("item", vItem1); err != nil {
 			diags = append(diags, diagError(
-				"Failure when setting GetDefaultAuthenticationProfileFromSdaFabricV1 response",
+				"Failure when setting GetDefaultAuthenticationProfileFromSdaFabric response",
 				err))
 			return diags
 		}
@@ -294,20 +304,20 @@ func resourceSdaFabricAuthenticationProfileUpdate(ctx context.Context, d *schema
 	var diags diag.Diagnostics
 
 	if d.HasChange("parameters") {
-		request1 := expandRequestSdaFabricAuthenticationProfileUpdateDefaultAuthenticationProfileInSdaFabricV1(ctx, "parameters", d)
+		request1 := expandRequestSdaFabricAuthenticationProfileUpdateDefaultAuthenticationProfileInSdaFabric(ctx, "parameters", d)
 		log.Printf("[DEBUG] request sent => %v", responseInterfaceToString(*request1))
-		response1, restyResp1, err := client.Sda.UpdateDefaultAuthenticationProfileInSdaFabricV1(request1)
+		response1, restyResp1, err := client.Sda.UpdateDefaultAuthenticationProfileInSdaFabric(request1)
 		if err != nil || response1 == nil {
 			if restyResp1 != nil {
 				log.Printf("[DEBUG] resty response for update operation => %v", restyResp1.String())
 				diags = append(diags, diagErrorWithAltAndResponse(
-					"Failure when executing UpdateDefaultAuthenticationProfileInSdaFabricV1", err, restyResp1.String(),
-					"Failure at UpdateDefaultAuthenticationProfileInSdaFabricV1, unexpected response", ""))
+					"Failure when executing UpdateDefaultAuthenticationProfileInSdaFabric", err, restyResp1.String(),
+					"Failure at UpdateDefaultAuthenticationProfileInSdaFabric, unexpected response", ""))
 				return diags
 			}
 			diags = append(diags, diagErrorWithAlt(
-				"Failure when executing UpdateDefaultAuthenticationProfileInSdaFabricV1", err,
-				"Failure at UpdateDefaultAuthenticationProfileInSdaFabricV1, unexpected response", ""))
+				"Failure when executing UpdateDefaultAuthenticationProfileInSdaFabric", err,
+				"Failure at UpdateDefaultAuthenticationProfileInSdaFabric, unexpected response", ""))
 			return diags
 		}
 
@@ -341,7 +351,7 @@ func resourceSdaFabricAuthenticationProfileUpdate(ctx context.Context, d *schema
 			if response2.Status == "FAILURE" {
 				log.Printf("[DEBUG] Error %s", response2.BapiError)
 				diags = append(diags, diagError(
-					"Failure when executing UpdateDefaultAuthenticationProfileInSdaFabricV1", err))
+					"Failure when executing UpdateDefaultAuthenticationProfileInSdaFabric", err))
 				return diags
 			}
 		}
@@ -360,23 +370,23 @@ func resourceSdaFabricAuthenticationProfileDelete(ctx context.Context, d *schema
 	resourceID := d.Id()
 	resourceMap := separateResourceID(resourceID)
 
-	queryParamDelete := catalystcentersdkgo.DeleteDefaultAuthenticationProfileFromSdaFabricV1QueryParams{}
+	queryParamDelete := catalystcentersdkgo.DeleteDefaultAuthenticationProfileFromSdaFabricQueryParams{}
 
 	vvSiteNameHierarchy := resourceMap["site_name_hierarchy"]
 	queryParamDelete.SiteNameHierarchy = vvSiteNameHierarchy
 
-	response1, restyResp1, err := client.Sda.DeleteDefaultAuthenticationProfileFromSdaFabricV1(&queryParamDelete)
+	response1, restyResp1, err := client.Sda.DeleteDefaultAuthenticationProfileFromSdaFabric(&queryParamDelete)
 	if err != nil || response1 == nil {
 		if restyResp1 != nil {
 			log.Printf("[DEBUG] resty response for delete operation => %v", restyResp1.String())
 			diags = append(diags, diagErrorWithAltAndResponse(
-				"Failure when executing DeleteDefaultAuthenticationProfileFromSdaFabricV1", err, restyResp1.String(),
-				"Failure at DeleteDefaultAuthenticationProfileFromSdaFabricV1, unexpected response", ""))
+				"Failure when executing DeleteDefaultAuthenticationProfileFromSdaFabric", err, restyResp1.String(),
+				"Failure at DeleteDefaultAuthenticationProfileFromSdaFabric, unexpected response", ""))
 			return diags
 		}
 		diags = append(diags, diagErrorWithAlt(
-			"Failure when executing DeleteDefaultAuthenticationProfileFromSdaFabricV1", err,
-			"Failure at DeleteDefaultAuthenticationProfileFromSdaFabricV1, unexpected response", ""))
+			"Failure when executing DeleteDefaultAuthenticationProfileFromSdaFabric", err,
+			"Failure at DeleteDefaultAuthenticationProfileFromSdaFabric, unexpected response", ""))
 		return diags
 	}
 
@@ -410,7 +420,7 @@ func resourceSdaFabricAuthenticationProfileDelete(ctx context.Context, d *schema
 		if response2.Status == "FAILURE" {
 			log.Printf("[DEBUG] Error %s", response2.BapiError)
 			diags = append(diags, diagError(
-				"Failure when executing DeleteDefaultAuthenticationProfileFromSdaFabricV1", err))
+				"Failure when executing DeleteDefaultAuthenticationProfileFromSdaFabric", err))
 			return diags
 		}
 	}
@@ -421,9 +431,10 @@ func resourceSdaFabricAuthenticationProfileDelete(ctx context.Context, d *schema
 
 	return diags
 }
-func expandRequestSdaFabricAuthenticationProfileAddDefaultAuthenticationTemplateInSdaFabricV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddDefaultAuthenticationTemplateInSdaFabricV1 {
-	request := catalystcentersdkgo.RequestSdaAddDefaultAuthenticationTemplateInSdaFabricV1{}
-	if v := expandRequestSdaFabricAuthenticationProfileAddDefaultAuthenticationTemplateInSdaFabricV1ItemArray(ctx, key+".payload", d); v != nil {
+
+func expandRequestSdaFabricAuthenticationProfileAddDefaultAuthenticationTemplateInSdaFabric(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaAddDefaultAuthenticationTemplateInSdaFabric {
+	request := catalystcentersdkgo.RequestSdaAddDefaultAuthenticationTemplateInSdaFabric{}
+	if v := expandRequestSdaFabricAuthenticationProfileAddDefaultAuthenticationTemplateInSdaFabricItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -432,8 +443,8 @@ func expandRequestSdaFabricAuthenticationProfileAddDefaultAuthenticationTemplate
 	return &request
 }
 
-func expandRequestSdaFabricAuthenticationProfileAddDefaultAuthenticationTemplateInSdaFabricV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddDefaultAuthenticationTemplateInSdaFabricV1 {
-	request := []catalystcentersdkgo.RequestItemSdaAddDefaultAuthenticationTemplateInSdaFabricV1{}
+func expandRequestSdaFabricAuthenticationProfileAddDefaultAuthenticationTemplateInSdaFabricItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaAddDefaultAuthenticationTemplateInSdaFabric {
+	request := []catalystcentersdkgo.RequestItemSdaAddDefaultAuthenticationTemplateInSdaFabric{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -444,7 +455,7 @@ func expandRequestSdaFabricAuthenticationProfileAddDefaultAuthenticationTemplate
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaFabricAuthenticationProfileAddDefaultAuthenticationTemplateInSdaFabricV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaFabricAuthenticationProfileAddDefaultAuthenticationTemplateInSdaFabricItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -455,8 +466,8 @@ func expandRequestSdaFabricAuthenticationProfileAddDefaultAuthenticationTemplate
 	return &request
 }
 
-func expandRequestSdaFabricAuthenticationProfileAddDefaultAuthenticationTemplateInSdaFabricV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddDefaultAuthenticationTemplateInSdaFabricV1 {
-	request := catalystcentersdkgo.RequestItemSdaAddDefaultAuthenticationTemplateInSdaFabricV1{}
+func expandRequestSdaFabricAuthenticationProfileAddDefaultAuthenticationTemplateInSdaFabricItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaAddDefaultAuthenticationTemplateInSdaFabric {
+	request := catalystcentersdkgo.RequestItemSdaAddDefaultAuthenticationTemplateInSdaFabric{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".site_name_hierarchy")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".site_name_hierarchy")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".site_name_hierarchy")))) {
 		request.SiteNameHierarchy = interfaceToString(v)
 	}
@@ -469,9 +480,9 @@ func expandRequestSdaFabricAuthenticationProfileAddDefaultAuthenticationTemplate
 	return &request
 }
 
-func expandRequestSdaFabricAuthenticationProfileUpdateDefaultAuthenticationProfileInSdaFabricV1(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateDefaultAuthenticationProfileInSdaFabricV1 {
-	request := catalystcentersdkgo.RequestSdaUpdateDefaultAuthenticationProfileInSdaFabricV1{}
-	if v := expandRequestSdaFabricAuthenticationProfileUpdateDefaultAuthenticationProfileInSdaFabricV1ItemArray(ctx, key+".payload", d); v != nil {
+func expandRequestSdaFabricAuthenticationProfileUpdateDefaultAuthenticationProfileInSdaFabric(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestSdaUpdateDefaultAuthenticationProfileInSdaFabric {
+	request := catalystcentersdkgo.RequestSdaUpdateDefaultAuthenticationProfileInSdaFabric{}
+	if v := expandRequestSdaFabricAuthenticationProfileUpdateDefaultAuthenticationProfileInSdaFabricItemArray(ctx, key+".payload", d); v != nil {
 		request = *v
 	}
 	if isEmptyValue(reflect.ValueOf(request)) {
@@ -480,8 +491,8 @@ func expandRequestSdaFabricAuthenticationProfileUpdateDefaultAuthenticationProfi
 	return &request
 }
 
-func expandRequestSdaFabricAuthenticationProfileUpdateDefaultAuthenticationProfileInSdaFabricV1ItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateDefaultAuthenticationProfileInSdaFabricV1 {
-	request := []catalystcentersdkgo.RequestItemSdaUpdateDefaultAuthenticationProfileInSdaFabricV1{}
+func expandRequestSdaFabricAuthenticationProfileUpdateDefaultAuthenticationProfileInSdaFabricItemArray(ctx context.Context, key string, d *schema.ResourceData) *[]catalystcentersdkgo.RequestItemSdaUpdateDefaultAuthenticationProfileInSdaFabric {
+	request := []catalystcentersdkgo.RequestItemSdaUpdateDefaultAuthenticationProfileInSdaFabric{}
 	key = fixKeyAccess(key)
 	o := d.Get(key)
 	if o == nil {
@@ -492,7 +503,7 @@ func expandRequestSdaFabricAuthenticationProfileUpdateDefaultAuthenticationProfi
 		return nil
 	}
 	for item_no := range objs {
-		i := expandRequestSdaFabricAuthenticationProfileUpdateDefaultAuthenticationProfileInSdaFabricV1Item(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
+		i := expandRequestSdaFabricAuthenticationProfileUpdateDefaultAuthenticationProfileInSdaFabricItem(ctx, fmt.Sprintf("%s.%d", key, item_no), d)
 		if i != nil {
 			request = append(request, *i)
 		}
@@ -503,8 +514,8 @@ func expandRequestSdaFabricAuthenticationProfileUpdateDefaultAuthenticationProfi
 	return &request
 }
 
-func expandRequestSdaFabricAuthenticationProfileUpdateDefaultAuthenticationProfileInSdaFabricV1Item(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateDefaultAuthenticationProfileInSdaFabricV1 {
-	request := catalystcentersdkgo.RequestItemSdaUpdateDefaultAuthenticationProfileInSdaFabricV1{}
+func expandRequestSdaFabricAuthenticationProfileUpdateDefaultAuthenticationProfileInSdaFabricItem(ctx context.Context, key string, d *schema.ResourceData) *catalystcentersdkgo.RequestItemSdaUpdateDefaultAuthenticationProfileInSdaFabric {
+	request := catalystcentersdkgo.RequestItemSdaUpdateDefaultAuthenticationProfileInSdaFabric{}
 	if v, ok := d.GetOkExists(fixKeyAccess(key + ".site_name_hierarchy")); !isEmptyValue(reflect.ValueOf(d.Get(fixKeyAccess(key+".site_name_hierarchy")))) && (ok || !reflect.DeepEqual(v, d.Get(fixKeyAccess(key+".site_name_hierarchy")))) {
 		request.SiteNameHierarchy = interfaceToString(v)
 	}
