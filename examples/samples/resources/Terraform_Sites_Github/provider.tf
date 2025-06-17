@@ -2,7 +2,7 @@ terraform {
   required_providers {
     catalystcenter = {
       source  = "hashicorp.com/edu/catalystcenter"
-      version = "1.1.1-beta"
+      version = "1.2.0-beta"
     }
   }
 }

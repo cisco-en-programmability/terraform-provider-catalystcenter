@@ -22,7 +22,7 @@ The following table shows the supported versions.
 | Cisco Catalyst Center version | Terraform "catalystcenter" provider version |
 |--------------------------|----------------------------------------|
 | 2.3.7.6                  | 1.0.0-beta                             |
-| 2.3.7.9                  | 1.1.1-beta                             |
+| 2.3.7.9                  | 1.2.0-beta                             |
 
 If your SDK, Terraform provider is older please consider updating it first.
 
@@ -63,7 +63,7 @@ terraform {
   required_providers {
     catalystcenter = {
       source = "cisco-en-programmability/catalystcenter"
-      version = "1.1.1-beta"
+      version = "1.2.0-beta"
     }
   }
 }
