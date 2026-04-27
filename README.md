@@ -17,7 +17,7 @@ Bugs will be fixed on a best effort basis until June 30th, 2026.
 
 ## What happens if I don’t migrate? 
 Your existing setup will continue to function, but no new features will be available for this provider. Over time, compatibility issues may arise as Terraform and Meraki evolve.
-Bugs will be fixed on a best effort basis until June 30th, 2026.
+Bugs will be fixed on a best effort basis until July 31st, 2026.
 
 - - - 
 
